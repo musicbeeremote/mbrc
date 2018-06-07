@@ -2,13 +2,13 @@ package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v7.app.AlertDialog
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.appcompat.app.AlertDialog
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -20,12 +20,12 @@ import com.kelsos.mbrc.content.library.albums.Sorting.ORDER_DESCENDING
 import com.kelsos.mbrc.content.library.albums.Sorting.Order
 import kotterknife.bindView
 
-class SortingDialog : DialogFragment() {
+class SortingDialog : androidx.fragment.app.DialogFragment() {
   private val orderButton: Button by bindView(R.id.sorting_dialog__order)
   private val sortingOption: RadioGroup by bindView(R.id.sorting_dialog__sorting_options)
 
   private lateinit var dialog: AlertDialog
-  private lateinit var fm: FragmentManager
+  private lateinit var fm: androidx.fragment.app.FragmentManager
   private lateinit var orderChange: (order: Int) -> Unit
   private lateinit var sortingChange: (sorting: Int) -> Unit
 
@@ -106,7 +106,7 @@ class SortingDialog : DialogFragment() {
     const val TAG = "com.kelsos.mbrc.ui.dialog.SortingDialog"
 
     fun create(
-      fm: FragmentManager,
+      fm: androidx.fragment.app.FragmentManager,
       @Fields sorting: Int,
       @Order order: Int,
       orderChange: (order: Int) -> Unit,

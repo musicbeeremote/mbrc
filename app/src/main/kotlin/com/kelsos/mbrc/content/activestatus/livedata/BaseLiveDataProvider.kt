@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.content.activestatus.livedata
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 abstract class BaseLiveDataProvider<T> : LiveDataProvider<T> where T : Any {
 

@@ -5,20 +5,20 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.annotation.IdRes
-import android.support.annotation.IntDef
-import android.support.annotation.LayoutRes
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.IdRes
+import androidx.annotation.IntDef
+import androidx.annotation.LayoutRes
+import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 
 class RecyclerViewFastScroller : LinearLayout {
 
@@ -30,8 +30,8 @@ class RecyclerViewFastScroller : LinearLayout {
   private var currentAnimator: ObjectAnimator? = null
   private var scrollStateChangeListener: RecyclerViewFastScroller.ScrollStateChangeListener? = null
 
-  private val onScrollListener = object : RecyclerView.OnScrollListener() {
-    override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+  private val onScrollListener = object : OnScrollListener() {
+    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
       updateBubbleAndHandlePosition()
     }
   }
@@ -150,7 +150,7 @@ class RecyclerViewFastScroller : LinearLayout {
 
     val recyclerView = this.recyclerView ?: return
 
-    val itemCount = recyclerView.adapter.itemCount
+    val itemCount = recyclerView.adapter?.itemCount ?: 0
     val proportion: Float = if (handle.y == 0F) {
       0f
     } else {
@@ -160,7 +160,10 @@ class RecyclerViewFastScroller : LinearLayout {
     }
 
     val targetPos = getValueInRange(0, itemCount - 1, (proportion * itemCount.toFloat()).toInt())
-    (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(targetPos, 0)
+    (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(
+      targetPos,
+      0
+    )
     val bubbleText = (recyclerView.adapter as BubbleTextGetter).getTextToShowInBubble(targetPos)
     bubble?.text = bubbleText
   }

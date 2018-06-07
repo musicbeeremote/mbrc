@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.utilities
 
-import android.arch.lifecycle.LiveData
-import android.arch.paging.DataSource
-import android.arch.paging.LivePagedListBuilder
-import android.arch.paging.PagedList
+import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import org.threeten.bp.Instant
 
 fun <T> DataSource.Factory<Int, T>.paged(): LiveData<PagedList<T>> {

@@ -3,16 +3,16 @@ package com.kelsos.mbrc.ui.dialogs
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AlertDialog
 import android.text.TextUtils
 import android.widget.EditText
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
 
-class SettingsDialogFragment : DialogFragment() {
+class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
   private val hostEdit: EditText by bindView(R.id.settings_dialog__hostname_edit)
   private val nameEdit: EditText by bindView(R.id.settings_dialog__name_edit)
@@ -22,7 +22,7 @@ class SettingsDialogFragment : DialogFragment() {
   private lateinit var settings: ConnectionSettingsEntity
   private var edit: Boolean = false
 
-  private lateinit var fm: FragmentManager
+  private lateinit var fm: androidx.fragment.app.FragmentManager
 
   private fun setConnectionSettings(settings: ConnectionSettingsEntity) {
     this.settings = settings
@@ -121,7 +121,7 @@ class SettingsDialogFragment : DialogFragment() {
 
     fun newInstance(
       settings: ConnectionSettingsEntity,
-      fm: FragmentManager
+      fm: androidx.fragment.app.FragmentManager
     ): SettingsDialogFragment {
 
       return SettingsDialogFragment().apply {
@@ -131,7 +131,7 @@ class SettingsDialogFragment : DialogFragment() {
       }
     }
 
-    fun create(fm: FragmentManager): SettingsDialogFragment {
+    fun create(fm: androidx.fragment.app.FragmentManager): SettingsDialogFragment {
       return SettingsDialogFragment().apply { this.fm = fm }
     }
   }

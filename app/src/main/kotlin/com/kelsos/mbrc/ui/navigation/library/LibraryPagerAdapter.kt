@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentStatePagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentStatePagerAdapter
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.navigation.library.Search.Section
 import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumFragment
@@ -12,11 +12,11 @@ import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreFragment
 import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
 
 class LibraryPagerAdapter(
-  activity: FragmentActivity
-) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
+  activity: androidx.fragment.app.FragmentActivity
+) : androidx.fragment.app.FragmentStatePagerAdapter(activity.supportFragmentManager) {
   private val context: Context = activity.applicationContext
 
-  override fun getItem(@Section position: Int): Fragment? {
+  override fun getItem(@Section position: Int): androidx.fragment.app.Fragment? {
     when (position) {
       Search.SECTION_GENRE -> return BrowseGenreFragment()
       Search.SECTION_ARTIST -> return BrowseArtistFragment()

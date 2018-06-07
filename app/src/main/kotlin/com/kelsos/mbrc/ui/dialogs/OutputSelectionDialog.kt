@@ -3,9 +3,9 @@ package com.kelsos.mbrc.ui.dialogs
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -22,13 +22,13 @@ import kotterknife.bindView
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class OutputSelectionDialog : DialogFragment(),
+class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
   OutputSelectionView,
   View.OnTouchListener,
   AdapterView.OnItemSelectedListener {
 
   private var touchInitiated: Boolean = false
-  private lateinit var fm: FragmentManager
+  private lateinit var fm: androidx.fragment.app.FragmentManager
   private lateinit var dialog: AlertDialog
 
   private val availableOutputs: Spinner by bindView(R.id.output_selection__available_outputs)
@@ -136,7 +136,7 @@ class OutputSelectionDialog : DialogFragment(),
   companion object {
     private const val TAG = "output_selection_dialog"
 
-    fun instance(fm: FragmentManager): OutputSelectionDialog {
+    fun instance(fm: androidx.fragment.app.FragmentManager): OutputSelectionDialog {
       val dialog = OutputSelectionDialog()
       dialog.fm = fm
       return dialog

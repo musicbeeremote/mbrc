@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity

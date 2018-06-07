@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.nowplaying.queue
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 
 object LibraryPopup {
   @StringDef(

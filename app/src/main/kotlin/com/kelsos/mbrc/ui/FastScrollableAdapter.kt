@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui
 
-import android.arch.paging.PagedList
-import android.arch.paging.PagedListAdapter
-import android.support.v7.util.DiffUtil
+import androidx.paging.PagedList
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter

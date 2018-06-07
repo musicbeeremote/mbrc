@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.scope
 import com.kelsos.mbrc.ui.navigation.main.MainActivity

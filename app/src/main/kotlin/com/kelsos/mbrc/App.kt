@@ -2,8 +2,8 @@ package com.kelsos.mbrc
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.annotation.CallSuper
-import android.support.multidex.MultiDexApplication
+import androidx.annotation.CallSuper
+import androidx.multidex.MultiDexApplication
 import com.chibatching.kotpref.Kotpref
 import com.github.anrwatchdog.ANRError
 import com.github.anrwatchdog.ANRWatchDog

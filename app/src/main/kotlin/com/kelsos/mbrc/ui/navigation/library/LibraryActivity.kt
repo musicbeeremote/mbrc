@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
-import android.support.v4.view.ViewPager.OnPageChangeListener
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.SearchView.OnQueryTextListener
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import android.view.Menu
 import android.view.MenuItem
 import com.kelsos.mbrc.R
@@ -23,8 +23,8 @@ class LibraryActivity : BaseNavigationActivity(),
   OnQueryTextListener,
   OnPageChangeListener {
 
-  private val pager: ViewPager by bindView(R.id.search_pager)
-  private val tabs: TabLayout by bindView(R.id.pager_tab_strip)
+  private val pager: androidx.viewpager.widget.ViewPager by bindView(R.id.search_pager)
+  private val tabs: com.google.android.material.tabs.TabLayout by bindView(R.id.pager_tab_strip)
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -163,7 +163,7 @@ class LibraryActivity : BaseNavigationActivity(),
   }
 
   override fun refreshFailed() {
-    Snackbar.make(pager, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+    com.google.android.material.snackbar.Snackbar.make(pager, R.string.refresh_failed, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
   }
 
   override fun showRefreshing() {

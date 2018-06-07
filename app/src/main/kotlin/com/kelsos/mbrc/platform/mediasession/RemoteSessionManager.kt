@@ -8,12 +8,12 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
 import android.media.AudioManager
-import android.media.RemoteControlClient
+import android.media.session.MediaSession.FLAG_HANDLES_MEDIA_BUTTONS
+import android.media.session.MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS
+import android.media.session.PlaybackState
 import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
-import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
 import android.support.v4.media.session.PlaybackStateCompat
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
@@ -39,7 +39,7 @@ constructor(
   private val userActionUseCase: UserActionUseCase,
   private val manager: AudioManager
 ) : AudioManager.OnAudioFocusChangeListener {
-  private val mediaSession: MediaSessionCompat?
+  private val mediaSession: MediaSessionCompat
 
   @Inject
   lateinit var handler: MediaIntentHandler
@@ -63,53 +63,55 @@ constructor(
       PendingIntent.FLAG_UPDATE_CURRENT
     )
 
-    mediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
-    mediaSession.setPlaybackToRemote(volumeProvider)
-
-    mediaSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      mediaSession.setCallback(object : MediaSessionCompat.Callback() {
-        override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
-          val success = handler.handleMediaIntent(mediaButtonEvent)
-          return success || super.onMediaButtonEvent(mediaButtonEvent)
-        }
-
-        override fun onPlay() {
-          postAction(UserAction(Protocol.PlayerPlay, true))
-        }
-
-        override fun onPause() {
-          postAction(UserAction(Protocol.PlayerPause, true))
-        }
-
-        override fun onSkipToNext() {
-          postAction(UserAction(Protocol.PlayerNext, true))
-        }
-
-        override fun onSkipToPrevious() {
-          postAction(UserAction(Protocol.PlayerPrevious, true))
-        }
-
-        override fun onStop() {
-          postAction(UserAction(Protocol.PlayerStop, true))
-        }
-      })
+    mediaSession = MediaSessionCompat(context, "Session").apply {
+      setMediaButtonReceiver(mediaPendingIntent)
+      setPlaybackToRemote(volumeProvider)
+      setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
     }
+
+    mediaSession.setCallback(object : MediaSessionCompat.Callback() {
+      override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
+        val success = handler.handleMediaIntent(mediaButtonEvent)
+        return success || super.onMediaButtonEvent(mediaButtonEvent)
+      }
+
+      override fun onPlay() {
+        postAction(UserAction(Protocol.PlayerPlay, true))
+      }
+
+      override fun onPause() {
+        postAction(UserAction(Protocol.PlayerPause, true))
+      }
+
+      override fun onSkipToNext() {
+        postAction(UserAction(Protocol.PlayerNext, true))
+      }
+
+      override fun onSkipToPrevious() {
+        postAction(UserAction(Protocol.PlayerPrevious, true))
+      }
+
+      override fun onStop() {
+        postAction(UserAction(Protocol.PlayerStop, true))
+      }
+    })
   }
 
   private fun onConnectionStatusChanged(event: ConnectionStatusChangeEvent) {
-    if (event.status == Connection.OFF) {
-      if (mediaSession != null) {
-        val builder = PlaybackStateCompat.Builder()
-        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
-        val playbackState = builder.build()
-        mediaSession.isActive = false
-        mediaSession.setPlaybackState(playbackState)
-        ensureTransportControls(playbackState)
-      }
-      abandonFocus()
+    if (event.status != Connection.OFF) {
+      return
     }
+
+    val playbackState = PlaybackStateCompat.Builder()
+      .setState(PlaybackState.STATE_STOPPED, -1, 0f)
+      .build()
+
+    with(mediaSession) {
+      isActive = false
+      setPlaybackState(playbackState)
+    }
+
+    abandonFocus()
   }
 
   private fun postAction(action: UserAction) {
@@ -117,13 +119,9 @@ constructor(
   }
 
   val mediaSessionToken: MediaSessionCompat.Token
-    get() = mediaSession!!.sessionToken
+    get() = mediaSession.sessionToken
 
   private fun metadataUpdate(data: RemoteClientMetaData) {
-    if (mediaSession == null) {
-      return
-    }
-
     val trackInfo = data.track
     val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
 
@@ -138,9 +136,6 @@ constructor(
   }
 
   private fun updateState(stateChange: PlayStateChange) {
-    if (mediaSession == null) {
-      return
-    }
 
     val builder = PlaybackStateCompat.Builder()
     builder.setActions(PLAYBACK_ACTIONS)
@@ -161,7 +156,6 @@ constructor(
     }
     val playbackState = builder.build()
     mediaSession.setPlaybackState(playbackState)
-    ensureTransportControls(playbackState)
   }
 
   private fun onPlayStateChange(change: PlayStateChange) {
@@ -171,56 +165,6 @@ constructor(
         // Do nothing
       }
       else -> abandonFocus()
-    }
-  }
-
-  @Suppress("DEPRECATION")
-  @SuppressWarnings("deprecation")
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-  private fun ensureTransportControls(playbackState: PlaybackStateCompat) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      return
-    }
-
-    val actions = playbackState.actions
-    val remoteObj = mediaSession!!.remoteControlClient
-    if (actions != 0L && remoteObj != null) {
-
-      var transportControls = 0
-
-      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_REWIND != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_REWIND
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_PLAY != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PLAY
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_PLAY_PAUSE != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_PAUSE != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PAUSE
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_STOP != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_STOP
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_FAST_FORWARD != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_FAST_FORWARD
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_NEXT
-      }
-
-      (remoteObj as RemoteControlClient).setTransportControlFlags(transportControls)
     }
   }
 

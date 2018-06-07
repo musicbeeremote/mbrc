@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.OnItemTouchListener
 import android.view.GestureDetector
 import android.view.MotionEvent
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import timber.log.Timber
 
 class NowPlayingTouchListener(
@@ -24,13 +24,9 @@ class NowPlayingTouchListener(
       })
   }
 
-  override fun onTouchEvent(rv: RecyclerView?, e: MotionEvent?) = Unit
+  override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
 
-  override fun onInterceptTouchEvent(rv: RecyclerView?, e: MotionEvent?): Boolean {
-    if (e == null) {
-      return false
-    }
-
+  override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
     gestureDetector.onTouchEvent(e)
 
     val action = e.actionMasked

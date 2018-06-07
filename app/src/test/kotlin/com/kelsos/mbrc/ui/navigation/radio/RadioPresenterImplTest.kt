@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import com.kelsos.mbrc.any
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi

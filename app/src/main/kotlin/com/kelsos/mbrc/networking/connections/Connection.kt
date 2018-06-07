@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking.connections
 
 import android.annotation.SuppressLint
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 object Connection {
   const val OFF = 0

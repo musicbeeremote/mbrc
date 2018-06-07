@@ -1,10 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.constraintlayout.Group
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.close
 import com.kelsos.mbrc.di.inject
@@ -34,7 +33,7 @@ class LyricsActivity : BaseNavigationActivity(), LyricsView {
   private fun setupRecycler() {
     lyricsRecycler.apply {
       setHasFixedSize(true)
-      layoutManager = LinearLayoutManager(this@LyricsActivity)
+      layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@LyricsActivity)
       adapter = lyricsAdapter
     }
   }

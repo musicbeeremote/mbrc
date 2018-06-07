@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <android.support.v4.widget.SwipeRefreshLayout
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/library_browser__refresh_layout"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -14,7 +14,7 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/library_browser__content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +24,7 @@
         android:scrollbars="none"
         tools:listitem="@layout/listitem_single" />
 
-  </android.support.v4.widget.SwipeRefreshLayout>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   <com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
       android:id="@+id/fastscroller"
@@ -96,7 +96,7 @@
       app:layout_constraintTop_toBottomOf="@+id/library_browser__empty_icon"
       app:layout_constraintVertical_bias="0.0" />
 
-  <android.support.constraint.Group
+  <androidx.constraintlayout.widget.Group
       android:id="@+id/library_browser__empty_group"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -104,4 +104,4 @@
       tools:visibility="visible"
       app:constraint_referenced_ids="library_browser__text_title,library_browser__text_subtitle,library_browser__empty_icon" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

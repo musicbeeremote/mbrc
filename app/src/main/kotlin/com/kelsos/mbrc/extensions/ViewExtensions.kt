@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.extensions
 
-import android.support.annotation.StringRes
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.StringRes
+import androidx.recyclerview.widget.RecyclerView
 
-fun RecyclerView.ViewHolder.string(@StringRes resId: Int): String {
+fun androidx.recyclerview.widget.RecyclerView.ViewHolder.string(@StringRes resId: Int): String {
   return this.itemView.context.getString(resId)
 }

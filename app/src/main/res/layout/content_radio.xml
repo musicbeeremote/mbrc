@@ -1,4 +1,4 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_layout"
@@ -8,7 +8,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.kelsos.mbrc.ui.navigation.radio.RadioActivity">
 
-  <android.support.v4.widget.SwipeRefreshLayout
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/radio_stations__refresh_layout"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -17,14 +17,14 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/radio_stations__stations_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/list_padding_top"
         tools:listitem="@layout/listitem_single" />
 
-  </android.support.v4.widget.SwipeRefreshLayout>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   <ProgressBar
       android:id="@+id/radio_stations__loading_bar"
@@ -40,7 +40,7 @@
       app:layout_constraintTop_toTopOf="parent"
       tools:visibility="gone" />
 
-  <android.support.constraint.Group
+  <androidx.constraintlayout.widget.Group
       android:id="@+id/radio_stations__empty_group"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -101,4 +101,4 @@
       tools:ignore="MissingPrefix" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

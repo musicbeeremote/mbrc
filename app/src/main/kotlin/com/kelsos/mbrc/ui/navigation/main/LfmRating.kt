@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 object LfmRating {
   const val LOVED = 1

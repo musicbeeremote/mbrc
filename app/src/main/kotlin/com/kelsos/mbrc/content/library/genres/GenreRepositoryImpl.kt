@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.genres
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol

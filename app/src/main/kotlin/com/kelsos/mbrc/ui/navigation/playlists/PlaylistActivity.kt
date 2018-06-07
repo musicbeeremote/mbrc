@@ -1,15 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.constraintlayout.Group
 import androidx.core.view.isVisible
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
@@ -26,8 +22,8 @@ class PlaylistActivity : BaseNavigationActivity(),
   OnPlaylistPressedListener,
   OnRefreshListener {
 
-  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.playlists__refresh_layout)
-  private val playlistList: RecyclerView by bindView(R.id.playlists__playlist_list)
+  private val swipeLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout by bindView(R.id.playlists__refresh_layout)
+  private val playlistList: androidx.recyclerview.widget.RecyclerView by bindView(R.id.playlists__playlist_list)
   private val emptyView: Group by bindView(R.id.playlists__empty_group)
   private val emptyViewTitle: TextView by bindView(R.id.playlists__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.playlists__loading_bar)
@@ -48,7 +44,7 @@ class PlaylistActivity : BaseNavigationActivity(),
     super.setup()
 
     adapter.setPlaylistPressedListener(this)
-    playlistList.layoutManager = LinearLayoutManager(this)
+    playlistList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener(this)
     emptyViewTitle.setText(R.string.playlists_list_empty)
@@ -89,9 +85,9 @@ class PlaylistActivity : BaseNavigationActivity(),
   override fun failure(throwable: Throwable) {
     swipeLayout.isRefreshing = false
     if (throwable.cause is ConnectException) {
-      Snackbar.make(swipeLayout, R.string.service_connection_error, Snackbar.LENGTH_SHORT).show()
+      com.google.android.material.snackbar.Snackbar.make(swipeLayout, R.string.service_connection_error, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
     } else {
-      Snackbar.make(swipeLayout, R.string.playlists_load_failed, Snackbar.LENGTH_SHORT).show()
+      com.google.android.material.snackbar.Snackbar.make(swipeLayout, R.string.playlists_load_failed, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
     }
   }
 

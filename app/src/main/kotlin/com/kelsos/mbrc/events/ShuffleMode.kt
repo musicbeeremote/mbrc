@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 
 object ShuffleMode {
   const val OFF = "off"

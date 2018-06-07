@@ -1,10 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.genreartists
 
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
+import androidx.constraintlayout.Group
+import androidx.paging.PagedList
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.extensions.linear
@@ -22,7 +21,7 @@ class GenreArtistsActivity : BaseActivity(),
   GenreArtistsView,
   MenuItemSelectedListener<ArtistEntity> {
 
-  private val recyclerView: RecyclerView by bindView(R.id.genre_artists__artist_list)
+  private val recyclerView: androidx.recyclerview.widget.RecyclerView by bindView(R.id.genre_artists__artist_list)
   private val emptyView: Group by bindView(R.id.genre_artists__empty_view)
 
   @Inject

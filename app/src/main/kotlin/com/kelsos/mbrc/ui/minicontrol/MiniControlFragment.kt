@@ -3,8 +3,8 @@ package com.kelsos.mbrc.ui.minicontrol
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.TaskStackBuilder
+import androidx.fragment.app.Fragment
+import androidx.core.app.TaskStackBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +23,7 @@ import toothpick.Toothpick
 import java.io.File
 import javax.inject.Inject
 
-class MiniControlFragment : Fragment(), MiniControlView {
+class MiniControlFragment : androidx.fragment.app.Fragment(), MiniControlView {
 
   private val trackCover: ImageView by bindView(R.id.mc_track_cover)
   private val trackArtist: TextView by bindView(R.id.mc_track_artist)

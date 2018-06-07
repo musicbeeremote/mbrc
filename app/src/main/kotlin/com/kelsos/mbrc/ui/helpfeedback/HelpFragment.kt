@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.helpfeedback
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import kotterknife.bindView
 import timber.log.Timber
 
-class HelpFragment : Fragment() {
+class HelpFragment : androidx.fragment.app.Fragment() {
 
   private val helpWebview: WebView by bindView(R.id.help_webview)
 

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.main
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider

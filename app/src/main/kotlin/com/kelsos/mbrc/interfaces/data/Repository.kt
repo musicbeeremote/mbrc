@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.interfaces.data
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import io.reactivex.Completable
 import io.reactivex.Single
 

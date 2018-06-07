@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.genreartists
 
-import android.arch.paging.PagedList
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter

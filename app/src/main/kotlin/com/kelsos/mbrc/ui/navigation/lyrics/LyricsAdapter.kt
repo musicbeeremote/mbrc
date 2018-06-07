@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
@@ -43,11 +43,11 @@ class LyricsAdapter : ListAdapter<String, LyricsAdapter.ViewHolder>(DIFF) {
 
   companion object {
     val DIFF = object : DiffUtil.ItemCallback<String>() {
-      override fun areItemsTheSame(oldItem: String?, newItem: String?): Boolean {
+      override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
         return oldItem == newItem
       }
 
-      override fun areContentsTheSame(oldItem: String?, newItem: String?): Boolean {
+      override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
         return oldItem == newItem
       }
     }

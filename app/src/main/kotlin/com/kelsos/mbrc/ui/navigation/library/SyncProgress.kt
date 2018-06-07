@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 data class SyncProgress(
   val current: Int,

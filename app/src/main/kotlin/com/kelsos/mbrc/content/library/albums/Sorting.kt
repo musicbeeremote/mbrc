@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.albums
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 object Sorting {
   const val ALBUM = 1

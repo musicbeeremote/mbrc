@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import javax.inject.Inject
 
 

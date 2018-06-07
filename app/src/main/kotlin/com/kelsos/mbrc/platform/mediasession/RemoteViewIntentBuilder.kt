@@ -7,7 +7,7 @@ import android.app.PendingIntent.getActivity
 import android.app.PendingIntent.getBroadcast
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 
 object RemoteViewIntentBuilder {

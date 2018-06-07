@@ -1,16 +1,13 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.constraintlayout.Group
 import androidx.core.view.isVisible
+import androidx.paging.PagedList
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.radios.RadioStationEntity
 import com.kelsos.mbrc.ui.activities.BaseNavigationActivity
@@ -24,8 +21,8 @@ import javax.inject.Inject
 class RadioActivity : BaseNavigationActivity(), RadioView, OnRefreshListener,
   OnRadioPressedListener {
 
-  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.radio_stations__refresh_layout)
-  private val radioView: RecyclerView by bindView(R.id.radio_stations__stations_list)
+  private val swipeLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout by bindView(R.id.radio_stations__refresh_layout)
+  private val radioView: androidx.recyclerview.widget.RecyclerView by bindView(R.id.radio_stations__stations_list)
   private val emptyView: Group by bindView(R.id.radio_stations__empty_group)
   private val emptyViewTitle: TextView by bindView(R.id.radio_stations__text_title)
   private val emptyViewIcon: ImageView by bindView(R.id.radio_stations__empty_icon)
@@ -58,7 +55,7 @@ class RadioActivity : BaseNavigationActivity(), RadioView, OnRefreshListener,
   private fun setupRecycler() {
     swipeLayout.setOnRefreshListener(this)
     radioView.adapter = adapter
-    radioView.layoutManager = LinearLayoutManager(this)
+    radioView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     adapter.setOnRadioPressedListener(this)
   }
 

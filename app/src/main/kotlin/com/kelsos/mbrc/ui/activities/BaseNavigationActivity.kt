@@ -1,21 +1,21 @@
 package com.kelsos.mbrc.ui.activities
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
-import android.support.v4.app.NavUtils
-import android.support.v4.app.TaskStackBuilder
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.Toolbar
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.app.NavUtils
+import androidx.core.app.TaskStackBuilder
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.widget.ImageView
@@ -44,7 +44,7 @@ import javax.inject.Inject
 import kotlin.reflect.KClass
 
 abstract class BaseNavigationActivity : BaseActivity(),
-  NavigationView.OnNavigationItemSelectedListener {
+  com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener {
 
   @Inject
   lateinit var serviceChecker: ServiceChecker
@@ -59,8 +59,8 @@ abstract class BaseNavigationActivity : BaseActivity(),
   lateinit var clientConnectionUseCase: ClientConnectionUseCase
 
   private val toolbar: Toolbar by bindView(R.id.toolbar)
-  private val drawer: DrawerLayout by bindView(R.id.drawer_layout)
-  private val navigationView: NavigationView by bindView(R.id.nav_view)
+  private val drawer: androidx.drawerlayout.widget.DrawerLayout by bindView(R.id.drawer_layout)
+  private val navigationView: com.google.android.material.navigation.NavigationView by bindView(R.id.nav_view)
 
   private var connectText: TextView? = null
   private var toggle: ActionBarDrawerToggle? = null
@@ -150,7 +150,7 @@ abstract class BaseNavigationActivity : BaseActivity(),
 
     val focus = currentFocus
     if (focus != null) {
-      Snackbar.make(focus, message, Snackbar.LENGTH_SHORT).show()
+      com.google.android.material.snackbar.Snackbar.make(focus, message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
     }
   }
 

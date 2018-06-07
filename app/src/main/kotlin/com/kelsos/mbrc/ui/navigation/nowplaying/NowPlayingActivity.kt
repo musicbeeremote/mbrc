@@ -1,19 +1,17 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.SearchView.OnQueryTextListener
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ProgressBar
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.constraintlayout.Group
 import androidx.core.view.isVisible
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
@@ -96,10 +94,10 @@ class NowPlayingActivity : BaseNavigationActivity(),
     Toothpick.inject(this, scope)
     super.setup()
 
-    val manager = LinearLayoutManager(this)
+    val manager = androidx.recyclerview.widget.LinearLayoutManager(this)
     nowPlayingList.layoutManager = manager
     nowPlayingList.adapter = adapter
-    nowPlayingList.itemAnimator.changeDuration = 0
+    nowPlayingList.itemAnimator?.changeDuration = 0
     touchListener = NowPlayingTouchListener(this, {
       if (it) {
         swipeRefreshLayout.isRefreshing = false
@@ -159,7 +157,7 @@ class NowPlayingActivity : BaseNavigationActivity(),
 
   override fun failure(throwable: Throwable) {
     swipeRefreshLayout.isRefreshing = false
-    Snackbar.make(nowPlayingList, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+    com.google.android.material.snackbar.Snackbar.make(nowPlayingList, R.string.refresh_failed, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
   }
 
   override fun loading(show: Boolean) {

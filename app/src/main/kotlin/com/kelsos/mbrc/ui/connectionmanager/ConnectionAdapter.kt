@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
-import android.support.v7.widget.PopupMenu
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
 import java.util.ArrayList
 
-class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
+class ConnectionAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
   private val data: MutableList<ConnectionSettingsEntity>
   private var selectionId: Long = 0
   private var changeListener: ConnectionChangeListener? = null
@@ -83,7 +83,7 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
     notifyDataSetChanged()
   }
 
-  class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  class ConnectionViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
     private val hostname: TextView by bindView(R.id.connection_settings__hostname_and_port)
     private val computerName: TextView by bindView(R.id.connection_settings__name)
     private val defaultSettings: ImageView by bindView(R.id.connection_settings__default_indicator)

@@ -4,9 +4,9 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.app.ActivityCompat
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.annotation.StringRes
+import androidx.core.app.ActivityCompat
+import androidx.preference.PreferenceFragmentCompat
 import android.view.MenuItem
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R

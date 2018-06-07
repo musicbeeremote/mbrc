@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.drag
 
 import android.graphics.Canvas
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 
 class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
   ItemTouchHelper.Callback() {
@@ -39,9 +39,9 @@ class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
   override fun isItemViewSwipeEnabled(): Boolean = true
 
   override fun onChildDrawOver(
-    c: Canvas?,
-    recyclerView: RecyclerView?,
-    viewHolder: RecyclerView.ViewHolder?,
+    c: Canvas,
+    recyclerView: RecyclerView,
+    viewHolder: RecyclerView.ViewHolder,
     dX: Float,
     dY: Float,
     actionState: Int,
@@ -49,7 +49,7 @@ class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
   ) {
     if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
       // Fade out the view as it is swiped out of the parent's bounds
-      val alpha = ALPHA_FULL - Math.abs(dX) / viewHolder!!.itemView.width.toFloat()
+      val alpha = ALPHA_FULL - Math.abs(dX) / viewHolder.itemView.width.toFloat()
       viewHolder.itemView.alpha = alpha
       viewHolder.itemView.translationX = dX
     } else {
@@ -67,7 +67,7 @@ class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
     super.onSelectedChanged(viewHolder, actionState)
   }
 
-  override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder) {
+  override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
     super.clearView(recyclerView, viewHolder)
     viewHolder.itemView.alpha = ALPHA_FULL
 

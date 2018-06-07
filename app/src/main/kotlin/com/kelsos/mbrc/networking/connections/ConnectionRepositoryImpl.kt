@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import android.content.SharedPreferences
 import android.content.res.Resources
 import com.kelsos.mbrc.R

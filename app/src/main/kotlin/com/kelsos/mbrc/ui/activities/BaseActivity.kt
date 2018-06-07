@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.activities
 
 import android.annotation.SuppressLint
-import android.support.annotation.StringRes
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.kelsos.mbrc.R
 import kotterknife.bindView
 
@@ -27,10 +27,10 @@ open class BaseActivity : AppCompatActivity() {
   }
 
   protected fun showSnackbar(@StringRes resId: Int) {
-    Snackbar.make(
+    com.google.android.material.snackbar.Snackbar.make(
       findViewById(android.R.id.content),
       resId,
-      Snackbar.LENGTH_SHORT
+      com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
     ).show()
   }
 }

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import android.arch.paging.PagedList
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.mvp.BaseView

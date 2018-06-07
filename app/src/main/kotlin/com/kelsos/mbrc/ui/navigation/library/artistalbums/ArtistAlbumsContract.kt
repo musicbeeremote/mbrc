@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
-import android.arch.paging.PagedList
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter

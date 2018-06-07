@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.artists
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.interfaces.data.Repository
 import io.reactivex.Single

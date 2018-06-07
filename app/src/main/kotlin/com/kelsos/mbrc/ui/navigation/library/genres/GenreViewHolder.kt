@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.library.genres
 
-import android.support.constraint.Group
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.Group
 import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.GenreEntity

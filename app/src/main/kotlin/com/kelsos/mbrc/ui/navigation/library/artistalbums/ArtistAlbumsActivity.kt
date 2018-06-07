@@ -1,11 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library.artistalbums
 
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
+import androidx.constraintlayout.Group
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.ui.activities.BaseActivity
@@ -56,7 +55,7 @@ class ArtistAlbumsActivity : BaseActivity(),
     setupToolbar(title)
 
     adapter.setMenuItemSelectedListener(this)
-    recyclerView.layoutManager = LinearLayoutManager(this)
+    recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     recyclerView.adapter = adapter
     presenter.attach(this)
     presenter.load(artist!!)

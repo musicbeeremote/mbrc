@@ -6,7 +6,7 @@ object Repeat {
   const val NONE = "none"
   const val ONE = "one"
 
-  @android.support.annotation.StringDef(
+  @androidx.annotation.StringDef(
     com.kelsos.mbrc.content.activestatus.Repeat.ALL,
     com.kelsos.mbrc.content.activestatus.Repeat.NONE,
     com.kelsos.mbrc.content.activestatus.Repeat.ONE

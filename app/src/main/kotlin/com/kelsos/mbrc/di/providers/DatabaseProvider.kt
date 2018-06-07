@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.di.providers
 
 import android.app.Application
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import com.kelsos.mbrc.Database
 import com.kelsos.mbrc.content.library.albums.AlbumDao
 import com.kelsos.mbrc.content.library.artists.ArtistDao

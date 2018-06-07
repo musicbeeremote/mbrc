@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.minicontrol
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.mvp.BasePresenter

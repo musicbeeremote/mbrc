@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.preferences
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 import io.reactivex.Single
 import java.util.Date
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:layout_editor_absoluteY="25dp">
 
-  <android.support.v7.widget.RecyclerView
+  <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/content_search__search_results"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -17,7 +17,7 @@
       app:layout_constraintTop_toTopOf="parent"
       tools:listitem="@layout/listitem_single" />
 
-  <android.support.constraint.Group
+  <androidx.constraintlayout.widget.Group
       android:id="@+id/content_search__empty_group"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -48,4 +48,4 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="1" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

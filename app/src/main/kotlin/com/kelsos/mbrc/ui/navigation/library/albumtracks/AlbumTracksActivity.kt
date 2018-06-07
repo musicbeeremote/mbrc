@@ -1,12 +1,11 @@
 package com.kelsos.mbrc.ui.navigation.library.albumtracks
 
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
+import androidx.constraintlayout.Group
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
@@ -66,7 +65,7 @@ class AlbumTracksActivity : BaseActivity(),
     setupToolbar(title)
 
     adapter.setMenuItemSelectedListener(this)
-    listTracks.layoutManager = LinearLayoutManager(baseContext)
+    listTracks.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(baseContext)
     listTracks.adapter = adapter
 
     presenter.attach(this)

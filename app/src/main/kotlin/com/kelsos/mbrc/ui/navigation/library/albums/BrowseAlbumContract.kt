@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
-import android.arch.paging.PagedList
+import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.albums.Sorting.Fields
 import com.kelsos.mbrc.content.library.albums.Sorting.Order

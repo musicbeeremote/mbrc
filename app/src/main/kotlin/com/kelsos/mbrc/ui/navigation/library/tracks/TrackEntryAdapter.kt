@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 import android.view.View
 import android.view.ViewGroup
 import com.kelsos.mbrc.R

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.discovery
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 object DiscoveryStop {
   const val NO_WIFI = 1

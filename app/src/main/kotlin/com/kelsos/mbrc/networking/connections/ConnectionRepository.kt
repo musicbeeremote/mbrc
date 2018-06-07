@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 import io.reactivex.Single
 

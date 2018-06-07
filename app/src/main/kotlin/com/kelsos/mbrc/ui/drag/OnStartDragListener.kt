@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.drag
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 
 interface OnStartDragListener {
-  fun onStartDrag(viewHolder: RecyclerView.ViewHolder)
+  fun onStartDrag(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder)
 }

@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.activestatus
 
-import android.support.annotation.IntRange
+import androidx.annotation.IntRange
 import com.kelsos.mbrc.events.ShuffleMode
 
 data class PlayerStatusModel(

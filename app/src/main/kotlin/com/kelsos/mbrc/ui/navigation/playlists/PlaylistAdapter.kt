@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.app.Activity
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import kotterknife.bindView
 import javax.inject.Inject
 
 class PlaylistAdapter
-@Inject constructor(context: Activity) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
+@Inject constructor(context: Activity) : androidx.recyclerview.widget.RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private var data: List<Playlist>? = null
@@ -55,7 +55,7 @@ class PlaylistAdapter
     fun playlistPressed(path: String)
   }
 
-  class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
     val name: TextView by bindView(R.id.line_one)
     val context: ImageView by bindView(R.id.ui_item_context_indicator)
   }

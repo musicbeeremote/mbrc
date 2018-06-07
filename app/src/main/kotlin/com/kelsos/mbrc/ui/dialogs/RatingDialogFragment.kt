@@ -2,10 +2,10 @@ package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.RatingBar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.scopes
@@ -18,7 +18,7 @@ import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class RatingDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener {
+class RatingDialogFragment : androidx.fragment.app.DialogFragment(), RatingBar.OnRatingBarChangeListener {
 
   private val ratingBar: RatingBar by bindView(R.id.ratingBar)
   private var rating: Float = 0.toFloat()
@@ -69,7 +69,7 @@ class RatingDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListen
     show(supportFragmentManager, TAG)
   }
 
-  private lateinit var supportFragmentManager: FragmentManager
+  private lateinit var supportFragmentManager: androidx.fragment.app.FragmentManager
 
   companion object {
     private const val TAG = "com.kelsos.mbrc.ui.dialogs.RATING_DIALOG"

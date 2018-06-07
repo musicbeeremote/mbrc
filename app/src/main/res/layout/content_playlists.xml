@@ -1,4 +1,4 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,7 +6,7 @@
     android:layout_marginBottom="@dimen/mini_control_height"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-  <android.support.v4.widget.SwipeRefreshLayout
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/playlists__refresh_layout"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -17,16 +17,16 @@
       app:layout_constraintTop_toTopOf="parent"
       tools:context="com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/playlists__playlist_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/list_padding_top"
         tools:listitem="@layout/listitem_single" />
 
-  </android.support.v4.widget.SwipeRefreshLayout>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-  <android.support.constraint.Group
+  <androidx.constraintlayout.widget.Group
       android:id="@+id/playlists__empty_group"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -96,4 +96,4 @@
       app:layout_constraintTop_toBottomOf="@id/playlists__empty_icon"
       app:layout_constraintVertical_bias="0.0" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

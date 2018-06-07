@@ -3,11 +3,10 @@ package com.kelsos.mbrc.ui.navigation.library.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.constraint.Group
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
+import androidx.constraintlayout.Group
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
@@ -58,7 +57,7 @@ class SearchResultsActivity : BaseActivity(),
     setupToolbar(query)
 
     searchResultsRecycler.adapter = adapter
-    searchResultsRecycler.layoutManager = LinearLayoutManager(this)
+    searchResultsRecycler.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     adapter.setOnSearchItemSelectedListener(this)
   }
 

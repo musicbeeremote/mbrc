@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.radio
 
-import android.arch.paging.PagedListAdapter
-import android.support.v7.util.DiffUtil
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.content.radios.RadioStationEntity
 import javax.inject.Inject
 
@@ -35,11 +35,11 @@ constructor() : PagedListAdapter<RadioStationEntity, RadioViewHolder>(DIFF) {
 
   companion object {
     val DIFF = object : DiffUtil.ItemCallback<RadioStationEntity>() {
-      override fun areItemsTheSame(oldItem: RadioStationEntity?, newItem: RadioStationEntity?): Boolean {
-        return oldItem?.id == newItem?.id
+      override fun areItemsTheSame(oldItem: RadioStationEntity, newItem: RadioStationEntity): Boolean {
+        return oldItem.id == newItem.id
       }
 
-      override fun areContentsTheSame(oldItem: RadioStationEntity?, newItem: RadioStationEntity?): Boolean {
+      override fun areContentsTheSame(oldItem: RadioStationEntity, newItem: RadioStationEntity): Boolean {
         return oldItem == newItem
       }
     }

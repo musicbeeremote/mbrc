@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.MenuItem
 import android.widget.Button
 import com.kelsos.mbrc.R
@@ -28,7 +28,7 @@ class ConnectionManagerActivity : BaseActivity(),
   @Inject
   lateinit var presenter: ConnectionManagerPresenter
 
-  private val recyclerView: RecyclerView by bindView(R.id.connection_manager__connections)
+  private val recyclerView: androidx.recyclerview.widget.RecyclerView by bindView(R.id.connection_manager__connections)
 
   private var progress: AlertDialog? = null
   private lateinit var adapter: ConnectionAdapter
@@ -63,7 +63,7 @@ class ConnectionManagerActivity : BaseActivity(),
     setupToolbar(getString(R.string.connection_manager_title))
 
     recyclerView.setHasFixedSize(true)
-    val mLayoutManager = LinearLayoutManager(this)
+    val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     recyclerView.layoutManager = mLayoutManager
     adapter = ConnectionAdapter()
     adapter.setChangeListener(this)
@@ -108,13 +108,13 @@ class ConnectionManagerActivity : BaseActivity(),
       else -> message = getString(R.string.unknown_reason)
     }
 
-    Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
+    com.google.android.material.snackbar.Snackbar.make(recyclerView, message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
 
-    Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
+    com.google.android.material.snackbar.Snackbar.make(recyclerView, message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettingsEntity) {

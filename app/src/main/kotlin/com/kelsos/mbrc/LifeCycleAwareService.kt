@@ -1,9 +1,9 @@
 package com.kelsos.mbrc
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LifecycleRegistry
-import android.support.annotation.CallSuper
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.annotation.CallSuper
 import com.kelsos.mbrc.interfaces.SimpleLifecycle
 
 abstract class LifeCycleAwareService : SimpleLifecycle,

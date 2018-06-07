@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.app.Activity
-import android.arch.paging.PagedListAdapter
+import androidx.paging.PagedListAdapter
 import android.graphics.Color
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.View
@@ -103,7 +103,7 @@ constructor(context: Activity) :
   class NowPlayingTrackViewHolder(
     itemView: View,
     onHolderItemPressed: OnViewItemPressed,
-    onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
+    onDragStart: (holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) -> Unit
   ) : BindableViewHolder<NowPlayingEntity>(itemView),
     TouchHelperViewHolder {
 
@@ -156,7 +156,7 @@ constructor(context: Activity) :
       fun create(
         parent: ViewGroup,
         onHolderItemPressed: OnViewItemPressed,
-        onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
+        onDragStart: (holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) -> Unit
       ): NowPlayingTrackViewHolder {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.ui_list_track_item, parent, false)

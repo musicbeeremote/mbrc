@@ -1,20 +1,17 @@
 package com.kelsos.mbrc.platform.mediasession
 
-import android.support.v4.media.VolumeProviderCompat
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class RemoteVolumeProvider
 @Inject
 constructor(
   private val statusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val userActionUseCase: UserActionUseCase
-) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0) {
+) : androidx.media.VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0) {
 
   init {
     val volume = statusLiveDataProvider.getValue()?.volume ?: 0

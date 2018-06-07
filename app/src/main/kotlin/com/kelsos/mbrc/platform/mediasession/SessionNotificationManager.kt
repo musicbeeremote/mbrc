@@ -6,8 +6,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationCompat.Action
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Action
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
@@ -87,7 +87,7 @@ constructor(
   }
 
   private fun createBuilder(notificationData: NotificationData): NotificationCompat.Builder {
-    val mediaStyle = android.support.v4.media.app.NotificationCompat.MediaStyle()
+    val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)

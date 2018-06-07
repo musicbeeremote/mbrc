@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.networking.connections.Connection

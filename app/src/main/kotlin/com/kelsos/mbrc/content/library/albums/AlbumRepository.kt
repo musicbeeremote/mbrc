@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.content.library.albums
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import com.kelsos.mbrc.interfaces.data.Repository
 import io.reactivex.Single
 

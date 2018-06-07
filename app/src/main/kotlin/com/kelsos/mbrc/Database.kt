@@ -1,7 +1,7 @@
 package com.kelsos.mbrc
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.RoomDatabase
 import com.kelsos.mbrc.Database.Companion.VERSION
 import com.kelsos.mbrc.content.library.albums.AlbumDao
 import com.kelsos.mbrc.content.library.albums.AlbumEntity

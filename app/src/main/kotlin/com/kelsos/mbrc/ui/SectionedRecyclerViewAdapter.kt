@@ -1,22 +1,20 @@
 package com.kelsos.mbrc.ui
 
 import android.annotation.SuppressLint
-import android.support.annotation.IntRange
-import android.support.v4.util.ArrayMap
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.ViewGroup
+import androidx.annotation.IntRange
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> :
-  RecyclerView.Adapter<VH>() {
+abstract class SectionedRecyclerViewAdapter<VH : androidx.recyclerview.widget.RecyclerView.ViewHolder> :
+  androidx.recyclerview.widget.RecyclerView.Adapter<VH>() {
 
-  private val mHeaderLocationMap: ArrayMap<Int, Int> = ArrayMap()
-  private var mLayoutManager: GridLayoutManager? = null
-  private val mSpanMap: ArrayMap<Int, Int>? = null
+  private val mHeaderLocationMap: androidx.collection.ArrayMap<Int, Int> =
+    androidx.collection.ArrayMap()
+  private var mLayoutManager: androidx.recyclerview.widget.GridLayoutManager? = null
+  private val mSpanMap: androidx.collection.ArrayMap<Int, Int>? = null
   private var mShowHeadersForEmptySections: Boolean = false
 
   abstract val sectionCount: Int
@@ -45,13 +43,13 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> :
     mShowHeadersForEmptySections = show
   }
 
-  fun setLayoutManager(lm: GridLayoutManager?) {
+  fun setLayoutManager(lm: androidx.recyclerview.widget.GridLayoutManager?) {
     mLayoutManager = lm
     if (lm == null) {
       return
     }
 
-    lm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+    lm.spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
       override fun getSpanSize(position: Int): Int {
         val layoutManager = mLayoutManager ?: throw RuntimeException("layoutManager was null")
         if (isHeader(position)) {
@@ -140,14 +138,14 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> :
    */
   @Deprecated("")
   override fun onBindViewHolder(holder: VH, position: Int) {
-    var layoutParams: StaggeredGridLayoutManager.LayoutParams? = null
-    if (holder.itemView.layoutParams is GridLayoutManager.LayoutParams) {
-      layoutParams = StaggeredGridLayoutManager.LayoutParams(
+    var layoutParams: androidx.recyclerview.widget.StaggeredGridLayoutManager.LayoutParams? = null
+    if (holder.itemView.layoutParams is androidx.recyclerview.widget.GridLayoutManager.LayoutParams) {
+      layoutParams = androidx.recyclerview.widget.StaggeredGridLayoutManager.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.WRAP_CONTENT
       )
-    } else if (holder.itemView.layoutParams is StaggeredGridLayoutManager.LayoutParams) {
-      layoutParams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
+    } else if (holder.itemView.layoutParams is androidx.recyclerview.widget.StaggeredGridLayoutManager.LayoutParams) {
+      layoutParams = holder.itemView.layoutParams as androidx.recyclerview.widget.StaggeredGridLayoutManager.LayoutParams
     }
     if (isHeader(position)) {
       if (layoutParams != null) layoutParams.isFullSpan = true

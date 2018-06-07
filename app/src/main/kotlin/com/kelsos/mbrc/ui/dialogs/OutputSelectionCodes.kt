@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.dialogs
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 object OutputSelectionContract {
   const val CONNECTION_ERROR = 1

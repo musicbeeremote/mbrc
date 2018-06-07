@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.protocol
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 
 object Protocol {
   const val Player = "player"
