@@ -45,8 +45,6 @@ import javax.inject.Singleton
 @Singleton
 class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
 
-  private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
-
   // Injects
   @Inject
   lateinit var presenter: MainViewPresenter
@@ -446,6 +444,11 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     super.onDestroy()
   }
 
+  @javax.inject.Scope
+  @Target(AnnotationTarget.TYPE)
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class Presenter
+
   companion object {
     fun start(context: Context) {
       with(context) {
@@ -456,6 +459,7 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
     private const val PAUSED = "Paused"
     private const val STOPPED = "Stopped"
     private const val PLAYING = "Playing"
+    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
     fun tag(@PlayerState.State state: String): String = when (state) {
       PlayerState.PLAYING -> PLAYING
@@ -463,9 +467,4 @@ class MainActivity : BaseNavigationActivity(), MainView, ProgressUpdate {
       else -> STOPPED
     }
   }
-
-  @javax.inject.Scope
-  @Target(AnnotationTarget.TYPE)
-  @Retention(AnnotationRetention.RUNTIME)
-  annotation class Presenter
 }

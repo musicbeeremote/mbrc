@@ -29,7 +29,7 @@ constructor(
   volumeProvider: RemoteVolumeProvider,
   private val userActionUseCase: UserActionUseCase
 ) : AudioManager.OnAudioFocusChangeListener {
-  private val mediaSession: MediaSessionCompat?
+  private val mediaSession: MediaSessionCompat
 
   @Inject
   lateinit var handler: MediaIntentHandler
@@ -94,13 +94,9 @@ constructor(
   }
 
   val mediaSessionToken: MediaSessionCompat.Token
-    get() = mediaSession!!.sessionToken
+    get() = mediaSession.sessionToken
 
   private fun metadataUpdate(data: RemoteClientMetaData) {
-    if (mediaSession == null) {
-      return
-    }
-
     val trackInfo = data.track
     val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
 

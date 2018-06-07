@@ -6,9 +6,7 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class RemoteVolumeProvider
 @Inject
 constructor(

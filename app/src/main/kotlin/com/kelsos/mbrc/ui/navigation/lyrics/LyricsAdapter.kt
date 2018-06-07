@@ -42,7 +42,6 @@ class LyricsAdapter : ListAdapter<String, LyricsAdapter.ViewHolder>(DIFF) {
 
   companion object {
     val DIFF = object : DiffUtil.ItemCallback<String>() {
-
       override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
         return oldItem == newItem
       }
