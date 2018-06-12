@@ -13,8 +13,8 @@ import com.kelsos.mbrc.ui.BindableViewHolder
 class GenreViewHolder(
   binding: ListitemSingleBinding
 ) : BindableViewHolder<Genre>(binding) {
-  private val title: TextView = itemView.findViewById(R.id.line_one)
-  private val indicator: ImageView = itemView.findViewById(R.id.ui_item_context_indicator)
+  private val title: TextView = binding.lineOne
+  private val indicator: ImageView = binding.uiItemContextIndicator
   private val empty: String by lazy { itemView.context.getString(R.string.empty) }
 
   override fun bindTo(item: Genre) {

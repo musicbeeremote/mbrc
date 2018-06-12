@@ -16,7 +16,8 @@
 
     <activity
         android:name=".ui.activities.SplashActivity"
-        android:noHistory="true">
+        android:noHistory="true"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
@@ -25,64 +26,8 @@
     </activity>
 
     <activity
-        android:name=".ui.navigation.main.MainActivity"
-        android:launchMode="singleTop"
-        android:windowSoftInputMode="adjustNothing" />
-
-    <activity
-        android:name=".UpdateRequiredActivity"
-        android:exported="true" />
-
-    <activity
-        android:name=".ui.navigation.library.LibraryActivity"
-        android:label="@string/nav_library"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.nowplaying.NowPlayingActivity"
-        android:label="@string/nav_now_playing"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.playlists.PlaylistActivity"
-        android:label="@string/nav_playlists"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.radio.RadioActivity"
-        android:label="@string/title_activity_radios"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.lyrics.LyricsActivity"
-        android:label="@string/nav_lyrics"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.preferences.SettingsActivity"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.connectionmanager.ConnectionManagerActivity"
-        android:parentActivityName=".ui.preferences.SettingsActivity"
-        android:windowSoftInputMode="adjustNothing" />
-
-    <activity android:name=".ui.navigation.library.albumtracks.AlbumTracksActivity" />
-
-    <activity android:name=".ui.navigation.library.artistalbums.ArtistAlbumsActivity" />
-
-    <activity android:name=".ui.navigation.library.genreartists.GenreArtistsActivity" />
-
-    <activity
-        android:name=".ui.helpfeedback.HelpFeedbackActivity"
-        android:label="@string/title_activity_help_feedback"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <receiver android:name=".platform.mediasession.MediaButtonReceiver">
-      <intent-filter>
-        <action android:name="android.intent.action.MEDIA_BUTTON" />
-      </intent-filter>
-    </receiver>
+        android:name=".NavigationActivity"
+        android:label="@string/title_activity_bottom_navigation" />
 
     <receiver android:name=".platform.widgets.WidgetSmall">
       <intent-filter>
@@ -102,6 +47,12 @@
       <meta-data
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_normal" />
+    </receiver>
+
+    <receiver android:name=".platform.mediasession.MediaButtonReceiver">
+      <intent-filter>
+        <action android:name="android.intent.action.MEDIA_BUTTON" />
+      </intent-filter>
     </receiver>
 
     <service

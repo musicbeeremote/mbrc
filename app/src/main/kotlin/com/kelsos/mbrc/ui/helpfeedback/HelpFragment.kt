@@ -19,8 +19,7 @@ class HelpFragment : Fragment() {
   override fun onStart() {
     super.onStart()
 
-    val url: String
-    url = try {
+    val url: String = try {
       "http://kelsos.net/musicbeeremote/help?version=${getVersion()}"
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.v(e, "Failed to get version")

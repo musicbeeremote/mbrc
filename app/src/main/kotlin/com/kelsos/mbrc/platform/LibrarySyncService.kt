@@ -48,12 +48,12 @@ class LibrarySyncService : IntentService("LibrarySyncService") {
     /**
      * Sync action for the library data
      */
-    private val ACTION_SYNC = "com.kelsos.mbrc.action.SYNC"
+    private const val ACTION_SYNC = "com.kelsos.mbrc.action.SYNC"
 
     /**
      * Who started the network operation. This is to distinct between user initiated network operations
      */
-    private val EXTRA_AUTO = "com.kelsos.mbrc.dev.extra.AUTO"
+    private const val EXTRA_AUTO = "com.kelsos.mbrc.dev.extra.AUTO"
 
     /**
      * Starts this service to perform a library metadata network operatin with the given parameters. If

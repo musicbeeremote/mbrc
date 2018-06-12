@@ -15,7 +15,7 @@ import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.ui.navigation.main.MainActivity
+import com.kelsos.mbrc.ui.navigation.main.MainFragment
 import com.squareup.picasso.Picasso
 import timber.log.Timber
 import java.io.File
@@ -40,20 +40,24 @@ class WidgetNormal : AppWidgetProvider() {
       return
     }
 
-    if (extras.getBoolean(UpdateWidgets.COVER, false)) {
-      val path = extras.getString(UpdateWidgets.COVER_PATH, "")
-      updateCover(context, widgetManager, widgetsIds, path)
-    } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
-      val info =
-        extras.getParcelable<PlayingTrackModel>(UpdateWidgets.TRACK_INFO)
-      info?.run {
-        updateInfo(context, widgetManager, widgetsIds, this)
+    when {
+      extras.getBoolean(UpdateWidgets.COVER, false) -> {
+        val path = extras.getString(UpdateWidgets.COVER_PATH, "")
+        updateCover(context, widgetManager, widgetsIds, path)
       }
-    } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
-      updatePlayState(
-        context, widgetManager, widgetsIds,
-        extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
-      )
+      extras.getBoolean(UpdateWidgets.INFO, false) -> {
+        val info =
+          extras.getParcelable<PlayingTrackModel>(UpdateWidgets.TRACK_INFO)
+        info?.run {
+          updateInfo(context, widgetManager, widgetsIds, this)
+        }
+      }
+      extras.getBoolean(UpdateWidgets.STATE, false) -> {
+        updatePlayState(
+          context, widgetManager, widgetsIds,
+          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
+        )
+      }
     }
   }
 
@@ -67,7 +71,7 @@ class WidgetNormal : AppWidgetProvider() {
 
     for (appWidgetId in appWidgetIds) {
       // Create an Intent to launch ExampleActivity
-      val intent = Intent(context, MainActivity::class.java)
+      val intent = Intent(context, MainFragment::class.java)
       val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
       // Get the layout for the App Widget and attach an on-click listener

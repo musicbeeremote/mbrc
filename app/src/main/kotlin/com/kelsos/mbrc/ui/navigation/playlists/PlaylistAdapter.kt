@@ -1,47 +1,37 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
-import android.app.Activity
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.databinding.ListitemSingleBinding
+import com.kelsos.mbrc.ui.BindableViewHolder
 import javax.inject.Inject
 
 class PlaylistAdapter
 @Inject
-constructor(context: Activity) : PagingDataAdapter<Playlist, PlaylistAdapter.ViewHolder>(
+constructor() : PagingDataAdapter<Playlist, PlaylistAdapter.ViewHolder>(
   PLAYLIST_COMPARATOR
 ) {
-
-  private val inflater: LayoutInflater = LayoutInflater.from(context)
   private var playlistPressedListener: OnPlaylistPressedListener? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val view = inflater.inflate(R.layout.listitem_single, parent, false)
-    val viewHolder = ViewHolder(view)
-
-    viewHolder.itemView.setOnClickListener {
-      val path = getItem(viewHolder.bindingAdapterPosition)?.url
-      path?.let {
-        playlistPressedListener?.playlistPressed(it)
-      }
+    val viewHolder = ViewHolder.create(parent)
+    viewHolder.onPress { position ->
+      val item = getItem(position) ?: return@onPress
+      playlistPressedListener?.playlistPressed(item.url)
     }
     return viewHolder
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val playlist = getItem(holder.bindingAdapterPosition)
-    playlist?.let {
-      holder.name.text = playlist.name
+    getItem(position)?.let { playlist ->
+      holder.bindTo(playlist)
     }
-    holder.context.visibility = View.GONE
   }
 
   fun setPlaylistPressedListener(playlistPressedListener: OnPlaylistPressedListener) {
@@ -52,14 +42,25 @@ constructor(context: Activity) : PagingDataAdapter<Playlist, PlaylistAdapter.Vie
     fun playlistPressed(path: String)
   }
 
-  class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val name: TextView
-    val context: ImageView
+  class ViewHolder(binding: ListitemSingleBinding) : BindableViewHolder<Playlist>(binding) {
+    private val name: TextView = binding.lineOne
+    private val context: ImageView = binding.uiItemContextIndicator
 
-    init {
-      val binding = ListitemSingleBinding.bind(itemView)
-      name = binding.lineOne
-      context = binding.uiItemContextIndicator
+    override fun bindTo(item: Playlist) {
+      context.isVisible = false
+      name.text = item.name
+    }
+
+    override fun clear() {
+      name.text = ""
+    }
+
+    companion object {
+      fun create(parent: ViewGroup): ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ListitemSingleBinding.inflate(layoutInflater, parent, false)
+        return ViewHolder(binding)
+      }
     }
   }
 

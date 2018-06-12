@@ -79,13 +79,11 @@ constructor(
 
   private fun onConnectionStatusChanged(event: ConnectionStatusChangeEvent) {
     if (event.status == Connection.OFF) {
-      if (mediaSession != null) {
-        val builder = PlaybackStateCompat.Builder()
-        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
-        val playbackState = builder.build()
-        mediaSession.isActive = false
-        mediaSession.setPlaybackState(playbackState)
-      }
+      val builder = PlaybackStateCompat.Builder()
+      builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+      val playbackState = builder.build()
+      mediaSession.isActive = false
+      mediaSession.setPlaybackState(playbackState)
     }
   }
 
@@ -110,9 +108,6 @@ constructor(
   }
 
   private fun updateState(change: PlayStateChange) {
-    if (mediaSession == null) {
-      return
-    }
 
     val builder = PlaybackStateCompat.Builder()
     builder.setActions(PLAYBACK_ACTIONS)

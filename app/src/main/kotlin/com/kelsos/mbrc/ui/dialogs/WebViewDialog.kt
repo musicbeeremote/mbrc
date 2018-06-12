@@ -1,29 +1,19 @@
 package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
-import android.os.Bundle
 import android.webkit.WebView
-import androidx.fragment.app.DialogFragment
+import androidx.annotation.StringRes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.kelsos.mbrc.ui.preferences.SettingsFragment
 
-class WebViewDialog : DialogFragment() {
-
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val title = arguments?.getInt(ARG_TITLE) ?: throw Exception("argument null")
-    val url = arguments?.getString(ARG_URL) ?: throw Exception("argument null")
-
-    return MaterialAlertDialogBuilder(requireActivity())
-      .setTitle(title)
-      .setView(
-        WebView(requireActivity()).apply {
-          loadUrl(url)
-        }
-      ).setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
-      .show()
-  }
-
-  companion object {
-    const val ARG_URL = "url"
-    const val ARG_TITLE = "title"
-  }
+fun SettingsFragment.webDialog(@StringRes titleResId: Int, url: String): Dialog {
+  return MaterialAlertDialogBuilder(requireActivity())
+    .setView(
+      WebView(requireActivity()).apply {
+        loadUrl(url)
+      }
+    )
+    .setTitle(titleResId)
+    .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+    .show()
 }

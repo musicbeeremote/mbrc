@@ -47,7 +47,7 @@ object RemoteUtils {
   fun sha1(input: String) = hashString("SHA-1", input)
 
   private fun hashString(type: String, input: String): String {
-    val HEX_CHARS = "0123456789ABCDEF"
+    val hexChars = "0123456789ABCDEF"
     val bytes = MessageDigest
       .getInstance(type)
       .digest(input.toByteArray())
@@ -55,8 +55,8 @@ object RemoteUtils {
 
     bytes.forEach {
       val i = it.toInt()
-      result.append(HEX_CHARS[i shr 4 and 0x0f])
-      result.append(HEX_CHARS[i and 0x0f])
+      result.append(hexChars[i shr 4 and 0x0f])
+      result.append(hexChars[i and 0x0f])
     }
 
     return result.toString()

@@ -2,12 +2,14 @@ package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.RatingBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.UiDialogRatingBinding
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -17,7 +19,7 @@ import javax.inject.Inject
 
 class RatingDialogFragment : DialogFragment() {
 
-  private var ratingBar: RatingBar? = null
+  private lateinit var ratingBar: RatingBar
   private var rating: Float = 0.toFloat()
   private var scope: Scope? = null
 
@@ -37,18 +39,19 @@ class RatingDialogFragment : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    val binding = UiDialogRatingBinding.inflate(LayoutInflater.from(requireContext()))
     val dialog = MaterialAlertDialogBuilder(requireContext())
       .setTitle(R.string.rate_the_playing_track)
-      .setView(R.layout.ui_dialog_rating)
+      .setView(binding.root)
       .show()
 
-    ratingBar = dialog.findViewById(R.id.ratingBar)
-    ratingBar?.setOnRatingBarChangeListener { _, _, isUserInitiated ->
+    ratingBar = binding.ratingBar
+    ratingBar.setOnRatingBarChangeListener { _, _, isUserInitiated ->
       if (isUserInitiated) {
         userActionUseCase.perform(UserAction(Protocol.NowPlayingRating, rating))
       }
     }
-    ratingBar?.rating = rating
+    ratingBar.rating = rating
     return dialog
   }
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
 
   <string name="application_name">MusicBee Remote</string>
@@ -42,13 +42,10 @@
   <string name="settings_dialog_hint_name">Computer name</string>
   <string name="settings_dialog_hint_host">Hostname / IP</string>
   <string name="settings_dialog_hint_port">Port number</string>
-  <string name="drawer_open">Open navigation drawer</string>
-  <string name="drawer_close">Close navigation drawer</string>
   <string name="artist_placeholder">Artistname</string>
   <string name="connection_manager_scan">SCAN</string>
   <string name="connection_manager_add">ADD</string>
   <string name="settings_dialog_add">Add</string>
-  <string name="connection_manager_title">Connection Manager</string>
   <string name="connection_default_description">Represents if this connection is the default selected connection
     </string>
   <string name="connectivity_manager_default">Set default</string>
@@ -110,7 +107,6 @@
   <string name="nav_library">Library</string>
   <string name="empty">[Empty]</string>
   <string name="unknown_artist">Unknown artist</string>
-  <string name="title_activity_help_feedback">Help &amp; Feedback</string>
   <string name="library_search_hint">Search your library</string>
   <string name="label_genres">Genres</string>
   <string name="label_artists">Artists</string>
@@ -143,7 +139,7 @@
   <string name="playlists_load_failed">There was an error while trying to load the playlists.</string>
   <string name="service_connection_error">Failed to connect to remote host.</string>
   <string name="now_playing_search_hint">Search and play a track</string>
-  <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
+  <string name="feedback_device_information">Include Device &amp; Application Information</string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
   <string name="library_actionbar_refresh">Refresh</string>
   <string name="feedback_logs">Include Logs</string>
@@ -154,7 +150,6 @@
   <string name="album_tracks__play__content_description">Plays all the tracks</string>
   <string name="press_to_sync">Press here to sync</string>
   <string name="library_sync_in_progress">Library metadata sync in progress, please wait…</string>
-  <string name="library_search_subtitle">Displaying results for search</string>
   <string name="application_starting">Attempting to establish connection…</string>
   <string name="nav_output">Output</string>
   <string name="output_selection__select_output">Select Output</string>
@@ -179,7 +174,6 @@
   <string name="radio__loading_failed">There was an error while loading the radio stations</string>
   <string name="radio__play_successful">The radio stations has been queued successfully.</string>
   <string name="radio__play_failed">There was an error while trying to play the radio station.</string>
-  <string name="title_activity_radios">Radios</string>
   <string name="radio__no_radio_stations">No radio stations found</string>
   <string name="album_tracks__cover_content">The cover of the album</string>
   <string name="album_tracks__play">Play</string>
@@ -188,4 +182,5 @@
   <string name="update_required__content_description">Update icon</string>
   <string name="notification__session_channel_name">MusicBee Remote</string>
   <string name="notification__session_channel_description">MusicBee Remote controls notification</string>
+  <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
 </resources>

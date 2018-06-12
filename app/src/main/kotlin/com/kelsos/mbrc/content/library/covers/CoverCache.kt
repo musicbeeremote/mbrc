@@ -65,17 +65,19 @@ constructor(
           }
         }
       }.collect { (payload, response) ->
-        if (response.status == 304) {
+        val status = response.status
+        if (status == 304) {
           Timber.v("cover for $payload did not change")
           return@collect
         }
+
         val cover = response.cover
         val hash = response.hash
 
-        if (response.status == 200 && !cover.isNullOrEmpty() && !hash.isNullOrEmpty()) {
+        if (status == 200 && !cover.isNullOrEmpty() && !hash.isNullOrEmpty()) {
           val result = runCatching {
             val file = File(cache, payload.key())
-            val decodeBase64 = response.cover.decodeBase64()
+            val decodeBase64 = cover.decodeBase64()
             if (decodeBase64 != null) {
               file.sink().buffer().use { sink -> sink.write(decodeBase64) }
             }

@@ -274,13 +274,9 @@ class UpdateCover
   private val cache: PlayingTrackCache,
   appDispatchers: AppCoroutineDispatchers
 ) : ICommand {
-  private val coverDir: File
+  private val coverDir: File = File(context.filesDir, COVER_DIR)
   private val job = SupervisorJob()
   private val scope = CoroutineScope(job + appDispatchers.network)
-
-  init {
-    coverDir = File(context.filesDir, COVER_DIR)
-  }
 
   override fun execute(message: ProtocolMessage) {
     val adapter = moshi.adapter(CoverPayload::class.java)

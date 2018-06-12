@@ -15,8 +15,8 @@ constructor(
   private val discovery: ServiceDiscoveryUseCase,
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,
-  private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
+  playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider
 ) : IRemoteServiceCore, LifeCycleAwareService() {
 
@@ -54,8 +54,6 @@ constructor(
         notificationManager.connectionStateChanged(it)
       }
     }
-
-    discovery.discover {}
   }
 
   override fun stop() {

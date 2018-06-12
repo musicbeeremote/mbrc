@@ -32,44 +32,10 @@ inline fun <reified T> Module.bind(): Binding<T> = bind(T::class.java)
 inline fun <reified T> Module.bindClass(target: () -> KClass<out Any>): Binding<T> =
   bind<T>().apply { to(target().java as Class<T>) }
 
-inline fun <reified T> Module.bindClass(target: Class<out T>): Binding<T> =
-  bind<T>().apply { to(target) }
-
-inline fun <reified T> Module.bindClass(target: KClass<out Any>): Binding<T> =
-  bind<T>().apply { to(target.java as Class<T>) }
-
 inline fun <reified T> Module.bindInstance(target: () -> T): Binding<T> =
   bind<T>().apply { toInstance(target()) }
 
-inline fun <reified T> Module.bindProvider(target: () -> Class<out Provider<T>>): Binding<T> =
-  bind<T>().apply { toProvider(target()) }
-
-inline fun <reified T> Module.bindProvider(target: KClass<out Provider<T>>): Binding<T> =
-  bind<T>().apply { toProvider(target.java) }
-
-inline fun <reified T> Module.bindProvider(target: Class<out Provider<T>>): Binding<T> =
-  bind<T>().apply { toProvider(target) }
-
-inline fun <reified T> Module.bindProviderInstance(target: Provider<T>): Binding<T> =
-  bind<T>().apply { toProviderInstance(target) }
-
-inline fun <reified T> Module.bindProviderInstance(noinline target: () -> T): Binding<T> =
-  bind<T>().apply {
-    toProviderInstance(target.asProvider())
-  }
-
-fun <T> (() -> T).asProvider(): Provider<T> {
-  return object : Provider<T> {
-    override fun get(): T {
-      return invoke()
-    }
-  }
-}
-
 fun module(bindings: Module.() -> Binding<*>?): Module = Module().apply { bindings() }
-
-fun simpleScope(scopeName: Any, bindings: Module.() -> Binding<*>?): Scope =
-  Toothpick.openScope(scopeName).apply { installTestModules(Module().apply { bindings() }) }
 
 fun scope(scopeName: Any, vararg bindings: Scope.() -> Module?): Scope =
   Toothpick.openScope(scopeName).apply { bindings.forEach { installModules(it()) } }
@@ -77,11 +43,6 @@ fun scope(scopeName: Any, vararg bindings: Scope.() -> Module?): Scope =
 // Extra additions
 inline fun <reified T> Module.bindSingletonProvider(target: KClass<out Provider<T>>): Binding<T> =
   bind<T>().apply { toProvider(target.java).providesSingletonInScope() }
-
-inline fun <reified T> Module.bindSingletonProviderInstance(noinline target: () -> T): Binding<T> =
-  bind<T>().apply {
-    toProviderInstance(target.asProvider()).providesSingletonInScope()
-  }
 
 inline fun <reified T> Module.bindSingletonClass(target: () -> KClass<out Any>): Binding<T> =
   bind<T>().apply { to(target().java as Class<T>).singletonInScope() }

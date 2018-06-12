@@ -18,11 +18,11 @@
       android:background="?attr/selectableItemBackground"
       android:baselineAlignBottom="false"
       android:contentDescription="@string/main_button_previous_description"
-      android:tint="@color/white"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@+id/mc_play_pause"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_skip_previous_black_24dp" />
+      app:srcCompat="@drawable/ic_skip_previous_black_24dp"
+      app:tint="@color/white" />
 
   <ImageButton
       android:id="@+id/mc_play_pause"
@@ -34,11 +34,11 @@
       android:background="?attr/selectableItemBackground"
       android:baselineAlignBottom="false"
       android:contentDescription="@string/main_button_play_pause_description"
-      android:tint="@color/white"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@+id/mc_next_track"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_play_arrow_black_36dp" />
+      app:srcCompat="@drawable/ic_play_arrow_black_36dp"
+      app:tint="@color/white" />
 
   <ImageButton
       android:id="@+id/mc_next_track"
@@ -50,11 +50,11 @@
       android:background="?attr/selectableItemBackground"
       android:baselineAlignBottom="false"
       android:contentDescription="@string/main_button_next_description"
-      android:tint="@color/white"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_skip_next_black_24dp" />
+      app:srcCompat="@drawable/ic_skip_next_black_24dp"
+      app:tint="@color/white" />
 
   <ImageView
       android:id="@+id/mc_track_cover"

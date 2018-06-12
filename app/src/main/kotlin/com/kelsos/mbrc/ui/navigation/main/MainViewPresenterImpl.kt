@@ -9,13 +9,11 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.preferences.SettingsManager
 import javax.inject.Inject
 
 class MainViewPresenterImpl
 @Inject
 constructor(
-  private val settingsManager: SettingsManager,
   private val userActionUseCase: UserActionUseCase,
   connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,

@@ -8,7 +8,7 @@ import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@LibraryActivity.Presenter
+@LibraryFragment.Presenter
 class LibraryPresenterImpl
 @Inject constructor(
   private val settingsManager: SettingsManager,

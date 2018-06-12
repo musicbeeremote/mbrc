@@ -111,7 +111,6 @@ constructor(
     val trackSource: List<String>
     val path: String?
     val success: Boolean
-    val tracks: Int
     var action = type
     trackSource = when (type) {
       LibraryPopup.ADD_ALL -> {
@@ -138,9 +137,8 @@ constructor(
       }
     }
 
-    tracks = trackSource.size
     success = queue(action, trackSource, path)
-    return QueueResult(success, tracks)
+    return QueueResult(success, trackSource.size)
   }
 
   suspend fun queueTrack(track: Track, queueAlbum: Boolean = false): QueueResult {

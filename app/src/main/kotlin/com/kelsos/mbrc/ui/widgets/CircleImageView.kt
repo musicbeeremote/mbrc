@@ -339,16 +339,14 @@ class CircleImageView : AppCompatImageView {
     bitmapWidth = bitmap!!.width
 
     borderRect.set(calculateBounds())
-    borderRadius = Math.min(
-      (borderRect.height() - mBorderWidth) / 2.0f,
-      (borderRect.width() - mBorderWidth) / 2.0f
-    )
+    borderRadius = ((borderRect.height() - mBorderWidth) / 2.0f)
+      .coerceAtMost((borderRect.width() - mBorderWidth) / 2.0f)
 
     drawableRect.set(borderRect)
     if (!borderOverlay) {
       drawableRect.inset(mBorderWidth.toFloat(), mBorderWidth.toFloat())
     }
-    drawableRadius = Math.min(drawableRect.height() / 2.0f, drawableRect.width() / 2.0f)
+    drawableRadius = (drawableRect.height() / 2.0f).coerceAtMost(drawableRect.width() / 2.0f)
 
     applyColorFilter()
     updateShaderMatrix()
@@ -359,7 +357,7 @@ class CircleImageView : AppCompatImageView {
     val availableWidth = width - paddingLeft - paddingRight
     val availableHeight = height - paddingTop - paddingBottom
 
-    val sideLength = Math.min(availableWidth, availableHeight)
+    val sideLength = availableWidth.coerceAtMost(availableHeight)
 
     val left = paddingLeft + (availableWidth - sideLength) / 2f
     val top = paddingTop + (availableHeight - sideLength) / 2f

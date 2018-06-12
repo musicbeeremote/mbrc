@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <TextView
+      android:id="@+id/sync_progress_text"
+      style="@style/TextAppearance.MaterialComponents.Caption"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingStart="16dp"
+      android:paddingTop="4dp"
+      android:paddingEnd="16dp"
+      android:paddingBottom="4dp"
+      android:text="@string/library_sync_in_progress"
+      android:textAlignment="center"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/pager_tab_strip" />
+
+  <androidx.viewpager2.widget.ViewPager2
+      android:id="@+id/search_pager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginBottom="@dimen/mini_control_height"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      app:layout_constraintBottom_toTopOf="@id/library_control"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/sync_progress" />
+
+  <com.google.android.material.progressindicator.LinearProgressIndicator
+      android:id="@+id/sync_progress"
+      style="@style/Widget.MaterialComponents.LinearProgressIndicator"
+      android:layout_width="match_parent"
+      android:layout_height="2dp"
+      android:layout_gravity="start"
+      android:layout_marginTop="2dp"
+      android:progress="70"
+      app:layout_constraintTop_toBottomOf="@id/sync_progress_text" />
+
+  <com.google.android.material.tabs.TabLayout
+      android:id="@+id/pager_tab_strip"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="top"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <include
+      android:id="@+id/library_control"
+      layout="@layout/mini_control_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      app:behavior_peekHeight="@dimen/mini_control_peek_height"
+      app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+      app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

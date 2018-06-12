@@ -19,7 +19,9 @@ class DatabaseProvider
 constructor(private val application: Application) : Provider<Database> {
   override fun get(): Database {
     val context = application.applicationContext
-    return Room.databaseBuilder(context, Database::class.java, "cache.db").build()
+    return Room.databaseBuilder(context, Database::class.java, "cache.db")
+      .fallbackToDestructiveMigration()
+      .build()
   }
 }
 

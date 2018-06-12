@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +15,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
+import com.kelsos.mbrc.ui.navigation.library.LibraryFragmentDirections
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import toothpick.Toothpick
@@ -46,7 +48,7 @@ class BrowseAlbumFragment :
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    _binding = FragmentBrowseBinding.inflate(inflater)
+    _binding = FragmentBrowseBinding.inflate(inflater, container, false)
     return binding.root
   }
 
@@ -72,15 +74,26 @@ class BrowseAlbumFragment :
     presenter.load()
   }
 
+  override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
+  }
+
   override fun onMenuItemSelected(@IdRes itemId: Int, item: Album) {
-    val action = actionHandler.albumSelected(itemId, item, requireActivity())
-    if (action != LibraryPopup.PROFILE) {
+    val action = actionHandler.albumSelected(itemId)
+    if (action == LibraryPopup.PROFILE) {
+      onItemClicked(item)
+    } else {
       presenter.queue(action, item)
     }
   }
 
   override fun onItemClicked(item: Album) {
-    actionHandler.albumSelected(item, requireActivity())
+    val directions = LibraryFragmentDirections.actionLibraryFragmentToAlbumTracksFragment(
+      artist = item.artist,
+      album = item.album
+    )
+    findNavController(this).navigate(directions)
   }
 
   override suspend fun update(albums: PagingData<Album>) {

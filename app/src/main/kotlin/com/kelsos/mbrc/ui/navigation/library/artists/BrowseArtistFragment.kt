@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +15,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
+import com.kelsos.mbrc.ui.navigation.library.LibraryFragmentDirections
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import toothpick.Scope
@@ -78,7 +80,7 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, MenuItemSelectedListe
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    _binding = FragmentBrowseBinding.inflate(inflater)
+    _binding = FragmentBrowseBinding.inflate(inflater, container, false)
     return binding.root
   }
 
@@ -96,15 +98,25 @@ class BrowseArtistFragment : Fragment(), BrowseArtistView, MenuItemSelectedListe
     presenter.load()
   }
 
+  override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
+  }
+
   override fun onMenuItemSelected(@IdRes itemId: Int, item: Artist) {
-    val action = actionHandler.artistSelected(itemId, item, requireActivity())
-    if (action != LibraryPopup.PROFILE) {
+    val action = actionHandler.artistSelected(itemId)
+    if (action == LibraryPopup.PROFILE) {
+      onItemClicked(item)
+    } else {
       presenter.queue(action, item)
     }
   }
 
   override fun onItemClicked(item: Artist) {
-    actionHandler.artistSelected(item, requireActivity())
+    val directions = LibraryFragmentDirections.actionLibraryFragmentToArtistAlbumsFragment(
+      item.artist
+    )
+    findNavController().navigate(directions)
   }
 
   override suspend fun update(artists: PagingData<Artist>) {

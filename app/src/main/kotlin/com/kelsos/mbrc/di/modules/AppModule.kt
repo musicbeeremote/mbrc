@@ -57,6 +57,8 @@ import com.kelsos.mbrc.di.providers.NowPlayingDaoProvider
 import com.kelsos.mbrc.di.providers.PlaylistDaoProvider
 import com.kelsos.mbrc.di.providers.RadioStationDaoProvider
 import com.kelsos.mbrc.di.providers.TrackDaoProvider
+import com.kelsos.mbrc.metrics.SyncMetrics
+import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
 import com.kelsos.mbrc.networking.RequestManager
@@ -102,8 +104,7 @@ class AppModule : Module() {
   init {
 
     bindInstance {
-      val moshi = Moshi.Builder().build()
-      return@bindInstance moshi
+      return@bindInstance Moshi.Builder().build()
     }
 
     bindClass<ConnectionRepository> { ConnectionRepositoryImpl::class }
@@ -179,5 +180,20 @@ class AppModule : Module() {
     bindClass<RequestManager> { RequestManagerImpl::class }
 
     bindInstance<CoverModel> { StoredCoverModel }
+    bindInstance<SyncMetrics> {
+      object : SyncMetrics {
+        override fun librarySyncStarted() {
+          TODO("Not yet implemented")
+        }
+
+        override fun librarySyncComplete(metrics: SyncedData) {
+          TODO("Not yet implemented")
+        }
+
+        override fun librarySyncFailed() {
+          TODO("Not yet implemented")
+        }
+      }
+    }
   }
 }

@@ -2,8 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
   <item>
 
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="oval">
+    <shape android:shape="oval">
       <padding android:top="0dp" android:right="1dp" android:bottom="1dp" android:left="0dp" />
       <size
           android:width="32dp"
@@ -14,8 +13,7 @@
     </shape>
   </item>
   <item>
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="oval">
+    <shape android:shape="oval">
 
       <size
           android:width="32dp"

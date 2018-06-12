@@ -19,7 +19,7 @@ fun File.md5(): String? {
     val digest = md5er.digest() ?: return null
     var str = ""
     digest.indices.forEach {
-      str += Integer.toString((digest[it].toInt() and 0xff) + 0x100, 16).substring(1)
+      str += ((digest[it].toInt() and 0xff) + 0x100).toString(16).substring(1)
     }
     return str
   } catch (e: Exception) {

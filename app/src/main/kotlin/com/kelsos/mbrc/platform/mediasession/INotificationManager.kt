@@ -15,6 +15,5 @@ interface INotificationManager {
 
   companion object {
     const val NOW_PLAYING_PLACEHOLDER = 15613
-    const val CHANNEL_ID = "mbrc_session_01"
   }
 }

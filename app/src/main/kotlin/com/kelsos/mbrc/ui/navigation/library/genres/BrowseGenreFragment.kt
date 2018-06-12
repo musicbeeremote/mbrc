@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +14,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
+import com.kelsos.mbrc.ui.navigation.library.LibraryFragmentDirections
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import toothpick.Toothpick
@@ -37,8 +38,9 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListene
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_browse, container, false)
+  ): View {
+    _binding = FragmentBrowseBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun search(term: String) {
@@ -66,6 +68,7 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListene
   override fun onDestroyView() {
     super.onDestroyView()
     presenter.detach()
+    _binding = null
   }
 
   override suspend fun update(genres: PagingData<Genre>) {
@@ -88,15 +91,20 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListene
     presenter.load()
   }
 
-  override fun onMenuItemSelected(@IdRes itemId: Int, item: Genre) {
-    val action = actionHandler.genreSelected(itemId, item, requireActivity())
-    if (action != LibraryPopup.PROFILE) {
+  override fun onMenuItemSelected(itemId: Int, item: Genre) {
+    val action = actionHandler.genreSelected(itemId)
+    if (action === LibraryPopup.PROFILE) {
+      onItemClicked(item)
+    } else {
       presenter.queue(action, item)
     }
   }
 
   override fun onItemClicked(item: Genre) {
-    actionHandler.genreSelected(item, requireActivity())
+    val directions = LibraryFragmentDirections.actionLibraryFragmentToGenreArtistsActivity(
+      item.genre
+    )
+    findNavController(this).navigate(directions)
   }
 
   override fun onDestroy() {

@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
   <androidx.preference.PreferenceCategory android:title="@string/settings_connection">
-    <Preference
+    <androidx.preference.Preference
         android:key="@string/preferences_key_connection_manager"
         android:title="@string/settings_manage_connections"/>
   </androidx.preference.PreferenceCategory>

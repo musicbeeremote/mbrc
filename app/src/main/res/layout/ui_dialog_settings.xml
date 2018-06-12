@@ -17,7 +17,8 @@
         android:id="@+id/settings_dialog__name_edit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:hint="@string/settings_dialog_hint_name" />
+        android:hint="@string/settings_dialog_hint_name"
+        android:inputType="text" />
   </com.google.android.material.textfield.TextInputLayout>
 
   <com.google.android.material.textfield.TextInputLayout
@@ -32,7 +33,8 @@
         android:id="@+id/settings_dialog__hostname_edit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:hint="@string/settings_dialog_hint_host"  />
+        android:hint="@string/settings_dialog_hint_host"
+        android:inputType="text" />
   </com.google.android.material.textfield.TextInputLayout>
 
   <com.google.android.material.textfield.TextInputLayout
@@ -49,7 +51,7 @@
         android:layout_height="match_parent"
         android:hint="@string/settings_dialog_hint_port"
         android:inputType="number"
-        android:maxLength="5"/>
+        android:maxLength="5" />
   </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

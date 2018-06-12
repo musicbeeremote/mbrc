@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@RadioActivity.Presenter
 class RadioPresenterImpl
 @Inject
 constructor(

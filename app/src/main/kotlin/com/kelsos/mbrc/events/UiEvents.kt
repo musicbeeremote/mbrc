@@ -9,8 +9,6 @@ class ConnectionSettingsChanged(val defaultId: Long)
 
 class ConnectionStatusChangeEvent(@Connection.Status val status: Int)
 
-class LibraryRefreshCompleteEvent
-
 class NotifyUser(@StringRes val resId: Int) {
   val message: String
   var isFromResource: Boolean = false

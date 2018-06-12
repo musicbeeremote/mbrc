@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import android.app.Activity
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN
@@ -18,17 +17,14 @@ import com.kelsos.mbrc.ui.OnViewItemPressed
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
-import javax.inject.Inject
 
-class NowPlayingAdapter
-@Inject
-constructor(context: Activity) :
-  PagingDataAdapter<NowPlaying, NowPlayingAdapter.NowPlayingTrackViewHolder>(
-    NOW_PLAYING_COMPARATOR
-  ),
+class NowPlayingAdapter(
+  private val dragStartListener: OnStartDragListener
+) : PagingDataAdapter<NowPlaying, NowPlayingAdapter.NowPlayingTrackViewHolder>(
+  NOW_PLAYING_COMPARATOR
+),
   ItemTouchHelperAdapter {
 
-  private val dragStartListener = context as OnStartDragListener
   private var currentTrack = ""
   private var playingTrackIndex = -1
 
@@ -100,8 +96,7 @@ constructor(context: Activity) :
     binding: UiListTrackItemBinding,
     onHolderItemPressed: OnViewItemPressed,
     onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
-  ) : BindableViewHolder<NowPlaying>(binding),
-    TouchHelperViewHolder {
+  ) : BindableViewHolder<NowPlaying>(binding), TouchHelperViewHolder {
 
     private val title: TextView = binding.trackTitle
     private val artist: TextView = binding.trackArtist

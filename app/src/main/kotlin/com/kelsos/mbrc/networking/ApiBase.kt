@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 class ApiBase
 @Inject
 constructor(
-  private val deserializationAdapter: DeserializationAdapter,
+  private val adapter: DeserializationAdapter,
   private val apiRequestManager: RequestManager
 ) {
 
@@ -30,7 +30,7 @@ constructor(
     val connection = apiRequestManager.openConnection()
     val response = apiRequestManager.request(connection, SocketMessage.create(request, payload))
     connection.close()
-    return deserializationAdapter.objectify<GenericSocketMessage<T>>(response, type).data
+    return adapter.objectify<GenericSocketMessage<T>>(response, type).data
   }
 
   suspend fun <T : Any> getAllPages(request: String, clazz: KClass<T>): Flow<List<T>> {
@@ -47,7 +47,7 @@ constructor(
         Timber.v("fetching $request offset $offset [$LIMIT]")
         val message = SocketMessage.create(request, range ?: "")
         val response = apiRequestManager.request(connection, message)
-        val socketMessage = deserializationAdapter.objectify<GenericSocketMessage<Page<T>>>(
+        val socketMessage = adapter.objectify<GenericSocketMessage<Page<T>>>(
           response,
           type
         )
@@ -78,7 +78,7 @@ constructor(
         val entryStart = now()
         val message = SocketMessage.create(request, item)
         val response = apiRequestManager.request(connection, message)
-        val socketMessage = deserializationAdapter.objectify<GenericSocketMessage<T>>(
+        val socketMessage = adapter.objectify<GenericSocketMessage<T>>(
           response,
           type
         )
