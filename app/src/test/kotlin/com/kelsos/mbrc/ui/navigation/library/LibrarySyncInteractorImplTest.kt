@@ -10,7 +10,6 @@ import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
 import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
-import com.kelsos.mbrc.events.bus.RxBus
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single

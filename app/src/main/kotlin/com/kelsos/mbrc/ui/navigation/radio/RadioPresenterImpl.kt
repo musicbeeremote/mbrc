@@ -15,7 +15,7 @@ import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
 import javax.inject.Inject
 
-@RadioActivity.Presenter
+@RadioFragment.Presenter
 class RadioPresenterImpl
 @Inject
 constructor(

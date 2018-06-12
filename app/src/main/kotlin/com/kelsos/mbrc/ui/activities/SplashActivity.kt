@@ -2,9 +2,9 @@ package com.kelsos.mbrc.ui.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.scope
-import com.kelsos.mbrc.ui.navigation.main.MainActivity
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -23,7 +23,7 @@ class SplashActivity : AppCompatActivity() {
       delay(800)
 
       withContext(UI) {
-        MainActivity.start(this@SplashActivity)
+        NavigationActivity.start(this@SplashActivity)
       }
     }
   }

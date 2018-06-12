@@ -24,11 +24,6 @@ constructor(
   private lateinit var tracks: LiveData<PagedList<TrackEntity>>
   private lateinit var indexes: LiveData<List<String>>
 
-  override fun attach(view: BrowseTrackView) {
-    super.attach(view)
-    // listen for library refresh somehow
-  }
-
 
   override fun load() {
     disposables += repository.allTracks()

@@ -105,19 +105,6 @@ constructor(
     userActionUseCase.perform(UserAction.toggle(Protocol.PlayerScrobble))
   }
 
-  override fun attach(view: MainView) {
-    super.attach(view)
-//    bus.register(this, TrackPositionData::class.java, {
-//      view().updateProgress(it)
-//    }, true)
-    //model.setOnPluginOutOfDate { view().notifyPluginOutOfDate() }
-  }
-
-  override fun detach() {
-    super.detach()
-    //model.setOnPluginOutOfDate(null)
-  }
-
   override fun play() {
     userActionUseCase.perform(UserAction(Protocol.PlayerPlayPause, true))
   }

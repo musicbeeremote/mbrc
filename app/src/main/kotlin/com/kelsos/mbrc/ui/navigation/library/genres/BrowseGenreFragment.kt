@@ -8,15 +8,18 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.Group
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagedList
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar.make
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.GenreEntity
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
+import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsFragmentArgs
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import toothpick.Toothpick
@@ -81,11 +84,16 @@ class BrowseGenreFragment : androidx.fragment.app.Fragment(),
   }
 
   override fun onMenuItemSelected(action: String, item: GenreEntity) {
-    actionHandler.genreSelected(action, item, requireContext())
+    if (action == PROFILE) {
+      onItemClicked(item)
+      return
+    }
+    actionHandler.genreSelected(action, item)
   }
 
   override fun onItemClicked(item: GenreEntity) {
-    actionHandler.genreSelected(item, requireContext())
+    val args = GenreArtistsFragmentArgs.Builder(item.genre).build()
+    findNavController(this).navigate(R.id.genre_artists_fragment, args.toBundle())
   }
 
   override fun onRefresh() {

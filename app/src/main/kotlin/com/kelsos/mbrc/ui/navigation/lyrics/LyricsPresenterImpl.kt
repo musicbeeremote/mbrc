@@ -6,7 +6,7 @@ import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProvider
 import com.kelsos.mbrc.mvp.BasePresenter
 import javax.inject.Inject
 
-@LyricsActivity.Presenter
+@LyricsFragment.Presenter
 class LyricsPresenterImpl
 @Inject
 constructor(

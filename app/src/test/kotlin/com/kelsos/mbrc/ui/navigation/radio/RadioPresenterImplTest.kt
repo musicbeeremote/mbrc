@@ -8,7 +8,7 @@ import com.kelsos.mbrc.content.nowplaying.queue.QueueResponse
 import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioStationEntity
 import com.kelsos.mbrc.rules.MockitoInitializerRule
-import com.kelsos.mbrc.ui.navigation.radio.RadioActivity.Presenter
+import com.kelsos.mbrc.ui.navigation.radio.RadioFragment.Presenter
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers

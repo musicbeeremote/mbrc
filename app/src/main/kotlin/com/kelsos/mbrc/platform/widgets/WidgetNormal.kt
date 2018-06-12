@@ -15,7 +15,7 @@ import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.ui.navigation.main.MainActivity
+import com.kelsos.mbrc.ui.navigation.main.MainFragment
 import com.squareup.picasso.Picasso
 import timber.log.Timber
 import java.io.File
@@ -65,7 +65,7 @@ class WidgetNormal : AppWidgetProvider() {
 
     for (appWidgetId in appWidgetIds) {
       // Create an Intent to launch ExampleActivity
-      val intent = Intent(context, MainActivity::class.java)
+      val intent = Intent(context, MainFragment::class.java)
       val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
       // Get the layout for the App Widget and attach an on-click listener

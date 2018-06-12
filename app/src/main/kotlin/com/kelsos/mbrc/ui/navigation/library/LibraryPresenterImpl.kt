@@ -8,7 +8,7 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
-@LibraryActivity.Presenter
+@LibraryFragment.Presenter
 class LibraryPresenterImpl
 @Inject constructor(
   private val appRxSchedulers: AppRxSchedulers,

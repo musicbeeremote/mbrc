@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_home">
+
+  <fragment
+      android:id="@+id/nav_home"
+      android:name="com.kelsos.mbrc.ui.navigation.main.MainFragment"
+      android:label="MusicBee Remote"
+      tools:layout="@layout/fragment_main">
+    <action
+        android:id="@+id/action_mainFragment_to_nowPlayingFragment"
+        app:destination="@id/nav_now_playing" />
+    <action
+        android:id="@+id/action_mainFragment_to_libraryFragment"
+        app:destination="@id/nav_library" />
+    <action
+        android:id="@+id/action_mainFragment_to_lyricsFragment"
+        app:destination="@id/nav_lyrics" />
+    <action
+        android:id="@+id/action_mainFragment_to_playlistFragment"
+        app:destination="@id/nav_playlists" />
+    <action
+        android:id="@+id/action_mainFragment_to_helpFeedbackFragment"
+        app:destination="@id/nav_help" />
+    <action
+        android:id="@+id/action_mainFragment_to_settingsFragment"
+        app:destination="@id/nav_settings" />
+    <action
+        android:id="@+id/action_nav_home_to_nav_radio"
+        app:destination="@id/nav_radio" />
+  </fragment>
+  <fragment
+      android:id="@+id/nav_now_playing"
+      android:name="com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingFragment"
+      android:label="Now Playing"
+      tools:layout="@layout/fragment_nowplaying" />
+  <fragment
+      android:id="@+id/nav_library"
+      android:name="com.kelsos.mbrc.ui.navigation.library.LibraryFragment"
+      android:label="Library"
+      tools:layout="@layout/fragment_library">
+    <action
+        android:id="@+id/action_libraryFragment_to_albumTracksFragment"
+        app:destination="@id/album_tracks_fragment" />
+    <action
+        android:id="@+id/action_libraryFragment_to_genreArtistsActivity"
+        app:destination="@id/genre_artists_fragment" />
+    <action
+        android:id="@+id/action_libraryFragment_to_artistAlbumsFragment"
+        app:destination="@id/artist_albums_fragment" />
+  </fragment>
+  <fragment
+      android:id="@+id/nav_lyrics"
+      android:name="com.kelsos.mbrc.ui.navigation.lyrics.LyricsFragment"
+      android:label="Lyrics"
+      tools:layout="@layout/fragment_lyrics" />
+  <fragment
+      android:id="@+id/nav_playlists"
+      android:name="com.kelsos.mbrc.ui.navigation.playlists.PlaylistFragment"
+      android:label="Playlists"
+      tools:layout="@layout/fragment_playlists" />
+  <fragment
+      android:id="@+id/nav_help"
+      android:name="com.kelsos.mbrc.ui.helpfeedback.HelpFeedbackFragment"
+      android:label="Help &amp; Feedback"
+      tools:layout="@layout/fragment_help_feedback" />
+  <fragment
+      android:id="@+id/nav_settings"
+      android:name="com.kelsos.mbrc.ui.preferences.SettingsFragment"
+      android:label="Preferences">
+    <action
+        android:id="@+id/action_settingsFragment_to_connectionManagerFragment"
+        app:destination="@id/connection_manager_fragment" />
+  </fragment>
+  <fragment
+      android:id="@+id/connection_manager_fragment"
+      android:name="com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerFragment"
+      android:label="Connections"
+      tools:layout="@layout/fragment_connection_manager" />
+  <fragment
+      android:id="@+id/album_tracks_fragment"
+      android:name="com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksFragment"
+      android:label="AlbumTracksFragment"
+      tools:layout="@layout/fragment_album_tracks">
+    <argument
+        android:name="album"
+        app:type="string" />
+    <argument
+        android:name="artist"
+        app:type="string" />
+  </fragment>
+  <fragment
+      android:id="@+id/genre_artists_fragment"
+      android:name="com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsFragment"
+      android:label="GenreArtistsActivity"
+      tools:layout="@layout/activity_genre_artists">
+    <argument
+        android:name="genre"
+        app:type="string" />
+    <action
+        android:id="@+id/action_genre_artists_fragment_to_artist_albums_fragment"
+        app:destination="@id/artist_albums_fragment" />
+  </fragment>
+  <fragment
+      android:id="@+id/artist_albums_fragment"
+      android:name="com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsFragment"
+      android:label="ArtistAlbumsFragment"
+      tools:layout="@layout/activity_artist_albums">
+    <argument
+        android:name="artist"
+        app:type="string" />
+    <action
+        android:id="@+id/action_artist_albums_fragment_to_album_tracks_fragment"
+        app:destination="@id/album_tracks_fragment" />
+  </fragment>
+  <fragment
+      android:id="@+id/nav_radio"
+      android:name="com.kelsos.mbrc.ui.navigation.radio.RadioFragment"
+      android:label="Radio"
+      tools:layout="@layout/fragment_radio" />
+</navigation>

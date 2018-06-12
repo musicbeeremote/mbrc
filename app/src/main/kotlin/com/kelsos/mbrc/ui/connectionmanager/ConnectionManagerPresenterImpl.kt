@@ -21,24 +21,6 @@ constructor(
 
   private lateinit var settings: LiveData<List<ConnectionSettingsEntity>>
 
-  override fun attach(view: ConnectionManagerView) {
-    super.attach(view)
-//    disposables += bus.observe(ConnectionSettingsChanged::class)
-//      .subscribeOn(appRxSchedulers.disk())
-//      .observeOn(appRxSchedulers.main())
-//      .subscribe({ view().onConnectionSettingsChange(it) })
-
-//    disposables += bus.observe(DiscoveryStopped::class)
-//      .subscribeOn(appRxSchedulers.disk())
-//      .observeOn(appRxSchedulers.main())
-//      .subscribe({ view().onDiscoveryStopped(it) })
-
-//    disposables += bus.observe(NotifyUser::class)
-//      .subscribeOn(appRxSchedulers.disk())
-//      .observeOn(appRxSchedulers.main())
-//      .subscribe({ view().onUserNotification(it) })
-  }
-
   override fun startDiscovery() {
     serviceDiscoveryUseCase.discover {
       view().onDiscoveryStopped(it)

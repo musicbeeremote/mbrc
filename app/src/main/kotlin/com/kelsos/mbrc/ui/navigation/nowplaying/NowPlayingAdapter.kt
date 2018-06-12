@@ -1,16 +1,14 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import android.app.Activity
-import androidx.paging.PagedListAdapter
 import android.graphics.Color
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.ui.BindableViewHolder
@@ -20,17 +18,13 @@ import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
 import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import kotterknife.bindView
-import javax.inject.Inject
 
-class NowPlayingAdapter
-@Inject
-constructor(context: Activity) :
+class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
   PagedListAdapter<NowPlayingEntity, NowPlayingAdapter.NowPlayingTrackViewHolder>(
     DIFF_CALLBACK
   ),
   ItemTouchHelperAdapter {
 
-  private val dragStartListener = context as OnStartDragListener
 
   private var currentTrack = ""
   private var playingTrackIndex = -1

@@ -2,10 +2,10 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.ALBUM
 import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.ARTIST
@@ -13,8 +13,8 @@ import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.GENRE
 import com.kelsos.mbrc.ui.navigation.library.SyncProgress.Companion.TRACK
 
 @SuppressLint("InflateParams")
-fun LibraryActivity.syncDialog(): SyncProgressDialog {
-  return SyncProgressDialog.create(this)
+fun LibraryFragment.syncDialog(): SyncProgressDialog {
+  return SyncProgressDialog.create(requireContext())
 }
 
 class SyncProgressDialog(private val context: Context) {

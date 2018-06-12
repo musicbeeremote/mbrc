@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.services
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.networking.client.ConnectivityVerifier
 import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl
 import com.kelsos.mbrc.networking.client.SocketMessage

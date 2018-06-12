@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.minicontrol
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import androidx.core.app.TaskStackBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
 import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
 import com.kelsos.mbrc.extensions.getDimens
-import com.kelsos.mbrc.ui.navigation.main.MainActivity
+import com.kelsos.mbrc.ui.navigation.main.MainFragment
 import com.squareup.picasso.Picasso
 import kotterknife.bindView
 import toothpick.Toothpick
@@ -40,7 +39,7 @@ class MiniControlFragment : androidx.fragment.app.Fragment(), MiniControlView {
   private fun onControlClick() {
     val context = context ?: error("null context")
     val builder = TaskStackBuilder.create(context)
-    builder.addNextIntentWithParentStack(Intent(context, MainActivity::class.java))
+    builder.addNextIntentWithParentStack(Intent(context, MainFragment::class.java))
     builder.startActivities()
   }
 

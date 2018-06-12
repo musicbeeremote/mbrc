@@ -1,9 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import android.content.Context
-import android.content.Intent
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
-import com.kelsos.mbrc.content.library.albums.AlbumMapper
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
@@ -13,9 +10,6 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
-import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksActivity
-import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsActivity
-import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsActivity
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -39,15 +33,9 @@ constructor(
   fun albumSelected(
     @Action action: String,
     entry: AlbumEntity,
-    context: Context,
     result: (success: Boolean) -> Unit = {}
   ) {
-
-    if (action == LibraryPopup.PROFILE) {
-      openProfile(entry, context)
-      return
-    }
-
+    require(action != PROFILE) { "action should not be profile" }
     queueAlbum(entry, action, result)
   }
 
@@ -71,15 +59,9 @@ constructor(
   fun artistSelected(
     @Action action: String,
     entry: ArtistEntity,
-    context: Context,
     result: (success: Boolean) -> Unit = {}
   ) {
-
-    if (action == PROFILE) {
-      openProfile(entry, context)
-      return
-    }
-
+    require(action != PROFILE) { "action should not be profile" }
     queueArtist(entry, action, result)
   }
 
@@ -97,15 +79,9 @@ constructor(
   fun genreSelected(
     @Action action: String,
     entry: GenreEntity,
-    context: Context,
     result: (success: Boolean) -> Unit = {}
   ) {
-
-    if (action == PROFILE) {
-      openProfile(entry, context)
-      return
-    }
-
+    require(action != PROFILE) { "action should not be profile" }
     queueGenre(entry, action, result)
   }
 
@@ -157,38 +133,7 @@ constructor(
       }
   }
 
-  fun albumSelected(album: AlbumEntity, context: Context) {
-    openProfile(album, context)
-  }
-
-  fun artistSelected(artist: ArtistEntity, context: Context) {
-    openProfile(artist, context)
-  }
-
-  fun genreSelected(genre: GenreEntity, context: Context) {
-    openProfile(genre, context)
-  }
-
   fun trackSelected(track: TrackEntity, album: Boolean = false) {
     queueTrack(track, settings.defaultAction, album)
-  }
-
-  private fun openProfile(artist: ArtistEntity, context: Context) {
-    val intent = Intent(context, ArtistAlbumsActivity::class.java)
-    intent.putExtra(ArtistAlbumsActivity.ARTIST_NAME, artist.artist)
-    context.startActivity(intent)
-  }
-
-  private fun openProfile(album: AlbumEntity, context: Context) {
-    val mapper = AlbumMapper()
-    val intent = Intent(context, AlbumTracksActivity::class.java)
-    intent.putExtra(AlbumTracksActivity.ALBUM, mapper.map(album))
-    context.startActivity(intent)
-  }
-
-  private fun openProfile(genre: GenreEntity, context: Context) {
-    val intent = Intent(context, GenreArtistsActivity::class.java)
-    intent.putExtra(GenreArtistsActivity.GENRE_NAME, genre.genre)
-    context.startActivity(intent)
   }
 }

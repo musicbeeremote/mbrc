@@ -19,7 +19,6 @@
       android:logo="@mipmap/ic_launcher"
       android:theme="@style/AppTheme"
       tools:ignore="UnusedAttribute">
-
     <activity
         android:name=".ui.activities.SplashActivity"
         android:noHistory="true">
@@ -30,65 +29,10 @@
       </intent-filter>
     </activity>
 
-    <activity
-        android:name=".ui.navigation.main.MainActivity"
-        android:launchMode="singleTop"
-        android:windowSoftInputMode="adjustNothing"></activity>
-
-    <activity
-        android:name=".ui.navigation.library.LibraryActivity"
-        android:label="@string/nav_library"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.library.search.SearchResultsActivity"
-        android:parentActivityName=".ui.navigation.library.LibraryActivity" />
-
-    <activity
-        android:name=".ui.navigation.nowplaying.NowPlayingActivity"
-        android:label="@string/nav_now_playing"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.playlists.PlaylistActivity"
-        android:label="@string/nav_playlists"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.radio.RadioActivity"
-        android:label="@string/title_activity_radios"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.navigation.lyrics.LyricsActivity"
-        android:label="@string/nav_lyrics"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.preferences.SettingsActivity"
-        android:parentActivityName=".ui.navigation.main.MainActivity" />
-
-    <activity
-        android:name=".ui.connectionmanager.ConnectionManagerActivity"
-        android:parentActivityName=".ui.preferences.SettingsActivity"
-        android:windowSoftInputMode="adjustNothing" />
-
-    <activity android:name=".ui.navigation.library.albumtracks.AlbumTracksActivity" />
-
-    <activity android:name=".ui.navigation.library.artistalbums.ArtistAlbumsActivity" />
-
-    <activity android:name=".ui.navigation.library.genreartists.GenreArtistsActivity" />
-
-    <activity
-        android:name=".ui.helpfeedback.HelpFeedbackActivity"
-        android:label="@string/title_activity_help_feedback"
-        android:parentActivityName=".ui.navigation.main.MainActivity"></activity>
-
     <service
         android:name=".platform.RemoteService"
         android:description="@string/info_service_description"
         android:permission="android.permission.READ_PHONE_STATE">
-
       <intent-filter>
         <action android:name="android.intent.action.PHONE_STATE" />
         <action android:name="android.net.wifi.STATE_CHANGE" />
@@ -98,7 +42,6 @@
         <action android:name="com.kelsos.mbrc.notification.previous" />
       </intent-filter>
     </service>
-
     <service
         android:name=".platform.LibrarySyncService"
         android:exported="false" />
@@ -111,7 +54,6 @@
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
     </receiver>
-
     <receiver android:name=".platform.widgets.WidgetSmall">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -121,7 +63,6 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_small" />
     </receiver>
-
     <receiver android:name=".platform.widgets.WidgetNormal">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -132,6 +73,9 @@
           android:resource="@xml/remote_widget_normal" />
     </receiver>
 
+    <activity
+        android:name=".NavigationActivity"
+        android:label="@string/title_activity_bottom_navigation" />
   </application>
 
 </manifest>
