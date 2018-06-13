@@ -28,9 +28,8 @@ class HelpFeedbackFragment : Fragment() {
     return inflater.inflate(R.layout.fragment_help_feedback, container, false)
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
     viewPager.adapter = pagerAdapter
     tabLayout.setupWithViewPager(viewPager)
   }

@@ -35,8 +35,8 @@ constructor(
       }
     }
     disposables += artistObservable
-      .observeOn(appRxSchedulers.database)
-      .subscribeOn(appRxSchedulers.disk)
+      .subscribeOn(appRxSchedulers.database)
+      .observeOn(appRxSchedulers.main)
       .doFinally { view().hideLoading() }
       .subscribe({
         onArtistsLoaded(it.factory)

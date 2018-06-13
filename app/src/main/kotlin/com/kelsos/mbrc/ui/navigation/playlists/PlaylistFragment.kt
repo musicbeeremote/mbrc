@@ -34,8 +34,7 @@ class PlaylistFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.playlists__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.playlists__loading_bar)
 
-  @Inject
-  lateinit var adapter: PlaylistAdapter
+  private val adapter: PlaylistAdapter by lazy { PlaylistAdapter() }
 
   @Inject
   lateinit var presenter: PlaylistPresenter
@@ -89,7 +88,7 @@ class PlaylistFragment : Fragment(),
 
   override fun update(cursor: List<Playlist>) {
     emptyView.isVisible = cursor.isEmpty()
-    adapter.update(cursor)
+    adapter.submitList(cursor)
     swipeLayout.isRefreshing = false
   }
 

@@ -20,7 +20,20 @@
   <androidx.viewpager.widget.ViewPager
       android:id="@+id/search_pager"
       android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+      android:layout_height="match_parent"
+      app:layout_constraintBottom_toTopOf="@id/mini_control"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/pager_tab_strip" />
+
+  <fragment
+      android:id="@+id/mini_control"
+      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.ConstraintLayout>
 
