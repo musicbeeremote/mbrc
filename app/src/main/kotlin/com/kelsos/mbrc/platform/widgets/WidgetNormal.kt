@@ -10,12 +10,12 @@ import android.widget.RemoteViews
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.ui.navigation.main.MainFragment
+import com.kelsos.mbrc.ui.navigation.player.PlayerFragment
 import com.squareup.picasso.Picasso
 import timber.log.Timber
 import java.io.File
@@ -45,7 +45,7 @@ class WidgetNormal : AppWidgetProvider() {
         context,
         widgetManager,
         widgetsIds,
-        extras.getParcelable<PlayingTrackModel>(UpdateWidgets.TRACK_INFO)
+        extras.getParcelable<PlayingTrack>(UpdateWidgets.TRACK_INFO)
       )
     } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
       updatePlayState(
@@ -65,7 +65,7 @@ class WidgetNormal : AppWidgetProvider() {
 
     for (appWidgetId in appWidgetIds) {
       // Create an Intent to launch ExampleActivity
-      val intent = Intent(context, MainFragment::class.java)
+      val intent = Intent(context, PlayerFragment::class.java)
       val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
       // Get the layout for the App Widget and attach an on-click listener
@@ -89,7 +89,7 @@ class WidgetNormal : AppWidgetProvider() {
     context: Context?,
     widgetManager: AppWidgetManager,
     widgetsIds: IntArray,
-    info: PlayingTrackModel
+    info: PlayingTrack
   ) {
     if (context == null) {
       return

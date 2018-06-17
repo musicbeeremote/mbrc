@@ -1,16 +1,14 @@
 package com.kelsos.mbrc.ui.preferences
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.core.app.ActivityCompat
+import androidx.navigation.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerFragment
 import com.kelsos.mbrc.ui.dialogs.webDialog
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
@@ -53,7 +51,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     mManager?.setOnPreferenceClickListener {
-      startActivity(Intent(requireContext(), ConnectionManagerFragment::class.java))
+      checkNotNull(view).findNavController().navigate(R.id.action_settingsFragment_to_connectionManagerFragment)
       false
     }
 
@@ -116,15 +114,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
       "file:///android_asset/licenses.html"
     )
   }
-
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
-    android.R.id.home -> {
-      activity?.finish()
-      true
-    }
-    else -> super.onOptionsItemSelected(item)
-  }
-
 
   companion object {
     private const val REQUEST_CODE = 15

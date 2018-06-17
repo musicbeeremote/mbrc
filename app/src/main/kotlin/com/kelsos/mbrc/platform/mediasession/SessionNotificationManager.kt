@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.platform.ForegroundHooks
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
@@ -114,7 +114,7 @@ constructor(
       builder.setLargeIcon(icon)
     }
 
-    with(notificationData.trackModel) {
+    with(notificationData.track) {
       builder.setContentTitle(title)
         .setContentText(artist)
         .setSubText(album)
@@ -150,7 +150,7 @@ constructor(
     this.hooks = hooks
   }
 
-  override fun trackChanged(playingTrack: PlayingTrackModel) {
+  override fun trackChanged(playingTrack: PlayingTrack) {
     async(CommonPool) {
       notificationData = with(playingTrack.coverUrl) {
         val cover = if (isNotEmpty()) {
@@ -158,7 +158,7 @@ constructor(
         } else {
           null
         }
-        notificationData.copy(trackModel = playingTrack, cover = cover)
+        notificationData.copy(track = playingTrack, cover = cover)
       }
 
       update(notificationData)

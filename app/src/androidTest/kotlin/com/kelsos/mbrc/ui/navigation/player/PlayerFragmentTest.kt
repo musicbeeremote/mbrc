@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.main
+package com.kelsos.mbrc.ui.navigation.player
 
 import android.app.Application
 import android.content.Intent
@@ -13,7 +13,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.preferences.SettingsManager
 import io.reactivex.Completable
@@ -38,11 +38,11 @@ import toothpick.testing.ToothPickRule
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class MainFragmentTest {
+class PlayerFragmentTest {
 
   private var toothPickRule = ToothPickRule(this)
   private val activityRule = IntentsTestRule(
-    MainFragment::class.java,
+    PlayerFragment::class.java,
     true,
     false
   )
@@ -63,7 +63,7 @@ class MainFragmentTest {
     mockCache = mock(PlayingTrackCache::class.java)
     mockServiceChecker = mock(ServiceChecker::class.java)
 
-    val trackInfo = PlayingTrackModel()
+    val trackInfo = PlayingTrack()
     given(mockCache.restoreCover()).willReturn(Single.just(""))
     given(mockCache.persistCover(anyString())).willReturn(Completable.complete())
     given(mockCache.restoreInfo()).willReturn(Single.just(trackInfo))

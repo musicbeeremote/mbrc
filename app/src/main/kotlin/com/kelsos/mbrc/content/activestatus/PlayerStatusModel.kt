@@ -13,5 +13,16 @@ data class PlayerStatusModel(
   @Repeat.Mode
   val repeat: String = Repeat.NONE,
   @PlayerState.State
-  var playState: String = PlayerState.UNDEFINED
-)
+  var state: String = PlayerState.UNDEFINED
+) {
+  fun isShuffleAutoDj(): Boolean = shuffle == ShuffleMode.AUTODJ
+
+  fun isShuffleOff(): Boolean = shuffle == ShuffleMode.OFF
+
+  fun isRepeatOff(): Boolean = repeat == Repeat.NONE
+
+  fun isRepeatOne(): Boolean = repeat == Repeat.ONE
+
+  fun isPlaying(): Boolean = state == PlayerState.PLAYING
+
+}

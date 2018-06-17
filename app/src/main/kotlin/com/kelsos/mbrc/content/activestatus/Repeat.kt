@@ -7,9 +7,9 @@ object Repeat {
   const val ONE = "one"
 
   @androidx.annotation.StringDef(
-    com.kelsos.mbrc.content.activestatus.Repeat.ALL,
-    com.kelsos.mbrc.content.activestatus.Repeat.NONE,
-    com.kelsos.mbrc.content.activestatus.Repeat.ONE
+    Repeat.ALL,
+    Repeat.NONE,
+    Repeat.ONE
   )
   @Retention(AnnotationRetention.SOURCE)
   annotation class Mode

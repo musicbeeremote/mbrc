@@ -2,6 +2,7 @@ package com.kelsos.mbrc
 
 import androidx.room.Room
 import androidx.test.InstrumentationRegistry
+import com.kelsos.mbrc.data.Database
 import org.junit.After
 import org.junit.Before
 

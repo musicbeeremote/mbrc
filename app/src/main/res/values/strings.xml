@@ -24,9 +24,9 @@
   <string name="settings_miscellaneous_incoming_call_description">Default action on incoming call \n\nRequires
         permission to read the Phone State.
     </string>
-  <string name="main_label_duration_current">01:03</string>
-  <string name="main_label_duration_total">04:11</string>
-  <string name="info_service_description">This service is responsible for the communication
+
+
+  <string name="info_service_description">This client is responsible for the communication
         of the application
         with the plugin.
     </string>
@@ -138,7 +138,7 @@
   <string name="no_results_found">Sorry could not find any results for your search!</string>
   <string name="refresh_failed">Refresh failed</string>
   <string name="connect_button_description">Connect Button</string>
-  <string name="playback_progress">%1$02d:%2$02d</string>
+
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
   <string name="notification_action_next">Next</string>dw

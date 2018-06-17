@@ -1,31 +1,28 @@
 package com.kelsos.mbrc.content.activestatus
 
 import android.app.Application
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
-import io.reactivex.Completable
-import io.reactivex.Single
+import kotlinx.coroutines.experimental.withContext
 import okio.Okio
-import java.io.BufferedReader
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileReader
-import java.io.FileWriter
+import java.nio.charset.Charset
 import javax.inject.Inject
 
 class PlayingTrackCacheImpl
 @Inject
 constructor(
   private val mapper: Moshi,
-  private val context: Application
+  private val appContext: Application,
+  private val appCoroutineDispatchers: AppCoroutineDispatchers
 ) : PlayingTrackCache {
 
-  private val adapter by lazy { mapper.adapter(PlayingTrackModel::class.java) }
+  private val adapter by lazy { mapper.adapter(PlayingTrack::class.java) }
 
-  override fun persistInfo(track: PlayingTrackModel): Completable {
-    return Completable.fromCallable {
-      val infoFile = File(context.filesDir, TRACK_INFO)
+  override suspend fun persistInfo(track: PlayingTrack) {
+    withContext(appCoroutineDispatchers.disk) {
+      val infoFile = File(appContext.filesDir, TRACK_INFO)
       if (infoFile.exists()) {
         infoFile.delete()
       }
@@ -33,42 +30,42 @@ constructor(
     }
   }
 
-  override fun restoreInfo(): Single<PlayingTrackModel> {
-    return Single.fromCallable {
-      val infoFile = File(context.filesDir, TRACK_INFO)
-      if (infoFile.exists()) {
-        return@fromCallable adapter.fromJson(Okio.buffer(Okio.source(infoFile)))
+  override suspend fun restoreInfo(): PlayingTrack? {
+    return withContext(appCoroutineDispatchers.disk) {
+      val infoFile = File(appContext.filesDir, TRACK_INFO)
+      return@withContext if (infoFile.exists()) {
+        adapter.fromJson(Okio.buffer(Okio.source(infoFile)))
+      } else {
+        null
       }
-      throw FileNotFoundException()
     }
   }
 
-  override fun persistCover(cover: String): Completable = Completable.fromCallable {
-    val coverFile = File(context.filesDir, COVER_INFO)
-    if (coverFile.exists()) {
-      coverFile.delete()
-    }
-
-    val writer = FileWriter(coverFile)
-    val bufferedWriter = BufferedWriter(writer)
-    bufferedWriter.write(cover)
-    bufferedWriter.flush()
-    bufferedWriter.close()
-    writer.close()
-  }
-
-  override fun restoreCover(): Single<String> {
-    return Single.fromCallable {
-      val coverFile = File(context.filesDir, COVER_INFO)
+  override suspend fun persistCover(cover: String) {
+    withContext(appCoroutineDispatchers.disk) {
+      val coverFile = File(appContext.filesDir, COVER_INFO)
       if (coverFile.exists()) {
-        val reader = FileReader(coverFile)
-        val bufferedReader = BufferedReader(reader)
-        val cover = bufferedReader.readLine()
-        bufferedReader.close()
-        reader.close()
-        return@fromCallable cover
+        coverFile.delete()
       }
-      return@fromCallable ""
+
+      Okio.buffer(Okio.sink(coverFile)).use {
+        it.write(coverFile.readBytes())
+        it.emit()
+        it.close()
+      }
+    }
+  }
+
+  override suspend fun restoreCover(): String? {
+    return withContext(appCoroutineDispatchers.disk) {
+      val coverFile = File(appContext.filesDir, COVER_INFO)
+      return@withContext if (!coverFile.exists()) {
+        null
+      } else {
+        Okio.buffer(Okio.source(coverFile)).use {
+          return@use it.readString(Charset.forName("UTF-8"))
+        }
+      }
     }
   }
 
@@ -79,8 +76,8 @@ constructor(
 }
 
 interface PlayingTrackCache {
-  fun persistInfo(track: PlayingTrackModel): Completable
-  fun restoreInfo(): Single<PlayingTrackModel>
-  fun persistCover(cover: String): Completable
-  fun restoreCover(): Single<String>
+  suspend fun persistInfo(track: PlayingTrack)
+  suspend fun restoreInfo(): PlayingTrack?
+  suspend fun persistCover(cover: String)
+  suspend fun restoreCover(): String?
 }

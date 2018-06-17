@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
 import kotterknife.bindView
@@ -91,7 +91,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
     }
   }
 
-  override fun updateTrackInfo(track: PlayingTrackModel) {
+  override fun updateTrackInfo(track: PlayingTrack) {
     trackArtist.text = track.artist
     trackTitle.text = track.title
     updateCover(track.coverUrl)

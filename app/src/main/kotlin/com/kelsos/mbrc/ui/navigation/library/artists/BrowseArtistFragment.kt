@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.constraintlayout.Group
+import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagedList

@@ -17,9 +17,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.PlayStateChange
-import com.kelsos.mbrc.events.RemoteClientMetaData
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
@@ -45,16 +43,6 @@ constructor(
   lateinit var handler: MediaIntentHandler
 
   init {
-
-//    bus.register(this, RemoteClientMetaData::class.java, { this.metadataUpdate(it) })
-//    bus.register(this, PlayStateChange::class.java, { this.updateState(it) })
-//    bus.register(this, PlayStateChange::class.java, { this.onPlayStateChange(it) })
-//    bus.register(
-//      this,
-//      ConnectionStatusChangeEvent::class.java,
-//      { this.onConnectionStatusChanged(it) })
-//
-//
     val myEventReceiver = ComponentName(context.packageName, MediaButtonReceiver::class.java.name)
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
     mediaButtonIntent.component = myEventReceiver
@@ -97,8 +85,8 @@ constructor(
     })
   }
 
-  private fun onConnectionStatusChanged(event: ConnectionStatusChangeEvent) {
-    if (event.status != Connection.OFF) {
+  private fun onConnectionStatusChanged(@Connection.Status status: Int) {
+    if (status != Connection.OFF) {
       return
     }
 
@@ -121,49 +109,47 @@ constructor(
   val mediaSessionToken: MediaSessionCompat.Token
     get() = mediaSession.sessionToken
 
-  private fun metadataUpdate(data: RemoteClientMetaData) {
-    val trackInfo = data.track
-    val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
+  private fun metadataUpdate(track: PlayingTrack) {
+    val bitmap = RemoteUtils.coverBitmapSync(track.coverUrl)
 
     val meta = MediaMetadataCompat.Builder().apply {
-      putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
-      putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
-      putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
+      putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.album)
+      putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.artist)
+      putString(MediaMetadataCompat.METADATA_KEY_TITLE, track.title)
       putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
     }
 
     mediaSession.setMetadata(meta.build())
   }
 
-  private fun updateState(stateChange: PlayStateChange) {
+  private fun updateState(@State state: String) {
 
-    val builder = PlaybackStateCompat.Builder()
-    builder.setActions(PLAYBACK_ACTIONS)
-    @State val state = stateChange.state
-    when (state) {
-      PlayerState.PLAYING -> {
-        builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
-        mediaSession.isActive = true
-      }
-      PlayerState.PAUSED -> {
-        builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
-        mediaSession.isActive = true
-      }
-      else -> {
-        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
-        mediaSession.isActive = false
-      }
-    }
-    val playbackState = builder.build()
+    val playbackState = PlaybackStateCompat.Builder()
+      .setActions(PLAYBACK_ACTIONS)
+      .apply {
+        when (state) {
+          PlayerState.PLAYING -> {
+            setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
+            mediaSession.isActive = true
+          }
+          PlayerState.PAUSED -> {
+            setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
+            mediaSession.isActive = true
+          }
+          else -> {
+            setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+            mediaSession.isActive = false
+          }
+        }
+      }.build()
+
     mediaSession.setPlaybackState(playbackState)
   }
 
-  private fun onPlayStateChange(change: PlayStateChange) {
-    when {
-      PlayerState.PLAYING == change.state -> requestFocus()
-      change.state == PlayerState.PAUSED -> {
-        // Do nothing
-      }
+  private fun onPlayStateChange(@State state: String) {
+    when (state) {
+      PlayerState.PLAYING -> requestFocus()
+      PlayerState.PAUSED -> Unit
       else -> abandonFocus()
     }
   }

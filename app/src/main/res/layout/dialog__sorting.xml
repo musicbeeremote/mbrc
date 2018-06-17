@@ -1,40 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="25dp">
+    android:orientation="vertical">
 
   <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/sorting_dialog__order"
-      android:layout_width="wrap_content"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
       android:layout_marginTop="16dp"
       android:background="?attr/selectableItemBackground"
       android:drawableStart="@drawable/ic_arrow_drop_up_black_24dp"
-      android:paddingEnd="16dp"
       android:paddingStart="16dp"
+      android:paddingEnd="16dp"
       android:text=""
+      app:fontFamily="@font/roboto_medium"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.036"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      tools:text="Ascending"/>
+      tools:text="Ascending" />
 
   <RadioGroup
       android:id="@+id/sorting_dialog__sorting_options"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.055"
@@ -44,52 +41,59 @@
 
     <RadioButton
         android:id="@+id/sorting_dialog__album"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/album_sorting__album"/>
+        android:text="@string/album_sorting__album"
+        app:fontFamily="@font/roboto_light" />
 
     <RadioButton
         android:id="@+id/sorting_dialog__album_artist__album"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/album_sorting__album_artist__album"/>
+        android:text="@string/album_sorting__album_artist__album"
+        app:fontFamily="@font/roboto_light" />
 
     <RadioButton
         android:id="@+id/sorting_dialog__album_artist__year__album"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/album_sorting__album_artist__year__album"/>
+        android:text="@string/album_sorting__album_artist__year__album"
+        app:fontFamily="@font/roboto_light" />
 
     <RadioButton
         android:id="@+id/sorting_dialog__artist__album"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/album_sorting__artist__album"/>
+        android:text="@string/album_sorting__artist__album"
+        app:fontFamily="@font/roboto_light" />
 
     <RadioButton
         android:id="@+id/sorting_dialog__genre__album_artist__album"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/album_sorting__genre__album_artist__album"/>
+        android:text="@string/album_sorting__genre__album_artist__album"
+        app:fontFamily="@font/roboto_light" />
 
     <RadioButton
         android:id="@+id/sorting_dialog__year__album"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/album_sorting__year__album"/>
+        android:text="@string/album_sorting__year__album"
+        app:fontFamily="@font/roboto_light" />
 
     <RadioButton
         android:id="@+id/sorting_dialog__year__album_artist__album"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/album_sorting__album_artist__album"/>
+        android:text="@string/album_sorting__album_artist__album"
+        app:fontFamily="@font/roboto_light" />
   </RadioGroup>
 
-</androidx.constraintlayout.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

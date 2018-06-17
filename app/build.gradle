@@ -13,416 +13,420 @@ apply plugin: 'com.akaita.android.easylauncher'
 apply plugin: 'com.google.firebase.firebase-perf'
 
 repositories {
-    maven { url 'https://maven.fabric.io/public' }
+  maven { url 'https://maven.fabric.io/public' }
 }
 
 static buildTime() {
-    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
-    df.setTimeZone(TimeZone.getTimeZone("UTC"))
-    return df.format(new Date())
+  def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+  df.setTimeZone(TimeZone.getTimeZone("UTC"))
+  return df.format(new Date())
 }
 
 def gitHash() {
-    return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+  return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
 def version = "1.2.0"
 def version_code = 114
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '27.0.3'
+  compileSdkVersion 28
+  buildToolsVersion '27.0.3'
 
-    defaultConfig {
-        applicationId "com.kelsos.mbrc"
-        minSdkVersion 21
-        targetSdkVersion 28
-        versionCode version_code
-        versionName version
-        buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
-        buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+  dataBinding {
+    enabled = true
+  }
 
-        // Enabling multidex support.
-        multiDexEnabled true
+  defaultConfig {
+    applicationId "com.kelsos.mbrc"
+    minSdkVersion 21
+    targetSdkVersion 28
+    versionCode version_code
+    versionName version
+    buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
+    buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
 
-        testInstrumentationRunner 'com.kelsos.mbrc.MockTestRunner'
-        testApplicationId "com.kelsos.mbrc.test"
-        vectorDrawables.useSupportLibrary = true
+    // Enabling multidex support.
+    multiDexEnabled true
+
+    testInstrumentationRunner 'com.kelsos.mbrc.MockTestRunner'
+    testApplicationId "com.kelsos.mbrc.test"
+    vectorDrawables.useSupportLibrary = true
+  }
+
+  testOptions {
+    unitTests.returnDefaultValues = true
+    execution 'ANDROIDX_TEST_ORCHESTRATOR'
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+
+  signingConfigs {
+    release {
+      storeFile file('placeholder')
+      keyAlias "placeholder"
+      storePassword "placeholder"
+      keyPassword "placeholder"
+    }
+  }
+
+  flavorDimensions "basic"
+
+  buildTypes {
+    release {
+      signingConfig signingConfigs.release
+      debuggable false
+      zipAlignEnabled true
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+      buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
+      buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+      buildConfigField "boolean", "USE_CRASHLYTICS", "true"
     }
 
-    testOptions {
-        unitTests.returnDefaultValues = true
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    debug {
+      applicationIdSuffix ".dev"
+      versionNameSuffix "-dev"
+      testCoverageEnabled true
+
+      buildConfigField "String", "GIT_SHA", "\"debug_build\""
+      buildConfigField "String", "BUILD_TIME", "\"debug_build\""
+      buildConfigField "boolean", "USE_CRASHLYTICS", "false"
+    }
+  }
+
+  productFlavors {
+    play {
+      ext.enableCrashlytics = true
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+    github {
+      ext.enableCrashlytics = false
     }
+  }
 
-    signingConfigs {
-        release {
-            storeFile file('placeholder')
-            keyAlias "placeholder"
-            storePassword "placeholder"
-            keyPassword "placeholder"
-        }
+
+  packagingOptions {
+    exclude 'META-INF/ASL2.0'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+
+  lintOptions {
+    abortOnError false
+    lintConfig file("lint.xml")
+    xmlReport false
+    htmlReport true
+    htmlOutput file("$project.buildDir/reports/lint/lint-result.html")
+    xmlOutput file("$project.buildDir/reports/lint/lint-result.xml")
+  }
+
+  dexOptions {
+    javaMaxHeapSize "2G"
+  }
+
+  android.applicationVariants.all { variant ->
+    variant.outputs.all {
+      outputFileName = "${defaultConfig.applicationId}-${variant.flavorName}-${variant.versionCode}-v${variant.versionName}.apk"
     }
+  }
 
-    flavorDimensions "basic"
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            debuggable false
-            zipAlignEnabled true
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
-            buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-            buildConfigField "boolean", "USE_CRASHLYTICS", "true"
-        }
-
-        debug {
-            applicationIdSuffix ".dev"
-            versionNameSuffix "-dev"
-            testCoverageEnabled true
-
-            buildConfigField "String", "GIT_SHA", "\"debug_build\""
-            buildConfigField "String", "BUILD_TIME", "\"debug_build\""
-            buildConfigField "boolean", "USE_CRASHLYTICS", "false"
-        }
-    }
-
-    productFlavors {
-        play {
-            ext.enableCrashlytics = true
-        }
-
-        github {
-            ext.enableCrashlytics = false
-        }
-    }
-
-
-    packagingOptions {
-        exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/services/javax.annotation.processing.Processor'
-    }
-
-    lintOptions {
-        abortOnError false
-        lintConfig file("lint.xml")
-        xmlReport false
-        htmlReport true
-        htmlOutput file("$project.buildDir/reports/lint/lint-result.html")
-        xmlOutput file("$project.buildDir/reports/lint/lint-result.xml")
-    }
-
-    dexOptions {
-        javaMaxHeapSize "2G"
-    }
-
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "${defaultConfig.applicationId}-${variant.flavorName}-${variant.versionCode}-v${variant.versionName}.apk"
-        }
-    }
-
-    sourceSets {
-        androidTest.java.srcDirs += "src/androidTest/kotlin"
-        test.java.srcDirs += 'src/test/kotlin'
-        main.java.srcDirs += 'src/main/kotlin'
-        debug.java.srcDirs += 'src/debug/kotlin'
-        play.java.srcDirs += 'src/play/kotlin'
-    }
+  sourceSets {
+    androidTest.java.srcDirs += "src/androidTest/kotlin"
+    test.java.srcDirs += 'src/test/kotlin'
+    main.java.srcDirs += 'src/main/kotlin'
+    debug.java.srcDirs += 'src/debug/kotlin'
+    play.java.srcDirs += 'src/play/kotlin'
+  }
 }
 
 idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
 }
 
 kotlin {
-    experimental {
-        coroutines 'enable'
-    }
+  experimental {
+    coroutines 'enable'
+  }
 }
 
 ext {
-    support_library_version = "27.1.1"
-    toothpick_version = "1.1.3"
-    jackson_version = "2.9.5"
-    runner_version = "1.0.2"
-    espresso_version = "3.0.2"
-    junit_version = "4.12"
-    mockito_version = "2.18.3"
-    robolectric_version = "3.8"
-    truth_version = "0.40"
-    leakcanary_version = "1.5.4"
-    multidex_version = "1.0.3"
+  support_library_version = "27.1.1"
+  toothpick_version = "1.1.3"
+  jackson_version = "2.9.5"
+  runner_version = "1.0.2"
+  espresso_version = "3.0.2"
+  junit_version = "4.12"
+  mockito_version = "2.18.3"
+  robolectric_version = "3.8"
+  truth_version = "0.40"
+  leakcanary_version = "1.5.4"
+  multidex_version = "1.0.3"
 }
 
 dependencies {
-    //Instrumentation Test dependencies
-    androidTestImplementation 'androidx.annotation:annotation:1.0.0-alpha3'
+  //Instrumentation Test dependencies
+  androidTestImplementation 'androidx.annotation:annotation:1.0.0-alpha3'
 
-    androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0-alpha3'
-    androidTestImplementation "junit:junit:${junit_version}"
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
-    androidTestImplementation 'androidx.test:rules:1.1.0-alpha3'
+  androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
+  androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+  androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0-alpha3'
+  androidTestImplementation "junit:junit:${junit_version}"
+  androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
+  androidTestImplementation 'androidx.test:rules:1.1.0-alpha3'
 
-    androidTestUtil 'androidx.test:orchestrator:1.1.0-alpha3'
+  androidTestUtil 'androidx.test:orchestrator:1.1.0-alpha3'
 
-    androidTestImplementation "org.mockito:mockito-core:${mockito_version}"
-    androidTestImplementation "org.mockito:mockito-android:${mockito_version}"
+  androidTestImplementation "org.mockito:mockito-core:${mockito_version}"
+  androidTestImplementation "org.mockito:mockito-android:${mockito_version}"
 
-    androidTestImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  androidTestImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
 
-    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
 
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:1.3.2'
-    androidTestUtil 'com.linkedin.testbutler:test-butler-app:1.3.2@apk'
+  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:1.3.2'
+  androidTestUtil 'com.linkedin.testbutler:test-butler-app:1.3.2@apk'
 
-    // Test dependencies
-    testImplementation "junit:junit:${junit_version}"
+  // Test dependencies
+  testImplementation "junit:junit:${junit_version}"
 
-    testImplementation "org.mockito:mockito-core:${mockito_version}"
+  testImplementation "org.mockito:mockito-core:${mockito_version}"
 
-    testImplementation "org.robolectric:robolectric:${robolectric_version}"
-    testImplementation "org.robolectric:shadows-multidex:${robolectric_version}"
+  testImplementation "org.robolectric:robolectric:${robolectric_version}"
+  testImplementation "org.robolectric:shadows-multidex:${robolectric_version}"
 
-    testImplementation "com.google.truth:truth:${truth_version}"
+  testImplementation "com.google.truth:truth:${truth_version}"
 
-    testImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  testImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
 
-    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
-    //The android library only will fail the robolectric tests
-    testImplementation 'org.threeten:threetenbp:1.3.6'
+  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  //The android library only will fail the robolectric tests
+  testImplementation 'org.threeten:threetenbp:1.3.6'
 
-    implementation 'com.github.anrwatchdog:anrwatchdog:1.3.0'
+  implementation 'com.github.anrwatchdog:anrwatchdog:1.3.0'
 
-    implementation 'com.chibatching.kotpref:kotpref:2.5.0'
+  implementation 'com.chibatching.kotpref:kotpref:2.5.0'
 
-    implementation 'com.google.android.material:material:1.0.0-alpha3'
+  implementation 'com.google.android.material:material:1.0.0-alpha3'
 
-    implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
-    implementation 'androidx.media:media:1.0.0-alpha3'
+  implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
+  implementation 'androidx.media:media:1.0.0-alpha3'
 
-    implementation 'androidx.core:core:1.0.0-alpha3'
-    implementation 'androidx.core:core-ktx:1.0.0-alpha3'
+  implementation 'androidx.core:core:1.0.0-alpha3'
+  implementation 'androidx.core:core-ktx:1.0.0-alpha3'
 
-    implementation 'androidx.annotation:annotation:1.0.0-alpha3'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha3'
-    implementation 'androidx.preference:preference:1.0.0-alpha3'
 
-    implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha02'
-    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha02'
 
-    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha02'
-    implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha02'
 
-    implementation 'androidx.paging:paging-runtime:2.0.0-alpha1'
+  implementation 'androidx.annotation:annotation:1.0.0-alpha3'
+  implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha3'
+  implementation 'androidx.preference:preference:1.0.0-alpha3'
 
-    implementation 'androidx.room:room-runtime:2.0.0-alpha1'
-    implementation 'androidx.room:room-rxjava2:2.0.0-alpha1'
-    kapt "androidx.room:room-compiler:2.0.0-alpha1"
+  implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha02'
+  implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha02'
 
-    implementation 'com.squareup.moshi:moshi:1.6.0'
-    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
+  implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha02'
+  implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha02'
 
-    implementation "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
-    implementation "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
-    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
+  implementation 'androidx.paging:paging-runtime:2.0.0-alpha1'
 
-    implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
+  kapt 'androidx.databinding:databinding-compiler:3.2.0-alpha18'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.22.5"
+  implementation 'androidx.room:room-runtime:2.0.0-alpha1'
+  implementation 'androidx.room:room-rxjava2:2.0.0-alpha1'
+  kapt "androidx.room:room-compiler:2.0.0-alpha1"
 
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'androidx.multidex:multidex:2.0.0'
+  implementation 'com.squareup.moshi:moshi:1.6.0'
+  kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
 
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
-    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+  implementation "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
+  implementation "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
+  kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
 
-    implementation 'com.jakewharton.timber:timber:4.7.0'
-    implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.1'
+  implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.22.5"
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  implementation 'com.squareup.picasso:picasso:2.71828'
+  implementation 'androidx.multidex:multidex:2.0.0'
 
-    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+  implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
+  implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
-    playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
-        transitive = true
-    }
-    playImplementation 'com.google.firebase:firebase-perf:16.0.0'
-    playImplementation 'com.google.firebase:firebase-core:16.0.0'
+  implementation 'com.jakewharton.timber:timber:4.7.0'
+  implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+  implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+
+  implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
+
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
+  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+
+  debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+
+  playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
+    transitive = true
+  }
+  playImplementation 'com.google.firebase:firebase-perf:16.0.0'
+  playImplementation 'com.google.firebase:firebase-core:16.0.1'
 }
 
 allprojects {
-    afterEvaluate { project ->
+  afterEvaluate { project ->
 
-        def signProperties = rootProject.file('signing.properties')
-        if (signProperties.exists()) {
-            def prop = new Properties()
-            prop.load(new FileInputStream(signProperties))
-            def filepath = prop["keys"]
-            def keyProperties = file(filepath)
-            if (keyProperties.exists()) {
-                def props = new Properties()
-                props.load(new FileInputStream(keyProperties))
-                def keystorePath = props['keystore']
-                def releaseConfig = android.signingConfigs['release']
-                releaseConfig.storeFile = file(keystorePath)
-                releaseConfig.storePassword = props['storePass']
-                releaseConfig.keyAlias = props['keyAlias']
-                releaseConfig.keyPassword = props['keyPass']
-            }
-        }
+    def signProperties = rootProject.file('signing.properties')
+    if (signProperties.exists()) {
+      def prop = new Properties()
+      prop.load(new FileInputStream(signProperties))
+      def filepath = prop["keys"]
+      def keyProperties = file(filepath)
+      if (keyProperties.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(keyProperties))
+        def keystorePath = props['keystore']
+        def releaseConfig = android.signingConfigs['release']
+        releaseConfig.storeFile = file(keystorePath)
+        releaseConfig.storePassword = props['storePass']
+        releaseConfig.keyAlias = props['keyAlias']
+        releaseConfig.keyPassword = props['keyPass']
+      }
     }
+  }
 }
 
 afterEvaluate {
-    initFabricPropertiesIfNeeded()
+  initFabricPropertiesIfNeeded()
 }
 
 /**
  * For CI because otherwise the build will fail on the fabric plugin*/
 def initFabricPropertiesIfNeeded() {
-    def propertiesFile = file('fabric.properties')
-    if (!propertiesFile.exists()) {
-        def commentMessage = "This is autogenerated fabric property from system environment to prevent key to be committed to source control."
-        ant.propertyfile(file: "fabric.properties", comment: commentMessage) {
-            entry(key: "apiSecret", value: crashlyticsBuildSecret)
-            entry(key: "apiKey", value: crashlyticsApikey)
-        }
+  def propertiesFile = file('fabric.properties')
+  if (!propertiesFile.exists()) {
+    def commentMessage = "This is autogenerated fabric property from system environment to prevent key to be committed to source control."
+    ant.propertyfile(file: "fabric.properties", comment: commentMessage) {
+      entry(key: "apiSecret", value: crashlyticsBuildSecret)
+      entry(key: "apiKey", value: crashlyticsApikey)
     }
+  }
 }
 
 coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+  jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
 }
 
 tasks.coveralls {
-    dependsOn 'jacocoTestReport'
-    onlyIf { System.env.'CI' }
+  dependsOn 'jacocoTestReport'
+  onlyIf { System.env.'CI' }
 }
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 jacoco {
-    toolVersion = "0.8.1"
+  toolVersion = "0.8.1"
 }
 
 kapt {
-    arguments {
-        arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
-    }
+  arguments {
+    arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
+  }
 }
 
 androidExtensions {
-    experimental = true
+  experimental = true
 }
 
 task jacocoTestReport(type: JacocoReport,
-        dependsOn: ['testGithubDebugUnitTest'/*, 'createGithubDebugCoverageReport'*/]) {
-    group = "Reporting"
-    description "Generate jacoco coverage reports"
+  dependsOn: ['testGithubDebugUnitTest'/*, 'createGithubDebugCoverageReport'*/]) {
+  group = "Reporting"
+  description "Generate jacoco coverage reports"
 
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
 
-    def fileFilter = [
-            '**/R.class',
-            '**/R$*.class',
-            '**/BuildConfig.*',
-            '**/Manifest*.*',
-            '**/*Test*.*',
-            '**/FactoryRegistry.*',
-            '**/*_ViewBinding*',
-            '**/*MemberInjector*',
-            '**/*$$Factory*.*',
-            '**/MemberInjectorRegistry.*',
-            '**/**_Table.*',
-            '**/GeneratedDatabaseHolder.*',
-            '**/*_Database.*',
-            '**/*$*$*.*', // Anonymous classes generated by kotlin
-            'android/**/*.*'
-    ]
-    def debugTree = fileTree(
-            dir: "${buildDir}/intermediates/classes/github/debug",
-            excludes: fileFilter
-    )
-    def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/githubDebug")
-    def mainSrc = "${project.projectDir}/src/main/kotlin"
+  def fileFilter = [
+    '**/R.class',
+    '**/R$*.class',
+    '**/BuildConfig.*',
+    '**/Manifest*.*',
+    '**/*Test*.*',
+    '**/FactoryRegistry.*',
+    '**/*_ViewBinding*',
+    '**/*MemberInjector*',
+    '**/*$$Factory*.*',
+    '**/MemberInjectorRegistry.*',
+    '**/**_Table.*',
+    '**/GeneratedDatabaseHolder.*',
+    '**/*_Database.*',
+    '**/*$*$*.*', // Anonymous classes generated by kotlin
+    'android/**/*.*'
+  ]
+  def debugTree = fileTree(
+    dir: "${buildDir}/intermediates/classes/github/debug",
+    excludes: fileFilter
+  )
+  def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/githubDebug")
+  def mainSrc = "${project.projectDir}/src/main/kotlin"
 
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree, kotlinTree])
-    executionData = fileTree(dir: "$buildDir", includes: [
-            "**/*.exec",
-            "**/*.ec"
-    ])
+  sourceDirectories = files([mainSrc])
+  classDirectories = files([debugTree, kotlinTree])
+  executionData = fileTree(dir: "$buildDir", includes: [
+    "**/*.exec",
+    "**/*.ec"
+  ])
 }
 
 configurations {
-    ktlint
+  ktlint
 }
 
 dependencies {
-    ktlint "com.github.shyiko:ktlint:0.23.1"
-    // additional 3rd party ruleset(s) can be specified here
-    // just add them to the classpath (e.g. ktlint 'groupId:artifactId:version') and
-    // ktlint will pick them up
+  ktlint "com.github.shyiko:ktlint:0.23.1"
+  // additional 3rd party ruleset(s) can be specified here
+  // just add them to the classpath (e.g. ktlint 'groupId:artifactId:version') and
+  // ktlint will pick them up
 }
 
 task ktlint(type: JavaExec, group: "verification") {
-    description = "Check Kotlin code style."
-    classpath = configurations.ktlint
-    main = "com.github.shyiko.ktlint.Main"
-    args "src/**/*.kt"
-    // to generate report in checkstyle format prepend following args:
-    // "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
-    // see https://github.com/shyiko/ktlint#usage for more
+  description = "Check Kotlin code style."
+  classpath = configurations.ktlint
+  main = "com.github.shyiko.ktlint.Main"
+  args "src/**/*.kt"
+  // to generate report in checkstyle format prepend following args:
+  // "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
+  // see https://github.com/shyiko/ktlint#usage for more
 }
 check.dependsOn ktlint
 
 task ktlintFormat(type: JavaExec, group: "formatting") {
-    description = "Fix Kotlin code style deviations."
-    classpath = configurations.ktlint
-    main = "com.github.shyiko.ktlint.Main"
-    args "-F", "src/**/*.kt"
+  description = "Fix Kotlin code style deviations."
+  classpath = configurations.ktlint
+  main = "com.github.shyiko.ktlint.Main"
+  args "-F", "src/**/*.kt"
 }
 
 apply plugin: 'com.google.gms.google-services'
 
 android.applicationVariants.all { variant ->
-    if (variant.name != 'play') {
-        project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = false
-    }
-}
-
-dependencies {
-    implementation 'com.google.android.material:material:1.0.0-alpha1'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.0'
+  if (variant.name != 'play') {
+    project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = false
+  }
 }

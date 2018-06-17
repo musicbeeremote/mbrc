@@ -15,7 +15,7 @@ import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
-import com.kelsos.mbrc.ui.navigation.main.LfmRating
+import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import timber.log.Timber
 import javax.inject.Inject
@@ -144,7 +144,7 @@ constructor(
     playerStatusLiveDataProvider.update {
       copy(
         mute = status.mute,
-        playState = status.playState,
+        state = status.playState,
         repeat = status.repeat,
         shuffle = status.shuffle,
         scrobbling = status.scrobbling,
@@ -165,7 +165,7 @@ constructor(
     val playState = message.data as? String ?: PlayerState.UNDEFINED
 
     playerStatusLiveDataProvider.update {
-      copy(playState = playState)
+      copy(state = playState)
     }
 
     UpdateWidgets.updatePlaystate(context, playState)

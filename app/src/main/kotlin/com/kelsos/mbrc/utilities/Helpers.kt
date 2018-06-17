@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.utilities
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -14,6 +16,16 @@ fun <T> DataSource.Factory<Int, T>.paged(): LiveData<PagedList<T>> {
     .setEnablePlaceholders(true)
     .build()
   return LivePagedListBuilder(this, config).build()
+}
+
+fun <T> LiveData<T>.nonNullObserver(lifecycleOwner: LifecycleOwner, observer: (T) -> Unit) {
+  observe(lifecycleOwner, Observer {
+    if (it == null) {
+      return@Observer
+    }
+
+    observer(it)
+  })
 }
 
 /**

@@ -21,7 +21,7 @@ object RemoteUtils {
   }
 
   private fun bitmapFromFile(path: String): Observable<Bitmap> {
-    return Observable.create<Bitmap>({
+    return Observable.create<Bitmap> {
       try {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.RGB_565
@@ -35,7 +35,7 @@ object RemoteUtils {
       } catch (e: Exception) {
         it.onError(e)
       }
-    })
+    }
   }
 
   fun loadBitmap(path: String): Deferred<Bitmap?> {

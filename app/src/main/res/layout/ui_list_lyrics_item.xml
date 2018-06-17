@@ -11,4 +11,4 @@
   android:textSize="@dimen/lyrics_text_size"
   app:fontFamily="@font/roboto_light"
   tools:text="A line of lyrics text"
-  tools:ignore="MissingPrefix" />
+   />

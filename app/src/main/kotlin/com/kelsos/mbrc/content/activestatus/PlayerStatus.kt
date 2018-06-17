@@ -11,9 +11,9 @@ data class PlayerStatus(
   @Json(name = Protocol.PlayerState)
   val playState: String,
   @Json(name = Protocol.PlayerRepeat)
-  val repeat: String, // = node.path().asText().toRepeat()
+  val repeat: String,
   @Json(name = Protocol.PlayerShuffle)
-  val shuffle: String, // = node.path().asText()
+  val shuffle: String,
   @Json(name = Protocol.PlayerScrobble)
   val scrobbling: Boolean,
   @Json(name = Protocol.PlayerVolume)

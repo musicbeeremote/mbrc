@@ -1,27 +1,24 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
-import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
-import java.util.ArrayList
 
-class ConnectionAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<ConnectionAdapter.ConnectionViewHolder>() {
-  private val data: MutableList<ConnectionSettingsEntity>
+class ConnectionAdapter :
+  ListAdapter<ConnectionSettingsEntity, ConnectionAdapter.ConnectionViewHolder>(DIFF_CALLBACK) {
+
   private var selectionId: Long = 0
   private var changeListener: ConnectionChangeListener? = null
-
-  init {
-    data = ArrayList()
-    setHasStableIds(true)
-  }
 
   fun setSelectionId(selectionId: Long) {
     this.selectionId = selectionId
@@ -32,27 +29,25 @@ class ConnectionAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Conn
     this.changeListener = changeListener
   }
 
-  override fun getItemId(position: Int): Long = data[0].id
-
   override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): ConnectionViewHolder {
     val holder = ConnectionViewHolder.create(viewGroup)
 
     holder.onOverflow {
       val adapterPosition = holder.adapterPosition
-      val settings = data[adapterPosition]
+      val settings = getItem(adapterPosition)
       showPopup(settings, it)
     }
 
     holder.onClick {
       val adapterPosition = holder.adapterPosition
-      val settings = data[adapterPosition]
+      val settings = getItem(adapterPosition)
       changeListener?.onDefault(settings)
     }
     return holder
   }
 
   override fun onBindViewHolder(holder: ConnectionViewHolder, position: Int) {
-    holder.bind(data[position], selectionId)
+    holder.bind(getItem(holder.adapterPosition), selectionId)
   }
 
   private fun showPopup(settings: ConnectionSettingsEntity, v: View) {
@@ -75,15 +70,7 @@ class ConnectionAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Conn
     popupMenu.show()
   }
 
-  override fun getItemCount(): Int = data.size
-
-  fun updateData(data: List<ConnectionSettingsEntity>) {
-    this.data.clear()
-    this.data.addAll(data)
-    notifyDataSetChanged()
-  }
-
-  class ConnectionViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+  class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val hostname: TextView by bindView(R.id.connection_settings__hostname_and_port)
     private val computerName: TextView by bindView(R.id.connection_settings__name)
     private val defaultSettings: ImageView by bindView(R.id.connection_settings__default_indicator)
@@ -119,5 +106,23 @@ class ConnectionAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Conn
     fun onEdit(settings: ConnectionSettingsEntity)
 
     fun onDefault(settings: ConnectionSettingsEntity)
+  }
+
+  companion object {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ConnectionSettingsEntity>() {
+      override fun areItemsTheSame(
+        oldItem: ConnectionSettingsEntity,
+        newItem: ConnectionSettingsEntity
+      ): Boolean {
+        return oldItem.id == newItem.id
+      }
+
+      override fun areContentsTheSame(
+        oldItem: ConnectionSettingsEntity,
+        newItem: ConnectionSettingsEntity
+      ): Boolean {
+        return oldItem == newItem
+      }
+    }
   }
 }

@@ -7,9 +7,9 @@
 
   <fragment
       android:id="@+id/nav_home"
-      android:name="com.kelsos.mbrc.ui.navigation.main.MainFragment"
+      android:name="com.kelsos.mbrc.ui.navigation.player.PlayerFragment"
       android:label="MusicBee Remote"
-      tools:layout="@layout/fragment_main">
+      tools:layout="@layout/fragment_player">
     <action
         android:id="@+id/action_mainFragment_to_nowPlayingFragment"
         app:destination="@id/nav_now_playing" />
@@ -62,24 +62,40 @@
       android:name="com.kelsos.mbrc.ui.navigation.playlists.PlaylistFragment"
       android:label="Playlists"
       tools:layout="@layout/fragment_playlists" />
-  <fragment
+
+  <navigation
       android:id="@+id/nav_help"
-      android:name="com.kelsos.mbrc.ui.helpfeedback.HelpFeedbackFragment"
-      android:label="Help &amp; Feedback"
-      tools:layout="@layout/fragment_help_feedback" />
-  <fragment
+      app:startDestination="@id/help_fragment">
+
+    <fragment
+        android:id="@+id/help_fragment"
+        android:name="com.kelsos.mbrc.ui.helpfeedback.HelpFeedbackFragment"
+        android:label="Help &amp; Feedback"
+        tools:layout="@layout/fragment_help_feedback" />
+
+  </navigation>
+
+  <navigation
       android:id="@+id/nav_settings"
-      android:name="com.kelsos.mbrc.ui.preferences.SettingsFragment"
-      android:label="Preferences">
-    <action
-        android:id="@+id/action_settingsFragment_to_connectionManagerFragment"
-        app:destination="@id/connection_manager_fragment" />
-  </fragment>
-  <fragment
-      android:id="@+id/connection_manager_fragment"
-      android:name="com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerFragment"
-      android:label="Connections"
-      tools:layout="@layout/fragment_connection_manager" />
+      app:startDestination="@id/settings_fragment">
+
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.kelsos.mbrc.ui.preferences.SettingsFragment"
+        android:label="Preferences">
+      <action
+          android:id="@+id/action_settingsFragment_to_connectionManagerFragment"
+          app:destination="@id/connection_manager_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/connection_manager_fragment"
+        android:name="com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerFragment"
+        android:label="Connections"
+        tools:layout="@layout/fragment_connection_manager" />
+
+  </navigation>
+
   <fragment
       android:id="@+id/album_tracks_fragment"
       android:name="com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksFragment"
@@ -96,7 +112,7 @@
       android:id="@+id/genre_artists_fragment"
       android:name="com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsFragment"
       android:label="GenreArtistsActivity"
-      tools:layout="@layout/activity_genre_artists">
+      tools:layout="@layout/fragment_genre_artists">
     <argument
         android:name="genre"
         app:type="string" />
@@ -108,7 +124,7 @@
       android:id="@+id/artist_albums_fragment"
       android:name="com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsFragment"
       android:label="ArtistAlbumsFragment"
-      tools:layout="@layout/activity_artist_albums">
+      tools:layout="@layout/fragment_artist_albums">
     <argument
         android:name="artist"
         app:type="string" />

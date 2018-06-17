@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.protocol.commands
 
-import com.kelsos.mbrc.content.activestatus.TrackPositionData
+import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.ProtocolMessage
@@ -48,7 +48,7 @@ constructor(
     val response = adapter.fromJsonValue(message.data) ?: return
 
     trackPositionLiveDataProvider.update(
-      TrackPositionData(
+      PlayingPosition(
         response.current,
         response.total
       )

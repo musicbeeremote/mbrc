@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking.client
 
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
@@ -8,6 +9,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -26,11 +28,11 @@ constructor(
   private val activityChecker: SocketActivityChecker,
   private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,
-  private val messageSerializer: MessageSerializer
+  private val messageSerializer: MessageSerializer,
+  private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 ) : IClientConnectionManager, PingTimeoutListener {
 
   private lateinit var connectionSettings: ConnectionSettingsEntity
-  private lateinit var onConnectionChange: (Boolean) -> Unit
 
   private var executor = getExecutor()
 
@@ -46,11 +48,6 @@ constructor(
 
   override fun setDefaultConnectionSettings(connectionSettings: ConnectionSettingsEntity) {
     this.connectionSettings = connectionSettings
-  }
-
-
-  override fun setOnConnectionChangeListener(onConnectionChange: (Boolean) -> Unit) {
-    this.onConnectionChange = onConnectionChange
   }
 
   override fun start() {
@@ -72,24 +69,27 @@ constructor(
       return
     }
 
-    async(CommonPool) {
+    launch(CommonPool) {
       if (!::connectionSettings.isInitialized) {
         Timber.v("no connection settings aborting")
-        return@async
+        return@launch
       }
 
       Timber.v("Attempting connection on $connectionSettings")
+      val onConnection: (Boolean) -> Unit = { connected ->
+        if (!connected) {
+          //activityChecker.stop()
+          connectionStatusLiveDataProvider.disconnected()
+        } else {
+          connectionStatusLiveDataProvider.connected()
+          messageQueue.queue(SocketMessage.player())
+        }
+      }
+
       connection = SocketConnection(
         connectionSettings,
-        messageHandler, { connected ->
-          onConnectionChange(connected)
-
-          if (!connected) {
-            //activityChecker.stop()
-          } else {
-            messageQueue.queue(SocketMessage.player())
-          }
-        }
+        messageHandler,
+        onConnection
       ) {
       }.apply {
         messageHandler.start()
@@ -163,7 +163,7 @@ constructor(
     }
 
     fun sendMessage(messageString: String) {
-      async(CommonPool) {
+      launch(CommonPool) {
         Timber.v("Sending (${isConnected()})")
         if (isConnected()) {
           writeToSocket(messageString)
@@ -241,8 +241,6 @@ constructor(
   }
 
   companion object {
-    private const val DELAY = 3
-    private const val MAX_RETRIES = 3
     private const val SOCKET_BUFFER = 2 * 4096
   }
 }

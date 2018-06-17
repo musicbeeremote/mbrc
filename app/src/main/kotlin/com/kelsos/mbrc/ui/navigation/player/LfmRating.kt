@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.main
+package com.kelsos.mbrc.ui.navigation.player
 
 import androidx.annotation.IntDef
 

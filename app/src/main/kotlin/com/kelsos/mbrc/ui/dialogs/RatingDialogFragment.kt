@@ -2,14 +2,11 @@ package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
+import android.widget.RatingBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.RatingBar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.di.scopes
-import com.kelsos.mbrc.events.RatingChanged
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -18,7 +15,8 @@ import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class RatingDialogFragment : androidx.fragment.app.DialogFragment(), RatingBar.OnRatingBarChangeListener {
+class RatingDialogFragment : androidx.fragment.app.DialogFragment(),
+  RatingBar.OnRatingBarChangeListener {
 
   private val ratingBar: RatingBar by bindView(R.id.ratingBar)
   private var rating: Float = 0.toFloat()
@@ -39,13 +37,14 @@ class RatingDialogFragment : androidx.fragment.app.DialogFragment(), RatingBar.O
     Toothpick.closeScope(this)
   }
 
-  private fun handleRatingChange(event: RatingChanged) {
-    rating = event.rating
-    ratingBar.rating = rating
+  private fun handleRatingChange() {
+    //todo handle rating change properly
+    //rating = event.rating
+    //ratingBar.rating = rating
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val activity = activity ?: error("no context")
+    val activity = requireActivity()
     val builder = AlertDialog.Builder(activity)
     builder.setTitle(R.string.rate_the_playing_track)
     builder.setView(R.layout.ui_dialog_rating)

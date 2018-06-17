@@ -1,4 +1,4 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.core
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner

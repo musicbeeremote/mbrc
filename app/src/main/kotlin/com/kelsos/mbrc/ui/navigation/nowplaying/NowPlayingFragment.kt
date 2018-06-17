@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.constraintlayout.Group
+import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.paging.PagedList
@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
@@ -111,7 +111,7 @@ class NowPlayingFragment : Fragment(),
     nowPlayingList.layoutManager = manager
     nowPlayingList.adapter = adapter
     nowPlayingList.itemAnimator?.changeDuration = 0
-    touchListener = NowPlayingTouchListener(requireContext(), {
+    touchListener = NowPlayingTouchListener(requireContext()) {
       if (it) {
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.isEnabled = false
@@ -119,7 +119,7 @@ class NowPlayingFragment : Fragment(),
       } else {
         swipeRefreshLayout.isEnabled = true
       }
-    })
+    }
     nowPlayingList.addOnItemTouchListener(touchListener)
     val callback = SimpleItemTouchHelper(adapter)
     itemTouchHelper = ItemTouchHelper(callback)
@@ -159,7 +159,7 @@ class NowPlayingFragment : Fragment(),
     swipeRefreshLayout.isRefreshing = false
   }
 
-  override fun trackChanged(track: PlayingTrackModel, scrollToTrack: Boolean) {
+  override fun trackChanged(track: PlayingTrack, scrollToTrack: Boolean) {
     adapter.setPlayingTrack(track.path)
     if (scrollToTrack) {
       nowPlayingList.scrollToPosition(adapter.getPlayingTrackIndex())

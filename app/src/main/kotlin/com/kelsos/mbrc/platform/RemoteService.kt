@@ -4,7 +4,7 @@ import android.app.Notification
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import com.kelsos.mbrc.IRemoteServiceCore
+import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import timber.log.Timber
 import toothpick.Scope

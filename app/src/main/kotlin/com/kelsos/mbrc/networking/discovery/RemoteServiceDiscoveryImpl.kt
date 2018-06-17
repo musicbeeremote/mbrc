@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking.discovery
 
+import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.kelsos.mbrc.networking.connections.ConnectionMapper
@@ -31,6 +32,7 @@ internal constructor(
   private val disposables = CompositeDisposable()
   private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
 
+  @SuppressLint("CheckResult")
   override fun discover(callback: (status: Int, setting: ConnectionSettingsEntity?) -> Unit) {
     if (!isWifiConnected) {
       callback(DiscoveryStop.NO_WIFI, null)
@@ -48,7 +50,7 @@ internal constructor(
     discoveryObservable()
       .subscribeOn(Schedulers.io())
       .unsubscribeOn(Schedulers.io())
-      .doOnTerminate({ this.stopDiscovery() })
+      .doOnTerminate { this.stopDiscovery() }
       .map { mapper.map(it) }
       .subscribe({
         callback(DiscoveryStop.COMPLETE, it)

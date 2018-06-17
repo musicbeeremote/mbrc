@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.minicontrol
 
-import androidx.lifecycle.Observer
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.mvp.BasePresenter
@@ -18,20 +17,13 @@ constructor(
 ) : BasePresenter<MiniControlView>(), MiniControlPresenter {
 
   init {
-    playerStatusLiveDataProvider.get().observe(this, Observer {
-      if (it == null) {
-        return@Observer
-      }
-      view().updateState(it.playState)
-    })
+    playerStatusLiveDataProvider.observe(this) {
+      view().updateState(it.state)
+    }
 
-    playingTrackLiveDataProvider.get().observe(this, Observer {
-      if (it == null) {
-        return@Observer
-      }
-
+    playingTrackLiveDataProvider.observe(this) {
       view().updateTrackInfo(it)
-    })
+    }
   }
 
   override fun next() {

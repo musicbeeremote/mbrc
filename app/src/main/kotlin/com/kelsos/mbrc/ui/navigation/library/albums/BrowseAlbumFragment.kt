@@ -9,10 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.constraintlayout.Group
+import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
@@ -28,14 +31,14 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class BrowseAlbumFragment : androidx.fragment.app.Fragment(),
+class BrowseAlbumFragment : Fragment(),
   BrowseAlbumView,
   MenuItemSelectedListener<AlbumEntity>,
-  androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener {
+  SwipeRefreshLayout.OnRefreshListener {
 
 
-  private val recycler: androidx.recyclerview.widget.RecyclerView by bindView(R.id.library_browser__content)
-  private val swipeLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
+  private val recycler: RecyclerView by bindView(R.id.library_browser__content)
+  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
   private val fastScroller: RecyclerViewFastScroller by bindView(R.id.fastscroller)
 
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)

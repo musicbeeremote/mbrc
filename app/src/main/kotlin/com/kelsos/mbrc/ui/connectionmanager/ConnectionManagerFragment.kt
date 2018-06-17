@@ -9,8 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.events.ConnectionSettingsChanged
-import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
@@ -89,10 +87,6 @@ class ConnectionManagerFragment : Fragment(),
     presenter.save(settings)
   }
 
-  override fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
-    adapter.setSelectionId(event.defaultId)
-  }
-
   override fun onDiscoveryStopped(status: Int) {
     progress?.dismiss()
 
@@ -108,12 +102,7 @@ class ConnectionManagerFragment : Fragment(),
     }
 
     com.google.android.material.snackbar.Snackbar.make(recyclerView, message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
-  }
 
-  override fun onUserNotification(event: NotifyUser) {
-    val message = if (event.isFromResource) getString(event.resId) else event.message
-
-    com.google.android.material.snackbar.Snackbar.make(recyclerView, message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettingsEntity) {
@@ -130,7 +119,7 @@ class ConnectionManagerFragment : Fragment(),
   }
 
   override fun updateData(data: List<ConnectionSettingsEntity>) {
-    adapter.updateData(data)
+    adapter.submitList(data)
   }
 
   override fun updateDefault(defaultId: Long) {

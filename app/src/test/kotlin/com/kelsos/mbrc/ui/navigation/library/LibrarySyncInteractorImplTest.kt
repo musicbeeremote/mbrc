@@ -9,7 +9,6 @@ import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
-import com.kelsos.mbrc.events.LibraryRefreshCompleteEvent
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -54,8 +53,6 @@ class LibrarySyncInteractorImplTest {
   @Mock
   private lateinit var playlistRepository: PlaylistRepository
 
-  @Mock
-  private lateinit var bus: RxBus
 
   private lateinit var ioScheduler: TestScheduler
   private lateinit var mainScheduler: TestScheduler
@@ -103,7 +100,6 @@ class LibrarySyncInteractorImplTest {
     verify(onCompleteListener, times(1)).onSuccess()
     verify(onCompleteListener, times(1)).onTermination()
     verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
@@ -126,7 +122,6 @@ class LibrarySyncInteractorImplTest {
     verify(onCompleteListener, never()).onSuccess()
     verify(onCompleteListener, times(1)).onTermination()
     verify(onCompleteListener, times(1)).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
@@ -150,7 +145,6 @@ class LibrarySyncInteractorImplTest {
     verify(onCompleteListener, times(1)).onSuccess()
     verify(onCompleteListener, times(1)).onTermination()
     verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
@@ -173,11 +167,10 @@ class LibrarySyncInteractorImplTest {
     verify(onCompleteListener, times(1)).onSuccess()
     verify(onCompleteListener, times(1)).onTermination()
     verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
 
     // Reset the mocks and run a second network
     reset(onCompleteListener)
-    reset(bus)
+
 
     sync.sync()
 
@@ -189,7 +182,6 @@ class LibrarySyncInteractorImplTest {
     verify(onCompleteListener, times(1)).onSuccess()
     verify(onCompleteListener, times(1)).onTermination()
     verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
@@ -213,7 +205,6 @@ class LibrarySyncInteractorImplTest {
     verify(onCompleteListener, never()).onSuccess()
     verify(onCompleteListener, times(1)).onTermination()
     verify(onCompleteListener, times(1)).onFailure(any(Exception::class.java))
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
@@ -231,7 +222,6 @@ class LibrarySyncInteractorImplTest {
     ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
     mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
     assertThat(sync.isRunning()).isFalse()
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   private fun mockCacheState(isEmpty: Boolean) {

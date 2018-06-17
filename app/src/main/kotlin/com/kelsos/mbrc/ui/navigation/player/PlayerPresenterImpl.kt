@@ -1,7 +1,6 @@
-package com.kelsos.mbrc.ui.navigation.main
+package com.kelsos.mbrc.ui.navigation.player
 
-import androidx.lifecycle.Observer
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
+import com.jakewharton.rxrelay2.PublishRelay
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
@@ -11,58 +10,67 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainViewPresenterImpl
+class PlayerPresenterImpl
 @Inject
 constructor(
   private val settingsManager: SettingsManager,
   private val userActionUseCase: UserActionUseCase,
-  connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
+  private val appRxSchedulers: AppRxSchedulers,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   trackRatingLiveDataProvider: TrackRatingLiveDataProvider,
   trackPositionLiveDataProvider: TrackPositionLiveDataProvider
-) : BasePresenter<MainView>(), MainViewPresenter {
+) : BasePresenter<PlayerView>(), PlayerPresenter {
+
+  private val progressRelay: PublishRelay<Int> = PublishRelay.create()
+  private val volumeRelay: PublishRelay<Int> = PublishRelay.create()
 
   init {
-    playingTrackLiveDataProvider.get().observe(this, Observer { activeTrack ->
-      if (activeTrack == null) {
-        return@Observer
-      }
+    playingTrackLiveDataProvider.observe(this) { activeTrack ->
       view().updateTrackInfo(activeTrack)
-    })
+    }
 
-    playerStatusLiveDataProvider.get().observe(this, Observer { playerStatus ->
-      if (playerStatus == null) {
-        return@Observer
-      }
+    playerStatusLiveDataProvider.observe(this) { playerStatus ->
       view().updateStatus(playerStatus)
-    })
+    }
 
-    trackRatingLiveDataProvider.get().observe(this, Observer { rating ->
-      if (rating == null) {
-        return@Observer
-      }
+    trackRatingLiveDataProvider.observe(this) { rating ->
       view().updateRating(rating)
-    })
+    }
 
-    connectionStatusLiveDataProvider.get().observe(this, Observer { status ->
-      if (status == null) {
-        return@Observer
-      }
-      view().updateConnection(status.status)
-    })
-
-    trackPositionLiveDataProvider.get().observe(this, Observer {
-      if (it == null) {
-        return@Observer
-      }
-
+    trackPositionLiveDataProvider.observe(this) {
       view().updateProgress(it)
-    })
+    }
   }
+
+  override fun attach(view: PlayerView) {
+    super.attach(view)
+    disposables += progressRelay.throttleLast(
+      800,
+      TimeUnit.MILLISECONDS,
+      appRxSchedulers.network
+    )
+      .subscribeOn(appRxSchedulers.network)
+      .subscribe { position ->
+        userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
+      }
+
+    disposables += volumeRelay.throttleLast(
+      800,
+      TimeUnit.MILLISECONDS,
+      appRxSchedulers.network
+    )
+      .subscribeOn(appRxSchedulers.network)
+      .subscribe { volume ->
+        userActionUseCase.perform(UserAction.create(Protocol.PlayerVolume, volume))
+      }
+  }
+
   override fun stop(): Boolean {
     userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
     return true
@@ -81,11 +89,11 @@ constructor(
   }
 
   override fun changeVolume(value: Int) {
-    userActionUseCase.perform(UserAction.create(Protocol.PlayerVolume, value))
+    volumeRelay.accept(value)
   }
 
   override fun seek(position: Int) {
-    userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
+    progressRelay.accept(position)
   }
 
   override fun load() {
@@ -95,10 +103,6 @@ constructor(
       }
     }) {
     }
-  }
-
-  override fun requestNowPlayingPosition() {
-    userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition))
   }
 
   override fun toggleScrobbling() {

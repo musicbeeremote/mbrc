@@ -1,4 +1,4 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.core
 
 import com.kelsos.mbrc.interfaces.SimpleLifecycle
 

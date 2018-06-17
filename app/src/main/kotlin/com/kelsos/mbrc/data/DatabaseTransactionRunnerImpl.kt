@@ -1,4 +1,4 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.data
 
 import javax.inject.Inject
 

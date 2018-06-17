@@ -2,7 +2,7 @@ package com.kelsos.mbrc.di.providers
 
 import android.app.Application
 import androidx.room.Room
-import com.kelsos.mbrc.Database
+import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.content.library.albums.AlbumDao
 import com.kelsos.mbrc.content.library.artists.ArtistDao
 import com.kelsos.mbrc.content.library.genres.GenreDao
