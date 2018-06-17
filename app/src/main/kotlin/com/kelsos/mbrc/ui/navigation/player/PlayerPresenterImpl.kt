@@ -1,6 +1,5 @@
-package com.kelsos.mbrc.ui.navigation.main
+package com.kelsos.mbrc.ui.navigation.player
 
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
@@ -9,55 +8,54 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.preferences.SettingsManager
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.sample
 import javax.inject.Inject
 
-class MainViewPresenterImpl
+class PlayerPresenterImpl
 @Inject
 constructor(
   private val userActionUseCase: UserActionUseCase,
-  connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
+  private val settingsManager: SettingsManager,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   trackRatingLiveDataProvider: TrackRatingLiveDataProvider,
-  trackPositionLiveDataProvider: TrackPositionLiveDataProvider
-) : BasePresenter<MainView>(), MainViewPresenter {
+  trackPositionLiveDataProvider: TrackPositionLiveDataProvider,
+) : BasePresenter<PlayerView>(), PlayerPresenter {
+
+  private val progressRelay: MutableSharedFlow<Int> = MutableStateFlow(0)
+  private val volumeRelay: MutableSharedFlow<Int> = MutableStateFlow(0)
 
   init {
-    playingTrackLiveDataProvider.get().observe(this) { activeTrack ->
-      if (activeTrack == null) {
-        return@observe
-      }
+    playingTrackLiveDataProvider.observe(this) { activeTrack ->
       view().updateTrackInfo(activeTrack)
     }
 
-    playerStatusLiveDataProvider.get().observe(this) { playerStatus ->
-      if (playerStatus == null) {
-        return@observe
-      }
+    playerStatusLiveDataProvider.observe(this) { playerStatus ->
       view().updateStatus(playerStatus)
     }
 
-    trackRatingLiveDataProvider.get().observe(this) { rating ->
-      if (rating == null) {
-        return@observe
-      }
+    trackRatingLiveDataProvider.observe(this) { rating ->
       view().updateRating(rating)
     }
 
-    connectionStatusLiveDataProvider.get().observe(this) { status ->
-      if (status == null) {
-        return@observe
-      }
-      view().updateConnection(status.status)
-    }
-
-    trackPositionLiveDataProvider.get().observe(this) {
-      if (it == null) {
-        return@observe
-      }
-
+    trackPositionLiveDataProvider.observe(this) {
       view().updateProgress(it)
     }
+  }
+
+  override fun attach(view: PlayerView) {
+    super.attach(view)
+    progressRelay.sample(800).onEach { position ->
+      userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
+    }.launchIn(scope)
+    volumeRelay.sample(800).onEach { volume ->
+      userActionUseCase.perform(UserAction.create(Protocol.PlayerVolume, volume))
+    }.launchIn(scope)
   }
 
   override fun stop(): Boolean {
@@ -78,15 +76,17 @@ constructor(
   }
 
   override fun changeVolume(value: Int) {
-    userActionUseCase.perform(UserAction.create(Protocol.PlayerVolume, value))
+    volumeRelay.tryEmit(value)
   }
 
   override fun seek(position: Int) {
-    userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
+    progressRelay.tryEmit(position)
   }
 
-  override fun requestNowPlayingPosition() {
-    userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition))
+  override fun load() {
+    if (settingsManager.shouldShowChangeLog()) {
+      view().showChangeLog()
+    }
   }
 
   override fun toggleScrobbling() {

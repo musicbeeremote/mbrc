@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking.client
 
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
@@ -29,11 +30,11 @@ constructor(
   private val activityChecker: SocketActivityChecker,
   private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,
-  private val messageSerializer: MessageSerializer
+  private val messageSerializer: MessageSerializer,
+  private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 ) : IClientConnectionManager, PingTimeoutListener {
 
   private lateinit var connectionSettings: ConnectionSettingsEntity
-  private lateinit var onConnectionChange: (Boolean) -> Unit
 
   private var executor = getExecutor()
 
@@ -51,10 +52,6 @@ constructor(
 
   override fun setDefaultConnectionSettings(connectionSettings: ConnectionSettingsEntity) {
     this.connectionSettings = connectionSettings
-  }
-
-  override fun setOnConnectionChangeListener(onConnectionChange: (Boolean) -> Unit) {
-    this.onConnectionChange = onConnectionChange
   }
 
   override fun start() {
@@ -85,18 +82,20 @@ constructor(
       }
 
       Timber.v("Attempting connection on $connectionSettings")
+      val onConnection: (Boolean) -> Unit = { connected ->
+        if (!connected) {
+          // activityChecker.stop()
+          connectionStatusLiveDataProvider.disconnected()
+        } else {
+          connectionStatusLiveDataProvider.connected()
+          messageQueue.queue(SocketMessage.player())
+        }
+      }
+
       connection = SocketConnection(
         connectionSettings,
         messageHandler,
-        { connected ->
-          onConnectionChange(connected)
-
-          if (!connected) {
-            // activityChecker.stop()
-          } else {
-            messageQueue.queue(SocketMessage.player())
-          }
-        }
+        onConnection
       ) {
       }.apply {
         messageHandler.start()

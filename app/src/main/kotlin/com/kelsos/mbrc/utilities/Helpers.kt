@@ -13,8 +13,8 @@ fun <T, I : Any> PagingSource<Int, T>.paged(): Flow<PagingData<I>> where T : I {
   val config = PagingConfig(
     prefetchDistance = 100,
     enablePlaceholders = true,
-    initialLoadSize = 100,
-    pageSize = 50
+    initialLoadSize = 25,
+    pageSize = 100
   )
   return Pager(config) { this }.flow.map { data -> data.map { it } }
 }

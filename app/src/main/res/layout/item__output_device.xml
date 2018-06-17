@@ -18,7 +18,7 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_volume_up_black_24dp"
+      android:src="@drawable/ic_volume_up_black_24dp"
       app:tint="@color/primary" />
 
   <TextView

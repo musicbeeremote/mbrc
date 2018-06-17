@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking
 
-import com.kelsos.mbrc.DeserializationAdapter
-import com.kelsos.mbrc.SerializationAdapter
+import com.kelsos.mbrc.data.DeserializationAdapter
+import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.InetAddressMapper

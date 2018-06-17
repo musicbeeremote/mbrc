@@ -32,10 +32,7 @@ constructor(
       userActionUseCase.perform(UserAction(Protocol.NowPlayingListMove, data))
     }
 
-    playingTrackLiveDataProvider.get().observe(this) {
-      if (it == null) {
-        return@observe
-      }
+    playingTrackLiveDataProvider.observe(this) {
       view().trackChanged(it)
     }
   }

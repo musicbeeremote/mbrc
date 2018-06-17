@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.content.activestatus.livedata
 
-import com.kelsos.mbrc.content.activestatus.TrackRatingModel
+import com.kelsos.mbrc.content.activestatus.TrackRating
 import javax.inject.Inject
 
-interface TrackRatingLiveDataProvider : LiveDataProvider<TrackRatingModel>
+interface TrackRatingLiveDataProvider : LiveDataProvider<TrackRating>
 
 class TrackRatingLiveDataProviderImpl
 @Inject
 constructor() : TrackRatingLiveDataProvider,
-  BaseLiveDataProvider<TrackRatingModel>() {
+  BaseLiveDataProvider<TrackRating>() {
   init {
-    update(TrackRatingModel())
+    update(TrackRating())
   }
 }

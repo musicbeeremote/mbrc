@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking
 
-import com.kelsos.mbrc.DeserializationAdapter
+import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.interfaces.data.RemoteDataSource.Companion.LIMIT
 import com.kelsos.mbrc.networking.client.GenericSocketMessage
 import com.kelsos.mbrc.networking.client.ResponseWithPayload

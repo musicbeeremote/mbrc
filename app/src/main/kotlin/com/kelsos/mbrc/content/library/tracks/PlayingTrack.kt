@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class PlayingTrackModel(
+data class PlayingTrack(
   var artist: String = "",
   var title: String = "",
   var album: String = "",
@@ -12,4 +12,12 @@ data class PlayingTrackModel(
   var path: String = "",
   var coverUrl: String = "",
   var duration: Long = 0
-) : Parcelable
+) : Parcelable {
+  fun albumInfo(): String {
+    return if (year.isEmpty()) {
+      album
+    } else {
+      "$album ($year)"
+    }
+  }
+}

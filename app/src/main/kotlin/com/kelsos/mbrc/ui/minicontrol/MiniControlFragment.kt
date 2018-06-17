@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.UiFragmentMiniControlBinding
 import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
@@ -86,7 +86,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
     }
   }
 
-  override fun updateTrackInfo(track: PlayingTrackModel) {
+  override fun updateTrackInfo(track: PlayingTrack) {
     binding.mcTrackArtist.text = track.artist
     binding.mcTrackTitle.text = track.title
     updateCover(track.coverUrl)

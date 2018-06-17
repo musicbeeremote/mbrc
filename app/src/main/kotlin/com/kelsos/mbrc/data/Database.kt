@@ -1,8 +1,7 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.kelsos.mbrc.Database.Companion.VERSION
 import com.kelsos.mbrc.content.library.albums.AlbumDao
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.library.artists.ArtistDao
@@ -17,6 +16,7 @@ import com.kelsos.mbrc.content.playlists.PlaylistDao
 import com.kelsos.mbrc.content.playlists.PlaylistEntity
 import com.kelsos.mbrc.content.radios.RadioStationDao
 import com.kelsos.mbrc.content.radios.RadioStationEntity
+import com.kelsos.mbrc.data.Database.Companion.VERSION
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 

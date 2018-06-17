@@ -16,18 +16,11 @@ constructor(
 ) : BasePresenter<MiniControlView>(), MiniControlPresenter {
 
   init {
-    playerStatusLiveDataProvider.get().observe(this) {
-      if (it == null) {
-        return@observe
-      }
-      view().updateState(it.playState)
+    playerStatusLiveDataProvider.observe(this) {
+      view().updateState(it.state)
     }
 
-    playingTrackLiveDataProvider.get().observe(this) {
-      if (it == null) {
-        return@observe
-      }
-
+    playingTrackLiveDataProvider.observe(this) {
       view().updateTrackInfo(it)
     }
   }

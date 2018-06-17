@@ -8,8 +8,8 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.kelsos.mbrc.IRemoteServiceCore
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager

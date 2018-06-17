@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentConnectionManagerBinding
-import com.kelsos.mbrc.events.ConnectionSettingsChanged
-import com.kelsos.mbrc.events.NotifyUser
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
@@ -88,10 +86,6 @@ class ConnectionManagerFragment :
     presenter.save(settings)
   }
 
-  override fun onConnectionSettingsChange(event: ConnectionSettingsChanged) {
-    checkNotNull(adapter).setSelectionId(event.defaultId)
-  }
-
   override fun onDiscoveryStopped(status: Int) {
     binding.connectionManagerProgress.isGone = true
 
@@ -105,11 +99,6 @@ class ConnectionManagerFragment :
       else -> throw IllegalArgumentException(status.toString())
     }
 
-    Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
-  }
-
-  override fun onUserNotification(event: NotifyUser) {
-    val message = if (event.isFromResource) getString(event.resId) else event.message
     Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
   }
 
@@ -127,7 +116,7 @@ class ConnectionManagerFragment :
   }
 
   override fun updateData(data: List<ConnectionSettingsEntity>) {
-    checkNotNull(adapter).updateData(data)
+    checkNotNull(adapter).submitList(data)
   }
 
   override fun updateDefault(defaultId: Long) {

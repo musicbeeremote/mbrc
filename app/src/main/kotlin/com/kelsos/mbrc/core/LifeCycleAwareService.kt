@@ -1,4 +1,4 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.core
 
 import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle

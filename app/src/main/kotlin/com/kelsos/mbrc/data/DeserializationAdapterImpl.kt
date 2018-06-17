@@ -1,4 +1,4 @@
-package com.kelsos.mbrc
+package com.kelsos.mbrc.data
 
 import com.squareup.moshi.Moshi
 import java.lang.reflect.ParameterizedType

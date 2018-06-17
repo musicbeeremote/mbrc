@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -48,8 +46,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/radio_stations__empty_icon"
-      app:layout_constraintVertical_bias="0.0"
-      tools:ignore="MissingPrefix" />
+      app:layout_constraintVertical_bias="0.0" />
 
   <TextView
       android:id="@+id/radio_stations__text_title"
@@ -68,8 +65,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="1"
-      tools:ignore="MissingPrefix" />
+      app:layout_constraintVertical_bias="1" />
 
   <androidx.constraintlayout.widget.Group
       android:id="@+id/radio_stations__empty_group"

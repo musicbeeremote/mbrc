@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.client
 
-import com.kelsos.mbrc.DeserializationAdapter
+import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers

@@ -40,6 +40,11 @@ class HelpFragment : Fragment() {
     return binding.root
   }
 
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    helpView.webViewClient = RemoteWebViewClient()
+  }
+
   private class RemoteWebViewClient : WebViewClient() {
     @Suppress("OverridingDeprecatedMember")
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {

@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.platform.mediasession
 
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 
 interface INotificationManager {
 
   fun cancel(notificationId: Int = NOW_PLAYING_PLACEHOLDER)
 
-  fun trackChanged(playingTrack: PlayingTrackModel)
+  fun trackChanged(playingTrack: PlayingTrack)
 
   fun playerStateChanged(@PlayerState.State state: String)
 

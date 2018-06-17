@@ -6,69 +6,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/lyrics__lyrics_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:paddingLeft="@dimen/normal_margin"
-        android:paddingRight="@dimen/normal_margin"
-        android:paddingTop="@dimen/small_margin"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@id/lyrics__mini_control"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/lyrics__lyrics_list"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:paddingLeft="@dimen/normal_margin"
+      android:paddingTop="@dimen/small_margin"
+      android:paddingRight="@dimen/normal_margin"
+      android:scrollbars="vertical"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/lyrics__empty_group"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:constraint_referenced_ids="lyrics__empty_text,lyrics__empty_icon"
-        tools:visibility="visible" />
+  <androidx.constraintlayout.widget.Group
+      android:id="@+id/lyrics__empty_group"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="gone"
+      app:constraint_referenced_ids="lyrics__empty_text,lyrics__empty_icon"
+      tools:visibility="visible" />
 
-    <TextView
-        android:id="@+id/lyrics__empty_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="sans-serif-medium"
-        android:maxLines="1"
-        android:text="@string/no_lyrics"
-        android:textColor="@color/primary_text"
-        android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/lyrics__empty_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_goneMarginBottom="8dp" />
+  <TextView
+      android:id="@+id/lyrics__empty_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:fontFamily="sans-serif-medium"
+      android:maxLines="1"
+      android:text="@string/no_lyrics"
+      android:textColor="@color/primary_text"
+      android:textSize="22sp"
+      app:layout_constraintBottom_toTopOf="@+id/lyrics__empty_icon"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="1.0"
+      app:layout_goneMarginBottom="8dp" />
 
-    <ImageView
-        android:id="@+id/lyrics__empty_icon"
-        style="@style/empty_view_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/small_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_view_headline_black_120dp"
-        tools:ignore="RtlSymmetry" />
-
-    <include
-        android:id="@+id/lyrics__mini_control"
-        layout="@layout/mini_control_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:behavior_peekHeight="@dimen/mini_control_peek_height"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+  <ImageView
+      android:id="@+id/lyrics__empty_icon"
+      style="@style/empty_view_image"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:paddingEnd="@dimen/small_margin"
+      android:src="@drawable/ic_view_headline_black_120dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:ignore="RtlSymmetry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

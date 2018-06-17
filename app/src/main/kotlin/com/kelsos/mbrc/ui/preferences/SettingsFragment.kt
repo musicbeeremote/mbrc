@@ -74,7 +74,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     mManager?.setOnPreferenceClickListener {
-      findNavController().navigate(R.id.connection_manager_fragment)
+      findNavController().navigate(R.id.action_settingsFragment_to_connectionManagerFragment)
       false
     }
 

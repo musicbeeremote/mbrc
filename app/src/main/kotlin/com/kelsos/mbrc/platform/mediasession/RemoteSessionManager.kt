@@ -9,9 +9,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.events.PlayStateChange
-import com.kelsos.mbrc.events.RemoteClientMetaData
+import com.kelsos.mbrc.content.activestatus.PlayerState.State
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
@@ -77,8 +76,8 @@ constructor(
     })
   }
 
-  private fun onConnectionStatusChanged(event: ConnectionStatusChangeEvent) {
-    if (event.status == Connection.OFF) {
+  private fun onConnectionStatusChanged(@Connection.Status status: Int) {
+    if (status == Connection.OFF) {
       val builder = PlaybackStateCompat.Builder()
       builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
       val playbackState = builder.build()
@@ -94,38 +93,48 @@ constructor(
   val mediaSessionToken: MediaSessionCompat.Token
     get() = mediaSession.sessionToken
 
-  private fun metadataUpdate(data: RemoteClientMetaData) {
-    val trackInfo = data.track
-    val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
+  private fun metadataUpdate(track: PlayingTrack) {
+    val bitmap = RemoteUtils.coverBitmapSync(track.coverUrl)
 
     val builder = MediaMetadataCompat.Builder()
-      .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
-      .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
-      .putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
+      .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.album)
+      .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.artist)
+      .putString(MediaMetadataCompat.METADATA_KEY_TITLE, track.title)
       .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
-      .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, trackInfo.duration)
+      .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, track.duration)
     mediaSession.setMetadata(builder.build())
   }
 
-  private fun updateState(change: PlayStateChange) {
+  private fun updateState(@State state: String) {
 
-    val builder = PlaybackStateCompat.Builder()
-    builder.setActions(PLAYBACK_ACTIONS)
-    when (change.state) {
-      PlayerState.PLAYING -> {
-        builder.setState(PlaybackStateCompat.STATE_PLAYING, change.position, 1f)
-        mediaSession.isActive = true
-      }
-      PlayerState.PAUSED -> {
-        builder.setState(PlaybackStateCompat.STATE_PAUSED, change.position, 0f)
-        mediaSession.isActive = true
-      }
-      else -> {
-        builder.setState(PlaybackStateCompat.STATE_STOPPED, change.position, 0f)
-        mediaSession.isActive = false
-      }
-    }
-    mediaSession.setPlaybackState(builder.build())
+    val playbackState = PlaybackStateCompat.Builder()
+      .setActions(PLAYBACK_ACTIONS)
+      .apply {
+        when (state) {
+          PlayerState.PLAYING -> {
+            setState(
+              PlaybackStateCompat.STATE_PLAYING, -1
+              /**change.position**/, 1f
+            )
+            mediaSession.isActive = true
+          }
+          PlayerState.PAUSED -> {
+            setState(
+              PlaybackStateCompat.STATE_PAUSED, -1
+              /**change.position**/, 0f
+            )
+            mediaSession.isActive = true
+          }
+          else -> {
+            setState(
+              PlaybackStateCompat.STATE_STOPPED, -1
+              /**change.position**/, 0f
+            )
+            mediaSession.isActive = false
+          }
+        }
+      }.build()
+    mediaSession.setPlaybackState(playbackState)
   }
 
   override fun onAudioFocusChange(focusChange: Int) {

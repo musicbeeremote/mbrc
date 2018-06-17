@@ -19,7 +19,7 @@
       app:tint="@color/secondary_text"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_desktop_windows_black_24dp" />
+      android:src="@drawable/ic_desktop_windows_black_24dp" />
 
   <TextView
       android:id="@+id/connection_settings__name"
@@ -70,7 +70,7 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@+id/connection_settings__overflow"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_check_black_24dp" />
+      android:src="@drawable/ic_check_black_24dp" />
 
   <ImageView
       android:id="@+id/connection_settings__overflow"
@@ -86,6 +86,6 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_more_vert_black_24dp" />
+      android:src="@drawable/ic_more_vert_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

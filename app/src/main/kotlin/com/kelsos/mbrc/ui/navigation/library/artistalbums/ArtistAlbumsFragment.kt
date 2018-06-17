@@ -12,7 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
-import com.kelsos.mbrc.databinding.ActivityArtistAlbumsBinding
+import com.kelsos.mbrc.databinding.FragmentArtistAlbumsBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
@@ -31,7 +31,7 @@ class ArtistAlbumsFragment : Fragment(), ArtistAlbumsView, MenuItemSelectedListe
   lateinit var presenter: ArtistAlbumsPresenter
 
   private lateinit var artist: String
-  private var _binding: ActivityArtistAlbumsBinding? = null
+  private var _binding: FragmentArtistAlbumsBinding? = null
   private val binding get() = _binding!!
 
   override fun onCreateView(
@@ -39,7 +39,7 @@ class ArtistAlbumsFragment : Fragment(), ArtistAlbumsView, MenuItemSelectedListe
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    return inflater.inflate(R.layout.activity_artist_albums, container, false)
+    return inflater.inflate(R.layout.fragment_artist_albums, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

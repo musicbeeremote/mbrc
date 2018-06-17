@@ -11,9 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrackModel
-import com.kelsos.mbrc.events.ConnectionStatusChangeEvent
-import com.kelsos.mbrc.networking.connections.Connection
+import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
@@ -55,8 +53,8 @@ constructor(
     notificationManager.notify(INotificationManager.NOW_PLAYING_PLACEHOLDER, notification)
   }
 
-  private fun connectionChanged(event: ConnectionStatusChangeEvent) {
-    if (event.status == Connection.OFF) {
+  private fun connectionChanged(connected: Boolean) {
+    if (!connected) {
       cancel(NOW_PLAYING_PLACEHOLDER)
     } else {
       update(this.notificationData)
@@ -101,7 +99,7 @@ constructor(
       builder.setLargeIcon(icon)
     }
 
-    with(notificationData.trackModel) {
+    with(notificationData.track) {
       builder.setContentTitle(title)
         .setContentText(artist)
         .setSubText(album)
@@ -132,7 +130,7 @@ constructor(
     notificationManager.cancel(notificationId)
   }
 
-  override fun trackChanged(playingTrack: PlayingTrackModel) {
+  override fun trackChanged(playingTrack: PlayingTrack) {
     GlobalScope.async {
       notificationData = with(playingTrack.coverUrl) {
         val cover = if (isNotEmpty()) {
@@ -140,7 +138,7 @@ constructor(
         } else {
           null
         }
-        notificationData.copy(trackModel = playingTrack, cover = cover)
+        notificationData.copy(track = playingTrack, cover = cover)
       }
 
       update(notificationData)

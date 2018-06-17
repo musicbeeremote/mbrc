@@ -1,13 +1,6 @@
 package com.kelsos.mbrc.di.modules
 
 import com.kelsos.mbrc.DatabaseTransactionRunner
-import com.kelsos.mbrc.DatabaseTransactionRunnerImpl
-import com.kelsos.mbrc.DeserializationAdapter
-import com.kelsos.mbrc.DeserializationAdapterImpl
-import com.kelsos.mbrc.IRemoteServiceCore
-import com.kelsos.mbrc.RemoteServiceCore
-import com.kelsos.mbrc.SerializationAdapter
-import com.kelsos.mbrc.SerializationAdapterImpl
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
@@ -44,6 +37,13 @@ import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
 import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
+import com.kelsos.mbrc.core.IRemoteServiceCore
+import com.kelsos.mbrc.core.RemoteServiceCore
+import com.kelsos.mbrc.data.DatabaseTransactionRunnerImpl
+import com.kelsos.mbrc.data.DeserializationAdapter
+import com.kelsos.mbrc.data.DeserializationAdapterImpl
+import com.kelsos.mbrc.data.SerializationAdapter
+import com.kelsos.mbrc.data.SerializationAdapterImpl
 import com.kelsos.mbrc.di.bindClass
 import com.kelsos.mbrc.di.bindInstance
 import com.kelsos.mbrc.di.bindSingletonClass

@@ -5,11 +5,11 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.Database
-import com.kelsos.mbrc.DeserializationAdapter
-import com.kelsos.mbrc.DeserializationAdapterImpl
-import com.kelsos.mbrc.SerializationAdapter
-import com.kelsos.mbrc.SerializationAdapterImpl
+import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.data.DeserializationAdapter
+import com.kelsos.mbrc.data.DeserializationAdapterImpl
+import com.kelsos.mbrc.data.SerializationAdapter
+import com.kelsos.mbrc.data.SerializationAdapterImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.client.ConnectivityVerifier

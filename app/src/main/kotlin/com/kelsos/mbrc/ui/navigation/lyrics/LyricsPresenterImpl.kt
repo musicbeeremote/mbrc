@@ -11,11 +11,7 @@ constructor(
   lyricsLiveDataProvider: LyricsLiveDataProvider
 ) : BasePresenter<LyricsView>(), LyricsPresenter {
   init {
-    lyricsLiveDataProvider.get().observe(this) { lyrics ->
-      if (lyrics == null) {
-        return@observe
-      }
-
+    lyricsLiveDataProvider.observe(this) { lyrics ->
       view().updateLyrics(lyrics)
     }
   }

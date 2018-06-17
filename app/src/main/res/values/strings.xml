@@ -23,8 +23,6 @@
   <string name="settings_miscellaneous_incoming_call_description">Default action on incoming call \n\nRequires
         permission to read the Phone State.
     </string>
-  <string name="main_label_duration_current">01:03</string>
-  <string name="main_label_duration_total">04:11</string>
   <string name="info_service_description">This service is responsible for the communication
         of the application
         with the plugin.
@@ -42,6 +40,8 @@
   <string name="settings_dialog_hint_name">Computer name</string>
   <string name="settings_dialog_hint_host">Hostname / IP</string>
   <string name="settings_dialog_hint_port">Port number</string>
+  <string name="drawer_open">Open navigation drawer</string>
+  <string name="drawer_close">Close navigation drawer</string>
   <string name="artist_placeholder">Artistname</string>
   <string name="connection_manager_scan">SCAN</string>
   <string name="connection_manager_add">ADD</string>
@@ -55,8 +55,8 @@
   <string name="settings_oss_license">Open source licenses</string>
   <string name="settings_version">settings_version</string>
   <string name="preferences_key_connection_manager">manage_connections</string>
-  <string name="con_man_no_wifi">This client is available only on a wifi connection</string>
-  <string name="con_man_not_found">A remote client could not be found</string>
+  <string name="con_man_no_wifi">This service is available only on a wifi connection</string>
+  <string name="con_man_not_found">A remote service could not be found</string>
   <string name="con_man_success">Service successfully found</string>
   <string name="settings_key_default_index">mbrc_default_settings</string>
   <string name="preferences_library_track_default_action_key">mbrc.library_track_default</string>
@@ -115,7 +115,6 @@
   <string name="no_results_found">Sorry could not find any results for your search!</string>
   <string name="library__sync_failed">The library metadata sync was incomplete or failed completely. This might result in queueing not working properly..</string>
   <string name="connect_button_description">Connect Button</string>
-  <string name="playback_progress">%1$02d:%2$02d</string>
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
   <string name="notification_action_next">Next</string>dw
@@ -145,6 +144,7 @@
   <string name="feedback_logs">Include Logs</string>
   <string name="library_album_artists_only">Only Album Artists</string>
   <string name="main__dialog_plugin_outdated_message">A newer version of the plugin is available.\nPlease consider updating.</string>
+  <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="album_tracks__play__content_description">Plays all the tracks</string>
@@ -183,4 +183,5 @@
   <string name="notification__session_channel_name">MusicBee Remote</string>
   <string name="notification__session_channel_description">MusicBee Remote controls notification</string>
   <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
+  <string name="player__progress_start">00:00</string>
 </resources>

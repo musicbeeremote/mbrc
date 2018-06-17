@@ -66,7 +66,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_music_note_black_80dp" />
+      android:src="@drawable/ic_music_note_black_80dp" />
 
   <Button
     android:id="@+id/library_browser__sync"

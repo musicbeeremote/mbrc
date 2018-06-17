@@ -2,7 +2,6 @@ package com.kelsos.mbrc.di.providers
 
 import android.app.Application
 import androidx.room.Room
-import com.kelsos.mbrc.Database
 import com.kelsos.mbrc.content.library.albums.AlbumDao
 import com.kelsos.mbrc.content.library.artists.ArtistDao
 import com.kelsos.mbrc.content.library.genres.GenreDao
@@ -10,6 +9,7 @@ import com.kelsos.mbrc.content.library.tracks.TrackDao
 import com.kelsos.mbrc.content.nowplaying.NowPlayingDao
 import com.kelsos.mbrc.content.playlists.PlaylistDao
 import com.kelsos.mbrc.content.radios.RadioStationDao
+import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import javax.inject.Inject
 import javax.inject.Provider

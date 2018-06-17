@@ -6,16 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
   <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/now_playing__refresh_layout"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintBottom_toTopOf="@id/now_playing__mini_control"
-      android:layout_marginBottom="@dimen/mini_control_height">
+      app:layout_constraintTop_toTopOf="parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/now_playing__track_list"
@@ -37,10 +34,10 @@
       style="@style/Widget.AppCompat.ProgressBar"
       android:layout_width="60dp"
       android:layout_height="60dp"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
       android:visibility="visible"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
@@ -51,25 +48,25 @@
   <ImageView
       android:id="@+id/now_playing__empty_icon"
       style="@style/empty_view_image"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_music_note_black_80dp" />
+      android:src="@drawable/ic_music_note_black_80dp" />
 
   <TextView
       android:id="@+id/now_playing__text_subtitle"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="16dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
       android:fontFamily="sans-serif-light"
       android:text="@string/swipe_to_refresh"
       android:textSize="14sp"
@@ -84,10 +81,10 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginBottom="16dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="16dp"
       android:fontFamily="sans-serif-medium"
       android:maxLines="1"
       android:text="@string/now_playing_list_empty"
@@ -98,17 +95,4 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="1.0" />
 
-    <include
-        android:id="@+id/now_playing__mini_control"
-        layout="@layout/mini_control_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:behavior_peekHeight="@dimen/mini_control_peek_height"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
