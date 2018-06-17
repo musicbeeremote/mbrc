@@ -78,6 +78,7 @@ class LibraryFragment :
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
+    setHasOptionsMenu(true)
     _binding = FragmentLibraryBinding.inflate(inflater, container, false)
     return binding.root
   }
