@@ -22,13 +22,12 @@ constructor(
   private val userActionUseCase: UserActionUseCase,
   private val appRxSchedulers: AppRxSchedulers,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
-  playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   trackRatingLiveDataProvider: TrackRatingLiveDataProvider,
   trackPositionLiveDataProvider: TrackPositionLiveDataProvider
 ) : BasePresenter<PlayerView>(), PlayerPresenter {
 
   private val progressRelay: PublishRelay<Int> = PublishRelay.create()
-  private val volumeRelay: PublishRelay<Int> = PublishRelay.create()
 
   init {
     playingTrackLiveDataProvider.observe(this) { activeTrack ->
@@ -48,6 +47,10 @@ constructor(
     }
   }
 
+  override fun showVolumeDialog() {
+    view().showVolumeDialog()
+  }
+
   override fun attach(view: PlayerView) {
     super.attach(view)
     disposables += progressRelay.throttleLast(
@@ -59,25 +62,11 @@ constructor(
       .subscribe { position ->
         userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
       }
-
-    disposables += volumeRelay.throttleLast(
-      800,
-      TimeUnit.MILLISECONDS,
-      appRxSchedulers.network
-    )
-      .subscribeOn(appRxSchedulers.network)
-      .subscribe { volume ->
-        userActionUseCase.perform(UserAction.create(Protocol.PlayerVolume, volume))
-      }
   }
 
   override fun stop(): Boolean {
     userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
     return true
-  }
-
-  override fun mute() {
-    userActionUseCase.perform(UserAction.toggle(Protocol.PlayerMute))
   }
 
   override fun shuffle() {
@@ -86,10 +75,6 @@ constructor(
 
   override fun repeat() {
     userActionUseCase.perform(UserAction.toggle(Protocol.PlayerRepeat))
-  }
-
-  override fun changeVolume(value: Int) {
-    volumeRelay.accept(value)
   }
 
   override fun seek(position: Int) {

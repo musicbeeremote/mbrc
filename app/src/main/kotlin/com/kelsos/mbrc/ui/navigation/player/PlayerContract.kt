@@ -20,6 +20,8 @@ interface PlayerView : BaseView {
   fun updateStatus(playerStatus: PlayerStatusModel)
 
   fun updateRating(rating: TrackRating)
+
+  fun showVolumeDialog()
 }
 
 interface PlayerPresenter : Presenter<PlayerView> {
@@ -30,9 +32,8 @@ interface PlayerPresenter : Presenter<PlayerView> {
   fun previous()
   fun next()
   fun stop(): Boolean
-  fun mute()
   fun shuffle()
   fun repeat()
-  fun changeVolume(value: Int)
+  fun showVolumeDialog()
   fun lfmLove(): Boolean
 }

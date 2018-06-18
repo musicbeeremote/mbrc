@@ -8,6 +8,10 @@ data class PlayingPosition(val current: Duration = 0, val total: Duration = 0) {
   fun currentMinutes(): String {
     return current.toMinutes()
   }
+
+  fun progress(): String {
+    return "${currentMinutes()} / ${totalMinutes()}"
+  }
 }
 
 typealias Duration = Int
