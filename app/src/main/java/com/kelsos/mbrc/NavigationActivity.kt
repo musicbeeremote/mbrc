@@ -16,6 +16,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.databinding.ActivityNavigationBinding
@@ -116,8 +117,10 @@ class NavigationActivity : AppCompatActivity() {
       R.string.drawer_close
     )
     binding.drawerLayout.addDrawerListener(drawerToggle)
-
-    val navController = findNavController(R.id.main_navigation_fragment)
+    val navHostFragment = supportFragmentManager.findFragmentById(
+      R.id.main_navigation_fragment
+    ) as NavHostFragment
+    val navController = navHostFragment.navController
     setupWithNavController(binding.navView, navController)
   }
 

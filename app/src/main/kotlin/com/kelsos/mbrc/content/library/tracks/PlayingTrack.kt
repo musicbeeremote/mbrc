@@ -13,11 +13,12 @@ data class PlayingTrack(
   var coverUrl: String = "",
   var duration: Long = 0
 ) : Parcelable {
-  fun albumInfo(): String {
+  fun artistInfo(): String {
+    val artistBasic = "$artist - $album"
     return if (year.isEmpty()) {
-      album
+      artistBasic
     } else {
-      "$album ($year)"
+      "$artistBasic ($year)"
     }
   }
 }

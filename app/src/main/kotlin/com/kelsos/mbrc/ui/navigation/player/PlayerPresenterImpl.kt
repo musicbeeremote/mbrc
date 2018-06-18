@@ -28,7 +28,6 @@ constructor(
 ) : BasePresenter<PlayerView>(), PlayerPresenter {
 
   private val progressRelay: MutableSharedFlow<Int> = MutableStateFlow(0)
-  private val volumeRelay: MutableSharedFlow<Int> = MutableStateFlow(0)
 
   init {
     playingTrackLiveDataProvider.observe(this) { activeTrack ->
@@ -53,18 +52,11 @@ constructor(
     progressRelay.sample(800).onEach { position ->
       userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
     }.launchIn(scope)
-    volumeRelay.sample(800).onEach { volume ->
-      userActionUseCase.perform(UserAction.create(Protocol.PlayerVolume, volume))
-    }.launchIn(scope)
   }
 
   override fun stop(): Boolean {
     userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
     return true
-  }
-
-  override fun mute() {
-    userActionUseCase.perform(UserAction.toggle(Protocol.PlayerMute))
   }
 
   override fun shuffle() {
@@ -73,10 +65,6 @@ constructor(
 
   override fun repeat() {
     userActionUseCase.perform(UserAction.toggle(Protocol.PlayerRepeat))
-  }
-
-  override fun changeVolume(value: Int) {
-    volumeRelay.tryEmit(value)
   }
 
   override fun seek(position: Int) {

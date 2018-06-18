@@ -8,7 +8,6 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvide
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.connections.Connection
-import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,7 +15,6 @@ import javax.inject.Inject
 class RemoteServiceCore
 @Inject
 constructor(
-  private val discovery: ServiceDiscoveryUseCase,
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
@@ -64,7 +62,6 @@ constructor(
   override fun start() {
     super.start()
     Timber.v("Starting remote core")
-    discovery.discover {}
   }
 
   override fun stop() {

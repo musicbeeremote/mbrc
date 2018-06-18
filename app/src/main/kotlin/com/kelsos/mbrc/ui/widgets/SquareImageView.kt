@@ -7,6 +7,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
+import java.io.File
 
 class SquareImageView : AppCompatImageView {
   constructor(context: Context) : super(context)
@@ -26,8 +27,10 @@ class SquareImageView : AppCompatImageView {
       return
     }
 
+    val coverFile = File(coverUrl)
+
     Picasso.get()
-      .load(coverUrl)
+      .load(coverFile)
       .noFade()
       .placeholder(R.drawable.ic_image_no_cover)
       .error(R.drawable.ic_image_no_cover)

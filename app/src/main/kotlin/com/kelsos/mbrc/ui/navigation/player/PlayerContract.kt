@@ -30,9 +30,7 @@ interface PlayerPresenter : Presenter<PlayerView> {
   fun previous()
   fun next()
   fun stop(): Boolean
-  fun mute()
   fun shuffle()
   fun repeat()
-  fun changeVolume(value: Int)
   fun lfmLove(): Boolean
 }

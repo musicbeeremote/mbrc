@@ -72,12 +72,13 @@ constructor(
   }
 
   override fun shouldShowChangeLog(): Boolean {
-    val lastVersionCode = preferences.getInt(getKey(R.string.settings_key_last_version_run), 0)
-    val currentVersion = getVersionCode()
+    val key = getKey(R.string.settings_key_last_version_run)
+    val lastVersionCode = preferences.getLong(key, 0)
+    val currentVersion = getVersionCode().toLong()
 
     if (lastVersionCode < currentVersion) {
       preferences.edit()
-        .putInt(getKey(R.string.settings_key_last_version_run), currentVersion)
+        .putLong(key, currentVersion)
         .apply()
       Timber.d("Update or fresh install")
 

@@ -157,4 +157,8 @@
       android:id="@+id/rating_dialog"
       android:name="com.kelsos.mbrc.ui.dialogs.RatingDialogFragment"
       android:label="RatingDialogFragment" />
+  <dialog
+      android:id="@+id/volume_dialog"
+      android:name="com.kelsos.mbrc.ui.navigation.player.VolumeDialog"
+      android:label="VolumeDialog" />
 </navigation>

@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <color name="dark_transparent_overlay">#37000000</color>
   <color name="primary">#ff9800</color>
   <color name="primary_dark">#e65100</color>
   <color name="primary_light">#FFECB3</color>
   <color name="accent">#FF5722</color>
   <color name="primary_text">#FFFFFF</color>
   <color name="secondary_text">#b2ffffff</color>
-  <color name="button_dark">#ff5a595b</color>
+  <color name="button_dark">#7F7F80</color>
   <color name="white">#fff</color>
   <color name="black">#000</color>
   <color name="power_on">#33A328</color>

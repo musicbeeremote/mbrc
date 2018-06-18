@@ -7,8 +7,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
@@ -18,6 +16,8 @@ import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.TrackRating
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
+import com.kelsos.mbrc.extensions.setIcon
+import com.kelsos.mbrc.extensions.setStatusColor
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -28,6 +28,9 @@ class PlayerFragment : Fragment(), PlayerView {
 
   private var _binding: FragmentPlayerBinding? = null
   private val binding get() = _binding!!
+
+  private var love: MenuItem? = null
+  private var scrobble: MenuItem? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val scope = Toothpick.openScopes(requireActivity().application, requireActivity(), this)
@@ -52,22 +55,19 @@ class PlayerFragment : Fragment(), PlayerView {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    binding.playerScreenFavoriteButton.setOnClickListener { presenter.lfmLove() }
     binding.playerScreenShuffle.setOnClickListener { presenter.shuffle() }
     binding.playerScreenRepeat.setOnClickListener { presenter.repeat() }
-    binding.playerScreenMute.setOnClickListener { presenter.mute() }
     binding.playerScreenPlay.apply {
       setOnClickListener { presenter.play() }
       setOnLongClickListener { presenter.stop() }
     }
     binding.playerScreenPlayNext.setOnClickListener { presenter.next() }
     binding.playerScreenPlayPrevious.setOnClickListener { presenter.previous() }
-    binding.playerScreenVolume.setOnSeekBarChangeListener { volume ->
-      presenter.changeVolume(volume)
-    }
-    binding.playerScreenProgress.setOnSeekBarChangeListener {
-      progress ->
+    binding.playerScreenProgress.setOnSeekBarChangeListener { progress ->
       presenter.seek(progress)
+    }
+    binding.playerScreenVolume.setOnClickListener {
+      findNavController().navigate(R.id.volume_dialog)
     }
   }
 
@@ -112,15 +112,25 @@ class PlayerFragment : Fragment(), PlayerView {
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
     inflater.inflate(R.menu.menu, menu)
-    // todo fix rating.
+    val rating = menu.findItem(R.id.menu_rating_dialog)
+    love = menu.findItem(R.id.menu_lastfm_love)
+    scrobble = menu.findItem(R.id.menu_lastfm_scrobble)
+    scrobble?.setOnMenuItemClickListener {
+      presenter.toggleScrobbling()
+      return@setOnMenuItemClickListener true
+    }
+    rating.setOnMenuItemClickListener {
+      findNavController().navigate(R.id.rating_dialog)
+      return@setOnMenuItemClickListener true
+    }
   }
 
   override fun updateRating(rating: TrackRating) {
-    binding.playerScreenFavoriteButton.setIcon(
-      enabled = rating.isFavorite(),
-      onRes = R.drawable.ic_favorite_black_24dp,
-      offRes = R.drawable.ic_favorite_border_black_24dp
-    )
+    if (rating.isFavorite()) {
+      love?.setIcon(R.drawable.ic_favorite_black_24dp)
+    } else {
+      love?.setIcon(R.drawable.ic_favorite_border_black_24dp)
+    }
   }
 
   override fun updateStatus(playerStatus: PlayerStatusModel) {
@@ -139,48 +149,24 @@ class PlayerFragment : Fragment(), PlayerView {
       onRes = R.drawable.ic_headset_black_24dp,
       offRes = R.drawable.ic_shuffle_black_24dp
     )
-    binding.playerScreenMute.setIcon(
-      enabled = playerStatus.mute,
-      onRes = R.drawable.ic_volume_up_black_24dp,
-      offRes = R.drawable.ic_volume_off_black_24dp
-    )
-    binding.playerScreenVolume.progress = if (playerStatus.mute) 0 else playerStatus.volume
     binding.playerScreenRepeat.setStatusColor(!playerStatus.isRepeatOff())
-    binding.playerScreenMute.setStatusColor(playerStatus.mute)
     binding.playerScreenShuffle.setStatusColor(!playerStatus.isShuffleOff())
   }
 
   override fun updateTrackInfo(playingTrack: PlayingTrack) {
     binding.playerScreenAlbumCover.loadImage(playingTrack.coverUrl)
-    binding.playerScreenTrackArtist.text = playingTrack.artist
-    binding.playerScreenTrackAlbum.text = playingTrack.albumInfo()
+    binding.playerScreenTrackArtist.text = playingTrack.artistInfo()
     binding.playerScreenTrackTitle.text = playingTrack.title
   }
 
   override fun updateProgress(position: PlayingPosition) {
-    binding.playerScreenCurrentProgress.text = position.currentMinutes()
-    binding.playerScreenTotalProgress.text = position.totalMinutes()
+    binding.playerScreenTotalProgress.text = position.progress()
     binding.playerScreenProgress.progress = position.current.toInt()
     binding.playerScreenProgress.max = position.total.toInt()
   }
 
-  // todo move scrobble to some menu/dialog
-
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()
-  }
-
-  private fun ImageButton.setStatusColor(enabled: Boolean) {
-    val colorResId = if (enabled) R.color.accent else R.color.button_dark
-    setColorFilter(context.getColor(colorResId))
-  }
-  private fun ImageButton.setIcon(
-    enabled: Boolean,
-    @DrawableRes onRes: Int,
-    @DrawableRes offRes: Int
-  ) {
-    val iconResId = if (enabled) onRes else offRes
-    setImageResource(iconResId)
   }
 }

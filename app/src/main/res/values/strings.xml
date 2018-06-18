@@ -183,5 +183,6 @@
   <string name="notification__session_channel_name">MusicBee Remote</string>
   <string name="notification__session_channel_description">MusicBee Remote controls notification</string>
   <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
-  <string name="player__progress_start">00:00</string>
+  <string name="player__progress_start">00:00 / 00:00</string>
+  <string name="player_screen__volume_content">Opens the volume dialog</string>
 </resources>
