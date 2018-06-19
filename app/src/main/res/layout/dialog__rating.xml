@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <data>
+
+    <variable
+        name="rating"
+        type="com.kelsos.mbrc.content.activestatus.TrackRating" />
+
+    <variable
+        name="presenter"
+        type="com.kelsos.mbrc.ui.navigation.player.RatingDialogPresenter" />
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/relativeLayout"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/rating_dialog_height"
+      android:layout_gravity="center"
+      android:padding="12dp">
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/rating_bar_height"
+        android:rating="@{rating.rating}"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:onRatingChangeByUser="@{(rating) -> presenter.changeRating(rating)}" />
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

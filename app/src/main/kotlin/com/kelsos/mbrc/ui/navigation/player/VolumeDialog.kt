@@ -40,6 +40,11 @@ class VolumeDialog : DialogFragment(), VolumeView {
     databinding.status = playerStatus
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    Toothpick.closeScope(this)
+  }
+
   fun show() {
     show(fm, TAG)
   }

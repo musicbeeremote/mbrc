@@ -107,7 +107,7 @@ constructor(
     userActionUseCase.perform(action)
   }
 
-  override fun lfmLove(): Boolean {
+  override fun favorite(): Boolean {
     userActionUseCase.perform(UserAction.toggle(Protocol.NowPlayingLfmRating))
     return true
   }

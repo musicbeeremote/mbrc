@@ -35,5 +35,5 @@ interface PlayerPresenter : Presenter<PlayerView> {
   fun shuffle()
   fun repeat()
   fun showVolumeDialog()
-  fun lfmLove(): Boolean
+  fun favorite(): Boolean
 }
