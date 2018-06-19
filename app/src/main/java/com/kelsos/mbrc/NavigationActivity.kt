@@ -16,6 +16,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupWithNavController
@@ -64,6 +65,37 @@ class NavigationActivity : AppCompatActivity() {
     serviceChecker.startServiceIfNotRunning()
     clientConnectionUseCase.connect()
   }
+
+  private val onNavigatedListener: NavController.OnNavigatedListener =
+    NavController.OnNavigatedListener { controller, destination ->
+      supportActionBar?.title = destination.label
+      val destinationId = destination.id
+
+      Timber.v("dest: $destinationId ${destination.label}")
+
+      val displayHome = when (destinationId) {
+        R.id.settings_fragment,
+        R.id.help_fragment,
+        R.id.connection_manager_fragment,
+        R.id.genre_artists_fragment,
+        R.id.artist_albums_fragment,
+        R.id.album_tracks_fragment -> false
+        else -> true
+      }
+
+      drawerToggle.run {
+        syncState()
+        isDrawerIndicatorEnabled = displayHome
+      }
+
+      val lockMode = if (!displayHome) {
+        DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+      } else {
+        DrawerLayout.LOCK_MODE_UNLOCKED
+      }
+      drawerLayout.setDrawerLockMode(lockMode)
+    }
+
 
   private fun onConnection(connectionStatus: ConnectionStatus) {
     Timber.v("Handling new connection status ${Connection.string(connectionStatus.status)}")
@@ -122,6 +154,7 @@ class NavigationActivity : AppCompatActivity() {
 
     val navController = findNavController(R.id.main_navigation_fragment)
     setupWithNavController(findViewById<NavigationView>(R.id.nav_view), navController)
+    navController.addOnNavigatedListener(onNavigatedListener)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -172,8 +205,9 @@ class NavigationActivity : AppCompatActivity() {
   }
 
   override fun onDestroy() {
-    super.onDestroy()
     connectionStatusLiveDataProvider.removeObservers(this)
+    findNavController(R.id.main_navigation_fragment).removeOnNavigatedListener(onNavigatedListener)
+    super.onDestroy()
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -193,9 +227,14 @@ class NavigationActivity : AppCompatActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     // The action bar home/up action should open or close the drawer.
     // [ActionBarDrawerToggle] will take care of this.
+    if (!drawerToggle.isDrawerIndicatorEnabled) {
+      return findNavController(R.id.main_navigation_fragment).navigateUp()
+    }
+
     if (drawerToggle.onOptionsItemSelected(item)) {
       return true
     }
+
     return super.onOptionsItemSelected(item)
   }
 

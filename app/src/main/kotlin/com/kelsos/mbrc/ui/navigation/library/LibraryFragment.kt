@@ -101,7 +101,7 @@ class LibraryFragment : Fragment(),
   override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
     super.onCreateOptionsMenu(menu, inflater)
     inflater?.inflate(R.menu.library_search, menu)
-    searchMenuItem = menu?.findItem(R.id.library_search_item)?.apply {
+    searchMenuItem = menu?.findItem(R.id.library_screen__action_search)?.apply {
       searchView = actionView as SearchView
     }
 
@@ -117,7 +117,7 @@ class LibraryFragment : Fragment(),
   }
 
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    if (item?.itemId == R.id.library_refresh_item) {
+    if (item?.itemId == R.id.library_screen__action_refresh) {
       presenter.refresh()
       return true
     } else if (item?.itemId == R.id.library_album_artist) {
