@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.player
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -92,12 +93,20 @@ class PlayerFragment : Fragment(), PlayerView {
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
-      R.id.menu_lastfm_scrobble -> {
+      R.id.player_screen__action_scrobbling -> {
         presenter.toggleScrobbling()
         true
       }
-      R.id.menu_rating_dialog -> {
+      R.id.player_screen__action_rating -> {
         findNavController().navigate(R.id.rating_dialog)
+        true
+      }
+      R.id.player_screen__action_favorite -> {
+        presenter.favorite()
+        true
+      }
+      R.id.player_screen__action_share -> {
+        share()
         true
       }
       else -> false
@@ -111,17 +120,23 @@ class PlayerFragment : Fragment(), PlayerView {
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
-    inflater.inflate(R.menu.menu, menu)
-    val rating = menu.findItem(R.id.menu_rating_dialog)
-    love = menu.findItem(R.id.menu_lastfm_love)
-    scrobble = menu.findItem(R.id.menu_lastfm_scrobble)
-    scrobble?.setOnMenuItemClickListener {
-      presenter.toggleScrobbling()
-      return@setOnMenuItemClickListener true
-    }
-    rating.setOnMenuItemClickListener {
-      findNavController().navigate(R.id.rating_dialog)
-      return@setOnMenuItemClickListener true
+    inflater.inflate(R.menu.player_screen__actions, menu)
+    love = menu.findItem(R.id.player_screen__action_favorite)
+    scrobble = menu.findItem(R.id.player_screen__action_scrobbling)
+  }
+
+  private fun share() {
+    val shareIntent = Intent.createChooser(sendIntent(), null)
+    requireContext().startActivity(shareIntent)
+  }
+
+  private fun sendIntent(): Intent {
+    return Intent(Intent.ACTION_SEND).apply {
+      // TODO: hook up the playing track
+      val track = PlayingTrack()
+      val payload = "Now Playing: ${track.artist} - ${track.title}"
+      type = "text/plain"
+      putExtra(Intent.EXTRA_TEXT, payload)
     }
   }
 
@@ -151,6 +166,7 @@ class PlayerFragment : Fragment(), PlayerView {
     )
     binding.playerScreenRepeat.setStatusColor(!playerStatus.isRepeatOff())
     binding.playerScreenShuffle.setStatusColor(!playerStatus.isShuffleOff())
+    scrobble?.isChecked = playerStatus.scrobbling
   }
 
   override fun updateTrackInfo(playingTrack: PlayingTrack) {

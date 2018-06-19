@@ -205,10 +205,10 @@ constructor(
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
-    val rating = (message.data as? Double)?.toFloat() ?: 0.0f
+    val rating = message.data.toString().toFloatOrNull()
 
     ratingLiveDataProvider.update {
-      copy(rating = rating)
+      copy(rating = rating ?: 0.0f)
     }
   }
 }

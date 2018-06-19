@@ -32,5 +32,5 @@ interface PlayerPresenter : Presenter<PlayerView> {
   fun stop(): Boolean
   fun shuffle()
   fun repeat()
-  fun lfmLove(): Boolean
+  fun favorite(): Boolean
 }

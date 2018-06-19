@@ -155,7 +155,7 @@
       android:label="OutputSelectionDialog" />
   <dialog
       android:id="@+id/rating_dialog"
-      android:name="com.kelsos.mbrc.ui.dialogs.RatingDialogFragment"
+      android:name="com.kelsos.mbrc.ui.navigation.player.RatingDialogFragment"
       android:label="RatingDialogFragment" />
   <dialog
       android:id="@+id/volume_dialog"
