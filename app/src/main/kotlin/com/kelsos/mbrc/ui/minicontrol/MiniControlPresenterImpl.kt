@@ -2,23 +2,25 @@ package com.kelsos.mbrc.ui.minicontrol
 
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.mvp.BasePresenter
+import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerNext
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPlayPause
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPrevious
 import javax.inject.Inject
 
-@MiniControlFragment.Presenter
 class MiniControlPresenterImpl
 @Inject
 constructor(
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
-  playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
+  playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  private val userActionUseCase: UserActionUseCase
 ) : BasePresenter<MiniControlView>(), MiniControlPresenter {
 
   init {
     playerStatusLiveDataProvider.observe(this) {
-      view().updateState(it.state)
+      view().updateStatus(it)
     }
 
     playingTrackLiveDataProvider.observe(this) {
@@ -27,19 +29,14 @@ constructor(
   }
 
   override fun next() {
-    post(PlayerNext)
+    userActionUseCase.perform(UserAction.create(PlayerNext))
   }
 
   override fun previous() {
-    post(PlayerPrevious)
+    userActionUseCase.perform(UserAction.create(PlayerPrevious))
   }
 
   override fun playPause() {
-    post(PlayerPlayPause)
+    userActionUseCase.perform(UserAction.create(PlayerPlayPause))
   }
-
-  fun post(action: String) {
-
-  }
-
 }

@@ -4,14 +4,13 @@
     android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/mini_control_height"
     tools:context="com.kelsos.mbrc.ui.navigation.radio.RadioFragment">
 
   <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/radio_stations__refresh_layout"
       android:layout_width="0dp"
       android:layout_height="0dp"
-      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintBottom_toTopOf="@id/mini_control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent">
@@ -30,8 +29,8 @@
       style="@style/Widget.AppCompat.ProgressBar"
       android:layout_width="60dp"
       android:layout_height="60dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp"
       android:visibility="visible"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
@@ -49,8 +48,8 @@
   <ImageView
       android:id="@+id/radio_stations__empty_icon"
       style="@style/empty_view_image"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -63,10 +62,10 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="16dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
       android:fontFamily="sans-serif-light"
       android:text="@string/swipe_to_refresh"
       android:textSize="14sp"
@@ -75,18 +74,17 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/radio_stations__empty_icon"
-      app:layout_constraintVertical_bias="0.0"
-       />
+      app:layout_constraintVertical_bias="0.0" />
 
   <TextView
       android:id="@+id/radio_stations__text_title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-      android:layout_marginBottom="16dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="80dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="16dp"
       android:fontFamily="sans-serif-medium"
       android:maxLines="1"
       android:text="@string/now_playing_list_empty"
@@ -96,8 +94,15 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="1"
-       />
+      app:layout_constraintVertical_bias="1" />
 
+  <fragment
+      android:id="@+id/mini_control"
+      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,6 +17,10 @@ constructor(
   private val appRxSchedulers: AppRxSchedulers
 ) : TrackPositionLiveDataProvider, BaseLiveDataProvider<PlayingPosition>() {
 
+  init {
+    update(PlayingPosition())
+  }
+
   private var disposable: Disposable? = null
 
   private fun running(): Boolean {

@@ -21,7 +21,7 @@ class TrackViewHolder(
 ) : BindableViewHolder<TrackEntity>(itemView) {
   private val artist: TextView by bindView(R.id.line_two)
   private val title: TextView by bindView(R.id.line_one)
-  private val empty: Group by bindView(R.id.listitem_loading)
+  private val empty: Group by bindView(R.id.placeholder_group)
   private val indicator: ImageView by bindView(R.id.overflow_menu)
   private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
 
