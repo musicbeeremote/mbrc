@@ -13,6 +13,10 @@ class TrackPositionLiveDataProviderImpl
 @Inject
 constructor() : TrackPositionLiveDataProvider, BaseLiveDataProvider<PlayingPosition>() {
 
+  init {
+    update(PlayingPosition())
+  }
+
   private var timer: Timer? = null
 
   private fun running(): Boolean {

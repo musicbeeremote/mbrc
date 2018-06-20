@@ -19,18 +19,18 @@
       android:layout_marginBottom="8dp"
       android:contentDescription="@string/menu_overflow_description"
       android:scaleType="centerInside"
+      android:src="@drawable/ic_more_vert_black_24dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      android:src="@drawable/ic_more_vert_black_24dp"
       app:tint="@android:color/white" />
 
   <TextView
       android:id="@+id/line_two"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginEnd="8dp"
-      android:layout_marginBottom="4dp"
+      android:layout_marginEnd="16dp"
+      android:layout_marginBottom="8dp"
       android:ellipsize="end"
       android:maxLines="1"
       android:textColor="@color/secondary_text"

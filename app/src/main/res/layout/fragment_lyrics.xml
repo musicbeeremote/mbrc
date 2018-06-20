@@ -51,10 +51,19 @@
       android:layout_height="wrap_content"
       android:paddingEnd="@dimen/small_margin"
       android:src="@drawable/ic_view_headline_black_120dp"
-      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintBottom_toTopOf="@+id/lyrics__mini_control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       tools:ignore="RtlSymmetry" />
+
+  <androidx.fragment.app.FragmentContainerView
+      android:id="@+id/lyrics__mini_control"
+      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

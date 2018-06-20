@@ -92,14 +92,11 @@
 
   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-  <include
+  <androidx.fragment.app.FragmentContainerView
       android:id="@+id/radio_stations__mini_control"
-      layout="@layout/mini_control_layout"
+      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      app:behavior_peekHeight="@dimen/mini_control_peek_height"
-      app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+      android:layout_height="@dimen/mini_control_height"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent" />

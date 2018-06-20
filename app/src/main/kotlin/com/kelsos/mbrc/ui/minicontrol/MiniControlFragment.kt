@@ -9,9 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.PlayerState.State
+import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.UiFragmentMiniControlBinding
+import com.kelsos.mbrc.di.inject
 import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
 import toothpick.Toothpick
@@ -36,13 +37,14 @@ class MiniControlFragment : Fragment(), MiniControlView {
     binding.mcNextTrack.setOnClickListener { presenter.next() }
     binding.mcPlayPause.setOnClickListener { presenter.playPause() }
     binding.mcPrevTrack.setOnClickListener { presenter.previous() }
+    presenter.attach(this)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(MiniControlModule())
+    scope.installModules(miniControlModule)
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
+    scope.inject(this)
   }
 
   override fun onCreateView(
@@ -92,19 +94,16 @@ class MiniControlFragment : Fragment(), MiniControlView {
     updateCover(track.coverUrl)
   }
 
-  override fun updateState(@State state: String) {
-    when (state) {
+  override fun updateStatus(status: PlayerStatusModel) {
+    when (status.state) {
       PlayerState.PLAYING -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_pause)
       else -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_play)
     }
   }
 
   override fun onDestroy() {
+    presenter.detach()
     Toothpick.closeScope(this)
     super.onDestroy()
   }
-
-  @javax.inject.Scope
-  @Retention(AnnotationRetention.RUNTIME)
-  annotation class Presenter
 }

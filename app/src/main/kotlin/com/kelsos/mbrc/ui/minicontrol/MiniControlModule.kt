@@ -1,11 +1,8 @@
 package com.kelsos.mbrc.ui.minicontrol
 
-import toothpick.config.Module
+import com.kelsos.mbrc.di.bindSingletonClass
+import com.kelsos.mbrc.di.module
 
-class MiniControlModule : Module() {
-  init {
-    bind(MiniControlPresenter::class.java)
-      .to(MiniControlPresenterImpl::class.java)
-      .singletonInScope()
-  }
+val miniControlModule = module {
+  bindSingletonClass<MiniControlPresenter> { MiniControlPresenterImpl::class }
 }
