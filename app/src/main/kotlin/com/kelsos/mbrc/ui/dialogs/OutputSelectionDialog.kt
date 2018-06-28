@@ -3,24 +3,18 @@ package com.kelsos.mbrc.ui.dialogs
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ProgressBar
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
 import kotterknife.bindView
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+
 
 class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
   OutputSelectionView,
@@ -35,16 +29,12 @@ class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
   private val loadingProgress: ProgressBar by bindView(R.id.output_selection__loading_outputs)
   private val errorMessage: TextView by bindView(R.id.output_selection__error_message)
 
-  @Inject
-  internal lateinit var presenter: OutputSelectionPresenter
+  private val presenter: OutputSelectionPresenter by inject()
 
   @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context = context ?: error("context was null")
+    val context = requireContext()
 
-    val scopes = Toothpick.openScopes(context.applicationContext, this)
-    scopes.installModules(OutputSelectionModule())
-    Toothpick.inject(this, scopes)
     val inflater = LayoutInflater.from(context)
     val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
 
@@ -59,11 +49,6 @@ class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
     presenter.load()
 
     return dialog
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
   }
 
   override fun onStart() {

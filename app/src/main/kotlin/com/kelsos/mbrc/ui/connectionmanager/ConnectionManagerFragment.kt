@@ -8,28 +8,26 @@ import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import kotterknife.bindView
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+
 
 class ConnectionManagerFragment : Fragment(),
   ConnectionManagerView,
   SettingsDialogFragment.SettingsSaveListener,
   ConnectionAdapter.ConnectionChangeListener {
 
-  @Inject
-  lateinit var presenter: ConnectionManagerPresenter
+  private val presenter: ConnectionManagerPresenter by inject()
 
-  private val recyclerView: androidx.recyclerview.widget.RecyclerView by bindView(R.id.connection_manager__connections)
+  private val recyclerView: RecyclerView by bindView(R.id.connection_manager__connections)
 
   private var progress: AlertDialog? = null
   private lateinit var adapter: ConnectionAdapter
-  private lateinit var scope: Scope
 
   private val addButton: Button by bindView(R.id.connection_manager__add)
   private val scanButton: Button by bindView(R.id.connection_manager__scan)
@@ -70,16 +68,8 @@ class ConnectionManagerFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(ConnectionManagerModule.create())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
-
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
     super.onDestroy()
   }
 

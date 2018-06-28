@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.networking.client
 
 import com.squareup.moshi.Moshi
-import javax.inject.Inject
+
 
 class MessageSerializerImpl
-@Inject
+
 constructor(
   private val mapper: Moshi
 ) : MessageSerializer {

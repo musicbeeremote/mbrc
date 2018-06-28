@@ -7,8 +7,8 @@ import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -25,14 +25,14 @@ import org.mockito.Mockito.reset
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import toothpick.Scope
-import toothpick.Toothpick
-import toothpick.config.Module
-import toothpick.testing.ToothPickRule
-import toothpick.testing.ToothPickTestModule
+
+
+
+
+
 import java.util.concurrent.TimeUnit
 
-class LibrarySyncInteractorImplTest {
+class LibrarySyncUseCaseImplTest {
   @Rule
   fun toothPickRule() = ToothPickRule(this)
 
@@ -68,7 +68,7 @@ class LibrarySyncInteractorImplTest {
       init {
         bind(Scheduler::class.java).withName("io").toInstance(ioScheduler)
         bind(Scheduler::class.java).withName("main").toInstance(mainScheduler)
-        bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java)
+        bind(LibrarySyncUseCase::class.java).to(LibrarySyncUseCaseImpl::class.java)
           .singletonInScope()
       }
     })
@@ -82,8 +82,8 @@ class LibrarySyncInteractorImplTest {
 
   @Test
   fun emptyLibraryAutoSync() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
-    val sync = scope.getInstance(LibrarySyncInteractor::class.java)
+    val onCompleteListener = mock(LibrarySyncUseCase.OnCompleteListener::class.java)
+    val sync = scope.getInstance(LibrarySyncUseCase::class.java)
 
     mockCacheState(true)
     mockSuccessfulRepositoryResponse()
@@ -104,8 +104,8 @@ class LibrarySyncInteractorImplTest {
 
   @Test
   fun nonEmptyLibraryAutoSync() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
-    val sync = scope.getInstance(LibrarySyncInteractor::class.java)
+    val onCompleteListener = mock(LibrarySyncUseCase.OnCompleteListener::class.java)
+    val sync = scope.getInstance(LibrarySyncUseCase::class.java)
 
     mockCacheState(false)
     mockSuccessfulRepositoryResponse()
@@ -126,8 +126,8 @@ class LibrarySyncInteractorImplTest {
 
   @Test
   fun nonEmptyLibraryManualSyncTwiceConsecutiveCalled() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
-    val sync = scope.getInstance(LibrarySyncInteractor::class.java)
+    val onCompleteListener = mock(LibrarySyncUseCase.OnCompleteListener::class.java)
+    val sync = scope.getInstance(LibrarySyncUseCase::class.java)
 
     mockCacheState(false)
     mockSuccessfulRepositoryResponse()
@@ -149,8 +149,8 @@ class LibrarySyncInteractorImplTest {
 
   @Test
   fun nonEmptyLibraryManualSyncAndSecondAfterCompletion() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
-    val sync = scope.getInstance(LibrarySyncInteractor::class.java)
+    val onCompleteListener = mock(LibrarySyncUseCase.OnCompleteListener::class.java)
+    val sync = scope.getInstance(LibrarySyncUseCase::class.java)
 
     mockCacheState(false)
     mockSuccessfulRepositoryResponse()
@@ -186,8 +186,8 @@ class LibrarySyncInteractorImplTest {
 
   @Test
   fun nonEmptyLibraryManualSyncFailure() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
-    val sync = scope.getInstance(LibrarySyncInteractor::class.java)
+    val onCompleteListener = mock(LibrarySyncUseCase.OnCompleteListener::class.java)
+    val sync = scope.getInstance(LibrarySyncUseCase::class.java)
 
     mockCacheState(false)
     mockFailedRepositoryResponse()
@@ -209,7 +209,7 @@ class LibrarySyncInteractorImplTest {
 
   @Test
   fun syncWithoutCompletionListener() {
-    val sync = scope.getInstance(LibrarySyncInteractor::class.java)
+    val sync = scope.getInstance(LibrarySyncUseCase::class.java)
 
     mockCacheState(false)
     mockSuccessfulRepositoryResponse()

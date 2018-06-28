@@ -2,10 +2,10 @@ package com.kelsos.mbrc.data
 
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.squareup.moshi.Moshi
-import javax.inject.Inject
+
 
 class SerializationAdapterImpl
-@Inject
+
 constructor(
   private val moshi: Moshi
 ) : SerializationAdapter {

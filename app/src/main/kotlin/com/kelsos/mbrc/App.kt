@@ -8,17 +8,14 @@ import com.chibatching.kotpref.Kotpref
 import com.github.anrwatchdog.ANRError
 import com.github.anrwatchdog.ANRWatchDog
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.kelsos.mbrc.di.modules.AppModule
+import com.kelsos.mbrc.di.modules.appModule
+import com.kelsos.mbrc.di.modules.uiModule
 import com.kelsos.mbrc.utilities.CustomLoggingTree
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
+import org.koin.android.ext.android.startKoin
+import org.koin.dsl.module.Module
 import timber.log.Timber
-import toothpick.Toothpick
-import toothpick.configuration.Configuration
-import toothpick.registries.FactoryRegistryLocator
-import toothpick.registries.MemberInjectorRegistryLocator
-import toothpick.smoothie.module.SmoothieApplicationModule
-
 
 
 @SuppressLint("Registered")
@@ -32,19 +29,24 @@ open class App : MultiDexApplication() {
     initialize()
   }
 
+  protected open fun modules(): List<Module> {
+    return listOf(appModule, uiModule)
+  }
+
   protected open fun initialize() {
     if (!testMode()) {
       AndroidThreeTen.init(this)
     }
 
-    initializeToothpick()
+    startKoin(this, modules())
+
     initializeTimber()
     initializeLeakCanary()
     ANRWatchDog()
       .setANRListener { onAnr(it) }
       .setIgnoreDebugger(true)
       .start()
-    
+
     Kotpref.init(this)
   }
 
@@ -71,22 +73,6 @@ open class App : MultiDexApplication() {
     }
   }
 
-  private fun initializeToothpick() {
-    val configuration: Configuration = if (BuildConfig.DEBUG) {
-      Configuration.forDevelopment().disableReflection()
-    } else {
-      Configuration.forProduction().disableReflection()
-    }
-
-    Toothpick.setConfiguration(configuration)
-
-    MemberInjectorRegistryLocator.setRootRegistry(MemberInjectorRegistry())
-    FactoryRegistryLocator.setRootRegistry(FactoryRegistry())
-    val applicationScope = Toothpick.openScope(this)
-    if (!testMode()) {
-      applicationScope.installModules(SmoothieApplicationModule(this), AppModule())
-    }
-  }
 
   internal open fun installLeakCanary(): RefWatcher {
     return RefWatcher.DISABLED

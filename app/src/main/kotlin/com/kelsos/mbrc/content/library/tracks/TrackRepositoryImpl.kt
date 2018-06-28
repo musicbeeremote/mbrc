@@ -11,10 +11,10 @@ import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
-import javax.inject.Inject
+
 
 class TrackRepositoryImpl
-@Inject
+
 constructor(
   private val dao: TrackDao,
   private val remoteDataSource: ApiBase,

@@ -5,14 +5,14 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+
 
 interface TrackPositionLiveDataProvider : LiveDataProvider<PlayingPosition> {
   fun setPlaying(playing: Boolean)
 }
 
 class TrackPositionLiveDataProviderImpl
-@Inject
+
 constructor(
   private val appRxSchedulers: AppRxSchedulers
 ) : TrackPositionLiveDataProvider, BaseLiveDataProvider<PlayingPosition>() {

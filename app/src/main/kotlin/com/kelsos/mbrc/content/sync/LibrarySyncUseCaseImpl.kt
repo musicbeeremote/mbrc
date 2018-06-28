@@ -15,10 +15,10 @@ import io.reactivex.functions.Function4
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import timber.log.Timber
-import javax.inject.Inject
 
-class LibrarySyncInteractorImpl
-@Inject
+
+class LibrarySyncUseCaseImpl
+
 constructor(
   private val genreRepository: GenreRepository,
   private val artistRepository: ArtistRepository,
@@ -27,11 +27,11 @@ constructor(
   private val playlistRepository: PlaylistRepository,
   private val metrics: SyncMetrics,
   private val appRxSchedulers: AppRxSchedulers
-) : LibrarySyncInteractor {
+) : LibrarySyncUseCase {
 
   private var disposable: Disposable? = null
   private var running: Boolean = false
-  private var onCompleteListener: LibrarySyncInteractor.OnCompleteListener? = null
+  private var onCompleteListener: LibrarySyncUseCase.OnCompleteListener? = null
 
   override fun sync(auto: Boolean) {
     disposable?.let {
@@ -100,7 +100,7 @@ constructor(
   }
 
   override fun setOnCompleteListener(
-    onCompleteListener: LibrarySyncInteractor.OnCompleteListener?
+    onCompleteListener: LibrarySyncUseCase.OnCompleteListener?
   ) {
     this.onCompleteListener = onCompleteListener
   }

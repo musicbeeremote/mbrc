@@ -8,10 +8,10 @@ import kotlinx.coroutines.experimental.withContext
 import okio.Okio
 import java.io.File
 import java.nio.charset.Charset
-import javax.inject.Inject
+
 
 class PlayingTrackCacheImpl
-@Inject
+
 constructor(
   private val mapper: Moshi,
   private val appContext: Application,

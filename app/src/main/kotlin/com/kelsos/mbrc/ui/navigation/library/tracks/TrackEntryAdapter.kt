@@ -10,11 +10,9 @@ import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
-import javax.inject.Inject
 
-class TrackEntryAdapter
-@Inject
-constructor() : FastScrollableAdapter<TrackEntity, TrackViewHolder>(DIFF_CALLBACK),
+
+class TrackEntryAdapter : FastScrollableAdapter<TrackEntity, TrackViewHolder>(DIFF_CALLBACK),
   BubbleTextGetter, OnFastScrollListener {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->

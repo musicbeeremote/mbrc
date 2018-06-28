@@ -16,9 +16,8 @@ import com.google.android.material.tabs.TabLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.snackbar
 import kotterknife.bindView
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+
 
 class LibraryFragment : Fragment(),
   LibraryView,
@@ -33,9 +32,7 @@ class LibraryFragment : Fragment(),
   private var albumArtistOnly: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
 
-  private lateinit var scope: Scope
-  @Inject
-  lateinit var presenter: LibraryPresenter
+  private val presenter: LibraryPresenter by inject()
 
   private var refreshDialog: SyncProgressDialog? = null
 
@@ -66,13 +63,6 @@ class LibraryFragment : Fragment(),
 
   override fun onQueryTextChange(newText: String): Boolean {
     return false
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    Toothpick.openScope(PRESENTER_SCOPE).installModules(LibraryModule())
-    scope = Toothpick.openScopes(requireActivity().application, PRESENTER_SCOPE, this)
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
   }
 
   override fun onCreateView(
@@ -134,9 +124,6 @@ class LibraryFragment : Fragment(),
   override fun onDestroy() {
     presenter.detach()
     pagerAdapter = null
-    Toothpick.closeScope(this)
-    Toothpick.closeScope(PRESENTER_SCOPE)
-
     super.onDestroy()
   }
 
@@ -180,12 +167,7 @@ class LibraryFragment : Fragment(),
     refreshDialog?.dismiss()
   }
 
-  @javax.inject.Scope
-  @Retention(AnnotationRetention.RUNTIME)
-  annotation class Presenter
-
   companion object {
     private const val PAGER_POSITION = "com.kelsos.mbrc.ui.activities.nav.PAGER_POSITION"
-    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   }
 }

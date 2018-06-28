@@ -18,15 +18,10 @@ import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.TrackRating
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
-import toothpick.Toothpick
-import javax.inject.Inject
-import javax.inject.Singleton
+import org.koin.android.ext.android.inject
 
-@Singleton
 class PlayerFragment : Fragment(), PlayerView {
-
-  @Inject
-  lateinit var presenter: PlayerPresenter
+  private val presenter: PlayerPresenter by inject()
 
   private lateinit var dataBinding: FragmentPlayerBinding
 
@@ -34,10 +29,7 @@ class PlayerFragment : Fragment(), PlayerView {
   private var shareActionProvider: ShareActionProvider? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, requireActivity(), this)
-    scope.installModules(mainModule)
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
     setHasOptionsMenu(true)
   }
 
@@ -143,8 +135,4 @@ class PlayerFragment : Fragment(), PlayerView {
 
   //todo move scrobble to some player_screen__actions/dialog
 
-  override fun onDestroy() {
-    Toothpick.closeScope(this)
-    super.onDestroy()
-  }
 }

@@ -6,10 +6,10 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import java.net.SocketException
 import java.net.SocketTimeoutException
-import javax.inject.Inject
+
 
 class OutputSelectionPresenterImpl
-@Inject
+
 constructor(
   private val outputApi: OutputApi,
   private val appRxSchedulers: AppRxSchedulers

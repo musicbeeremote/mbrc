@@ -9,10 +9,10 @@ import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
-import javax.inject.Inject
+
 
 class ConnectionRepositoryImpl
-@Inject
+
 constructor(
   private val connectionDao: ConnectionDao,
   private val preferences: SharedPreferences,

@@ -42,9 +42,9 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import toothpick.Toothpick
-import toothpick.config.Module
-import toothpick.testing.ToothPickTestModule
+
+
+
 import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)

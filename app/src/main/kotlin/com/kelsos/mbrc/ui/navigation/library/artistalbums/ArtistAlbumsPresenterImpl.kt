@@ -9,10 +9,10 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class ArtistAlbumsPresenterImpl
-@Inject
+
 constructor(
   private val repository: AlbumRepository
 ) : BasePresenter<ArtistAlbumsView>(),

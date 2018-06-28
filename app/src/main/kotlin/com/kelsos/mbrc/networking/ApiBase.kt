@@ -13,11 +13,11 @@ import io.reactivex.Single
 import timber.log.Timber
 import java.net.NoRouteToHostException
 import java.net.SocketTimeoutException
-import javax.inject.Inject
+
 import kotlin.reflect.KClass
 
 class ApiBase
-@Inject constructor(
+ constructor(
   private val deserializationAdapter: DeserializationAdapter,
   private val apiRequestManager: RequestManager
 ) {

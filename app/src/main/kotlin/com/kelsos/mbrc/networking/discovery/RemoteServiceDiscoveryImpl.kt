@@ -17,10 +17,10 @@ import java.net.InetAddress
 import java.net.MulticastSocket
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+
 
 class RemoteServiceDiscoveryImpl
-@Inject
+
 internal constructor(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,

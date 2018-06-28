@@ -4,12 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.di.scope
-import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.withContext
 
 class SplashActivity : AppCompatActivity() {
 
@@ -17,9 +13,7 @@ class SplashActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_splash)
 
-    async(CommonPool) {
-      scope(application)
-
+    launch(CommonPool) {
       delay(800)
 
       withContext(UI) {

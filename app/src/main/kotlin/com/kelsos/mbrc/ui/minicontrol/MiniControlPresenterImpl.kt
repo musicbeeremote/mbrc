@@ -8,10 +8,10 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerNext
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPlayPause
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPrevious
-import javax.inject.Inject
+
 
 class MiniControlPresenterImpl
-@Inject
+
 constructor(
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,

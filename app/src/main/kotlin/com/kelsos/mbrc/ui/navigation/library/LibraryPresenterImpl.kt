@@ -1,19 +1,17 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase.OnCompleteListener
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import javax.inject.Inject
 
-@LibraryFragment.Presenter
 class LibraryPresenterImpl
-@Inject constructor(
+constructor(
   private val appRxSchedulers: AppRxSchedulers,
   private val settingsManager: SettingsManager,
-  private val librarySyncInteractor: LibrarySyncInteractor,
+  private val librarySyncUseCase: LibrarySyncUseCase,
   syncProgressProvider: SyncProgressProvider
 ) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>() {
 
@@ -30,20 +28,20 @@ class LibraryPresenterImpl
 
   override fun refresh() {
     view().showRefreshing()
-    librarySyncInteractor.sync()
+    librarySyncUseCase.sync()
   }
 
   override fun attach(view: LibraryView) {
     super.attach(view)
-    librarySyncInteractor.setOnCompleteListener(this)
-    if (!librarySyncInteractor.isRunning()) {
+    librarySyncUseCase.setOnCompleteListener(this)
+    if (!librarySyncUseCase.isRunning()) {
       view.hideRefreshing()
     }
   }
 
   override fun detach() {
     super.detach()
-    librarySyncInteractor.setOnCompleteListener(null)
+    librarySyncUseCase.setOnCompleteListener(null)
   }
 
   override fun onTermination() {

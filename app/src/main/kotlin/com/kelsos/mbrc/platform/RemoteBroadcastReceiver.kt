@@ -15,10 +15,10 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.SettingsManager
-import javax.inject.Inject
+
 
 class RemoteBroadcastReceiver
-@Inject
+
 constructor(
   private val settingsManager: SettingsManager,
   private val volumeInteractor: VolumeInteractor,

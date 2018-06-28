@@ -11,10 +11,10 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class BrowseGenrePresenterImpl
-@Inject
+
 constructor(
   private val repository: GenreRepository,
   private val appRxSchedulers: AppRxSchedulers

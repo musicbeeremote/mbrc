@@ -23,8 +23,8 @@ import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import toothpick.config.Module
-import toothpick.testing.ToothPickRule
+
+
 import java.util.ArrayList
 
 @RunWith(RobolectricTestRunner::class)

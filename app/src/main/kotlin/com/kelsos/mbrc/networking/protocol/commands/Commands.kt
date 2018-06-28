@@ -7,10 +7,10 @@ import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class ProtocolPingHandle
-@Inject constructor(
+ constructor(
   private val messageQueue: MessageQueue,
   private var activityChecker: SocketActivityChecker
 ) : ICommand {
@@ -22,7 +22,7 @@ class ProtocolPingHandle
 }
 
 class ProtocolPongHandle
-@Inject constructor() : ICommand {
+ constructor() : ICommand {
   override fun execute(message: ProtocolMessage) {
     Timber.d(message.data.toString())
   }

@@ -6,30 +6,19 @@ import android.content.Intent
 import android.os.IBinder
 import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
+import org.koin.android.ext.android.inject
 import timber.log.Timber
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
 
 class RemoteService : Service(), ForegroundHooks {
 
-  @Inject
-  lateinit var receiver: RemoteBroadcastReceiver
-
-  @Inject
-  lateinit var core: IRemoteServiceCore
-
-  @Inject
-  lateinit var notifications: SessionNotificationManager
-
-  private var scope: Scope? = null
+  private val receiver: RemoteBroadcastReceiver by inject()
+  private val core: IRemoteServiceCore by inject()
+  private val notifications: SessionNotificationManager by inject()
 
   override fun onBind(intent: Intent?): IBinder? = null
 
   override fun onCreate() {
     super.onCreate()
-    scope = Toothpick.openScope(application)
-    Toothpick.inject(this, scope)
     this.registerReceiver(receiver, receiver.filter())
     notifications.setForegroundHooks(this)
   }
@@ -45,7 +34,6 @@ class RemoteService : Service(), ForegroundHooks {
     super.onDestroy()
     core.stop()
     this.unregisterReceiver(receiver)
-    Toothpick.closeScope(this)
   }
 
   override fun start(id: Int, notification: Notification) {

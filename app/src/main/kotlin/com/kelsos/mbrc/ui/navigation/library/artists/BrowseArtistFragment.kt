@@ -21,9 +21,8 @@ import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsFragmentArgs
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+
 
 class BrowseArtistFragment : androidx.fragment.app.Fragment(),
   BrowseArtistView,
@@ -38,27 +37,9 @@ class BrowseArtistFragment : androidx.fragment.app.Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject
-  lateinit var adapter: ArtistEntryAdapter
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-  @Inject
-  lateinit var presenter: BrowseArtistPresenter
-
-  private var scope: Scope? = null
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    val activity = activity ?: error("null activity")
-    scope = Toothpick.openScopes(activity.application, this)
-    scope?.installModules(BrowseArtistModule())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
-
-  override fun onDestroy() {
-    Toothpick.closeScope(this)
-    super.onDestroy()
-  }
+  private val adapter: ArtistEntryAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
+  private val presenter: BrowseArtistPresenter by inject()
 
   override fun onStart() {
     super.onStart()

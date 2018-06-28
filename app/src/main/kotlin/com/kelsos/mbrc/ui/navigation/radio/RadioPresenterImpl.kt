@@ -13,17 +13,14 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
-import javax.inject.Inject
 
-@RadioFragment.Presenter
+
 class RadioPresenterImpl
-@Inject
 constructor(
   private val radioRepository: RadioRepository,
   private val queueApi: QueueApi,
   private val appRxSchedulers: AppRxSchedulers
-) : BasePresenter<RadioView>(),
-  RadioPresenter {
+) : BasePresenter<RadioView>(), RadioPresenter {
 
   private lateinit var radios: LiveData<PagedList<RadioStationEntity>>
 

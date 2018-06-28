@@ -17,8 +17,8 @@ import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import kotterknife.bindView
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+
 
 class AlbumTracksFragment : Fragment(),
   AlbumTracksView,
@@ -27,15 +27,10 @@ class AlbumTracksFragment : Fragment(),
   private val listTracks: RecyclerView by bindView(R.id.album_tracks__track_list)
   private val emptyView: Group by bindView(R.id.album_tracks__empty_view)
   private val playAlbum: FloatingActionButton by bindView(R.id.play_album)
-
-  @Inject
-  lateinit var adapter: TrackEntryAdapter
-
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-
-  @Inject
-  lateinit var presenter: AlbumTracksPresenter
+  
+  private val adapter: TrackEntryAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
+  private val presenter: AlbumTracksPresenter by inject()
 
   private lateinit var album: AlbumInfo
 
@@ -58,10 +53,7 @@ class AlbumTracksFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(this)
-    scope.installModules(AlbumTracksModule())
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
 
     album = AlbumTracksFragmentArgs.fromBundle(checkNotNull(arguments)).run {
       AlbumInfo(album, artist)
@@ -89,7 +81,6 @@ class AlbumTracksFragment : Fragment(),
 
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
     super.onDestroy()
   }
 }

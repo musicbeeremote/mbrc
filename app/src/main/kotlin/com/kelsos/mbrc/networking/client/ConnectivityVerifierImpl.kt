@@ -7,10 +7,10 @@ import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Single
 import java.net.SocketTimeoutException
-import javax.inject.Inject
+
 
 class ConnectivityVerifierImpl
-@Inject constructor(
+ constructor(
   private val deserializationAdapter: DeserializationAdapter,
   private val requestManager: RequestManager,
   val repository: ConnectionRepository

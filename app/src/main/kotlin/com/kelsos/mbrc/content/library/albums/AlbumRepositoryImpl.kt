@@ -10,10 +10,10 @@ import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
-import javax.inject.Inject
+
 
 class AlbumRepositoryImpl
-@Inject
+
 constructor(
   private val dao: AlbumDao,
   private val remoteDataSource: ApiBase,

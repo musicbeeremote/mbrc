@@ -16,10 +16,10 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.nonNullObserver
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
-import javax.inject.Inject
+
 
 class NowPlayingPresenterImpl
-@Inject
+
 constructor(
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   private val repository: NowPlayingRepository,

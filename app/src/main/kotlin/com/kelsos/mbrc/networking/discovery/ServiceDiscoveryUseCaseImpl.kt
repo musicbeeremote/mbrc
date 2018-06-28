@@ -2,10 +2,10 @@ package com.kelsos.mbrc.networking.discovery
 
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop.COMPLETE
-import javax.inject.Inject
+
 
 class ServiceDiscoveryUseCaseImpl
-  @Inject constructor(
+   constructor(
     private val serviceDiscovery: RemoteServiceDiscovery,
     private val connectionRepository: ConnectionRepository
   ): ServiceDiscoveryUseCase {

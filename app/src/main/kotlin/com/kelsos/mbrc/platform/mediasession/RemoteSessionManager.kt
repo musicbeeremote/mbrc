@@ -2,7 +2,6 @@
 
 package com.kelsos.mbrc.platform.mediasession
 
-import android.annotation.TargetApi
 import android.app.Application
 import android.app.PendingIntent
 import android.content.ComponentName
@@ -11,7 +10,6 @@ import android.media.AudioManager
 import android.media.session.MediaSession.FLAG_HANDLES_MEDIA_BUTTONS
 import android.media.session.MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS
 import android.media.session.PlaybackState
-import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -24,13 +22,8 @@ import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class RemoteSessionManager
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-@Inject
 constructor(
   context: Application,
   volumeProvider: RemoteVolumeProvider,
@@ -39,7 +32,6 @@ constructor(
 ) : AudioManager.OnAudioFocusChangeListener {
   private val mediaSession: MediaSessionCompat
 
-  @Inject
   lateinit var handler: MediaIntentHandler
 
   init {

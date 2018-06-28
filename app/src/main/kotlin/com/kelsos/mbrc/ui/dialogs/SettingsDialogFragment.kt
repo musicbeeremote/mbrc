@@ -3,16 +3,15 @@ package com.kelsos.mbrc.ui.dialogs
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
-import androidx.appcompat.app.AlertDialog
 import android.text.TextUtils
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
 
-class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
+class SettingsDialogFragment : DialogFragment() {
 
   private val hostEdit: EditText by bindView(R.id.settings_dialog__hostname_edit)
   private val nameEdit: EditText by bindView(R.id.settings_dialog__name_edit)

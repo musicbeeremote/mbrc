@@ -18,10 +18,9 @@ import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.extensions.snackbar
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
 import kotterknife.bindView
-import toothpick.Scope
-import toothpick.Toothpick
+import org.koin.android.ext.android.inject
 import java.net.ConnectException
-import javax.inject.Inject
+
 
 class PlaylistFragment : Fragment(),
   PlaylistView,
@@ -35,11 +34,7 @@ class PlaylistFragment : Fragment(),
   private val emptyViewProgress: ProgressBar by bindView(R.id.playlists__loading_bar)
 
   private val adapter: PlaylistAdapter by lazy { PlaylistAdapter() }
-
-  @Inject
-  lateinit var presenter: PlaylistPresenter
-
-  private lateinit var scope: Scope
+  private val presenter: PlaylistPresenter by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -60,21 +55,12 @@ class PlaylistFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(requireActivity().application, PRESENTER_SCOPE, this)
-    scope.installTestModules(PlaylistModule())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
-
   override fun playlistPressed(path: String) {
     presenter.play(path)
   }
 
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
-    Toothpick.closeScope(PRESENTER_SCOPE)
     super.onDestroy()
   }
 
@@ -107,14 +93,5 @@ class PlaylistFragment : Fragment(),
   override fun hideLoading() {
     emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
-  }
-
-  @javax.inject.Scope
-  @Target(AnnotationTarget.TYPE)
-  @Retention(AnnotationRetention.RUNTIME)
-  annotation class Presenter
-
-  companion object {
-    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   }
 }

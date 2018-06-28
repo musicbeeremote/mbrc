@@ -11,10 +11,10 @@ import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
-import javax.inject.Inject
+
 
 class GenreRepositoryImpl
-@Inject
+
 constructor(
   private val remoteDataSource: ApiBase,
   private val dao: GenreDao,

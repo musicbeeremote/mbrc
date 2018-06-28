@@ -9,10 +9,8 @@ import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
-import javax.inject.Inject
 
 class ConnectionManagerPresenterImpl
-@Inject
 constructor(
   private val repository: ConnectionRepository,
   private val serviceDiscoveryUseCase: ServiceDiscoveryUseCase,

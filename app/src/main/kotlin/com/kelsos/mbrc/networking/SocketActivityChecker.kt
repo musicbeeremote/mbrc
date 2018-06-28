@@ -4,9 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
-@Singleton
 class SocketActivityChecker {
   private var disposable: Disposable? = null
   private var pingTimeoutListener: PingTimeoutListener? = null

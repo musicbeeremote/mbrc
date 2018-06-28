@@ -15,12 +15,8 @@ import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class PopupActionHandler
-@Inject
 constructor(
   private val settings: DefaultActionPreferenceStore,
   private val appRxSchedulers: AppRxSchedulers,

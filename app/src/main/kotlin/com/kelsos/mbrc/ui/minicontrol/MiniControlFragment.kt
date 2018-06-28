@@ -8,27 +8,16 @@ import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.UiFragmentMiniControlBinding
-import com.kelsos.mbrc.di.inject
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
-  @Inject
-  lateinit var presenter: MiniControlPresenter
-
+  private val presenter: MiniControlPresenter by inject()
   private lateinit var binding: UiFragmentMiniControlBinding
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     presenter.attach(this)
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(miniControlModule)
-    super.onCreate(savedInstanceState)
-    scope.inject(this)
   }
 
   override fun onCreateView(
@@ -43,7 +32,6 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
     super.onDestroy()
   }
 

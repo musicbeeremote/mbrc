@@ -22,8 +22,8 @@ import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsFragmentArgs
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+
 
 class BrowseGenreFragment : androidx.fragment.app.Fragment(),
   BrowseGenreView,
@@ -38,12 +38,9 @@ class BrowseGenreFragment : androidx.fragment.app.Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject
-  lateinit var adapter: GenreEntryAdapter
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-  @Inject
-  lateinit var presenter: BrowseGenrePresenter
+  private val adapter: GenreEntryAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
+  private val presenter: BrowseGenrePresenter by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -51,14 +48,6 @@ class BrowseGenreFragment : androidx.fragment.app.Fragment(),
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    val activity = activity ?: error("null activity")
-    val scope = Toothpick.openScopes(activity.application, this)
-    scope.installModules(BrowseGenreModule())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
   }
 
   override fun onDestroyView() {
@@ -107,11 +96,6 @@ class BrowseGenreFragment : androidx.fragment.app.Fragment(),
   override fun failure(throwable: Throwable) {
     swipeLayout.isRefreshing = false
     make(recycler, R.string.refresh_failed, LENGTH_SHORT).show()
-  }
-
-  override fun onDestroy() {
-    Toothpick.closeScope(this)
-    super.onDestroy()
   }
 
   override fun hideLoading() {

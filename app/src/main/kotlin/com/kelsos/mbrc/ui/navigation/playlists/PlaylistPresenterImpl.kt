@@ -14,10 +14,10 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
-import javax.inject.Inject
+
 
 class PlaylistPresenterImpl
-@Inject
+
 constructor(
   private val repository: PlaylistRepository,
   private val appRxSchedulers: AppRxSchedulers,

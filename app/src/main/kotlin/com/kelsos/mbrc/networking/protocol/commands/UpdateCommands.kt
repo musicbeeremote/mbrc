@@ -18,10 +18,10 @@ import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class UpdateLastFm
-@Inject
+
 constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
@@ -35,7 +35,7 @@ constructor(
 }
 
 class UpdateLfmRating
-@Inject
+
 constructor(
   private val trackRatingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
@@ -54,7 +54,7 @@ constructor(
 }
 
 class UpdateLyrics
-@Inject
+
 constructor(
   private val mapper: Moshi,
   private val lyricsLiveDataProvider: LyricsLiveDataProvider
@@ -89,7 +89,7 @@ constructor(
 }
 
 class UpdateMute
-@Inject
+
 constructor(
   private val statusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
@@ -101,7 +101,7 @@ constructor(
 }
 
 class UpdateNowPlayingTrack
-@Inject
+
 constructor(
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   private val context: Application,
@@ -131,7 +131,7 @@ constructor(
 
 
 class UpdatePlayerStatus
-@Inject
+
 constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val moshi: Moshi
@@ -155,7 +155,7 @@ constructor(
 }
 
 class UpdatePlayState
-@Inject
+
 constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val context: Application
@@ -173,7 +173,7 @@ constructor(
 }
 
 class UpdatePluginVersionCommand
-@Inject
+
 constructor(
 
 ) : ICommand {
@@ -185,7 +185,7 @@ constructor(
 }
 
 class UpdateRating
-@Inject
+
 constructor(
   private val ratingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
@@ -200,7 +200,7 @@ constructor(
 }
 
 class UpdateRepeat
-@Inject
+
 constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
@@ -215,7 +215,7 @@ constructor(
 }
 
 class UpdateShuffle
-@Inject
+
 constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
@@ -230,7 +230,7 @@ constructor(
 }
 
 class UpdateVolume
-@Inject
+
 constructor(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {

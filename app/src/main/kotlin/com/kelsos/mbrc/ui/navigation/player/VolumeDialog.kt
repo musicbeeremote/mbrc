@@ -8,22 +8,16 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.databinding.DialogVolumeBinding
-import com.kelsos.mbrc.di.inject
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class VolumeDialog : DialogFragment(), VolumeView {
 
-  @Inject
-  lateinit var volumeDialogPresenter: VolumeDialogPresenter
+  private val volumeDialogPresenter: VolumeDialogPresenter by inject()
 
   private lateinit var databinding: DialogVolumeBinding
   private lateinit var fm: FragmentManager
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(volumeDialogModule)
-    scope.inject(this)
     databinding = DialogVolumeBinding.inflate(requireActivity().layoutInflater)
     databinding.presenter = volumeDialogPresenter
     return AlertDialog.Builder(requireContext())
@@ -38,11 +32,6 @@ class VolumeDialog : DialogFragment(), VolumeView {
 
   override fun update(playerStatus: PlayerStatusModel) {
     databinding.status = playerStatus
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
   }
 
   fun show() {

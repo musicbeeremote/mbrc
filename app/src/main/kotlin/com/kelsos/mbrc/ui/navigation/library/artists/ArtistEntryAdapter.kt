@@ -8,10 +8,10 @@ import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
-import javax.inject.Inject
+
 
 class ArtistEntryAdapter
-@Inject
+
 constructor() : FastScrollableAdapter<ArtistEntity, ArtistViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->

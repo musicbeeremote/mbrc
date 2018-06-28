@@ -3,28 +3,16 @@ package com.kelsos.mbrc.platform
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
-import toothpick.Toothpick
-import javax.inject.Inject
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
+import org.koin.android.ext.android.inject
+
 
 /**
  * An [IntentService] subclass for handling the metadata network operation
  */
 class LibrarySyncService : IntentService("LibrarySyncService") {
 
-  @Inject
-  lateinit var librarySyncInteractor: LibrarySyncInteractor
-
-  override fun onCreate() {
-    val scope = Toothpick.openScopes(application, this)
-    Toothpick.inject(this, scope)
-    super.onCreate()
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
-  }
+  private val librarySyncUseCase: LibrarySyncUseCase by inject()
 
   override fun onHandleIntent(intent: Intent?) {
     if (intent != null) {
@@ -41,19 +29,19 @@ class LibrarySyncService : IntentService("LibrarySyncService") {
    * parameters.
    */
   private fun handleActionSync(auto: Boolean) {
-    librarySyncInteractor.sync(auto)
+    librarySyncUseCase.sync(auto)
   }
 
   companion object {
     /**
      * Sync action for the library data
      */
-    private val ACTION_SYNC = "com.kelsos.mbrc.action.SYNC"
+    private const val ACTION_SYNC = "com.kelsos.mbrc.action.SYNC"
 
     /**
      * Who started the network operation. This is to distinct between user initiated network operations
      */
-    private val EXTRA_AUTO = "com.kelsos.mbrc.dev.extra.AUTO"
+    private const val EXTRA_AUTO = "com.kelsos.mbrc.dev.extra.AUTO"
 
     /**
      * Starts this service to perform a library metadata network operatin with the given parameters. If

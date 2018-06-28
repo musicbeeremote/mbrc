@@ -11,10 +11,10 @@ import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class RemoteServiceCore
-@Inject
+
 constructor(
   private val discovery: ServiceDiscoveryUseCase,
   private val clientConnectionManager: IClientConnectionManager,

@@ -11,12 +11,8 @@ import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.Date
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class SettingsManagerImpl
-@Inject
 constructor(
   private val context: Application,
   private val preferences: SharedPreferences

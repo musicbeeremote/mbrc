@@ -13,10 +13,10 @@ import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+
 
 class PlayerPresenterImpl
-@Inject
+
 constructor(
   private val settingsManager: SettingsManager,
   private val userActionUseCase: UserActionUseCase,

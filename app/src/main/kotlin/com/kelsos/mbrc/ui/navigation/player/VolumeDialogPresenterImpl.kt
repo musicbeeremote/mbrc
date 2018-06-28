@@ -9,10 +9,10 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+
 
 class VolumeDialogPresenterImpl
-@Inject
+
 constructor(
   private val userActionUseCase: UserActionUseCase,
   private val appRxSchedulers: AppRxSchedulers,

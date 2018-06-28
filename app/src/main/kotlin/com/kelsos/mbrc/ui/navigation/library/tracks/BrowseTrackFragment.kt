@@ -17,8 +17,7 @@ import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class BrowseTrackFragment : androidx.fragment.app.Fragment(),
   BrowseTrackView,
@@ -33,12 +32,9 @@ class BrowseTrackFragment : androidx.fragment.app.Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject
-  lateinit var adapter: TrackEntryAdapter
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-  @Inject
-  lateinit var presenter: BrowseTrackPresenter
+  private val adapter: TrackEntryAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
+  private val presenter: BrowseTrackPresenter by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -48,13 +44,6 @@ class BrowseTrackFragment : androidx.fragment.app.Fragment(),
     return inflater.inflate(R.layout.fragment_browse, container, false)
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(BrowseTrackModule())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
 
   override fun onDestroyView() {
     super.onDestroyView()

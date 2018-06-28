@@ -20,9 +20,7 @@ import com.kelsos.mbrc.content.radios.RadioStationEntity
 import com.kelsos.mbrc.extensions.snackbar
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import kotterknife.bindView
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class RadioFragment : Fragment(), RadioView, OnRefreshListener,
   OnRadioPressedListener {
@@ -34,20 +32,8 @@ class RadioFragment : Fragment(), RadioView, OnRefreshListener,
   private val emptyViewIcon: ImageView by bindView(R.id.radio_stations__empty_icon)
   private val emptyViewProgress: ProgressBar by bindView(R.id.radio_stations__loading_bar)
 
-  @Inject
-  lateinit var presenter: RadioPresenter
-
-  @Inject
-  lateinit var adapter: RadioAdapter
-
-  private lateinit var scope: Scope
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    Toothpick.openScope(PRESENTER_SCOPE).installModules(RadioModule())
-    scope = Toothpick.openScopes(requireActivity().application, PRESENTER_SCOPE, this)
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
+  private val presenter: RadioPresenter by inject()
+  private val adapter: RadioAdapter by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -80,8 +66,6 @@ class RadioFragment : Fragment(), RadioView, OnRefreshListener,
   override fun onDestroy() {
     presenter.detach()
     adapter.setOnRadioPressedListener(null)
-    Toothpick.closeScope(PRESENTER_SCOPE)
-    Toothpick.closeScope(this)
     super.onDestroy()
   }
 
@@ -115,13 +99,5 @@ class RadioFragment : Fragment(), RadioView, OnRefreshListener,
       emptyViewProgress.isVisible = false
       swipeLayout.isRefreshing = false
     }
-  }
-
-  @javax.inject.Scope
-  @Retention(AnnotationRetention.RUNTIME)
-  annotation class Presenter
-
-  companion object {
-    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   }
 }

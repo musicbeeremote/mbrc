@@ -27,15 +27,13 @@ import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksFragmentArgs
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
-import toothpick.Toothpick
-import toothpick.smoothie.module.SmoothieActivityModule
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+
 
 class BrowseAlbumFragment : Fragment(),
   BrowseAlbumView,
   MenuItemSelectedListener<AlbumEntity>,
   SwipeRefreshLayout.OnRefreshListener {
-
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
@@ -45,12 +43,9 @@ class BrowseAlbumFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  @Inject
-  lateinit var adapter: AlbumEntryAdapter
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-  @Inject
-  lateinit var presenter: BrowseAlbumPresenter
+  private val adapter: AlbumEntryAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
+  private val presenter: BrowseAlbumPresenter by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -61,11 +56,7 @@ class BrowseAlbumFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val activity = activity ?: error("null activity")
-    val scope = Toothpick.openScopes(activity.application, this)
-    scope.installModules(SmoothieActivityModule(activity), BrowseAlbumModule())
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
     setHasOptionsMenu(true)
   }
 
@@ -149,10 +140,5 @@ class BrowseAlbumFragment : Fragment(),
   override fun hideLoading() {
     emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
-  }
-
-  override fun onDestroy() {
-    Toothpick.closeScope(this)
-    super.onDestroy()
   }
 }

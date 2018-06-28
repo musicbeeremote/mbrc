@@ -4,10 +4,9 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
-import javax.inject.Inject
 
-class MoveManagerImpl
-@Inject constructor() : MoveManager {
+
+class MoveManagerImpl : MoveManager {
 
   private var originalPosition: Int = -1
   private var finalPosition: Int = -1

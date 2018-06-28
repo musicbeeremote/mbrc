@@ -16,10 +16,10 @@ import java.io.IOException
 import java.net.Socket
 import java.net.SocketException
 import java.nio.charset.Charset
-import javax.inject.Inject
+
 
 class RequestManagerImpl
-@Inject
+
 constructor(
   private val serializationAdapter: SerializationAdapter,
   private val deserializationAdapter: DeserializationAdapter,

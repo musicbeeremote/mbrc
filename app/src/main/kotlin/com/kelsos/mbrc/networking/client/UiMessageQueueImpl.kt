@@ -4,10 +4,10 @@ import com.jakewharton.rxrelay2.PublishRelay
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.WeakHashMap
-import javax.inject.Inject
+
 
 class UiMessageQueueImpl
-@Inject
+
 constructor(
   private val appRxSchedulers: AppRxSchedulers
 ) : UiMessageQueue {

@@ -26,10 +26,10 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class SessionNotificationManager
-@Inject
+
 constructor(
   private val context: Application,
   private val sessionManager: RemoteSessionManager,

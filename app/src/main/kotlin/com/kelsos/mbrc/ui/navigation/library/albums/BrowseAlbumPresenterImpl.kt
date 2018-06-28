@@ -13,10 +13,10 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.kelsos.mbrc.utilities.paged
 import io.reactivex.rxkotlin.plusAssign
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class BrowseAlbumPresenterImpl
-@Inject
+
 constructor(
   private val repository: AlbumRepository,
   private val albumSortingStore: AlbumSortingStore,

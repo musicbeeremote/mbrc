@@ -21,8 +21,8 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import toothpick.config.Module
-import toothpick.testing.ToothPickRule
+
+
 import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)

@@ -2,10 +2,10 @@ package com.kelsos.mbrc.preferences
 
 import android.content.SharedPreferences
 import com.kelsos.mbrc.content.library.albums.Sorting
-import javax.inject.Inject
+
 
 class AlbumSortingStoreImpl
-@Inject
+
 constructor(private val sharedPreferences: SharedPreferences) : AlbumSortingStore {
   @Sorting.Fields
   override fun getSortingSelection(): Int {

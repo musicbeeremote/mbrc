@@ -5,10 +5,10 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Single
-import javax.inject.Inject
+
 
 class QueueApiImpl
-@Inject
+
 constructor(
   private val apiBase: ApiBase
 ) : QueueApi {

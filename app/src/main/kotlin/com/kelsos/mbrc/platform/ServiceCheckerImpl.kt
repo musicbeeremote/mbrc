@@ -3,10 +3,10 @@ package com.kelsos.mbrc.platform
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Intent
-import javax.inject.Inject
+
 
 class ServiceCheckerImpl
-@Inject constructor(
+ constructor(
   private val manager: ActivityManager,
   private val application: Application
 ) : ServiceChecker {

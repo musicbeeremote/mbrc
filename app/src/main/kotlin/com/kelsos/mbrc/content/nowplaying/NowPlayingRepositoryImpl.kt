@@ -11,10 +11,10 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
-import javax.inject.Inject
+
 
 class NowPlayingRepositoryImpl
-@Inject
+
 constructor(
   private val remoteDataSource: ApiBase,
   private val dao: NowPlayingDao,

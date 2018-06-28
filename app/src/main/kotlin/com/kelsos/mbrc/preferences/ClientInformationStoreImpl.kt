@@ -2,10 +2,10 @@ package com.kelsos.mbrc.preferences
 
 import android.content.SharedPreferences
 import java.util.UUID
-import javax.inject.Inject
+
 
 class ClientInformationStoreImpl
-@Inject constructor(private val preferences: SharedPreferences) : ClientInformationStore {
+ constructor(private val preferences: SharedPreferences) : ClientInformationStore {
 
   override fun getClientId(): String {
     var clientId = preferences.getString(CLIENT_ID, "")

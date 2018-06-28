@@ -3,10 +3,10 @@ package com.kelsos.mbrc.networking.client
 import timber.log.Timber
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
-import javax.inject.Inject
+
 
 class MessageQueueImpl
-@Inject
+
 constructor() : MessageQueue {
 
   private lateinit var onMessageAvailable: (message: SocketMessage) -> Unit
