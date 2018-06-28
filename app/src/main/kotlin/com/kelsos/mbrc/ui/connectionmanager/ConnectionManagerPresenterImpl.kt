@@ -7,11 +7,8 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class ConnectionManagerPresenterImpl
-@Inject
-constructor(
+class ConnectionManagerPresenterImpl(
   private val repository: ConnectionRepository,
   private val serviceDiscoveryUseCase: ServiceDiscoveryUseCase
 ) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {

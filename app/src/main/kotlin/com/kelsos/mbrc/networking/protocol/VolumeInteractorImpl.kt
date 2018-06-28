@@ -3,11 +3,8 @@ package com.kelsos.mbrc.networking.protocol
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
-import javax.inject.Inject
 
-class VolumeInteractorImpl
-@Inject
-constructor(
+class VolumeInteractorImpl(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val messageQueue: MessageQueue
 ) : VolumeInteractor {

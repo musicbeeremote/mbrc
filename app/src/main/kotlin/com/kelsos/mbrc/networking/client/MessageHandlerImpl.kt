@@ -10,11 +10,8 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import timber.log.Timber
-import javax.inject.Inject
 
-class MessageHandlerImpl
-@Inject
-constructor(
+class MessageHandlerImpl(
   private val commandExecutor: CommandExecutor,
   private val messageDeserializer: MessageDeserializer,
   private val messageQueue: MessageQueue,

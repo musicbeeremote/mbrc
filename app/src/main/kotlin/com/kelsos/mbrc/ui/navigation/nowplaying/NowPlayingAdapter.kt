@@ -24,7 +24,6 @@ class NowPlayingAdapter(
   NOW_PLAYING_COMPARATOR
 ),
   ItemTouchHelperAdapter {
-
   private var currentTrack = ""
   private var playingTrackIndex = -1
 

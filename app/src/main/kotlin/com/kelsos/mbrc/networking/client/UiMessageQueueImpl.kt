@@ -10,11 +10,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.WeakHashMap
-import javax.inject.Inject
 
-class UiMessageQueueImpl
-@Inject
-constructor(
+class UiMessageQueueImpl(
   dispatchers: AppCoroutineDispatchers
 ) : UiMessageQueue {
   private val publishRelay: MutableSharedFlow<UiMessage> = MutableSharedFlow(0, 5)

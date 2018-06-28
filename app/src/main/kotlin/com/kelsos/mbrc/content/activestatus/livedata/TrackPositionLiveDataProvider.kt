@@ -2,16 +2,14 @@ package com.kelsos.mbrc.content.activestatus.livedata
 
 import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import java.util.Timer
-import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 
 interface TrackPositionLiveDataProvider : LiveDataProvider<PlayingPosition> {
   fun setPlaying(playing: Boolean)
 }
 
-class TrackPositionLiveDataProviderImpl
-@Inject
-constructor() : TrackPositionLiveDataProvider, BaseLiveDataProvider<PlayingPosition>() {
+class TrackPositionLiveDataProviderImpl() : TrackPositionLiveDataProvider,
+  BaseLiveDataProvider<PlayingPosition>() {
 
   init {
     update(PlayingPosition())

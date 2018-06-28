@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.util.WeakHashMap
-import javax.inject.Inject
 
 interface DefaultSettingsLiveDataProvider {
 
@@ -23,9 +22,7 @@ interface DefaultSettingsLiveDataProvider {
 
 typealias OnDefaultConnectionChanged = (ConnectionSettingsEntity) -> Unit
 
-class DefaultSettingsLiveDataProviderImpl
-@Inject
-constructor() : DefaultSettingsLiveDataProvider {
+class DefaultSettingsLiveDataProviderImpl : DefaultSettingsLiveDataProvider {
   private val settingsRelay: MutableSharedFlow<ConnectionSettingsEntity> = MutableSharedFlow(0, 1)
   private val map: WeakHashMap<Any, Job> = WeakHashMap()
   private val supervisor: Job = SupervisorJob()

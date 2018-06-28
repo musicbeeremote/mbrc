@@ -10,11 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.sample
-import javax.inject.Inject
 
-class VolumeDialogPresenterImpl
-@Inject
-constructor(
+class VolumeDialogPresenterImpl(
   private val userActionUseCase: UserActionUseCase,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : VolumeDialogPresenter, BasePresenter<VolumeView>() {

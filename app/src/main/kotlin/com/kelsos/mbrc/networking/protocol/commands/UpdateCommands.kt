@@ -35,12 +35,9 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
-import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 
-class UpdateLastFm
-@Inject
-constructor(
+class UpdateLastFm(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -52,9 +49,7 @@ constructor(
   }
 }
 
-class UpdateLfmRating
-@Inject
-constructor(
+class UpdateLfmRating(
   private val trackRatingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
 
@@ -71,9 +66,7 @@ constructor(
   }
 }
 
-class UpdateLyrics
-@Inject
-constructor(
+class UpdateLyrics(
   private val mapper: Moshi,
   private val lyricsLiveDataProvider: LyricsLiveDataProvider
 ) : ICommand {
@@ -106,9 +99,7 @@ constructor(
   }
 }
 
-class UpdateMute
-@Inject
-constructor(
+class UpdateMute(
   private val statusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -118,9 +109,7 @@ constructor(
   }
 }
 
-class UpdateNowPlayingTrack
-@Inject
-constructor(
+class UpdateNowPlayingTrack(
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   private val context: Application,
   private val mapper: Moshi
@@ -146,9 +135,7 @@ constructor(
   }
 }
 
-class UpdatePlayerStatus
-@Inject
-constructor(
+class UpdatePlayerStatus(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val moshi: Moshi
 ) : ICommand {
@@ -170,9 +157,7 @@ constructor(
   }
 }
 
-class UpdatePlayState
-@Inject
-constructor(
+class UpdatePlayState(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val context: Application
 ) : ICommand {
@@ -188,9 +173,7 @@ constructor(
   }
 }
 
-class UpdatePluginVersionCommand
-@Inject
-constructor() : ICommand {
+class UpdatePluginVersionCommand : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val pluginVersion = message.data as? String
@@ -198,9 +181,7 @@ constructor() : ICommand {
   }
 }
 
-class UpdateRating
-@Inject
-constructor(
+class UpdateRating(
   private val ratingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
 
@@ -213,9 +194,7 @@ constructor(
   }
 }
 
-class UpdateRepeat
-@Inject
-constructor(
+class UpdateRepeat(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -228,9 +207,7 @@ constructor(
   }
 }
 
-class UpdateShuffle
-@Inject
-constructor(
+class UpdateShuffle(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -243,9 +220,7 @@ constructor(
   }
 }
 
-class UpdateVolume
-@Inject
-constructor(
+class UpdateVolume(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -266,8 +241,7 @@ private fun String.toRepeat(): String {
   }
 }
 
-class UpdateCover
-@Inject constructor(
+class UpdateCover(
   private val context: Application,
   private val moshi: Moshi,
   private val coverService: ApiBase,

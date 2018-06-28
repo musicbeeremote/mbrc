@@ -13,9 +13,7 @@ import com.kelsos.mbrc.databinding.FragmentConnectionManagerBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class ConnectionManagerFragment :
   Fragment(),
@@ -23,11 +21,8 @@ class ConnectionManagerFragment :
   SettingsDialogFragment.SettingsSaveListener,
   ConnectionAdapter.ConnectionChangeListener {
 
-  @Inject
-  lateinit var presenter: ConnectionManagerPresenter
-
+  private val presenter: ConnectionManagerPresenter by inject()
   private var adapter: ConnectionAdapter? = null
-  private lateinit var scope: Scope
 
   private var _binding: FragmentConnectionManagerBinding? = null
   private val binding get() = _binding!!
@@ -69,16 +64,8 @@ class ConnectionManagerFragment :
     _binding = null
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(ConnectionManagerModule.create())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
-
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
     super.onDestroy()
   }
 
@@ -99,7 +86,7 @@ class ConnectionManagerFragment :
       else -> throw IllegalArgumentException(status.toString())
     }
 
-    Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettingsEntity) {

@@ -9,11 +9,8 @@ import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class ConnectionRepositoryImpl
-@Inject
-constructor(
+class ConnectionRepositoryImpl(
   private val connectionDao: ConnectionDao,
   private val preferences: SharedPreferences,
   private val resources: Resources,

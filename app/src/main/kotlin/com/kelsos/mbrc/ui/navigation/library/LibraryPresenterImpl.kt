@@ -1,44 +1,41 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor.OnCompleteListener
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase.OnCompleteListener
 import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@LibraryFragment.Presenter
-class LibraryPresenterImpl
-@Inject constructor(
+class LibraryPresenterImpl(
   private val settingsManager: SettingsManager,
-  private val librarySyncInteractor: LibrarySyncInteractor,
+  private val syncUseCase: LibrarySyncUseCase,
   private val searchModel: LibrarySearchModel
 ) : LibraryPresenter,
   OnCompleteListener,
   BasePresenter<LibraryView>(),
-  LibrarySyncInteractor.OnStartListener {
+  LibrarySyncUseCase.OnStartListener {
 
   override fun refresh() {
     view().showSyncProgress()
     scope.launch {
-      librarySyncInteractor.sync()
+      syncUseCase.sync()
     }
   }
 
   override fun attach(view: LibraryView) {
     super.attach(view)
-    librarySyncInteractor.setOnCompleteListener(this)
-    librarySyncInteractor.setOnStartListener(this)
-    if (!librarySyncInteractor.isRunning()) {
+    syncUseCase.setOnCompleteListener(this)
+    syncUseCase.setOnStartListener(this)
+    if (!syncUseCase.isRunning()) {
       view.hideSyncProgress()
     }
   }
 
   override fun detach() {
     super.detach()
-    librarySyncInteractor.setOnCompleteListener(null)
-    librarySyncInteractor.setOnStartListener(null)
+    syncUseCase.setOnCompleteListener(null)
+    syncUseCase.setOnStartListener(null)
   }
 
   override fun onTermination() {
@@ -55,7 +52,7 @@ class LibraryPresenterImpl
 
   override fun showStats() {
     scope.launch {
-      view().showStats(librarySyncInteractor.syncStats())
+      view().showStats(syncUseCase.syncStats())
     }
   }
 

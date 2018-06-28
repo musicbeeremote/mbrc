@@ -29,11 +29,14 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import toothpick.config.Module
-import toothpick.testing.ToothPickRule
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.experimental.builder.singleBy
+import org.koin.test.KoinTest
+import org.koin.test.inject
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
@@ -45,33 +48,28 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
-class ConnectivityVerifierImplTest {
+class ConnectivityVerifierImplTest : KoinTest {
 
   private val connectionRepository: ConnectionRepository = mockk()
   private val testDispatcher = TestCoroutineDispatcher()
-
-  @Rule
-  @JvmField
-  val toothpickRule: ToothPickRule = ToothPickRule(this, "verifier")
-    .setRootRegistryPackage("com.kelsos.mbrc")
   private val moshi = Moshi.Builder().build()
   private val adapter = moshi.adapter(SocketMessage::class.java)
   private val port: Int = 46000
 
-  lateinit var verifier: ConnectivityVerifier
+  private val verifier: ConnectivityVerifier by inject()
   lateinit var db: Database
   lateinit var dao: ConnectionDao
   private val informationStore: ClientInformationStore = mockk()
 
   @Before
   fun setUp() {
-    toothpickRule.scope.installModules(TestModule())
     val context = ApplicationProvider.getApplicationContext<Context>()
     db = Room.inMemoryDatabaseBuilder(context, Database::class.java).build()
     dao = db.connectionDao()
-
-    verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
     every { informationStore.getClientId() } returns "abc"
+    startKoin {
+      modules(testModule)
+    }
   }
 
   private fun startMockServer(
@@ -131,6 +129,7 @@ class ConnectivityVerifierImplTest {
   @After
   fun tearDown() {
     db.close()
+    stopKoin()
   }
 
   @Test
@@ -144,7 +143,6 @@ class ConnectivityVerifierImplTest {
       settings
     }
 
-    val verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
     assertThat(verifier.verify()).isTrue()
   }
 
@@ -158,7 +156,6 @@ class ConnectivityVerifierImplTest {
       settings
     }
 
-    val verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
     try {
       verifier.verify()
       error("Test should throw")
@@ -177,7 +174,6 @@ class ConnectivityVerifierImplTest {
       settings
     }
 
-    val verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
     try {
       println(verifier.verify())
       error("Test should throw")
@@ -194,7 +190,6 @@ class ConnectivityVerifierImplTest {
       null
     }
 
-    val verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
     try {
       verifier.verify()
       error("Test should throw")
@@ -211,7 +206,6 @@ class ConnectivityVerifierImplTest {
       null
     }
 
-    val verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
     try {
       verifier.verify()
       error("Test should throw")
@@ -220,24 +214,22 @@ class ConnectivityVerifierImplTest {
     }
   }
 
-  inner class TestModule : Module() {
-    init {
-      bind(Moshi::class.java).toProviderInstance { Moshi.Builder().build() }
-      bind(RequestManager::class.java).to(RequestManagerImpl::class.java)
-      bind(ConnectionRepository::class.java).toInstance(connectionRepository)
-      bind(ConnectivityVerifier::class.java).to(ConnectivityVerifierImpl::class.java)
-      bind(AppCoroutineDispatchers::class.java).toInstance(
-        AppCoroutineDispatchers(
-          testDispatcher,
-          testDispatcher,
-          testDispatcher,
-          testDispatcher
-        )
+  val testModule = module {
+    single { Moshi.Builder().build() }
+    single { connectionRepository }
+    single { informationStore }
+    single {
+      AppCoroutineDispatchers(
+        testDispatcher,
+        testDispatcher,
+        testDispatcher,
+        testDispatcher
       )
-      bind(ClientInformationStore::class.java).toInstance(informationStore)
-      bind(ConnectionDao::class.java).toProviderInstance { dao }
-      bind(DeserializationAdapter::class.java).to(DeserializationAdapterImpl::class.java)
-      bind(SerializationAdapter::class.java).to(SerializationAdapterImpl::class.java)
     }
+    single { dao }
+    singleBy<RequestManager, RequestManagerImpl>()
+    singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
+    singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
+    singleBy<SerializationAdapter, SerializationAdapterImpl>()
   }
 }

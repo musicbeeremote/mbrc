@@ -14,13 +14,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.sample
-import javax.inject.Inject
 
-class PlayerPresenterImpl
-@Inject
-constructor(
-  private val userActionUseCase: UserActionUseCase,
+class PlayerPresenterImpl(
   private val settingsManager: SettingsManager,
+  private val userActionUseCase: UserActionUseCase,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   trackRatingLiveDataProvider: TrackRatingLiveDataProvider,

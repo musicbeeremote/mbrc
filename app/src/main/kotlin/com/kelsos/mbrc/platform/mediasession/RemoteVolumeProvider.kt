@@ -5,11 +5,8 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvide
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import javax.inject.Inject
 
-class RemoteVolumeProvider
-@Inject
-constructor(
+class RemoteVolumeProvider(
   private val statusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val userActionUseCase: UserActionUseCase
 ) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0) {

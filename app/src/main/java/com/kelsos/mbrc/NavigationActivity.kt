@@ -23,30 +23,20 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.databinding.ActivityNavigationBinding
 import com.kelsos.mbrc.databinding.NavHeaderMainBinding
-import com.kelsos.mbrc.di.inject
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.ServiceChecker
+import org.koin.android.ext.android.inject
 import timber.log.Timber
-import toothpick.Toothpick
-import toothpick.smoothie.module.SmoothieActivityModule
-import javax.inject.Inject
 
 class NavigationActivity : AppCompatActivity() {
 
-  @Inject
-  lateinit var serviceChecker: ServiceChecker
-
-  @Inject
-  lateinit var volumeInteractor: VolumeInteractor
-
-  @Inject
-  lateinit var connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
-
-  @Inject
-  lateinit var clientConnectionUseCase: ClientConnectionUseCase
+  private val serviceChecker: ServiceChecker by inject()
+  private val volumeInteractor: VolumeInteractor by inject()
+  private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider by inject()
+  private val clientConnectionUseCase: ClientConnectionUseCase by inject()
 
   private lateinit var binding: ActivityNavigationBinding
 
@@ -178,12 +168,9 @@ class NavigationActivity : AppCompatActivity() {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scopes = Toothpick.openScopes(application, this)
-    scopes.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
     binding = ActivityNavigationBinding.inflate(layoutInflater)
     setContentView(binding.root)
-    scopes.inject(this)
     setupToolbar()
     setupNavigationDrawer()
     setupConnectionIndicator()

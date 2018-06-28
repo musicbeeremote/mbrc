@@ -16,19 +16,13 @@ import com.kelsos.mbrc.databinding.FragmentArtistAlbumsBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class ArtistAlbumsFragment : Fragment(), ArtistAlbumsView, MenuItemSelectedListener<Album> {
 
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-
-  @Inject
-  lateinit var adapter: AlbumEntryAdapter
-
-  @Inject
-  lateinit var presenter: ArtistAlbumsPresenter
+  private val actionHandler: PopupActionHandler by inject()
+  private val adapter: AlbumEntryAdapter by inject()
+  private val presenter: ArtistAlbumsPresenter by inject()
 
   private lateinit var artist: String
   private var _binding: FragmentArtistAlbumsBinding? = null
@@ -39,11 +33,14 @@ class ArtistAlbumsFragment : Fragment(), ArtistAlbumsView, MenuItemSelectedListe
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    return inflater.inflate(R.layout.fragment_artist_albums, container, false)
+    _binding = FragmentArtistAlbumsBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    val args = ArtistAlbumsFragmentArgs.fromBundle(requireArguments())
+    artist = args.artist
     adapter.setMenuItemSelectedListener(this)
     binding.artistAlbumsAlbumList.layoutManager = LinearLayoutManager(requireContext())
     binding.artistAlbumsAlbumList.adapter = adapter
@@ -55,14 +52,6 @@ class ArtistAlbumsFragment : Fragment(), ArtistAlbumsView, MenuItemSelectedListe
   override fun onDestroyView() {
     super.onDestroyView()
     _binding = null
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(ArtistAlbumsModule())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-    artist = ArtistAlbumsFragmentArgs.fromBundle(requireArguments()).artist
   }
 
   override fun onMenuItemSelected(itemId: Int, item: Album) {
@@ -92,14 +81,13 @@ class ArtistAlbumsFragment : Fragment(), ArtistAlbumsView, MenuItemSelectedListe
     } else {
       getString(R.string.queue_result__failure)
     }
-    Snackbar.make(binding.root, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+    Snackbar.make(requireView(), R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
   }
 
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
     super.onDestroy()
   }
 }

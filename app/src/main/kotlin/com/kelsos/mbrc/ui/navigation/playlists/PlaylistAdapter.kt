@@ -10,11 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.databinding.ListitemSingleBinding
 import com.kelsos.mbrc.ui.BindableViewHolder
-import javax.inject.Inject
 
-class PlaylistAdapter
-@Inject
-constructor() : PagingDataAdapter<Playlist, PlaylistAdapter.ViewHolder>(
+class PlaylistAdapter : PagingDataAdapter<Playlist, PlaylistAdapter.ViewHolder>(
   PLAYLIST_COMPARATOR
 ) {
   private var playlistPressedListener: OnPlaylistPressedListener? = null

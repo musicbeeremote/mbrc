@@ -10,11 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class RadioRepositoryImpl
-@Inject
-constructor(
+class RadioRepositoryImpl(
   private val dao: RadioStationDao,
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers

@@ -14,10 +14,8 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.databinding.FragmentPlaylistsBinding
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
-import toothpick.Scope
-import toothpick.Toothpick
+import org.koin.android.ext.android.inject
 import java.net.ConnectException
-import javax.inject.Inject
 
 class PlaylistFragment :
   Fragment(),
@@ -25,11 +23,9 @@ class PlaylistFragment :
   OnPlaylistPressedListener,
   OnRefreshListener {
 
-  private val adapter: PlaylistAdapter by lazy { PlaylistAdapter() }
+  private val adapter: PlaylistAdapter by inject()
+  private val presenter: PlaylistPresenter by inject()
 
-  @Inject
-  lateinit var presenter: PlaylistPresenter
-  private lateinit var scope: Scope
   private var _binding: FragmentPlaylistsBinding? = null
   private val binding get() = _binding!!
 
@@ -57,21 +53,12 @@ class PlaylistFragment :
     _binding = null
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(requireActivity().application, PRESENTER_SCOPE, this)
-    scope.installTestModules(PlaylistModule())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
-
   override fun playlistPressed(path: String) {
     presenter.play(path)
   }
 
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
-    Toothpick.closeScope(PRESENTER_SCOPE)
     super.onDestroy()
   }
 
@@ -106,14 +93,5 @@ class PlaylistFragment :
   override fun hideLoading() {
     binding.playlistsEmptyGroup.isGone = true
     binding.playlistsRefreshLayout.isRefreshing = false
-  }
-
-  @javax.inject.Scope
-  @Target(AnnotationTarget.TYPE)
-  @Retention(AnnotationRetention.RUNTIME)
-  annotation class Presenter
-
-  companion object {
-    private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
   }
 }

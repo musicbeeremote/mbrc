@@ -3,11 +3,8 @@ package com.kelsos.mbrc.metrics
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import timber.log.Timber
-import javax.inject.Inject
 
-class SyncMetricsImpl
-@Inject
-constructor() : SyncMetrics {
+class SyncMetricsImpl : SyncMetrics {
 
   private val traces = HashMap<String, Trace>()
   private val times = HashMap<String, Long>()

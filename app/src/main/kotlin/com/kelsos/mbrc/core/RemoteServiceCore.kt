@@ -10,11 +10,8 @@ import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
-import javax.inject.Inject
 
-class RemoteServiceCore
-@Inject
-constructor(
+class RemoteServiceCore(
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,

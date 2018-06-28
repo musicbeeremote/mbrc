@@ -8,28 +8,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.TrackRating
 import com.kelsos.mbrc.databinding.DialogRatingBinding
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class RatingDialogFragment : DialogFragment(), RatingDialogView {
-
-  @Inject
-  lateinit var presenter: RatingDialogPresenter
 
   private var _binding: DialogRatingBinding? = null
   private val binding get() = _binding!!
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(ratingDialogModule)
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    Toothpick.closeScope(this)
-  }
+  private val presenter: RatingDialogPresenter by inject()
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     _binding = DialogRatingBinding.inflate(LayoutInflater.from(requireContext()))

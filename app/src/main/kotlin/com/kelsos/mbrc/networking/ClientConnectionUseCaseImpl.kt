@@ -1,11 +1,8 @@
 package com.kelsos.mbrc.networking
 
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
-import javax.inject.Inject
 
-class ClientConnectionUseCaseImpl
-@Inject
-constructor(
+class ClientConnectionUseCaseImpl(
   private val connectionManager: IClientConnectionManager
 ) :
   ClientConnectionUseCase {

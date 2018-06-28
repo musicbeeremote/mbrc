@@ -8,11 +8,8 @@ import com.kelsos.mbrc.networking.protocol.responses.NowPlayingMoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.Position
 import com.squareup.moshi.Moshi
-import javax.inject.Inject
 
-class UpdateNowPlayingTrackMoved
-@Inject
-constructor(
+class UpdateNowPlayingTrackMoved(
   private val moshi: Moshi
 ) : ICommand {
 
@@ -22,9 +19,7 @@ constructor(
   }
 }
 
-class UpdateNowPlayingTrackRemoval
-@Inject
-constructor(
+class UpdateNowPlayingTrackRemoval(
   private val moshi: Moshi
 ) : ICommand {
   override fun execute(message: ProtocolMessage) {
@@ -33,9 +28,7 @@ constructor(
   }
 }
 
-class UpdatePlaybackPositionCommand
-@Inject
-constructor(
+class UpdatePlaybackPositionCommand(
   private val moshi: Moshi,
   private val trackPositionLiveDataProvider: TrackPositionLiveDataProvider
 ) : ICommand {

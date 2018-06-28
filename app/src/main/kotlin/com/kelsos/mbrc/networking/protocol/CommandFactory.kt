@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.networking.protocol
 
-import android.app.Application
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
 import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
@@ -20,39 +19,33 @@ import com.kelsos.mbrc.networking.protocol.commands.UpdateRating
 import com.kelsos.mbrc.networking.protocol.commands.UpdateRepeat
 import com.kelsos.mbrc.networking.protocol.commands.UpdateShuffle
 import com.kelsos.mbrc.networking.protocol.commands.UpdateVolume
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-class CommandFactoryImpl
-@Inject
-constructor(application: Application) : CommandFactory {
-
-  private val scope = Toothpick.openScope(application)
+class CommandFactoryImpl : CommandFactory, KoinComponent {
 
   override fun create(@Protocol.Context context: String): ICommand {
-    val clazz = when (context) {
-      Protocol.NowPlayingTrack -> UpdateNowPlayingTrack::class.java
-      Protocol.NowPlayingCover -> UpdateCover::class.java
-      Protocol.NowPlayingRating -> UpdateRating::class.java
-      Protocol.PlayerStatus -> UpdatePlayerStatus::class.java
-      Protocol.PlayerState -> UpdatePlayState::class.java
-      Protocol.PlayerRepeat -> UpdateRepeat::class.java
-      Protocol.PlayerVolume -> UpdateVolume::class.java
-      Protocol.PlayerMute -> UpdateMute::class.java
-      Protocol.PlayerShuffle -> UpdateShuffle::class.java
-      Protocol.PlayerScrobble -> UpdateLastFm::class.java
-      Protocol.NowPlayingLyrics -> UpdateLyrics::class.java
-      Protocol.NowPlayingLfmRating -> UpdateLfmRating::class.java
-      Protocol.NowPlayingListRemove -> UpdateNowPlayingTrackRemoval::class.java
-      Protocol.NowPlayingListMove -> UpdateNowPlayingTrackMoved::class.java
-      Protocol.NowPlayingPosition -> UpdatePlaybackPositionCommand::class.java
-      Protocol.PluginVersion -> UpdatePluginVersionCommand::class.java
-      Protocol.PING -> ProtocolPingHandle::class.java
-      Protocol.PONG -> ProtocolPongHandle::class.java
+    return when (context) {
+      Protocol.NowPlayingTrack -> get<UpdateNowPlayingTrack>()
+      Protocol.NowPlayingCover -> get<UpdateCover>()
+      Protocol.NowPlayingRating -> get<UpdateRating>()
+      Protocol.PlayerStatus -> get<UpdatePlayerStatus>()
+      Protocol.PlayerState -> get<UpdatePlayState>()
+      Protocol.PlayerRepeat -> get<UpdateRepeat>()
+      Protocol.PlayerVolume -> get<UpdateVolume>()
+      Protocol.PlayerMute -> get<UpdateMute>()
+      Protocol.PlayerShuffle -> get<UpdateShuffle>()
+      Protocol.PlayerScrobble -> get<UpdateLastFm>()
+      Protocol.NowPlayingLyrics -> get<UpdateLyrics>()
+      Protocol.NowPlayingLfmRating -> get<UpdateLfmRating>()
+      Protocol.NowPlayingListRemove -> get<UpdateNowPlayingTrackRemoval>()
+      Protocol.NowPlayingListMove -> get<UpdateNowPlayingTrackMoved>()
+      Protocol.NowPlayingPosition -> get<UpdatePlaybackPositionCommand>()
+      Protocol.PluginVersion -> get<UpdatePluginVersionCommand>()
+      Protocol.PING -> get<ProtocolPingHandle>()
+      Protocol.PONG -> get<ProtocolPongHandle>()
       else -> error("Not supported message context $context")
     }
-
-    return scope.getInstance(clazz)
   }
 }
 

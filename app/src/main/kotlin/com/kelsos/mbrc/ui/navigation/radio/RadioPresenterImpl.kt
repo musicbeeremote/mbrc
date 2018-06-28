@@ -10,11 +10,8 @@ import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class RadioPresenterImpl
-@Inject
-constructor(
+class RadioPresenterImpl(
   private val radioRepository: RadioRepository,
   private val queue: QueueHandler,
   dispatcher: AppCoroutineDispatchers

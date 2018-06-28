@@ -12,20 +12,17 @@ import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.UiFragmentMiniControlBinding
-import com.kelsos.mbrc.di.inject
 import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
-import toothpick.Toothpick
+import org.koin.android.ext.android.inject
 import java.io.File
-import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
+  private val presenter: MiniControlPresenter by inject()
+
   private var _binding: UiFragmentMiniControlBinding? = null
   private val binding get() = _binding!!
-
-  @Inject
-  lateinit var presenter: MiniControlPresenter
 
   private fun onControlClick() {
     findNavController().navigate(R.id.main_navigation_fragment)
@@ -40,13 +37,6 @@ class MiniControlFragment : Fragment(), MiniControlView {
     presenter.attach(this)
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(miniControlModule)
-    super.onCreate(savedInstanceState)
-    scope.inject(this)
-  }
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -56,19 +46,14 @@ class MiniControlFragment : Fragment(), MiniControlView {
     return binding.root
   }
 
+  override fun onDestroy() {
+    presenter.detach()
+    super.onDestroy()
+  }
+
   override fun onDestroyView() {
     super.onDestroyView()
     _binding = null
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
   }
 
   private fun updateCover(path: String) {
@@ -99,11 +84,5 @@ class MiniControlFragment : Fragment(), MiniControlView {
       PlayerState.PLAYING -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_pause)
       else -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_play)
     }
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    Toothpick.closeScope(this)
-    super.onDestroy()
   }
 }

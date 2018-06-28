@@ -12,11 +12,8 @@ import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import javax.inject.Inject
 
-class QueueHandler
-@Inject
-constructor(
+class QueueHandler(
   private val settings: DefaultActionPreferenceStore,
   private val trackRepository: TrackRepository,
   private val service: ApiBase,

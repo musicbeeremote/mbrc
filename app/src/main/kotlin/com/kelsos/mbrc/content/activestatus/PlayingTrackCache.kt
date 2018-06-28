@@ -13,11 +13,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
-import javax.inject.Inject
 
-class PlayingTrackCacheImpl
-@Inject
-constructor(
+class PlayingTrackCacheImpl(
   context: Application,
   private val dispatchers: AppCoroutineDispatchers
 ) : PlayingTrackCache {

@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.preferences.SettingsManager
@@ -14,14 +14,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class BrowseArtistPresenterImpl
-@Inject
-constructor(
+class BrowseArtistPresenterImpl(
   private val repository: ArtistRepository,
   private val settingsManager: SettingsManager,
-  private val librarySyncInteractor: LibrarySyncInteractor,
+  private val syncUseCase: LibrarySyncUseCase,
   private val queue: QueueHandler,
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseArtistView>(),
@@ -74,7 +71,7 @@ constructor(
 
   override fun sync() {
     scope.launch {
-      librarySyncInteractor.sync()
+      syncUseCase.sync()
     }
   }
 

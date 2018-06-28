@@ -18,11 +18,8 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.DialogOutputSelectionBinding
-import com.kelsos.mbrc.di.modules.obtainViewModel
 import com.kelsos.mbrc.features.output.OutputSelectionResult
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
-import toothpick.Scope
-import toothpick.Toothpick
 
 class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
@@ -36,8 +33,6 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
   private var _binding: DialogOutputSelectionBinding? = null
   private val binding get() = _binding!!
-
-  private var scope: Scope? = null
 
   private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -58,8 +53,6 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    scope = Toothpick.openScopes(requireActivity().application, this)
-    Toothpick.inject(this, scope)
     viewModel.outputs.observe(viewLifecycleOwner) {
       update(it)
     }
@@ -95,8 +88,6 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
     loadingProgress = binding.outputSelectionLoadingOutputs
     val view = binding.root
 
-    viewModel = obtainViewModel(OutputSelectionViewModel::class.java)
-
     dialog = MaterialAlertDialogBuilder(requireContext())
       .setTitle(R.string.output_selection__select_output)
       .setView(view)
@@ -106,11 +97,6 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
       .create()
 
     return dialog
-  }
-
-  override fun onDestroy() {
-    Toothpick.closeScope(this)
-    super.onDestroy()
   }
 
   override fun onTouch(view: View?, event: MotionEvent?): Boolean {

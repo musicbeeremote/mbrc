@@ -19,13 +19,10 @@ import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
 import com.kelsos.mbrc.extensions.setIcon
 import com.kelsos.mbrc.extensions.setStatusColor
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class PlayerFragment : Fragment(), PlayerView {
-
-  @Inject
-  lateinit var presenter: PlayerPresenter
+  private val presenter: PlayerPresenter by inject()
 
   private var _binding: FragmentPlayerBinding? = null
   private val binding get() = _binding!!
@@ -34,10 +31,7 @@ class PlayerFragment : Fragment(), PlayerView {
   private var scrobble: MenuItem? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, requireActivity(), this)
-    scope.installModules(mainModule)
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
     setHasOptionsMenu(true)
   }
 
@@ -179,10 +173,5 @@ class PlayerFragment : Fragment(), PlayerView {
     binding.playerScreenTotalProgress.text = position.progress()
     binding.playerScreenProgress.progress = position.current.toInt()
     binding.playerScreenProgress.max = position.total.toInt()
-  }
-
-  override fun onDestroy() {
-    Toothpick.closeScope(this)
-    super.onDestroy()
   }
 }

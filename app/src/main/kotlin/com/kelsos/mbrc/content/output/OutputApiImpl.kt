@@ -2,11 +2,8 @@ package com.kelsos.mbrc.content.output
 
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import javax.inject.Inject
 
-class OutputApiImpl
-@Inject
-constructor(
+class OutputApiImpl(
   private val apiBase: ApiBase
 ) : OutputApi {
   override suspend fun getOutputs(): OutputResponse {

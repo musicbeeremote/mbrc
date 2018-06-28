@@ -1,19 +1,14 @@
 package com.kelsos.mbrc.networking.protocol.commands
 
-import android.app.Application
-import android.content.Intent
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.platform.RemoteService
 import timber.log.Timber
-import javax.inject.Inject
 
-class ProtocolPingHandle
-@Inject constructor(
+class ProtocolPingHandle(
   private val messageQueue: MessageQueue,
   private var activityChecker: SocketActivityChecker
 ) : ICommand {
@@ -24,24 +19,8 @@ class ProtocolPingHandle
   }
 }
 
-class ProtocolPongHandle
-@Inject constructor() : ICommand {
+class ProtocolPongHandle : ICommand {
   override fun execute(message: ProtocolMessage) {
     Timber.d(message.data.toString())
-  }
-}
-
-class TerminateServiceCommand
-@Inject constructor(
-  private val application: Application
-) : ICommand {
-
-  override fun execute(message: ProtocolMessage) {
-    if (RemoteService.SERVICE_STOPPING) {
-      return
-    }
-    application.run {
-      stopService(Intent(this, RemoteService::class.java))
-    }
   }
 }

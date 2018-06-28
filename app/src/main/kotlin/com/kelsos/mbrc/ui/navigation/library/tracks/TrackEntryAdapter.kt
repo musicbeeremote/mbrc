@@ -7,11 +7,8 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.popup
-import javax.inject.Inject
 
-class TrackEntryAdapter
-@Inject
-constructor() : PagingDataAdapter<Track, TrackViewHolder>(DIFF_CALLBACK) {
+class TrackEntryAdapter : PagingDataAdapter<Track, TrackViewHolder>(DIFF_CALLBACK) {
   private var listener: MenuItemSelectedListener<Track>? = null
   private var coverMode: Boolean = false
 

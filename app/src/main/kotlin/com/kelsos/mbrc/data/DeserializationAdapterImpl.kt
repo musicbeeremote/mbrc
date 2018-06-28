@@ -2,12 +2,9 @@ package com.kelsos.mbrc.data
 
 import com.squareup.moshi.Moshi
 import java.lang.reflect.ParameterizedType
-import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class DeserializationAdapterImpl
-@Inject
-constructor(
+class DeserializationAdapterImpl(
   private val moshi: Moshi
 ) : DeserializationAdapter {
   override fun <T : Any> objectify(line: String, type: ParameterizedType): T {

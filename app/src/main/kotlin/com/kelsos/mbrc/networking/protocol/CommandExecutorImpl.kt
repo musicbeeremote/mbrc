@@ -8,11 +8,8 @@ import java.util.HashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
-import javax.inject.Inject
 
-class CommandExecutorImpl
-@Inject
-constructor(
+class CommandExecutorImpl(
   private val commandFactory: CommandFactory
 ) : CommandExecutor {
 

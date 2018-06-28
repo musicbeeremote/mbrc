@@ -14,11 +14,8 @@ import timber.log.Timber
 import java.io.IOException
 import java.net.Socket
 import java.nio.charset.Charset
-import javax.inject.Inject
 
-class RequestManagerImpl
-@Inject
-constructor(
+class RequestManagerImpl(
   private val serializationAdapter: SerializationAdapter,
   private val deserializationAdapter: DeserializationAdapter,
   private val clientInformationStore: ClientInformationStore,

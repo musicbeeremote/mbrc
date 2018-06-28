@@ -37,10 +37,6 @@
     public void set*(...);
 }
 
-
--keep class javax.inject.** { *; }
--keep class javax.annotation.** { *; }
-
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
     public static *** v(...);
@@ -62,23 +58,8 @@
 #Toothpick
 # Do not obfuscate annotation scoped classes
 -keepnames @javax.inject.Singleton class *
-# Add any custom defined @Scope (e.g. @Singleton) annotations here
+# Add any custom defined @Scope (e.g. ) annotations here
 # because proguard does not allow annotation inheritance rules
-
-# Do not obfuscate classes with Injected Constructors
--keepclasseswithmembernames class * {
-    @javax.inject.Inject <init>(...);
-}
-
-# Do not obfuscate classes with Injected Fields
--keepclasseswithmembernames class * {
-    @javax.inject.Inject <fields>;
-}
-
-# Do not obfuscate classes with Injected Methods
--keepclasseswithmembernames class * {
-    @javax.inject.Inject <methods>;
-}
 
 # OkHttp
 -keepattributes Signature

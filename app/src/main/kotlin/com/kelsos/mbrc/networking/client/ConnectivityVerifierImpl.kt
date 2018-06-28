@@ -5,10 +5,8 @@ import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class ConnectivityVerifierImpl
-@Inject constructor(
+class ConnectivityVerifierImpl(
   private val deserializationAdapter: DeserializationAdapter,
   private val requestManager: RequestManager,
   private val dispatchers: AppCoroutineDispatchers

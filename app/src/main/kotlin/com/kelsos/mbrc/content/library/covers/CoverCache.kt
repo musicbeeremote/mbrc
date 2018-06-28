@@ -13,11 +13,8 @@ import okio.buffer
 import okio.sink
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 
-class CoverCache
-@Inject
-constructor(
+class CoverCache(
   private val albumRepository: AlbumRepository,
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers,

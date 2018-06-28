@@ -15,19 +15,13 @@ import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import toothpick.Toothpick
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class BrowseTrackFragment : Fragment(), BrowseTrackView, MenuItemSelectedListener<Track> {
 
-  @Inject
-  lateinit var adapter: TrackEntryAdapter
-
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-
-  @Inject
-  lateinit var presenter: BrowseTrackPresenter
+  private val adapter: TrackEntryAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
+  private val presenter: BrowseTrackPresenter by inject()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
@@ -56,15 +50,6 @@ class BrowseTrackFragment : Fragment(), BrowseTrackView, MenuItemSelectedListene
       .show()
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(requireActivity().application, this)
-    scope.installModules(BrowseTrackModule())
-    super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
-    adapter.setCoverMode(true)
-    presenter.attach(this)
-  }
-
   override fun onDestroyView() {
     super.onDestroyView()
     presenter.detach()
@@ -81,6 +66,7 @@ class BrowseTrackFragment : Fragment(), BrowseTrackView, MenuItemSelectedListene
     binding.libraryBrowserContent.layoutManager = LinearLayoutManager(requireContext())
     binding.libraryBrowserContent.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
+    adapter.setCoverMode(true)
     presenter.load()
   }
 

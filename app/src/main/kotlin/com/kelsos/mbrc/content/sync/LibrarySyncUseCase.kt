@@ -5,7 +5,7 @@ import com.kelsos.mbrc.metrics.SyncedData
 /**
  * The class is responsible for the library metadata and playlist data network.
  */
-interface LibrarySyncInteractor {
+interface LibrarySyncUseCase {
   /**
    * Starts the network process for the library and playlist metadata. The network can be
    * either manual or automatic. The automatic network should happen only under certain

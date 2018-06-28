@@ -3,10 +3,8 @@ package com.kelsos.mbrc.networking.discovery
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop.COMPLETE
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
-class ServiceDiscoveryUseCaseImpl
-@Inject constructor(
+class ServiceDiscoveryUseCaseImpl(
   private val serviceDiscovery: RemoteServiceDiscovery,
   private val connectionRepository: ConnectionRepository
 ) : ServiceDiscoveryUseCase {

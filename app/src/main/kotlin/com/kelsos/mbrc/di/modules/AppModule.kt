@@ -1,5 +1,8 @@
 package com.kelsos.mbrc.di.modules
 
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
+import androidx.room.Room
 import com.kelsos.mbrc.DatabaseTransactionRunner
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
@@ -21,6 +24,7 @@ import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.albums.AlbumRepositoryImpl
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepositoryImpl
+import com.kelsos.mbrc.content.library.covers.CoverCache
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
@@ -35,30 +39,16 @@ import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.content.radios.RadioRepository
 import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractorImpl
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.core.RemoteServiceCore
+import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.data.DatabaseTransactionRunnerImpl
 import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
-import com.kelsos.mbrc.di.bindClass
-import com.kelsos.mbrc.di.bindInstance
-import com.kelsos.mbrc.di.bindSingletonClass
-import com.kelsos.mbrc.di.bindSingletonProvider
-import com.kelsos.mbrc.di.providers.AlbumDaoProvider
-import com.kelsos.mbrc.di.providers.ArtistDaoProvider
-import com.kelsos.mbrc.di.providers.ConnectionDaoProvider
-import com.kelsos.mbrc.di.providers.DatabaseProvider
-import com.kelsos.mbrc.di.providers.GenreDaoProvider
-import com.kelsos.mbrc.di.providers.NowPlayingDaoProvider
-import com.kelsos.mbrc.di.providers.PlaylistDaoProvider
-import com.kelsos.mbrc.di.providers.RadioStationDaoProvider
-import com.kelsos.mbrc.di.providers.TrackDaoProvider
-import com.kelsos.mbrc.metrics.SyncMetrics
-import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
 import com.kelsos.mbrc.networking.RequestManager
@@ -89,6 +79,24 @@ import com.kelsos.mbrc.networking.protocol.CommandFactory
 import com.kelsos.mbrc.networking.protocol.CommandFactoryImpl
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.networking.protocol.VolumeInteractorImpl
+import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
+import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
+import com.kelsos.mbrc.networking.protocol.commands.UpdateCover
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLastFm
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLfmRating
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLyrics
+import com.kelsos.mbrc.networking.protocol.commands.UpdateMute
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrack
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackMoved
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackRemoval
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayState
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlaybackPositionCommand
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayerStatus
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePluginVersionCommand
+import com.kelsos.mbrc.networking.protocol.commands.UpdateRating
+import com.kelsos.mbrc.networking.protocol.commands.UpdateRepeat
+import com.kelsos.mbrc.networking.protocol.commands.UpdateShuffle
+import com.kelsos.mbrc.networking.protocol.commands.UpdateVolume
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
@@ -97,103 +105,175 @@ import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerPresenter
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerPresenterImpl
+import com.kelsos.mbrc.ui.minicontrol.MiniControlPresenter
+import com.kelsos.mbrc.ui.minicontrol.MiniControlPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.LibraryPresenter
+import com.kelsos.mbrc.ui.navigation.library.LibraryPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumPresenter
+import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksPresenter
+import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsPresenter
+import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistPresenter
+import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsPresenter
+import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsPresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenrePresenter
+import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenrePresenterImpl
+import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackPresenter
+import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackPresenterImpl
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenter
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenterImpl
+import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManager
+import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManagerImpl
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenter
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenterImpl
+import com.kelsos.mbrc.ui.navigation.player.PlayerPresenter
+import com.kelsos.mbrc.ui.navigation.player.PlayerPresenterImpl
+import com.kelsos.mbrc.ui.navigation.player.RatingDialogPresenter
+import com.kelsos.mbrc.ui.navigation.player.RatingDialogPresenterImpl
+import com.kelsos.mbrc.ui.navigation.player.VolumeDialogPresenter
+import com.kelsos.mbrc.ui.navigation.player.VolumeDialogPresenterImpl
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenter
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenterImpl
+import com.kelsos.mbrc.ui.navigation.radio.RadioPresenter
+import com.kelsos.mbrc.ui.navigation.radio.RadioPresenterImpl
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
-import toothpick.config.Module
+import kotlinx.coroutines.Dispatchers
+import org.koin.dsl.module
+import org.koin.experimental.builder.factoryBy
+import org.koin.experimental.builder.single
+import org.koin.experimental.builder.singleBy
 
-class AppModule : Module() {
-  init {
+val appModule = module {
+  single { Moshi.Builder().build() }
 
-    bindInstance {
-      return@bindInstance Moshi.Builder().build()
-    }
+  singleBy<ConnectionRepository, ConnectionRepositoryImpl>()
 
-    bindClass<ConnectionRepository> { ConnectionRepositoryImpl::class }
+  singleBy<TrackRepository, TrackRepositoryImpl>()
+  singleBy<AlbumRepository, AlbumRepositoryImpl>()
+  singleBy<ArtistRepository, ArtistRepositoryImpl>()
+  singleBy<GenreRepository, GenreRepositoryImpl>()
 
-    bindClass<TrackRepository> { TrackRepositoryImpl::class }
-    bindClass<AlbumRepository> { AlbumRepositoryImpl::class }
-    bindClass<ArtistRepository> { ArtistRepositoryImpl::class }
-    bindClass<GenreRepository> { GenreRepositoryImpl::class }
+  singleBy<NowPlayingRepository, NowPlayingRepositoryImpl>()
+  singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
+  single<CoverCache>()
 
-    bindClass<NowPlayingRepository> { NowPlayingRepositoryImpl::class }
-    bindClass<PlaylistRepository> { PlaylistRepositoryImpl::class }
+  singleBy<MessageSerializer, MessageSerializerImpl>()
 
-    bindSingletonProvider(DatabaseProvider::class)
-    bindSingletonProvider(GenreDaoProvider::class)
+  singleBy<SerializationAdapter, SerializationAdapterImpl>()
+  singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
+  singleBy<DatabaseTransactionRunner, DatabaseTransactionRunnerImpl>()
+  singleBy<RequestManager, RequestManagerImpl>()
 
-    bindSingletonProvider(ArtistDaoProvider::class)
-    bindSingletonProvider(AlbumDaoProvider::class)
-    bindSingletonProvider(TrackDaoProvider::class)
-    bindSingletonProvider(NowPlayingDaoProvider::class)
+  singleBy<UserActionUseCase, UserActionUseCaseImpl>()
 
-    bindSingletonProvider(PlaylistDaoProvider::class)
-    bindSingletonProvider(RadioStationDaoProvider::class)
-    bindSingletonProvider(ConnectionDaoProvider::class)
+  singleBy<ClientConnectionUseCase, ClientConnectionUseCaseImpl>()
 
-    bindSingletonClass<SettingsManager> { SettingsManagerImpl::class }
-    bindSingletonClass<PlayingTrackCache> { PlayingTrackCacheImpl::class }
-    bindSingletonClass<ServiceChecker> { ServiceCheckerImpl::class }
+  singleBy<SettingsManager, SettingsManagerImpl>()
+  singleBy<PlayingTrackCache, PlayingTrackCacheImpl>()
+  singleBy<ServiceChecker, ServiceCheckerImpl>()
 
-    bindSingletonClass<LibrarySyncInteractor> { LibrarySyncInteractorImpl::class }
+  singleBy<LibrarySyncUseCase, LibrarySyncUseCaseImpl>()
 
-    bindSingletonClass<RadioRepository> { RadioRepositoryImpl::class }
-    bindSingletonClass<ClientInformationStore> { ClientInformationStoreImpl::class }
-    bindSingletonClass<VolumeInteractor> { VolumeInteractorImpl::class }
-    bindSingletonClass<OutputApi> { OutputApiImpl::class }
+  singleBy<RadioRepository, RadioRepositoryImpl>()
+  singleBy<ClientInformationStore, ClientInformationStoreImpl>()
+  singleBy<VolumeInteractor, VolumeInteractorImpl>()
+  singleBy<OutputApi, OutputApiImpl>()
 
-    bindSingletonClass<PlayingTrackLiveDataProvider> { PlayingTrackLiveDataProviderImpl::class }
-    bindSingletonClass<PlayerStatusLiveDataProvider> { PlayerStatusLiveDataProviderImpl::class }
-    bindSingletonClass<TrackRatingLiveDataProvider> { TrackRatingLiveDataProviderImpl::class }
-    bindSingletonClass<ConnectionStatusLiveDataProvider> {
-      ConnectionStatusLiveDataProviderImpl::class
-    }
+  singleBy<PlayingTrackLiveDataProvider, PlayingTrackLiveDataProviderImpl>()
+  singleBy<PlayerStatusLiveDataProvider, PlayerStatusLiveDataProviderImpl>()
+  singleBy<TrackRatingLiveDataProvider, TrackRatingLiveDataProviderImpl>()
+  singleBy<ConnectionStatusLiveDataProvider, ConnectionStatusLiveDataProviderImpl>()
 
-    bindSingletonClass<DefaultSettingsLiveDataProvider> {
-      DefaultSettingsLiveDataProviderImpl::class
-    }
+  singleBy<DefaultSettingsLiveDataProvider, DefaultSettingsLiveDataProviderImpl>()
 
-    bindSingletonClass<LyricsLiveDataProvider> { LyricsLiveDataProviderImpl::class }
+  singleBy<LyricsLiveDataProvider, LyricsLiveDataProviderImpl>()
 
-    bindClass<MessageSerializer> { MessageSerializerImpl::class }
+  singleBy<MessageQueue, MessageQueueImpl>()
+  singleBy<MessageHandler, MessageHandlerImpl>()
+  singleBy<CommandExecutor, CommandExecutorImpl>()
 
-    bindSingletonClass<MessageQueue> { MessageQueueImpl::class }
-    bindSingletonClass<MessageHandler> { MessageHandlerImpl::class }
-    bindSingletonClass<CommandExecutor> { CommandExecutorImpl::class }
-    bindClass<UserActionUseCase> { UserActionUseCaseImpl::class }
-    bindSingletonClass<IClientConnectionManager> { ClientConnectionManager::class }
-    bindClass<ClientConnectionUseCase> { ClientConnectionUseCaseImpl::class }
-    bindSingletonClass<CommandFactory> { CommandFactoryImpl::class }
-    bindSingletonClass<MessageDeserializer> { MessageDeserializerImpl::class }
-    bindSingletonClass<UiMessageQueue> { UiMessageQueueImpl::class }
-    bindSingletonClass<RemoteServiceDiscovery> { RemoteServiceDiscoveryImpl::class }
-    bindSingletonClass<ServiceDiscoveryUseCase> { ServiceDiscoveryUseCaseImpl::class }
-    bindSingletonClass<TrackPositionLiveDataProvider> { TrackPositionLiveDataProviderImpl::class }
+  singleBy<IClientConnectionManager, ClientConnectionManager>()
+  singleBy<CommandFactory, CommandFactoryImpl>()
+  singleBy<MessageDeserializer, MessageDeserializerImpl>()
+  singleBy<UiMessageQueue, UiMessageQueueImpl>()
+  singleBy<RemoteServiceDiscovery, RemoteServiceDiscoveryImpl>()
+  singleBy<ServiceDiscoveryUseCase, ServiceDiscoveryUseCaseImpl>()
+  singleBy<TrackPositionLiveDataProvider, TrackPositionLiveDataProviderImpl>()
 
-    bindSingletonClass<INotificationManager> { SessionNotificationManager::class }
-    bindSingletonClass<IRemoteServiceCore> { RemoteServiceCore::class }
+  singleBy<INotificationManager, SessionNotificationManager>()
+  singleBy<IRemoteServiceCore, RemoteServiceCore>()
 
-    bindClass<SerializationAdapter> { SerializationAdapterImpl::class }
-    bindClass<DeserializationAdapter> { DeserializationAdapterImpl::class }
-    bindClass<DatabaseTransactionRunner> { DatabaseTransactionRunnerImpl::class }
+  singleBy<CoverModel, StoredCoverModel>()
 
-    bindSingletonProvider(AppCoroutineDispatcherProvider::class)
-
-    bindClass<RequestManager> { RequestManagerImpl::class }
-
-    bindInstance<CoverModel> { StoredCoverModel }
-    bindInstance<SyncMetrics> {
-      object : SyncMetrics {
-        override fun librarySyncStarted() {
-          TODO("Not yet implemented")
-        }
-
-        override fun librarySyncComplete(metrics: SyncedData) {
-          TODO("Not yet implemented")
-        }
-
-        override fun librarySyncFailed() {
-          TODO("Not yet implemented")
-        }
-      }
-    }
+  single {
+    AppCoroutineDispatchers(
+      Dispatchers.Main,
+      Dispatchers.IO,
+      Dispatchers.IO,
+      Dispatchers.IO
+    )
   }
+
+  single { Room.databaseBuilder(get(), Database::class.java, "cache.db").build() }
+  single { get<Database>().genreDao() }
+  single { get<Database>().artistDao() }
+  single { get<Database>().albumDao() }
+  single { get<Database>().trackDao() }
+  single { get<Database>().nowPlayingDao() }
+  single { get<Database>().playlistDao() }
+  single { get<Database>().radioStationDao() }
+  single { get<Database>().connectionDao() }
+
+  single<UpdateNowPlayingTrack>()
+  single<UpdateCover>()
+  single<UpdateRating>()
+  single<UpdatePlayerStatus>()
+  single<UpdatePlayState>()
+  single<UpdateRepeat>()
+  single<UpdateVolume>()
+  single<UpdateMute>()
+  single<UpdateShuffle>()
+  single<UpdateLastFm>()
+  single<UpdateLyrics>()
+  single<UpdateLfmRating>()
+  single<UpdateNowPlayingTrackRemoval>()
+  single<UpdateNowPlayingTrackMoved>()
+  single<UpdatePlaybackPositionCommand>()
+  single<UpdatePluginVersionCommand>()
+  single<ProtocolPingHandle>()
+  single<ProtocolPongHandle>()
+
+  single<SharedPreferences> {
+    PreferenceManager.getDefaultSharedPreferences(get())
+  }
+  single<CoverModel> { StoredCoverModel }
+}
+
+val uiModule = module {
+  factoryBy<PlaylistPresenter, PlaylistPresenterImpl>()
+  factoryBy<RadioPresenter, RadioPresenterImpl>()
+  factoryBy<LyricsPresenter, LyricsPresenterImpl>()
+  factoryBy<LibraryPresenter, LibraryPresenterImpl>()
+  factoryBy<PlayerPresenter, PlayerPresenterImpl>()
+  factoryBy<BrowseAlbumPresenter, BrowseAlbumPresenterImpl>()
+
+  factoryBy<AlbumTracksPresenter, AlbumTracksPresenterImpl>()
+  factoryBy<ArtistAlbumsPresenter, ArtistAlbumsPresenterImpl>()
+  factoryBy<BrowseArtistPresenter, BrowseArtistPresenterImpl>()
+  factoryBy<GenreArtistsPresenter, GenreArtistsPresenterImpl>()
+  factoryBy<BrowseGenrePresenter, BrowseGenrePresenterImpl>()
+  factoryBy<BrowseTrackPresenter, BrowseTrackPresenterImpl>()
+
+  factoryBy<NowPlayingPresenter, NowPlayingPresenterImpl>()
+  factoryBy<MoveManager, MoveManagerImpl>()
+  factoryBy<ConnectionManagerPresenter, ConnectionManagerPresenterImpl>()
+  factoryBy<VolumeDialogPresenter, VolumeDialogPresenterImpl>()
+  factoryBy<MiniControlPresenter, MiniControlPresenterImpl>()
+  factoryBy<RatingDialogPresenter, RatingDialogPresenterImpl>()
 }

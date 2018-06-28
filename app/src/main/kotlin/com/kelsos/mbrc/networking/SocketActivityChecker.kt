@@ -9,13 +9,8 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class SocketActivityChecker
-@Inject
-constructor(dispatchers: AppCoroutineDispatchers) {
+class SocketActivityChecker(dispatchers: AppCoroutineDispatchers) {
   private var deferred: Deferred<Unit>? = null
   private var pingTimeoutListener: PingTimeoutListener? = null
   private val job = SupervisorJob()

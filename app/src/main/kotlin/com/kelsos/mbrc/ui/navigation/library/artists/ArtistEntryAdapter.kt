@@ -7,11 +7,8 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.popup
-import javax.inject.Inject
 
-class ArtistEntryAdapter
-@Inject
-constructor() : PagingDataAdapter<Artist, ArtistViewHolder>(DIFF_CALLBACK) {
+class ArtistEntryAdapter : PagingDataAdapter<Artist, ArtistViewHolder>(DIFF_CALLBACK) {
   private var listener: MenuItemSelectedListener<Artist>? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArtistViewHolder {

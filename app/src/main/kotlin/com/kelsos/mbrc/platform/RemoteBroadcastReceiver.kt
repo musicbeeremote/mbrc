@@ -14,11 +14,8 @@ import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.SettingsManager
 import timber.log.Timber
-import javax.inject.Inject
 
-class RemoteBroadcastReceiver
-@Inject
-constructor(
+class RemoteBroadcastReceiver(
   private val settingsManager: SettingsManager,
   private val volumeInteractor: VolumeInteractor,
   private val userActionUseCase: UserActionUseCase

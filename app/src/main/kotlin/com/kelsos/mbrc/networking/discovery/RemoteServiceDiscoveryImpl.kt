@@ -16,11 +16,8 @@ import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
 import java.util.Locale
-import javax.inject.Inject
 
-class RemoteServiceDiscoveryImpl
-@Inject
-internal constructor(
+class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
   private val moshi: Moshi,

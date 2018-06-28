@@ -13,11 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class LibrarySyncInteractorImpl
-@Inject
-constructor(
+class LibrarySyncUseCaseImpl(
   private val genreRepository: GenreRepository,
   private val artistRepository: ArtistRepository,
   private val albumRepository: AlbumRepository,
@@ -25,12 +22,12 @@ constructor(
   private val playlistRepository: PlaylistRepository,
   private val coverCache: CoverCache,
   dispatchers: AppCoroutineDispatchers,
-  private val metrics: SyncMetrics,
-) : LibrarySyncInteractor {
+  private val metrics: SyncMetrics
+) : LibrarySyncUseCase {
 
   private var running: Boolean = false
-  private var onCompleteListener: LibrarySyncInteractor.OnCompleteListener? = null
-  private var onStartListener: LibrarySyncInteractor.OnStartListener? = null
+  private var onCompleteListener: LibrarySyncUseCase.OnCompleteListener? = null
+  private var onStartListener: LibrarySyncUseCase.OnStartListener? = null
 
   private val job = SupervisorJob()
   private val scope = CoroutineScope(job + dispatchers.network)
@@ -104,12 +101,12 @@ constructor(
   }
 
   override fun setOnCompleteListener(
-    onCompleteListener: LibrarySyncInteractor.OnCompleteListener?
+    onCompleteListener: LibrarySyncUseCase.OnCompleteListener?
   ) {
     this.onCompleteListener = onCompleteListener
   }
 
-  override fun setOnStartListener(onStartListener: LibrarySyncInteractor.OnStartListener?) {
+  override fun setOnStartListener(onStartListener: LibrarySyncUseCase.OnStartListener?) {
     this.onStartListener = onStartListener
   }
 

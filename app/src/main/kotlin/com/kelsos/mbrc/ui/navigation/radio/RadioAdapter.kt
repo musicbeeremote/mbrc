@@ -4,11 +4,8 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.content.radios.RadioStation
-import javax.inject.Inject
 
-class RadioAdapter
-@Inject
-constructor() : PagingDataAdapter<RadioStation, RadioViewHolder>(
+class RadioAdapter : PagingDataAdapter<RadioStation, RadioViewHolder>(
   RADIO_COMPARATOR
 ) {
   private var radioPressedListener: OnRadioPressedListener? = null

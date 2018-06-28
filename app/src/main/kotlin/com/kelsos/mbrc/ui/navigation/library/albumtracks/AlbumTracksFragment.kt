@@ -20,23 +20,17 @@ import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1
 import com.squareup.picasso.Picasso
-import toothpick.Toothpick
+import org.koin.android.ext.android.inject
 import java.io.File
-import javax.inject.Inject
 
 class AlbumTracksFragment :
   Fragment(),
   AlbumTracksView,
   MenuItemSelectedListener<Track> {
 
-  @Inject
-  lateinit var adapter: TrackEntryAdapter
-
-  @Inject
-  lateinit var actionHandler: PopupActionHandler
-
-  @Inject
-  lateinit var presenter: AlbumTracksPresenter
+  private val adapter: TrackEntryAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
+  private val presenter: AlbumTracksPresenter by inject()
 
   private lateinit var album: AlbumInfo
   private var _binding: FragmentAlbumTracksBinding? = null
@@ -75,10 +69,7 @@ class AlbumTracksFragment :
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(this)
-    scope.installModules(AlbumTracksModule())
     super.onCreate(savedInstanceState)
-    Toothpick.inject(this, scope)
 
     album = AlbumTracksFragmentArgs.fromBundle(requireArguments()).run {
       AlbumInfo(album, artist, "")
@@ -123,7 +114,6 @@ class AlbumTracksFragment :
 
   override fun onDestroy() {
     presenter.detach()
-    Toothpick.closeScope(this)
     super.onDestroy()
   }
 }

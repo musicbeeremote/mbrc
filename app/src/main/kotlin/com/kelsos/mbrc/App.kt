@@ -4,14 +4,13 @@ import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
 import androidx.multidex.MultiDexApplication
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.kelsos.mbrc.di.modules.AppModule
+import com.kelsos.mbrc.di.modules.appModule
+import com.kelsos.mbrc.di.modules.uiModule
 import com.kelsos.mbrc.utilities.CustomLoggingTree
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 import timber.log.Timber
-import toothpick.Toothpick
-import toothpick.configuration.Configuration
-import toothpick.registries.FactoryRegistryLocator
-import toothpick.registries.MemberInjectorRegistryLocator
-import toothpick.smoothie.module.SmoothieApplicationModule
 
 @SuppressLint("Registered")
 open class App : MultiDexApplication() {
@@ -22,35 +21,26 @@ open class App : MultiDexApplication() {
     initialize()
   }
 
+  protected open fun appModules(): List<Module> {
+    return listOf(appModule, uiModule)
+  }
+
   protected open fun initialize() {
     if (!testMode()) {
       AndroidThreeTen.init(this)
     }
 
-    initializeToothpick()
+    startKoin {
+      androidContext(this@App)
+      modules(appModules())
+    }
+
     initializeTimber()
   }
 
   private fun initializeTimber() {
     if (BuildConfig.DEBUG) {
       Timber.plant(CustomLoggingTree.create())
-    }
-  }
-
-  private fun initializeToothpick() {
-    val configuration: Configuration = if (BuildConfig.DEBUG) {
-      Configuration.forDevelopment().disableReflection()
-    } else {
-      Configuration.forProduction().disableReflection()
-    }
-
-    Toothpick.setConfiguration(configuration)
-
-    MemberInjectorRegistryLocator.setRootRegistry(MemberInjectorRegistry())
-    FactoryRegistryLocator.setRootRegistry(FactoryRegistry())
-    val applicationScope = Toothpick.openScope(this)
-    if (!testMode()) {
-      applicationScope.installModules(SmoothieApplicationModule(this), AppModule())
     }
   }
 

@@ -11,12 +11,9 @@ import com.squareup.moshi.Types
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
-import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class ApiBase
-@Inject
-constructor(
+class ApiBase(
   private val adapter: DeserializationAdapter,
   private val apiRequestManager: RequestManager
 ) {

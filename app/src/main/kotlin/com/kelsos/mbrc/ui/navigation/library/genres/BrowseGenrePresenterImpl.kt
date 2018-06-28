@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.genres.GenreRepository
-import com.kelsos.mbrc.content.sync.LibrarySyncInteractor
+import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
@@ -13,13 +13,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class BrowseGenrePresenterImpl
-@Inject
-constructor(
+class BrowseGenrePresenterImpl(
   private val repository: GenreRepository,
-  private val librarySyncInteractor: LibrarySyncInteractor,
+  private val syncUseCase: LibrarySyncUseCase,
   private val queue: QueueHandler,
   private val searchModel: LibrarySearchModel
 ) : BasePresenter<BrowseGenreView>(), BrowseGenrePresenter {
@@ -66,7 +63,7 @@ constructor(
 
   override fun sync() {
     scope.launch {
-      librarySyncInteractor.sync()
+      syncUseCase.sync()
     }
   }
 

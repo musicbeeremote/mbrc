@@ -22,13 +22,8 @@ import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.RemoteUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class SessionNotificationManager
-@Inject
-constructor(
+class SessionNotificationManager(
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
   private val settings: SettingsManager,

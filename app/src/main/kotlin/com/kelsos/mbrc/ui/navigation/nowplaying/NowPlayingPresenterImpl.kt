@@ -13,11 +13,8 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class NowPlayingPresenterImpl
-@Inject
-constructor(
+class NowPlayingPresenterImpl(
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,

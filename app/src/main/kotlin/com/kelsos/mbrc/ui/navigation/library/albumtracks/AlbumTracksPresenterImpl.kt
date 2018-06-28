@@ -12,11 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class AlbumTracksPresenterImpl
-@Inject
-constructor(
+class AlbumTracksPresenterImpl(
   private val repository: TrackRepository,
   private val queue: QueueHandler
 ) : BasePresenter<AlbumTracksView>(),

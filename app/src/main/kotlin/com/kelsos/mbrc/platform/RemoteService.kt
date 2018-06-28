@@ -16,23 +16,14 @@ import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.channel
+import org.koin.android.ext.android.inject
 import timber.log.Timber
-import toothpick.Scope
-import toothpick.Toothpick
-import javax.inject.Inject
 
 class RemoteService : Service() {
 
-  @Inject
-  lateinit var receiver: RemoteBroadcastReceiver
-
-  @Inject
-  lateinit var core: IRemoteServiceCore
-
-  @Inject
-  lateinit var notifications: SessionNotificationManager
-
-  private lateinit var scope: Scope
+  private val receiver: RemoteBroadcastReceiver by inject()
+  private val core: IRemoteServiceCore by inject()
+  private val notifications: SessionNotificationManager by inject()
   private lateinit var handler: Handler
 
   private fun placeholderNotification(): Notification {
@@ -65,8 +56,6 @@ class RemoteService : Service() {
     startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
     handler = Handler(Looper.myLooper()!!)
     SERVICE_RUNNING = true
-    scope = Toothpick.openScope(application)
-    Toothpick.inject(this, scope)
     this.registerReceiver(receiver, receiver.filter(this))
   }
 
@@ -86,7 +75,7 @@ class RemoteService : Service() {
     handler.postDelayed(
       {
         core.stop()
-        Toothpick.closeScope(this)
+        core.stop()
         SERVICE_STOPPING = false
         SERVICE_RUNNING = false
         Timber.d("Background Service::Destroyed")

@@ -17,20 +17,14 @@ import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class RemoteSessionManager
-@Inject
-constructor(
+class RemoteSessionManager(
   context: Application,
   volumeProvider: RemoteVolumeProvider,
   private val userActionUseCase: UserActionUseCase
 ) : AudioManager.OnAudioFocusChangeListener {
   private val mediaSession: MediaSessionCompat
 
-  @Inject
   lateinit var handler: MediaIntentHandler
 
   init {

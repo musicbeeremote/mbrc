@@ -11,11 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class GenreArtistsPresenterImpl
-@Inject
-constructor(
+class GenreArtistsPresenterImpl(
   private val repository: ArtistRepository,
   private val queue: QueueHandler
 ) : BasePresenter<GenreArtistsView>(), GenreArtistsPresenter {

@@ -22,11 +22,8 @@ import java.io.PrintWriter
 import java.net.Socket
 import java.net.SocketAddress
 import java.util.concurrent.Executors
-import javax.inject.Inject
 
-class ClientConnectionManager
-@Inject
-constructor(
+class ClientConnectionManager(
   private val activityChecker: SocketActivityChecker,
   private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,

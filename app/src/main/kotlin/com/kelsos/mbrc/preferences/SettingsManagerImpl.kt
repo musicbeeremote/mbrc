@@ -8,13 +8,8 @@ import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersionCode
 import org.threeten.bp.Instant
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class SettingsManagerImpl
-@Inject
-constructor(
+class SettingsManagerImpl(
   private val context: Application,
   private val preferences: SharedPreferences
 ) : SettingsManager {

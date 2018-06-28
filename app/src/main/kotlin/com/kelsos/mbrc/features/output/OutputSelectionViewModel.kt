@@ -12,11 +12,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.net.SocketException
 import java.net.SocketTimeoutException
-import javax.inject.Inject
 
-class OutputSelectionViewModel
-@Inject
-constructor(
+class OutputSelectionViewModel(
   private val outputApi: OutputApi,
   dispatchers: AppCoroutineDispatchers
 ) : ViewModel() {
