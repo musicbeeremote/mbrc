@@ -18,12 +18,13 @@ import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class GenreArtistsFragment : Fragment(), GenreArtistsView, MenuItemSelectedListener<Artist> {
+class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<Artist> {
 
   private val adapter: ArtistEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: GenreArtistsPresenter by inject()
+  private val viewModel: GenreArtistsViewModel by viewModel()
 
   private lateinit var genre: String
   private var _binding: FragmentGenreArtistsBinding? = null
@@ -43,8 +44,6 @@ class GenreArtistsFragment : Fragment(), GenreArtistsView, MenuItemSelectedListe
     adapter.setMenuItemSelectedListener(this)
     binding.genreArtistsArtistList.adapter = adapter
     binding.genreArtistsArtistList.layoutManager = LinearLayoutManager(requireContext())
-    presenter.attach(this)
-    presenter.load(genre)
   }
 
   override fun onDestroyView() {
@@ -54,7 +53,6 @@ class GenreArtistsFragment : Fragment(), GenreArtistsView, MenuItemSelectedListe
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
     genre = GenreArtistsFragmentArgs.fromBundle(requireArguments()).genre
   }
 
@@ -62,8 +60,6 @@ class GenreArtistsFragment : Fragment(), GenreArtistsView, MenuItemSelectedListe
     val action = actionHandler.artistSelected(itemId)
     if (action == LibraryPopup.PROFILE) {
       onItemClicked(item)
-    } else {
-      presenter.queue(action, item)
     }
   }
 
@@ -74,11 +70,11 @@ class GenreArtistsFragment : Fragment(), GenreArtistsView, MenuItemSelectedListe
     findNavController(this).navigate(nav)
   }
 
-  override suspend fun update(artists: PagingData<Artist>) {
+  suspend fun update(artists: PagingData<Artist>) {
     adapter.submitData(artists)
   }
 
-  override fun queue(success: Boolean, tracks: Int) {
+  fun queue(success: Boolean, tracks: Int) {
     val message = if (success) {
       getString(R.string.queue_result__success, tracks)
     } else {
@@ -87,10 +83,5 @@ class GenreArtistsFragment : Fragment(), GenreArtistsView, MenuItemSelectedListe
     Snackbar.make(binding.root, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
   }
 }

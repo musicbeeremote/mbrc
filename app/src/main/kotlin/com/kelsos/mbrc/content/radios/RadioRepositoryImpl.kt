@@ -18,13 +18,10 @@ class RadioRepositoryImpl(
 ) : RadioRepository {
   private val mapper = RadioDtoMapper()
 
-  override suspend fun getAll(): Flow<PagingData<RadioStation>> =
-    dao.getAll().paged()
+  override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override suspend fun getAndSaveRemote(): Flow<PagingData<RadioStation>> {
-    getRemote()
-    return dao.getAll().paged()
-  }
+  override fun getAll(): Flow<PagingData<RadioStation>> =
+    dao.getAll().paged()
 
   override suspend fun getRemote() {
     withContext(dispatchers.network) {
@@ -39,11 +36,10 @@ class RadioRepositoryImpl(
     }
   }
 
-  override suspend fun search(
+  override fun search(
     term: String
   ): Flow<PagingData<RadioStation>> = dao.search(term).paged()
 
-  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
-
-  override suspend fun count(): Long = dao.count()
+  override suspend fun cacheIsEmpty(): Boolean =
+    withContext(dispatchers.database) { dao.count() == 0L }
 }

@@ -15,14 +15,11 @@ import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.databinding.FragmentRadioBinding
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RadioFragment :
-  Fragment(),
-  RadioView,
-  SwipeRefreshLayout.OnRefreshListener,
-  OnRadioPressedListener {
+class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioPressedListener {
 
-  private val presenter: RadioPresenter by inject()
+  private val viewModel: RadioViewModel by viewModel()
   private val adapter: RadioAdapter by inject()
 
   private var _binding: FragmentRadioBinding? = null
@@ -43,8 +40,6 @@ class RadioFragment :
     binding.radioStationsStationsList.adapter = adapter
     binding.radioStationsStationsList.layoutManager = LinearLayoutManager(requireContext())
     adapter.setOnRadioPressedListener(this)
-    presenter.attach(this)
-    presenter.load()
   }
 
   override fun onDestroyView() {
@@ -53,40 +48,32 @@ class RadioFragment :
   }
 
   override fun onDestroy() {
-    presenter.detach()
     adapter.setOnRadioPressedListener(null)
     super.onDestroy()
   }
 
-  override suspend fun update(data: PagingData<RadioStation>) {
+  suspend fun update(data: PagingData<RadioStation>) {
     adapter.submitData(data)
     binding.radioStationsEmptyGroup.isGone = adapter.itemCount != 0
   }
 
-  override fun error(error: Throwable) {
+  fun error() {
     Snackbar.make(requireView(), R.string.radio__loading_failed, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onRadioPressed(path: String) {
-    presenter.play(path)
+    viewModel.play(path)
   }
 
   override fun onRefresh() {
-    presenter.refresh()
+    viewModel.refresh()
   }
 
-  override fun radioPlayFailed() {
+  fun radioPlayFailed() {
     Snackbar.make(requireView(), R.string.radio__play_failed, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun radioPlaySuccessful() {
+  fun radioPlaySuccessful() {
     Snackbar.make(requireView(), R.string.radio__play_successful, Snackbar.LENGTH_SHORT).show()
-  }
-
-  override fun loading(visible: Boolean) {
-    if (!visible) {
-      binding.radioStationsLoadingBar.isGone = true
-      binding.radioStationsRefreshLayout.isRefreshing = false
-    }
   }
 }

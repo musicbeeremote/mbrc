@@ -100,7 +100,6 @@ class RemoteSessionManager(
   }
 
   private fun updateState(@State state: String) {
-
     val playbackState = PlaybackStateCompat.Builder()
       .setActions(PLAYBACK_ACTIONS)
       .apply {

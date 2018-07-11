@@ -1,21 +1,16 @@
 package com.kelsos.mbrc.networking.connections
 
-import android.content.SharedPreferences
-import android.content.res.Resources
 import androidx.lifecycle.LiveData
-import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class ConnectionRepositoryImpl(
   private val connectionDao: ConnectionDao,
-  private val preferences: SharedPreferences,
-  private val resources: Resources,
+  private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider,
   private val dispatchers: AppCoroutineDispatchers,
-  private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider
+  private val defaultSettingsModel: DefaultSettingsModel
 ) : ConnectionRepository {
 
   init {
@@ -28,6 +23,11 @@ class ConnectionRepositoryImpl(
 
   override suspend fun save(settings: ConnectionSettingsEntity) =
     withContext(dispatchers.database) {
+
+      val id = connectionDao.findId(settings.address, settings.port)
+      if (id != null) {
+        settings.id = id
+      }
 
       if (settings.id > 0) {
         connectionDao.update(settings)
@@ -76,6 +76,7 @@ class ConnectionRepositoryImpl(
 
   override suspend fun setDefault(settings: ConnectionSettingsEntity) {
     defaultId = settings.id
+    defaultSettingsLiveDataProvider.update(settings)
   }
 
   override suspend fun getDefault(): ConnectionSettingsEntity? = withContext(dispatchers.database) {
@@ -87,18 +88,10 @@ class ConnectionRepositoryImpl(
   }
 
   override var defaultId: Long
-    get() {
-      val key = resources.getString(R.string.settings_key_default_index)
-      return this.preferences.getLong(key, 0)
-    }
+    get() = defaultSettingsModel.defaultId
     private set(id) {
-      val key = resources.getString(R.string.settings_key_default_index)
-      this.preferences.edit().putLong(key, id).apply()
+      defaultSettingsModel.defaultId = id
     }
-
-  override suspend fun getModel(): ConnectionModel = withContext(dispatchers.database) {
-    return@withContext ConnectionModel(defaultId, getAll())
-  }
 
   override suspend fun getAll(): LiveData<List<ConnectionSettingsEntity>> = connectionDao.getAll()
 

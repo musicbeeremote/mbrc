@@ -9,22 +9,19 @@ import androidx.fragment.app.Fragment
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import com.google.android.material.snackbar.Snackbar
-import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.databinding.FragmentPlaylistsBinding
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
 import org.koin.android.ext.android.inject
-import java.net.ConnectException
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment :
   Fragment(),
-  PlaylistView,
   OnPlaylistPressedListener,
   OnRefreshListener {
 
   private val adapter: PlaylistAdapter by inject()
-  private val presenter: PlaylistPresenter by inject()
+  private val viewModel: PlaylistViewModel by viewModel()
 
   private var _binding: FragmentPlaylistsBinding? = null
   private val binding get() = _binding!!
@@ -44,8 +41,6 @@ class PlaylistFragment :
     binding.playlistsPlaylistList.layoutManager = LinearLayoutManager(requireContext())
     binding.playlistsPlaylistList.adapter = adapter
     binding.playlistsRefreshLayout.setOnRefreshListener(this)
-    presenter.attach(this)
-    presenter.load()
   }
 
   override fun onDestroyView() {
@@ -54,12 +49,7 @@ class PlaylistFragment :
   }
 
   override fun playlistPressed(path: String) {
-    presenter.play(path)
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
+    viewModel.play(path)
   }
 
   override fun onRefresh() {
@@ -67,31 +57,12 @@ class PlaylistFragment :
       binding.playlistsRefreshLayout.isRefreshing = true
     }
 
-    presenter.reload()
+    viewModel.reload()
   }
 
-  override suspend fun update(data: PagingData<Playlist>) {
+  suspend fun update(data: PagingData<Playlist>) {
     adapter.submitData(data)
     binding.playlistsEmptyGroup.isGone = adapter.itemCount != 0
-    binding.playlistsRefreshLayout.isRefreshing = false
-  }
-
-  override fun failure(throwable: Throwable) {
-    val swipeLayout = binding.playlistsRefreshLayout
-    swipeLayout.isRefreshing = false
-    val resId = if (throwable.cause is ConnectException) {
-      R.string.service_connection_error
-    } else {
-      R.string.playlists_load_failed
-    }
-    Snackbar.make(requireView(), resId, Snackbar.LENGTH_SHORT).show()
-  }
-
-  override fun showLoading() {
-  }
-
-  override fun hideLoading() {
-    binding.playlistsEmptyGroup.isGone = true
     binding.playlistsRefreshLayout.isRefreshing = false
   }
 }

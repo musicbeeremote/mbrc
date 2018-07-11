@@ -37,4 +37,7 @@ interface ConnectionDao {
 
   @Query("select * from settings where id < :id order by id desc limit 1")
   fun getPrevious(id: Long): ConnectionSettingsEntity?
+
+  @Query("select id from settings where address = :address and port = :port")
+  fun findId(address: String, port: Int): Long?
 }

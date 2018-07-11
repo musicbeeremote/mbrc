@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.paging.PagingData
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
@@ -17,13 +17,16 @@ import com.kelsos.mbrc.databinding.FragmentBrowseBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryFragmentDirections
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListener<Genre> {
+class BrowseGenreFragment : Fragment(), MenuItemSelectedListener<Genre> {
 
   private val adapter: GenreEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseGenrePresenter by inject()
+  private val viewModel: BrowseGenreViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
@@ -37,11 +40,11 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListene
     return binding.root
   }
 
-  override fun search(term: String) {
+  fun search(term: String) {
     binding.libraryBrowserSync.isGone = term.isNotEmpty()
   }
 
-  override fun queue(success: Boolean, tracks: Int) {
+  fun queue(success: Boolean, tracks: Int) {
     val message = if (success) {
       getString(R.string.queue_result__success, tracks)
     } else {
@@ -52,38 +55,33 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListene
       .show()
   }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    presenter.detach()
-    _binding = null
-  }
-
-  override suspend fun update(genres: PagingData<Genre>) {
-    adapter.submitData(genres)
-    binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
-  }
-
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
     binding.libraryBrowserTextTitle.setText(R.string.genres_list_empty)
     binding.libraryBrowserSync.setOnClickListener {
-      presenter.sync()
     }
     binding.libraryBrowserContent.adapter = adapter
     binding.libraryBrowserContent.layoutManager = LinearLayoutManager(requireContext())
     binding.libraryBrowserContent.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
-    presenter.attach(this)
-    presenter.load()
+
+    viewModel.genres.onEach { data ->
+      binding.libraryBrowserLoadingBar.isGone = true
+      adapter.submitData(data)
+      binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
+    }.launchIn(lifecycleScope)
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
   }
 
   override fun onMenuItemSelected(itemId: Int, item: Genre) {
     val action = actionHandler.genreSelected(itemId)
     if (action === LibraryPopup.PROFILE) {
       onItemClicked(item)
-    } else {
-      presenter.queue(action, item)
     }
   }
 
@@ -91,10 +89,6 @@ class BrowseGenreFragment : Fragment(), BrowseGenreView, MenuItemSelectedListene
     val directions = LibraryFragmentDirections.actionLibraryFragmentToGenreArtistsActivity(
       item.genre
     )
-    findNavController(this).navigate(directions)
-  }
-
-  override fun hideLoading() {
-    binding.libraryBrowserLoadingBar.isGone = true
+    findNavController().navigate(directions)
   }
 }

@@ -1,37 +1,21 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.verifyNoMoreInteractions
-import org.mockito.MockitoAnnotations
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class MoveManagerImplTest {
-
-  @Mock
-  private lateinit var onMoveSubmit: (Int, Int) -> Unit
-
-  private val testDispatcher = TestCoroutineDispatcher()
-  private val dispatchers = AppCoroutineDispatchers(
-    testDispatcher,
-    testDispatcher,
-    testDispatcher,
-    testDispatcher
-  )
-  private val moveManager: MoveManager = MoveManagerImpl(dispatchers)
-
-  @Before
-  fun setUp() {
-    MockitoAnnotations.initMocks(this)
-  }
+  private val dispatcher = TestCoroutineDispatcher()
+  private val onMoveSubmit: (Int, Int) -> Unit = mockk()
+  private val moveManager: MoveManager = MoveManagerImpl(dispatcher)
 
   @Test
-  fun moveFromOneToTen() = runBlockingTest(testDispatcher) {
+  fun moveFromOneToTen() = runBlockingTest(dispatcher) {
     moveManager.onMoveSubmit(onMoveSubmit)
     moveManager.move(1, 2)
     moveManager.move(2, 3)
@@ -45,12 +29,11 @@ class MoveManagerImplTest {
 
     advanceUntilIdle()
 
-    verify(onMoveSubmit, times(1)).invoke(1, 10)
-    verifyNoMoreInteractions(onMoveSubmit)
+    verify(exactly = 1) { onMoveSubmit.invoke(1, 10) }
   }
 
   @Test
-  fun moveFromTenToFive() = runBlockingTest(testDispatcher) {
+  fun moveFromTenToFive() = runBlockingTest(dispatcher) {
     moveManager.onMoveSubmit(onMoveSubmit)
     moveManager.move(10, 9)
     moveManager.move(9, 8)
@@ -59,7 +42,6 @@ class MoveManagerImplTest {
 
     advanceUntilIdle()
 
-    verify(onMoveSubmit, times(1)).invoke(10, 5)
-    verifyNoMoreInteractions(onMoveSubmit)
+    verify(exactly = 1) { onMoveSubmit.invoke(10, 5) }
   }
 }

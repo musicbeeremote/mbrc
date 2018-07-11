@@ -16,21 +16,17 @@ import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.FragmentAlbumTracksBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
-import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
-class AlbumTracksFragment :
-  Fragment(),
-  AlbumTracksView,
-  MenuItemSelectedListener<Track> {
+class AlbumTracksFragment : Fragment(), MenuItemSelectedListener<Track> {
 
   private val adapter: TrackEntryAdapter by inject()
-  private val actionHandler: PopupActionHandler by inject()
-  private val presenter: AlbumTracksPresenter by inject()
+  private val viewModel: AlbumTracksViewModel by viewModel()
 
   private lateinit var album: AlbumInfo
   private var _binding: FragmentAlbumTracksBinding? = null
@@ -53,14 +49,13 @@ class AlbumTracksFragment :
 
     binding.albumTracksPlay.isGone = false
     binding.albumTracksPlay.setOnClickListener {
-      presenter.queueAlbum(album.artist, album.album)
+      // TODO: Queue
     }
     adapter.setMenuItemSelectedListener(this)
     binding.albumTracksTrackList.layoutManager = LinearLayoutManager(requireContext())
     binding.albumTracksTrackList.adapter = adapter
 
-    presenter.attach(this)
-    presenter.load(album)
+    viewModel.load(album)
   }
 
   override fun onDestroyView() {
@@ -90,18 +85,16 @@ class AlbumTracksFragment :
   }
 
   override fun onMenuItemSelected(@IdRes itemId: Int, item: Track) {
-    presenter.queue(item, actionHandler.trackSelected(itemId))
   }
 
   override fun onItemClicked(item: Track) {
-    presenter.queue(item)
   }
 
-  override suspend fun update(tracks: PagingData<Track>) {
+  suspend fun update(tracks: PagingData<Track>) {
     adapter.submitData(tracks)
   }
 
-  override fun queue(success: Boolean, tracks: Int) {
+  fun queue(success: Boolean, tracks: Int) {
     val message = if (success) {
       getString(R.string.queue_result__success, tracks)
     } else {
@@ -110,10 +103,5 @@ class AlbumTracksFragment :
     Snackbar.make(binding.root, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
   }
 }

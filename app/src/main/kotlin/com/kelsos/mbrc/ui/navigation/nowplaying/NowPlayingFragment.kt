@@ -11,32 +11,34 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.paging.PagingData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
-import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.databinding.FragmentNowplayingBinding
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
-import org.koin.android.ext.android.inject
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NowPlayingFragment :
   Fragment(),
-  NowPlayingView,
   OnQueryTextListener,
   OnStartDragListener,
-  NowPlayingAdapter.NowPlayingListener {
+  NowPlayingListener {
 
   private var _binding: FragmentNowplayingBinding? = null
   private val binding get() = _binding!!
 
   private val adapter: NowPlayingAdapter by lazy { NowPlayingAdapter(this@NowPlayingFragment) }
 
-  private val presenter: NowPlayingPresenter by inject()
+  private val viewModel: NowPlayingViewModel by viewModel()
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -45,7 +47,6 @@ class NowPlayingFragment :
 
   override fun onQueryTextSubmit(query: String): Boolean {
     closeSearch()
-    presenter.search(query)
     return true
   }
 
@@ -108,13 +109,34 @@ class NowPlayingFragment :
     }
     binding.nowPlayingTrackList.addOnItemTouchListener(touchListener)
     val callback = SimpleItemTouchHelper(adapter)
-    itemTouchHelper = ItemTouchHelper(callback)
-    itemTouchHelper!!.attachToRecyclerView(binding.nowPlayingTrackList)
+    itemTouchHelper = ItemTouchHelper(callback).apply {
+      attachToRecyclerView(binding.nowPlayingTrackList)
+    }
     adapter.setListener(this)
-    binding.nowPlayingRefreshLayout.setOnRefreshListener { this.refresh() }
-    presenter.attach(this)
-    presenter.load()
-    refresh(true)
+    binding.nowPlayingRefreshLayout.setOnRefreshListener {
+      this.viewModel.refresh()
+    }
+
+    viewModel.playingTrack.observe(viewLifecycleOwner) {
+      adapter.setPlayingTrack(it.path)
+    }
+
+    viewModel.nowPlayingTracks.onEach {
+      binding.nowPlayingRefreshLayout.isRefreshing = false
+      binding.nowPlayingLoadingBar.isGone = true
+      adapter.submitData(it)
+      binding.nowPlayingEmptyGroup.isGone = adapter.itemCount != 0
+    }.launchIn(lifecycleScope)
+
+    viewModel.events.filter { !it.hasBeenHandled }
+      .map { checkNotNull(it.getContentIfNotHandled()) }
+      .onEach { code ->
+        val messageResId = when (code) {
+          1 -> R.string.refresh_failed
+          else -> R.string.refresh_failed
+        }
+        Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
+      }
   }
 
   override fun onDestroyView() {
@@ -122,50 +144,16 @@ class NowPlayingFragment :
     _binding = null
   }
 
-  private fun refresh(scrollToTrack: Boolean = false) {
-    presenter.reload(scrollToTrack)
-  }
-
   override fun onPress(position: Int) {
-    presenter.play(position + 1)
+    viewModel.play(position + 1)
   }
 
   override fun onMove(from: Int, to: Int) {
-    presenter.moveTrack(from, to)
+    viewModel.moveTrack(from, to)
   }
 
   override fun onDismiss(position: Int) {
-    presenter.removeTrack(position)
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
-  }
-
-  override suspend fun update(data: PagingData<NowPlaying>) {
-    adapter.submitData(data)
-    binding.nowPlayingEmptyGroup.isGone = adapter.itemCount != 0
-    binding.nowPlayingRefreshLayout.isRefreshing = false
-  }
-
-  override fun trackChanged(track: PlayingTrack, scrollToTrack: Boolean) {
-    adapter.setPlayingTrack(track.path)
-    if (scrollToTrack) {
-      binding.nowPlayingTrackList.scrollToPosition(adapter.getPlayingTrackIndex())
-    }
-  }
-
-  override fun failure(throwable: Throwable) {
-    binding.nowPlayingRefreshLayout.isRefreshing = false
-    Snackbar.make(binding.root, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
-  override fun loading(show: Boolean) {
-    if (!show) {
-      binding.nowPlayingLoadingBar.isGone = true
-      binding.nowPlayingRefreshLayout.isRefreshing = false
-    }
+    viewModel.removeTrack(position)
   }
 
   override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {

@@ -9,19 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
-import com.kelsos.mbrc.databinding.UiFragmentMiniControlBinding
+import com.kelsos.mbrc.databinding.FragmentMiniControlBinding
 import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
-class MiniControlFragment : Fragment(), MiniControlView {
+class MiniControlFragment : Fragment() {
 
-  private val presenter: MiniControlPresenter by inject()
-
-  private var _binding: UiFragmentMiniControlBinding? = null
+  private val viewModel: MiniControlViewModel by viewModel()
+  private var _binding: FragmentMiniControlBinding? = null
   private val binding get() = _binding!!
 
   private fun onControlClick() {
@@ -30,11 +27,28 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
+    viewModel.playerStatus.observe(this) { status ->
+      when (status.state) {
+        PlayerState.PLAYING -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_pause)
+        else -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_play)
+      }
+    }
+
+    viewModel.playingTrack.observe(this) { track ->
+      binding.mcTrackArtist.text = track.artist
+      binding.mcTrackTitle.text = track.title
+      updateCover(track.coverUrl)
+    }
+
+    viewModel.trackPosition.observe(this) { position ->
+      binding.miniControlProgress.max = position.total.toInt()
+      binding.miniControlProgress.progress = position.current.toInt()
+    }
     binding.miniControl.setOnClickListener { onControlClick() }
-    binding.mcNextTrack.setOnClickListener { presenter.next() }
-    binding.mcPlayPause.setOnClickListener { presenter.playPause() }
-    binding.mcPrevTrack.setOnClickListener { presenter.previous() }
-    presenter.attach(this)
+    binding.mcNextTrack.setOnClickListener { viewModel.next() }
+    binding.mcPlayPause.setOnClickListener { viewModel.playPause() }
+    binding.mcPrevTrack.setOnClickListener { viewModel.previous() }
   }
 
   override fun onCreateView(
@@ -42,13 +56,8 @@ class MiniControlFragment : Fragment(), MiniControlView {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    _binding = UiFragmentMiniControlBinding.inflate(inflater, container, false)
+    _binding = FragmentMiniControlBinding.inflate(inflater, container, false)
     return binding.root
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
   }
 
   override fun onDestroyView() {
@@ -70,19 +79,6 @@ class MiniControlFragment : Fragment(), MiniControlView {
         .into(binding.mcTrackCover)
     } else {
       binding.mcTrackCover.setImageResource(R.drawable.ic_image_no_cover)
-    }
-  }
-
-  override fun updateTrackInfo(track: PlayingTrack) {
-    binding.mcTrackArtist.text = track.artist
-    binding.mcTrackTitle.text = track.title
-    updateCover(track.coverUrl)
-  }
-
-  override fun updateStatus(status: PlayerStatusModel) {
-    when (status.state) {
-      PlayerState.PLAYING -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_pause)
-      else -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_play)
     }
   }
 }

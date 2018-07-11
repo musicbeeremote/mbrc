@@ -49,10 +49,12 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
+import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.client.ClientConnectionManager
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.client.MessageDeserializer
@@ -69,6 +71,8 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.client.UserActionUseCaseImpl
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
+import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
@@ -97,54 +101,45 @@ import com.kelsos.mbrc.networking.protocol.commands.UpdateRating
 import com.kelsos.mbrc.networking.protocol.commands.UpdateRepeat
 import com.kelsos.mbrc.networking.protocol.commands.UpdateShuffle
 import com.kelsos.mbrc.networking.protocol.commands.UpdateVolume
+import com.kelsos.mbrc.platform.RemoteBroadcastReceiver
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
+import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
+import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerPresenter
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerPresenterImpl
-import com.kelsos.mbrc.ui.minicontrol.MiniControlPresenter
-import com.kelsos.mbrc.ui.minicontrol.MiniControlPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.LibraryPresenter
-import com.kelsos.mbrc.ui.navigation.library.LibraryPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumPresenter
-import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksPresenter
-import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsPresenter
-import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistPresenter
-import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsPresenter
-import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenrePresenter
-import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenrePresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackPresenter
-import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackPresenterImpl
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenter
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenterImpl
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
+import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
+import com.kelsos.mbrc.ui.navigation.library.LibraryViewModel
+import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumViewModel
+import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksViewModel
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistViewModel
+import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreViewModel
+import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackViewModel
+import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsViewModel
 import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManager
 import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManagerImpl
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenter
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenterImpl
-import com.kelsos.mbrc.ui.navigation.player.PlayerPresenter
-import com.kelsos.mbrc.ui.navigation.player.PlayerPresenterImpl
-import com.kelsos.mbrc.ui.navigation.player.RatingDialogPresenter
-import com.kelsos.mbrc.ui.navigation.player.RatingDialogPresenterImpl
-import com.kelsos.mbrc.ui.navigation.player.VolumeDialogPresenter
-import com.kelsos.mbrc.ui.navigation.player.VolumeDialogPresenterImpl
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenter
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenterImpl
-import com.kelsos.mbrc.ui.navigation.radio.RadioPresenter
-import com.kelsos.mbrc.ui.navigation.radio.RadioPresenterImpl
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingViewModel
+import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
+import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
+import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
+import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter
+import com.kelsos.mbrc.ui.navigation.radio.RadioViewModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
+import org.koin.androidx.experimental.dsl.viewModel
 import org.koin.dsl.module
+import org.koin.experimental.builder.factory
 import org.koin.experimental.builder.factoryBy
 import org.koin.experimental.builder.single
 import org.koin.experimental.builder.singleBy
@@ -220,6 +215,8 @@ val appModule = module {
     )
   }
 
+  single<ApiBase>()
+
   single { Room.databaseBuilder(get(), Database::class.java, "cache.db").build() }
   single { get<Database>().genreDao() }
   single { get<Database>().artistDao() }
@@ -249,31 +246,38 @@ val appModule = module {
   single<ProtocolPingHandle>()
   single<ProtocolPongHandle>()
 
-  single<SharedPreferences> {
-    PreferenceManager.getDefaultSharedPreferences(get())
-  }
-  single<CoverModel> { StoredCoverModel }
+  single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+
+  factoryBy<DefaultSettingsModel, DefaultSettingsModelImpl>()
+  factoryBy<MoveManager, MoveManagerImpl>()
+
+  factory<SocketActivityChecker>()
+  factory<RemoteBroadcastReceiver>()
+  factory<SessionNotificationManager>()
+  factory<RemoteSessionManager>()
+  factory<RemoteVolumeProvider>()
 }
 
 val uiModule = module {
-  factoryBy<PlaylistPresenter, PlaylistPresenterImpl>()
-  factoryBy<RadioPresenter, RadioPresenterImpl>()
-  factoryBy<LyricsPresenter, LyricsPresenterImpl>()
-  factoryBy<LibraryPresenter, LibraryPresenterImpl>()
-  factoryBy<PlayerPresenter, PlayerPresenterImpl>()
-  factoryBy<BrowseAlbumPresenter, BrowseAlbumPresenterImpl>()
+  viewModel<AlbumTracksViewModel>()
+  viewModel<ConnectionManagerViewModel>()
+  viewModel<PlayerViewModel>()
+  viewModel<BrowseAlbumViewModel>()
+  viewModel<BrowseGenreViewModel>()
+  viewModel<BrowseArtistViewModel>()
+  viewModel<BrowseTrackViewModel>()
+  viewModel<MiniControlViewModel>()
+  viewModel<LyricsViewModel>()
+  viewModel<RadioViewModel>()
+  viewModel<NowPlayingViewModel>()
+  viewModel<LibraryViewModel>()
+  viewModel<RatingDialogViewModel>()
+  viewModel<VolumeDialogViewModel>()
 
-  factoryBy<AlbumTracksPresenter, AlbumTracksPresenterImpl>()
-  factoryBy<ArtistAlbumsPresenter, ArtistAlbumsPresenterImpl>()
-  factoryBy<BrowseArtistPresenter, BrowseArtistPresenterImpl>()
-  factoryBy<GenreArtistsPresenter, GenreArtistsPresenterImpl>()
-  factoryBy<BrowseGenrePresenter, BrowseGenrePresenterImpl>()
-  factoryBy<BrowseTrackPresenter, BrowseTrackPresenterImpl>()
-
-  factoryBy<NowPlayingPresenter, NowPlayingPresenterImpl>()
-  factoryBy<MoveManager, MoveManagerImpl>()
-  factoryBy<ConnectionManagerPresenter, ConnectionManagerPresenterImpl>()
-  factoryBy<VolumeDialogPresenter, VolumeDialogPresenterImpl>()
-  factoryBy<MiniControlPresenter, MiniControlPresenterImpl>()
-  factoryBy<RatingDialogPresenter, RatingDialogPresenterImpl>()
+  factory<RadioAdapter>()
+  factory<GenreEntryAdapter>()
+  factory<ArtistEntryAdapter>()
+  factory<AlbumEntryAdapter>()
+  factory<TrackEntryAdapter>()
+  factory<ConnectionAdapter>()
 }

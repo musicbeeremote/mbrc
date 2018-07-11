@@ -7,21 +7,22 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.paging.PagingData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
-import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BrowseTrackFragment : Fragment(), BrowseTrackView, MenuItemSelectedListener<Track> {
+class BrowseTrackFragment : Fragment(), MenuItemSelectedListener<Track> {
 
   private val adapter: TrackEntryAdapter by inject()
-  private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseTrackPresenter by inject()
+  private val viewModel: BrowseTrackViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
@@ -35,11 +36,11 @@ class BrowseTrackFragment : Fragment(), BrowseTrackView, MenuItemSelectedListene
     return binding.root
   }
 
-  override fun search(term: String) {
+  fun search(term: String) {
     binding.libraryBrowserSync.isGone = term.isNotEmpty()
   }
 
-  override fun queue(success: Boolean, tracks: Int) {
+  fun queue(success: Boolean, tracks: Int) {
     val message = if (success) {
       getString(R.string.queue_result__success, tracks)
     } else {
@@ -50,40 +51,27 @@ class BrowseTrackFragment : Fragment(), BrowseTrackView, MenuItemSelectedListene
       .show()
   }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    presenter.detach()
-  }
-
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
     binding.libraryBrowserTextTitle.setText(R.string.tracks_list_empty)
     binding.libraryBrowserSync.setOnClickListener {
-      presenter.sync()
+      viewModel.reload()
     }
     binding.libraryBrowserContent.adapter = adapter
     binding.libraryBrowserContent.layoutManager = LinearLayoutManager(requireContext())
     binding.libraryBrowserContent.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
     adapter.setCoverMode(true)
-    presenter.load()
-  }
-
-  override suspend fun update(tracks: PagingData<Track>) {
-    adapter.submitData(tracks)
-    binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
+    viewModel.tracks.onEach {
+      adapter.submitData(it)
+      binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
+    }.launchIn(lifecycleScope)
   }
 
   override fun onMenuItemSelected(@IdRes itemId: Int, item: Track) {
-    presenter.queue(item, actionHandler.trackSelected(itemId))
   }
 
   override fun onItemClicked(item: Track) {
-    presenter.queue(item)
-  }
-
-  override fun hideLoading() {
-    binding.libraryBrowserLoadingBar.isGone = true
   }
 }

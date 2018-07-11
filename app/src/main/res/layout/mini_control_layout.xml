@@ -19,6 +19,6 @@
       android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mini_control_height"
-      android:layout="@layout/ui_fragment_mini_control"
-      tools:layout="@layout/ui_fragment_mini_control" />
+      android:layout="@layout/fragment_mini_control"
+      tools:layout="@layout/fragment_mini_control" />
 </LinearLayout>

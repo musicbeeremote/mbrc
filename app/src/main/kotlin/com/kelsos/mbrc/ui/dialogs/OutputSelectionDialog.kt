@@ -14,17 +14,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.DialogOutputSelectionBinding
 import com.kelsos.mbrc.features.output.OutputSelectionResult
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
+class OutputSelectionDialog :
+  DialogFragment(),
+  View.OnTouchListener,
+  AdapterView.OnItemSelectedListener {
 
   private var touchInitiated: Boolean = false
-  private lateinit var fm: FragmentManager
   private lateinit var dialog: AlertDialog
 
   private lateinit var availableOutputs: Spinner
@@ -34,22 +36,7 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
   private var _binding: DialogOutputSelectionBinding? = null
   private val binding get() = _binding!!
 
-  private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-    }
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-      if (!touchInitiated) {
-        return
-      }
-
-      val selectedOutput = availableOutputs.adapter.getItem(position) as String
-      viewModel.setOutput(selectedOutput)
-      touchInitiated = false
-    }
-  }
-
-  private lateinit var viewModel: OutputSelectionViewModel
+  private val viewModel: OutputSelectionViewModel by viewModel()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -99,6 +86,19 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
     return dialog
   }
 
+  override fun onNothingSelected(parent: AdapterView<*>?) {
+  }
+
+  override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    if (!touchInitiated) {
+      return
+    }
+
+    val selectedOutput = availableOutputs.adapter.getItem(position) as String
+    viewModel.setOutput(selectedOutput)
+    touchInitiated = false
+  }
+
   override fun onTouch(view: View?, event: MotionEvent?): Boolean {
     touchInitiated = true
     return view?.performClick() == true
@@ -114,7 +114,7 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
       data
     )
     availableOutputs.adapter = outputAdapter
-    availableOutputs.onItemSelectedListener = onItemSelectedListener
+    availableOutputs.onItemSelectedListener = this
     availableOutputs.setOnTouchListener(this)
     loadingProgress.isVisible = false
     availableOutputs.isVisible = true
@@ -133,19 +133,5 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
   override fun dismiss() {
     dialog.dismiss()
-  }
-
-  fun show() {
-    show(fm, TAG)
-  }
-
-  companion object {
-    private const val TAG = "output_selection_dialog"
-
-    fun create(fm: FragmentManager): OutputSelectionDialog {
-      val dialog = OutputSelectionDialog()
-      dialog.fm = fm
-      return dialog
-    }
   }
 }

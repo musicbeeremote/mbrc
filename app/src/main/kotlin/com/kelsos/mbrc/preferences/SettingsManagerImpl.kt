@@ -2,6 +2,7 @@ package com.kelsos.mbrc.preferences
 
 import android.app.Application
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
@@ -62,8 +63,9 @@ class SettingsManagerImpl(
   }
 
   override fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean) {
-    preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
-      .apply()
+    preferences.edit {
+      putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
+    }
   }
 
   override fun shouldShowChangeLog(): Boolean {

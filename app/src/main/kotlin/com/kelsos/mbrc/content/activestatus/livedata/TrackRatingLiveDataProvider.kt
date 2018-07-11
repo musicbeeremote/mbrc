@@ -6,6 +6,7 @@ interface TrackRatingLiveDataProvider : LiveDataProvider<TrackRating>
 
 class TrackRatingLiveDataProviderImpl : TrackRatingLiveDataProvider,
   BaseLiveDataProvider<TrackRating>() {
+
   init {
     update(TrackRating())
   }

@@ -18,12 +18,9 @@ class PlaylistRepositoryImpl(
 ) : PlaylistRepository {
   private val mapper = PlaylistDtoMapper()
 
-  override suspend fun getAll(): Flow<PagingData<Playlist>> = dao.getAll().paged()
+  override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override suspend fun getAndSaveRemote(): Flow<PagingData<Playlist>> {
-    getRemote()
-    return dao.getAll().paged()
-  }
+  override fun getAll(): Flow<PagingData<Playlist>> = dao.getAll().paged()
 
   override suspend fun getRemote() {
     withContext(dispatchers.network) {
@@ -42,10 +39,8 @@ class PlaylistRepositoryImpl(
     }
   }
 
-  override suspend fun search(term: String): Flow<PagingData<Playlist>> =
-    dao.search(term).paged()
+  override fun search(term: String): Flow<PagingData<Playlist>> = dao.search(term).paged()
 
-  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
-
-  override suspend fun count(): Long = dao.count()
+  override suspend fun cacheIsEmpty(): Boolean =
+    withContext(dispatchers.database) { dao.count() == 0L }
 }

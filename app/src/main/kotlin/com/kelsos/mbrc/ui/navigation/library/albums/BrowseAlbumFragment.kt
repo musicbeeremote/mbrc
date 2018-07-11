@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -18,21 +19,21 @@ import com.kelsos.mbrc.databinding.FragmentBrowseBinding
 import com.kelsos.mbrc.ui.navigation.library.LibraryFragmentDirections
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BrowseAlbumFragment :
-  Fragment(),
-  BrowseAlbumView,
-  MenuItemSelectedListener<Album> {
+class BrowseAlbumFragment : Fragment(), MenuItemSelectedListener<Album> {
 
   private val adapter: AlbumEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseAlbumPresenter by inject()
+  private val viewModel: BrowseAlbumViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
 
-  override fun search(term: String) {
+  fun search(term: String) {
     binding.libraryBrowserSync.isGone = term.isNotEmpty()
   }
 
@@ -45,28 +46,19 @@ class BrowseAlbumFragment :
     return binding.root
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setHasOptionsMenu(true)
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     binding.libraryBrowserTextTitle.setText(R.string.albums_list_empty)
     binding.libraryBrowserSync.setOnClickListener {
-      presenter.sync()
     }
     binding.libraryBrowserContent.adapter = adapter
     binding.libraryBrowserContent.layoutManager = LinearLayoutManager(requireContext())
     binding.libraryBrowserContent.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
-    presenter.attach(this)
-    presenter.load()
+    viewModel.albums.onEach {
+      adapter.submitData(it)
+      binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
+    }.launchIn(lifecycleScope)
   }
 
   override fun onDestroyView() {
@@ -78,8 +70,6 @@ class BrowseAlbumFragment :
     val action = actionHandler.albumSelected(itemId)
     if (action == LibraryPopup.PROFILE) {
       onItemClicked(item)
-    } else {
-      presenter.queue(action, item)
     }
   }
 
@@ -88,15 +78,15 @@ class BrowseAlbumFragment :
       artist = item.artist,
       album = item.album
     )
-    findNavController(this).navigate(directions)
+    findNavController().navigate(directions)
   }
 
-  override suspend fun update(albums: PagingData<Album>) {
+  suspend fun update(albums: PagingData<Album>) {
     adapter.submitData(albums)
     binding.libraryBrowserEmptyGroup.isGone = adapter.itemCount != 0
   }
 
-  override fun queue(success: Boolean, tracks: Int) {
+  fun queue(success: Boolean, tracks: Int) {
     val message = if (success) {
       getString(R.string.queue_result__success, tracks)
     } else {
@@ -105,9 +95,5 @@ class BrowseAlbumFragment :
     Snackbar.make(requireView(), R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
-  }
-
-  override fun hideLoading() {
-    binding.libraryBrowserLoadingBar.isGone = true
   }
 }

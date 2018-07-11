@@ -9,21 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
-import com.kelsos.mbrc.databinding.LibraryStatsLayoutBinding
-import com.kelsos.mbrc.metrics.SyncedData
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LibraryFragment :
-  Fragment(),
-  LibraryView,
-  OnQueryTextListener {
+class LibraryFragment : Fragment(), OnQueryTextListener {
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -31,7 +23,7 @@ class LibraryFragment :
   private var searchClear: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
 
-  private val presenter: LibraryPresenter by inject()
+  private val viewModel: LibraryViewModel by viewModel()
 
   private var _binding: FragmentLibraryBinding? = null
   private val binding get() = _binding!!
@@ -90,7 +82,6 @@ class LibraryFragment :
         else -> throw IllegalArgumentException("invalid position")
       }
     }.attach()
-    presenter.attach(this)
   }
 
   override fun onDestroyView() {
@@ -112,77 +103,37 @@ class LibraryFragment :
       setIconifiedByDefault(true)
       setOnQueryTextListener(this@LibraryFragment)
     }
-
-    presenter.loadArtistPreference()
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.library_screen__action_refresh -> {
-        presenter.refresh()
+        viewModel.refresh()
         return true
       }
       R.id.library_album_artist -> {
         albumArtistOnly?.let {
           it.isChecked = !it.isChecked
-          presenter.setArtistPreference(it.isChecked)
+          viewModel.setArtistPreference(it.isChecked)
         }
 
         return true
       }
       R.id.library_search_clear -> {
-        presenter.search("")
         searchMenuItem?.isVisible = true
         searchClear?.isVisible = false
         return true
       }
       R.id.library_sync_state -> {
-        presenter.showStats()
         return true
       }
     }
     return super.onOptionsItemSelected(item)
   }
 
-  override fun showStats(stats: SyncedData) {
-    val binding = LibraryStatsLayoutBinding.inflate(layoutInflater)
-    MaterialAlertDialogBuilder(requireContext())
-      .setTitle(R.string.library_stats__title)
-      .setView(binding.root)
-      .setPositiveButton(android.R.string.ok) { md, _ -> md.dismiss() }
-      .show()
-
-    binding.apply {
-      libraryStatsGenreValue.text = "${stats.genres}"
-      libraryStatsArtistValue.text = "${stats.artists}"
-      libraryStatsAlbumValue.text = "${stats.albums}"
-      libraryStatsTrackValue.text = "${stats.tracks}"
-      libraryStatsPlaylistValue.text = "${stats.playlists}"
-    }
-  }
-
-  override fun syncComplete(stats: SyncedData) {
-    val message = getString(
-      R.string.library__sync_complete,
-      stats.genres,
-      stats.artists,
-      stats.albums,
-      stats.tracks,
-      stats.playlists
-    )
-    Snackbar.make(binding.root, R.string.library__sync_complete, Snackbar.LENGTH_LONG)
-      .setText(message)
-      .show()
-  }
-
   override fun onDestroy() {
-    presenter.detach()
     pagerAdapter = null
     super.onDestroy()
-  }
-
-  override fun updateArtistOnlyPreference(albumArtistOnly: Boolean?) {
-    this.albumArtistOnly?.isChecked = albumArtistOnly ?: false
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -193,20 +144,6 @@ class LibraryFragment :
   override fun onViewStateRestored(savedInstanceState: Bundle?) {
     super.onViewStateRestored(savedInstanceState)
     binding.searchPager.currentItem = savedInstanceState?.getInt(PAGER_POSITION, 0) ?: 0
-  }
-
-  override fun syncFailure() {
-    Snackbar.make(binding.root, R.string.library__sync_failed, Snackbar.LENGTH_LONG).show()
-  }
-
-  override fun showSyncProgress() {
-    binding.syncProgress.isGone = false
-    binding.syncProgressText.isGone = false
-  }
-
-  override fun hideSyncProgress() {
-    binding.syncProgress.isGone = true
-    binding.syncProgressText.isGone = true
   }
 
   companion object {

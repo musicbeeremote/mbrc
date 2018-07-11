@@ -124,7 +124,7 @@ class NavigationActivity : AppCompatActivity() {
   }
 
   private fun setupToolbar() {
-    setSupportActionBar(findViewById(R.id.toolbar))
+    setSupportActionBar(binding.toolbar)
     supportActionBar?.run {
       setDisplayHomeAsUpEnabled(true)
       setHomeButtonEnabled(true)

@@ -8,11 +8,11 @@ import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelsos.mbrc.databinding.FragmentLyricsBinding
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LyricsFragment : Fragment(), LyricsView {
+class LyricsFragment : Fragment() {
 
-  private val presenter: LyricsPresenter by inject()
+  private val viewModel: LyricsViewModel by viewModel()
   private val lyricsAdapter: LyricsAdapter by lazy { LyricsAdapter() }
   private var _binding: FragmentLyricsBinding? = null
   private val binding get() = _binding!!
@@ -34,21 +34,15 @@ class LyricsFragment : Fragment(), LyricsView {
     lyricsRecycler.setHasFixedSize(true)
     lyricsRecycler.layoutManager = layoutManager
     lyricsRecycler.adapter = adapter
-    presenter.attach(this)
+
+    viewModel.lyricsLiveDataProvider.observe(this) { lyrics ->
+      binding.lyricsEmptyGroup.isGone = lyrics.isNotEmpty()
+      lyricsAdapter.submitList(lyrics)
+    }
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
     _binding = null
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
-  }
-
-  override fun updateLyrics(lyrics: List<String>) {
-    binding.lyricsEmptyGroup.isGone = lyrics.isNotEmpty()
-    lyricsAdapter.submitList(lyrics)
   }
 }

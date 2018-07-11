@@ -19,7 +19,9 @@ class TrackRepositoryImpl(
 
   private val mapper = TrackDtoMapper()
 
-  override suspend fun getAll(): Flow<PagingData<Track>> = dao.getAll().paged()
+  override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
+
+  override fun getAll(): Flow<PagingData<Track>> = dao.getAll().paged()
 
   override suspend fun getAlbumTracks(
     album: String,
@@ -28,12 +30,9 @@ class TrackRepositoryImpl(
     dao.getAlbumTracks(album, artist).paged()
 
   override suspend fun getNonAlbumTracks(artist: String): Flow<PagingData<Track>> =
-    dao.getNonAlbumTracks(artist).paged()
-
-  override suspend fun getAndSaveRemote(): Flow<PagingData<Track>> {
-    getRemote()
-    return dao.getAll().paged()
-  }
+    withContext(dispatchers.database) {
+      dao.getNonAlbumTracks(artist).paged()
+    }
 
   override suspend fun getRemote() {
     withContext(dispatchers.network) {
@@ -61,23 +60,22 @@ class TrackRepositoryImpl(
     }
   }
 
-  override suspend fun search(term: String): Flow<PagingData<Track>> {
+  override fun search(term: String): Flow<PagingData<Track>> {
     return dao.search(term).paged()
   }
 
-  override suspend fun getGenreTrackPaths(genre: String): List<String> {
-    return dao.getGenreTrackPaths(genre)
-  }
+  override suspend fun getGenreTrackPaths(genre: String): List<String> =
+    dao.getGenreTrackPaths(genre)
 
   override suspend fun getArtistTrackPaths(artist: String): List<String> =
-    dao.getArtistTrackPaths(artist)
+    withContext(dispatchers.database) { dao.getArtistTrackPaths(artist) }
 
   override suspend fun getAlbumTrackPaths(album: String, artist: String): List<String> =
-    dao.getAlbumTrackPaths(album, artist)
+    withContext(dispatchers.database) { dao.getAlbumTrackPaths(album, artist) }
 
-  override suspend fun getAllTrackPaths(): List<String> = dao.getAllTrackPaths()
+  override suspend fun getAllTrackPaths(): List<String> =
+    withContext(dispatchers.database) { dao.getAllTrackPaths() }
 
-  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
-
-  override suspend fun count(): Long = dao.count()
+  override suspend fun cacheIsEmpty(): Boolean =
+    withContext(dispatchers.database) { dao.count() == 0L }
 }

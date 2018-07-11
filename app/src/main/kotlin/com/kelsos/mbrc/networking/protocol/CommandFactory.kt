@@ -19,9 +19,11 @@ import com.kelsos.mbrc.networking.protocol.commands.UpdateRating
 import com.kelsos.mbrc.networking.protocol.commands.UpdateRepeat
 import com.kelsos.mbrc.networking.protocol.commands.UpdateShuffle
 import com.kelsos.mbrc.networking.protocol.commands.UpdateVolume
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
+@OptIn(KoinApiExtension::class)
 class CommandFactoryImpl : CommandFactory, KoinComponent {
 
   override fun create(@Protocol.Context context: String): ICommand {
