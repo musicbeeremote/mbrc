@@ -11,20 +11,14 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import com.kelsos.mbrc.utilities.AppRxSchedulers
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import timber.log.Timber
+import kotlinx.coroutines.experimental.launch
 
-class PopupActionHandler
-constructor(
+class PopupActionHandler(
   private val settings: DefaultActionPreferenceStore,
   private val appRxSchedulers: AppRxSchedulers,
   private val trackRepository: TrackRepository,
   private val queueApi: QueueApi
 ) {
-
-  private val disposables = CompositeDisposable()
 
   fun albumSelected(
     @Action action: String,
@@ -40,16 +34,10 @@ constructor(
     @Action type: String,
     result: (success: Boolean) -> Unit
   ) {
-    disposables += trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
-      .flatMap {
-        queueApi.queue(type, it)
-      }.subscribeOn(appRxSchedulers.disk)
-      .subscribe({
-        result(true)
-      }) {
-        result(false)
-        Timber.e(it, "Failed to queue")
-      }
+    launch {
+      val paths = trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
+      val response = queueApi.queue(type, paths)
+    }
   }
 
   fun artistSelected(
@@ -62,14 +50,8 @@ constructor(
   }
 
   private fun queueArtist(entry: ArtistEntity, type: String, result: (success: Boolean) -> Unit) {
-    disposables += trackRepository.getArtistTrackPaths(artist = entry.artist).flatMap {
-      queueApi.queue(type, it)
-    }.subscribeOn(appRxSchedulers.disk).subscribe({
-      result(true)
-    }) {
-      result(false)
-      Timber.e(it, "Failed to queue")
-    }
+    val paths = trackRepository.getArtistTrackPaths(artist = entry.artist)
+    queueApi.queue(type, paths)
   }
 
   fun genreSelected(
@@ -82,16 +64,8 @@ constructor(
   }
 
   private fun queueGenre(entry: GenreEntity, type: String, result: (success: Boolean) -> Unit) {
-    disposables += trackRepository.getGenreTrackPaths(genre = entry.genre)
-      .flatMap {
-        queueApi.queue(type, it)
-      }.subscribeOn(appRxSchedulers.disk)
-      .subscribe({
-        result(true)
-      }) {
-        result(false)
-        Timber.e(it, "Failed to queue")
-      }
+    val paths = trackRepository.getGenreTrackPaths(genre = entry.genre)
+    queueApi.queue(type, paths)
   }
 
   //todo album detection -> queue album tracks
@@ -105,10 +79,10 @@ constructor(
 
   private fun queueTrack(entry: TrackEntity, @Action type: String, album: Boolean = false) {
 
-    val trackSource: Single<List<String>>
+    val paths: List<String>
     val path: String?
     if (type == LibraryPopup.ADD_ALL) {
-      trackSource = if (album) {
+      paths = if (album) {
         trackRepository.getAlbumTrackPaths(entry.album, entry.albumArtist)
       } else {
         trackRepository.getAllTrackPaths()
@@ -116,17 +90,11 @@ constructor(
 
       path = entry.src
     } else {
-      trackSource = Single.fromCallable {
-        return@fromCallable listOf(entry.src)
-      }
+      paths = listOf(entry.src)
       path = null
     }
 
-    disposables += trackSource.flatMap { queueApi.queue(type, it, path) }
-      .subscribeOn(appRxSchedulers.disk)
-      .subscribe({ }) {
-        Timber.v(it, "Failed to queue")
-      }
+    queueApi.queue(type, paths, path)
   }
 
   fun trackSelected(track: TrackEntity, album: Boolean = false) {

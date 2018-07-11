@@ -1,42 +1,31 @@
 package com.kelsos.mbrc.ui.minicontrol
 
+import androidx.lifecycle.ViewModel
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerNext
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPlayPause
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPrevious
 
-
-class MiniControlPresenterImpl
-
-constructor(
-  playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
-  playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+class MiniControlViewModel(
+  val playingTrack: PlayingTrackLiveDataProvider,
+  val playerStatus: PlayerStatusLiveDataProvider,
+  val trackPosition: TrackPositionLiveDataProvider,
   private val userActionUseCase: UserActionUseCase
-) : BasePresenter<MiniControlView>(), MiniControlPresenter {
+) : ViewModel() {
 
-  init {
-    playerStatusLiveDataProvider.observe(this) {
-      view().updateStatus(it)
-    }
-
-    playingTrackLiveDataProvider.observe(this) {
-      view().updateTrackInfo(it)
-    }
-  }
-
-  override fun next() {
+  fun next() {
     userActionUseCase.perform(UserAction.create(PlayerNext))
   }
 
-  override fun previous() {
+  fun previous() {
     userActionUseCase.perform(UserAction.create(PlayerPrevious))
   }
 
-  override fun playPause() {
+  fun playPause() {
     userActionUseCase.perform(UserAction.create(PlayerPlayPause))
   }
 }

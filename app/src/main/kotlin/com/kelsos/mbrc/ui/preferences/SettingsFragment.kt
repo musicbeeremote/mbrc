@@ -15,7 +15,6 @@ import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
-
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.application_settings)
 

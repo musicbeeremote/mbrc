@@ -1,12 +1,13 @@
 package com.kelsos.mbrc.preferences
 
 import androidx.annotation.StringDef
+import androidx.lifecycle.LiveData
 import io.reactivex.Single
-import java.util.Date
+import java.util.*
 
 interface SettingsManager {
 
-  fun shouldDisplayOnlyAlbumArtists(): Single<Boolean>
+  fun shouldDisplayOnlyAlbumArtists(): LiveData<Boolean>
   fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
   fun shouldShowChangeLog(): Single<Boolean>
   fun isNotificationControlEnabled(): Boolean

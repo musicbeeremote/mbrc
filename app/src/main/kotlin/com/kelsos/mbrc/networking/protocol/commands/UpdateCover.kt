@@ -10,31 +10,23 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvide
 import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
 import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
-import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.squareup.moshi.Moshi
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import io.reactivex.Single
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.rx2.await
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.lang.Exception
 
-
-class UpdateCover
-
-constructor(
+class UpdateCover(
   private val context: Application,
   private val mapper: Moshi,
-  private val rxSchedulers: AppRxSchedulers,
-  private val appCoroutineDispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppCoroutineDispatchers,
   private val coverApi: CoverApi,
   private val coverModel: CoverModel,
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider
@@ -43,7 +35,7 @@ constructor(
 
   init {
     coverDir = File(context.filesDir, COVER_DIR)
-    launch(appCoroutineDispatchers.disk) {
+    launch(dispatchers.disk) {
       playingTrackLiveDataProvider.update {
         copy(coverUrl = coverModel.coverPath)
       }
@@ -63,23 +55,22 @@ constructor(
   }
 
   private fun retrieveCover() {
-    coverApi.getCover().subscribeOn(rxSchedulers.network).flatMap {
-      Single.fromCallable { getBitmap(it) }
-    }.flatMap {
-      return@flatMap Single.fromCallable { storeCover(it) }
-    }.flatMap {
-      return@flatMap prefetch(it)
-    }.subscribeOn(rxSchedulers.disk).subscribe({
+    launch(dispatchers.network) {
+      try {
+        val response = coverApi.getCover().await()
+        val bitmap = getBitmap(response)
+        val file = storeCover(bitmap)
 
-      playingTrackLiveDataProvider.update {
-        val coverUri = it.toUri().toString()
-        coverModel.coverPath = coverUri
-        copy(coverUrl = coverUri)
+        playingTrackLiveDataProvider.update {
+          val coverUri = file.toUri().toString()
+          coverModel.coverPath = coverUri
+          copy(coverUrl = coverUri)
+        }
+        UpdateWidgets.updateCover(context, file.absolutePath)
+      } catch (e: Exception) {
+        removeCover(e)
       }
-      UpdateWidgets.updateCover(context, it.absolutePath)
-    }, {
-      removeCover(it)
-    })
+    }
 
     Timber.v("Message received for available cover")
     return
@@ -110,37 +101,26 @@ constructor(
   private fun storeCover(bitmap: Bitmap): File {
     checkIfExists()
     clearPreviousCovers()
+
     val file = temporaryCover()
     val fileStream = FileOutputStream(file)
     val success = bitmap.compress(JPEG, 100, fileStream)
     fileStream.close()
+
+    val md5 = file.md5()
+    val extension = file.extension
+    val newFile = File(context.filesDir, "$md5.$extension")
+    if (newFile.exists()) {
+      file.delete()
+      return newFile
+    }
+
     if (success) {
-      val md5 = file.md5()
-      val extension = file.extension
-      val newFile = File(context.filesDir, "$md5.$extension")
       file.renameTo(newFile)
-      Timber.v("file was renamed to %s", newFile.absolutePath)
+      Timber.v("file was renamed to ${newFile.absolutePath}")
       return newFile
     } else {
       throw RuntimeException("unable to store cover")
-    }
-  }
-
-  private fun prefetch(newFile: File): Single<File> {
-    return Single.create<File> {
-      val dimens = context.getDimens()
-      Picasso.get().load(newFile)
-        .config(Bitmap.Config.RGB_565)
-        .resize(dimens, dimens)
-        .centerCrop().fetch(object : Callback {
-          override fun onSuccess() {
-            it.onSuccess(newFile)
-          }
-
-          override fun onError(e: Exception?) {
-            it.onError(e ?: RuntimeException("can't fetch"))
-          }
-        })
     }
   }
 
@@ -150,7 +130,7 @@ constructor(
     }
   }
 
-  private fun clearPreviousCovers(keep: Int = 2) {
+  private fun clearPreviousCovers(keep: Int = 1) {
     if (!coverDir.exists()) {
       return
     }

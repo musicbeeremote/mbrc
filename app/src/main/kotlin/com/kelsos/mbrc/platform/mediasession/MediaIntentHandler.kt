@@ -7,9 +7,7 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 
-class MediaIntentHandler
-
-constructor(
+class MediaIntentHandler(
   private val userActionUseCase: UserActionUseCase
 ) {
   private var previousClick: Long = 0

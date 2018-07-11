@@ -11,10 +11,7 @@ import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import timber.log.Timber
 
-
-class MessageHandlerImpl
-
-constructor(
+class MessageHandlerImpl(
   private val commandExecutor: CommandExecutor,
   private val messageDeserializer: MessageDeserializer,
   private val messageQueue: MessageQueue,
@@ -31,7 +28,6 @@ constructor(
   }
 
   private fun process(message: String) {
-
 
     val node = messageDeserializer.deserialize(message)
     val context = node.context

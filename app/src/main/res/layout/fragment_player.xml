@@ -18,8 +18,12 @@
         type="com.kelsos.mbrc.content.activestatus.PlayingPosition" />
 
     <variable
-        name="presenter"
-        type="com.kelsos.mbrc.ui.navigation.player.PlayerPresenter" />
+        name="viewModel"
+        type="com.kelsos.mbrc.ui.navigation.player.PlayerViewModel" />
+
+    <variable
+        name="volumeProvider"
+        type="com.kelsos.mbrc.ui.navigation.player.VolumeDialogProvider"/>
 
   </data>
 
@@ -68,7 +72,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/player_screen__space"
-        app:onProgressChangeByUser="@{(progress) -> presenter.seek(progress)}" />
+        app:onProgressChangeByUser="@{(progress) -> viewModel.seek(progress)}" />
 
     <TextView
         android:id="@+id/player_screen__total_progress"
@@ -143,7 +147,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:onClick="@{() -> presenter.showVolumeDialog()}"
+        android:onClick="@{() -> volumeProvider.showVolumeDialog()}"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_repeat_description"
         android:padding="8dp"
@@ -162,7 +166,7 @@
         android:layout_gravity="center_vertical"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_repeat_description"
-        android:onClick="@{() -> presenter.repeat()}"
+        android:onClick="@{() -> viewModel.repeat()}"
         android:scaleType="centerInside"
         android:src="@{status.isRepeatOne() ? @drawable/ic_repeat_one_black_24dp : @drawable/ic_repeat_black_24dp}"
         android:tint="@{status.isRepeatOff() ? @color/button_dark : @color/accent}"
@@ -179,7 +183,7 @@
         android:layout_height="0dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_previous_description"
-        android:onClick="@{()-> presenter.previous()}"
+        android:onClick="@{()-> viewModel.previous()}"
         android:scaleType="centerInside"
         android:tint="@color/button_dark"
         app:layout_constraintBottom_toBottomOf="@+id/player_screen__play"
@@ -198,8 +202,8 @@
         android:clickable="true"
         android:contentDescription="@string/main_button_play_pause_description"
         android:focusable="true"
-        android:onClick="@{()-> presenter.play()}"
-        android:onLongClick="@{()->presenter.stop()}"
+        android:onClick="@{()-> viewModel.play()}"
+        android:onLongClick="@{()->viewModel.stop()}"
         android:padding="@dimen/small_margin"
         android:scaleType="fitCenter"
         android:src="@{status.isPlaying() ? @drawable/ic_pause_circle_filled_black_24dp : @drawable/ic_play_circle_filled_black_24dp}"
@@ -216,7 +220,7 @@
         android:layout_height="0dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_next_description"
-        android:onClick="@{()-> presenter.next()}"
+        android:onClick="@{()-> viewModel.next()}"
         android:scaleType="centerInside"
         android:tint="@color/button_dark"
         app:layout_constraintBottom_toBottomOf="@+id/player_screen__play"
@@ -233,7 +237,7 @@
         android:layout_gravity="center_vertical"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/main_button_shuffle_description"
-        android:onClick="@{()-> presenter.shuffle()}"
+        android:onClick="@{()-> viewModel.shuffle()}"
         android:scaleType="centerInside"
         android:src="@{status.isShuffleAutoDj() ? @drawable/ic_headset_black_24dp : @drawable/ic_shuffle_black_24dp}"
         android:tint="@{status.isShuffleOff() ? @color/button_dark : @color/accent}"

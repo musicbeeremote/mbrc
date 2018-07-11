@@ -5,16 +5,10 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import io.reactivex.Completable
-import io.reactivex.Single
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 
-
-class AlbumRepositoryImpl
-
-constructor(
+class AlbumRepositoryImpl(
   private val dao: AlbumDao,
   private val remoteDataSource: ApiBase,
   private val coroutineDispatchers: AppCoroutineDispatchers
@@ -26,40 +20,40 @@ constructor(
     return withContext(coroutineDispatchers.database) { dao.count() }
   }
 
-  override fun getAlbumsByArtist(artist: String): Single<DataSource.Factory<Int, AlbumEntity>> {
-    return Single.fromCallable { dao.getAlbumsByArtist(artist) }
+  override suspend fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, AlbumEntity> {
+    return withContext(coroutineDispatchers.database) { dao.getAlbumsByArtist(artist) }
   }
 
-  override fun getAll(): Single<DataSource.Factory<Int, AlbumEntity>> {
-    return Single.fromCallable { dao.getAll() }
+  override suspend fun getAll(): DataSource.Factory<Int, AlbumEntity> {
+    return withContext(coroutineDispatchers.database) { dao.getAll() }
   }
 
-  override fun getRemote(): Completable {
+  override suspend fun getRemote() {
     val added = epoch()
-    return remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).doOnNext {
-      async(CommonPool) {
+    remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).blockingForEach {
+      launch(coroutineDispatchers.disk) {
         val list = it.map { mapper.map(it).apply { dateAdded = added } }
         withContext(coroutineDispatchers.database) {
           dao.insert(list)
         }
       }
-    }.doOnComplete {
-      async(coroutineDispatchers.database) {
-        dao.removePreviousEntries(added)
-      }
-    }.ignoreElements()
+    }
+
+    withContext(coroutineDispatchers.database) {
+      dao.removePreviousEntries(added)
+    }
   }
 
-  override fun search(term: String): Single<DataSource.Factory<Int, AlbumEntity>> {
-    return Single.fromCallable { dao.search(term) }
+  override suspend fun search(term: String): DataSource.Factory<Int, AlbumEntity> {
+    return dao.search(term)
   }
 
-  override fun cacheIsEmpty(): Single<Boolean> = Single.fromCallable { dao.count() == 0L }
+  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
   override fun getAlbumsSorted(
     @Sorting.Fields order: Int,
     ascending: Boolean
-  ): Single<AlbumsModel> {
+  ): AlbumsModel {
     val model = when (order) {
       Sorting.ALBUM -> {
         AlbumsModel(
@@ -172,6 +166,6 @@ constructor(
       else -> throw IllegalArgumentException("Invalid option")
     }
 
-    return Single.fromCallable { model }
+    return model
   }
 }

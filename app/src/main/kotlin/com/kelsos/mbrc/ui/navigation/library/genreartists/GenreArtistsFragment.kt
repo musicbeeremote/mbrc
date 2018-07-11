@@ -21,16 +21,14 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 
-class GenreArtistsFragment : Fragment(),
-  GenreArtistsView,
-  MenuItemSelectedListener<ArtistEntity> {
+class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<ArtistEntity> {
 
   private val recyclerView: RecyclerView by bindView(R.id.genre_artists__artist_list)
   private val emptyView: Group by bindView(R.id.genre_artists__empty_view)
 
   private val adapter: ArtistEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: GenreArtistsPresenter by inject()
+  private val presenter: GenreArtistsViewModel by inject()
 
   private lateinit var genre: String
 
@@ -46,8 +44,6 @@ class GenreArtistsFragment : Fragment(),
     super.onViewCreated(view, savedInstanceState)
     adapter.setMenuItemSelectedListener(this)
     recyclerView.linear(adapter)
-    presenter.attach(this)
-    presenter.load(genre)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,12 +71,7 @@ class GenreArtistsFragment : Fragment(),
     findNavController(this).navigate(R.id.artist_albums_fragment, args.toBundle())
   }
 
-  override fun update(pagedList: PagedList<ArtistEntity>) {
+  fun update(pagedList: PagedList<ArtistEntity>) {
     adapter.submitList(pagedList)
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
   }
 }

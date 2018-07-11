@@ -6,36 +6,32 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import com.kelsos.mbrc.content.activestatus.TrackRating
 import com.kelsos.mbrc.databinding.DialogRatingBinding
 import org.koin.android.ext.android.inject
 
-class RatingDialogFragment : DialogFragment(), RatingDialogView {
+class RatingDialogFragment : DialogFragment() {
 
   private lateinit var databinding: DialogRatingBinding
   private lateinit var fm: FragmentManager
 
-  private val presenter: RatingDialogPresenter by inject()
+  private val viewModel: RatingDialogViewModel by inject()
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     databinding = DialogRatingBinding.inflate(requireActivity().layoutInflater)
-    databinding.presenter = presenter
+    databinding.viewModel = viewModel
     return AlertDialog.Builder(requireContext())
       .setView(databinding.root)
       .setOnDismissListener {
-        presenter.detach()
+
       }
       .create()
       .also {
-        presenter.attach(this@RatingDialogFragment)
-        presenter.loadRating()
+        viewModel.loadRating()
+        viewModel.trackRatingLiveDataProvider.observe(this@RatingDialogFragment) {
+          databinding.model = it
+        }
       }
   }
-
-  override fun updateRating(rating: TrackRating) {
-    databinding.rating = rating
-  }
-
 
   fun show() {
     show(

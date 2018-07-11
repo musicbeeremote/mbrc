@@ -10,14 +10,13 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-
-class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
-  OutputSelectionView,
+class OutputSelectionDialog : DialogFragment(),
   View.OnTouchListener,
   AdapterView.OnItemSelectedListener {
 
@@ -29,7 +28,7 @@ class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
   private val loadingProgress: ProgressBar by bindView(R.id.output_selection__loading_outputs)
   private val errorMessage: TextView by bindView(R.id.output_selection__error_message)
 
-  private val presenter: OutputSelectionPresenter by inject()
+  private val presenter: OutputSelectionViewModel by inject()
 
   @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -46,19 +45,9 @@ class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
       }
       .create()
 
-    presenter.load()
+
 
     return dialog
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
   }
 
   override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -79,7 +68,7 @@ class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
     return view?.performClick() == true
   }
 
-  override fun update(data: OutputResponse) {
+  fun update(data: OutputResponse) {
     availableOutputs.onItemSelectedListener = null
     availableOutputs.setOnTouchListener(null)
     val (devices, active) = data
@@ -99,7 +88,7 @@ class OutputSelectionDialog : androidx.fragment.app.DialogFragment(),
     availableOutputs.isVisible = true
   }
 
-  override fun error(@OutputSelectionContract.Code code: Int) {
+  fun error(@OutputSelectionContract.Code code: Int) {
     val resId = when (code) {
       OutputSelectionContract.CONNECTION_ERROR -> R.string.output_selection__connection_error
       else -> R.string.output_selection__generic_error

@@ -5,54 +5,47 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import io.reactivex.Completable
-import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
-import timber.log.Timber
 
-
-class NowPlayingRepositoryImpl
-
-constructor(
+class NowPlayingRepositoryImpl(
   private val remoteDataSource: ApiBase,
   private val dao: NowPlayingDao,
-  private val coroutineDispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers
 ) : NowPlayingRepository {
 
   private val mapper = NowPlayingDtoMapper()
 
   override suspend fun count(): Long {
-    return withContext(coroutineDispatchers.database) { dao.count() }
+    return withContext(dispatchers.database) { dao.count() }
   }
 
-  override fun getAll(): Single<DataSource.Factory<Int, NowPlayingEntity>> {
-    return Single.fromCallable { dao.getAll() }
+  override suspend fun getAll(): DataSource.Factory<Int, NowPlayingEntity> {
+    return withContext(dispatchers.database) { dao.getAll() }
   }
 
-  override fun getRemote(): Completable {
+  override suspend fun getRemote() {
     val added = epoch()
-    return remoteDataSource.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class).doOnNext {
-      async(CommonPool) {
+    remoteDataSource.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class).blockingForEach {
+      launch(CommonPool) {
         val list = it.map { mapper.map(it).apply { dateAdded = added } }
-        withContext(coroutineDispatchers.database) {
+        withContext(dispatchers.database) {
           dao.insertAll(list)
         }
       }
-    }.doOnComplete {
-      async(coroutineDispatchers.database) {
-        dao.removePreviousEntries(added)
-      }
-    }.ignoreElements()
-      .doOnError { Timber.v(it) }
+    }
+
+    withContext(dispatchers.database) {
+      dao.removePreviousEntries(added)
+    }
   }
 
-  override fun search(term: String): Single<DataSource.Factory<Int, NowPlayingEntity>> {
-    return Single.fromCallable { dao.search(term) }
+  override suspend fun search(term: String): DataSource.Factory<Int, NowPlayingEntity> {
+    return dao.search(term)
   }
 
-  override fun cacheIsEmpty(): Single<Boolean> = Single.fromCallable { dao.count() == 0L }
+  override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) { dao.count() == 0L }
 
   override fun move(from: Int, to: Int) {
     TODO("implement move")

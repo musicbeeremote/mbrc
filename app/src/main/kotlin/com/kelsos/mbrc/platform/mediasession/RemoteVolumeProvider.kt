@@ -1,17 +1,15 @@
 package com.kelsos.mbrc.platform.mediasession
 
+import androidx.media.VolumeProviderCompat
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 
-
-class RemoteVolumeProvider
-
-constructor(
+class RemoteVolumeProvider(
   private val statusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val userActionUseCase: UserActionUseCase
-) : androidx.media.VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0) {
+) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0) {
 
   init {
     val volume = statusLiveDataProvider.getValue()?.volume ?: 0

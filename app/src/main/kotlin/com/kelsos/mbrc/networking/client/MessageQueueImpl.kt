@@ -4,10 +4,7 @@ import timber.log.Timber
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 
-
-class MessageQueueImpl
-
-constructor() : MessageQueue {
+class MessageQueueImpl : MessageQueue {
 
   private lateinit var onMessageAvailable: (message: SocketMessage) -> Unit
   private val messageQueue: LinkedBlockingQueue<SocketMessage> = LinkedBlockingQueue()

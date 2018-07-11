@@ -8,8 +8,11 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
@@ -24,13 +27,10 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 
-class BrowseArtistFragment : androidx.fragment.app.Fragment(),
-  BrowseArtistView,
-  MenuItemSelectedListener<ArtistEntity>,
-  OnRefreshListener {
+class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>, OnRefreshListener {
 
-  private val recycler: androidx.recyclerview.widget.RecyclerView by bindView(R.id.library_browser__content)
-  private val swipeLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
+  private val recycler: RecyclerView by bindView(R.id.library_browser__content)
+  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
   private val fastScroller: RecyclerViewFastScroller by bindView(R.id.fastscroller)
 
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)
@@ -39,17 +39,7 @@ class BrowseArtistFragment : androidx.fragment.app.Fragment(),
 
   private val adapter: ArtistEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseArtistPresenter by inject()
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
-  }
+  private val presenter: BrowseArtistViewModel by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -66,11 +56,9 @@ class BrowseArtistFragment : androidx.fragment.app.Fragment(),
     recycler.setHasFixedSize(true)
     recycler.linear(adapter, fastScroller)
     adapter.setMenuItemSelectedListener(this)
-    presenter.attach(this)
-    presenter.load()
   }
 
-  override fun updateIndexes(indexes: List<String>) {
+  fun updateIndexes(indexes: List<String>) {
     adapter.setIndexes(indexes)
   }
 
@@ -95,16 +83,16 @@ class BrowseArtistFragment : androidx.fragment.app.Fragment(),
     presenter.reload()
   }
 
-  override fun update(pagedList: PagedList<ArtistEntity>) {
+  fun update(pagedList: PagedList<ArtistEntity>) {
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
   }
 
-  override fun failure(throwable: Throwable) {
+  fun failure(throwable: Throwable) {
     Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun hideLoading() {
+  fun hideLoading() {
     emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
   }

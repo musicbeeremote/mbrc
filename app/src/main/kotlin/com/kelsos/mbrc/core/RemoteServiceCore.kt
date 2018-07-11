@@ -1,11 +1,7 @@
 package com.kelsos.mbrc.core
 
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.*
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
@@ -65,7 +61,6 @@ constructor(
   override fun start() {
     super.start()
     Timber.v("Starting remote core")
-    discovery.discover {}
   }
 
   override fun stop() {

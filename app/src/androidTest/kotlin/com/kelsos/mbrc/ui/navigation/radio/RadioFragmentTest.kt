@@ -25,7 +25,7 @@ import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.content.radios.RadioStationDao
 import com.kelsos.mbrc.content.radios.RadioStationDto
 import com.kelsos.mbrc.ui.minicontrol.MiniControlFragment
-import com.kelsos.mbrc.ui.minicontrol.MiniControlPresenter
+import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -79,9 +79,9 @@ class RadioFragmentTest : DbTest() {
   )
 
   @Mock
-  lateinit var presenter: RadioPresenter
+  lateinit var presenter: RadioViewModel
   @Mock
-  lateinit var miniControlPresenter: MiniControlPresenter
+  lateinit var miniControlPresenter: MiniControlViewModel
 
   private lateinit var resource: CountingIdlingResource
 
@@ -89,13 +89,9 @@ class RadioFragmentTest : DbTest() {
   fun setUp() {
 
     MockitoAnnotations.initMocks(this)
-    val radioActivityScope = Toothpick.openScope(RadioFragment.Presenter::class.java)
-    radioActivityScope.installTestModules(TestModule(db.radioStationDao()))
-    val miniControlFragmentScope = Toothpick.openScope(MiniControlFragment.Presenter::class.java)
-    miniControlFragmentScope.installTestModules(TestModule(db.radioStationDao()))
     val application = InstrumentationRegistry.getTargetContext().applicationContext as Application
-    val scope = Toothpick.openScope(application)
-    scope.installModules(ToothPickTestModule(this))
+
+
     resource = CountingIdlingResource("idling resource")
     IdlingRegistry.getInstance().register(resource)
   }
@@ -234,14 +230,5 @@ class RadioFragmentTest : DbTest() {
 
     verify(presenter, times(1)).refresh()
     verify(presenter, times(1)).load()
-  }
-
-  inner class TestModule(dao: RadioStationDao) : Module() {
-    init {
-      bind(RadioPresenter::class.java).toInstance(presenter)
-      bind(MiniControlPresenter::class.java).toInstance(miniControlPresenter)
-      bind(RadioRepository::class.java).to(RadioRepositoryImpl::class.java)
-      bind(RadioStationDao::class.java).toInstance(dao)
-    }
   }
 }

@@ -6,9 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.content.radios.RadioStationEntity
 
 
-class RadioAdapter
+class RadioAdapter : PagedListAdapter<RadioStationEntity, RadioViewHolder>(DIFF) {
 
-constructor() : PagedListAdapter<RadioStationEntity, RadioViewHolder>(DIFF) {
   private var radioPressedListener: OnRadioPressedListener? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RadioViewHolder {

@@ -1,35 +1,27 @@
 package com.kelsos.mbrc.ui.navigation.player
 
+import androidx.lifecycle.ViewModel
 import com.jakewharton.rxrelay2.PublishRelay
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppRxSchedulers
-import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
 
-class VolumeDialogPresenterImpl
-
-constructor(
+class VolumeDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
   private val appRxSchedulers: AppRxSchedulers,
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
-) : VolumeDialogPresenter, BasePresenter<VolumeView>() {
+  val playerStatus: PlayerStatusLiveDataProvider
+) : ViewModel() {
 
   private val volumeRelay: PublishRelay<Int> = PublishRelay.create()
+  private val disposable: Disposable
 
   init {
-    playerStatusLiveDataProvider.observe(this) {
-      view().update(it)
-    }
-  }
-
-  override fun attach(view: VolumeView) {
-    super.attach(view)
-    disposables += volumeRelay.throttleLast(
+    disposable = volumeRelay.throttleLast(
       800,
       TimeUnit.MILLISECONDS,
       appRxSchedulers.network
@@ -40,11 +32,16 @@ constructor(
       }
   }
 
-  override fun mute() {
+  override fun onCleared() {
+    disposable.dispose()
+    super.onCleared()
+  }
+
+  fun mute() {
     userActionUseCase.perform(UserAction.toggle(Protocol.PlayerMute))
   }
 
-  override fun changeVolume(volume: Int) {
+  fun changeVolume(volume: Int) {
     volumeRelay.accept(volume)
   }
 }

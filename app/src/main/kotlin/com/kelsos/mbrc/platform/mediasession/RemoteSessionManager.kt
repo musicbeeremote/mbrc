@@ -23,8 +23,7 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
 
-class RemoteSessionManager
-constructor(
+class RemoteSessionManager(
   context: Application,
   volumeProvider: RemoteVolumeProvider,
   private val userActionUseCase: UserActionUseCase,

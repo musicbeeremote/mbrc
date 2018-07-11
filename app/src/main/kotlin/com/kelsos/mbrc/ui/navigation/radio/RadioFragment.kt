@@ -22,8 +22,7 @@ import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class RadioFragment : Fragment(), RadioView, OnRefreshListener,
-  OnRadioPressedListener {
+class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
 
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.radio_stations__refresh_layout)
   private val radioView: RecyclerView by bindView(R.id.radio_stations__stations_list)
@@ -32,7 +31,7 @@ class RadioFragment : Fragment(), RadioView, OnRefreshListener,
   private val emptyViewIcon: ImageView by bindView(R.id.radio_stations__empty_icon)
   private val emptyViewProgress: ProgressBar by bindView(R.id.radio_stations__loading_bar)
 
-  private val presenter: RadioPresenter by inject()
+  private val presenter: RadioViewModel by inject()
   private val adapter: RadioAdapter by inject()
 
   override fun onCreateView(
@@ -47,8 +46,6 @@ class RadioFragment : Fragment(), RadioView, OnRefreshListener,
     super.onViewCreated(view, savedInstanceState)
     setupEmptyView()
     setupRecycler()
-    presenter.attach(this)
-    presenter.load()
   }
 
   private fun setupRecycler() {
@@ -64,17 +61,17 @@ class RadioFragment : Fragment(), RadioView, OnRefreshListener,
   }
 
   override fun onDestroy() {
-    presenter.detach()
+
     adapter.setOnRadioPressedListener(null)
     super.onDestroy()
   }
 
-  override fun update(data: PagedList<RadioStationEntity>) {
+  fun update(data: PagedList<RadioStationEntity>) {
     emptyView.isVisible = data.isEmpty()
     adapter.submitList(data)
   }
 
-  override fun error(error: Throwable) {
+  fun error(error: Throwable) {
     snackbar(R.string.radio__loading_failed)
   }
 
@@ -86,15 +83,15 @@ class RadioFragment : Fragment(), RadioView, OnRefreshListener,
     presenter.refresh()
   }
 
-  override fun radioPlayFailed(error: Throwable?) {
+  fun radioPlayFailed(error: Throwable?) {
     snackbar(R.string.radio__play_failed)
   }
 
-  override fun radioPlaySuccessful() {
+  fun radioPlaySuccessful() {
     snackbar(R.string.radio__play_successful)
   }
 
-  override fun loading(visible: Boolean) {
+  fun loading(visible: Boolean) {
     if (!visible) {
       emptyViewProgress.isVisible = false
       swipeLayout.isRefreshing = false

@@ -2,6 +2,9 @@ package com.kelsos.mbrc.preferences
 
 import android.app.Application
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.preferences.SettingsManager.CallAction
@@ -10,16 +13,21 @@ import com.kelsos.mbrc.preferences.SettingsManager.Companion.REDUCE
 import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.Single
 import timber.log.Timber
-import java.util.Date
+import java.util.*
 
-class SettingsManagerImpl
-constructor(
+class SettingsManagerImpl(
   private val context: Application,
   private val preferences: SharedPreferences
 ) : SettingsManager {
 
+  private val displayAlbumArtist: MutableLiveData<Boolean> = MutableLiveData()
+
   init {
     setupManager()
+    displayAlbumArtist.postValue(preferences.getBoolean(
+      getKey(R.string.settings_key_album_artists_only),
+      false
+    ))
   }
 
   private fun setupManager() {
@@ -68,18 +76,15 @@ constructor(
       .apply()
   }
 
-  override fun shouldDisplayOnlyAlbumArtists(): Single<Boolean> {
-    return Single.fromCallable {
-      return@fromCallable preferences.getBoolean(
-        getKey(R.string.settings_key_album_artists_only),
-        false
-      )
-    }
+  override fun shouldDisplayOnlyAlbumArtists(): LiveData<Boolean> {
+    return displayAlbumArtist
   }
 
   override fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean) {
-    preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
-      .apply()
+    preferences.edit {
+      putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
+    }
+    displayAlbumArtist.postValue(onlyAlbumArtist)
   }
 
   override fun shouldShowChangeLog(): Single<Boolean> {

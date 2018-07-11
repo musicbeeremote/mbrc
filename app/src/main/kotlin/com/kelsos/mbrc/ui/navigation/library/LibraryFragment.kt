@@ -1,12 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
@@ -20,7 +15,6 @@ import org.koin.android.ext.android.inject
 
 
 class LibraryFragment : Fragment(),
-  LibraryView,
   OnQueryTextListener,
   OnPageChangeListener {
 
@@ -32,7 +26,7 @@ class LibraryFragment : Fragment(),
   private var albumArtistOnly: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
 
-  private val presenter: LibraryPresenter by inject()
+  private val presenter: LibraryViewModel by inject()
 
   private var refreshDialog: SyncProgressDialog? = null
 
@@ -83,8 +77,6 @@ class LibraryFragment : Fragment(),
     pager.addOnPageChangeListener(this)
 
     tabs.setupWithViewPager(pager)
-
-    presenter.attach(this)
   }
 
 
@@ -102,8 +94,6 @@ class LibraryFragment : Fragment(),
       setIconifiedByDefault(true)
       setOnQueryTextListener(this@LibraryFragment)
     }
-
-    presenter.loadArtistPreference()
   }
 
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -122,7 +112,7 @@ class LibraryFragment : Fragment(),
   }
 
   override fun onDestroy() {
-    presenter.detach()
+
     pagerAdapter = null
     super.onDestroy()
   }
@@ -136,7 +126,7 @@ class LibraryFragment : Fragment(),
   override fun onPageScrollStateChanged(state: Int) {
   }
 
-  override fun updateArtistOnlyPreference(albumArtistOnly: Boolean?) {
+  fun updateArtistOnlyPreference(albumArtistOnly: Boolean?) {
     this.albumArtistOnly?.isChecked = albumArtistOnly ?: false
   }
 
@@ -150,20 +140,20 @@ class LibraryFragment : Fragment(),
     pager.currentItem = savedInstanceState?.getInt(PAGER_POSITION, 0) ?: 0
   }
 
-  override fun refreshFailed() {
+  fun refreshFailed() {
     snackbar(R.string.refresh_failed)
   }
 
-  override fun showRefreshing() {
+  fun showRefreshing() {
     refreshDialog = syncDialog()
     refreshDialog?.show()
   }
 
-  override fun updateSyncProgress(progress: SyncProgress) {
+  fun updateSyncProgress(progress: SyncProgress) {
     refreshDialog?.updateProgress(progress)
   }
 
-  override fun hideRefreshing() {
+  fun hideRefreshing() {
     refreshDialog?.dismiss()
   }
 

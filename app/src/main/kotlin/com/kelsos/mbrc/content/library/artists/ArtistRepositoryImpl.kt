@@ -6,73 +6,63 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import io.reactivex.Completable
-import io.reactivex.Single
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 
 
-class ArtistRepositoryImpl
-
-constructor(
+class ArtistRepositoryImpl(
   private val dao: ArtistDao,
   private val remoteDataSource: ApiBase,
-  private val coroutineDispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers
 ) : ArtistRepository {
 
   private val mapper = ArtistDtoMapper()
 
   override suspend fun count(): Long {
-    return withContext(coroutineDispatchers.database) { dao.count() }
+    return withContext(dispatchers.database) { dao.count() }
   }
 
-  override fun getArtistByGenre(genre: String): Single<DataSource.Factory<Int, ArtistEntity>> {
-    return Single.fromCallable { dao.getArtistByGenre(genre) }
+  override suspend fun getArtistByGenre(genre: String): DataSource.Factory<Int, ArtistEntity> {
+    return dao.getArtistByGenre(genre)
   }
 
-  override fun getAll(): Single<DataSource.Factory<Int, ArtistEntity>> {
-    return Single.fromCallable { dao.getAll() }
+  override suspend fun getAll(): DataSource.Factory<Int, ArtistEntity> {
+    return dao.getAll()
   }
 
-  override fun allArtists(): Single<DataModel<ArtistEntity>> {
-    return Single.fromCallable { DataModel(dao.getAll(), dao.getAllIndexes()) }
+  override suspend fun allArtists(): DataModel<ArtistEntity> {
+    return DataModel(dao.getAll(), dao.getAllIndexes())
   }
 
-  override fun albumArtists(): Single<DataModel<ArtistEntity>> {
-    return Single.fromCallable { DataModel(dao.getAlbumArtists(), dao.getAlbumArtistIndexes()) }
+  override suspend fun albumArtists(): DataModel<ArtistEntity> {
+    return DataModel(dao.getAlbumArtists(), dao.getAlbumArtistIndexes())
   }
 
-  override fun getRemote(): Completable {
+  override suspend fun getRemote() {
     val added = epoch()
-    return remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class).doOnNext {
-      async(CommonPool) {
+    remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class).blockingForEach {
+      launch(dispatchers.disk) {
         val items = it.map { mapper.map(it).apply { dateAdded = added } }
-        withContext(coroutineDispatchers.database) {
+        withContext(dispatchers.database) {
           dao.insertAll(items)
         }
       }
+    }
 
-    }.doOnComplete {
-      async(coroutineDispatchers.database) {
-        dao.removePreviousEntries(added)
-      }
-    }.ignoreElements()
+    launch(dispatchers.database) {
+      dao.removePreviousEntries(added)
+    }
   }
 
-  override fun search(term: String): Single<DataSource.Factory<Int, ArtistEntity>> {
-    return Single.fromCallable { dao.search(term) }
+  override suspend fun search(term: String): DataSource.Factory<Int, ArtistEntity> {
+    return dao.search(term)
   }
 
-  override fun getAlbumArtistsOnly(): Single<DataSource.Factory<Int, ArtistEntity>> {
-    return Single.fromCallable { dao.getAlbumArtists() }
+  override suspend fun getAlbumArtistsOnly(): DataSource.Factory<Int, ArtistEntity> {
+    return dao.getAlbumArtists()
   }
 
-  override fun getAllRemoteAndShowAlbumArtist(): Single<DataSource.Factory<Int, ArtistEntity>> {
-    return getRemote().andThen(getAlbumArtistsOnly())
-  }
-
-  override fun cacheIsEmpty(): Single<Boolean> {
-    return Single.fromCallable { dao.count() == 0L }
+  override suspend fun cacheIsEmpty(): Boolean {
+    return withContext(dispatchers.database) { dao.count() == 0L }
   }
 }

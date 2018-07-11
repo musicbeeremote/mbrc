@@ -26,9 +26,9 @@ import org.mockito.Mockito.verify
 
 import java.net.SocketTimeoutException
 
-class RadioPresenterImplTest {
+class RadioViewModelTest {
 
-  private val toothpickRule: ToothPickRule = ToothPickRule(this, Presenter::class.java)
+  private val toothpickRule: ToothPickRule = ToothPickRule(this, ViewModel::class.java)
     .setRootRegistryPackage("com.kelsos.mbrc")
   @Rule
   @JvmField
@@ -44,7 +44,7 @@ class RadioPresenterImplTest {
   @Mock
   private lateinit var result: DataSource.Factory<Int, RadioStationEntity>
 
-  private lateinit var presenter: RadioPresenter
+  private lateinit var presenter: RadioViewModel
 
   @Before
   fun setUp() {

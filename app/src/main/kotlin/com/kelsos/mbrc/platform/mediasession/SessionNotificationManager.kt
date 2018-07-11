@@ -28,13 +28,11 @@ import kotlinx.coroutines.experimental.withContext
 import timber.log.Timber
 
 
-class SessionNotificationManager
-
-constructor(
+class SessionNotificationManager(
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
   private val settings: SettingsManager,
-  private val appCoroutineDispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppCoroutineDispatchers,
   private val notificationManager: NotificationManager
 ) : INotificationManager {
 
@@ -59,7 +57,7 @@ constructor(
   private suspend fun update(notificationData: NotificationData) {
     notification = createBuilder(notificationData).build()
 
-    withContext(appCoroutineDispatchers.main) {
+    withContext(dispatchers.main) {
       notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
     }
 

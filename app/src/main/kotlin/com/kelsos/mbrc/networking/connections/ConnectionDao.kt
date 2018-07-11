@@ -1,12 +1,7 @@
 package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface ConnectionDao {
@@ -37,4 +32,7 @@ interface ConnectionDao {
 
   @Query("select * from settings where id < :id order by id desc limit 1")
   fun getPrevious(id: Long): ConnectionSettingsEntity?
+
+  @Query("select id from settings where address = :address and port = :port")
+  fun findId(address: String, port: Int): Long?
 }

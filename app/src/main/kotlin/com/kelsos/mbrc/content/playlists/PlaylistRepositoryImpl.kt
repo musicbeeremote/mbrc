@@ -5,55 +5,49 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import io.reactivex.Completable
-import io.reactivex.Single
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 
-
-class PlaylistRepositoryImpl
-
-constructor(
+class PlaylistRepositoryImpl(
   private val dao: PlaylistDao,
   private val remoteDataSource: ApiBase,
-  private val coroutineDispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers
 ) : PlaylistRepository {
 
   private val mapper = PlaylistDtoMapper()
 
   override suspend fun count(): Long {
-    return withContext(coroutineDispatchers.database) { dao.count() }
+    return withContext(dispatchers.database) { dao.count() }
   }
 
-  override fun getAll(): Single<DataSource.Factory<Int, PlaylistEntity>> {
-    return Single.fromCallable { dao.getAll() }
+  override suspend fun getAll(): DataSource.Factory<Int, PlaylistEntity> {
+    return dao.getAll()
   }
 
-  override fun getRemote(): Completable {
+  override suspend fun getRemote() {
     val added = epoch()
-    return remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class).doOnNext {
-      async(CommonPool) {
+    remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class).blockingForEach {
+      launch(dispatchers.disk) {
         val playlists = it.map {
           mapper.map(it).apply {
             this.dateAdded = added
           }
         }
-        withContext(coroutineDispatchers.database) {
+        withContext(dispatchers.database) {
           dao.insertAll(playlists)
         }
       }
 
-    }.doOnComplete {
-      async(coroutineDispatchers.database) {
-        dao.removePreviousEntries(added)
-      }
-    }.ignoreElements()
+    }
+
+    withContext(dispatchers.database) {
+      dao.removePreviousEntries(added)
+    }
   }
 
-  override fun search(term: String): Single<DataSource.Factory<Int, PlaylistEntity>> {
-    return Single.fromCallable { dao.search(term) }
+  override suspend fun search(term: String): DataSource.Factory<Int, PlaylistEntity> {
+    return dao.search(term)
   }
 
-  override fun cacheIsEmpty(): Single<Boolean> = Single.fromCallable { dao.count() == 0L }
+  override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 }

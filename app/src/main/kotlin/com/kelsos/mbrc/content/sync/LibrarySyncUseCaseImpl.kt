@@ -7,37 +7,26 @@ import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.metrics.SyncedData
-import com.kelsos.mbrc.utilities.AppRxSchedulers
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function4
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
-
-class LibrarySyncUseCaseImpl
-
-constructor(
+class LibrarySyncUseCaseImpl(
   private val genreRepository: GenreRepository,
   private val artistRepository: ArtistRepository,
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
   private val metrics: SyncMetrics,
-  private val appRxSchedulers: AppRxSchedulers
+  private val dispatchers: AppCoroutineDispatchers
 ) : LibrarySyncUseCase {
 
-  private var disposable: Disposable? = null
   private var running: Boolean = false
   private var onCompleteListener: LibrarySyncUseCase.OnCompleteListener? = null
 
-  override fun sync(auto: Boolean) {
-    disposable?.let {
-      if (!it.isDisposed) {
-        return
-      }
+  override suspend fun sync(auto: Boolean) {
+    if (running) {
+      return
     }
     running = true
 
@@ -45,58 +34,50 @@ constructor(
 
     metrics.librarySyncStarted()
 
-    disposable = checkIfShouldSync(auto).flatMapCompletable { empty ->
-      if (empty) {
-        return@flatMapCompletable genreRepository.getRemote()
-          .andThen(artistRepository.getRemote())
-          .andThen(albumRepository.getRemote())
-          .andThen(trackRepository.getRemote())
-          .andThen(playlistRepository.getRemote())
-      } else {
-        return@flatMapCompletable Completable.error(ShouldNotProceedException())
-      }
-    }.subscribeOn(appRxSchedulers.network)
-      .observeOn(appRxSchedulers.main)
-      .doOnTerminate {
+    if (checkIfShouldSync(auto)) {
+      try {
+        genreRepository.getRemote()
+        artistRepository.getRemote()
+        albumRepository.getRemote()
+        trackRepository.getRemote()
+        playlistRepository.getRemote()
+      } catch (ex: Exception) {
         onCompleteListener?.onTermination()
-        running = false
-      }
-      .subscribe({
-        onCompleteListener?.onSuccess()
-        async(CommonPool) {
-          val syncedData = SyncedData(
-            genres = genreRepository.count(),
-            artists = artistRepository.count(),
-            albums = albumRepository.count(),
-            tracks = trackRepository.count(),
-            playlists = playlistRepository.count()
-          )
-          metrics.librarySyncComplete(syncedData)
-        }
-
-      }) {
-        Timber.e(it, "Refresh couldn't complete")
-        onCompleteListener?.onFailure(it)
+        onCompleteListener?.onFailure(ex)
         metrics.librarySyncFailed()
+
+        return
       }
+    }
+
+    onCompleteListener?.onSuccess()
+    launch(dispatchers.disk) {
+      val syncedData = SyncedData(
+        genres = genreRepository.count(),
+        artists = artistRepository.count(),
+        albums = albumRepository.count(),
+        tracks = trackRepository.count(),
+        playlists = playlistRepository.count()
+      )
+      metrics.librarySyncComplete(syncedData)
+    }
+
+    running = false
   }
 
-  private fun checkIfShouldSync(auto: Boolean): Single<Boolean> {
+  private suspend fun checkIfShouldSync(auto: Boolean): Boolean {
     return if (auto) {
       isEmpty()
     } else {
-      Single.just(true)
+      true
     }
   }
 
-  private fun isEmpty(): Single<Boolean> {
-    return Single.zip(genreRepository.cacheIsEmpty(),
-      artistRepository.cacheIsEmpty(),
-      albumRepository.cacheIsEmpty(),
-      trackRepository.cacheIsEmpty(),
-      Function4 { noGenres, noArtists, noAlbums, noTracks ->
-        noGenres && noArtists && noAlbums && noTracks
-      })
+  private suspend fun isEmpty(): Boolean {
+    return genreRepository.cacheIsEmpty() &&
+      artistRepository.cacheIsEmpty() &&
+      albumRepository.cacheIsEmpty() &&
+      trackRepository.cacheIsEmpty()
   }
 
   override fun setOnCompleteListener(
@@ -108,6 +89,4 @@ constructor(
   override fun isRunning(): Boolean {
     return running
   }
-
-  inner class ShouldNotProceedException : Exception()
 }

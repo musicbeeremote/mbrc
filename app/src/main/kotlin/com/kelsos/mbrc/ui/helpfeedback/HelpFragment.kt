@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import kotterknife.bindView
 import timber.log.Timber
 
-class HelpFragment : androidx.fragment.app.Fragment() {
+class HelpFragment : Fragment() {
 
   private val helpWebview: WebView by bindView(R.id.help_webview)
 

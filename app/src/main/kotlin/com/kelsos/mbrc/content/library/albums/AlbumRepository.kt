@@ -2,10 +2,9 @@ package com.kelsos.mbrc.content.library.albums
 
 import androidx.paging.DataSource
 import com.kelsos.mbrc.interfaces.data.Repository
-import io.reactivex.Single
 
 interface AlbumRepository : Repository<AlbumEntity> {
-  fun getAlbumsByArtist(artist: String): Single<DataSource.Factory<Int, AlbumEntity>>
+  suspend fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, AlbumEntity>
 
   /**
    * Retrieves the albums ordered by
@@ -13,5 +12,5 @@ interface AlbumRepository : Repository<AlbumEntity> {
   fun getAlbumsSorted(
     @Sorting.Fields order: Int = Sorting.ALBUM_ARTIST__ALBUM,
     ascending: Boolean = true
-  ): Single<AlbumsModel>
+  ): AlbumsModel
 }

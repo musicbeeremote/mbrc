@@ -1,27 +1,19 @@
 package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
-import android.content.SharedPreferences
-import android.content.res.Resources
-import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
-import io.reactivex.Single
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import kotlinx.coroutines.experimental.launch
 
-
-class ConnectionRepositoryImpl
-
-constructor(
+class ConnectionRepositoryImpl(
   private val connectionDao: ConnectionDao,
-  private val preferences: SharedPreferences,
   private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider,
-  private val resources: Resources
+  private val dispatchers: AppCoroutineDispatchers,
+  private val defaultSettingsModel: DefaultSettingsModel
 ) : ConnectionRepository {
 
   init {
-    async(CommonPool) {
+    launch(dispatchers.disk) {
       default?.let {
         defaultSettingsLiveDataProvider.update(it)
       }
@@ -29,7 +21,13 @@ constructor(
   }
 
   override fun save(settings: ConnectionSettingsEntity) {
-    async(CommonPool) {
+    launch(dispatchers.database) {
+
+      val id = connectionDao.findId(settings.address, settings.port)
+      id?.let {
+        settings.id = it
+      }
+
       if (settings.id > 0) {
         connectionDao.update(settings)
       } else {
@@ -43,7 +41,7 @@ constructor(
   }
 
   override fun delete(settings: ConnectionSettingsEntity) {
-    async(CommonPool) {
+    launch(dispatchers.database) {
       val oldId = settings.id
 
       connectionDao.delete(settings)
@@ -89,18 +87,10 @@ constructor(
     }
 
   override var defaultId: Long
-    get() {
-      val key = resources.getString(R.string.settings_key_default_index)
-      return this.preferences.getLong(key, 0)
-    }
+    get() = defaultSettingsModel.defaultId
     private set(id) {
-      val key = resources.getString(R.string.settings_key_default_index)
-      this.preferences.edit().putLong(key, id).apply()
+      defaultSettingsModel.defaultId = id
     }
-
-  override fun getModel(): Single<ConnectionModel> = Single.fromCallable {
-    return@fromCallable ConnectionModel(defaultId, getAll())
-  }
 
   override fun getAll(): LiveData<List<ConnectionSettingsEntity>> = connectionDao.getAll()
 

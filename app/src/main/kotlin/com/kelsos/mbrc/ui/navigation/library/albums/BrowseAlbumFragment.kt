@@ -1,12 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
@@ -31,7 +26,6 @@ import org.koin.android.ext.android.inject
 
 
 class BrowseAlbumFragment : Fragment(),
-  BrowseAlbumView,
   MenuItemSelectedListener<AlbumEntity>,
   SwipeRefreshLayout.OnRefreshListener {
 
@@ -45,7 +39,7 @@ class BrowseAlbumFragment : Fragment(),
 
   private val adapter: AlbumEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseAlbumPresenter by inject()
+  private val presenter: BrowseAlbumViewModel by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -58,16 +52,6 @@ class BrowseAlbumFragment : Fragment(),
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setHasOptionsMenu(true)
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.detach()
   }
 
   override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -83,7 +67,7 @@ class BrowseAlbumFragment : Fragment(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun showSorting(order: Int, selection: Int) {
+  fun showSorting(order: Int, selection: Int) {
     with(requireFragmentManager()) {
       SortingDialog.create(this, selection, order, presenter::order, presenter::sortBy).show()
     }
@@ -97,8 +81,6 @@ class BrowseAlbumFragment : Fragment(),
     recycler.linear(adapter, fastScroller)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
-    presenter.attach(this)
-    presenter.load()
   }
 
   override fun onMenuItemSelected(action: String, item: AlbumEntity) {
@@ -119,25 +101,25 @@ class BrowseAlbumFragment : Fragment(),
       swipeLayout.isRefreshing = true
     }
 
-    presenter.reload()
+    //presenter.refresh()
   }
 
-  override fun update(pagedList: PagedList<AlbumEntity>) {
+  fun update(pagedList: PagedList<AlbumEntity>) {
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
     swipeLayout.isRefreshing = false
   }
 
-  override fun updateIndexes(indexes: List<String>) {
+  fun updateIndexes(indexes: List<String>) {
     adapter.setIndexes(indexes)
   }
 
-  override fun failure(throwable: Throwable) {
+  fun failure(throwable: Throwable) {
     swipeLayout.isRefreshing = false
     Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun hideLoading() {
+  fun hideLoading() {
     emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
   }

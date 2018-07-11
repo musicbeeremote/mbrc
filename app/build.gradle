@@ -173,7 +173,7 @@ ext {
 
 dependencies {
   //Instrumentation Test dependencies
-  androidTestImplementation 'androidx.annotation:annotation:1.0.0-alpha3'
+  androidTestImplementation 'androidx.annotation:annotation:1.0.0-beta01'
 
   androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
   androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {
@@ -212,17 +212,17 @@ dependencies {
 
   implementation 'com.chibatching.kotpref:kotpref:2.5.0'
 
-  implementation 'com.google.android.material:material:1.0.0-alpha3'
+  implementation 'com.google.android.material:material:1.0.0-beta01'
 
-  implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
-  implementation 'androidx.media:media:1.0.0-alpha3'
+  implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
+  implementation 'androidx.media:media:1.0.0-beta01'
 
-  implementation 'androidx.core:core:1.0.0-alpha3'
-  implementation 'androidx.core:core-ktx:1.0.0-alpha3'
+  implementation 'androidx.core:core:1.0.0-beta01'
+  implementation 'androidx.core:core-ktx:1.0.0-beta01'
 
-  implementation 'androidx.annotation:annotation:1.0.0-alpha3'
-  implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha3'
-  implementation 'androidx.preference:preference:1.0.0-alpha3'
+  implementation 'androidx.annotation:annotation:1.0.0-beta01'
+  implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
+  implementation 'androidx.preference:preference:1.0.0-beta01'
 
   implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha02'
   implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha02'
@@ -230,26 +230,25 @@ dependencies {
   implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha02'
   implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha02'
 
-  implementation 'androidx.paging:paging-runtime:2.0.0-alpha1'
+  implementation 'androidx.paging:paging-runtime:2.0.0-beta01'
 
-  kapt 'androidx.databinding:databinding-compiler:3.2.0-beta02'
-
-  implementation 'androidx.room:room-runtime:2.0.0-alpha1'
-  implementation 'androidx.room:room-rxjava2:2.0.0-alpha1'
-  kapt "androidx.room:room-compiler:2.0.0-alpha1"
+  implementation 'androidx.room:room-runtime:2.0.0-beta01'
+  implementation 'androidx.room:room-rxjava2:2.0.0-beta01'
+  kapt "androidx.room:room-compiler:2.0.0-beta01"
 
   implementation 'com.squareup.moshi:moshi:1.6.0'
   kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
 
   implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
-  implementation 'org.koin:koin-android:0.9.3'
-  implementation 'org.koin:koin-android-architecture:0.9.3'
+  implementation 'org.koin:koin-android:1.0.0-beta-3'
+  implementation 'org.koin:koin-androidx-scope:1.0.0-beta-3'
+  implementation 'org.koin:koin-androidx-viewmodel:1.0.0-beta-3'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.3"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.23.3"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.23.3"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.23.4"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.23.4"
 
   implementation 'com.squareup.picasso:picasso:2.71828'
   implementation 'androidx.multidex:multidex:2.0.0'
@@ -331,12 +330,6 @@ repositories {
 
 jacoco {
   toolVersion = "0.8.1"
-}
-
-kapt {
-  arguments {
-    arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
-  }
 }
 
 androidExtensions {

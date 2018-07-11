@@ -33,57 +33,46 @@ import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.core.RemoteServiceCore
 import com.kelsos.mbrc.data.*
-import com.kelsos.mbrc.networking.ClientConnectionUseCase
-import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
-import com.kelsos.mbrc.networking.RequestManager
-import com.kelsos.mbrc.networking.RequestManagerImpl
+import com.kelsos.mbrc.networking.*
 import com.kelsos.mbrc.networking.client.*
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
+import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
+import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCaseImpl
 import com.kelsos.mbrc.networking.protocol.*
 import com.kelsos.mbrc.networking.protocol.commands.*
+import com.kelsos.mbrc.platform.RemoteBroadcastReceiver
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
+import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
+import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.preferences.*
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerPresenter
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerPresenterImpl
-import com.kelsos.mbrc.ui.dialogs.OutputSelectionPresenter
-import com.kelsos.mbrc.ui.dialogs.OutputSelectionPresenterImpl
-import com.kelsos.mbrc.ui.minicontrol.MiniControlPresenter
-import com.kelsos.mbrc.ui.minicontrol.MiniControlPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.LibraryPresenter
-import com.kelsos.mbrc.ui.navigation.library.LibraryPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumPresenter
-import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksPresenter
-import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsPresenter
-import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistPresenter
-import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsPresenter
-import com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsPresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenrePresenter
-import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenrePresenterImpl
-import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackPresenter
-import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackPresenterImpl
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenter
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsPresenterImpl
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
+import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
+import com.kelsos.mbrc.ui.navigation.library.LibraryViewModel
+import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumViewModel
+import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksViewModel
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistViewModel
+import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreViewModel
+import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackViewModel
+import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
+import com.kelsos.mbrc.ui.navigation.lyrics.LyricsViewModel
 import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManager
 import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManagerImpl
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenter
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingPresenterImpl
-import com.kelsos.mbrc.ui.navigation.player.*
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenter
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistPresenterImpl
-import com.kelsos.mbrc.ui.navigation.radio.RadioPresenter
-import com.kelsos.mbrc.ui.navigation.radio.RadioPresenterImpl
+import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingViewModel
+import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
+import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
+import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter
+import com.kelsos.mbrc.ui.navigation.radio.RadioViewModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.squareup.moshi.Moshi
@@ -91,88 +80,89 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.rx2.asCoroutineDispatcher
-import org.koin.dsl.module.applicationContext
+import org.koin.androidx.viewmodel.ext.koin.viewModel
+import org.koin.dsl.module.module
 import java.util.concurrent.Executors
 
 
-val appModule = applicationContext {
-  bean { Moshi.Builder().build() }
-  bean<CoverApi> { CoverApiImpl(get()) }
-  bean<QueueApi> { QueueApiImpl(get()) }
+val appModule = module {
+  single { Moshi.Builder().build() }
+  single<CoverApi> { CoverApiImpl(get()) }
+  single<QueueApi> { QueueApiImpl(get()) }
 
-  bean<ConnectionRepository> { ConnectionRepositoryImpl(get(), get(), get(), get()) }
+  single<ConnectionRepository> { ConnectionRepositoryImpl(get(), get(), get(), get()) }
 
-  bean<TrackRepository> { TrackRepositoryImpl(get(), get(), get()) }
-  bean<AlbumRepository> { AlbumRepositoryImpl(get(), get(), get()) }
-  bean<ArtistRepository> { ArtistRepositoryImpl(get(), get(), get()) }
-  bean<GenreRepository> { GenreRepositoryImpl(get(), get(), get()) }
+  single<TrackRepository> { TrackRepositoryImpl(get(), get(), get()) }
+  single<AlbumRepository> { AlbumRepositoryImpl(get(), get(), get()) }
+  single<ArtistRepository> { ArtistRepositoryImpl(get(), get(), get()) }
+  single<GenreRepository> { GenreRepositoryImpl(get(), get(), get()) }
 
-  bean<NowPlayingRepository> { NowPlayingRepositoryImpl(get(), get(), get()) }
-  bean<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(), get()) }
+  single<NowPlayingRepository> { NowPlayingRepositoryImpl(get(), get(), get()) }
+  single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(), get()) }
 
-  bean<AlbumSortingStore> { AlbumSortingStoreImpl(get()) }
+  single<AlbumSortingStore> { AlbumSortingStoreImpl(get()) }
 
-  bean<MessageSerializer> { MessageSerializerImpl(get()) }
+  single<MessageSerializer> { MessageSerializerImpl(get()) }
 
 
-  bean<SerializationAdapter> { SerializationAdapterImpl(get()) }
-  bean<DeserializationAdapter> { DeserializationAdapterImpl(get()) }
-  bean<DatabaseTransactionRunner> { DatabaseTransactionRunnerImpl(get()) }
-  bean<RequestManager> { RequestManagerImpl(get(), get(), get(), get()) }
+  single<SerializationAdapter> { SerializationAdapterImpl(get()) }
+  single<DeserializationAdapter> { DeserializationAdapterImpl(get()) }
+  single<DatabaseTransactionRunner> { DatabaseTransactionRunnerImpl(get()) }
+  single<RequestManager> { RequestManagerImpl(get(), get(), get(), get()) }
 
-  bean<UserActionUseCase> { UserActionUseCaseImpl(get()) }
+  single<UserActionUseCase> { UserActionUseCaseImpl(get()) }
 
-  bean<ClientConnectionUseCase> { ClientConnectionUseCaseImpl(get()) }
+  single<ClientConnectionUseCase> { ClientConnectionUseCaseImpl(get()) }
 
-  bean<SettingsManager> { SettingsManagerImpl(get(), get()) }
-  bean<PlayingTrackCache> { PlayingTrackCacheImpl(get(), get(), get()) }
-  bean<ServiceChecker> { ServiceCheckerImpl(get(), get()) }
+  single<SettingsManager> { SettingsManagerImpl(get(), get()) }
+  single<PlayingTrackCache> { PlayingTrackCacheImpl(get(), get(), get()) }
+  single<ServiceChecker> { ServiceCheckerImpl(get(), get()) }
 
-  bean<LibrarySyncUseCase> {
+  single<LibrarySyncUseCase> {
     LibrarySyncUseCaseImpl(get(), get(), get(), get(), get(), get(), get())
   }
 
-  bean<RadioRepository> { RadioRepositoryImpl(get(), get(), get()) }
-  bean<ClientInformationStore> { ClientInformationStoreImpl(get()) }
-  bean<VolumeInteractor> { VolumeInteractorImpl(get(), get()) }
-  bean<OutputApi> { OutputApiImpl(get()) }
+  single<RadioRepository> { RadioRepositoryImpl(get(), get(), get()) }
+  single<ClientInformationStore> { ClientInformationStoreImpl(get()) }
+  single<VolumeInteractor> { VolumeInteractorImpl(get(), get()) }
+  single<OutputApi> { OutputApiImpl(get()) }
 
 
   //bindInstance { SyncProgressProvider() }
 
-  bean<PlayingTrackLiveDataProvider> { PlayingTrackLiveDataProviderImpl(get(), get()) }
-  bean<PlayerStatusLiveDataProvider> { PlayerStatusLiveDataProviderImpl() }
-  bean<TrackRatingLiveDataProvider> { TrackRatingLiveDataProviderImpl() }
-  bean<ConnectionStatusLiveDataProvider> {
+  single<PlayingTrackLiveDataProvider> { PlayingTrackLiveDataProviderImpl(get(), get()) }
+  single<PlayerStatusLiveDataProvider> { PlayerStatusLiveDataProviderImpl() }
+  single<TrackRatingLiveDataProvider> { TrackRatingLiveDataProviderImpl() }
+  single<ConnectionStatusLiveDataProvider> {
     ConnectionStatusLiveDataProviderImpl()
   }
 
-  bean<DefaultSettingsLiveDataProvider> {
+  single<DefaultSettingsLiveDataProvider> {
     DefaultSettingsLiveDataProviderImpl(get())
   }
 
-  bean<LyricsLiveDataProvider> { LyricsLiveDataProviderImpl() }
+  single<LyricsLiveDataProvider> { LyricsLiveDataProviderImpl() }
 
-  bean<MessageQueue> { MessageQueueImpl() }
-  bean<MessageHandler> { MessageHandlerImpl(get(), get(), get(), get(), get(), get()) }
-  bean<CommandExecutor> { CommandExecutorImpl(get()) }
+  single<MessageQueue> { MessageQueueImpl() }
+  single<MessageHandler> { MessageHandlerImpl(get(), get(), get(), get(), get(), get()) }
+  single<CommandExecutor> { CommandExecutorImpl(get()) }
 
-  bean<IClientConnectionManager> { ClientConnectionManager(get(), get(), get(), get(), get()) }
-  bean<CommandFactory> { CommandFactoryImpl() }
-  bean<MessageDeserializer> { MessageDeserializerImpl(get()) }
-  bean<UiMessageQueue> { UiMessageQueueImpl(get()) }
-  bean<RemoteServiceDiscovery> { RemoteServiceDiscoveryImpl(get(), get(), get()) }
-  bean<ServiceDiscoveryUseCase> { ServiceDiscoveryUseCaseImpl(get(), get()) }
-  bean<TrackPositionLiveDataProvider> { TrackPositionLiveDataProviderImpl(get()) }
+  single<IClientConnectionManager> { ClientConnectionManager(get(), get(), get(), get(), get()) }
+  single<CommandFactory> { CommandFactoryImpl() }
+  single<MessageDeserializer> { MessageDeserializerImpl(get()) }
+  single<UiMessageQueue> { UiMessageQueueImpl(get()) }
+  single<RemoteServiceDiscovery> { RemoteServiceDiscoveryImpl(get(), get(), get()) }
+  single<ServiceDiscoveryUseCase> { ServiceDiscoveryUseCaseImpl(get(), get()) }
+  single<TrackPositionLiveDataProvider> { TrackPositionLiveDataProviderImpl(get()) }
 
-  bean<INotificationManager> { SessionNotificationManager(get(), get(), get(), get(), get()) }
-  bean<IRemoteServiceCore> {
+  single<INotificationManager> { SessionNotificationManager(get(), get(), get(), get(), get()) }
+  single<IRemoteServiceCore> {
     RemoteServiceCore(get(), get(), get(), get(), get(), get(), get(), get())
   }
 
-  bean<CoverModel> { StoredCoverModel }
+  single<CoverModel> { StoredCoverModel }
 
-  bean {
+  single {
     AppRxSchedulers(
       AndroidSchedulers.mainThread(),
       Schedulers.io(),
@@ -183,7 +173,7 @@ val appModule = applicationContext {
     )
   }
 
-  bean {
+  single {
     val appRxSchedulers = get<AppRxSchedulers>()
     AppCoroutineDispatchers(
       UI,
@@ -193,63 +183,69 @@ val appModule = applicationContext {
     )
   }
 
-  bean { Room.databaseBuilder(get(), Database::class.java, "cache.db").build() }
-  bean { get<Database>().genreDao() }
-  bean { get<Database>().artistDao() }
-  bean { get<Database>().albumDao() }
-  bean { get<Database>().trackDao() }
-  bean { get<Database>().nowPlayingDao() }
-  bean { get<Database>().playlistDao() }
-  bean { get<Database>().radioStationDao() }
-  bean { get<Database>().connectionDao() }
+  single { ApiBase(get(), get()) }
+
+  single { Room.databaseBuilder(get(), Database::class.java, "cache.db").build() }
+  single { get<Database>().genreDao() }
+  single { get<Database>().artistDao() }
+  single { get<Database>().albumDao() }
+  single { get<Database>().trackDao() }
+  single { get<Database>().nowPlayingDao() }
+  single { get<Database>().playlistDao() }
+  single { get<Database>().radioStationDao() }
+  single { get<Database>().connectionDao() }
 
 
-  bean { UpdateNowPlayingTrack(get(), get(), get()) }
-  bean { UpdateCover(get(), get(), get(), get(), get(), get(), get()) }
-  bean { UpdateRating(get()) }
-  bean { UpdatePlayerStatus(get(), get()) }
-  bean { UpdatePlayState(get(), get()) }
-  bean { UpdateRepeat(get()) }
-  bean { UpdateVolume(get()) }
-  bean { UpdateMute(get()) }
-  bean { UpdateShuffle(get()) }
-  bean { UpdateLastFm(get()) }
-  bean { UpdateLyrics(get(), get()) }
-  bean { UpdateLfmRating(get()) }
-  bean { UpdateNowPlayingTrackRemoval(get()) }
-  bean { UpdateNowPlayingTrackMoved(get()) }
-  bean { UpdatePlaybackPositionCommand(get(), get()) }
-  bean { UpdatePluginVersionCommand() }
-  bean { ProtocolPingHandle(get(), get()) }
-  bean { ProtocolPongHandle() }
+  single { UpdateNowPlayingTrack(get(), get(), get()) }
+  single { UpdateCover(get(), get(), get(), get(), get(), get()) }
+  single { UpdateRating(get()) }
+  single { UpdatePlayerStatus(get(), get()) }
+  single { UpdatePlayState(get(), get()) }
+  single { UpdateRepeat(get()) }
+  single { UpdateVolume(get()) }
+  single { UpdateMute(get()) }
+  single { UpdateShuffle(get()) }
+  single { UpdateLastFm(get()) }
+  single { UpdateLyrics(get(), get()) }
+  single { UpdateLfmRating(get()) }
+  single { UpdateNowPlayingTrackRemoval(get()) }
+  single { UpdateNowPlayingTrackMoved(get()) }
+  single { UpdatePlaybackPositionCommand(get(), get()) }
+  single { UpdatePluginVersionCommand() }
+  single { ProtocolPingHandle(get(), get()) }
+  single { ProtocolPongHandle() }
 
-  bean<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+  single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+
+  factory { DefaultSettingsModelImpl as DefaultSettingsModel }
+  factory { MoveManagerImpl() as MoveManager }
+
+  factory { SocketActivityChecker() }
+  factory { RemoteBroadcastReceiver() }
+  factory { SessionNotificationManager(get(), get(), get(), get(), get()) }
+  factory { RemoteSessionManager(get(), get(), get(), get()) }
+  factory { RemoteVolumeProvider(get(), get()) }
 }
 
-val uiModule = applicationContext {
-  factory { PlaylistPresenterImpl(get(), get(), get()) as PlaylistPresenter }
-  factory { RadioPresenterImpl(get(), get(), get()) as RadioPresenter }
-  factory { LyricsPresenterImpl(get()) as LyricsPresenter }
-  factory { LibraryPresenterImpl(get(), get(), get(), get()) as LibraryPresenter }
-  factory {
-    PlayerPresenterImpl(get(), get(), get(), get(), get(), get(), get()) as PlayerPresenter
-  }
-  factory {
-    BrowseAlbumPresenterImpl(get(), get(), get()) as BrowseAlbumPresenter
-  }
+val uiModule = module {
+  viewModel { AlbumTracksViewModel(get()) }
+  viewModel { ConnectionManagerViewModel(get(), get(), get()) }
+  viewModel { PlayerViewModel(get(), get(), get(), get(), get(), get(), get()) }
+  viewModel { BrowseAlbumViewModel(get(), get(), get()) }
+  viewModel { BrowseGenreViewModel(get(), get()) }
+  viewModel { BrowseArtistViewModel(get(), get(), get()) }
+  viewModel { BrowseTrackViewModel(get(), get()) }
+  viewModel { MiniControlViewModel(get(), get(), get(), get()) }
+  viewModel { LyricsViewModel(get()) }
+  viewModel { RadioViewModel(get(), get(), get(), get()) }
+  viewModel { NowPlayingViewModel(get(), get(), get(), get(), get()) }
+  viewModel { LibraryViewModel(get(), get(), get(), get()) }
 
-  factory { AlbumTracksPresenterImpl(get()) as AlbumTracksPresenter }
-  factory { ArtistAlbumsPresenterImpl(get()) as ArtistAlbumsPresenter }
-  factory { BrowseArtistPresenterImpl(get(), get(), get()) as BrowseArtistPresenter }
-  factory { GenreArtistsPresenterImpl(get(), get()) as GenreArtistsPresenter }
-  factory { BrowseGenrePresenterImpl(get(), get()) as BrowseGenrePresenter }
-  factory { BrowseTrackPresenterImpl(get(), get()) as BrowseTrackPresenter }
+  viewModel { VolumeDialogViewModel(get(), get(), get()) }
 
-  factory { NowPlayingPresenterImpl(get(), get(), get(), get(), get()) as NowPlayingPresenter }
-  factory { MoveManagerImpl() as MoveManager }
-  factory { OutputSelectionPresenterImpl(get(), get()) as OutputSelectionPresenter }
-  factory { ConnectionManagerPresenterImpl(get(), get(), get()) as ConnectionManagerPresenter }
-  factory { VolumeDialogPresenterImpl(get(), get(), get()) as VolumeDialogPresenter }
-  factory { MiniControlPresenterImpl(get(), get(), get()) as MiniControlPresenter }
-  factory { RatingDialogPresenterImpl(get(), get()) as RatingDialogPresenter }
+  factory { RadioAdapter() }
+  factory { GenreEntryAdapter() }
+  factory { ArtistEntryAdapter() }
+  factory { AlbumEntryAdapter() }
+  factory { TrackEntryAdapter() }
 }

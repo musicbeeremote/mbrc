@@ -5,26 +5,15 @@ import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.*
 import timber.log.Timber
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.IOException
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.io.PrintWriter
+import java.io.*
 import java.net.Socket
 import java.net.SocketAddress
 import java.util.concurrent.Executors
 
 
-class ClientConnectionManager
-
-constructor(
+class ClientConnectionManager(
   private val activityChecker: SocketActivityChecker,
   private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,

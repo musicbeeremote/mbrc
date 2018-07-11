@@ -13,13 +13,12 @@ import com.kelsos.mbrc.R
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-
-class LyricsFragment : Fragment(), LyricsView {
+class LyricsFragment : Fragment() {
 
   private val lyricsRecycler: RecyclerView by bindView(R.id.lyrics__lyrics_list)
   private val emptyView: Group by bindView(R.id.lyrics__empty_group)
 
-  private val presenter: LyricsPresenter by inject()
+  private val viewModel: LyricsViewModel by inject()
   private val lyricsAdapter: LyricsAdapter by lazy { LyricsAdapter() }
 
   private fun setupRecycler() {
@@ -41,17 +40,10 @@ class LyricsFragment : Fragment(), LyricsView {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     setupRecycler()
-    presenter.attach(this)
-  }
 
-  override fun onDestroy() {
-    presenter.detach()
-
-    super.onDestroy()
-  }
-
-  override fun updateLyrics(lyrics: List<String>) {
-    emptyView.isVisible = lyrics.isEmpty()
-    lyricsAdapter.submitList(lyrics)
+    viewModel.lyricsLiveDataProvider.observe(this) { lyrics ->
+      emptyView.isVisible = lyrics.isEmpty()
+      lyricsAdapter.submitList(lyrics)
+    }
   }
 }

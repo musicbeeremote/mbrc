@@ -20,9 +20,7 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 
-class AlbumTracksFragment : Fragment(),
-  AlbumTracksView,
-  MenuItemSelectedListener<TrackEntity> {
+class AlbumTracksFragment : Fragment(), MenuItemSelectedListener<TrackEntity> {
 
   private val listTracks: RecyclerView by bindView(R.id.album_tracks__track_list)
   private val emptyView: Group by bindView(R.id.album_tracks__empty_view)
@@ -30,7 +28,7 @@ class AlbumTracksFragment : Fragment(),
   
   private val adapter: TrackEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: AlbumTracksPresenter by inject()
+  private val presenter: AlbumTracksViewModel by inject()
 
   private lateinit var album: AlbumInfo
 
@@ -48,7 +46,7 @@ class AlbumTracksFragment : Fragment(),
     listTracks.layoutManager = LinearLayoutManager(requireContext())
     listTracks.adapter = adapter
 
-    presenter.attach(this)
+
     presenter.load(album)
   }
 
@@ -75,12 +73,7 @@ class AlbumTracksFragment : Fragment(),
     actionHandler.trackSelected(item, true)
   }
 
-  override fun update(pagedList: PagedList<TrackEntity>) {
+  fun update(pagedList: PagedList<TrackEntity>) {
     adapter.submitList(pagedList)
-  }
-
-  override fun onDestroy() {
-    presenter.detach()
-    super.onDestroy()
   }
 }

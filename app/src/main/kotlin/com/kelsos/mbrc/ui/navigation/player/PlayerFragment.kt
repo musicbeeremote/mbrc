@@ -2,26 +2,20 @@ package com.kelsos.mbrc.ui.navigation.player
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ShareActionProvider
 import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
-import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.TrackRating
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
 import org.koin.android.ext.android.inject
 
-class PlayerFragment : Fragment(), PlayerView {
-  private val presenter: PlayerPresenter by inject()
+class PlayerFragment : Fragment(), VolumeDialogProvider {
+
+  private val viewModel: PlayerViewModel by inject()
 
   private lateinit var dataBinding: FragmentPlayerBinding
 
@@ -38,35 +32,50 @@ class PlayerFragment : Fragment(), PlayerView {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    dataBinding = FragmentPlayerBinding.inflate(inflater, container, false)
+    dataBinding = FragmentPlayerBinding.inflate(inflater, container, false).apply {
+      volumeProvider = this@PlayerFragment
+      track = PlayingTrack()
+    }
     return dataBinding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    dataBinding.presenter = presenter
-    dataBinding.track = PlayingTrack()
+    dataBinding.viewModel = viewModel
+
+    viewModel.playerStatus.observe(this) {
+      dataBinding.status = it
+      menu?.findItem(R.id.player_screen__action_scrobbling)?.isChecked = it.scrobbling
+    }
+
+    viewModel.playingTrack.observe(this) {
+      dataBinding.track = it
+      shareActionProvider?.setShareIntent(getShareIntent())
+    }
+
+    viewModel.trackPosition.observe(this) {
+      dataBinding.position = it
+    }
+
+    viewModel.trackRating.observe(this) {
+      updateRating(it)
+    }
+
   }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.attach(this)
-    presenter.load()
-  }
-
-  override fun showChangeLog() {
+  fun showChangeLog() {
     showChangeLogDialog()
     //todo manage dialogs somehow
   }
 
-  override fun notifyPluginOutOfDate() {
+  fun notifyPluginOutOfDate() {
     showPluginOutOfDateDialog()
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.player_screen__action_scrobbling -> {
-        presenter.toggleScrobbling()
+        viewModel.toggleScrobbling()
         true
       }
       R.id.player_screen__action_rating -> {
@@ -74,7 +83,7 @@ class PlayerFragment : Fragment(), PlayerView {
         true
       }
       R.id.player_screen__action_favorite -> {
-        presenter.favorite()
+        viewModel.favorite()
         true
       }
       else -> false
@@ -83,11 +92,6 @@ class PlayerFragment : Fragment(), PlayerView {
 
   override fun showVolumeDialog() {
     VolumeDialog.create(requireActivity()).show()
-  }
-
-  override fun onStop() {
-    presenter.detach()
-    super.onStop()
   }
 
   override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -108,7 +112,7 @@ class PlayerFragment : Fragment(), PlayerView {
     }
   }
 
-  override fun updateRating(rating: TrackRating) {
+  private fun updateRating(rating: TrackRating) {
     menu?.findItem(R.id.player_screen__action_favorite)?.let {
       val iconResId = if (rating.isFavorite()) {
         R.drawable.ic_favorite_black_24dp
@@ -118,21 +122,8 @@ class PlayerFragment : Fragment(), PlayerView {
       it.setIcon(iconResId)
     }
   }
+}
 
-  override fun updateStatus(playerStatus: PlayerStatusModel) {
-    dataBinding.status = playerStatus
-    menu?.findItem(R.id.player_screen__action_scrobbling)?.isChecked = playerStatus.scrobbling
-  }
-
-  override fun updateTrackInfo(playingTrack: PlayingTrack) {
-    dataBinding.track = playingTrack
-    shareActionProvider?.setShareIntent(getShareIntent())
-  }
-
-  override fun updateProgress(position: PlayingPosition) {
-    dataBinding.position = position
-  }
-
-  //todo move scrobble to some player_screen__actions/dialog
-
+interface VolumeDialogProvider {
+  fun showVolumeDialog()
 }

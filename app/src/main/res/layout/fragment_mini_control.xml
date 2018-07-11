@@ -13,6 +13,15 @@
     <variable
         name="status"
         type="com.kelsos.mbrc.content.activestatus.PlayerStatusModel" />
+
+    <variable
+        name="viewModel"
+        type="com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel" />
+
+    <variable
+        name="position"
+        type="com.kelsos.mbrc.content.activestatus.PlayingPosition" />
+
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,17 +30,30 @@
       android:layout_height="@dimen/mini_control_height"
       android:background="@color/background_dark">
 
+    <ProgressBar
+        android:id="@+id/mini_control__progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:max="@{position.total}"
+        android:progress="@{position.current}"
+        android:progressTint="@color/accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/mc_track_cover"
         android:layout_width="@dimen/mini_control_height"
         android:layout_height="wrap_content"
         android:contentDescription="@string/description_album_cover"
+        android:padding="2dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_image_no_cover"
         app:imageUrl="@{track.coverUrl}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/mini_control__progress" />
 
     <TextView
         android:id="@+id/mc_track_title"
@@ -50,7 +72,7 @@
         app:layout_constraintBottom_toTopOf="@id/mc_track_artist"
         app:layout_constraintEnd_toStartOf="@+id/mc_prev_track"
         app:layout_constraintStart_toEndOf="@+id/mc_track_cover"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mini_control__progress"
         tools:ignore="MissingPrefix,UnusedAttribute"
         tools:text="All night" />
 

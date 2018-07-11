@@ -15,15 +15,15 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.VolumeInteractor
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.SettingsManager
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 
 
-class RemoteBroadcastReceiver
+class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
-constructor(
-  private val settingsManager: SettingsManager,
-  private val volumeInteractor: VolumeInteractor,
-  private val userActionUseCase: UserActionUseCase
-) : BroadcastReceiver() {
+  private val settingsManager: SettingsManager by inject()
+  private val volumeInteractor: VolumeInteractor by inject()
+  private val userActionUseCase: UserActionUseCase by inject()
 
   /**
    * Initialized and installs the IntentFilter listening for the SONG_CHANGED

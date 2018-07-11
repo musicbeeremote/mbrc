@@ -1,8 +1,15 @@
 package com.kelsos.mbrc
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.app.Application
+import android.app.NotificationManager
 import android.content.Context
+import android.media.AudioManager
+import android.net.ConnectivityManager
+import android.net.wifi.WifiManager
 import androidx.annotation.CallSuper
+import androidx.core.content.getSystemService
 import androidx.multidex.MultiDexApplication
 import com.chibatching.kotpref.Kotpref
 import com.github.anrwatchdog.ANRError
@@ -15,6 +22,7 @@ import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.Module
+import org.koin.dsl.module.module
 import timber.log.Timber
 
 
@@ -30,7 +38,18 @@ open class App : MultiDexApplication() {
   }
 
   protected open fun modules(): List<Module> {
-    return listOf(appModule, uiModule)
+    val androidModule = module {
+      val app = this@App as Application
+
+      single { app }
+      single { app.resources }
+      single { checkNotNull(app.getSystemService<ActivityManager>()) }
+      single { checkNotNull(app.getSystemService<AudioManager>()) }
+      single { checkNotNull(app.getSystemService<NotificationManager>()) }
+      single { checkNotNull(app.getSystemService<WifiManager>()) }
+      single { checkNotNull(app.getSystemService<ConnectivityManager>()) }
+    }
+    return listOf(appModule, uiModule, androidModule)
   }
 
   protected open fun initialize() {

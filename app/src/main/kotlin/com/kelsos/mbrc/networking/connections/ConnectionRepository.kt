@@ -1,8 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionModel
-import io.reactivex.Single
 
 interface ConnectionRepository {
   fun save(settings: ConnectionSettingsEntity)
@@ -17,5 +15,4 @@ interface ConnectionRepository {
 
   val defaultId: Long
 
-  fun getModel(): Single<ConnectionModel>
 }

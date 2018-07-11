@@ -20,7 +20,6 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 class BrowseTrackFragment : androidx.fragment.app.Fragment(),
-  BrowseTrackView,
   MenuItemSelectedListener<TrackEntity>,
   OnRefreshListener {
 
@@ -34,7 +33,7 @@ class BrowseTrackFragment : androidx.fragment.app.Fragment(),
 
   private val adapter: TrackEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseTrackPresenter by inject()
+  private val presenter: BrowseTrackViewModel by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -42,12 +41,6 @@ class BrowseTrackFragment : androidx.fragment.app.Fragment(),
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(R.layout.fragment_browse, container, false)
-  }
-
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    presenter.detach()
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,15 +51,13 @@ class BrowseTrackFragment : androidx.fragment.app.Fragment(),
     recycler.linear(adapter, fastScroller)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
-    presenter.attach(this)
-    presenter.load()
   }
 
-  override fun updateIndexes(indexes: List<String>) {
+  fun updateIndexes(indexes: List<String>) {
     adapter.setIndexes(indexes)
   }
 
-  override fun update(pagedList: PagedList<TrackEntity>) {
+  fun update(pagedList: PagedList<TrackEntity>) {
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
   }
@@ -87,12 +78,12 @@ class BrowseTrackFragment : androidx.fragment.app.Fragment(),
     presenter.reload()
   }
 
-  override fun failure(it: Throwable) {
+  fun failure(it: Throwable) {
     swipeLayout.isRefreshing = false
     com.google.android.material.snackbar.Snackbar.make(recycler, R.string.refresh_failed, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun hideLoading() {
+  fun hideLoading() {
     emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
   }

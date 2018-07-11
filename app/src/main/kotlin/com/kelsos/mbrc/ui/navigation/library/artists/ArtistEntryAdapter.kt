@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
-import androidx.recyclerview.widget.DiffUtil
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
@@ -10,9 +10,7 @@ import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 
 
-class ArtistEntryAdapter
-
-constructor() : FastScrollableAdapter<ArtistEntity, ArtistViewHolder>(DIFF_CALLBACK) {
+class ArtistEntryAdapter : FastScrollableAdapter<ArtistEntity, ArtistViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_artist) {

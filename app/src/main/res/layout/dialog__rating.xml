@@ -5,12 +5,12 @@
   <data>
 
     <variable
-        name="rating"
-        type="com.kelsos.mbrc.content.activestatus.TrackRating" />
+        name="viewModel"
+        type="com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel" />
 
     <variable
-        name="presenter"
-        type="com.kelsos.mbrc.ui.navigation.player.RatingDialogPresenter" />
+        name="model"
+        type="com.kelsos.mbrc.content.activestatus.TrackRating" />
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,11 +24,11 @@
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/rating_bar_height"
-        android:rating="@{rating.rating}"
+        android:rating="@{model.rating}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:onRatingChangeByUser="@{(rating) -> presenter.changeRating(rating)}" />
+        app:onRatingChangeByUser="@{(rating) -> viewModel.changeRating(rating)}" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
