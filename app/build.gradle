@@ -158,53 +158,40 @@ kotlin {
   }
 }
 
-ext {
-  support_library_version = "27.1.1"
-  jackson_version = "2.9.5"
-  runner_version = "1.0.2"
-  espresso_version = "3.0.2"
-  junit_version = "4.12"
-  mockito_version = "2.19.0"
-  robolectric_version = "3.8"
-  truth_version = "0.41"
-  leakcanary_version = "1.5.4"
-  multidex_version = "1.0.3"
-}
-
 dependencies {
   //Instrumentation Test dependencies
-  androidTestImplementation 'androidx.annotation:annotation:1.0.0-beta01'
+  androidTestImplementation 'androidx.annotation:annotation:1.0.0-rc01'
 
   androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
   androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
-  androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0-alpha3'
-  androidTestImplementation "junit:junit:${junit_version}"
-  androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
-  androidTestImplementation 'androidx.test:rules:1.1.0-alpha3'
+  androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0-alpha4'
+  androidTestImplementation "junit:junit:4.12"
+  androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+  androidTestImplementation 'androidx.test:rules:1.1.0-alpha4'
 
-  androidTestUtil 'androidx.test:orchestrator:1.1.0-alpha3'
+  androidTestUtil 'androidx.test:orchestrator:1.1.0-alpha4'
 
-  androidTestImplementation "org.mockito:mockito-core:${mockito_version}"
-  androidTestImplementation "org.mockito:mockito-android:${mockito_version}"
+  androidTestImplementation "org.mockito:mockito-core:2.21.0"
+  androidTestImplementation "org.mockito:mockito-android:2.21.0"
 
-  androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.1"
 
-  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:1.3.2'
-  androidTestUtil 'com.linkedin.testbutler:test-butler-app:1.3.2@apk'
+  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:1.4.0'
+  androidTestUtil 'com.linkedin.testbutler:test-butler-app:1.4.0@apk'
 
   // Test dependencies
-  testImplementation "junit:junit:${junit_version}"
+  testImplementation "junit:junit:4.12"
 
-  testImplementation "org.mockito:mockito-core:${mockito_version}"
+  testImplementation "org.mockito:mockito-core:2.21.0"
 
-  testImplementation "org.robolectric:robolectric:${robolectric_version}"
-  testImplementation "org.robolectric:shadows-multidex:${robolectric_version}"
+  testImplementation "org.robolectric:robolectric:3.8"
+  testImplementation "org.robolectric:shadows-multidex:3.8"
 
-  testImplementation "com.google.truth:truth:${truth_version}"
+  testImplementation "com.google.truth:truth:0.42"
 
-  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.1"
   //The android library only will fail the robolectric tests
   testImplementation 'org.threeten:threetenbp:1.3.6'
 
@@ -212,29 +199,30 @@ dependencies {
 
   implementation 'com.chibatching.kotpref:kotpref:2.5.0'
 
-  implementation 'com.google.android.material:material:1.0.0-beta01'
+  implementation 'com.google.android.material:material:1.0.0-rc01'
+  implementation 'androidx.databinding:databinding-runtime:3.3.0-alpha05'
 
-  implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-  implementation 'androidx.media:media:1.0.0-beta01'
+  implementation 'androidx.appcompat:appcompat:1.0.0-rc01'
+  implementation 'androidx.media:media:1.0.0-rc01'
 
-  implementation 'androidx.core:core:1.0.0-beta01'
-  implementation 'androidx.core:core-ktx:1.0.0-beta01'
+  implementation 'androidx.core:core:1.0.0-rc01'
+  implementation 'androidx.core:core-ktx:1.0.0-rc01'
 
-  implementation 'androidx.annotation:annotation:1.0.0-beta01'
-  implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
-  implementation 'androidx.preference:preference:1.0.0-beta01'
+  implementation 'androidx.annotation:annotation:1.0.0-rc01'
+  implementation 'androidx.recyclerview:recyclerview:1.0.0-rc01'
+  implementation 'androidx.preference:preference:1.0.0-rc01'
 
-  implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha02'
-  implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha02'
+  implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha04'
+  implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha04'
 
-  implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha02'
-  implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha02'
+  implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha04'
+  implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha04'
 
-  implementation 'androidx.paging:paging-runtime:2.0.0-beta01'
+  implementation 'androidx.paging:paging-runtime:2.0.0-rc01'
 
-  implementation 'androidx.room:room-runtime:2.0.0-beta01'
-  implementation 'androidx.room:room-rxjava2:2.0.0-beta01'
-  kapt "androidx.room:room-compiler:2.0.0-beta01"
+  implementation 'androidx.room:room-runtime:2.0.0-rc01'
+  implementation 'androidx.room:room-rxjava2:2.0.0-rc01'
+  kapt "androidx.room:room-compiler:2.0.0-rc01"
 
   implementation 'com.squareup.moshi:moshi:1.6.0'
   kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
@@ -246,15 +234,15 @@ dependencies {
   implementation 'org.koin:koin-androidx-viewmodel:1.0.0-beta-3'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.23.4"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.23.4"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.24.0"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.24.0"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:0.24.0"
 
   implementation 'com.squareup.picasso:picasso:2.71828'
   implementation 'androidx.multidex:multidex:2.0.0'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
   implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
   implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -263,8 +251,8 @@ dependencies {
 
   implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
 
-  debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
-  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:1.6.1"
+  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.1"
 
   debugImplementation 'com.facebook.stetho:stetho:1.5.0'
 
@@ -383,7 +371,7 @@ configurations {
 }
 
 dependencies {
-  ktlint "com.github.shyiko:ktlint:0.24.0"
+  ktlint "com.github.shyiko:ktlint:0.27.0"
   // additional 3rd party ruleset(s) can be specified here
   // just add them to the classpath (e.g. ktlint 'groupId:artifactId:version') and
   // ktlint will pick them up

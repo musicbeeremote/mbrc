@@ -103,10 +103,10 @@
       tools:layout="@layout/fragment_album_tracks">
     <argument
         android:name="album"
-        app:type="string" />
+        app:argType="string" />
     <argument
         android:name="artist"
-        app:type="string" />
+        app:argType="string" />
   </fragment>
   <fragment
       android:id="@+id/genre_artists_fragment"
@@ -115,7 +115,7 @@
       tools:layout="@layout/fragment_genre_artists">
     <argument
         android:name="genre"
-        app:type="string" />
+        app:argType="string" />
     <action
         android:id="@+id/action_genre_artists_fragment_to_artist_albums_fragment"
         app:destination="@id/artist_albums_fragment" />
@@ -127,7 +127,7 @@
       tools:layout="@layout/fragment_artist_albums">
     <argument
         android:name="artist"
-        app:type="string" />
+        app:argType="string" />
     <action
         android:id="@+id/action_artist_albums_fragment_to_album_tracks_fragment"
         app:destination="@id/album_tracks_fragment" />
