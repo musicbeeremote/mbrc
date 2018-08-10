@@ -19,12 +19,8 @@ import androidx.test.filters.LargeTest
 import androidx.test.runner.AndroidJUnit4
 import com.kelsos.mbrc.DbTest
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.radios.RadioRepository
-import com.kelsos.mbrc.content.radios.RadioRepositoryImpl
 import com.kelsos.mbrc.content.radios.RadioStation
-import com.kelsos.mbrc.content.radios.RadioStationDao
 import com.kelsos.mbrc.content.radios.RadioStationDto
-import com.kelsos.mbrc.ui.minicontrol.MiniControlFragment
 import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -136,7 +132,7 @@ class RadioFragmentTest : DbTest() {
       })
 
     onView(allOf(
-      withId(android.support.design.R.id.snackbar_text),
+      withId(com.google.android.material.R.id.snackbar_text),
       withText(R.string.radio__play_successful)
     )).check(matches(withEffectiveVisibility(VISIBLE)))
   }
@@ -159,7 +155,7 @@ class RadioFragmentTest : DbTest() {
       })
 
     onView(allOf(
-      withId(android.support.design.R.id.snackbar_text),
+      withId(com.google.android.material.R.id.snackbar_text),
       withText(R.string.radio__play_failed)
     ))
       .check(matches(withEffectiveVisibility(VISIBLE)))
@@ -224,7 +220,7 @@ class RadioFragmentTest : DbTest() {
 
     onView(withId(R.id.radio_stations__refresh_layout)).perform(swipeDown())
     onView(allOf(
-      withId(android.support.design.R.id.snackbar_text),
+      withId(com.google.android.material.R.id.snackbar_text),
       withText(R.string.radio__loading_failed)
     )).check(matches(withEffectiveVisibility(VISIBLE)))
 
