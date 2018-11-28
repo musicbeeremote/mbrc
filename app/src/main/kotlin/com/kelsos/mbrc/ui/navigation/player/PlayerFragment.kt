@@ -2,7 +2,12 @@ package com.kelsos.mbrc.ui.navigation.player
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ShareActionProvider
 import androidx.core.view.MenuItemCompat
@@ -94,9 +99,9 @@ class PlayerFragment : Fragment(), VolumeDialogProvider {
     VolumeDialog.create(requireActivity()).show()
   }
 
-  override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
-    inflater?.inflate(R.menu.player_screen__actions, menu)
+    inflater.inflate(R.menu.player_screen__actions, menu)
     this.menu = menu
     this.menu?.findItem(R.id.player_screen__action_share)?.let {
       shareActionProvider = MenuItemCompat.getActionProvider(it) as ShareActionProvider

@@ -5,8 +5,8 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class RadioRepositoryImpl(
   private val dao: RadioStationDao,
@@ -20,17 +20,15 @@ class RadioRepositoryImpl(
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override suspend fun getAll(): DataSource.Factory<Int, RadioStationEntity> {
-    return withContext(dispatchers.database) {
-      dao.getAll()
-    }
+  override fun getAll(): DataSource.Factory<Int, RadioStationEntity> {
+    return dao.getAll()
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class).blockingForEach {
-      launch(dispatchers.disk) {
-        val items = it.map { mapper.map(it).apply { dateAdded = added } }
+    remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class).blockingForEach { page ->
+      runBlocking(dispatchers.disk) {
+        val items = page.map { mapper.map(it).apply { dateAdded = added } }
 
         withContext(dispatchers.database) {
           dao.insertAll(items)
@@ -43,8 +41,8 @@ class RadioRepositoryImpl(
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, RadioStationEntity> {
-    return withContext(dispatchers.database) { dao.search(term) }
+  override fun search(term: String): DataSource.Factory<Int, RadioStationEntity> {
+    return dao.search(term)
   }
 
   override suspend fun cacheIsEmpty(): Boolean {

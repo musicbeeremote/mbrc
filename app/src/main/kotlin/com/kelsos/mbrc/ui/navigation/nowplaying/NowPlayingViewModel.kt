@@ -14,9 +14,11 @@ import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.paged
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class NowPlayingViewModel(
   val playingTrack: PlayingTrackLiveDataProvider,
@@ -26,6 +28,9 @@ class NowPlayingViewModel(
   private val userActionUseCase: UserActionUseCase
 ) : ViewModel() {
 
+
+  private val viewModelJob: Job = Job()
+  private val networkScope: CoroutineScope = CoroutineScope(dispatchers.network + viewModelJob)
   private val eventStream: MutableLiveData<Event<Int>> = MutableLiveData()
 
   val nowPlayingTracks: LiveData<PagedList<NowPlayingEntity>> = runBlocking { repository.getAll() }.paged()
@@ -41,7 +46,7 @@ class NowPlayingViewModel(
 
 
   fun refresh() {
-    launch(dispatchers.network) {
+    networkScope.launch {
       try {
         repository.getRemote()
       } catch (ex: Exception) {
@@ -59,7 +64,9 @@ class NowPlayingViewModel(
   }
 
   fun moveTrack(from: Int, to: Int) {
-    moveManager.move(from, to)
+    networkScope.launch {
+      moveManager.move(from, to)
+    }
   }
 
   fun play(position: Int) {
@@ -68,5 +75,10 @@ class NowPlayingViewModel(
 
   fun removeTrack(position: Int) {
     userActionUseCase.perform(UserAction(Protocol.NowPlayingListRemove, position))
+  }
+
+  override fun onCleared() {
+    viewModelJob.cancel()
+    super.onCleared()
   }
 }

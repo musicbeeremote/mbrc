@@ -3,14 +3,12 @@ package com.kelsos.mbrc.content.activestatus.livedata
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.runBlocking
 
 
 interface PlayingTrackLiveDataProvider : LiveDataProvider<PlayingTrack>
 
-class PlayingTrackLiveDataProviderImpl
-
-constructor(
+class PlayingTrackLiveDataProviderImpl(
   private val playingTrackCache: PlayingTrackCache,
   appCoroutineDispatchers: AppCoroutineDispatchers
 ) : BaseLiveDataProvider<PlayingTrack>(),
@@ -18,7 +16,7 @@ constructor(
   init {
     update(PlayingTrack())
 
-    launch(appCoroutineDispatchers.disk) {
+    runBlocking(appCoroutineDispatchers.disk) {
       with(playingTrackCache) {
         try {
           val coverUrl = restoreCover()

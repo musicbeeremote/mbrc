@@ -10,12 +10,9 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
-import com.kelsos.mbrc.utilities.AppRxSchedulers
-import kotlinx.coroutines.experimental.launch
 
 class PopupActionHandler(
   private val settings: DefaultActionPreferenceStore,
-  private val appRxSchedulers: AppRxSchedulers,
   private val trackRepository: TrackRepository,
   private val queueApi: QueueApi
 ) {
@@ -34,10 +31,8 @@ class PopupActionHandler(
     @Action type: String,
     result: (success: Boolean) -> Unit
   ) {
-    launch {
-      val paths = trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
-      val response = queueApi.queue(type, paths)
-    }
+    val paths = trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
+    val response = queueApi.queue(type, paths)
   }
 
   fun artistSelected(

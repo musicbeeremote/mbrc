@@ -1,7 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
@@ -80,14 +85,14 @@ class LibraryFragment : Fragment(),
   }
 
 
-  override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
-    inflater?.inflate(R.menu.library_search, menu)
-    searchMenuItem = menu?.findItem(R.id.library_screen__action_search)?.apply {
+    inflater.inflate(R.menu.library_search, menu)
+    searchMenuItem = menu.findItem(R.id.library_screen__action_search)?.apply {
       searchView = actionView as SearchView
     }
 
-    albumArtistOnly = menu?.findItem(R.id.library_album_artist)
+    albumArtistOnly = menu.findItem(R.id.library_album_artist)
 
     searchView?.apply {
       queryHint = getString(R.string.library_search_hint)
@@ -96,11 +101,11 @@ class LibraryFragment : Fragment(),
     }
   }
 
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    if (item?.itemId == R.id.library_screen__action_refresh) {
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == R.id.library_screen__action_refresh) {
       presenter.refresh()
       return true
-    } else if (item?.itemId == R.id.library_album_artist) {
+    } else if (item.itemId == R.id.library_album_artist) {
       albumArtistOnly?.let {
         it.isChecked = !it.isChecked
         presenter.setArtistPreference(it.isChecked)

@@ -5,7 +5,20 @@ import androidx.preference.PreferenceManager
 import androidx.room.Room
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
-import com.kelsos.mbrc.content.activestatus.livedata.*
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProviderImpl
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.albums.AlbumRepositoryImpl
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
@@ -32,9 +45,33 @@ import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.core.RemoteServiceCore
-import com.kelsos.mbrc.data.*
-import com.kelsos.mbrc.networking.*
-import com.kelsos.mbrc.networking.client.*
+import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.data.DatabaseTransactionRunner
+import com.kelsos.mbrc.data.DatabaseTransactionRunnerImpl
+import com.kelsos.mbrc.data.DeserializationAdapter
+import com.kelsos.mbrc.data.DeserializationAdapterImpl
+import com.kelsos.mbrc.data.SerializationAdapter
+import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.networking.ClientConnectionUseCase
+import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
+import com.kelsos.mbrc.networking.RequestManager
+import com.kelsos.mbrc.networking.RequestManagerImpl
+import com.kelsos.mbrc.networking.SocketActivityChecker
+import com.kelsos.mbrc.networking.client.ClientConnectionManager
+import com.kelsos.mbrc.networking.client.IClientConnectionManager
+import com.kelsos.mbrc.networking.client.MessageDeserializer
+import com.kelsos.mbrc.networking.client.MessageDeserializerImpl
+import com.kelsos.mbrc.networking.client.MessageHandler
+import com.kelsos.mbrc.networking.client.MessageHandlerImpl
+import com.kelsos.mbrc.networking.client.MessageQueue
+import com.kelsos.mbrc.networking.client.MessageQueueImpl
+import com.kelsos.mbrc.networking.client.MessageSerializer
+import com.kelsos.mbrc.networking.client.MessageSerializerImpl
+import com.kelsos.mbrc.networking.client.UiMessageQueue
+import com.kelsos.mbrc.networking.client.UiMessageQueueImpl
+import com.kelsos.mbrc.networking.client.UserActionUseCase
+import com.kelsos.mbrc.networking.client.UserActionUseCaseImpl
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
 import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
@@ -43,8 +80,30 @@ import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCaseImpl
-import com.kelsos.mbrc.networking.protocol.*
-import com.kelsos.mbrc.networking.protocol.commands.*
+import com.kelsos.mbrc.networking.protocol.CommandExecutor
+import com.kelsos.mbrc.networking.protocol.CommandExecutorImpl
+import com.kelsos.mbrc.networking.protocol.CommandFactory
+import com.kelsos.mbrc.networking.protocol.CommandFactoryImpl
+import com.kelsos.mbrc.networking.protocol.VolumeInteractor
+import com.kelsos.mbrc.networking.protocol.VolumeInteractorImpl
+import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
+import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
+import com.kelsos.mbrc.networking.protocol.commands.UpdateCover
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLastFm
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLfmRating
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLyrics
+import com.kelsos.mbrc.networking.protocol.commands.UpdateMute
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrack
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackMoved
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackRemoval
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayState
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlaybackPositionCommand
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayerStatus
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePluginVersionCommand
+import com.kelsos.mbrc.networking.protocol.commands.UpdateRating
+import com.kelsos.mbrc.networking.protocol.commands.UpdateRepeat
+import com.kelsos.mbrc.networking.protocol.commands.UpdateShuffle
+import com.kelsos.mbrc.networking.protocol.commands.UpdateVolume
 import com.kelsos.mbrc.platform.RemoteBroadcastReceiver
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
@@ -52,7 +111,12 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import com.kelsos.mbrc.preferences.*
+import com.kelsos.mbrc.preferences.AlbumSortingStore
+import com.kelsos.mbrc.preferences.AlbumSortingStoreImpl
+import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
+import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.ui.navigation.library.LibraryViewModel
@@ -78,8 +142,8 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.rx2.asCoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 import java.util.concurrent.Executors
@@ -166,8 +230,8 @@ val appModule = module {
     AppRxSchedulers(
       AndroidSchedulers.mainThread(),
       Schedulers.io(),
-      Schedulers.from(Executors.newSingleThreadExecutor {
-        Thread(it, "database")
+      Schedulers.from(Executors.newSingleThreadExecutor { runnable ->
+        Thread(runnable, "database")
       }),
       Schedulers.io()
     )
@@ -176,7 +240,7 @@ val appModule = module {
   single {
     val appRxSchedulers = get<AppRxSchedulers>()
     AppCoroutineDispatchers(
-      UI,
+      Dispatchers.Main,
       appRxSchedulers.disk.asCoroutineDispatcher(),
       appRxSchedulers.network.asCoroutineDispatcher(),
       appRxSchedulers.database.asCoroutineDispatcher()
@@ -237,7 +301,7 @@ val uiModule = module {
   viewModel { BrowseTrackViewModel(get(), get()) }
   viewModel { MiniControlViewModel(get(), get(), get(), get()) }
   viewModel { LyricsViewModel(get()) }
-  viewModel { RadioViewModel(get(), get(), get(), get()) }
+  viewModel { RadioViewModel(get(), get(), get()) }
   viewModel { NowPlayingViewModel(get(), get(), get(), get(), get()) }
   viewModel { LibraryViewModel(get(), get(), get(), get()) }
 

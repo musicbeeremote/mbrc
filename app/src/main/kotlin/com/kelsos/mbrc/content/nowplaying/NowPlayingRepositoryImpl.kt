@@ -5,9 +5,8 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class NowPlayingRepositoryImpl(
   private val remoteDataSource: ApiBase,
@@ -21,15 +20,15 @@ class NowPlayingRepositoryImpl(
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override suspend fun getAll(): DataSource.Factory<Int, NowPlayingEntity> {
-    return withContext(dispatchers.database) { dao.getAll() }
+  override fun getAll(): DataSource.Factory<Int, NowPlayingEntity> {
+    return dao.getAll()
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class).blockingForEach {
-      launch(CommonPool) {
-        val list = it.map { mapper.map(it).apply { dateAdded = added } }
+    remoteDataSource.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class).blockingForEach { nowPlaying ->
+      runBlocking(dispatchers.disk) {
+        val list = nowPlaying.map { mapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insertAll(list)
         }
@@ -41,7 +40,7 @@ class NowPlayingRepositoryImpl(
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, NowPlayingEntity> {
+  override fun search(term: String): DataSource.Factory<Int, NowPlayingEntity> {
     return dao.search(term)
   }
 

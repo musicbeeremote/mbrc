@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
@@ -82,7 +82,9 @@ class BrowseGenreFragment : Fragment(),
 
   override fun onItemClicked(item: GenreEntity) {
     val args = GenreArtistsFragmentArgs.Builder(item.genre).build()
-    findNavController(this).navigate(R.id.genre_artists_fragment, args.toBundle())
+    view?.run {
+      findNavController().navigate(R.id.genre_artists_fragment, args.toBundle())
+    }
   }
 
   override fun onRefresh() {

@@ -1,13 +1,18 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -54,13 +59,13 @@ class BrowseAlbumFragment : Fragment(),
     setHasOptionsMenu(true)
   }
 
-  override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-    inflater?.inflate(R.menu.browse_album__menu, menu)
+  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    inflater.inflate(R.menu.browse_album__menu, menu)
     super.onCreateOptionsMenu(menu, inflater)
   }
 
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    if (item?.itemId == R.id.browse_album__sort_albums) {
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == R.id.browse_album__sort_albums) {
       presenter.showSorting()
       return true
     }
@@ -93,7 +98,7 @@ class BrowseAlbumFragment : Fragment(),
 
   override fun onItemClicked(item: AlbumEntity) {
     val args = AlbumTracksFragmentArgs.Builder(item.album, item.artist).build()
-    findNavController(this).navigate(R.id.album_tracks_fragment, args.toBundle())
+    view?.findNavController()?.navigate(R.id.album_tracks_fragment, args.toBundle())
   }
 
   override fun onRefresh() {

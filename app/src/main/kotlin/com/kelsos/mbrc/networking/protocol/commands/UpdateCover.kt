@@ -16,12 +16,13 @@ import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.rx2.await
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.Exception
 
 class UpdateCover(
   private val context: Application,
@@ -35,7 +36,7 @@ class UpdateCover(
 
   init {
     coverDir = File(context.filesDir, COVER_DIR)
-    launch(dispatchers.disk) {
+    GlobalScope.launch(dispatchers.disk) {
       playingTrackLiveDataProvider.update {
         copy(coverUrl = coverModel.coverPath)
       }
@@ -50,12 +51,14 @@ class UpdateCover(
       playingTrackLiveDataProvider.update { copy(coverUrl = "") }
       UpdateWidgets.updateCover(context)
     } else if (payload.status == CoverPayload.READY) {
-      retrieveCover()
+      GlobalScope.launch(dispatchers.disk) {
+        retrieveCover()
+      }
     }
   }
 
-  private fun retrieveCover() {
-    launch(dispatchers.network) {
+  private suspend fun retrieveCover() {
+    withContext(dispatchers.network) {
       try {
         val response = coverApi.getCover().await()
         val bitmap = getBitmap(response)

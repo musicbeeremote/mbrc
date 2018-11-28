@@ -6,24 +6,25 @@ import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
   diffCallback: DiffUtil.ItemCallback<T>
-) : PagedListAdapter<T, VH>(diffCallback), BubbleTextGetter, OnFastScrollListener {
+) : PagedListAdapter<T, VH>(diffCallback), BubbleTextGetter, OnFastScrollListener, CoroutineScope {
 
+  override val coroutineContext = Job() + Dispatchers.Main
   private var indexes: List<String> = emptyList()
 
   private var listener: MenuItemSelectedListener<T>? = null
 
   protected var fastScrolling: Boolean = false
     private set
-
-  private var fastScrollNotify: Deferred<Unit>? = null
 
   fun setMenuItemSelectedListener(listener: MenuItemSelectedListener<T>) {
     this.listener = listener
@@ -33,8 +34,8 @@ abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
     return checkNotNull(listener) { "listener was null" }
   }
 
-  override fun submitList(pagedList: PagedList<T>) {
-    fastScrollNotify?.cancel()
+  override fun submitList(pagedList: PagedList<T>?) {
+    coroutineContext.cancelChildren()
     super.submitList(pagedList)
   }
 
@@ -49,7 +50,7 @@ abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
   override fun onComplete(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
     fastScrolling = false
     Timber.v("scrolling done")
-    fastScrollNotify = async(UI) {
+    launch {
       delay(400)
       notifyItemRangeChanged(firstVisibleItemPosition, lastVisibleItemPosition)
     }

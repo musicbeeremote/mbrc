@@ -5,8 +5,8 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class AlbumRepositoryImpl(
   private val dao: AlbumDao,
@@ -24,15 +24,15 @@ class AlbumRepositoryImpl(
     return withContext(coroutineDispatchers.database) { dao.getAlbumsByArtist(artist) }
   }
 
-  override suspend fun getAll(): DataSource.Factory<Int, AlbumEntity> {
-    return withContext(coroutineDispatchers.database) { dao.getAll() }
+  override fun getAll(): DataSource.Factory<Int, AlbumEntity> {
+    return dao.getAll()
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).blockingForEach {
-      launch(coroutineDispatchers.disk) {
-        val list = it.map { mapper.map(it).apply { dateAdded = added } }
+    remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class).blockingForEach { albums ->
+      runBlocking(coroutineDispatchers.disk) {
+        val list = albums.map { mapper.map(it).apply { dateAdded = added } }
         withContext(coroutineDispatchers.database) {
           dao.insert(list)
         }
@@ -44,7 +44,7 @@ class AlbumRepositoryImpl(
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, AlbumEntity> {
+  override fun search(term: String): DataSource.Factory<Int, AlbumEntity> {
     return dao.search(term)
   }
 
@@ -54,7 +54,8 @@ class AlbumRepositoryImpl(
     @Sorting.Fields order: Int,
     ascending: Boolean
   ): AlbumsModel {
-    val model = when (order) {
+
+    return when (order) {
       Sorting.ALBUM -> {
         AlbumsModel(
           order,
@@ -165,7 +166,5 @@ class AlbumRepositoryImpl(
       }
       else -> throw IllegalArgumentException("Invalid option")
     }
-
-    return model
   }
 }

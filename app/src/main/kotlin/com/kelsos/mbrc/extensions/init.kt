@@ -1,28 +1,28 @@
 package com.kelsos.mbrc.extensions
 
 import android.annotation.SuppressLint
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 
-fun androidx.recyclerview.widget.RecyclerView.linear(
-  adapter: androidx.recyclerview.widget.RecyclerView.Adapter<*>,
+fun RecyclerView.linear(
+  adapter: RecyclerView.Adapter<*>,
   fastScroller: RecyclerViewFastScroller? = null
 ) {
   this.adapter = adapter
   val fastScrollListener = adapter as? OnFastScrollListener
 
-  val layoutManager: androidx.recyclerview.widget.LinearLayoutManager
+  val layoutManager: LinearLayoutManager
   if (fastScroller == null) {
-    layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+    layoutManager = LinearLayoutManager(context)
   } else {
-    layoutManager = object : androidx.recyclerview.widget.LinearLayoutManager(context, VERTICAL, false) {
+    layoutManager = object : LinearLayoutManager(context, VERTICAL, false) {
       override fun onLayoutChildren(
-        recycler: androidx.recyclerview.widget.RecyclerView.Recycler?,
-        state: androidx.recyclerview.widget.RecyclerView.State
+        recycler: RecyclerView.Recycler?,
+        state: RecyclerView.State
       ) {
         super.onLayoutChildren(recycler, state)
 

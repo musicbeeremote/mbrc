@@ -1,12 +1,9 @@
 package com.kelsos.mbrc.content.activestatus.livedata
 
 
+interface LyricsLiveDataProvider : LiveDataProvider<List<String>>
 
-interface LyricsLiveDataProvider: LiveDataProvider<List<String>>
-
-class LyricsLiveDataProviderImpl
-
-constructor(): LyricsLiveDataProvider, BaseLiveDataProvider<List<String>>() {
+class LyricsLiveDataProviderImpl : LyricsLiveDataProvider, BaseLiveDataProvider<List<String>>() {
   init {
     update(emptyList())
   }

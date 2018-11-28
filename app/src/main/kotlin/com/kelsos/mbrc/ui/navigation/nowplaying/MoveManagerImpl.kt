@@ -1,10 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 
 class MoveManagerImpl : MoveManager {
 
@@ -18,7 +17,7 @@ class MoveManagerImpl : MoveManager {
     this.onMoveSubmit = onMoveSubmit
   }
 
-  override fun move(from: Int, to: Int) {
+  override suspend fun move(from: Int, to: Int) {
     notify?.cancel()
     if (originalPosition < 0) {
       originalPosition = from
@@ -28,7 +27,8 @@ class MoveManagerImpl : MoveManager {
       finalPosition = to
     }
 
-    notify = async(CommonPool) {
+    // TODO: maybe global scope is not the greatest idea ever
+    notify = GlobalScope.async {
       delay(400)
       onMoveSubmit(originalPosition, finalPosition)
       originalPosition = -1

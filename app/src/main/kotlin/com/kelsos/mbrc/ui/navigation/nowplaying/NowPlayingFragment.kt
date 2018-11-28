@@ -1,7 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
@@ -66,9 +71,9 @@ class NowPlayingFragment : Fragment(),
     return true
   }
 
-  override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-    inflater?.inflate(R.menu.nowplaying_search, menu)
-    searchMenuItem = menu?.findItem(R.id.now_playing_search)?.apply {
+  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    inflater.inflate(R.menu.nowplaying_search, menu)
+    searchMenuItem = menu.findItem(R.id.now_playing_search)?.apply {
       searchView = actionView as SearchView
     }
 

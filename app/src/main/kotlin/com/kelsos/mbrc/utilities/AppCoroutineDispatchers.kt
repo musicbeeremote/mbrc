@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.utilities
 
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 
 data class AppCoroutineDispatchers(
   val main: CoroutineDispatcher,

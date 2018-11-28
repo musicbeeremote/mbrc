@@ -7,21 +7,23 @@ import androidx.databinding.BindingAdapter
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-private var clearDeferred: Deferred<Unit>? = null
+private var coroutineContext = Job() + Dispatchers.Main
 
 @BindingAdapter("imageUrl")
 fun ImageView.imageLoader(url: String) {
   val dimens = context.getDimens()
 
-  clearDeferred?.cancel()
+  coroutineContext.cancelChildren()
 
   if (url.isEmpty()) {
-    clearDeferred = async(UI) {
+    CoroutineScope(coroutineContext).launch {
       delay(800)
     }
 

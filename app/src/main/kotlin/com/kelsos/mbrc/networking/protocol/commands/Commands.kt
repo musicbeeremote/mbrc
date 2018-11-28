@@ -22,7 +22,7 @@ class ProtocolPingHandle
 }
 
 class ProtocolPongHandle
- constructor() : ICommand {
+  : ICommand {
   override fun execute(message: ProtocolMessage) {
     Timber.d(message.data.toString())
   }

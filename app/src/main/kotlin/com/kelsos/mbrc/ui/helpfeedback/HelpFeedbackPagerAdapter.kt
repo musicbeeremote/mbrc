@@ -8,28 +8,25 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import com.kelsos.mbrc.R
 
 class HelpFeedbackPagerAdapter(
-  fm: androidx.fragment.app.FragmentManager,
+  fm: FragmentManager,
   context: Activity
-) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
+) : FragmentStatePagerAdapter(fm) {
   private val context: Context
-
   private val titles = intArrayOf(R.string.tab_help, R.string.tab_feedback)
 
   init {
     this.context = context
   }
 
-  override fun getItem(position: Int): androidx.fragment.app.Fragment? {
+  override fun getItem(position: Int): Fragment {
     return when (position) {
       HELP -> HelpFragment.newInstance()
       FEEDBACK -> FeedbackFragment.newInstance()
-      else -> null
+      else -> error("Invalid position $position")
     }
   }
 
-  override fun getCount(): Int {
-    return PAGES
-  }
+  override fun getCount(): Int = PAGES
 
   override fun getPageTitle(position: Int): CharSequence {
     return context.getString(titles[position])

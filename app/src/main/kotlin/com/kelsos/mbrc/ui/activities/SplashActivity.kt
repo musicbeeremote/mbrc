@@ -4,19 +4,26 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.UI
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.inject
 
 class SplashActivity : AppCompatActivity() {
+
+  private val dispatchers: AppCoroutineDispatchers by inject()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_splash)
 
-    launch(CommonPool) {
+
+    GlobalScope.launch(dispatchers.disk) {
       delay(800)
 
-      withContext(UI) {
+      withContext(dispatchers.main) {
         NavigationActivity.start(this@SplashActivity)
       }
     }

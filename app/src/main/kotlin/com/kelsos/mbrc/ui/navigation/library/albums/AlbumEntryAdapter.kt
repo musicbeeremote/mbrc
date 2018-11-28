@@ -12,7 +12,7 @@ import com.kelsos.mbrc.ui.navigation.library.popup
 
 class AlbumEntryAdapter
 
-constructor() : FastScrollableAdapter<AlbumEntity, AlbumViewHolder>(DIFF_CALLBACK) {
+  : FastScrollableAdapter<AlbumEntity, AlbumViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_album) {

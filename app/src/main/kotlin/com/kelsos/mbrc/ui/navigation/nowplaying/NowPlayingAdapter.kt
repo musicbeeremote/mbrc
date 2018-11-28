@@ -16,7 +16,6 @@ import com.kelsos.mbrc.ui.OnViewItemPressed
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
-import com.kelsos.mbrc.utilities.Checks.ifNotNull
 import kotterknife.bindView
 
 class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :

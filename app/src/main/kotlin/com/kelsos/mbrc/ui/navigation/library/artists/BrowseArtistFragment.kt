@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -72,7 +72,10 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>,
 
   override fun onItemClicked(item: ArtistEntity) {
     val args = ArtistAlbumsFragmentArgs.Builder(item.artist).build()
-    findNavController(this).navigate(R.id.artist_albums_fragment, args.toBundle())
+    view?.run {
+      findNavController().navigate(R.id.artist_albums_fragment, args.toBundle())
+    }
+
   }
 
   override fun onRefresh() {

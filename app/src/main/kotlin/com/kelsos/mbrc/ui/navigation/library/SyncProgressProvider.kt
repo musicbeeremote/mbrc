@@ -5,4 +5,4 @@ import androidx.lifecycle.MutableLiveData
 
 
 class SyncProgressProvider
- constructor() : MutableLiveData<SyncProgress>()
+  : MutableLiveData<SyncProgress>()

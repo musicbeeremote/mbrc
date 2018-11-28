@@ -6,8 +6,8 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 
 class ArtistRepositoryImpl(
@@ -26,7 +26,7 @@ class ArtistRepositoryImpl(
     return dao.getArtistByGenre(genre)
   }
 
-  override suspend fun getAll(): DataSource.Factory<Int, ArtistEntity> {
+  override fun getAll(): DataSource.Factory<Int, ArtistEntity> {
     return dao.getAll()
   }
 
@@ -40,21 +40,21 @@ class ArtistRepositoryImpl(
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class).blockingForEach {
-      launch(dispatchers.disk) {
-        val items = it.map { mapper.map(it).apply { dateAdded = added } }
+    remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class).blockingForEach { artists ->
+      runBlocking(dispatchers.disk) {
+        val items = artists.map { mapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insertAll(items)
         }
       }
     }
 
-    launch(dispatchers.database) {
+    withContext(dispatchers.database) {
       dao.removePreviousEntries(added)
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, ArtistEntity> {
+  override fun search(term: String): DataSource.Factory<Int, ArtistEntity> {
     return dao.search(term)
   }
 

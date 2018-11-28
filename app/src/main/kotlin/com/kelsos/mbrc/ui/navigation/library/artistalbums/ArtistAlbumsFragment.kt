@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -69,7 +69,7 @@ class ArtistAlbumsFragment : Fragment(), MenuItemSelectedListener<AlbumEntity> {
 
   override fun onItemClicked(item: AlbumEntity) {
     val args = AlbumTracksFragmentArgs.Builder(item.album, item.artist).build()
-    findNavController(this).navigate(R.id.album_tracks_fragment, args.toBundle())
+    view?.findNavController()?.navigate(R.id.album_tracks_fragment, args.toBundle())
   }
 
   fun update(albums: PagedList<AlbumEntity>) {

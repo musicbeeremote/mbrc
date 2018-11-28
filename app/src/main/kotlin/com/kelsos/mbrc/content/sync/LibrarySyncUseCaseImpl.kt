@@ -8,7 +8,7 @@ import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class LibrarySyncUseCaseImpl(
@@ -51,7 +51,7 @@ class LibrarySyncUseCaseImpl(
     }
 
     onCompleteListener?.onSuccess()
-    launch(dispatchers.disk) {
+    withContext(dispatchers.disk) {
       val syncedData = SyncedData(
         genres = genreRepository.count(),
         artists = artistRepository.count(),

@@ -5,12 +5,24 @@ import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.net.Socket
 import java.net.SocketAddress
 import java.util.concurrent.Executors
+import kotlin.coroutines.CoroutineContext
 
 
 class ClientConnectionManager(
@@ -19,7 +31,8 @@ class ClientConnectionManager(
   private val messageHandler: MessageHandler,
   private val messageSerializer: MessageSerializer,
   private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
-) : IClientConnectionManager, PingTimeoutListener {
+) : IClientConnectionManager, PingTimeoutListener, CoroutineScope {
+  override val coroutineContext: CoroutineContext = Dispatchers.IO
 
   private lateinit var connectionSettings: ConnectionSettingsEntity
 
@@ -41,7 +54,7 @@ class ClientConnectionManager(
 
   override fun start() {
     pendingConnection?.cancel()
-    pendingConnection = async(CommonPool) {
+    pendingConnection = async {
       stop()
       delay(2000)
       realStart()
@@ -58,7 +71,7 @@ class ClientConnectionManager(
       return
     }
 
-    launch(CommonPool) {
+    launch {
       if (!::connectionSettings.isInitialized) {
         Timber.v("no connection settings aborting")
         return@launch
@@ -152,11 +165,9 @@ class ClientConnectionManager(
     }
 
     fun sendMessage(messageString: String) {
-      launch(CommonPool) {
-        Timber.v("Sending (${isConnected()})")
-        if (isConnected()) {
-          writeToSocket(messageString)
-        }
+      Timber.v("Sending (${isConnected()})")
+      if (isConnected()) {
+        writeToSocket(messageString)
       }
     }
 

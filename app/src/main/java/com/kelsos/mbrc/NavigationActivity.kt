@@ -225,7 +225,7 @@ class NavigationActivity : AppCompatActivity() {
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onConfigurationChanged(newConfig: Configuration?) {
+  override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
     // Pass any configuration change to the drawer toggle.
     drawerToggle.onConfigurationChanged(newConfig)

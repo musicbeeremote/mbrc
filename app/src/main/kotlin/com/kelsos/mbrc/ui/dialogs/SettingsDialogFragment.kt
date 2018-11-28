@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import kotterknife.bindView
@@ -21,18 +22,18 @@ class SettingsDialogFragment : DialogFragment() {
   private lateinit var settings: ConnectionSettingsEntity
   private var edit: Boolean = false
 
-  private lateinit var fm: androidx.fragment.app.FragmentManager
+  private lateinit var fm: FragmentManager
 
   private fun setConnectionSettings(settings: ConnectionSettingsEntity) {
     this.settings = settings
   }
 
-  override fun onAttach(context: Context?) {
+  override fun onAttach(context: Context) {
     super.onAttach(context)
     try {
       mListener = context as SettingsSaveListener?
     } catch (e: ClassCastException) {
-      throw ClassCastException(context!!.toString() + " must implement SettingsDialogListener")
+      throw ClassCastException(context.toString() + " must implement SettingsDialogListener")
     }
   }
 
@@ -120,7 +121,7 @@ class SettingsDialogFragment : DialogFragment() {
 
     fun newInstance(
       settings: ConnectionSettingsEntity,
-      fm: androidx.fragment.app.FragmentManager
+      fm: FragmentManager
     ): SettingsDialogFragment {
 
       return SettingsDialogFragment().apply {
@@ -130,7 +131,7 @@ class SettingsDialogFragment : DialogFragment() {
       }
     }
 
-    fun create(fm: androidx.fragment.app.FragmentManager): SettingsDialogFragment {
+    fun create(fm: FragmentManager): SettingsDialogFragment {
       return SettingsDialogFragment().apply { this.fm = fm }
     }
   }

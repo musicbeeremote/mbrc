@@ -5,8 +5,8 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class PlaylistRepositoryImpl(
   private val dao: PlaylistDao,
@@ -20,15 +20,15 @@ class PlaylistRepositoryImpl(
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override suspend fun getAll(): DataSource.Factory<Int, PlaylistEntity> {
+  override fun getAll(): DataSource.Factory<Int, PlaylistEntity> {
     return dao.getAll()
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class).blockingForEach {
-      launch(dispatchers.disk) {
-        val playlists = it.map {
+    remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class).blockingForEach { page ->
+      runBlocking(dispatchers.disk) {
+        val playlists = page.map {
           mapper.map(it).apply {
             this.dateAdded = added
           }
@@ -45,7 +45,7 @@ class PlaylistRepositoryImpl(
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, PlaylistEntity> {
+  override fun search(term: String): DataSource.Factory<Int, PlaylistEntity> {
     return dao.search(term)
   }
 

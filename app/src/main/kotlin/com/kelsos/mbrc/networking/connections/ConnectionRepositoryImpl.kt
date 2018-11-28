@@ -3,7 +3,9 @@ package com.kelsos.mbrc.networking.connections
 import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ConnectionRepositoryImpl(
   private val connectionDao: ConnectionDao,
@@ -13,15 +15,15 @@ class ConnectionRepositoryImpl(
 ) : ConnectionRepository {
 
   init {
-    launch(dispatchers.disk) {
+    GlobalScope.launch(dispatchers.disk) {
       default?.let {
         defaultSettingsLiveDataProvider.update(it)
       }
     }
   }
 
-  override fun save(settings: ConnectionSettingsEntity) {
-    launch(dispatchers.database) {
+  override suspend fun save(settings: ConnectionSettingsEntity) {
+    withContext(dispatchers.database) {
 
       val id = connectionDao.findId(settings.address, settings.port)
       id?.let {
@@ -40,8 +42,8 @@ class ConnectionRepositoryImpl(
     }
   }
 
-  override fun delete(settings: ConnectionSettingsEntity) {
-    launch(dispatchers.database) {
+  override suspend fun delete(settings: ConnectionSettingsEntity) {
+    withContext(dispatchers.database) {
       val oldId = settings.id
 
       connectionDao.delete(settings)

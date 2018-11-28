@@ -4,7 +4,7 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
 

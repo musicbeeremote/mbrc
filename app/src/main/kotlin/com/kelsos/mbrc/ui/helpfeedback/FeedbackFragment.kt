@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.utilities.RemoteUtils
@@ -20,7 +20,7 @@ import io.reactivex.schedulers.Schedulers
 import kotterknife.bindView
 import java.io.File
 
-class FeedbackFragment : androidx.fragment.app.Fragment() {
+class FeedbackFragment : Fragment() {
 
   private val feedbackEditText: EditText by bindView(R.id.feedback_content)
   private val deviceInfo: CheckBox by bindView(R.id.include_device_info)

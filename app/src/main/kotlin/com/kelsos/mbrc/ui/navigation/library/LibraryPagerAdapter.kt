@@ -1,6 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import android.content.Context
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentStatePagerAdapter
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.navigation.library.Category.Section
 import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumFragment
@@ -9,20 +12,18 @@ import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreFragment
 import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
 
 class LibraryPagerAdapter(
-  activity: androidx.fragment.app.FragmentActivity
-) : androidx.fragment.app.FragmentStatePagerAdapter(activity.supportFragmentManager) {
+  activity: FragmentActivity
+) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
   private val context: Context = activity.applicationContext
 
-  override fun getItem(@Section position: Int): androidx.fragment.app.Fragment? {
-    when (position) {
-      Category.SECTION_GENRE -> return BrowseGenreFragment()
-      Category.SECTION_ARTIST -> return BrowseArtistFragment()
-      Category.SECTION_ALBUM -> return BrowseAlbumFragment()
-      Category.SECTION_TRACK -> return BrowseTrackFragment()
-      else -> {
-      }
+  override fun getItem(@Section position: Int): Fragment {
+    return when (position) {
+      Category.SECTION_GENRE -> BrowseGenreFragment()
+      Category.SECTION_ARTIST -> BrowseArtistFragment()
+      Category.SECTION_ALBUM -> BrowseAlbumFragment()
+      Category.SECTION_TRACK -> BrowseTrackFragment()
+      else -> error("Invalid position $position")
     }
-    return null
   }
 
   override fun getCount(): Int = COUNT

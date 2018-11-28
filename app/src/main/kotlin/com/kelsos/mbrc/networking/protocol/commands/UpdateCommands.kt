@@ -174,9 +174,7 @@ constructor(
 
 class UpdatePluginVersionCommand
 
-constructor(
-
-) : ICommand {
+  : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val pluginVersion = message.data as? String

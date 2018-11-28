@@ -6,8 +6,8 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class TrackRepositoryImpl(
   private val dao: TrackDao,
@@ -21,7 +21,7 @@ class TrackRepositoryImpl(
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override suspend fun getAll(): DataSource.Factory<Int, TrackEntity> {
+  override fun getAll(): DataSource.Factory<Int, TrackEntity> {
     return dao.getAll()
   }
 
@@ -43,10 +43,10 @@ class TrackRepositoryImpl(
   override suspend fun getRemote() {
     val added = epoch()
 
-    remoteDataSource.getAllPages(Protocol.LibraryBrowseTracks, TrackDto::class).blockingForEach {
-      launch(dispatchers.disk) {
-        val tracks = it.map { mapper.map(it).apply { dateAdded = added } }
-        val sources = tracks.map { it.src }
+    remoteDataSource.getAllPages(Protocol.LibraryBrowseTracks, TrackDto::class).blockingForEach { tracks ->
+      runBlocking(dispatchers.disk) {
+        val trackData = tracks.map { mapper.map(it).apply { dateAdded = added } }
+        val sources = trackData.map { it.src }
 
         withContext(dispatchers.database) {
 
@@ -55,8 +55,8 @@ class TrackRepositoryImpl(
             .map { it.src to it.id }
             .toMap()
 
-          val toUpdate = tracks.filter { matches.containsKey(it.src) }
-          val toInsert = tracks.minus(toUpdate)
+          val toUpdate = trackData.filter { matches.containsKey(it.src) }
+          val toInsert = trackData.minus(toUpdate)
 
           dao.update(toUpdate.map { it.id = matches.getValue(it.src); it })
           dao.insertAll(toInsert)
@@ -69,7 +69,7 @@ class TrackRepositoryImpl(
     }
   }
 
-  override suspend fun search(term: String): DataSource.Factory<Int, TrackEntity> {
+  override fun search(term: String): DataSource.Factory<Int, TrackEntity> {
     return dao.search(term)
   }
 
