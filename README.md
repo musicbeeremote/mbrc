@@ -1,6 +1,7 @@
 MusicBee Remote - for Android [![Build Status](https://travis-ci.org/kelsos/mbrc.svg?branch=v1-development)](https://travis-ci.org/kelsos/mbrc)
 =============================
 
+[![Discord](https://img.shields.io/discord/420977901215678474.svg?style=popout)](https://discordapp.com/invite/rceTb57)
 [![Join the chat at https://gitter.im/musicbee-remote/Lobby](https://badges.gitter.im/musicbee-remote/Lobby.svg)](https://gitter.im/musicbee-remote/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 About
