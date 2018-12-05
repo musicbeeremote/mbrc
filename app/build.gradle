@@ -55,6 +55,7 @@ android {
   }
 
   testOptions {
+    unitTests.includeAndroidResources = true
     unitTests.returnDefaultValues = true
     execution 'ANDROIDX_TEST_ORCHESTRATOR'
   }
@@ -154,16 +155,14 @@ idea {
 
 dependencies {
   //Instrumentation Test dependencies
-  androidTestImplementation 'androidx.annotation:annotation:1.0.0'
+  androidTestImplementation 'androidx.annotation:annotation:1.0.1'
 
   androidTestImplementation 'androidx.multidex:multidex-instrumentation:2.0.0'
-  androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
-  androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
-  androidTestImplementation "junit:junit:4.12"
   androidTestImplementation 'androidx.test:runner:1.1.0'
-  androidTestImplementation 'androidx.test:rules:1.1.0'
+  androidTestImplementation 'androidx.test.ext:junit:1.0.0'
+  androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+  androidTestImplementation 'androidx.test.ext:truth:1.0.0'
 
   androidTestUtil 'androidx.test:orchestrator:1.1.0'
 
@@ -172,18 +171,20 @@ dependencies {
 
   androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.2"
 
-  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:1.4.0'
-  androidTestUtil 'com.linkedin.testbutler:test-butler-app:1.4.0@apk'
+  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.0.0'
+  androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.0.0@apk'
 
   // Test dependencies
-  testImplementation "junit:junit:4.12"
+  testImplementation "androidx.test:runner:1.1.0"
+  testImplementation "androidx.test.ext:junit:1.0.0"
+  testImplementation "androidx.test.espresso:espresso-intents:3.1.0"
+  testImplementation "androidx.test.espresso:espresso-core:3.1.0"
+  testImplementation "androidx.test.ext:truth:1.0.0"
 
   testImplementation "org.mockito:mockito-core:2.23.4"
 
   testImplementation "org.robolectric:robolectric:4.0.2"
   testImplementation "org.robolectric:shadows-multidex:4.0.2"
-
-  testImplementation "com.google.truth:truth:0.42"
 
   testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.2"
   //The android library only will fail the robolectric tests
@@ -194,15 +195,15 @@ dependencies {
   implementation 'com.chibatching.kotpref:kotpref:2.6.0'
 
   implementation 'com.google.android.material:material:1.1.0-alpha01'
-  implementation 'androidx.databinding:databinding-runtime:3.4.0-alpha04'
+  implementation 'androidx.databinding:databinding-runtime:3.4.0-alpha06'
 
   implementation 'androidx.appcompat:appcompat:1.0.2'
   implementation 'androidx.media:media:1.0.0'
 
-  implementation 'androidx.core:core:1.1.0-alpha01'
+  implementation 'androidx.core:core:1.1.0-alpha02'
   implementation 'androidx.core:core-ktx:1.0.1'
 
-  implementation 'androidx.annotation:annotation:1.0.0'
+  implementation 'androidx.annotation:annotation:1.0.1'
   implementation 'androidx.recyclerview:recyclerview:1.0.0'
   implementation 'androidx.preference:preference:1.1.0-alpha01'
 
@@ -211,9 +212,9 @@ dependencies {
 
   implementation 'androidx.paging:paging-runtime:2.1.0-beta01'
 
-  implementation 'androidx.room:room-runtime:2.1.0-alpha02'
-  implementation 'androidx.room:room-rxjava2:2.1.0-alpha02'
-  kapt "androidx.room:room-compiler:2.1.0-alpha02"
+  implementation 'androidx.room:room-runtime:2.1.0-alpha03'
+  implementation 'androidx.room:room-rxjava2:2.1.0-alpha03'
+  kapt "androidx.room:room-compiler:2.1.0-alpha03"
 
   implementation 'com.squareup.moshi:moshi:1.8.0'
   kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.8.0'
@@ -249,7 +250,7 @@ dependencies {
   implementation "io.arrow-kt:arrow-data:$arrow_version"
   implementation "io.arrow-kt:arrow-instances-core:$arrow_version"
   implementation "io.arrow-kt:arrow-instances-data:$arrow_version"
-  kapt    "io.arrow-kt:arrow-annotations-processor:$arrow_version"
+  kapt "io.arrow-kt:arrow-annotations-processor:$arrow_version"
 
   debugImplementation "com.squareup.leakcanary:leakcanary-android:1.6.2"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.2"
@@ -259,8 +260,8 @@ dependencies {
   playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.6@aar') {
     transitive = true
   }
-  playImplementation 'com.google.firebase:firebase-perf:16.2.0'
-  playImplementation 'com.google.firebase:firebase-core:16.0.5'
+  playImplementation 'com.google.firebase:firebase-perf:16.2.2'
+  playImplementation 'com.google.firebase:firebase-core:16.0.6'
 }
 
 allprojects {
