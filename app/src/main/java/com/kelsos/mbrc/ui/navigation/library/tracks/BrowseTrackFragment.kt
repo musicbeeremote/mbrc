@@ -8,8 +8,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.TrackEntity
 import com.kelsos.mbrc.extensions.linear
@@ -19,12 +23,12 @@ import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class BrowseTrackFragment : androidx.fragment.app.Fragment(),
+class BrowseTrackFragment : Fragment(),
   MenuItemSelectedListener<TrackEntity>,
   OnRefreshListener {
 
-  private val recycler: androidx.recyclerview.widget.RecyclerView by bindView(R.id.library_browser__content)
-  private val swipeLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
+  private val recycler: RecyclerView by bindView(R.id.library_browser__content)
+  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
   private val fastScroller: RecyclerViewFastScroller by bindView(R.id.fastscroller)
 
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)
@@ -80,7 +84,7 @@ class BrowseTrackFragment : androidx.fragment.app.Fragment(),
 
   fun failure(it: Throwable) {
     swipeLayout.isRefreshing = false
-    com.google.android.material.snackbar.Snackbar.make(recycler, R.string.refresh_failed, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
   fun hideLoading() {

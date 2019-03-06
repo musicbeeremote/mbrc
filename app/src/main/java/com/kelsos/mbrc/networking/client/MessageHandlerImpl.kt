@@ -57,10 +57,10 @@ class MessageHandlerImpl(
         2
       }
 
-      //model.pluginProtocol = protocolVersion
+      // model.pluginProtocol = protocolVersion
       connectionStatusLiveDataProvider.active()
       handshakeComplete()
-      //bus.post(StartLibrarySyncEvent())
+      // bus.post(StartLibrarySyncEvent())
       return
     }
 
@@ -79,7 +79,7 @@ class MessageHandlerImpl(
 
   private fun clientNotAllowed() {
     uiMessageQueue.dispatch(NOT_ALLOWED)
-    //bus.post(ChangeConnectionStateEvent(STOP))
+    // bus.post(ChangeConnectionStateEvent(STOP))
     connectionStatusLiveDataProvider.disconnected()
   }
 

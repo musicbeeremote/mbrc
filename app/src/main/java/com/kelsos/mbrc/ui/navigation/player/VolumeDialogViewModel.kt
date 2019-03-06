@@ -10,7 +10,6 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
-
 class VolumeDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
   private val appRxSchedulers: AppRxSchedulers,

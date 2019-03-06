@@ -15,18 +15,20 @@ class RadioRepositoryImpl(
 ) : RadioRepository {
 
   private val mapper = RadioDtoMapper()
+  private val dao2Model = RadioDaoMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override fun getAll(): DataSource.Factory<Int, RadioStationEntity> {
-    return dao.getAll()
+  override fun getAll(): DataSource.Factory<Int, RadioStation> {
+    return dao.getAll().map { dao2Model.map(it) }
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class).blockingForEach { page ->
+    val pages = remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class)
+    pages.blockingForEach { page ->
       runBlocking(dispatchers.disk) {
         val items = page.map { mapper.map(it).apply { dateAdded = added } }
 
@@ -41,8 +43,8 @@ class RadioRepositoryImpl(
     }
   }
 
-  override fun search(term: String): DataSource.Factory<Int, RadioStationEntity> {
-    return dao.search(term)
+  override fun search(term: String): DataSource.Factory<Int, RadioStation> {
+    return dao.search(term).map { dao2Model.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean {

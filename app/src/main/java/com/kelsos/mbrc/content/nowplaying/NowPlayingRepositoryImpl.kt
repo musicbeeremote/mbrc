@@ -15,18 +15,20 @@ class NowPlayingRepositoryImpl(
 ) : NowPlayingRepository {
 
   private val mapper = NowPlayingDtoMapper()
+  private val entity2model = NowPlayingEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override fun getAll(): DataSource.Factory<Int, NowPlayingEntity> {
-    return dao.getAll()
+  override fun getAll(): DataSource.Factory<Int, NowPlaying> {
+    return dao.getAll().map { entity2model.map(it) }
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class).blockingForEach { nowPlaying ->
+    val pages = remoteDataSource.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class)
+    pages.blockingForEach { nowPlaying ->
       runBlocking(dispatchers.disk) {
         val list = nowPlaying.map { mapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
@@ -40,11 +42,13 @@ class NowPlayingRepositoryImpl(
     }
   }
 
-  override fun search(term: String): DataSource.Factory<Int, NowPlayingEntity> {
-    return dao.search(term)
+  override fun search(term: String): DataSource.Factory<Int, NowPlaying> {
+    return dao.search(term).map { entity2model.map(it) }
   }
 
-  override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) { dao.count() == 0L }
+  override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) {
+    dao.count() == 0L
+  }
 
   override fun move(from: Int, to: Int) {
     TODO("implement move")

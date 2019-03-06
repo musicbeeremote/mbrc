@@ -4,7 +4,6 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Single
 
-
 class OutputApiImpl
 
 constructor(

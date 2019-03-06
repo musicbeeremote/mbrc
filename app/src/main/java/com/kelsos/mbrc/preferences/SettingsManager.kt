@@ -3,7 +3,7 @@ package com.kelsos.mbrc.preferences
 import androidx.annotation.StringDef
 import androidx.lifecycle.LiveData
 import io.reactivex.Single
-import java.util.*
+import java.util.Date
 
 interface SettingsManager {
 

@@ -65,7 +65,6 @@ class SessionNotificationManager(
     withContext(dispatchers.main) {
       notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
     }
-
   }
 
   private fun createNotificationChannels() {

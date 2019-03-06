@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.content.sync
 
+import arrow.core.Either
+import arrow.core.Try
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
@@ -22,11 +24,11 @@ class LibrarySyncUseCaseImpl(
 ) : LibrarySyncUseCase {
 
   private var running: Boolean = false
-  private var onCompleteListener: LibrarySyncUseCase.OnCompleteListener? = null
 
-  override suspend fun sync(auto: Boolean) {
+  override suspend fun sync(auto: Boolean): Either<Throwable, Boolean> {
+
     if (running) {
-      return
+      return Either.right(false)
     }
     running = true
 
@@ -34,23 +36,19 @@ class LibrarySyncUseCaseImpl(
 
     metrics.librarySyncStarted()
 
-    if (checkIfShouldSync(auto)) {
-      try {
+    val result: Either<Throwable, Boolean> = if (checkIfShouldSync(auto)) {
+      Try {
         genreRepository.getRemote()
         artistRepository.getRemote()
         albumRepository.getRemote()
         trackRepository.getRemote()
         playlistRepository.getRemote()
-      } catch (ex: Exception) {
-        onCompleteListener?.onTermination()
-        onCompleteListener?.onFailure(ex)
-        metrics.librarySyncFailed()
-
-        return
-      }
+        return@Try true
+      }.toEither()
+    } else {
+      Either.right(false)
     }
 
-    onCompleteListener?.onSuccess()
     withContext(dispatchers.disk) {
       val syncedData = SyncedData(
         genres = genreRepository.count(),
@@ -63,14 +61,13 @@ class LibrarySyncUseCaseImpl(
     }
 
     running = false
+    return result
   }
 
-  private suspend fun checkIfShouldSync(auto: Boolean): Boolean {
-    return if (auto) {
-      isEmpty()
-    } else {
-      true
-    }
+  private suspend fun checkIfShouldSync(auto: Boolean): Boolean = if (auto) {
+    isEmpty()
+  } else {
+    true
   }
 
   private suspend fun isEmpty(): Boolean {
@@ -78,12 +75,6 @@ class LibrarySyncUseCaseImpl(
       artistRepository.cacheIsEmpty() &&
       albumRepository.cacheIsEmpty() &&
       trackRepository.cacheIsEmpty()
-  }
-
-  override fun setOnCompleteListener(
-    onCompleteListener: LibrarySyncUseCase.OnCompleteListener?
-  ) {
-    this.onCompleteListener = onCompleteListener
   }
 
   override fun isRunning(): Boolean {

@@ -56,8 +56,8 @@ class NavigationActivity : AppCompatActivity() {
     clientConnectionUseCase.connect()
   }
 
-  private val onNavigatedListener: NavController.OnNavigatedListener =
-    NavController.OnNavigatedListener { controller, destination ->
+  private val onDestinationChangedListener: NavController.OnDestinationChangedListener =
+    NavController.OnDestinationChangedListener { _, destination, bundle ->
       supportActionBar?.title = destination.label
       val destinationId = destination.id
 
@@ -85,7 +85,6 @@ class NavigationActivity : AppCompatActivity() {
       }
       drawerLayout.setDrawerLockMode(lockMode)
     }
-
 
   private fun onConnection(connectionStatus: ConnectionStatus) {
     Timber.v("Handling new connection status ${Connection.string(connectionStatus.status)}")
@@ -144,7 +143,7 @@ class NavigationActivity : AppCompatActivity() {
 
     val navController = findNavController(R.id.main_navigation_fragment)
     setupWithNavController(findViewById<NavigationView>(R.id.nav_view), navController)
-    navController.addOnNavigatedListener(onNavigatedListener)
+    navController.addOnDestinationChangedListener(onDestinationChangedListener)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -188,12 +187,13 @@ class NavigationActivity : AppCompatActivity() {
   }
 
   override fun onNavigateUp(): Boolean {
-    return navigateUp(drawerLayout, findNavController(R.id.main_navigation_fragment))
+    return navigateUp(findNavController(R.id.main_navigation_fragment), drawerLayout)
   }
 
   override fun onDestroy() {
     connectionStatusLiveDataProvider.removeObservers(this)
-    findNavController(R.id.main_navigation_fragment).removeOnNavigatedListener(onNavigatedListener)
+    val navController = findNavController(R.id.main_navigation_fragment)
+    navController.removeOnDestinationChangedListener(onDestinationChangedListener)
     super.onDestroy()
   }
 

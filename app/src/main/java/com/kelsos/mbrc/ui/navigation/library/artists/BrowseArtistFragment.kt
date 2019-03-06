@@ -26,7 +26,6 @@ import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-
 class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>, OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
@@ -75,7 +74,6 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>,
     view?.run {
       findNavController().navigate(R.id.artist_albums_fragment, args.toBundle())
     }
-
   }
 
   override fun onRefresh() {

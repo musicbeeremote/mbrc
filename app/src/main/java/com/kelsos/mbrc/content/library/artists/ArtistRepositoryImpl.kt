@@ -9,7 +9,6 @@ import com.kelsos.mbrc.utilities.epoch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-
 class ArtistRepositoryImpl(
   private val dao: ArtistDao,
   private val remoteDataSource: ApiBase,
@@ -17,30 +16,32 @@ class ArtistRepositoryImpl(
 ) : ArtistRepository {
 
   private val mapper = ArtistDtoMapper()
+  private val entity2model = ArtistEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override suspend fun getArtistByGenre(genre: String): DataSource.Factory<Int, ArtistEntity> {
-    return dao.getArtistByGenre(genre)
+  override fun getArtistByGenre(genre: String): DataSource.Factory<Int, Artist> {
+    return dao.getArtistByGenre(genre).map { entity2model.map(it) }
   }
 
-  override fun getAll(): DataSource.Factory<Int, ArtistEntity> {
-    return dao.getAll()
+  override fun getAll(): DataSource.Factory<Int, Artist> {
+    return dao.getAll().map { entity2model.map(it) }
   }
 
-  override suspend fun allArtists(): DataModel<ArtistEntity> {
-    return DataModel(dao.getAll(), dao.getAllIndexes())
+  override fun allArtists(): DataModel<Artist> {
+    return DataModel(dao.getAll().map { entity2model.map(it) }, dao.getAllIndexes())
   }
 
-  override suspend fun albumArtists(): DataModel<ArtistEntity> {
-    return DataModel(dao.getAlbumArtists(), dao.getAlbumArtistIndexes())
+  override fun albumArtists(): DataModel<Artist> {
+    return DataModel(dao.getAlbumArtists().map { entity2model.map(it) }, dao.getAlbumArtistIndexes())
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class).blockingForEach { artists ->
+    val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class)
+    data.blockingForEach { artists ->
       runBlocking(dispatchers.disk) {
         val items = artists.map { mapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
@@ -54,12 +55,12 @@ class ArtistRepositoryImpl(
     }
   }
 
-  override fun search(term: String): DataSource.Factory<Int, ArtistEntity> {
-    return dao.search(term)
+  override fun search(term: String): DataSource.Factory<Int, Artist> {
+    return dao.search(term).map { entity2model.map(it) }
   }
 
-  override suspend fun getAlbumArtistsOnly(): DataSource.Factory<Int, ArtistEntity> {
-    return dao.getAlbumArtists()
+  override fun getAlbumArtistsOnly(): DataSource.Factory<Int, Artist> {
+    return dao.getAlbumArtists().map { entity2model.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean {

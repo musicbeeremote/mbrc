@@ -11,7 +11,6 @@ import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 
-
 class TrackEntryAdapter : FastScrollableAdapter<TrackEntity, TrackViewHolder>(DIFF_CALLBACK),
   BubbleTextGetter, OnFastScrollListener {
 

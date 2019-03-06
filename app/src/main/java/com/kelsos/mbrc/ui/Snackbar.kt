@@ -10,5 +10,4 @@ fun Activity.snackbar(@StringRes resId: Int) {
     resId,
     Snackbar.LENGTH_SHORT
   ).show()
-
 }

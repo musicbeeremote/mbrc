@@ -2,7 +2,6 @@ package com.kelsos.mbrc.networking.client
 
 import com.squareup.moshi.Moshi
 
-
 class MessageDeserializerImpl
 
 constructor(

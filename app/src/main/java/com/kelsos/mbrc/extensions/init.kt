@@ -26,13 +26,13 @@ fun RecyclerView.linear(
       ) {
         super.onLayoutChildren(recycler, state)
 
-        //TODO if the items are filtered, considered hiding the fast scroller here
+        // TODO if the items are filtered, considered hiding the fast scroller here
 
         val firstVisibleItemPosition = findFirstVisibleItemPosition()
         if (firstVisibleItemPosition != 0) {
           // this avoids trying to handle un-needed calls
           if (firstVisibleItemPosition == -1)
-          //not initialized, or no items shown, so hide fast-scroller
+          // not initialized, or no items shown, so hide fast-scroller
           {
             fastScroller.isVisible = false
           }
@@ -40,7 +40,7 @@ fun RecyclerView.linear(
         }
         val lastVisibleItemPosition = findLastVisibleItemPosition()
         val itemsShown = lastVisibleItemPosition - firstVisibleItemPosition + 1
-        //if all items are shown, hide the fast-scroller
+        // if all items are shown, hide the fast-scroller
         fastScroller.isVisible = adapter.itemCount > itemsShown
       }
     }

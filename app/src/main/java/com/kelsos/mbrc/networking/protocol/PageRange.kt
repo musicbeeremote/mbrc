@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 class PageRange {
 
-  @Json(name="offset")
+  @Json(name = "offset")
   var offset: Int = 0
   @Json(name = "limit")
   var limit: Int = 0

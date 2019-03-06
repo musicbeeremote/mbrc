@@ -6,11 +6,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ProgressBar
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.output.OutputResponse
 import kotterknife.bindView
@@ -21,7 +26,7 @@ class OutputSelectionDialog : DialogFragment(),
   AdapterView.OnItemSelectedListener {
 
   private var touchInitiated: Boolean = false
-  private lateinit var fm: androidx.fragment.app.FragmentManager
+  private lateinit var fm: FragmentManager
   private lateinit var dialog: AlertDialog
 
   private val availableOutputs: Spinner by bindView(R.id.output_selection__available_outputs)
@@ -44,8 +49,6 @@ class OutputSelectionDialog : DialogFragment(),
         dialogInterface.dismiss()
       }
       .create()
-
-
 
     return dialog
   }
@@ -88,9 +91,9 @@ class OutputSelectionDialog : DialogFragment(),
     availableOutputs.isVisible = true
   }
 
-  fun error(@OutputSelectionContract.Code code: Int) {
+  fun error(@OutputSelectionCodes.Code code: Int) {
     val resId = when (code) {
-      OutputSelectionContract.CONNECTION_ERROR -> R.string.output_selection__connection_error
+      OutputSelectionCodes.CONNECTION_ERROR -> R.string.output_selection__connection_error
       else -> R.string.output_selection__generic_error
     }
     errorMessage.setText(resId)
@@ -110,7 +113,7 @@ class OutputSelectionDialog : DialogFragment(),
   companion object {
     private const val TAG = "output_selection_dialog"
 
-    fun instance(fm: androidx.fragment.app.FragmentManager): OutputSelectionDialog {
+    fun instance(fm: FragmentManager): OutputSelectionDialog {
       val dialog = OutputSelectionDialog()
       dialog.fm = fm
       return dialog

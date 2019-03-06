@@ -15,18 +15,20 @@ class PlaylistRepositoryImpl(
 ) : PlaylistRepository {
 
   private val mapper = PlaylistDtoMapper()
+  private val entity2model = PlaylistEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override fun getAll(): DataSource.Factory<Int, PlaylistEntity> {
-    return dao.getAll()
+  override fun getAll(): DataSource.Factory<Int, Playlist> {
+    return dao.getAll().map { entity2model.map(it) }
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-    remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class).blockingForEach { page ->
+    val pages = remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class)
+    pages.blockingForEach { page ->
       runBlocking(dispatchers.disk) {
         val playlists = page.map {
           mapper.map(it).apply {
@@ -37,7 +39,6 @@ class PlaylistRepositoryImpl(
           dao.insertAll(playlists)
         }
       }
-
     }
 
     withContext(dispatchers.database) {
@@ -45,8 +46,8 @@ class PlaylistRepositoryImpl(
     }
   }
 
-  override fun search(term: String): DataSource.Factory<Int, PlaylistEntity> {
-    return dao.search(term)
+  override fun search(term: String): DataSource.Factory<Int, Playlist> {
+    return dao.search(term).map { entity2model.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L

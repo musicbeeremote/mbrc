@@ -20,7 +20,6 @@ import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-
 class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<ArtistEntity> {
 
   private val recyclerView: RecyclerView by bindView(R.id.genre_artists__artist_list)

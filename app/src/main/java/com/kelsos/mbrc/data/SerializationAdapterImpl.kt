@@ -3,7 +3,6 @@ package com.kelsos.mbrc.data
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.squareup.moshi.Moshi
 
-
 class SerializationAdapterImpl
 
 constructor(

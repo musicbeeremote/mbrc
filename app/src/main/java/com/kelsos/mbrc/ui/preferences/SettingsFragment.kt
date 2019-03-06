@@ -3,8 +3,12 @@ package com.kelsos.mbrc.ui.preferences
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
+import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
@@ -15,18 +19,22 @@ import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
+  private fun <T : Preference> preference(@StringRes resId: Int): T {
+    return findPreference(getString(resId))
+  }
+
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.application_settings)
 
-    val reduceOnIncoming = findPreference(getString(R.string.settings_key_incoming_call_action))
-    val mOpenSource = findPreference(getString(R.string.preferences_open_source))
-    val mManager = findPreference(resources.getString(R.string.preferences_key_connection_manager))
-    val mVersion = findPreference(resources.getString(R.string.settings_version))
-    val mBuild = findPreference(resources.getString(R.string.pref_key_build_time))
-    val mRevision = findPreference(resources.getString(R.string.pref_key_revision))
-    val debugLogging = findPreference(resources.getString(R.string.settings_key_debug_logging))
+    val reduceOnIncoming: ListPreference = preference(R.string.settings_key_incoming_call_action)
+    val openSource: Preference = preference(R.string.preferences_open_source)
+    val manager: Preference = preference(R.string.preferences_key_connection_manager)
+    val version: Preference = preference(R.string.settings_version)
+    val mBuild: Preference = preference(R.string.pref_key_build_time)
+    val mRevision: Preference = preference(R.string.pref_key_revision)
+    val debugLogging: CheckBoxPreference = preference(R.string.settings_key_debug_logging)
 
-    debugLogging?.setOnPreferenceChangeListener { _, newValue ->
+    debugLogging.setOnPreferenceChangeListener { _, newValue ->
       if (newValue as Boolean) {
         Timber.plant(FileLoggingTree(requireContext().applicationContext))
       } else {
@@ -37,50 +45,50 @@ class SettingsFragment : PreferenceFragmentCompat() {
       true
     }
 
-    mOpenSource?.setOnPreferenceClickListener {
+    openSource.setOnPreferenceClickListener {
       showOpenSourceLicenseDialog()
       false
     }
 
-    reduceOnIncoming?.setOnPreferenceChangeListener { _, _ ->
+    reduceOnIncoming.setOnPreferenceChangeListener { _, _ ->
       if (!hasPhonePermission()) {
         requestPhoneStatePermission()
       }
       true
     }
 
-    mManager?.setOnPreferenceClickListener {
-      checkNotNull(view).findNavController().navigate(R.id.action_settingsFragment_to_connectionManagerFragment)
+    manager.setOnPreferenceClickListener {
+      val navController = checkNotNull(view).findNavController()
+      navController.navigate(R.id.action_settingsFragment_to_connectionManagerFragment)
       false
     }
 
     try {
-      val version = RemoteUtils.getVersion()
-      mVersion?.summary = resources.getString(R.string.settings_version_number, version)
+      val appVersion = RemoteUtils.getVersion()
+      version.summary = resources.getString(R.string.settings_version_number, appVersion)
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.d(e, "failed")
     }
 
-    val showNotification =
+    val showNotification: CheckBoxPreference =
       findPreference(resources.getString(R.string.settings_key_notification_control))
 
-    showNotification?.setOnPreferenceChangeListener { _, newValue ->
+    showNotification.setOnPreferenceChangeListener { _, newValue ->
       val value = newValue as Boolean
       if (!value) {
-        //todo remove notification
-
+        // todo remove notification
       }
       true
     }
 
-    val mLicense = findPreference(resources.getString(R.string.settings_key_license))
-    mLicense?.setOnPreferenceClickListener {
+    val license: Preference = findPreference(resources.getString(R.string.settings_key_license))
+    license.setOnPreferenceClickListener {
       showLicenseDialog()
       false
     }
 
-    mBuild?.summary = BuildConfig.BUILD_TIME
-    mRevision?.summary = BuildConfig.GIT_SHA
+    mBuild.summary = BuildConfig.BUILD_TIME
+    mRevision.summary = BuildConfig.GIT_SHA
   }
 
   private fun requestPhoneStatePermission() {

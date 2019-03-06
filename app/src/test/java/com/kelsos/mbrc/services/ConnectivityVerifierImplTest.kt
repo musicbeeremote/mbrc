@@ -1,20 +1,25 @@
 package com.kelsos.mbrc.services
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.networking.client.ConnectivityVerifier
 import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.squareup.moshi.Moshi
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.koin.dsl.module.module
+import org.koin.experimental.builder.create
+import org.koin.standalone.StandAloneContext.startKoin
+import org.koin.standalone.StandAloneContext.stopKoin
+import org.koin.standalone.inject
+import org.koin.test.KoinTest
+import org.koin.test.declareMock
 import org.mockito.BDDMockito.given
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
-
-
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
@@ -26,24 +31,27 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class ConnectivityVerifierImplTest {
+@RunWith(AndroidJUnit4::class)
+class ConnectivityVerifierImplTest : KoinTest {
 
-  @Mock lateinit var connectionRepository: ConnectionRepository
-  @Rule @JvmField val toothpickRule: ToothPickRule = ToothPickRule(this, "verifier")
-      .setRootRegistryPackage("com.kelsos.mbrc")
-  private val mapper = ObjectMapper()
   private val port: Int = 46000
 
-  lateinit var verifier: ConnectivityVerifier
+  private val verifier: ConnectivityVerifier by inject()
+  private val connectionRepository: ConnectionRepository by inject()
+  private val moshi: Moshi by inject()
 
   @Before
   fun setUp() {
-    MockitoAnnotations.initMocks(this)
-    toothpickRule.scope.installModules(TestModule())
-    verifier = toothpickRule.getInstance(ConnectivityVerifier::class.java)
+    startKoin(listOf(testModule))
+    declareMock<ConnectionRepository>()
   }
 
-  fun startMockServer(
+  @After
+  fun tearDown() {
+    stopKoin()
+  }
+
+  private fun startMockServer(
     prematureDisconnect: Boolean = false,
     responseContext: String = Protocol.VerifyConnection,
     json: Boolean = true
@@ -53,15 +61,17 @@ class ConnectivityVerifierImplTest {
     val server = ServerSocket(port + random.nextInt(1000))
     val mockSocket = Runnable {
       server.soTimeout = 3000
+      val messageAdapter = moshi.adapter<SocketMessage>(SocketMessage::class.java)
 
       while (true) {
         val connection = server.accept()
         val input = InputStreamReader(connection!!.inputStream)
         val inputReader = BufferedReader(input)
         val line = inputReader.readLine()
-        val value = mapper.readValue(line, SocketMessage::class.java)
 
-        if (value.context != Protocol.VerifyConnection) {
+        val value = messageAdapter.fromJson(line)
+
+        if (value?.context != Protocol.VerifyConnection) {
           connection.close()
           server.close()
           return@Runnable
@@ -77,9 +87,8 @@ class ConnectivityVerifierImplTest {
         val output = PrintWriter(BufferedWriter(out), true)
         val newLine = "\r\n"
         if (json) {
-          val response = SocketMessage()
-          response.context = responseContext
-          output.write(mapper.writeValueAsString(response) + newLine + newLine)
+          val response = SocketMessage(context = responseContext)
+          output.write(messageAdapter.toJson(response) + newLine + newLine)
         } else {
           output.write(responseContext + newLine + newLine)
         }
@@ -98,11 +107,8 @@ class ConnectivityVerifierImplTest {
     return server
   }
 
-  @After
-  fun tearDown() {
-  }
-
-  @Test fun testSuccessfulVerification() {
+  @Test
+  fun testSuccessfulVerification() {
     val server = startMockServer()
 
     given(connectionRepository.default).willAnswer {
@@ -120,7 +126,8 @@ class ConnectivityVerifierImplTest {
     subscriber.assertValue(true)
   }
 
-  @Test fun testPrematureDisconnectDuringVerification() {
+  @Test
+  fun testPrematureDisconnectDuringVerification() {
     val server = startMockServer(true)
     given(connectionRepository.default).willAnswer {
       val settings = ConnectionSettingsEntity()
@@ -134,7 +141,8 @@ class ConnectivityVerifierImplTest {
     subscriber.assertError(RuntimeException::class.java)
   }
 
-  @Test fun testInvalidPluginResponseVerification() {
+  @Test
+  fun testInvalidPluginResponseVerification() {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
     given(connectionRepository.default).willAnswer {
       val settings = ConnectionSettingsEntity()
@@ -148,7 +156,8 @@ class ConnectivityVerifierImplTest {
     subscriber.assertError(ConnectivityVerifierImpl.NoValidPluginConnection::class.java)
   }
 
-  @Test fun testVerificationNoConnection() {
+  @Test
+  fun testVerificationNoConnection() {
     startMockServer(true)
 
     given(connectionRepository.default).willAnswer {
@@ -160,7 +169,8 @@ class ConnectivityVerifierImplTest {
     subscriber.assertError(RuntimeException::class.java)
   }
 
-  @Test fun testVerificationNoJsonPayload() {
+  @Test
+  fun testVerificationNoJsonPayload() {
     startMockServer(false, "payload", false)
 
     given(connectionRepository.default).willAnswer {
@@ -172,11 +182,8 @@ class ConnectivityVerifierImplTest {
     subscriber.assertError(RuntimeException::class.java)
   }
 
-  inner class TestModule : Module() {
-    init {
-      bind(ObjectMapper::class.java).toInstance(mapper)
-      bind(ConnectionRepository::class.java).toInstance(connectionRepository)
-      bind(ConnectivityVerifier::class.java).to(ConnectivityVerifierImpl::class.java)
-    }
+  private val testModule = module {
+    single { Moshi.Builder().build() }
+    single<ConnectivityVerifier> { create<ConnectivityVerifierImpl>() }
   }
 }

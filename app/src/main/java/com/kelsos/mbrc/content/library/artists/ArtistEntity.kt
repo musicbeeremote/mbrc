@@ -11,9 +11,9 @@ import androidx.room.PrimaryKey
 )
 data class ArtistEntity(
   @ColumnInfo
-  override var artist: String,
+  var artist: String,
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  override var id: Long = 0
-) : Artist
+  var id: Long = 0
+)

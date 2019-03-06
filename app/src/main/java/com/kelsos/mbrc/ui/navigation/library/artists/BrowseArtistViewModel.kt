@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-
 class BrowseArtistViewModel(
   private val repository: ArtistRepository,
   private val settingsManager: SettingsManager,

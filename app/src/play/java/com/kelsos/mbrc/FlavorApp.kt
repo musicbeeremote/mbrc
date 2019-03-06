@@ -25,7 +25,6 @@ open class FlavorApp : App() {
     return super.modules().plus(playModule)
   }
 
-
   override fun onAnr(anrError: ANRError?) {
     super.onAnr(anrError)
     Crashlytics.logException(anrError)

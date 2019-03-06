@@ -1,16 +1,15 @@
 package com.kelsos.mbrc.ui.navigation.library.genres
 
-import androidx.recyclerview.widget.DiffUtil
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.genres.GenreEntity
+import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 
-
-class GenreEntryAdapter : FastScrollableAdapter<GenreEntity, GenreViewHolder>(DIFF_CALLBACK) {
+class GenreEntryAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_genre) {
@@ -54,12 +53,12 @@ class GenreEntryAdapter : FastScrollableAdapter<GenreEntity, GenreViewHolder>(DI
   }
 
   companion object {
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<GenreEntity>() {
-      override fun areItemsTheSame(oldItem: GenreEntity, newItem: GenreEntity): Boolean {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Genre>() {
+      override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean {
         return oldItem.id == newItem.id
       }
 
-      override fun areContentsTheSame(oldItem: GenreEntity, newItem: GenreEntity): Boolean {
+      override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean {
         return oldItem == newItem
       }
     }

@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.content.sync
 
+import arrow.core.Either
+
 /**
  * The class is responsible for the library metadata and playlist data network.
  */
@@ -12,7 +14,7 @@ interface LibrarySyncUseCase {
    * @param auto Marks the network process as automatic (initiated by conditions) or
    * manual (initiated by the user)
    */
-  suspend fun sync(auto: Boolean = false)
+  suspend fun sync(auto: Boolean = false): Either<Throwable, Boolean>
 
   /**
    * Provides access to the interactor's current status.
@@ -20,12 +22,4 @@ interface LibrarySyncUseCase {
    * @return Should return true if the interactor is active and running, or false if not
    */
   fun isRunning(): Boolean
-
-  fun setOnCompleteListener(onCompleteListener: OnCompleteListener?)
-
-  interface OnCompleteListener {
-    fun onTermination()
-    fun onFailure(throwable: Throwable)
-    fun onSuccess()
-  }
 }

@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import com.kelsos.mbrc.R
 
-
 class DefaultActionPreferenceStore
 
 constructor(private val preferences: SharedPreferences, private var resources: Resources) {

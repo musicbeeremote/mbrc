@@ -9,10 +9,7 @@ import okio.Okio
 import java.io.File
 import java.nio.charset.Charset
 
-
-class PlayingTrackCacheImpl
-
-constructor(
+class PlayingTrackCacheImpl(
   private val mapper: Moshi,
   private val appContext: Application,
   private val appCoroutineDispatchers: AppCoroutineDispatchers

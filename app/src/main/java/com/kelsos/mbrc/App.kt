@@ -25,7 +25,6 @@ import org.koin.dsl.module.Module
 import org.koin.dsl.module.module
 import timber.log.Timber
 
-
 @SuppressLint("Registered")
 open class App : MultiDexApplication() {
 
@@ -41,7 +40,6 @@ open class App : MultiDexApplication() {
     val androidModule = module {
       val app = this@App as Application
 
-      single { app }
       single { app.resources }
       single { checkNotNull(app.getSystemService<ActivityManager>()) }
       single { checkNotNull(app.getSystemService<AudioManager>()) }
@@ -91,7 +89,6 @@ open class App : MultiDexApplication() {
       Timber.plant(CustomLoggingTree.create())
     }
   }
-
 
   internal open fun installLeakCanary(): RefWatcher {
     return RefWatcher.DISABLED

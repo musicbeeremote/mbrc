@@ -16,7 +16,6 @@ import com.kelsos.mbrc.preferences.SettingsManager
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
-
 class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
   private val settingsManager: SettingsManager by inject()
@@ -57,7 +56,7 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
         )
       )
       RemoteViewIntentBuilder.CLOSE_PRESSED == intent.action -> {
-        //bus.post(SessionNotificationManager.CancelNotificationEvent())
+        // bus.post(SessionNotificationManager.CancelNotificationEvent())
       }
       RemoteViewIntentBuilder.PREVIOUS_PRESSED == intent.action -> postAction(
         UserAction(
@@ -77,7 +76,7 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   private fun onWifiChange(intent: Intent) {
     val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
     if (networkInfo.state == NetworkInfo.State.CONNECTED) {
-      //bus.post(ChangeConnectionStateEvent(START))
+      // bus.post(ChangeConnectionStateEvent(START))
     }
   }
 

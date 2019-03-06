@@ -1,7 +1,24 @@
 package com.kelsos.mbrc.networking.protocol
 
 import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.networking.protocol.commands.*
+import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
+import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
+import com.kelsos.mbrc.networking.protocol.commands.UpdateCover
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLastFm
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLfmRating
+import com.kelsos.mbrc.networking.protocol.commands.UpdateLyrics
+import com.kelsos.mbrc.networking.protocol.commands.UpdateMute
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrack
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackMoved
+import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackRemoval
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayState
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlaybackPositionCommand
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayerStatus
+import com.kelsos.mbrc.networking.protocol.commands.UpdatePluginVersionCommand
+import com.kelsos.mbrc.networking.protocol.commands.UpdateRating
+import com.kelsos.mbrc.networking.protocol.commands.UpdateRepeat
+import com.kelsos.mbrc.networking.protocol.commands.UpdateShuffle
+import com.kelsos.mbrc.networking.protocol.commands.UpdateVolume
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
 
@@ -30,7 +47,6 @@ class CommandFactoryImpl : CommandFactory, KoinComponent {
       else -> error("Not supported message context $context")
     }
   }
-
 }
 
 interface CommandFactory {

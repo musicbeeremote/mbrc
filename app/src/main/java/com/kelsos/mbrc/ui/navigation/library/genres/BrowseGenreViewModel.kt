@@ -3,15 +3,13 @@ package com.kelsos.mbrc.ui.navigation.library.genres
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
-import com.kelsos.mbrc.content.library.genres.GenreEntity
+import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-
 
 class BrowseGenreViewModel(
   private val repository: GenreRepository,
@@ -20,14 +18,11 @@ class BrowseGenreViewModel(
   private val viewModelJob: Job = Job()
   private val networkScope = CoroutineScope(dispatchers.network + viewModelJob)
 
-  val genres: LiveData<PagedList<GenreEntity>>
+  val genres: LiveData<PagedList<Genre>>
   val indexes: LiveData<List<String>>
 
   init {
-    val genres = runBlocking(dispatchers.database) {
-      repository.allGenres()
-    }
-
+    val genres = repository.allGenres()
     this.genres = genres.factory.paged()
     this.indexes = genres.indexes
   }

@@ -5,7 +5,6 @@ import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 
-
 interface PlayingTrackLiveDataProvider : LiveDataProvider<PlayingTrack>
 
 class PlayingTrackLiveDataProviderImpl(
@@ -26,7 +25,6 @@ class PlayingTrackLiveDataProviderImpl(
             update(trackInfo.copy(coverUrl = coverUrl))
           }
         } catch (ex: Exception) {
-
         }
       }
     }

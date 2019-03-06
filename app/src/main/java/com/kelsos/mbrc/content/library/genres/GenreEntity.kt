@@ -11,9 +11,11 @@ import androidx.room.PrimaryKey
 )
 data class GenreEntity(
   @ColumnInfo
-  override var genre: String = "",
+  var genre: String = "",
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
+  @ColumnInfo(name = "date_updated")
+  var dateUpdated: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  override var id: Long = 0
-) : Genre
+  var id: Long = 0
+)

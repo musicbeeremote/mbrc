@@ -5,6 +5,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class GenreDto(
-  @Json(name ="genre")
+  @Json(name = "genre")
   var genre: String = ""
 )

@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 
-
 class CommandExecutorImpl
 
 constructor(
@@ -54,6 +53,7 @@ constructor(
       command.execute(event)
     } catch (ex: Exception) {
       Timber.d(ex, "executing command for type: ${event.type}")
+      Timber.d(event.toString())
     }
   }
 
@@ -90,4 +90,3 @@ constructor(
     }
   }
 }
-

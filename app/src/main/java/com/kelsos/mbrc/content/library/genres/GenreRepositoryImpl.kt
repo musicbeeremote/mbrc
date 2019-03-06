@@ -17,22 +17,33 @@ constructor(
 ) : GenreRepository {
 
   private val mapper = GenreDtoMapper()
+  private val dao2Model = GenreEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
-  override fun getAll(): DataSource.Factory<Int, GenreEntity> {
-    return dao.getAll()
+  override fun getAll(): DataSource.Factory<Int, Genre> {
+    return dao.getAll().map { dao2Model.map(it) }
   }
 
   override suspend fun getRemote() {
     val added = epoch()
-
-    remoteDataSource.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class).blockingForEach { genres ->
+    val stored = dao.genres().associate { it.genre to it.id }
+    val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class)
+    data.blockingForEach { genres ->
       runBlocking(dispatchers.disk) {
 
-        val items = genres.map { mapper.map(it).apply { dateAdded = added } }
+        val items = genres.map {
+          mapper.map(it).apply {
+            dateAdded = added
+
+            val id = stored[it.genre]
+            if (id != null) {
+              this.id = id
+            }
+          }
+        }
 
         withContext(dispatchers.database) {
           dao.insertAll(items)
@@ -45,15 +56,15 @@ constructor(
     }
   }
 
-  override fun search(term: String): DataSource.Factory<Int, GenreEntity> {
-    return dao.search(term)
+  override fun search(term: String): DataSource.Factory<Int, Genre> {
+    return dao.search(term).map { dao2Model.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) {
     dao.count() == 0L
   }
 
-  override suspend fun allGenres(): DataModel<GenreEntity> {
-    return withContext(dispatchers.database) { DataModel(dao.getAll(), dao.getAllIndexes()) }
+  override fun allGenres(): DataModel<Genre> {
+    return DataModel(dao.getAll().map { dao2Model.map(it) }, dao.getAllIndexes())
   }
 }

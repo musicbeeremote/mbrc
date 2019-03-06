@@ -18,7 +18,7 @@
       android:label="@string/application_name"
       android:logo="@mipmap/ic_launcher"
       android:theme="@style/AppTheme"
-      tools:ignore="UnusedAttribute">
+      tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
     <activity
         android:name=".ui.activities.SplashActivity"
         android:noHistory="true">

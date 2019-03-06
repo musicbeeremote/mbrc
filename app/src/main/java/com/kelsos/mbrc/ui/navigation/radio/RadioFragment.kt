@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.radios.RadioStationEntity
+import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.extensions.snackbar
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
 import kotterknife.bindView
@@ -66,7 +66,7 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
     super.onDestroy()
   }
 
-  fun update(data: PagedList<RadioStationEntity>) {
+  fun update(data: PagedList<RadioStation>) {
     emptyView.isVisible = data.isEmpty()
     adapter.submitList(data)
   }

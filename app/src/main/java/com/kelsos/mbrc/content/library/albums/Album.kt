@@ -1,9 +1,11 @@
 package com.kelsos.mbrc.content.library.albums
 
-import com.kelsos.mbrc.interfaces.data.Data
-
-interface Album : Data {
-  val artist: String
-  val album: String
-  val id: Long
-}
+data class Album(
+  var id: Long,
+  var artist: String,
+  var album: String,
+  var albumArtist: String,
+  var genre: String,
+  var sortableYear: String,
+  var dateAdded: Long
+)

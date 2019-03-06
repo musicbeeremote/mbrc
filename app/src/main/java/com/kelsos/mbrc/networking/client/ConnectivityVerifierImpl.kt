@@ -8,9 +8,8 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Single
 import java.net.SocketTimeoutException
 
-
 class ConnectivityVerifierImpl
- constructor(
+constructor(
   private val deserializationAdapter: DeserializationAdapter,
   private val requestManager: RequestManager,
   val repository: ConnectionRepository

@@ -24,14 +24,14 @@ class ConnectionManagerViewModel(
 
   fun startDiscovery() {
     serviceDiscoveryUseCase.discover {
-      //view().onDiscoveryStopped(it)
+      // view().onDiscoveryStopped(it)
     }
   }
 
   fun setDefault(settings: ConnectionSettingsEntity) {
 
     repository.default = settings
-    //bus.post(DefaultSettingsChangedEvent())
+    // bus.post(DefaultSettingsChangedEvent())
   }
 
   fun save(settings: ConnectionSettingsEntity) {
@@ -39,10 +39,9 @@ class ConnectionManagerViewModel(
       repository.save(settings)
 
       if (settings.id == repository.defaultId) {
-        //bus.post(DefaultSettingsChangedEvent())
+        // bus.post(DefaultSettingsChangedEvent())
       }
     }
-
   }
 
   fun delete(settings: ConnectionSettingsEntity) {
@@ -51,10 +50,9 @@ class ConnectionManagerViewModel(
       repository.delete(settings)
 
       if (settings.id == repository.defaultId) {
-        //bus.post(DefaultSettingsChangedEvent())
+        // bus.post(DefaultSettingsChangedEvent())
       }
     }
-
   }
 
   private fun onLoadError(throwable: Throwable) {

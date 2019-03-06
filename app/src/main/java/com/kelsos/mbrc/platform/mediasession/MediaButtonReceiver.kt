@@ -6,7 +6,6 @@ import android.content.Intent
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
-
 class MediaButtonReceiver : BroadcastReceiver(), KoinComponent {
 
   private val handler: MediaIntentHandler by inject()

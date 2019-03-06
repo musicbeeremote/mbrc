@@ -19,6 +19,9 @@ interface GenreDao {
   @Query("select * from genre order by genre")
   fun getAll(): DataSource.Factory<Int, GenreEntity>
 
+  @Query("select id, genre from genre order by genre")
+  fun genres(): List<GenreInfo>
+
   @Query("select * from genre where genre like '%' || :term || '%' order by genre")
   fun search(term: String): DataSource.Factory<Int, GenreEntity>
 

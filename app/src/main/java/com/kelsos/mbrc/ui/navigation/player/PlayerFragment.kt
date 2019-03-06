@@ -65,12 +65,11 @@ class PlayerFragment : Fragment(), VolumeDialogProvider {
     viewModel.trackRating.observe(this) {
       updateRating(it)
     }
-
   }
 
   fun showChangeLog() {
     showChangeLogDialog()
-    //todo manage dialogs somehow
+    // todo manage dialogs somehow
   }
 
   fun notifyPluginOutOfDate() {

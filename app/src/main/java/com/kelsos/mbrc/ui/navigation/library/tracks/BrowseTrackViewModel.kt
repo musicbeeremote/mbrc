@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.navigation.library.tracks
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
-import com.kelsos.mbrc.content.library.tracks.TrackEntity
+import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.paged
@@ -18,7 +18,7 @@ class BrowseTrackViewModel(
 
   private val viewModelJob: Job = Job()
   private val networkScope = CoroutineScope(dispatchers.network + viewModelJob)
-  val tracks: LiveData<PagedList<TrackEntity>>
+  val tracks: LiveData<PagedList<Track>>
   val indexes: LiveData<List<String>>
 
   init {
@@ -26,7 +26,6 @@ class BrowseTrackViewModel(
     tracks = allTracks.factory.paged()
     indexes = allTracks.indexes
   }
-
 
   fun reload() {
     networkScope.launch(dispatchers.network) {

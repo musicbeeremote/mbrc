@@ -14,7 +14,7 @@ class RemoteVolumeProvider(
   init {
     val volume = statusLiveDataProvider.getValue()?.volume ?: 0
     super.setCurrentVolume(volume)
-    //bus.register(this, VolumeChange::class.java, { super.setCurrentVolume(it.volume) })
+    // bus.register(this, VolumeChange::class.java, { super.setCurrentVolume(it.volume) })
   }
 
   override fun onSetVolumeTo(volume: Int) {

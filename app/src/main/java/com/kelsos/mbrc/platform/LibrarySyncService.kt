@@ -7,7 +7,6 @@ import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
-
 /**
  * An [IntentService] subclass for handling the metadata network operation
  */

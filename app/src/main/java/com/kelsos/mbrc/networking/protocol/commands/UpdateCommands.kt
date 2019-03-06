@@ -19,7 +19,6 @@ import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import timber.log.Timber
 
-
 class UpdateLastFm
 
 constructor(
@@ -112,7 +111,6 @@ constructor(
     val adapter = mapper.adapter(NowPlayingTrack::class.java)
     val track = adapter.fromJsonValue(message.data) ?: return
 
-
     playingTrackLiveDataProvider.update {
       copy(
         artist = track.artist,
@@ -128,7 +126,6 @@ constructor(
     }
   }
 }
-
 
 class UpdatePlayerStatus
 

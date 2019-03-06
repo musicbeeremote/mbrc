@@ -13,7 +13,6 @@ import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import java.util.concurrent.TimeUnit
 
-
 class PlayerViewModel(
   private val settingsManager: SettingsManager,
   private val userActionUseCase: UserActionUseCase,
@@ -22,7 +21,7 @@ class PlayerViewModel(
   val playerStatus: PlayerStatusLiveDataProvider,
   val trackRating: TrackRatingLiveDataProvider,
   val trackPosition: TrackPositionLiveDataProvider
-): ViewModel() {
+) : ViewModel() {
 
   private val progressRelay: PublishRelay<Int> = PublishRelay.create()
   private val disposable = progressRelay.throttleLast(

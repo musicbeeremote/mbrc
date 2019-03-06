@@ -3,8 +3,6 @@ package com.kelsos.mbrc.networking.connections
 import androidx.lifecycle.LiveData
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ConnectionRepositoryImpl(
@@ -15,10 +13,8 @@ class ConnectionRepositoryImpl(
 ) : ConnectionRepository {
 
   init {
-    GlobalScope.launch(dispatchers.disk) {
-      default?.let {
-        defaultSettingsLiveDataProvider.update(it)
-      }
+    default?.let {
+      defaultSettingsLiveDataProvider.update(it)
     }
   }
 
@@ -33,7 +29,7 @@ class ConnectionRepositoryImpl(
       if (settings.id > 0) {
         connectionDao.update(settings)
       } else {
-        connectionDao.insert(settings)
+        settings.id = connectionDao.insert(settings)
       }
 
       if (count() == 1L) {

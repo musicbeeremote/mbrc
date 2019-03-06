@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.dialogs
 
 import androidx.annotation.IntDef
 
-object OutputSelectionContract {
+object OutputSelectionCodes {
   const val CONNECTION_ERROR = 1
   const val UNKNOWN_ERROR = 2
 

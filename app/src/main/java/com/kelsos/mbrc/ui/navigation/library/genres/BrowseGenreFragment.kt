@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.extensions.linear
@@ -26,7 +27,7 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 class BrowseGenreFragment : Fragment(),
-  MenuItemSelectedListener<GenreEntity>,
+  MenuItemSelectedListener<Genre>,
   OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
@@ -69,10 +70,9 @@ class BrowseGenreFragment : Fragment(),
     viewModel.indexes.nonNullObserver(this) {
       adapter.setIndexes(it)
     }
-
   }
 
-  override fun onMenuItemSelected(action: String, item: GenreEntity) {
+  override fun onMenuItemSelected(action: String, item: Genre) {
     if (action == PROFILE) {
       onItemClicked(item)
       return
@@ -80,7 +80,7 @@ class BrowseGenreFragment : Fragment(),
     actionHandler.genreSelected(action, item)
   }
 
-  override fun onItemClicked(item: GenreEntity) {
+  override fun onItemClicked(item: Genre) {
     val args = GenreArtistsFragmentArgs.Builder(item.genre).build()
     view?.run {
       findNavController().navigate(R.id.genre_artists_fragment, args.toBundle())

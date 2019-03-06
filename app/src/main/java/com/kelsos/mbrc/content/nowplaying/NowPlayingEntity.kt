@@ -11,15 +11,15 @@ import androidx.room.PrimaryKey
 )
 data class NowPlayingEntity(
   @ColumnInfo(name = "title")
-  override var title: String = "",
+  var title: String = "",
   @ColumnInfo(name = "artist")
-  override var artist: String = "",
+  var artist: String = "",
   @ColumnInfo(name = "path")
-  override var path: String = "",
+  var path: String = "",
   @ColumnInfo(name = "position")
-  override var position: Int = 0,
+  var position: Int = 0,
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  override var id: Long = 0
-) : NowPlaying
+  var id: Long = 0
+)

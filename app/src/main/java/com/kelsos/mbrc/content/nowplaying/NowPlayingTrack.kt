@@ -3,17 +3,16 @@ package com.kelsos.mbrc.content.nowplaying
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-
 @JsonClass(generateAdapter = true)
 data class NowPlayingTrack(
-  @Json(name="artist")
+  @Json(name = "artist")
   val artist: String,
-  @Json(name="album")
+  @Json(name = "album")
   val album: String,
-  @Json(name="title")
+  @Json(name = "title")
   val title: String,
-  @Json(name="year")
+  @Json(name = "year")
   val year: String,
-  @Json(name="path")
+  @Json(name = "path")
   val path: String
 )

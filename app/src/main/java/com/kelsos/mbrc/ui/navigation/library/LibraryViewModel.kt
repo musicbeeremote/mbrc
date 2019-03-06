@@ -22,7 +22,7 @@ class LibraryViewModel(
 
   fun refresh() {
     networkScope.launch {
-      librarySyncUseCase.sync()
+      val syncResult = librarySyncUseCase.sync()
     }
   }
 
@@ -34,5 +34,4 @@ class LibraryViewModel(
     viewModelJob.cancel()
     super.onCleared()
   }
-
 }

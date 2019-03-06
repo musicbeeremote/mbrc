@@ -18,7 +18,6 @@ import java.net.MulticastSocket
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-
 class RemoteServiceDiscoveryImpl
 
 internal constructor(
@@ -147,7 +146,6 @@ internal constructor(
             )
           )
         }
-
       } catch (e: IOException) {
         Timber.v(e, "Failed to open multicast socket")
         throw e
@@ -158,7 +156,6 @@ internal constructor(
     private const val NOTIFY = "notify"
     private const val SO_TIMEOUT = 15 * 1000
     private const val MULTICAST_PORT = 45345
-    private const val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
+    private const val DISCOVERY_ADDRESS = "239.1.5.10" // NOPMD
   }
 }
-

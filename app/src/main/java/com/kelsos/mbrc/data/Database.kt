@@ -2,9 +2,9 @@ package com.kelsos.mbrc.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.kelsos.mbrc.data.Database.Companion.VERSION
 import com.kelsos.mbrc.content.library.albums.AlbumDao
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
+import com.kelsos.mbrc.content.library.albums.AlbumView
 import com.kelsos.mbrc.content.library.artists.ArtistDao
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.genres.GenreDao
@@ -17,6 +17,7 @@ import com.kelsos.mbrc.content.playlists.PlaylistDao
 import com.kelsos.mbrc.content.playlists.PlaylistEntity
 import com.kelsos.mbrc.content.radios.RadioStationDao
 import com.kelsos.mbrc.content.radios.RadioStationEntity
+import com.kelsos.mbrc.data.Database.Companion.VERSION
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 
@@ -30,7 +31,11 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
     PlaylistEntity::class,
     RadioStationEntity::class,
     ConnectionSettingsEntity::class
-  ], version = VERSION
+  ],
+  views = [
+    AlbumView::class
+  ],
+  version = VERSION
 )
 abstract class Database : RoomDatabase() {
 
@@ -51,7 +56,6 @@ abstract class Database : RoomDatabase() {
   abstract fun connectionDao(): ConnectionDao
 
   companion object {
-    const val VERSION = 5
+    const val VERSION = 1
   }
 }
-

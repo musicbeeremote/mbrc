@@ -27,7 +27,6 @@ import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-
 class NowPlayingFragment : Fragment(),
   OnQueryTextListener,
   OnStartDragListener,
@@ -116,7 +115,6 @@ class NowPlayingFragment : Fragment(),
     }
     adapter.setListener(this)
     swipeRefreshLayout.setOnRefreshListener { this.refresh() }
-
 
     viewModel.playingTrack.observe(this) {
       adapter.setPlayingTrack(it.path)

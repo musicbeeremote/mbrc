@@ -19,7 +19,6 @@ class MediaIntentHandler(
   fun handleMediaIntent(mediaIntent: Intent?): Boolean {
     var result = false
 
-
     val intent = mediaIntent ?: return false
 
     val action = intent.action

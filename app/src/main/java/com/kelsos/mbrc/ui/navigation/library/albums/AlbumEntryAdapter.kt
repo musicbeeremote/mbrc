@@ -9,7 +9,6 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 
-
 class AlbumEntryAdapter
 
   : FastScrollableAdapter<AlbumEntity, AlbumViewHolder>(DIFF_CALLBACK) {

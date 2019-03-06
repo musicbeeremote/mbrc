@@ -9,7 +9,6 @@ import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveRespon
 import com.kelsos.mbrc.networking.protocol.responses.Position
 import com.squareup.moshi.Moshi
 
-
 class UpdateNowPlayingTrackMoved
 
 constructor(
@@ -20,7 +19,7 @@ constructor(
     val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
     val response = adapter.fromJsonValue(message.data)
 
-    //bus.post(TrackMovedEvent(response.from, response.to, response.success))
+    // bus.post(TrackMovedEvent(response.from, response.to, response.success))
   }
 }
 
@@ -32,7 +31,7 @@ constructor(
   override fun execute(message: ProtocolMessage) {
     val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
     val response = adapter.fromJsonValue(message.data)
-    //bus.post(TrackRemovalEvent(response.index, response.success))
+    // bus.post(TrackRemovalEvent(response.index, response.success))
   }
 }
 

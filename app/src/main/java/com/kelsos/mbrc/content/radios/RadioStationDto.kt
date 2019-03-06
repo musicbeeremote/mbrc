@@ -5,8 +5,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class RadioStationDto(
-  @Json(name="name")
+  @Json(name = "name")
   var name: String = "",
-  @Json(name="url")
+  @Json(name = "url")
   var url: String = ""
 )

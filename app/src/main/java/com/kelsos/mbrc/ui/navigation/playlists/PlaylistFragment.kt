@@ -21,7 +21,6 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 import java.net.ConnectException
 
-
 class PlaylistFragment : Fragment(),
   OnPlaylistPressedListener,
   OnRefreshListener {
@@ -50,7 +49,6 @@ class PlaylistFragment : Fragment(),
     playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener(this)
     emptyViewTitle.setText(R.string.playlists_list_empty)
-
   }
 
   override fun playlistPressed(path: String) {

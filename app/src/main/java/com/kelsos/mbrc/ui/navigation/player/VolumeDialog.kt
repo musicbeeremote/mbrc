@@ -22,7 +22,6 @@ class VolumeDialog : DialogFragment() {
     return AlertDialog.Builder(requireContext())
       .setView(databinding.root)
       .setOnDismissListener {
-
       }
       .create().also {
         viewModel.playerStatus.observe(this@VolumeDialog) {

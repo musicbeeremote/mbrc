@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -21,14 +20,12 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.extensions.linear
-import com.kelsos.mbrc.ui.dialogs.SortingDialog
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksFragmentArgs
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
-
 
 class BrowseAlbumFragment : Fragment(),
   MenuItemSelectedListener<AlbumEntity>,
@@ -64,20 +61,6 @@ class BrowseAlbumFragment : Fragment(),
     super.onCreateOptionsMenu(menu, inflater)
   }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == R.id.browse_album__sort_albums) {
-      presenter.showSorting()
-      return true
-    }
-    return super.onOptionsItemSelected(item)
-  }
-
-  fun showSorting(order: Int, selection: Int) {
-    with(requireFragmentManager()) {
-      SortingDialog.create(this, selection, order, presenter::order, presenter::sortBy).show()
-    }
-  }
-
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     swipeLayout.setOnRefreshListener(this)
@@ -106,7 +89,7 @@ class BrowseAlbumFragment : Fragment(),
       swipeLayout.isRefreshing = true
     }
 
-    //presenter.refresh()
+    // presenter.refresh()
   }
 
   fun update(pagedList: PagedList<AlbumEntity>) {

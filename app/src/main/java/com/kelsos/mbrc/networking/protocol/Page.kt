@@ -6,12 +6,12 @@ import java.util.ArrayList
 
 @JsonClass(generateAdapter = true)
 class Page<T> {
-  @Json(name="total")
+  @Json(name = "total")
   var total: Int = 0
-  @Json(name="offset")
+  @Json(name = "offset")
   var offset: Int = 0
-  @Json(name="limit")
+  @Json(name = "limit")
   var limit: Int = 0
-  @Json(name="data")
+  @Json(name = "data")
   var data: List<T> = ArrayList()
 }

@@ -1,13 +1,15 @@
 package com.kelsos.mbrc
 
-import com.github.anrwatchdog.ANRError
+import com.kelsos.mbrc.metrics.DummySyncMetrics
+import com.kelsos.mbrc.metrics.SyncMetrics
+import org.koin.dsl.module.Module
+import org.koin.dsl.module.module
 
 open class FlavorApp : App() {
-  override fun onCreate() {
-    super.onCreate()
-  }
 
-  override fun onAnr(anrError: ANRError?) {
-    super.onAnr(anrError)
+  override fun modules(): List<Module> {
+    return super.modules().plus(module {
+      single<SyncMetrics> { DummySyncMetrics() }
+    })
   }
 }

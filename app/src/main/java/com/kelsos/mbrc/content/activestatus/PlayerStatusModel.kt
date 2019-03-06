@@ -24,5 +24,4 @@ data class PlayerStatusModel(
   fun isRepeatOne(): Boolean = repeat == Repeat.ONE
 
   fun isPlaying(): Boolean = state == PlayerState.PLAYING
-
 }

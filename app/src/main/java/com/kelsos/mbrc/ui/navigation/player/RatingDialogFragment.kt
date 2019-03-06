@@ -22,7 +22,6 @@ class RatingDialogFragment : DialogFragment() {
     return AlertDialog.Builder(requireContext())
       .setView(databinding.root)
       .setOnDismissListener {
-
       }
       .create()
       .also {

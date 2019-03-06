@@ -111,8 +111,6 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import com.kelsos.mbrc.preferences.AlbumSortingStore
-import com.kelsos.mbrc.preferences.AlbumSortingStoreImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
@@ -120,6 +118,7 @@ import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.ui.navigation.library.LibraryViewModel
+import com.kelsos.mbrc.ui.navigation.library.SyncProgressProvider
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
 import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumViewModel
 import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksViewModel
@@ -146,8 +145,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
+import org.koin.experimental.builder.create
 import java.util.concurrent.Executors
-
 
 val appModule = module {
   single { Moshi.Builder().build() }
@@ -164,10 +163,7 @@ val appModule = module {
   single<NowPlayingRepository> { NowPlayingRepositoryImpl(get(), get(), get()) }
   single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(), get()) }
 
-  single<AlbumSortingStore> { AlbumSortingStoreImpl(get()) }
-
   single<MessageSerializer> { MessageSerializerImpl(get()) }
-
 
   single<SerializationAdapter> { SerializationAdapterImpl(get()) }
   single<DeserializationAdapter> { DeserializationAdapterImpl(get()) }
@@ -183,7 +179,7 @@ val appModule = module {
   single<ServiceChecker> { ServiceCheckerImpl(get(), get()) }
 
   single<LibrarySyncUseCase> {
-    LibrarySyncUseCaseImpl(get(), get(), get(), get(), get(), get(), get())
+    create<LibrarySyncUseCaseImpl>()
   }
 
   single<RadioRepository> { RadioRepositoryImpl(get(), get(), get()) }
@@ -191,8 +187,7 @@ val appModule = module {
   single<VolumeInteractor> { VolumeInteractorImpl(get(), get()) }
   single<OutputApi> { OutputApiImpl(get()) }
 
-
-  //bindInstance { SyncProgressProvider() }
+  single { SyncProgressProvider() }
 
   single<PlayingTrackLiveDataProvider> { PlayingTrackLiveDataProviderImpl(get(), get()) }
   single<PlayerStatusLiveDataProvider> { PlayerStatusLiveDataProviderImpl() }
@@ -259,7 +254,6 @@ val appModule = module {
   single { get<Database>().radioStationDao() }
   single { get<Database>().connectionDao() }
 
-
   single { UpdateNowPlayingTrack(get(), get(), get()) }
   single { UpdateCover(get(), get(), get(), get(), get(), get()) }
   single { UpdateRating(get()) }
@@ -295,7 +289,7 @@ val uiModule = module {
   viewModel { AlbumTracksViewModel(get()) }
   viewModel { ConnectionManagerViewModel(get(), get(), get()) }
   viewModel { PlayerViewModel(get(), get(), get(), get(), get(), get(), get()) }
-  viewModel { BrowseAlbumViewModel(get(), get(), get()) }
+  viewModel { BrowseAlbumViewModel(get(), get()) }
   viewModel { BrowseGenreViewModel(get(), get()) }
   viewModel { BrowseArtistViewModel(get(), get(), get()) }
   viewModel { BrowseTrackViewModel(get(), get()) }
@@ -303,9 +297,9 @@ val uiModule = module {
   viewModel { LyricsViewModel(get()) }
   viewModel { RadioViewModel(get(), get(), get()) }
   viewModel { NowPlayingViewModel(get(), get(), get(), get(), get()) }
-  viewModel { LibraryViewModel(get(), get(), get(), get()) }
+  viewModel { create<LibraryViewModel>() }
 
-  viewModel { VolumeDialogViewModel(get(), get(), get()) }
+  viewModel { create<VolumeDialogViewModel>() }
 
   factory { RadioAdapter() }
   factory { GenreEntryAdapter() }

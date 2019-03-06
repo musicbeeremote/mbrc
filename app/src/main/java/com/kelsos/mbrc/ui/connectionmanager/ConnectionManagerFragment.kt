@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
@@ -16,7 +17,6 @@ import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
-
 
 class ConnectionManagerFragment : Fragment(),
   SettingsDialogFragment.SettingsSaveListener,
@@ -34,7 +34,7 @@ class ConnectionManagerFragment : Fragment(),
 
   private fun onAddButtonClick() {
     val settingsDialog = SettingsDialogFragment.create(requireFragmentManager())
-    settingsDialog.show()
+    settingsDialog.show(this)
   }
 
   private fun onScanButtonClick() {
@@ -67,7 +67,6 @@ class ConnectionManagerFragment : Fragment(),
     connectionManagerViewModel.settings.nonNullObserver(this) {
       adapter.submitList(it)
     }
-
   }
 
   override fun onSave(settings: ConnectionSettingsEntity) {
@@ -86,8 +85,7 @@ class ConnectionManagerFragment : Fragment(),
       else -> getString(R.string.unknown_reason)
     }
 
-    com.google.android.material.snackbar.Snackbar.make(recyclerView, message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
-
+    Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettingsEntity) {
@@ -96,7 +94,7 @@ class ConnectionManagerFragment : Fragment(),
 
   override fun onEdit(settings: ConnectionSettingsEntity) {
     val settingsDialog = SettingsDialogFragment.newInstance(settings, requireFragmentManager())
-    settingsDialog.show()
+    settingsDialog.show(this)
   }
 
   override fun onDefault(settings: ConnectionSettingsEntity) {

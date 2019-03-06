@@ -17,7 +17,6 @@ import java.net.Socket
 import java.net.SocketException
 import java.nio.charset.Charset
 
-
 class RequestManagerImpl
 
 constructor(
@@ -52,7 +51,6 @@ constructor(
       }
     }
 
-
     return ActiveConnection(socket, bufferedReader, handshake)
   }
 
@@ -77,11 +75,9 @@ constructor(
         }
 
         it.onSuccess(line)
-
       } catch (ex: SocketException) {
         it.tryOnError(ex)
       }
-
     }
   }
 
@@ -107,11 +103,7 @@ constructor(
     return (serializationAdapter.stringify(this) + "\r\n").toByteArray()
   }
 
-
   private fun Socket.send(socketMessage: SocketMessage) {
     this.outputStream.write(socketMessage.getBytes())
   }
-
-
 }
-

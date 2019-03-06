@@ -10,7 +10,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.SeekBar
 import androidx.appcompat.widget.AppCompatSeekBar
 
-
 class SizableSeekBar
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null) :
@@ -104,5 +103,3 @@ constructor(context: Context, attrs: AttributeSet? = null) :
     private const val maxThumbSizeRatio = 2.0f
   }
 }
-
-

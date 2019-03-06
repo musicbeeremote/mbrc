@@ -1,9 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-  <item
-      android:id="@+id/browse_album__sort_albums"
-      android:icon="@drawable/ic_sort_black_24dp"
-      android:title="@string/browse_album__sort"
-      app:showAsAction="ifRoom"/>
+<menu>
 </menu>

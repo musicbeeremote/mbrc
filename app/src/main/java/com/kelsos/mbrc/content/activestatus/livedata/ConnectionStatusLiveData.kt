@@ -4,7 +4,6 @@ import com.kelsos.mbrc.networking.connections.Connection.ACTIVE
 import com.kelsos.mbrc.networking.connections.Connection.ON
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 
-
 interface ConnectionStatusLiveDataProvider : LiveDataProvider<ConnectionStatus> {
   fun connected()
 
@@ -13,7 +12,8 @@ interface ConnectionStatusLiveDataProvider : LiveDataProvider<ConnectionStatus> 
   fun disconnected()
 }
 
-class ConnectionStatusLiveDataProviderImpl : ConnectionStatusLiveDataProvider, BaseLiveDataProvider<ConnectionStatus>() {
+class ConnectionStatusLiveDataProviderImpl : ConnectionStatusLiveDataProvider,
+  BaseLiveDataProvider<ConnectionStatus>() {
   init {
     update(ConnectionStatus())
   }

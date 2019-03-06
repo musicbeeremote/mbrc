@@ -19,6 +19,5 @@ class AlbumTracksViewModel(
     } else {
       repository.getAlbumTracks(album.album, album.artist)
     }
-
   }
 }

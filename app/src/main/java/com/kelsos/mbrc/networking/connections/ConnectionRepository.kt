@@ -14,5 +14,4 @@ interface ConnectionRepository {
   fun count(): Long
 
   val defaultId: Long
-
 }

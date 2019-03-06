@@ -19,7 +19,6 @@ fun Context.getDimens(): Int {
   }
 }
 
-
 fun Context.coloredSpan(@StringRes resId: Int, @ColorRes colorResId: Int): SpannedString {
   return buildSpannedString {
     color(ContextCompat.getColor(this@coloredSpan, colorResId)) {

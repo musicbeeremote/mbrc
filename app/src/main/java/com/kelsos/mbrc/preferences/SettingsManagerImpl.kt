@@ -13,7 +13,7 @@ import com.kelsos.mbrc.preferences.SettingsManager.Companion.REDUCE
 import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.Single
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 
 class SettingsManagerImpl(
   private val context: Application,

@@ -54,7 +54,5 @@ class MessageQueueImpl : MessageQueue {
         Timber.d(e, "Failed to execute command")
       }
     }
-
-
   }
 }

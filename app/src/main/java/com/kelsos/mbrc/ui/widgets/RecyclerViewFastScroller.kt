@@ -17,6 +17,7 @@ import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 
@@ -160,7 +161,8 @@ class RecyclerViewFastScroller : LinearLayout {
     }
 
     val targetPos = getValueInRange(0, itemCount - 1, (proportion * itemCount.toFloat()).toInt())
-    (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(
+    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+    layoutManager.scrollToPositionWithOffset(
       targetPos,
       0
     )

@@ -8,9 +8,7 @@ import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
 import timber.log.Timber
 
-
-class ProtocolPingHandle
- constructor(
+class ProtocolPingHandle(
   private val messageQueue: MessageQueue,
   private var activityChecker: SocketActivityChecker
 ) : ICommand {

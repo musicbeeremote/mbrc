@@ -18,7 +18,6 @@ import com.kelsos.mbrc.extensions.snackbar
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-
 class LibraryFragment : Fragment(),
   OnQueryTextListener,
   OnPageChangeListener {
@@ -39,8 +38,8 @@ class LibraryFragment : Fragment(),
     if (!query.isEmpty() && query.trim { it <= ' ' }.isNotEmpty()) {
       closeSearch()
 
-      //SearchResultsActivity.start(this, query.trim { it <= ' ' })
-      //navigate
+      // SearchResultsActivity.start(this, query.trim { it <= ' ' })
+      // navigate
     }
 
     return true
@@ -83,7 +82,6 @@ class LibraryFragment : Fragment(),
 
     tabs.setupWithViewPager(pager)
   }
-
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)

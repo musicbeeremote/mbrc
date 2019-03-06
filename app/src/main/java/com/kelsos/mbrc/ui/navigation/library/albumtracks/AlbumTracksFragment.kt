@@ -19,13 +19,12 @@ import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-
 class AlbumTracksFragment : Fragment(), MenuItemSelectedListener<TrackEntity> {
 
   private val listTracks: RecyclerView by bindView(R.id.album_tracks__track_list)
   private val emptyView: Group by bindView(R.id.album_tracks__empty_view)
   private val playAlbum: FloatingActionButton by bindView(R.id.play_album)
-  
+
   private val adapter: TrackEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val presenter: AlbumTracksViewModel by inject()
@@ -45,7 +44,6 @@ class AlbumTracksFragment : Fragment(), MenuItemSelectedListener<TrackEntity> {
     adapter.setMenuItemSelectedListener(this)
     listTracks.layoutManager = LinearLayoutManager(requireContext())
     listTracks.adapter = adapter
-
 
     presenter.load(album)
   }

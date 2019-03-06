@@ -6,7 +6,6 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 
-
 class RatingDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
   val trackRatingLiveDataProvider: TrackRatingLiveDataProvider

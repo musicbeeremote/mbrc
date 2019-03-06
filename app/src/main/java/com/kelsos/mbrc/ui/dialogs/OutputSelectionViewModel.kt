@@ -38,14 +38,14 @@ class OutputSelectionViewModel(
 //      }
   }
 
-  @OutputSelectionContract.Code
+  @OutputSelectionCodes.Code
   private fun code(throwable: Throwable?): Int {
     val cause = throwable?.cause ?: throwable
 
     return when (cause) {
-      is SocketException -> OutputSelectionContract.CONNECTION_ERROR
-      is SocketTimeoutException -> OutputSelectionContract.CONNECTION_ERROR
-      else -> OutputSelectionContract.UNKNOWN_ERROR
+      is SocketException -> OutputSelectionCodes.CONNECTION_ERROR
+      is SocketTimeoutException -> OutputSelectionCodes.CONNECTION_ERROR
+      else -> OutputSelectionCodes.UNKNOWN_ERROR
     }
   }
 }

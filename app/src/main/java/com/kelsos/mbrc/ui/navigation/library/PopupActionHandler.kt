@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import com.kelsos.mbrc.content.library.albums.AlbumEntity
-import com.kelsos.mbrc.content.library.artists.ArtistEntity
-import com.kelsos.mbrc.content.library.genres.GenreEntity
-import com.kelsos.mbrc.content.library.tracks.TrackEntity
+import com.kelsos.mbrc.content.library.albums.Album
+import com.kelsos.mbrc.content.library.artists.Artist
+import com.kelsos.mbrc.content.library.genres.Genre
+import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
@@ -19,7 +19,7 @@ class PopupActionHandler(
 
   fun albumSelected(
     @Action action: String,
-    entry: AlbumEntity,
+    entry: Album,
     result: (success: Boolean) -> Unit = {}
   ) {
     require(action != PROFILE) { "action should not be profile" }
@@ -27,7 +27,7 @@ class PopupActionHandler(
   }
 
   private fun queueAlbum(
-    entry: AlbumEntity,
+    entry: Album,
     @Action type: String,
     result: (success: Boolean) -> Unit
   ) {
@@ -37,42 +37,42 @@ class PopupActionHandler(
 
   fun artistSelected(
     @Action action: String,
-    entry: ArtistEntity,
+    entry: Artist,
     result: (success: Boolean) -> Unit = {}
   ) {
     require(action != PROFILE) { "action should not be profile" }
     queueArtist(entry, action, result)
   }
 
-  private fun queueArtist(entry: ArtistEntity, type: String, result: (success: Boolean) -> Unit) {
+  private fun queueArtist(entry: Artist, type: String, result: (success: Boolean) -> Unit) {
     val paths = trackRepository.getArtistTrackPaths(artist = entry.artist)
     queueApi.queue(type, paths)
   }
 
   fun genreSelected(
     @Action action: String,
-    entry: GenreEntity,
+    entry: Genre,
     result: (success: Boolean) -> Unit = {}
   ) {
     require(action != PROFILE) { "action should not be profile" }
     queueGenre(entry, action, result)
   }
 
-  private fun queueGenre(entry: GenreEntity, type: String, result: (success: Boolean) -> Unit) {
+  private fun queueGenre(entry: Genre, type: String, result: (success: Boolean) -> Unit) {
     val paths = trackRepository.getGenreTrackPaths(genre = entry.genre)
     queueApi.queue(type, paths)
   }
 
-  //todo album detection -> queue album tracks
+  // todo album detection -> queue album tracks
   fun trackSelected(
     @Action action: String,
-    entry: TrackEntity,
+    entry: Track,
     album: Boolean = false
   ) {
     queueTrack(entry, action, album)
   }
 
-  private fun queueTrack(entry: TrackEntity, @Action type: String, album: Boolean = false) {
+  private fun queueTrack(entry: Track, @Action type: String, album: Boolean = false) {
 
     val paths: List<String>
     val path: String?
@@ -92,7 +92,7 @@ class PopupActionHandler(
     queueApi.queue(type, paths, path)
   }
 
-  fun trackSelected(track: TrackEntity, album: Boolean = false) {
+  fun trackSelected(track: Track, album: Boolean = false) {
     queueTrack(track, settings.defaultAction, album)
   }
 }

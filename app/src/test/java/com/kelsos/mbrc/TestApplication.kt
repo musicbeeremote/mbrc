@@ -1,11 +1,10 @@
 package com.kelsos.mbrc
 
+import android.app.Application
 import org.robolectric.TestLifecycleApplication
 import java.lang.reflect.Method
 
-class TestApplication : App(), TestLifecycleApplication {
-
-  override fun testMode(): Boolean = true
+class TestApplication : Application(), TestLifecycleApplication {
 
   override fun beforeTest(method: Method?) {
   }

@@ -17,7 +17,6 @@ import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class NowPlayingViewModel(
@@ -28,12 +27,11 @@ class NowPlayingViewModel(
   private val userActionUseCase: UserActionUseCase
 ) : ViewModel() {
 
-
   private val viewModelJob: Job = Job()
   private val networkScope: CoroutineScope = CoroutineScope(dispatchers.network + viewModelJob)
   private val eventStream: MutableLiveData<Event<Int>> = MutableLiveData()
 
-  val nowPlayingTracks: LiveData<PagedList<NowPlayingEntity>> = runBlocking { repository.getAll() }.paged()
+  val nowPlayingTracks: LiveData<PagedList<NowPlayingEntity>> = repository.getAll().paged()
   val events: LiveData<Event<Int>>
     get() = eventStream
 
@@ -43,7 +41,6 @@ class NowPlayingViewModel(
       userActionUseCase.perform(UserAction(Protocol.NowPlayingListMove, data))
     }
   }
-
 
   fun refresh() {
     networkScope.launch {
@@ -57,10 +54,8 @@ class NowPlayingViewModel(
     }
   }
 
-
   fun search(query: String) {
     // todo: drop and upgrade to do this locally,
-
   }
 
   fun moveTrack(from: Int, to: Int) {

@@ -4,9 +4,7 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Intent
 
-
-class ServiceCheckerImpl
- constructor(
+class ServiceCheckerImpl(
   private val manager: ActivityManager,
   private val application: Application
 ) : ServiceChecker {

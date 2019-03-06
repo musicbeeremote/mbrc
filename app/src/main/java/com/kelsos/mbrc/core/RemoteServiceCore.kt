@@ -1,16 +1,18 @@
 package com.kelsos.mbrc.core
 
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.livedata.*
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
 
-
 class RemoteServiceCore
-
 constructor(
   private val discovery: ServiceDiscoveryUseCase,
   private val clientConnectionManager: IClientConnectionManager,
@@ -21,7 +23,6 @@ constructor(
   private val positionLiveDataProvider: TrackPositionLiveDataProvider,
   private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider
 ) : IRemoteServiceCore, LifeCycleAwareService() {
-
 
   init {
     defaultSettingsLiveDataProvider.observe(this) {
@@ -75,6 +76,5 @@ constructor(
     this.action = action
   }
 }
-
 
 typealias SyncStartAction = () -> Unit

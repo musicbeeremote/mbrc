@@ -4,7 +4,6 @@ import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import timber.log.Timber
 
-
 class SyncMetricsImpl : SyncMetrics {
 
   private val traces = HashMap<String, Trace>()

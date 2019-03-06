@@ -81,7 +81,6 @@ fun <V : View> Activity.bindOptionalViews(vararg ids: Int):
 fun <V : View> Dialog.bindOptionalViews(vararg ids: Int):
   ReadOnlyProperty<Dialog, List<V>> = optional(ids, viewFinder)
 
-
 fun <V : View> SupportDialogFragment.bindOptionalViews(vararg ids: Int):
   ReadOnlyProperty<SupportDialogFragment, List<V>> = optional(ids, viewFinder)
 

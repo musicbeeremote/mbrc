@@ -7,7 +7,6 @@ import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 
-
 class GenreArtistsViewModel(
   private val repository: ArtistRepository,
   private val appRxSchedulers: AppRxSchedulers

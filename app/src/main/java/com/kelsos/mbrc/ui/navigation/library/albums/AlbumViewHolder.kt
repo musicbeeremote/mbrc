@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +36,6 @@ class AlbumViewHolder(
     val artist = item.artist
     this.album.text = if (title.isBlank()) emptyAlbum else title
     this.artist.text = if (artist.isBlank()) unknownArtist else artist
-
   }
 
   override fun clear() {

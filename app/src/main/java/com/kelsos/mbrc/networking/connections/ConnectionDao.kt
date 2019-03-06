@@ -1,13 +1,18 @@
 package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface ConnectionDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun insert(settings: ConnectionSettingsEntity)
+  fun insert(settings: ConnectionSettingsEntity): Long
 
   @Delete
   fun delete(settings: ConnectionSettingsEntity)

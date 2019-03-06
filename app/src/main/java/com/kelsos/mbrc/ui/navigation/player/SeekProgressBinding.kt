@@ -4,7 +4,6 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.databinding.BindingAdapter
 
-
 @BindingAdapter(
   value = ["onProgressChangeByUser"]
 )

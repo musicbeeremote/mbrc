@@ -24,7 +24,6 @@ class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
   ),
   ItemTouchHelperAdapter {
 
-
   private var currentTrack = ""
   private var playingTrackIndex = -1
 
@@ -35,7 +34,7 @@ class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
   fun setPlayingTrack(path: String) {
     this.currentTrack = path
 
-    //todo notify range change with paylaod
+    // todo notify range change with paylaod
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NowPlayingTrackViewHolder {
@@ -59,7 +58,6 @@ class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
         }
       }
     }
-
   }
 
   override fun onItemMove(from: Int, to: Int): Boolean {
@@ -77,7 +75,7 @@ class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
     val nowPlaying = getItem(position)
 
     nowPlaying?.let {
-      //it.delete()
+      // it.delete()
       notifyItemRemoved(position)
       listener?.onDismiss(position)
     }

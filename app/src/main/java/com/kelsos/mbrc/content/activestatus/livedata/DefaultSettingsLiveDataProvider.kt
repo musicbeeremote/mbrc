@@ -6,7 +6,6 @@ import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.WeakHashMap
 
-
 interface DefaultSettingsLiveDataProvider {
 
   fun observe(obj: Any, onSettings: OnDefaultConnectionChanged)
