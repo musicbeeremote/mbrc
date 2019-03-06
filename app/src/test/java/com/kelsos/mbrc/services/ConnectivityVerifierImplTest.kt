@@ -5,6 +5,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
@@ -18,15 +20,20 @@ import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
+import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.ClientInformationStore
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.utils.testDispatcherModule
 import com.squareup.moshi.Moshi
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -50,26 +57,34 @@ import java.util.concurrent.Executors
 @RunWith(AndroidJUnit4::class)
 class ConnectivityVerifierImplTest : KoinTest {
 
-  private val connectionRepository: ConnectionRepository = mockk()
-  private val testDispatcher = TestCoroutineDispatcher()
-  private val moshi = Moshi.Builder().build()
-  private val adapter = moshi.adapter(SocketMessage::class.java)
   private val port: Int = 46000
 
   private val verifier: ConnectivityVerifier by inject()
   lateinit var db: Database
   lateinit var dao: ConnectionDao
   private val informationStore: ClientInformationStore = mockk()
+  private val connectionRepository: ConnectionRepository = mockk()
+  private val moshi: Moshi by inject()
 
   @Before
   fun setUp() {
+    Dispatchers.setMain(testDispatcher)
     val context = ApplicationProvider.getApplicationContext<Context>()
-    db = Room.inMemoryDatabaseBuilder(context, Database::class.java).build()
+    db = Room.inMemoryDatabaseBuilder(context, Database::class.java)
+      .allowMainThreadQueries()
+      .build()
     dao = db.connectionDao()
     every { informationStore.getClientId() } returns "abc"
     startKoin {
-      modules(testModule)
+      modules(listOf(testModule, testDispatcherModule))
     }
+  }
+
+  @After
+  fun tearDown() {
+    db.close()
+    stopKoin()
+    Dispatchers.resetMain()
   }
 
   private fun startMockServer(
@@ -80,6 +95,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     val random = Random()
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
     val server = ServerSocket(port + random.nextInt(1000))
+    val adapter = moshi.adapter(SocketMessage::class.java)
     val mockSocket = Runnable {
       server.soTimeout = 3000
 
@@ -126,14 +142,8 @@ class ConnectivityVerifierImplTest : KoinTest {
     return server
   }
 
-  @After
-  fun tearDown() {
-    db.close()
-    stopKoin()
-  }
-
   @Test
-  fun testSuccessfulVerification() = testDispatcher.runBlockingTest {
+  fun testSuccessfulVerification() = runBlockingTest(testDispatcher) {
     val server = startMockServer()
 
     coEvery { connectionRepository.getDefault() } answers {
@@ -147,7 +157,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   @Test
-  fun testPrematureDisconnectDuringVerification() = testDispatcher.runBlockingTest {
+  fun testPrematureDisconnectDuringVerification() = runBlockingTest(testDispatcher) {
     val server = startMockServer(true)
     coEvery { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettingsEntity()
@@ -165,7 +175,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   @Test
-  fun testInvalidPluginResponseVerification() = testDispatcher.runBlockingTest {
+  fun testInvalidPluginResponseVerification() = runBlockingTest(testDispatcher) {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
     coEvery { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettingsEntity()
@@ -183,7 +193,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   @Test
-  fun testVerificationNoConnection() = testDispatcher.runBlockingTest {
+  fun testVerificationNoConnection() = runBlockingTest(testDispatcher) {
     startMockServer(true)
 
     coEvery { connectionRepository.getDefault() } answers {
@@ -199,7 +209,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   @Test
-  fun testVerificationNoJsonPayload() = testDispatcher.runBlockingTest {
+  fun testVerificationNoJsonPayload() = runBlockingTest(testDispatcher) {
     startMockServer(false, "payload", false)
 
     coEvery { connectionRepository.getDefault() } answers {
@@ -214,22 +224,16 @@ class ConnectivityVerifierImplTest : KoinTest {
     }
   }
 
-  val testModule = module {
+  private val testModule = module {
     single { Moshi.Builder().build() }
     single { connectionRepository }
     single { informationStore }
-    single {
-      AppCoroutineDispatchers(
-        testDispatcher,
-        testDispatcher,
-        testDispatcher,
-        testDispatcher
-      )
-    }
     single { dao }
     singleBy<RequestManager, RequestManagerImpl>()
     singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
     singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
     singleBy<SerializationAdapter, SerializationAdapterImpl>()
+    singleBy<DefaultSettingsLiveDataProvider, DefaultSettingsLiveDataProviderImpl>()
+    single<DefaultSettingsModel> { DefaultSettingsModelImpl }
   }
 }

@@ -132,6 +132,7 @@ import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingViewModel
 import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
 import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
+import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter
 import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter
 import com.kelsos.mbrc.ui.navigation.radio.RadioViewModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -248,7 +249,7 @@ val appModule = module {
 
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
 
-  factoryBy<DefaultSettingsModel, DefaultSettingsModelImpl>()
+  factory<DefaultSettingsModel> { DefaultSettingsModelImpl }
   factoryBy<MoveManager, MoveManagerImpl>()
 
   factory<SocketActivityChecker>()
@@ -275,6 +276,7 @@ val uiModule = module {
   viewModel<VolumeDialogViewModel>()
 
   factory<RadioAdapter>()
+  factory<PlaylistAdapter>()
   factory<GenreEntryAdapter>()
   factory<ArtistEntryAdapter>()
   factory<AlbumEntryAdapter>()

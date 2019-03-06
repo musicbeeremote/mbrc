@@ -17,27 +17,43 @@ class GenreRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : GenreRepository {
 
-  private val mapper = GenreDtoMapper()
-
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override fun getAll(): Flow<PagingData<Genre>> = dao.getAll().paged()
+  override fun getAll(): Flow<PagingData<Genre>> = dao.getAll().paged {
+    it.toGenre()
+  }
 
   override suspend fun getRemote() {
+    val stored = dao.genres().associate { it.genre to it.id }
     withContext(dispatchers.network) {
       val added = epoch()
       api.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class)
         .onCompletion {
-          dao.removePreviousEntries(added)
+          withContext(dispatchers.database) {
+            dao.removePreviousEntries(added)
+          }
         }
         .collect { genres ->
-          val data = genres.map { mapper.map(it).apply { dateAdded = added } }
-          dao.insertAll(data)
+          val items = genres.map {
+            it.toEntity().apply {
+              dateAdded = added
+
+              val id = stored[it.genre]
+              if (id != null) {
+                this.id = id
+              }
+            }
+          }
+          withContext(dispatchers.database) {
+            dao.insertAll(items)
+          }
         }
     }
   }
 
-  override fun search(term: String): Flow<PagingData<Genre>> = dao.search(term).paged()
+  override fun search(term: String): Flow<PagingData<Genre>> = dao.search(term).paged {
+    it.toGenre()
+  }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

@@ -104,7 +104,7 @@ android {
     debug {
       applicationIdSuffix ".dev"
       versionNameSuffix "-dev"
-      testCoverageEnabled true
+      testCoverageEnabled false
 
       buildConfigField "String", "GIT_SHA", "\"debug_build\""
       buildConfigField "String", "BUILD_TIME", "\"debug_build\""

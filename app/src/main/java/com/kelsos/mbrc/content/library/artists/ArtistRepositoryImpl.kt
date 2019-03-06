@@ -17,18 +17,16 @@ class ArtistRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : ArtistRepository {
 
-  private val mapper = ArtistDtoMapper()
-
   override suspend fun count(): Long = withContext(dispatchers.database) {
     dao.count()
   }
 
-  override suspend fun getArtistByGenre(genre: String): Flow<PagingData<Artist>> =
-    withContext(dispatchers.database) {
-      dao.getArtistByGenre(genre).paged()
-    }
+  override fun getArtistByGenre(genre: String): Flow<PagingData<Artist>> =
+    dao.getArtistByGenre(genre).paged { it.toArtist() }
 
-  override fun getAll(): Flow<PagingData<Artist>> = dao.getAll().paged()
+  override fun getAll(): Flow<PagingData<Artist>> = dao.getAll().paged {
+    it.toArtist()
+  }
 
   override suspend fun getRemote() {
     withContext(dispatchers.network) {
@@ -38,17 +36,19 @@ class ArtistRepositoryImpl(
           dao.removePreviousEntries(added)
         }
         .collect { artists ->
-          val data = artists.map { mapper.map(it).apply { dateAdded = added } }
-          dao.insertAll(data)
+          val data = artists.map { it.toEntity().apply { dateAdded = added } }
+          withContext(dispatchers.database) {
+            dao.insertAll(data)
+          }
         }
     }
   }
 
   override fun search(term: String): Flow<PagingData<Artist>> =
-    dao.search(term).paged()
+    dao.search(term).paged { it.toArtist() }
 
-  override suspend fun getAlbumArtistsOnly(): Flow<PagingData<Artist>> =
-    dao.getAlbumArtists().paged()
+  override fun getAlbumArtistsOnly(): Flow<PagingData<Artist>> =
+    dao.getAlbumArtists().paged { it.toArtist() }
 
   override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) {
     dao.count() == 0L

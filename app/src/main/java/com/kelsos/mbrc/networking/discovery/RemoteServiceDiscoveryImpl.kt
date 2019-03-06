@@ -3,8 +3,8 @@ package com.kelsos.mbrc.networking.discovery
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
-import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.connections.toConnection
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
@@ -41,7 +41,6 @@ class RemoteServiceDiscoveryImpl(
 
     Timber.v("Starting remote service discovery")
 
-    val dataMapper = ConnectionMapper()
     val socket = create()
     runBlocking {
       var currentTry = 0
@@ -58,7 +57,7 @@ class RemoteServiceDiscoveryImpl(
             if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
               throw IOException("unexpected message")
             }
-            dataMapper.map(discoveryMessage)
+            discoveryMessage.toConnection()
           }
           callback(DiscoveryStop.COMPLETE, entity)
         } catch (e: Exception) {

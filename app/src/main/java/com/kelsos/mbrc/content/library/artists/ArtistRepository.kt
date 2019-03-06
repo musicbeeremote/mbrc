@@ -5,6 +5,6 @@ import com.kelsos.mbrc.interfaces.data.Repository
 import kotlinx.coroutines.flow.Flow
 
 interface ArtistRepository : Repository<Artist> {
-  suspend fun getArtistByGenre(genre: String): Flow<PagingData<Artist>>
-  suspend fun getAlbumArtistsOnly(): Flow<PagingData<Artist>>
+  fun getArtistByGenre(genre: String): Flow<PagingData<Artist>>
+  fun getAlbumArtistsOnly(): Flow<PagingData<Artist>>
 }

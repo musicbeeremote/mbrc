@@ -11,11 +11,11 @@ import androidx.room.PrimaryKey
 )
 data class PlaylistEntity(
   @ColumnInfo(name = "name")
-  override var name: String = "",
+  var name: String = "",
   @ColumnInfo(name = "url")
-  override var url: String = "",
+  var url: String = "",
   @ColumnInfo(name = "dated_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  override var id: Long = 0
-) : Playlist
+  var id: Long = 0
+)

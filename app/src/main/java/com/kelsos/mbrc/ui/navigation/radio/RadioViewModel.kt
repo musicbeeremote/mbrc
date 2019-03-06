@@ -9,7 +9,6 @@ import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class RadioViewModel(
@@ -17,17 +16,7 @@ class RadioViewModel(
   private val queue: QueueHandler,
   private val dispatchers: AppCoroutineDispatchers
 ) : ViewModel() {
-
-  private var _radios: Flow<PagingData<RadioStation>> = flow { }
-
-  init {
-    viewModelScope.launch {
-      _radios = radioRepository.getAll().cachedIn(viewModelScope)
-    }
-  }
-
-  val radios: Flow<PagingData<RadioStation>>
-    get() = _radios
+  val radios: Flow<PagingData<RadioStation>> = radioRepository.getAll().cachedIn(viewModelScope)
 
   fun refresh() {
     viewModelScope.launch(dispatchers.network) {

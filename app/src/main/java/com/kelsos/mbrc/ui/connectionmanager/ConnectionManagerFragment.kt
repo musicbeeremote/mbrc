@@ -25,7 +25,7 @@ class ConnectionManagerFragment :
   private val binding get() = _binding!!
 
   private fun onAddButtonClick() {
-    SettingsDialogFragment.create(parentFragmentManager).show()
+    SettingsDialogFragment.create(parentFragmentManager).show(this)
   }
 
   private fun onScanButtonClick() {
@@ -71,7 +71,7 @@ class ConnectionManagerFragment :
 
   override fun onEdit(settings: ConnectionSettingsEntity) {
     val settingsDialog = SettingsDialogFragment.newInstance(settings, parentFragmentManager)
-    settingsDialog.show()
+    settingsDialog.show(this)
   }
 
   override fun onDefault(settings: ConnectionSettingsEntity) {

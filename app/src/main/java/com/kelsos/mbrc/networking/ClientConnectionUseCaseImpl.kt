@@ -4,8 +4,7 @@ import com.kelsos.mbrc.networking.client.IClientConnectionManager
 
 class ClientConnectionUseCaseImpl(
   private val connectionManager: IClientConnectionManager
-) :
-  ClientConnectionUseCase {
+) : ClientConnectionUseCase {
   override fun connect() {
     connectionManager.stop()
     connectionManager.start()

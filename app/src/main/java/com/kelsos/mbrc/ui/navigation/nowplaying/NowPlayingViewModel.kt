@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
@@ -25,9 +26,9 @@ class NowPlayingViewModel(
   private val dispatchers: AppCoroutineDispatchers,
   private val userActionUseCase: UserActionUseCase
 ) : ViewModel() {
-  private val eventStream: MutableSharedFlow<Event<Int>> = MutableSharedFlow(0, 5)
 
-  val nowPlayingTracks: Flow<PagingData<NowPlaying>> = repository.getAll()
+  private val eventStream: MutableSharedFlow<Event<Int>> = MutableSharedFlow(0, 5)
+  val nowPlayingTracks: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
   val events: SharedFlow<Event<Int>>
     get() = eventStream
 

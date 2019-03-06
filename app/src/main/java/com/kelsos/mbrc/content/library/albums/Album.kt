@@ -1,13 +1,12 @@
 package com.kelsos.mbrc.content.library.albums
 
-import com.kelsos.mbrc.interfaces.data.Data
-import com.kelsos.mbrc.utilities.RemoteUtils.sha1
+import com.kelsos.mbrc.utilities.RemoteUtils
 
-interface Album : Data {
-  val artist: String
-  val album: String
+data class Album(
+  var id: Long,
+  var artist: String,
+  var album: String,
   val cover: String?
-  val id: Long
-}
+)
 
-fun Album.key(): String = sha1("${artist}_$album")
+fun Album.key(): String = RemoteUtils.sha1("${artist}_$album")

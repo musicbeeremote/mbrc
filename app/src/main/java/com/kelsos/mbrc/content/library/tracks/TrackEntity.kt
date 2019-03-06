@@ -4,32 +4,31 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.kelsos.mbrc.interfaces.data.Data
 
 @Entity(tableName = "track", indices = [Index("src", name = "track_src_index", unique = true)])
 data class TrackEntity(
   @ColumnInfo
-  override var artist: String = "",
+  var artist: String = "",
   @ColumnInfo
-  override var title: String = "",
+  var title: String = "",
   @ColumnInfo
-  override var src: String = "",
+  var src: String = "",
   @ColumnInfo
-  override var trackno: Int = 0,
+  var trackno: Int = 0,
   @ColumnInfo
-  override var disc: Int = 0,
+  var disc: Int = 0,
   @ColumnInfo(name = "album_artist")
-  override var albumArtist: String = "",
+  var albumArtist: String = "",
   @ColumnInfo
-  override var album: String = "",
+  var album: String = "",
   @ColumnInfo
-  override var genre: String = "",
+  var genre: String = "",
   @ColumnInfo
-  override var year: String = "",
+  var year: String = "",
   @ColumnInfo(name = "sortable_year")
   var sortableYear: String = "",
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  override var id: Long = 0
-) : Data, Track
+  var id: Long = 0
+)

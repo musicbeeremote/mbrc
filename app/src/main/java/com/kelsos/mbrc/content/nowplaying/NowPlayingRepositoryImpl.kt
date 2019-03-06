@@ -16,32 +16,39 @@ class NowPlayingRepositoryImpl(
   private val dao: NowPlayingDao,
   private val dispatchers: AppCoroutineDispatchers
 ) : NowPlayingRepository {
-  private val mapper = NowPlayingDtoMapper()
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override fun getAll(): Flow<PagingData<NowPlaying>> = dao.getAll().paged()
+  override fun getAll(): Flow<PagingData<NowPlaying>> = dao.getAll().paged {
+    it.toNowPlaying()
+  }
 
   override suspend fun getRemote() {
     val added = epoch()
     withContext(dispatchers.network) {
       api.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class)
         .onCompletion {
-          dao.removePreviousEntries(added)
+          withContext(dispatchers.database) {
+            dao.removePreviousEntries(added)
+          }
         }
         .collect { item ->
-          val list = item.map { mapper.map(it).apply { dateAdded = added } }
-          dao.insertAll(list)
+          val list = item.map { it.toEntity().apply { dateAdded = added } }
+          withContext(dispatchers.database) {
+            dao.insertAll(list)
+          }
         }
     }
   }
 
   override fun search(
     term: String
-  ): Flow<PagingData<NowPlaying>> = dao.search(term).paged()
+  ): Flow<PagingData<NowPlaying>> = dao.search(term).paged { it.toNowPlaying() }
 
   override suspend fun cacheIsEmpty(): Boolean =
-    withContext(dispatchers.database) { dao.count() == 0L }
+    withContext(dispatchers.database) {
+      dao.count() == 0L
+    }
 
   override fun move(from: Int, to: Int) {
     TODO("implement move")

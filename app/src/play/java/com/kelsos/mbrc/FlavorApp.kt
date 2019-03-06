@@ -6,7 +6,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.experimental.builder.single
 
-class FlavorApp : App() {
+open class FlavorApp : App() {
   override fun appModules(): List<Module> {
     val playModule = module {
       single<SyncMetrics> { SyncMetricsImpl() }

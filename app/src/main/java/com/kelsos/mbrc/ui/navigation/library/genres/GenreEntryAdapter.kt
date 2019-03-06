@@ -47,7 +47,7 @@ class GenreEntryAdapter : PagingDataAdapter<Genre, GenreViewHolder>(DIFF_CALLBAC
       }
 
       override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean {
-        return oldItem == newItem
+        return oldItem.genre == newItem.genre
       }
     }
   }

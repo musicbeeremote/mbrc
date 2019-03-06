@@ -3,7 +3,7 @@ package com.kelsos.mbrc.interfaces.data
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
-interface Repository<T : Data> {
+interface Repository<T : Any> {
   fun getAll(): Flow<PagingData<T>>
   suspend fun getRemote()
   fun search(term: String): Flow<PagingData<T>>

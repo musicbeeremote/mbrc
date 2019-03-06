@@ -4,7 +4,7 @@ import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataPro
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
-import com.kelsos.mbrc.networking.connections.InetAddressMapper
+import com.kelsos.mbrc.networking.connections.toSocketAddress
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Runnable
@@ -130,13 +130,12 @@ class ClientConnectionManager(
     private val error: (Throwable) -> Unit
   ) : Runnable {
     private val socketAddress: SocketAddress?
-    private val mapper: InetAddressMapper = InetAddressMapper()
 
     private var socket: Socket? = null
     private var output: PrintWriter? = null
 
     init {
-      socketAddress = mapper.map(connectionSettings)
+      socketAddress = connectionSettings.toSocketAddress()
     }
 
     /**

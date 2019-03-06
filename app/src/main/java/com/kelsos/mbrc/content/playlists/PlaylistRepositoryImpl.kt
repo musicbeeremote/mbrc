@@ -16,11 +16,10 @@ class PlaylistRepositoryImpl(
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers
 ) : PlaylistRepository {
-  private val mapper = PlaylistDtoMapper()
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override fun getAll(): Flow<PagingData<Playlist>> = dao.getAll().paged()
+  override fun getAll(): Flow<PagingData<Playlist>> = dao.getAll().paged { it.toPlaylist() }
 
   override suspend fun getRemote() {
     withContext(dispatchers.network) {
@@ -30,16 +29,20 @@ class PlaylistRepositoryImpl(
           dao.removePreviousEntries(added)
         }.collect { items ->
           val playlists = items.map {
-            mapper.map(it).apply {
+            it.toEntity().apply {
               this.dateAdded = added
             }
           }
-          dao.insertAll(playlists)
+          withContext(dispatchers.database) {
+            dao.insertAll(playlists)
+          }
         }
     }
   }
 
-  override fun search(term: String): Flow<PagingData<Playlist>> = dao.search(term).paged()
+  override fun search(term: String): Flow<PagingData<Playlist>> = dao.search(term).paged {
+    it.toPlaylist()
+  }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

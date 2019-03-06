@@ -4,7 +4,7 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.InetAddressMapper
+import com.kelsos.mbrc.networking.connections.toSocketAddress
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
@@ -73,11 +73,10 @@ class RequestManagerImpl(
     }
 
   private suspend fun connect(firstMessage: SocketMessage?): Socket {
-    val mapper = InetAddressMapper()
     val connectionSettings = checkNotNull(repository.getDefault())
 
     try {
-      val socketAddress = mapper.map(connectionSettings)
+      val socketAddress = connectionSettings.toSocketAddress()
       Timber.v("Creating new socket")
 
       return Socket().apply {

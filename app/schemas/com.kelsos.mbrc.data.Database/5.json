@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "7fcb9584932596bd9c91e1cfb2a7ba83",
+    "identityHash": "17b3f4104611ffee62e0a343fa830c43",
     "entities": [
       {
         "tableName": "genre",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genre` TEXT NOT NULL, `date_added` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genre` TEXT NOT NULL, `date_added` INTEGER NOT NULL, `date_updated` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "genre",
@@ -17,6 +17,12 @@
           {
             "fieldPath": "dateAdded",
             "columnName": "date_added",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateUpdated",
+            "columnName": "date_updated",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -441,7 +447,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7fcb9584932596bd9c91e1cfb2a7ba83')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '17b3f4104611ffee62e0a343fa830c43')"
     ]
   }
 }

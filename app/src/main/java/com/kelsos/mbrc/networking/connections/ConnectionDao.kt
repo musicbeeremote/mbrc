@@ -12,7 +12,7 @@ import androidx.room.Update
 interface ConnectionDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun insert(settings: ConnectionSettingsEntity)
+  fun insert(settings: ConnectionSettingsEntity): Long
 
   @Delete
   fun delete(settings: ConnectionSettingsEntity)

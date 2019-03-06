@@ -16,12 +16,11 @@ class RadioRepositoryImpl(
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers
 ) : RadioRepository {
-  private val mapper = RadioDtoMapper()
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAll(): Flow<PagingData<RadioStation>> =
-    dao.getAll().paged()
+    dao.getAll().paged { it.toRadioStation() }
 
   override suspend fun getRemote() {
     withContext(dispatchers.network) {
@@ -30,15 +29,17 @@ class RadioRepositoryImpl(
         .onCompletion {
           dao.removePreviousEntries(added)
         }.collect { radios ->
-          val data = radios.map { mapper.map(it).apply { dateAdded = added } }
-          dao.insertAll(data)
+          val data = radios.map { it.toEntity().apply { dateAdded = added } }
+          withContext(dispatchers.database) {
+            dao.insertAll(data)
+          }
         }
     }
   }
 
   override fun search(
     term: String
-  ): Flow<PagingData<RadioStation>> = dao.search(term).paged()
+  ): Flow<PagingData<RadioStation>> = dao.search(term).paged { it.toRadioStation() }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

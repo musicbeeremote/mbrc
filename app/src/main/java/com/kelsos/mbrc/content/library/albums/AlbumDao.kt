@@ -19,7 +19,7 @@ interface AlbumDao {
   @Query("select * from album")
   fun getAll(): PagingSource<Int, AlbumEntity>
 
-  @Query("select * from album where album.album like '%' || :term || '%'")
+  @Query("select * from album where album like '%' || :term || '%'")
   fun search(term: String): PagingSource<Int, AlbumEntity>
 
   @Query("select count(*) from album")

@@ -18,14 +18,12 @@ class AlbumRepositoryImpl(
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers
 ) : AlbumRepository {
-  private val mapper = AlbumDtoMapper()
-
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override suspend fun getAlbumsByArtist(artist: String): Flow<PagingData<Album>> =
-    withContext(dispatchers.database) { dao.getAlbumsByArtist(artist).paged() }
+  override fun getAlbumsByArtist(artist: String): Flow<PagingData<Album>> =
+    dao.getAlbumsByArtist(artist).paged { it.toAlbum() }
 
-  override fun getAll(): Flow<PagingData<Album>> = dao.getAll().paged()
+  override fun getAll(): Flow<PagingData<Album>> = dao.getAll().paged { it.toAlbum() }
 
   override suspend fun getRemote() {
     val added = epoch()
@@ -40,7 +38,7 @@ class AlbumRepositoryImpl(
         }
         .collect { albums ->
           val list = albums.map { dto ->
-            mapper.map(dto).apply {
+            dto.toEntity().apply {
               dateAdded = added
               val key = dto.album + dto.artist
 
@@ -57,7 +55,7 @@ class AlbumRepositoryImpl(
   }
 
   override fun search(term: String): Flow<PagingData<Album>> =
-    dao.search(term).paged()
+    dao.search(term).paged { it.toAlbum() }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

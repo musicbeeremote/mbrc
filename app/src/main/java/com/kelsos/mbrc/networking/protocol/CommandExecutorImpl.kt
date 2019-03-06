@@ -51,6 +51,7 @@ class CommandExecutorImpl(
       command.execute(event)
     } catch (ex: Exception) {
       Timber.d(ex, "executing command for type: ${event.type}")
+      Timber.d(event.toString())
     }
   }
 

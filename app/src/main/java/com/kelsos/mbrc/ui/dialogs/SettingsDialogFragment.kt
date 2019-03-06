@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.EditText
@@ -18,7 +17,7 @@ class SettingsDialogFragment : DialogFragment() {
   private lateinit var nameEdit: EditText
   private lateinit var portEdit: EditText
 
-  private var mListener: SettingsSaveListener? = null
+  private var saveListener: SettingsSaveListener? = null
   private lateinit var settings: ConnectionSettingsEntity
   private var edit: Boolean = false
 
@@ -26,15 +25,6 @@ class SettingsDialogFragment : DialogFragment() {
 
   private fun setConnectionSettings(settings: ConnectionSettingsEntity) {
     this.settings = settings
-  }
-
-  override fun onAttach(context: Context) {
-    super.onAttach(context)
-    try {
-      mListener = context as SettingsSaveListener?
-    } catch (e: ClassCastException) {
-      throw ClassCastException("$context must implement SettingsDialogListener")
-    }
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -62,7 +52,7 @@ class SettingsDialogFragment : DialogFragment() {
             port = portNum
           }
 
-          mListener?.onSave(settings)
+          saveListener?.onSave(settings)
           dialog.dismiss()
         }
       }.setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
@@ -91,7 +81,8 @@ class SettingsDialogFragment : DialogFragment() {
     true
   }
 
-  fun show() {
+  fun show(listener: SettingsSaveListener) {
+    this.saveListener = listener
     show(fm, "settings_dialog")
   }
 

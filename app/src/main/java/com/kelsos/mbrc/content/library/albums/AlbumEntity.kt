@@ -11,13 +11,13 @@ import androidx.room.PrimaryKey
 )
 data class AlbumEntity(
   @ColumnInfo
-  override var artist: String,
+  var artist: String,
   @ColumnInfo
-  override var album: String,
+  var album: String,
   @ColumnInfo
-  override var cover: String? = null,
+  var cover: String? = null,
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  override var id: Long = 0
-) : Album
+  var id: Long = 0
+)

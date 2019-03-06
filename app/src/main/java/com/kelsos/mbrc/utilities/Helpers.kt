@@ -9,14 +9,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Instant
 
-fun <T, I : Any> PagingSource<Int, T>.paged(): Flow<PagingData<I>> where T : I {
+fun <T : Any, I : Any> PagingSource<Int, T>.paged(
+  transform: suspend (value: T) -> I
+): Flow<PagingData<I>> {
   val config = PagingConfig(
-    prefetchDistance = 100,
     enablePlaceholders = true,
-    initialLoadSize = 25,
-    pageSize = 100
+    pageSize = 60,
+    maxSize = 200
   )
-  return Pager(config) { this }.flow.map { data -> data.map { it } }
+  return Pager(config) { this }.flow.map { data -> data.map(transform) }
 }
 
 /**
