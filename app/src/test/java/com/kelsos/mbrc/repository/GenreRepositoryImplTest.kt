@@ -15,7 +15,7 @@ import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.genres.GenreAdapter
 import com.kelsos.mbrc.utils.noopListUpdateCallback
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
@@ -78,7 +78,7 @@ class GenreRepositoryImplTest : KoinTest {
     repository.getRemote()
 
     val differ = AsyncPagingDataDiffer(
-      diffCallback = GenreEntryAdapter.DIFF_CALLBACK,
+      diffCallback = GenreAdapter.DIFF_CALLBACK,
       updateCallback = noopListUpdateCallback,
       mainDispatcher = testDispatcher,
       workerDispatcher = testDispatcher

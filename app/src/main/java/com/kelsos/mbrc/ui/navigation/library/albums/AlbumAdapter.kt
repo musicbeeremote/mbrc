@@ -8,7 +8,7 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.popup
 
-class AlbumEntryAdapter : PagingDataAdapter<Album, AlbumViewHolder>(DIFF_CALLBACK) {
+class AlbumAdapter : PagingDataAdapter<Album, AlbumViewHolder>(DIFF_CALLBACK) {
 
   private var listener: MenuItemSelectedListener<Album>? = null
 

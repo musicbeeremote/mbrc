@@ -17,7 +17,7 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentArtistAlbumsBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.albums.AlbumAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
@@ -26,7 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ArtistAlbumsFragment : Fragment(), MenuItemSelectedListener<Album> {
 
   private val actionHandler: PopupActionHandler by inject()
-  private val adapter: AlbumEntryAdapter by inject()
+  private val adapter: AlbumAdapter by inject()
   private val viewModel: ArtistAlbumsViewModel by viewModel()
 
   private lateinit var artist: String

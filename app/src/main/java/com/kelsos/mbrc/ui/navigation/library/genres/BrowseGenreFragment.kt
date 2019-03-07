@@ -24,7 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BrowseGenreFragment : Fragment(), MenuItemSelectedListener<Genre> {
 
-  private val adapter: GenreEntryAdapter by inject()
+  private val adapter: GenreAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val viewModel: BrowseGenreViewModel by viewModel()
 

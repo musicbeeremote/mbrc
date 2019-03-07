@@ -26,7 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BrowseAlbumFragment : Fragment(), MenuItemSelectedListener<Album> {
 
-  private val adapter: AlbumEntryAdapter by inject()
+  private val adapter: AlbumAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val viewModel: BrowseAlbumViewModel by viewModel()
 

@@ -21,7 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BrowseTrackFragment : Fragment(), MenuItemSelectedListener<Track> {
 
-  private val adapter: TrackEntryAdapter by inject()
+  private val adapter: TrackAdapter by inject()
   private val viewModel: BrowseTrackViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null

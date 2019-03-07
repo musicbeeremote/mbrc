@@ -16,13 +16,13 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentGenreArtistsBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
-import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistAdapter
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<Artist> {
 
-  private val adapter: ArtistEntryAdapter by inject()
+  private val adapter: ArtistAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val viewModel: GenreArtistsViewModel by viewModel()
 
@@ -80,7 +80,7 @@ class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<Artist> {
     } else {
       getString(R.string.queue_result__failure)
     }
-    Snackbar.make(binding.root, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+    Snackbar.make(requireView(), R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
   }

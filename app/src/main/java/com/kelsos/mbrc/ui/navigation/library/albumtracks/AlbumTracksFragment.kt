@@ -16,7 +16,7 @@ import com.kelsos.mbrc.content.library.albums.AlbumInfo
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.databinding.FragmentAlbumTracksBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
-import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.tracks.TrackAdapter
 import com.kelsos.mbrc.utilities.RemoteUtils.sha1
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.inject
@@ -25,7 +25,7 @@ import java.io.File
 
 class AlbumTracksFragment : Fragment(), MenuItemSelectedListener<Track> {
 
-  private val adapter: TrackEntryAdapter by inject()
+  private val adapter: TrackAdapter by inject()
   private val viewModel: AlbumTracksViewModel by viewModel()
 
   private lateinit var album: AlbumInfo
@@ -100,7 +100,7 @@ class AlbumTracksFragment : Fragment(), MenuItemSelectedListener<Track> {
     } else {
       getString(R.string.queue_result__failure)
     }
-    Snackbar.make(binding.root, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+    Snackbar.make(requireView(), R.string.queue_result__success, Snackbar.LENGTH_SHORT)
       .setText(message)
       .show()
   }
