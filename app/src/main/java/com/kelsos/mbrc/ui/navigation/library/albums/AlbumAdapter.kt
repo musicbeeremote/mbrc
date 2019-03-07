@@ -1,17 +1,18 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
-import androidx.recyclerview.widget.DiffUtil
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 
-class AlbumEntryAdapter
+class AlbumAdapter
 
-  : FastScrollableAdapter<AlbumEntity, AlbumViewHolder>(DIFF_CALLBACK) {
+  : FastScrollableAdapter<Album, AlbumViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_album) {
@@ -57,12 +58,12 @@ class AlbumEntryAdapter
   }
 
   companion object {
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<AlbumEntity>() {
-      override fun areItemsTheSame(oldItem: AlbumEntity, newItem: AlbumEntity): Boolean {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Album>() {
+      override fun areItemsTheSame(oldItem: Album, newItem: Album): Boolean {
         return oldItem.id == newItem.id
       }
 
-      override fun areContentsTheSame(oldItem: AlbumEntity, newItem: AlbumEntity): Boolean {
+      override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean {
         return oldItem == newItem
       }
     }

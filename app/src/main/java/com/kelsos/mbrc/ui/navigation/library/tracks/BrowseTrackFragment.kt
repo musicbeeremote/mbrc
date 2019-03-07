@@ -15,7 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.TrackEntity
+import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
@@ -24,7 +24,7 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 class BrowseTrackFragment : Fragment(),
-  MenuItemSelectedListener<TrackEntity>,
+  MenuItemSelectedListener<Track>,
   OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
@@ -35,7 +35,7 @@ class BrowseTrackFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  private val adapter: TrackEntryAdapter by inject()
+  private val adapter: TrackAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val presenter: BrowseTrackViewModel by inject()
 
@@ -61,16 +61,16 @@ class BrowseTrackFragment : Fragment(),
     adapter.setIndexes(indexes)
   }
 
-  fun update(pagedList: PagedList<TrackEntity>) {
+  fun update(pagedList: PagedList<Track>) {
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
   }
 
-  override fun onMenuItemSelected(action: String, item: TrackEntity) {
+  override fun onMenuItemSelected(action: String, item: Track) {
     actionHandler.trackSelected(action, item)
   }
 
-  override fun onItemClicked(item: TrackEntity) {
+  override fun onItemClicked(item: Track) {
     actionHandler.trackSelected(item)
   }
 

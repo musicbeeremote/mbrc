@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.albums.AlbumEntity
+import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
@@ -28,7 +28,7 @@ import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 class BrowseAlbumFragment : Fragment(),
-  MenuItemSelectedListener<AlbumEntity>,
+  MenuItemSelectedListener<Album>,
   SwipeRefreshLayout.OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
@@ -39,7 +39,7 @@ class BrowseAlbumFragment : Fragment(),
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  private val adapter: AlbumEntryAdapter by inject()
+  private val adapter: AlbumAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val presenter: BrowseAlbumViewModel by inject()
 
@@ -71,7 +71,7 @@ class BrowseAlbumFragment : Fragment(),
     adapter.setMenuItemSelectedListener(this)
   }
 
-  override fun onMenuItemSelected(action: String, item: AlbumEntity) {
+  override fun onMenuItemSelected(action: String, item: Album) {
     if (action == PROFILE) {
       onItemClicked(item)
       return
@@ -79,7 +79,7 @@ class BrowseAlbumFragment : Fragment(),
     actionHandler.albumSelected(action, item)
   }
 
-  override fun onItemClicked(item: AlbumEntity) {
+  override fun onItemClicked(item: Album) {
     val args = AlbumTracksFragmentArgs.Builder(item.album, item.artist).build()
     view?.findNavController()?.navigate(R.id.album_tracks_fragment, args.toBundle())
   }
@@ -92,7 +92,7 @@ class BrowseAlbumFragment : Fragment(),
     // presenter.refresh()
   }
 
-  fun update(pagedList: PagedList<AlbumEntity>) {
+  fun update(pagedList: PagedList<Album>) {
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
     swipeLayout.isRefreshing = false

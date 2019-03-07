@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
+import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
@@ -19,7 +19,7 @@ import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
 import kotterknife.bindView
 
 class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
-  PagedListAdapter<NowPlayingEntity, NowPlayingAdapter.NowPlayingTrackViewHolder>(
+  PagedListAdapter<NowPlaying, NowPlayingAdapter.NowPlayingTrackViewHolder>(
     DIFF_CALLBACK
   ),
   ItemTouchHelperAdapter {
@@ -95,7 +95,7 @@ class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
     itemView: View,
     onHolderItemPressed: OnViewItemPressed,
     onDragStart: (holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) -> Unit
-  ) : BindableViewHolder<NowPlayingEntity>(itemView),
+  ) : BindableViewHolder<NowPlaying>(itemView),
     TouchHelperViewHolder {
 
     private val title: TextView by bindView(R.id.track_title)
@@ -123,7 +123,7 @@ class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
       this.itemView.setBackgroundColor(0)
     }
 
-    override fun bindTo(item: NowPlayingEntity) {
+    override fun bindTo(item: NowPlaying) {
       title.text = item.title
       artist.text = item.artist
     }
@@ -157,16 +157,16 @@ class NowPlayingAdapter(private val dragStartListener: OnStartDragListener) :
   }
 
   companion object {
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<NowPlayingEntity>() {
-      override fun areItemsTheSame(oldItem: NowPlayingEntity, newItem: NowPlayingEntity): Boolean {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<NowPlaying>() {
+      override fun areItemsTheSame(oldItem: NowPlaying, newItem: NowPlaying): Boolean {
         val samePath = oldItem.path == newItem.path
         val samePosition = oldItem.position == newItem.position
         return samePath && samePosition
       }
 
       override fun areContentsTheSame(
-        oldItem: NowPlayingEntity,
-        newItem: NowPlayingEntity
+        oldItem: NowPlaying,
+        newItem: NowPlaying
       ): Boolean {
         return oldItem == newItem
       }

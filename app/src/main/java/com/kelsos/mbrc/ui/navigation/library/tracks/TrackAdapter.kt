@@ -1,17 +1,17 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
-import androidx.recyclerview.widget.DiffUtil
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.TrackEntity
+import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.navigation.library.popup
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 
-class TrackEntryAdapter : FastScrollableAdapter<TrackEntity, TrackViewHolder>(DIFF_CALLBACK),
+class TrackAdapter : FastScrollableAdapter<Track, TrackViewHolder>(DIFF_CALLBACK),
   BubbleTextGetter, OnFastScrollListener {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
@@ -59,12 +59,12 @@ class TrackEntryAdapter : FastScrollableAdapter<TrackEntity, TrackViewHolder>(DI
   }
 
   companion object {
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TrackEntity>() {
-      override fun areItemsTheSame(oldItem: TrackEntity, newItem: TrackEntity): Boolean {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Track>() {
+      override fun areItemsTheSame(oldItem: Track, newItem: Track): Boolean {
         return oldItem.id == newItem.id
       }
 
-      override fun areContentsTheSame(oldItem: TrackEntity, newItem: TrackEntity): Boolean {
+      override fun areContentsTheSame(oldItem: Track, newItem: Track): Boolean {
         return oldItem == newItem
       }
     }

@@ -4,12 +4,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.artists.ArtistEntity
+import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 
-class ArtistEntryAdapter : FastScrollableAdapter<ArtistEntity, ArtistViewHolder>(DIFF_CALLBACK) {
+class ArtistAdapter : FastScrollableAdapter<Artist, ArtistViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_artist) {
@@ -55,12 +55,12 @@ class ArtistEntryAdapter : FastScrollableAdapter<ArtistEntity, ArtistViewHolder>
   }
 
   companion object {
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ArtistEntity>() {
-      override fun areItemsTheSame(oldItem: ArtistEntity, newItem: ArtistEntity): Boolean {
+    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Artist>() {
+      override fun areItemsTheSame(oldItem: Artist, newItem: Artist): Boolean {
         return oldItem.id == newItem.id
       }
 
-      override fun areContentsTheSame(oldItem: ArtistEntity, newItem: ArtistEntity): Boolean {
+      override fun areContentsTheSame(oldItem: Artist, newItem: Artist): Boolean {
         return oldItem == newItem
       }
     }

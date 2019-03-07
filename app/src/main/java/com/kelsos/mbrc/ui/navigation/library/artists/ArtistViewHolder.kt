@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.artists.ArtistEntity
+import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
 
@@ -16,7 +16,7 @@ class ArtistViewHolder(
   itemView: View,
   indicatorPressed: (View, Int) -> Unit,
   pressed: (View, Int) -> Unit
-) : BindableViewHolder<ArtistEntity>(itemView) {
+) : BindableViewHolder<Artist>(itemView) {
   private val title: TextView by bindView(R.id.line_one)
   private val indicator: ImageView by bindView(R.id.ui_item_context_indicator)
   private val loading: Group by bindView(R.id.listitem_loading)
@@ -39,7 +39,7 @@ class ArtistViewHolder(
     }
   }
 
-  override fun bindTo(item: ArtistEntity) {
+  override fun bindTo(item: Artist) {
     loading.isVisible = false
     title.text = if (item.artist.isBlank()) {
       empty

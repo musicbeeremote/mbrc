@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
-import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
+import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.events.UserAction
@@ -31,7 +31,7 @@ class NowPlayingViewModel(
   private val networkScope: CoroutineScope = CoroutineScope(dispatchers.network + viewModelJob)
   private val eventStream: MutableLiveData<Event<Int>> = MutableLiveData()
 
-  val nowPlayingTracks: LiveData<PagedList<NowPlayingEntity>> = repository.getAll().paged()
+  val nowPlayingTracks: LiveData<PagedList<NowPlaying>> = repository.getAll().paged()
   val events: LiveData<Event<Int>>
     get() = eventStream
 

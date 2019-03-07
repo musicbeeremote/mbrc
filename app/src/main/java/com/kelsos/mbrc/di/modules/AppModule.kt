@@ -119,15 +119,15 @@ import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.ui.navigation.library.LibraryViewModel
 import com.kelsos.mbrc.ui.navigation.library.SyncProgressProvider
-import com.kelsos.mbrc.ui.navigation.library.albums.AlbumEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.albums.AlbumAdapter
 import com.kelsos.mbrc.ui.navigation.library.albums.BrowseAlbumViewModel
 import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksViewModel
-import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistAdapter
 import com.kelsos.mbrc.ui.navigation.library.artists.BrowseArtistViewModel
 import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreViewModel
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreEntryAdapter
 import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackViewModel
-import com.kelsos.mbrc.ui.navigation.library.tracks.TrackEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.tracks.TrackAdapter
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsViewModel
 import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManager
 import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManagerImpl
@@ -303,7 +303,7 @@ val uiModule = module {
 
   factory { RadioAdapter() }
   factory { GenreEntryAdapter() }
-  factory { ArtistEntryAdapter() }
-  factory { AlbumEntryAdapter() }
-  factory { TrackEntryAdapter() }
+  factory { ArtistAdapter() }
+  factory { AlbumAdapter() }
+  factory { TrackAdapter() }
 }

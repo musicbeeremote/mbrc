@@ -10,22 +10,22 @@ import androidx.navigation.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.artists.ArtistEntity
+import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsFragmentArgs
-import com.kelsos.mbrc.ui.navigation.library.artists.ArtistEntryAdapter
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistAdapter
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<ArtistEntity> {
+class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<Artist> {
 
   private val recyclerView: RecyclerView by bindView(R.id.genre_artists__artist_list)
   private val emptyView: Group by bindView(R.id.genre_artists__empty_view)
 
-  private val adapter: ArtistEntryAdapter by inject()
+  private val adapter: ArtistAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val presenter: GenreArtistsViewModel by inject()
 
@@ -57,7 +57,7 @@ class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<ArtistEntity> 
     }
   }
 
-  override fun onMenuItemSelected(action: String, item: ArtistEntity) {
+  override fun onMenuItemSelected(action: String, item: Artist) {
     if (action == PROFILE) {
       onItemClicked(item)
       return
@@ -65,14 +65,14 @@ class GenreArtistsFragment : Fragment(), MenuItemSelectedListener<ArtistEntity> 
     actionHandler.artistSelected(action, item)
   }
 
-  override fun onItemClicked(item: ArtistEntity) {
+  override fun onItemClicked(item: Artist) {
     val args = ArtistAlbumsFragmentArgs.Builder(item.artist).build()
     view?.run {
       findNavController().navigate(R.id.artist_albums_fragment, args.toBundle())
     }
   }
 
-  fun update(pagedList: PagedList<ArtistEntity>) {
+  fun update(pagedList: PagedList<Artist>) {
     adapter.submitList(pagedList)
   }
 }

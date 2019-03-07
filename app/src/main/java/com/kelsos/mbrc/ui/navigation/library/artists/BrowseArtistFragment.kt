@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.artists.ArtistEntity
+import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
@@ -26,7 +26,7 @@ import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>, OnRefreshListener {
+class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
@@ -36,7 +36,7 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>,
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
-  private val adapter: ArtistEntryAdapter by inject()
+  private val adapter: ArtistAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
   private val presenter: BrowseArtistViewModel by inject()
 
@@ -61,7 +61,7 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>,
     adapter.setIndexes(indexes)
   }
 
-  override fun onMenuItemSelected(action: String, item: ArtistEntity) {
+  override fun onMenuItemSelected(action: String, item: Artist) {
     if (action == PROFILE) {
       onItemClicked(item)
       return
@@ -69,7 +69,7 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>,
     actionHandler.artistSelected(action, item)
   }
 
-  override fun onItemClicked(item: ArtistEntity) {
+  override fun onItemClicked(item: Artist) {
     val args = ArtistAlbumsFragmentArgs.Builder(item.artist).build()
     view?.run {
       findNavController().navigate(R.id.artist_albums_fragment, args.toBundle())
@@ -84,7 +84,7 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<ArtistEntity>,
     presenter.reload()
   }
 
-  fun update(pagedList: PagedList<ArtistEntity>) {
+  fun update(pagedList: PagedList<Artist>) {
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
   }
