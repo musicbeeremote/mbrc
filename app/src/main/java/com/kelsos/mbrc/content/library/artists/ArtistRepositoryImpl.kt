@@ -35,7 +35,10 @@ class ArtistRepositoryImpl(
   }
 
   override fun albumArtists(): DataModel<Artist> {
-    return DataModel(dao.getAlbumArtists().map { entity2model.map(it) }, dao.getAlbumArtistIndexes())
+    return DataModel(
+      factory = dao.getAlbumArtists().map { entity2model.map(it) },
+      indexes = dao.getAlbumArtistIndexes()
+    )
   }
 
   override suspend fun getRemote() {

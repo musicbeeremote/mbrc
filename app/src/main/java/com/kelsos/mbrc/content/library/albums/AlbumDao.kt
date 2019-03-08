@@ -37,5 +37,4 @@ interface AlbumDao {
 
   @Query("select substr(album, 0, 1) from album")
   fun getIndexes(): LiveData<List<String>>
-
 }

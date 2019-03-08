@@ -2,8 +2,19 @@ package com.kelsos.mbrc.content.library.tracks
 
 import com.kelsos.mbrc.interfaces.data.Mapper
 
-class TrackEntityMapper : Mapper<TrackEntity, Track>{
+class TrackEntityMapper : Mapper<TrackEntity, Track> {
   override fun map(from: TrackEntity): Track {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return Track(
+      artist = from.artist,
+      title = from.title,
+      src = from.src,
+      trackno = from.trackno,
+      disc = from.disc,
+      albumArtist = from.albumArtist,
+      album = from.album,
+      genre = from.genre,
+      year = from.year,
+      id = from.id
+    )
   }
 }

@@ -18,5 +18,4 @@ class BrowseAlbumViewModel(
 
   val albums: MediatorLiveData<PagedList<AlbumEntity>> = MediatorLiveData()
   val indexes: MediatorLiveData<List<String>> = MediatorLiveData()
-
 }

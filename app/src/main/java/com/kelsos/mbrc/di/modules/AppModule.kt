@@ -111,6 +111,8 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
+import com.kelsos.mbrc.preferences.ClientInformationModel
+import com.kelsos.mbrc.preferences.ClientInformationModelImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
@@ -276,6 +278,7 @@ val appModule = module {
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
 
   factory { DefaultSettingsModelImpl as DefaultSettingsModel }
+  factory { ClientInformationModelImpl as ClientInformationModel }
   factory { MoveManagerImpl() as MoveManager }
 
   factory { SocketActivityChecker() }

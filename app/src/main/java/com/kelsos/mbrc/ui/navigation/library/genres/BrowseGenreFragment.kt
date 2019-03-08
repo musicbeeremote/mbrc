@@ -15,7 +15,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.genres.Genre
-import com.kelsos.mbrc.content.library.genres.GenreEntity
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener

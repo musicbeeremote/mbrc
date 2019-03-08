@@ -27,7 +27,8 @@ constructor(
 ) : RequestManager {
 
   override fun openConnection(handshake: Boolean): ActiveConnection {
-    val socket = connect(SocketMessage.player())
+    val firstMessage = if (handshake) SocketMessage.player() else null
+    val socket = connect(firstMessage)
 
     val inputStream = socket.getInputStream()
     val bufferedReader = inputStream.bufferedReader(Charset.defaultCharset())
@@ -81,7 +82,7 @@ constructor(
     }
   }
 
-  private fun connect(firstMessage: SocketMessage): Socket {
+  private fun connect(firstMessage: SocketMessage?): Socket {
     val mapper = InetAddressMapper()
     val connectionSettings = checkNotNull(repository.default) { "no settings" }
     try {
@@ -91,7 +92,9 @@ constructor(
       return Socket().apply {
         soTimeout = 20 * 1000
         connect(socketAddress)
-        send(firstMessage)
+        firstMessage?.let {
+          send(it)
+        }
       }
     } catch (e: IOException) {
       Timber.v("failed to create socket")
