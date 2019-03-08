@@ -1,12 +1,12 @@
-package com.kelsos.mbrc.services
+package com.kelsos.mbrc.networking.client
 
 import android.content.Context
+import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
@@ -14,16 +14,16 @@ import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
-import com.kelsos.mbrc.networking.client.ConnectivityVerifier
-import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl
-import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
 import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.preferences.ClientInformationModel
+import com.kelsos.mbrc.preferences.ClientInformationModelImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
 import com.squareup.moshi.Moshi
@@ -44,6 +44,7 @@ import org.koin.dsl.module
 import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
 import org.koin.test.inject
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
@@ -58,10 +59,9 @@ import java.util.concurrent.Executors
 class ConnectivityVerifierImplTest : KoinTest {
 
   private val port: Int = 46000
-
   private val verifier: ConnectivityVerifier by inject()
-  lateinit var db: Database
-  lateinit var dao: ConnectionDao
+  private lateinit var db: Database
+  private lateinit var dao: ConnectionDao
   private val informationStore: ClientInformationStore = mockk()
   private val connectionRepository: ConnectionRepository = mockk()
   private val moshi: Moshi by inject()
@@ -100,10 +100,13 @@ class ConnectivityVerifierImplTest : KoinTest {
       server.soTimeout = 3000
 
       while (true) {
+        Timber.v("Listening on ${server.inetAddress.hostAddress}:${server.localPort}")
         val connection = server.accept()
         val input = InputStreamReader(connection!!.inputStream)
         val inputReader = BufferedReader(input)
         val line = inputReader.readLine()
+        Timber.v("Received a message $line")
+
         val value = adapter.fromJson(line)
 
         if (value?.context != Protocol.VerifyConnection) {
@@ -225,15 +228,22 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   private val testModule = module {
+    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
     single { Moshi.Builder().build() }
     single { connectionRepository }
-    single { informationStore }
     single { dao }
     singleBy<RequestManager, RequestManagerImpl>()
     singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
     singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
     singleBy<SerializationAdapter, SerializationAdapterImpl>()
-    singleBy<DefaultSettingsLiveDataProvider, DefaultSettingsLiveDataProviderImpl>()
     single<DefaultSettingsModel> { DefaultSettingsModelImpl }
+    singleBy<ClientInformationStore, ClientInformationStoreImpl>()
+    single<ClientInformationModel> {
+      ClientInformationModelImpl(
+        PreferenceManager.getDefaultSharedPreferences(
+          appContext
+        )
+      )
+    }
   }
 }

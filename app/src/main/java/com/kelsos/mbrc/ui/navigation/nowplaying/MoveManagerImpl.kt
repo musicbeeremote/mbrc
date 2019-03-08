@@ -1,21 +1,19 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import kotlinx.coroutines.CoroutineDispatcher
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 
-class MoveManagerImpl(dispatcher: CoroutineDispatcher = Dispatchers.Default) : MoveManager {
-  private val job = SupervisorJob()
-  private val scope = CoroutineScope(dispatcher + job)
+class MoveManagerImpl(dispatchers: AppCoroutineDispatchers) : MoveManager {
   private var originalPosition: Int = -1
   private var finalPosition: Int = -1
-
-  private lateinit var onMoveSubmit: (originalPosition: Int, finalPosition: Int) -> Unit
+  private val job = SupervisorJob()
+  private val scope = CoroutineScope(dispatchers.disk + job)
   private var notify: Deferred<Unit>? = null
+  private lateinit var onMoveSubmit: (originalPosition: Int, finalPosition: Int) -> Unit
 
   override fun onMoveSubmit(onMoveSubmit: (originalPosition: Int, finalPosition: Int) -> Unit) {
     this.onMoveSubmit = onMoveSubmit

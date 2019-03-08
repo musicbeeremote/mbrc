@@ -1,24 +1,19 @@
 package com.kelsos.mbrc.preferences
 
-import android.content.SharedPreferences
 import java.util.UUID
 
 class ClientInformationStoreImpl(
-  private val preferences: SharedPreferences
+  private val model: ClientInformationModel
 ) : ClientInformationStore {
 
   override fun getClientId(): String {
-    var clientId = preferences.getString(CLIENT_ID, "")
+    var clientId = model.clientId
 
-    if (clientId.isNullOrBlank()) {
+    if (clientId.isBlank()) {
       clientId = UUID.randomUUID().toString()
-      preferences.edit().putString(CLIENT_ID, clientId).apply()
+      model.clientId = clientId
     }
 
     return clientId
-  }
-
-  companion object {
-    const val CLIENT_ID = "com.kelsos.mbrc.CLIENT_ID"
   }
 }

@@ -33,7 +33,9 @@ class ArtistRepositoryImpl(
       val added = epoch()
       api.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class)
         .onCompletion {
-          dao.removePreviousEntries(added)
+          withContext(dispatchers.database) {
+            dao.removePreviousEntries(added)
+          }
         }
         .collect { artists ->
           val data = artists.map { it.toEntity().apply { dateAdded = added } }
@@ -45,7 +47,9 @@ class ArtistRepositoryImpl(
   }
 
   override fun search(term: String): Flow<PagingData<Artist>> =
-    dao.search(term).paged { it.toArtist() }
+    dao.search(term).paged {
+      it.toArtist()
+    }
 
   override fun getAlbumArtistsOnly(): Flow<PagingData<Artist>> =
     dao.getAlbumArtists().paged { it.toArtist() }

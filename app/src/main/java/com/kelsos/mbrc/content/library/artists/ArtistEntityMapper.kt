@@ -5,8 +5,8 @@ import com.kelsos.mbrc.interfaces.data.Mapper
 object ArtistEntityMapper : Mapper<ArtistEntity, Artist> {
   override fun map(from: ArtistEntity): Artist {
     return Artist(
-      from.artist,
-      from.id
+      id = from.id,
+      artist = from.artist
     )
   }
 }

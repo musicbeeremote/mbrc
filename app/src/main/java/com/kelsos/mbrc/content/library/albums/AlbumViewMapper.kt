@@ -5,10 +5,10 @@ import com.kelsos.mbrc.interfaces.data.Mapper
 object AlbumViewMapper : Mapper<AlbumEntity, Album> {
   override fun map(from: AlbumEntity): Album {
     return Album(
-      from.id,
-      from.artist,
-      from.album,
-      from.cover
+      id = from.id,
+      artist = from.artist,
+      album = from.album,
+      cover = from.cover
     )
   }
 }

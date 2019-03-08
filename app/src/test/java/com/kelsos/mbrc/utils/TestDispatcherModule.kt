@@ -6,13 +6,14 @@ import org.koin.dsl.module
 
 val testDispatcher = TestCoroutineDispatcher()
 
+val appCoroutineDispatchers = AppCoroutineDispatchers(
+  testDispatcher,
+  testDispatcher,
+  testDispatcher,
+  testDispatcher
+)
 val testDispatcherModule = module {
   single {
-    AppCoroutineDispatchers(
-      testDispatcher,
-      testDispatcher,
-      testDispatcher,
-      testDispatcher
-    )
+    appCoroutineDispatchers
   }
 }
