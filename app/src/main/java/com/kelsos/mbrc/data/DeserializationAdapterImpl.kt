@@ -5,9 +5,7 @@ import java.lang.reflect.ParameterizedType
 
 import kotlin.reflect.KClass
 
-class DeserializationAdapterImpl
-
-constructor(
+class DeserializationAdapterImpl(
   private val moshi: Moshi
 ) : DeserializationAdapter {
   override fun <T : Any> objectify(line: String, type: ParameterizedType): T {

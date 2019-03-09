@@ -13,7 +13,7 @@ interface TrackDao {
   @Query("delete from track")
   fun deleteAll()
 
-  @Insert(onConflict = OnConflictStrategy.FAIL)
+  @Insert(onConflict = OnConflictStrategy.ABORT)
   fun insertAll(list: List<TrackEntity>)
 
   @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")

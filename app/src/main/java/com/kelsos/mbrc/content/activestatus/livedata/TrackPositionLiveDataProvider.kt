@@ -10,9 +10,7 @@ interface TrackPositionLiveDataProvider : LiveDataProvider<PlayingPosition> {
   fun setPlaying(playing: Boolean)
 }
 
-class TrackPositionLiveDataProviderImpl
-
-constructor(
+class TrackPositionLiveDataProviderImpl(
   private val appRxSchedulers: AppRxSchedulers
 ) : TrackPositionLiveDataProvider, BaseLiveDataProvider<PlayingPosition>() {
 

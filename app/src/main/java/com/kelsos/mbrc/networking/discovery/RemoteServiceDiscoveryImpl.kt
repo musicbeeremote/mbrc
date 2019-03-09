@@ -18,9 +18,7 @@ import java.net.MulticastSocket
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-class RemoteServiceDiscoveryImpl
-
-internal constructor(
+class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
   private val moshi: Moshi

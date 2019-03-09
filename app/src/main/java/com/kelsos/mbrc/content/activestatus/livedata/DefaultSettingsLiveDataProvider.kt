@@ -17,9 +17,7 @@ interface DefaultSettingsLiveDataProvider {
 
 typealias OnDefaultConnectionChanged = (ConnectionSettingsEntity) -> Unit
 
-class DefaultSettingsLiveDataProviderImpl
-
-constructor(
+class DefaultSettingsLiveDataProviderImpl(
   private val appRxSchedulers: AppRxSchedulers
 ) : DefaultSettingsLiveDataProvider {
   private val settingsRelay: BehaviorRelay<ConnectionSettingsEntity> = BehaviorRelay.create()

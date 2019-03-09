@@ -16,8 +16,7 @@ import java.net.SocketTimeoutException
 
 import kotlin.reflect.KClass
 
-class ApiBase
-constructor(
+class ApiBase(
   private val deserializationAdapter: DeserializationAdapter,
   private val apiRequestManager: RequestManager
 ) {

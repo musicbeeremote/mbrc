@@ -17,9 +17,7 @@ import java.net.Socket
 import java.net.SocketException
 import java.nio.charset.Charset
 
-class RequestManagerImpl
-
-constructor(
+class RequestManagerImpl(
   private val serializationAdapter: SerializationAdapter,
   private val deserializationAdapter: DeserializationAdapter,
   private val clientInformationStore: ClientInformationStore,

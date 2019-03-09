@@ -12,8 +12,7 @@ import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
 
-class RemoteServiceCore
-constructor(
+class RemoteServiceCore(
   private val discovery: ServiceDiscoveryUseCase,
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,

@@ -9,9 +9,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 
-class CommandExecutorImpl
-
-constructor(
+class CommandExecutorImpl(
   private val commandFactory: CommandFactory
 ) : CommandExecutor {
 

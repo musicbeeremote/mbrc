@@ -5,8 +5,7 @@ import com.kelsos.mbrc.networking.discovery.DiscoveryStop.COMPLETE
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ServiceDiscoveryUseCaseImpl
-constructor(
+class ServiceDiscoveryUseCaseImpl(
   private val serviceDiscovery: RemoteServiceDiscovery,
   private val connectionRepository: ConnectionRepository
 ) : ServiceDiscoveryUseCase {

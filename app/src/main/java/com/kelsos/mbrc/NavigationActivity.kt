@@ -57,7 +57,7 @@ class NavigationActivity : AppCompatActivity() {
   }
 
   private val onDestinationChangedListener: NavController.OnDestinationChangedListener =
-    NavController.OnDestinationChangedListener { _, destination, bundle ->
+    NavController.OnDestinationChangedListener { _, destination, _ ->
       supportActionBar?.title = destination.label
       val destinationId = destination.id
 

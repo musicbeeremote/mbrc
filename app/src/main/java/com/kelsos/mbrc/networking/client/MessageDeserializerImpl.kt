@@ -2,9 +2,7 @@ package com.kelsos.mbrc.networking.client
 
 import com.squareup.moshi.Moshi
 
-class MessageDeserializerImpl
-
-constructor(
+class MessageDeserializerImpl(
   private val moshi: Moshi
 ) : MessageDeserializer {
   private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }

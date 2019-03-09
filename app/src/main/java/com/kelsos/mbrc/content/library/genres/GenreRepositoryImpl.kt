@@ -9,8 +9,7 @@ import com.kelsos.mbrc.utilities.epoch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-class GenreRepositoryImpl
-constructor(
+class GenreRepositoryImpl(
   private val remoteDataSource: ApiBase,
   private val dao: GenreDao,
   private val dispatchers: AppCoroutineDispatchers

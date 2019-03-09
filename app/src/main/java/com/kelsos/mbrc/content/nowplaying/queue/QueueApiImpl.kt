@@ -6,9 +6,7 @@ import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Single
 
-class QueueApiImpl
-
-constructor(
+class QueueApiImpl(
   private val apiBase: ApiBase
 ) : QueueApi {
   override fun queue(

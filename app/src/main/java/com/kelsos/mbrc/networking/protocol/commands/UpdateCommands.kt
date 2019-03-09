@@ -19,9 +19,7 @@ import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import timber.log.Timber
 
-class UpdateLastFm
-
-constructor(
+class UpdateLastFm(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -33,9 +31,7 @@ constructor(
   }
 }
 
-class UpdateLfmRating
-
-constructor(
+class UpdateLfmRating(
   private val trackRatingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
 
@@ -52,9 +48,7 @@ constructor(
   }
 }
 
-class UpdateLyrics
-
-constructor(
+class UpdateLyrics(
   private val mapper: Moshi,
   private val lyricsLiveDataProvider: LyricsLiveDataProvider
 ) : ICommand {
@@ -87,9 +81,7 @@ constructor(
   }
 }
 
-class UpdateMute
-
-constructor(
+class UpdateMute(
   private val statusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -99,9 +91,7 @@ constructor(
   }
 }
 
-class UpdateNowPlayingTrack
-
-constructor(
+class UpdateNowPlayingTrack(
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   private val context: Application,
   private val mapper: Moshi
@@ -127,9 +117,7 @@ constructor(
   }
 }
 
-class UpdatePlayerStatus
-
-constructor(
+class UpdatePlayerStatus(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val moshi: Moshi
 ) : ICommand {
@@ -151,9 +139,7 @@ constructor(
   }
 }
 
-class UpdatePlayState
-
-constructor(
+class UpdatePlayState(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val context: Application
 ) : ICommand {
@@ -169,9 +155,7 @@ constructor(
   }
 }
 
-class UpdatePluginVersionCommand
-
-  : ICommand {
+class UpdatePluginVersionCommand : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val pluginVersion = message.data as? String
@@ -179,9 +163,7 @@ class UpdatePluginVersionCommand
   }
 }
 
-class UpdateRating
-
-constructor(
+class UpdateRating(
   private val ratingLiveDataProvider: TrackRatingLiveDataProvider
 ) : ICommand {
 
@@ -194,9 +176,7 @@ constructor(
   }
 }
 
-class UpdateRepeat
-
-constructor(
+class UpdateRepeat(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -209,9 +189,7 @@ constructor(
   }
 }
 
-class UpdateShuffle
-
-constructor(
+class UpdateShuffle(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 
@@ -224,9 +202,7 @@ constructor(
   }
 }
 
-class UpdateVolume
-
-constructor(
+class UpdateVolume(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
 ) : ICommand {
 

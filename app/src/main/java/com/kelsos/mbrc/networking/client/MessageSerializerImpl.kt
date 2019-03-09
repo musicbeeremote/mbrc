@@ -2,9 +2,7 @@ package com.kelsos.mbrc.networking.client
 
 import com.squareup.moshi.Moshi
 
-class MessageSerializerImpl
-
-constructor(
+class MessageSerializerImpl(
   private val mapper: Moshi
 ) : MessageSerializer {
 
