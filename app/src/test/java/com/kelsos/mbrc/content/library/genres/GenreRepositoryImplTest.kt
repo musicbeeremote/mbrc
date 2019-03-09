@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.content.library.genres
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -7,10 +7,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.TestApplication
-import com.kelsos.mbrc.content.library.genres.GenreDao
-import com.kelsos.mbrc.content.library.genres.GenreDto
-import com.kelsos.mbrc.content.library.genres.GenreRepository
-import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.library
+package com.kelsos.mbrc.content.sync
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
@@ -8,8 +8,6 @@ import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
-import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
-import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
@@ -69,41 +67,44 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     mockCacheState(true)
     mockSuccessfulRepositoryResponse()
 
-    runBlocking {
-
-      val result = librarySyncUseCase.sync(true)
-      assertThat(result.isRight()).isTrue()
-      assertThat(result.toOption().nonEmpty()).isTrue()
+    val result = runBlocking {
+      librarySyncUseCase.sync(true)
     }
+
+    assertThat(result.isRight()).isTrue()
+    val resultValue = result.toOption().orNull()
+    assertThat(resultValue).isNotNull()
+    assertThat(resultValue).isTrue()
   }
 
   @Test
   fun nonEmptyLibraryAutoSync() {
-
     mockCacheState(false)
     mockSuccessfulRepositoryResponse()
 
-    runBlocking {
-
-      val result = librarySyncUseCase.sync(true)
-      assertThat(result.isRight()).isTrue()
-      assertThat(result.toOption().nonEmpty()).isFalse()
+    val result = runBlocking {
+      librarySyncUseCase.sync(true)
     }
 
+    assertThat(result.isRight()).isTrue()
+    val resultValue = result.toOption().orNull()
+    assertThat(resultValue).isNotNull()
+    assertThat(resultValue).isFalse()
     assertThat(librarySyncUseCase.isRunning()).isFalse()
   }
-
 
   private fun mockCacheState(isEmpty: Boolean) {
     coEvery { genreRepository.cacheIsEmpty() } returns isEmpty
     coEvery { artistRepository.cacheIsEmpty() } returns isEmpty
     coEvery { albumRepository.cacheIsEmpty() } returns isEmpty
     coEvery { trackRepository.cacheIsEmpty() } returns isEmpty
+    coEvery { playlistRepository.cacheIsEmpty() } returns isEmpty
 
     coEvery { genreRepository.count() } returns if (isEmpty) 0 else 1
     coEvery { artistRepository.count() } returns if (isEmpty) 0 else 1
     coEvery { albumRepository.count() } returns if (isEmpty) 0 else 1
     coEvery { trackRepository.count() } returns if (isEmpty) 0 else 1
+    coEvery { playlistRepository.count() } returns if (isEmpty) 0 else 1
   }
 
   private fun mockSuccessfulRepositoryResponse() {

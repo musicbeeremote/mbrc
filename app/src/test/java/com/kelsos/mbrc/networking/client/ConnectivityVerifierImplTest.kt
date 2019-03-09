@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.services
+package com.kelsos.mbrc.networking.client
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.TestApplication
@@ -8,8 +8,6 @@ import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
-import com.kelsos.mbrc.networking.client.ConnectivityVerifier
-import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity

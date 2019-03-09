@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.repository
+package com.kelsos.mbrc.networking.connections
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,12 +13,6 @@ import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
 import com.kelsos.mbrc.data.Database
-import com.kelsos.mbrc.networking.connections.ConnectionDao
-import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
-import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every

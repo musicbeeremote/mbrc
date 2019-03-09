@@ -2,8 +2,10 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.TestApplication
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -17,7 +19,13 @@ class MoveManagerImplTest {
 
   private lateinit var onMoveSubmit: (Int, Int) -> Unit
 
-  private val moveManager: MoveManager = MoveManagerImpl()
+  private val dispatchers = AppCoroutineDispatchers(
+    main = Dispatchers.Default,
+    disk = Dispatchers.Default,
+    database = Dispatchers.Default,
+    network = Dispatchers.Default
+  )
+  private val moveManager: MoveManager = MoveManagerImpl(dispatchers)
 
   @Before
   fun setUp() {
@@ -40,7 +48,7 @@ class MoveManagerImplTest {
       delay(400)
     }
 
-    verify(exactly = 1) { onMoveSubmit }
+    verify(exactly = 1) { onMoveSubmit(1, 10) }
   }
 
   @Test
@@ -55,6 +63,6 @@ class MoveManagerImplTest {
       delay(400)
     }
 
-    verify(exactly = 1) { onMoveSubmit }
+    verify(exactly = 1) { onMoveSubmit(10, 5) }
   }
 }
