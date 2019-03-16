@@ -8,12 +8,10 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvide
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.connections.Connection
-import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
 
 class RemoteServiceCore(
-  private val discovery: ServiceDiscoveryUseCase,
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,
   private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,

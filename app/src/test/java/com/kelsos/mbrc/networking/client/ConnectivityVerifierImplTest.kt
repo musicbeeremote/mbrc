@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.networking.client
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import arrow.core.Option
 import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
@@ -124,11 +125,11 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     val server = startMockServer()
 
-    every { connectionRepository.default } answers {
+    every { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      return@answers settings
+      return@answers Option.fromNullable(settings)
     }
 
     val subscriber = verifier.verify().test()
@@ -143,11 +144,11 @@ class ConnectivityVerifierImplTest : KoinTest {
   fun testPrematureDisconnectDuringVerification() {
     val verifier = this.verifier
     val server = startMockServer(true)
-    every { connectionRepository.default } answers {
+    every { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      return@answers settings
+      return@answers Option.fromNullable(settings)
     }
 
     val subscriber = verifier.verify().test()
@@ -159,11 +160,11 @@ class ConnectivityVerifierImplTest : KoinTest {
   fun testInvalidPluginResponseVerification() {
     val verifier = this.verifier
     val server = startMockServer(false, Protocol.ClientNotAllowed)
-    every { connectionRepository.default } answers {
+    every { connectionRepository.getDefault() } answers {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      return@answers settings
+      return@answers Option.fromNullable(settings)
     }
 
     val subscriber = verifier.verify().test()
@@ -176,8 +177,8 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     startMockServer(true)
 
-    every { connectionRepository.default } answers {
-      return@answers null
+    every { connectionRepository.getDefault() } answers {
+      return@answers Option.empty<ConnectionSettingsEntity>()
     }
 
     val subscriber = verifier.verify().test()
@@ -190,8 +191,8 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     startMockServer(false, "payload", false)
 
-    every { connectionRepository.default } answers {
-      return@answers null
+    every { connectionRepository.getDefault() } answers {
+      return@answers Option.empty<ConnectionSettingsEntity>()
     }
 
     val subscriber = verifier.verify().test()

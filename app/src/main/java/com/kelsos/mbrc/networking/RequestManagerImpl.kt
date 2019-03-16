@@ -82,7 +82,8 @@ class RequestManagerImpl(
 
   private fun connect(firstMessage: SocketMessage?): Socket {
     val mapper = InetAddressMapper()
-    val connectionSettings = checkNotNull(repository.default) { "no settings" }
+    val connectionSettings = checkNotNull(repository.getDefault().orNull())
+
     try {
       val socketAddress = mapper.map(connectionSettings)
       Timber.v("Creating new socket")

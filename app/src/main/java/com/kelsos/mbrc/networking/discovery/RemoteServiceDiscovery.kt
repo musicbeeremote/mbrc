@@ -1,12 +1,8 @@
 package com.kelsos.mbrc.networking.discovery
 
+import arrow.core.Either
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 
 interface RemoteServiceDiscovery {
-  fun discover(
-    callback: (
-      status: Int,
-      setting: ConnectionSettingsEntity?
-    ) -> Unit
-  )
+  suspend fun discover(): Either<Int, ConnectionSettingsEntity>
 }

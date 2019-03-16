@@ -40,4 +40,7 @@ interface ConnectionDao {
 
   @Query("select id from settings where address = :address and port = :port")
   fun findId(address: String, port: Int): Long?
+
+  @Query("select * from settings where id = :id")
+  fun getById(id: Long): LiveData<ConnectionSettingsEntity>
 }

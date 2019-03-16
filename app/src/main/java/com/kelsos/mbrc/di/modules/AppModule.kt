@@ -78,8 +78,6 @@ import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
 import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
-import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
-import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCaseImpl
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.CommandExecutorImpl
 import com.kelsos.mbrc.networking.protocol.CommandFactory
@@ -151,74 +149,71 @@ import java.util.concurrent.Executors
 
 val appModule = module {
   single { Moshi.Builder().build() }
-  single<CoverApi> { CoverApiImpl(get()) }
-  single<QueueApi> { QueueApiImpl(get()) }
+  single<CoverApi> { create<CoverApiImpl>() }
+  single<QueueApi> { create<QueueApiImpl>() }
 
-  single<ConnectionRepository> { ConnectionRepositoryImpl(get(), get(), get(), get()) }
+  single<ConnectionRepository> { create<ConnectionRepositoryImpl>() }
 
-  single<TrackRepository> { TrackRepositoryImpl(get(), get(), get()) }
-  single<AlbumRepository> { AlbumRepositoryImpl(get(), get(), get()) }
-  single<ArtistRepository> { ArtistRepositoryImpl(get(), get(), get()) }
-  single<GenreRepository> { GenreRepositoryImpl(get(), get(), get()) }
+  single<TrackRepository> { create<TrackRepositoryImpl>() }
+  single<AlbumRepository> { create<AlbumRepositoryImpl>() }
+  single<ArtistRepository> { create<ArtistRepositoryImpl>() }
+  single<GenreRepository> { create<GenreRepositoryImpl>() }
 
-  single<NowPlayingRepository> { NowPlayingRepositoryImpl(get(), get(), get()) }
-  single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(), get()) }
+  single<NowPlayingRepository> { create<NowPlayingRepositoryImpl>() }
+  single<PlaylistRepository> { create<PlaylistRepositoryImpl>() }
 
-  single<MessageSerializer> { MessageSerializerImpl(get()) }
+  single<MessageSerializer> { create<MessageSerializerImpl>() }
 
-  single<SerializationAdapter> { SerializationAdapterImpl(get()) }
-  single<DeserializationAdapter> { DeserializationAdapterImpl(get()) }
-  single<DatabaseTransactionRunner> { DatabaseTransactionRunnerImpl(get()) }
-  single<RequestManager> { RequestManagerImpl(get(), get(), get(), get()) }
+  single<SerializationAdapter> { create<SerializationAdapterImpl>() }
+  single<DeserializationAdapter> { create<DeserializationAdapterImpl>() }
+  single<DatabaseTransactionRunner> { create<DatabaseTransactionRunnerImpl>() }
+  single<RequestManager> { create<RequestManagerImpl>() }
 
-  single<UserActionUseCase> { UserActionUseCaseImpl(get()) }
+  single<UserActionUseCase> { create<UserActionUseCaseImpl>() }
 
-  single<ClientConnectionUseCase> { ClientConnectionUseCaseImpl(get()) }
+  single<ClientConnectionUseCase> { create<ClientConnectionUseCaseImpl>() }
 
-  single<SettingsManager> { SettingsManagerImpl(get(), get()) }
-  single<PlayingTrackCache> { PlayingTrackCacheImpl(get(), get(), get()) }
-  single<ServiceChecker> { ServiceCheckerImpl(get(), get()) }
+  single<SettingsManager> { create<SettingsManagerImpl>() }
+  single<PlayingTrackCache> { create<PlayingTrackCacheImpl>() }
+  single<ServiceChecker> { create<ServiceCheckerImpl>() }
 
   single<LibrarySyncUseCase> {
     create<LibrarySyncUseCaseImpl>()
   }
 
-  single<RadioRepository> { RadioRepositoryImpl(get(), get(), get()) }
-  single<ClientInformationStore> { ClientInformationStoreImpl(get()) }
-  single<VolumeInteractor> { VolumeInteractorImpl(get(), get()) }
-  single<OutputApi> { OutputApiImpl(get()) }
+  single<RadioRepository> { create<RadioRepositoryImpl>() }
+  single<ClientInformationStore> { create<ClientInformationStoreImpl>() }
+  single<VolumeInteractor> { create<VolumeInteractorImpl>() }
+  single<OutputApi> { create<OutputApiImpl>() }
 
-  single { SyncProgressProvider() }
+  single { create<SyncProgressProvider>() }
 
-  single<PlayingTrackLiveDataProvider> { PlayingTrackLiveDataProviderImpl(get(), get()) }
-  single<PlayerStatusLiveDataProvider> { PlayerStatusLiveDataProviderImpl() }
-  single<TrackRatingLiveDataProvider> { TrackRatingLiveDataProviderImpl() }
+  single<PlayingTrackLiveDataProvider> { create<PlayingTrackLiveDataProviderImpl>() }
+  single<PlayerStatusLiveDataProvider> { create<PlayerStatusLiveDataProviderImpl>() }
+  single<TrackRatingLiveDataProvider> { create<TrackRatingLiveDataProviderImpl>() }
   single<ConnectionStatusLiveDataProvider> {
-    ConnectionStatusLiveDataProviderImpl()
+    create<ConnectionStatusLiveDataProviderImpl>()
   }
 
   single<DefaultSettingsLiveDataProvider> {
-    DefaultSettingsLiveDataProviderImpl(get())
+    create<DefaultSettingsLiveDataProviderImpl>()
   }
 
-  single<LyricsLiveDataProvider> { LyricsLiveDataProviderImpl() }
+  single<LyricsLiveDataProvider> { create<LyricsLiveDataProviderImpl>() }
 
-  single<MessageQueue> { MessageQueueImpl() }
-  single<MessageHandler> { MessageHandlerImpl(get(), get(), get(), get(), get(), get()) }
-  single<CommandExecutor> { CommandExecutorImpl(get()) }
+  single<MessageQueue> { create<MessageQueueImpl>() }
+  single<MessageHandler> { create<MessageHandlerImpl>() }
+  single<CommandExecutor> { create<CommandExecutorImpl>() }
 
-  single<IClientConnectionManager> { ClientConnectionManager(get(), get(), get(), get(), get()) }
-  single<CommandFactory> { CommandFactoryImpl() }
-  single<MessageDeserializer> { MessageDeserializerImpl(get()) }
-  single<UiMessageQueue> { UiMessageQueueImpl(get()) }
-  single<RemoteServiceDiscovery> { RemoteServiceDiscoveryImpl(get(), get(), get()) }
-  single<ServiceDiscoveryUseCase> { ServiceDiscoveryUseCaseImpl(get(), get()) }
-  single<TrackPositionLiveDataProvider> { TrackPositionLiveDataProviderImpl(get()) }
+  single<IClientConnectionManager> { create<ClientConnectionManager>() }
+  single<CommandFactory> { create<CommandFactoryImpl>() }
+  single<MessageDeserializer> { create<MessageDeserializerImpl>() }
+  single<UiMessageQueue> { create<UiMessageQueueImpl>() }
+  single<RemoteServiceDiscovery> { create<RemoteServiceDiscoveryImpl>() }
+  single<TrackPositionLiveDataProvider> { create<TrackPositionLiveDataProviderImpl>() }
 
-  single<INotificationManager> { SessionNotificationManager(get(), get(), get(), get(), get()) }
-  single<IRemoteServiceCore> {
-    RemoteServiceCore(get(), get(), get(), get(), get(), get(), get(), get())
-  }
+  single<INotificationManager> { create<SessionNotificationManager>() }
+  single<IRemoteServiceCore> { create<RemoteServiceCore>() }
 
   single<CoverModel> { StoredCoverModel }
 
@@ -243,7 +238,7 @@ val appModule = module {
     )
   }
 
-  single { ApiBase(get(), get()) }
+  single { create<ApiBase>() }
 
   single { Room.databaseBuilder(get(), Database::class.java, "cache.db").build() }
   single { get<Database>().genreDao() }
@@ -255,24 +250,24 @@ val appModule = module {
   single { get<Database>().radioStationDao() }
   single { get<Database>().connectionDao() }
 
-  single { UpdateNowPlayingTrack(get(), get(), get()) }
-  single { UpdateCover(get(), get(), get(), get(), get(), get()) }
-  single { UpdateRating(get()) }
-  single { UpdatePlayerStatus(get(), get()) }
-  single { UpdatePlayState(get(), get()) }
-  single { UpdateRepeat(get()) }
-  single { UpdateVolume(get()) }
-  single { UpdateMute(get()) }
-  single { UpdateShuffle(get()) }
-  single { UpdateLastFm(get()) }
-  single { UpdateLyrics(get(), get()) }
-  single { UpdateLfmRating(get()) }
-  single { UpdateNowPlayingTrackRemoval(get()) }
-  single { UpdateNowPlayingTrackMoved(get()) }
-  single { UpdatePlaybackPositionCommand(get(), get()) }
-  single { UpdatePluginVersionCommand() }
-  single { ProtocolPingHandle(get(), get()) }
-  single { ProtocolPongHandle() }
+  single { create<UpdateNowPlayingTrack>() }
+  single { create<UpdateCover>() }
+  single { create<UpdateRating>() }
+  single { create<UpdatePlayerStatus>() }
+  single { create<UpdatePlayState>() }
+  single { create<UpdateRepeat>() }
+  single { create<UpdateVolume>() }
+  single { create<UpdateMute>() }
+  single { create<UpdateShuffle>() }
+  single { create<UpdateLastFm>() }
+  single { create<UpdateLyrics>() }
+  single { create<UpdateLfmRating>() }
+  single { create<UpdateNowPlayingTrackRemoval>() }
+  single { create<UpdateNowPlayingTrackMoved>() }
+  single { create<UpdatePlaybackPositionCommand>() }
+  single { create<UpdatePluginVersionCommand>() }
+  single { create<ProtocolPingHandle>() }
+  single { create<ProtocolPongHandle>() }
 
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
 
@@ -280,31 +275,31 @@ val appModule = module {
   factory { ClientInformationModelImpl as ClientInformationModel }
   factory { create<MoveManagerImpl>() as MoveManager }
 
-  factory { SocketActivityChecker() }
-  factory { RemoteBroadcastReceiver() }
-  factory { SessionNotificationManager(get(), get(), get(), get(), get()) }
-  factory { RemoteSessionManager(get(), get(), get(), get()) }
-  factory { RemoteVolumeProvider(get(), get()) }
+  factory { create<SocketActivityChecker>() }
+  factory { create<RemoteBroadcastReceiver>() }
+  factory { create<SessionNotificationManager>() }
+  factory { create<RemoteSessionManager>() }
+  factory { create<RemoteVolumeProvider>() }
 }
 
 val uiModule = module {
-  viewModel { ConnectionManagerViewModel(get(), get(), get()) }
-  viewModel { PlayerViewModel(get(), get(), get(), get(), get(), get(), get()) }
-  viewModel { BrowseAlbumViewModel(get(), get()) }
-  viewModel { BrowseGenreViewModel(get(), get()) }
-  viewModel { BrowseArtistViewModel(get(), get(), get()) }
-  viewModel { BrowseTrackViewModel(get(), get()) }
-  viewModel { MiniControlViewModel(get(), get(), get(), get()) }
-  viewModel { LyricsViewModel(get()) }
-  viewModel { RadioViewModel(get(), get(), get()) }
-  viewModel { NowPlayingViewModel(get(), get(), get(), get(), get()) }
+  viewModel { create<ConnectionManagerViewModel>() }
+  viewModel { create<PlayerViewModel>() }
+  viewModel { create<BrowseAlbumViewModel>() }
+  viewModel { create<BrowseGenreViewModel>() }
+  viewModel { create<BrowseArtistViewModel>() }
+  viewModel { create<BrowseTrackViewModel>() }
+  viewModel { create<MiniControlViewModel>() }
+  viewModel { create<LyricsViewModel>() }
+  viewModel { create<RadioViewModel>() }
+  viewModel { create<NowPlayingViewModel>() }
   viewModel { create<LibraryViewModel>() }
 
   viewModel { create<VolumeDialogViewModel>() }
 
-  factory { RadioAdapter() }
-  factory { GenreEntryAdapter() }
-  factory { ArtistAdapter() }
-  factory { AlbumAdapter() }
-  factory { TrackAdapter() }
+  factory { create<RadioAdapter>() }
+  factory { create<GenreEntryAdapter>() }
+  factory { create<ArtistAdapter>() }
+  factory { create<AlbumAdapter>() }
+  factory { create<TrackAdapter>() }
 }

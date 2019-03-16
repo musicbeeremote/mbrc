@@ -3,6 +3,7 @@ package com.kelsos.mbrc.networking.discovery
 import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
+import arrow.core.Either
 import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -10,6 +11,7 @@ import com.squareup.moshi.Moshi
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.rx2.awaitFirstOrNull
 import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
@@ -30,11 +32,11 @@ class RemoteServiceDiscoveryImpl(
   private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
 
   @SuppressLint("CheckResult")
-  override fun discover(callback: (status: Int, setting: ConnectionSettingsEntity?) -> Unit) {
+  override suspend fun discover(): Either<Int, ConnectionSettingsEntity> {
     if (!isWifiConnected) {
-      callback(DiscoveryStop.NO_WIFI, null)
-      return
+      return Either.left(DiscoveryStop.NO_WIFI)
     }
+
     mLock = manager.createMulticastLock("locked")
     mLock?.let {
       it.setReferenceCounted(true)
@@ -44,17 +46,18 @@ class RemoteServiceDiscoveryImpl(
     Timber.v("Starting remote service discovery")
 
     val mapper = ConnectionMapper()
-    discoveryObservable()
+    val entity = discoveryObservable()
       .subscribeOn(Schedulers.io())
       .unsubscribeOn(Schedulers.io())
       .doOnTerminate { this.stopDiscovery() }
       .map { mapper.map(it) }
-      .subscribe({
-        callback(DiscoveryStop.COMPLETE, it)
-      }) {
-        callback(DiscoveryStop.NOT_FOUND, null)
-        Timber.v(it, "Discovery incomplete")
-      }
+      .awaitFirstOrNull()
+
+    return if (entity == null) {
+      Either.left(DiscoveryStop.NOT_FOUND)
+    } else {
+      Either.right(entity)
+    }
   }
 
   private fun stopDiscovery() {

@@ -13,6 +13,7 @@ import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
@@ -72,7 +73,7 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings)
     }
 
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
     assertThat(settings.id).isEqualTo(1)
   }
 
@@ -90,9 +91,10 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings3)
     }
 
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.count()).isEqualTo(3)
+    val count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(3)
   }
 
   @Test
@@ -109,9 +111,10 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings3)
     }
 
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.count()).isEqualTo(4)
+    var count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(4)
 
     runBlocking {
       repository.delete(settings2)
@@ -122,7 +125,8 @@ class ConnectionRepositoryTest : KoinTest {
     settingsList.add(settings1)
     settingsList.add(settings3)
 
-    assertThat(repository.count()).isEqualTo(3)
+    count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(3)
 
     repository.getAll().observeOnce {
       assertThat(it).containsAllIn(settingsList)
@@ -140,11 +144,9 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings1)
     }
 
-    assertThat(repository.default).isEqualTo(settings)
-
-    repository.default = settings1
-
-    assertThat(repository.default).isEqualTo(settings1)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
+    repository.setDefault(settings1)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings1)
   }
 
   @Test
@@ -156,15 +158,15 @@ class ConnectionRepositoryTest : KoinTest {
     }
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
 
     runBlocking {
       repository.delete(settings)
     }
 
-    assertThat(repository.count()).isEqualTo(0)
-    assertThat(repository.default).isNull()
-    assertThat(repository.defaultId).isEqualTo(-1)
+    val count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(0)
+    assertThat(repository.getDefault().orNull()).isNull()
   }
 
   @Test
@@ -182,18 +184,19 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings3)
     }
 
-    assertThat(repository.count()).isEqualTo(4)
+    var count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
 
     runBlocking {
       repository.delete(settings)
     }
 
-    assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings1)
-    assertThat(repository.defaultId).isEqualTo(2)
+    count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(3)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings1)
   }
 
   @Test
@@ -211,21 +214,22 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings3)
     }
 
-    assertThat(repository.count()).isEqualTo(4)
+    var count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
 
-    repository.default = settings1
-    assertThat(repository.default).isEqualTo(settings1)
+    repository.setDefault(settings1)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings1)
 
     runBlocking {
       repository.delete(settings1)
     }
 
-    assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings)
-    assertThat(repository.defaultId).isEqualTo(1)
+    count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(3)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
   }
 
   @Test
@@ -243,21 +247,22 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings3)
     }
 
-    assertThat(repository.count()).isEqualTo(4)
+    var count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
 
-    repository.default = settings3
-    assertThat(repository.default).isEqualTo(settings3)
+    repository.setDefault(settings3)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings3)
 
     runBlocking {
       repository.delete(settings3)
     }
 
-    assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings2)
-    assertThat(repository.defaultId).isEqualTo(3)
+    count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(3)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings2)
   }
 
   @Test
@@ -275,21 +280,22 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings3)
     }
 
-    assertThat(repository.count()).isEqualTo(4)
+    var count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings)
 
-    repository.default = settings3
-    assertThat(repository.default).isEqualTo(settings3)
+    repository.setDefault(settings3)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings3)
 
     runBlocking {
       repository.delete(settings1)
     }
 
-    assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings3)
-    assertThat(repository.defaultId).isEqualTo(4)
+    count = runBlocking { repository.count() }
+    assertThat(count).isEqualTo(3)
+    assertThat(repository.getDefault().orNull()).isEqualTo(settings3)
   }
 
   @Test
@@ -305,7 +311,7 @@ class ConnectionRepositoryTest : KoinTest {
     }
 
     assertThat(settings.id).isEqualTo(1)
-    val defaultSettings = repository.default
+    val defaultSettings = repository.getDefault().orNull()
 
     assertThat(defaultSettings).isEqualTo(settings)
     assertThat(defaultSettings!!.port).isEqualTo(3000)
@@ -317,7 +323,7 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings)
     }
 
-    assertThat(repository.default!!.port).isEqualTo(newPort)
+    assertThat(repository.getDefault().orNull()!!.port).isEqualTo(newPort)
 
     settings.address = newAddress
 
@@ -325,26 +331,7 @@ class ConnectionRepositoryTest : KoinTest {
       repository.save(settings)
     }
 
-    assertThat(repository.default!!.address).isEqualTo(newAddress)
-  }
-
-  @Test
-  fun setDefaultNull() {
-
-    val settings = createSettings("192.167.90.10")
-
-    runBlocking {
-      repository.save(settings)
-    }
-
-    assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
-
-    repository.default = null
-
-    assertThat(repository.count()).isEqualTo(1)
-    assertThat(repository.default!!).isEqualTo(settings)
-    assertThat(repository.defaultId).isEqualTo(1)
+    assertThat(repository.getDefault().orNull()!!.address).isEqualTo(newAddress)
   }
 
   private fun createSettings(address: String): ConnectionSettingsEntity {
@@ -366,6 +353,8 @@ class ConnectionRepositoryTest : KoinTest {
       every { editor.putLong(any(), capture(slot)) } returns editor
       preferences
     }
+
+    single { mockk<RemoteServiceDiscovery>() }
 
     single<ConnectionRepository> { create<ConnectionRepositoryImpl>() }
     single {
