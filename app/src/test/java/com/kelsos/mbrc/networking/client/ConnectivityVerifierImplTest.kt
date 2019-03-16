@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import arrow.core.Option
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.data.DeserializationAdapter
@@ -153,7 +154,7 @@ class ConnectivityVerifierImplTest : KoinTest {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      settings
+      return@answers Option.fromNullable(settings)
     }
 
     assertThat(verifier.verify()).isTrue()
@@ -166,7 +167,7 @@ class ConnectivityVerifierImplTest : KoinTest {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      settings
+      return@answers Option.fromNullable(settings)
     }
 
     try {
@@ -184,7 +185,7 @@ class ConnectivityVerifierImplTest : KoinTest {
       val settings = ConnectionSettingsEntity()
       settings.address = server.inetAddress.hostAddress
       settings.port = server.localPort
-      settings
+      return@answers Option.fromNullable(settings)
     }
 
     try {
@@ -200,7 +201,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     startMockServer(true)
 
     coEvery { connectionRepository.getDefault() } answers {
-      null
+      return@answers Option.empty<ConnectionSettingsEntity>()
     }
 
     try {
@@ -216,7 +217,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     startMockServer(false, "payload", false)
 
     coEvery { connectionRepository.getDefault() } answers {
-      null
+      return@answers Option.empty<ConnectionSettingsEntity>()
     }
 
     try {

@@ -72,8 +72,8 @@ class RequestManagerImpl(
       }
     }
 
-  private suspend fun connect(firstMessage: SocketMessage?): Socket {
-    val connectionSettings = checkNotNull(repository.getDefault())
+  private fun connect(firstMessage: SocketMessage?): Socket {
+    val connectionSettings = checkNotNull(repository.getDefault().orNull())
 
     try {
       val socketAddress = connectionSettings.toSocketAddress()

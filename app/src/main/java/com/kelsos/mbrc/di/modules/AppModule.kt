@@ -75,8 +75,6 @@ import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
 import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
-import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCase
-import com.kelsos.mbrc.networking.discovery.ServiceDiscoveryUseCaseImpl
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.CommandExecutorImpl
 import com.kelsos.mbrc.networking.protocol.CommandFactory
@@ -200,7 +198,6 @@ val appModule = module {
   singleBy<MessageDeserializer, MessageDeserializerImpl>()
   singleBy<UiMessageQueue, UiMessageQueueImpl>()
   singleBy<RemoteServiceDiscovery, RemoteServiceDiscoveryImpl>()
-  singleBy<ServiceDiscoveryUseCase, ServiceDiscoveryUseCaseImpl>()
   singleBy<TrackPositionLiveDataProvider, TrackPositionLiveDataProviderImpl>()
 
   singleBy<INotificationManager, SessionNotificationManager>()

@@ -3,6 +3,7 @@ package com.kelsos.mbrc.networking.discovery
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import arrow.core.Either
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.toConnection
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -28,10 +29,9 @@ class RemoteServiceDiscoveryImpl(
 
   private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
 
-  override fun discover(callback: (status: Int, setting: ConnectionSettingsEntity?) -> Unit) {
+  override suspend fun discover(): Either<Int, ConnectionSettingsEntity> {
     if (!isWifiConnected()) {
-      callback(DiscoveryStop.NO_WIFI, null)
-      return
+      return Either.left(DiscoveryStop.NO_WIFI)
     }
 
     multicastLock = manager.createMulticastLock("locked").apply {
@@ -42,7 +42,7 @@ class RemoteServiceDiscoveryImpl(
     Timber.v("Starting remote service discovery")
 
     val socket = create()
-    runBlocking {
+    return runBlocking {
       var currentTry = 0
       while (currentTry < 4) {
         try {
@@ -59,14 +59,10 @@ class RemoteServiceDiscoveryImpl(
             }
             discoveryMessage.toConnection()
           }
-          callback(DiscoveryStop.COMPLETE, entity)
+          return@runBlocking Either.right(entity)
         } catch (e: Exception) {
           currentTry++
         }
-      }
-
-      if (currentTry >= 4) {
-        callback(DiscoveryStop.NO_WIFI, null)
       }
 
       try {
@@ -77,6 +73,8 @@ class RemoteServiceDiscoveryImpl(
       } finally {
         stopDiscovery()
       }
+
+      return@runBlocking Either.left(DiscoveryStop.NOT_FOUND)
     }
   }
 

@@ -1,19 +1,22 @@
 package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
+import arrow.core.Option
 
 interface ConnectionRepository {
   suspend fun save(settings: ConnectionSettingsEntity)
 
   suspend fun delete(settings: ConnectionSettingsEntity)
 
-  suspend fun getAll(): LiveData<List<ConnectionSettingsEntity>>
+  fun getAll(): LiveData<List<ConnectionSettingsEntity>>
 
   suspend fun count(): Long
 
-  suspend fun setDefault(settings: ConnectionSettingsEntity)
+  fun getDefault(): Option<ConnectionSettingsEntity>
 
-  suspend fun getDefault(): ConnectionSettingsEntity?
+  fun setDefault(settings: ConnectionSettingsEntity)
 
-  val defaultId: Long
+  suspend fun defaultSettings(): LiveData<ConnectionSettingsEntity?>
+
+  suspend fun discover(): Int
 }
