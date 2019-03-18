@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.networking.client
 
+import arrow.core.Some
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
+import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.squareup.moshi.Moshi
@@ -30,11 +32,11 @@ class ClientConnectionManager(
   private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,
   private val moshi: Moshi,
+  private val connectionRepository: ConnectionRepository,
   private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 ) : IClientConnectionManager, PingTimeoutListener, CoroutineScope {
   override val coroutineContext: CoroutineContext = Dispatchers.IO
 
-  private lateinit var connectionSettings: ConnectionSettingsEntity
   private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }
 
   private var executor = getExecutor()
@@ -46,10 +48,6 @@ class ClientConnectionManager(
 
   init {
     messageQueue.setOnMessageAvailable { sendData(it) }
-  }
-
-  override fun setDefaultConnectionSettings(connectionSettings: ConnectionSettingsEntity) {
-    this.connectionSettings = connectionSettings
   }
 
   override fun start() {
@@ -72,12 +70,14 @@ class ClientConnectionManager(
     }
 
     launch {
-      if (!::connectionSettings.isInitialized) {
+      val default = connectionRepository.getDefault()
+      if (default.isEmpty()) {
         Timber.v("no connection settings aborting")
         return@launch
       }
+      val settings = (default as Some).t
 
-      Timber.v("Attempting connection on $connectionSettings")
+      Timber.v("Attempting connection on $settings")
       val onConnection: (Boolean) -> Unit = { connected ->
         if (!connected) {
           // activityChecker.stop()
@@ -89,7 +89,7 @@ class ClientConnectionManager(
       }
 
       connection = SocketConnection(
-        connectionSettings,
+        settings,
         messageHandler,
         onConnection
       ) {
