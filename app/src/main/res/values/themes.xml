@@ -24,18 +24,10 @@
     <item name="windowNoTitle">true</item>
     <item name="windowActionBarOverlay">true</item>
     <item name="android:actionBarWidgetTheme">@style/AppTheme.ActionBarWidget</item>
-    <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
 
   <style name="AppTheme.ActionBarWidget" parent="AppTheme">
     <item name="android:textColorHint">@color/primary_text_material_light</item>
-  </style>
-
-  <style name="Theme.Settings"
-    parent="@style/AppTheme">
-    <item name="android:windowNoTitle">true</item>
-    <item name="windowActionBar">false</item>
-    <item name="toolbarStyle">@style/Widget.Toolbar</item>
   </style>
 
   <style name="Widget.Toolbar"
