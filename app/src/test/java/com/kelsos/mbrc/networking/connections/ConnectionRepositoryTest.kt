@@ -10,8 +10,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.chibatching.kotpref.Kotpref
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.TestApplication
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.utils.observeOnce
@@ -363,7 +361,6 @@ class ConnectionRepositoryTest : KoinTest {
       resources
     }
     single { connectionDao }
-    single<DefaultSettingsLiveDataProvider> { create<DefaultSettingsLiveDataProviderImpl>() }
     factory { DefaultSettingsModelImpl as DefaultSettingsModel }
   }
 }

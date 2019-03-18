@@ -5,6 +5,7 @@ import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -28,12 +29,13 @@ class ClientConnectionManager(
   private val activityChecker: SocketActivityChecker,
   private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,
-  private val messageSerializer: MessageSerializer,
+  private val moshi: Moshi,
   private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 ) : IClientConnectionManager, PingTimeoutListener, CoroutineScope {
   override val coroutineContext: CoroutineContext = Dispatchers.IO
 
   private lateinit var connectionSettings: ConnectionSettingsEntity
+  private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }
 
   private var executor = getExecutor()
 
@@ -110,7 +112,7 @@ class ClientConnectionManager(
 
   @Synchronized
   private fun sendData(message: SocketMessage) {
-    connection?.sendMessage(messageSerializer.serialize(message))
+    connection?.sendMessage("${adapter.toJson(message)}\r\n")
   }
 
   override fun onTimeout() {

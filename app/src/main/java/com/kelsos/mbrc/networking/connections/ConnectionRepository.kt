@@ -16,7 +16,7 @@ interface ConnectionRepository {
 
   fun setDefault(settings: ConnectionSettingsEntity)
 
-  suspend fun defaultSettings(): LiveData<ConnectionSettingsEntity?>
+  fun defaultSettings(): LiveData<ConnectionSettingsEntity?>
 
   suspend fun discover(): Int
 }

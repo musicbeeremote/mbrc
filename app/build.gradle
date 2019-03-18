@@ -1,3 +1,4 @@
+//noinspection GradleDependency
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
@@ -193,26 +194,27 @@ dependencies {
   implementation 'com.chibatching.kotpref:kotpref:2.6.0'
 
   implementation 'com.google.android.material:material:1.1.0-alpha04'
-  implementation 'androidx.databinding:databinding-runtime:3.5.0-alpha06'
+  implementation 'androidx.databinding:databinding-runtime:3.5.0-alpha07'
 
   implementation 'androidx.appcompat:appcompat:1.0.2'
   implementation 'androidx.media:media:1.0.1'
 
-  implementation 'androidx.core:core:1.1.0-alpha04'
+  implementation 'androidx.core:core:1.1.0-alpha05'
   implementation 'androidx.core:core-ktx:1.0.1'
 
   implementation 'androidx.annotation:annotation:1.0.2'
   implementation 'androidx.recyclerview:recyclerview:1.0.0'
-  implementation 'androidx.preference:preference:1.1.0-alpha03'
+  implementation 'androidx.preference:preference:1.1.0-alpha04'
+  implementation 'androidx.preference:preference-ktx:1.1.0-alpha04'
 
-  implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-rc02'
-  implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-rc02'
+  implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0'
+  implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0'
 
   implementation 'androidx.paging:paging-runtime:2.1.0'
 
-  implementation 'androidx.room:room-runtime:2.1.0-alpha04'
-  implementation 'androidx.room:room-rxjava2:2.1.0-alpha04'
-  kapt "androidx.room:room-compiler:2.1.0-alpha04"
+  implementation 'androidx.room:room-runtime:2.1.0-alpha05'
+  implementation 'androidx.room:room-rxjava2:2.1.0-alpha05'
+  kapt "androidx.room:room-compiler:2.1.0-alpha05"
 
   implementation 'com.squareup.moshi:moshi:1.8.0'
   kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.8.0'
@@ -241,14 +243,14 @@ dependencies {
 
   implementation 'com.jakewharton.threetenabp:threetenabp:1.2.0'
 
-  def arrow_version = "0.8.2"
-  implementation "io.arrow-kt:arrow-core:$arrow_version"
+  def arrow_version = "0.9.0"
+  implementation "io.arrow-kt:arrow-core-data:$arrow_version"
+  implementation "io.arrow-kt:arrow-core-extensions:$arrow_version"
   implementation "io.arrow-kt:arrow-syntax:$arrow_version"
   implementation "io.arrow-kt:arrow-typeclasses:$arrow_version"
-  implementation "io.arrow-kt:arrow-data:$arrow_version"
-  implementation "io.arrow-kt:arrow-instances-core:$arrow_version"
-  implementation "io.arrow-kt:arrow-instances-data:$arrow_version"
-  kapt "io.arrow-kt:arrow-annotations-processor:$arrow_version"
+  implementation "io.arrow-kt:arrow-extras-data:$arrow_version"
+  implementation "io.arrow-kt:arrow-extras-extensions:$arrow_version"
+  kapt    "io.arrow-kt:arrow-meta:$arrow_version"
 
   debugImplementation "com.squareup.leakcanary:leakcanary-android:1.6.3"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
@@ -258,8 +260,8 @@ dependencies {
   playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
     transitive = true
   }
-  playImplementation 'com.google.firebase:firebase-perf:16.2.3'
-  playImplementation 'com.google.firebase:firebase-core:16.0.7'
+  playImplementation 'com.google.firebase:firebase-perf:16.2.4'
+  playImplementation 'com.google.firebase:firebase-core:16.0.8'
 }
 
 allprojects {

@@ -86,7 +86,7 @@ class ConnectionRepositoryImpl(
     defaultId = settings.id
   }
 
-  override suspend fun defaultSettings(): LiveData<ConnectionSettingsEntity?> {
+  override fun defaultSettings(): LiveData<ConnectionSettingsEntity?> {
     if (defaultData == null) {
       observeDefault()
     }

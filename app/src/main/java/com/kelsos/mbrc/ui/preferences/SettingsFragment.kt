@@ -20,7 +20,7 @@ import timber.log.Timber
 class SettingsFragment : PreferenceFragmentCompat() {
 
   private fun <T : Preference> preference(@StringRes resId: Int): T {
-    return findPreference(getString(resId))
+    return checkNotNull(findPreference(getString(resId)))
   }
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -71,7 +71,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     val showNotification: CheckBoxPreference =
-      findPreference(resources.getString(R.string.settings_key_notification_control))
+      preference(R.string.settings_key_notification_control)
 
     showNotification.setOnPreferenceChangeListener { _, newValue ->
       val value = newValue as Boolean
@@ -81,7 +81,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
       true
     }
 
-    val license: Preference = findPreference(resources.getString(R.string.settings_key_license))
+    val license: Preference = preference(R.string.settings_key_license)
     license.setOnPreferenceClickListener {
       showLicenseDialog()
       false
