@@ -1,43 +1,50 @@
 package com.kelsos.mbrc.ui.connectionmanager
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import timber.log.Timber
+import kotlinx.coroutines.withContext
 
 class ConnectionManagerViewModel(
   private val repository: ConnectionRepository,
   private val dispatchers: AppCoroutineDispatchers
 ) : ViewModel() {
-
-  var settings: LiveData<List<ConnectionSettingsEntity>> = runBlocking { repository.getAll() }
+  private val _discoveryStatus: MutableSharedFlow<Event<Int>> = MutableSharedFlow()
+  val settings: Flow<PagingData<ConnectionSettings>> = repository.getAll().cachedIn(viewModelScope)
+  val discoveryStatus: SharedFlow<Event<Int>> get() = _discoveryStatus
 
   fun startDiscovery() {
     viewModelScope.launch(dispatchers.network) {
       val result = repository.discover()
-      Timber.v(result.toString())
+      withContext(dispatchers.main) {
+        _discoveryStatus.tryEmit(Event(result))
+      }
     }
   }
 
-  fun setDefault(settings: ConnectionSettingsEntity) {
-    viewModelScope.launch(dispatchers.network) {
+  fun setDefault(settings: ConnectionSettings) {
+    viewModelScope.launch(dispatchers.database) {
       repository.setDefault(settings)
     }
   }
 
-  fun save(settings: ConnectionSettingsEntity) {
-    viewModelScope.launch(dispatchers.network) {
+  fun save(settings: ConnectionSettings) {
+    viewModelScope.launch(dispatchers.database) {
       repository.save(settings)
     }
   }
 
-  fun delete(settings: ConnectionSettingsEntity) {
-    viewModelScope.launch(dispatchers.network) {
+  fun delete(settings: ConnectionSettings) {
+    viewModelScope.launch(dispatchers.database) {
       repository.delete(settings)
     }
   }

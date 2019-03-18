@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "17b3f4104611ffee62e0a343fa830c43",
+    "identityHash": "edd78a8b6c60ff725138d8e2ff760eb2",
     "entities": [
       {
         "tableName": "genre",
@@ -397,7 +397,7 @@
       },
       {
         "tableName": "settings",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `port` INTEGER NOT NULL, `name` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `port` INTEGER NOT NULL, `name` TEXT NOT NULL, `is_default` INTEGER, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "address",
@@ -416,6 +416,12 @@
             "columnName": "name",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "isDefault",
+            "columnName": "is_default",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "id",
@@ -447,7 +453,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '17b3f4104611ffee62e0a343fa830c43')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'edd78a8b6c60ff725138d8e2ff760eb2')"
     ]
   }
 }

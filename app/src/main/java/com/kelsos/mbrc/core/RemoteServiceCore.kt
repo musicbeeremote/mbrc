@@ -2,7 +2,6 @@ package com.kelsos.mbrc.core
 
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
@@ -17,16 +16,10 @@ class RemoteServiceCore(
   playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
   playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
-  private val positionLiveDataProvider: TrackPositionLiveDataProvider,
-  private val defaultSettingsLiveDataProvider: DefaultSettingsLiveDataProvider
+  private val positionLiveDataProvider: TrackPositionLiveDataProvider
 ) : IRemoteServiceCore, LifeCycleAwareService() {
 
   init {
-    defaultSettingsLiveDataProvider.observe(this) {
-      Timber.v("settings changed")
-      clientConnectionManager.setDefaultConnectionSettings(it)
-      clientConnectionManager.start()
-    }
 
     playingTrackLiveDataProvider.observe(this) {
       notificationManager.trackChanged(it)
@@ -66,7 +59,6 @@ class RemoteServiceCore(
     Timber.v("Stopping remote core")
 
     clientConnectionManager.stop()
-    defaultSettingsLiveDataProvider.removeObservers(this)
   }
 
   override fun setSyncStartAction(action: SyncStartAction?) {

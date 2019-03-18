@@ -1,125 +1,103 @@
 package com.kelsos.mbrc.networking.connections
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
+import androidx.paging.PagingData
 import arrow.core.Option
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.utilities.paged
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class ConnectionRepositoryImpl(
-  private val connectionDao: ConnectionDao,
+  private val dao: ConnectionDao,
   private val dispatchers: AppCoroutineDispatchers,
-  private val defaultSettingsModel: DefaultSettingsModel,
-  private val remoteServiceDiscovery: RemoteServiceDiscovery
+  private val settings: DefaultSettingsModel,
+  private val discovery: RemoteServiceDiscovery
 ) : ConnectionRepository {
 
-  private val default: MediatorLiveData<ConnectionSettingsEntity> = MediatorLiveData()
-  private var defaultData: LiveData<ConnectionSettingsEntity>? = null
-
   override suspend fun discover(): Int {
-    val discover = remoteServiceDiscovery.discover()
+    val discover = discovery.discover()
     return discover.fold(
       { it },
       {
-        save(it)
+        save(it.toConnection())
         DiscoveryStop.COMPLETE
       }
     )
   }
 
-  override suspend fun save(settings: ConnectionSettingsEntity) {
+  override suspend fun save(settings: ConnectionSettings) {
     withContext(dispatchers.database) {
-
-      val id = connectionDao.findId(settings.address, settings.port)
+      val entity = settings.toConnectionEntity()
+      val id = dao.findId(settings.address, settings.port)
       id?.let {
         settings.id = it
       }
 
       if (settings.id > 0) {
-        connectionDao.update(settings)
+        dao.update(entity)
       } else {
-        settings.id = connectionDao.insert(settings)
+        settings.id = dao.insert(entity)
       }
 
       if (count() == 1L) {
-        defaultSettingsModel.defaultId = checkNotNull(last).id
+        dao.updateDefault(checkNotNull(dao.last()?.toConnection()).id)
       }
     }
   }
 
-  override suspend fun delete(settings: ConnectionSettingsEntity) {
+  override suspend fun delete(settings: ConnectionSettings) {
     withContext(dispatchers.database) {
       val oldId = settings.id
-
-      connectionDao.delete(settings)
-
-      if (oldId == defaultId) {
-        val count = count()
-        if (count == 0L) {
-          defaultId = -1
-        } else {
-          defaultSettingsModel.defaultId = checkNotNull(getItemBefore(oldId) ?: first).id
-        }
+      dao.delete(settings.toConnectionEntity())
+      val default = dao.getDefault()
+      if (default == null && count() > 0) {
+        dao.updateDefault(checkNotNull(getItemBefore(oldId) ?: dao.first()?.toConnection()).id)
       }
     }
   }
 
-  private fun getItemBefore(id: Long): ConnectionSettingsEntity? {
-    return connectionDao.getPrevious(id)
+  private fun getItemBefore(id: Long): ConnectionSettings? {
+    return dao.getPrevious(id)?.toConnection()
   }
 
-  private val first: ConnectionSettingsEntity?
-    get() = connectionDao.first()
-
-  private val last: ConnectionSettingsEntity?
-    get() = connectionDao.last()
-
-  override fun getDefault(): Option<ConnectionSettingsEntity> {
-    val defaultId = defaultId
-    if (defaultId < 0) {
-      return Option.empty()
-    }
-
-    return Option.fromNullable(connectionDao.findById(defaultId))
+  override fun getDefault(): Option<ConnectionSettings> {
+    return Option.fromNullable(dao.getDefault()?.toConnection())
   }
 
-  override fun setDefault(settings: ConnectionSettingsEntity) {
-    defaultId = settings.id
+  override fun setDefault(settings: ConnectionSettings) {
+    dao.updateDefault(settings.id)
   }
 
-  override suspend fun defaultSettings(): LiveData<ConnectionSettingsEntity?> {
-    if (defaultData == null) {
-      observeDefault()
-    }
-    return default
+  override fun getAll(): Flow<PagingData<ConnectionSettings>> = dao.getAll().paged {
+    it.toConnection()
   }
-
-  private fun observeDefault() {
-    val data = connectionDao.getById(defaultId).also {
-      this.defaultData = it
-    }
-    default.addSource(data) { value ->
-      default.value = value
-    }
-  }
-
-  private var defaultId: Long
-    get() = defaultSettingsModel.defaultId
-    set(id) {
-      defaultSettingsModel.defaultId = id
-      defaultData?.let {
-        default.removeSource(it)
-      }
-      observeDefault()
-    }
-
-  override fun getAll(): LiveData<List<ConnectionSettingsEntity>> = connectionDao.getAll()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) {
-      connectionDao.count()
+      dao.count()
     }
   }
+}
+
+private fun ConnectionSettingsEntity.toConnection(): ConnectionSettings {
+  return ConnectionSettings(
+    address = address,
+    port = port,
+    name = name,
+    isDefault = isDefault ?: false,
+    id = id
+  )
+}
+
+private fun ConnectionSettings.toConnectionEntity(): ConnectionSettingsEntity {
+  val isDefault = if (isDefault) isDefault else null
+  return ConnectionSettingsEntity(
+    address = address,
+    port = port,
+    name = name,
+    isDefault = isDefault,
+    id = id
+  )
 }

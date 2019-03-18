@@ -6,31 +6,39 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.snackbar.Snackbar
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentConnectionManagerBinding
-import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ConnectionManagerFragment :
-  Fragment(),
-  SettingsDialogFragment.SettingsSaveListener,
-  ConnectionAdapter.ConnectionChangeListener {
+class ConnectionManagerFragment : Fragment(), ConnectionAdapter.ConnectionChangeListener {
 
-  private val connectionManagerViewModel: ConnectionManagerViewModel by viewModel()
+  private val viewModel: ConnectionManagerViewModel by viewModel()
   private val adapter: ConnectionAdapter by inject()
 
   private var _binding: FragmentConnectionManagerBinding? = null
   private val binding get() = _binding!!
 
   private fun onAddButtonClick() {
-    SettingsDialogFragment.create(parentFragmentManager).show(this)
+    SettingsDialogFragment.newInstance(parentFragmentManager).show {
+      viewModel.save(it)
+    }
   }
 
   private fun onScanButtonClick() {
     binding.connectionManagerProgress.isGone = false
-    connectionManagerViewModel.startDiscovery()
+    viewModel.startDiscovery()
   }
 
   override fun onCreateView(
@@ -51,8 +59,17 @@ class ConnectionManagerFragment :
     binding.connectionManagerConnections.setHasFixedSize(true)
     binding.connectionManagerConnections.layoutManager = LinearLayoutManager(requireContext())
     binding.connectionManagerConnections.adapter = adapter
-    connectionManagerViewModel.settings.observe(viewLifecycleOwner) {
-      adapter.submitList(it)
+    lifecycleScope.launch {
+      viewModel.settings.collect {
+        adapter.submitData(it)
+      }
+    }
+    lifecycleScope.launch {
+      viewModel.discoveryStatus.map { it.getContentIfNotHandled() }
+        .filterNotNull()
+        .collect { status ->
+          onDiscoveryStopped(status)
+        }
     }
   }
 
@@ -61,20 +78,32 @@ class ConnectionManagerFragment :
     _binding = null
   }
 
-  override fun onSave(settings: ConnectionSettingsEntity) {
-    connectionManagerViewModel.save(settings)
+  private fun onDiscoveryStopped(status: Int) {
+    view?.findViewById<LinearProgressIndicator>(R.id.connection_manager__progress)?.isGone = true
+
+    val message: String = when (status) {
+      DiscoveryStop.NO_WIFI -> getString(R.string.con_man_no_wifi)
+      DiscoveryStop.NOT_FOUND -> getString(R.string.con_man_not_found)
+      DiscoveryStop.COMPLETE -> {
+        getString(R.string.con_man_success)
+      }
+      else -> getString(R.string.unknown_reason)
+    }
+
+    Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
   }
 
-  override fun onDelete(settings: ConnectionSettingsEntity) {
-    connectionManagerViewModel.delete(settings)
+  override fun onDelete(settings: ConnectionSettings) {
+    viewModel.delete(settings)
   }
 
-  override fun onEdit(settings: ConnectionSettingsEntity) {
-    val settingsDialog = SettingsDialogFragment.newInstance(settings, parentFragmentManager)
-    settingsDialog.show(this)
+  override fun onEdit(settings: ConnectionSettings) {
+    SettingsDialogFragment.newInstance(settings, parentFragmentManager).show {
+      viewModel.save(it)
+    }
   }
 
-  override fun onDefault(settings: ConnectionSettingsEntity) {
-    connectionManagerViewModel.setDefault(settings)
+  override fun onDefault(settings: ConnectionSettings) {
+    viewModel.setDefault(settings)
   }
 }

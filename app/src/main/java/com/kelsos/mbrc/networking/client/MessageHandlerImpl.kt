@@ -9,16 +9,19 @@ import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
+import com.squareup.moshi.Moshi
 import timber.log.Timber
 
 class MessageHandlerImpl(
   private val commandExecutor: CommandExecutor,
-  private val messageDeserializer: MessageDeserializer,
   private val messageQueue: MessageQueue,
   private val uiMessageQueue: UiMessageQueue,
   private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
-  private val clientInformationStore: ClientInformationStore
+  private val clientInformationStore: ClientInformationStore,
+  private val moshi: Moshi
 ) : MessageHandler {
+  private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }
+
   override fun handleMessage(incoming: String) {
     val replies = incoming.split("\r\n".toRegex()).dropLastWhile(String::isEmpty)
 
@@ -28,8 +31,7 @@ class MessageHandlerImpl(
   }
 
   private fun process(message: String) {
-
-    val node = messageDeserializer.deserialize(message)
+    val node = checkNotNull(adapter.fromJson(message)) { "socket message should not be null" }
     val context = node.context
 
     Timber.v("received message with context -> $context")

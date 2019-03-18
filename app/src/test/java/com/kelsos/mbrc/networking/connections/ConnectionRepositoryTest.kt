@@ -4,20 +4,27 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.paging.AsyncPagingDataDiffer
+import androidx.paging.LoadState
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
-import com.kelsos.mbrc.utils.observeOnce
+import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
+import com.kelsos.mbrc.utils.noopListUpdateCallback
+import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,6 +37,7 @@ import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.util.ArrayList
+import java.util.concurrent.CountDownLatch
 
 @RunWith(AndroidJUnit4::class)
 class ConnectionRepositoryTest : KoinTest {
@@ -44,6 +52,7 @@ class ConnectionRepositoryTest : KoinTest {
 
   @Before
   fun setUp() {
+    Dispatchers.setMain(testDispatcher)
     val context = ApplicationProvider.getApplicationContext<Context>()
     db = Room.inMemoryDatabaseBuilder(context, Database::class.java)
       .allowMainThreadQueries()
@@ -59,10 +68,12 @@ class ConnectionRepositoryTest : KoinTest {
   fun tearDown() {
     stopKoin()
     db.close()
+    Dispatchers.resetMain()
+    testDispatcher.cleanupTestCoroutines()
   }
 
   @Test
-  fun addNewSettings() = runBlockingTest {
+  fun addNewSettings() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
 
     repository.save(settings)
@@ -72,7 +83,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun addMultipleNewSettings() = runBlockingTest {
+  fun addMultipleNewSettings() = runBlockingTest(testDispatcher) {
 
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -90,7 +101,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun addMultipleNewSettingsRemoveOne() = runBlockingTest {
+  fun addMultipleNewSettingsRemoveOne() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -107,20 +118,44 @@ class ConnectionRepositoryTest : KoinTest {
 
     repository.delete(settings2)
 
-    val settingsList = ArrayList<ConnectionSettingsEntity>()
+    val settingsList = ArrayList<ConnectionSettings>()
     settingsList.add(settings)
     settingsList.add(settings1)
     settingsList.add(settings3)
 
     assertThat(repository.count()).isEqualTo(3)
 
-    repository.getAll().observeOnce {
-      assertThat(it).containsExactlyElementsIn(settingsList)
+    val differ = AsyncPagingDataDiffer(
+      diffCallback = ConnectionAdapter.CONNECTION_COMPARATOR,
+      updateCallback = noopListUpdateCallback,
+      mainDispatcher = testDispatcher,
+      workerDispatcher = testDispatcher
+    )
+    val latch = CountDownLatch(1)
+    differ.addLoadStateListener {
+      if (it.prepend == LoadState.NotLoading(endOfPaginationReached = true)) {
+        latch.countDown()
+      }
     }
+
+    val job = launch {
+      repository.getAll().collectLatest {
+        differ.submitData(it)
+      }
+    }
+
+    advanceUntilIdle()
+    @Suppress("BlockingMethodInNonBlockingContext")
+    latch.await()
+
+    val snapshot = differ.snapshot()
+    assertThat(snapshot.items).containsExactlyElementsIn(settingsList)
+
+    job.cancel()
   }
 
   @Test
-  fun changeDefault() = runBlockingTest {
+  fun changeDefault() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
 
@@ -133,7 +168,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun deleteSingleDefault() = runBlockingTest {
+  fun deleteSingleDefault() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
 
     repository.save(settings)
@@ -148,7 +183,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun deleteFromMultipleDefaultFirst() = runBlockingTest {
+  fun deleteFromMultipleDefaultFirst() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -171,7 +206,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun deleteFromMultipleDefaultSecond() = runBlockingTest {
+  fun deleteFromMultipleDefaultSecond() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -197,7 +232,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun deleteFromMultipleDefaultLast() = runBlockingTest {
+  fun deleteFromMultipleDefaultLast() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -223,7 +258,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun deleteFromMultipleNonDefault() = runBlockingTest {
+  fun deleteFromMultipleNonDefault() = runBlockingTest(testDispatcher) {
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -249,7 +284,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun updateSettings() = runBlockingTest {
+  fun updateSettings() = runBlockingTest(testDispatcher) {
     val newPort = 6060
     val address = "192.167.90.10"
     val newAddress = "192.167.90.11"
@@ -278,12 +313,14 @@ class ConnectionRepositoryTest : KoinTest {
     assertThat(repository.getDefault().orNull()!!.address).isEqualTo(newAddress)
   }
 
-  private fun createSettings(address: String): ConnectionSettingsEntity {
-    val settings = ConnectionSettingsEntity()
-    settings.name = "Desktop PC"
-    settings.address = address
-    settings.port = 3000
-    return settings
+  private fun createSettings(address: String): ConnectionSettings {
+    return ConnectionSettings(
+      name = "Desktop PC",
+      address = address,
+      port = 3000,
+      isDefault = true,
+      id = 0
+    )
   }
 
   private fun getTestModule() = module {
@@ -307,7 +344,6 @@ class ConnectionRepositoryTest : KoinTest {
       resources
     }
     single { connectionDao }
-    singleBy<DefaultSettingsLiveDataProvider, DefaultSettingsLiveDataProviderImpl>()
-    factory<DefaultSettingsModel> { DefaultSettingsModelImpl }
+    single<DefaultSettingsModel> { DefaultSettingsModelImpl }
   }
 }

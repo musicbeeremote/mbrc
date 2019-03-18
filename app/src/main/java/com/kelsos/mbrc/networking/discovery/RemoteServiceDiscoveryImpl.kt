@@ -7,10 +7,7 @@ import arrow.core.Either
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.toConnection
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
@@ -21,8 +18,7 @@ import java.util.Locale
 class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
-  private val moshi: Moshi,
-  private val dispatchers: AppCoroutineDispatchers
+  private val moshi: Moshi
 ) : RemoteServiceDiscovery {
   private var multicastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
@@ -42,40 +38,34 @@ class RemoteServiceDiscoveryImpl(
     Timber.v("Starting remote service discovery")
 
     val socket = create()
-    return runBlocking {
-      var currentTry = 0
-      while (currentTry < 4) {
-        try {
-          val entity = withContext(dispatchers.network) {
-            val buffer = ByteArray(512)
-            val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
-              socket.receive(this)
-              val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
-              Timber.v(message)
-              adapter.fromJson(message)
-            }
-            if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
-              throw IOException("unexpected message")
-            }
-            discoveryMessage.toConnection()
-          }
-          return@runBlocking Either.right(entity)
-        } catch (e: Exception) {
-          currentTry++
-        }
+    val entity = retryIO(times = 4) {
+      val buffer = ByteArray(512)
+      val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
+        socket.receive(this)
+        val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
+        Timber.v(message)
+        adapter.fromJson(message)
       }
-
-      try {
-        socket.leaveGroup(group)
-        socket.close()
-      } catch (e: IOException) {
-        Timber.v("While cleaning up the discovery ${e.message}")
-      } finally {
-        stopDiscovery()
+      if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
+        throw IOException("unexpected message")
       }
-
-      return@runBlocking Either.left(DiscoveryStop.NOT_FOUND)
+      discoveryMessage.toConnection()
     }
+
+    try {
+      socket.leaveGroup(group)
+      socket.close()
+    } catch (e: IOException) {
+      Timber.v("While cleaning up the discovery ${e.message}")
+    } finally {
+      stopDiscovery()
+    }
+
+    if (entity.isLeft()) {
+      return Either.left(DiscoveryStop.NOT_FOUND)
+    }
+
+    return entity.mapLeft { DiscoveryStop.COMPLETE }
   }
 
   private fun stopDiscovery() {

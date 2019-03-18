@@ -7,8 +7,6 @@ import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProviderImpl
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.DefaultSettingsLiveDataProviderImpl
 import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProvider
 import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProviderImpl
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
@@ -57,14 +55,10 @@ import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.client.ClientConnectionManager
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
-import com.kelsos.mbrc.networking.client.MessageDeserializer
-import com.kelsos.mbrc.networking.client.MessageDeserializerImpl
 import com.kelsos.mbrc.networking.client.MessageHandler
 import com.kelsos.mbrc.networking.client.MessageHandlerImpl
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.MessageQueueImpl
-import com.kelsos.mbrc.networking.client.MessageSerializer
-import com.kelsos.mbrc.networking.client.MessageSerializerImpl
 import com.kelsos.mbrc.networking.client.UiMessageQueue
 import com.kelsos.mbrc.networking.client.UiMessageQueueImpl
 import com.kelsos.mbrc.networking.client.UserActionUseCase
@@ -158,8 +152,6 @@ val appModule = module {
   singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
   single<CoverCache>()
 
-  singleBy<MessageSerializer, MessageSerializerImpl>()
-
   singleBy<SerializationAdapter, SerializationAdapterImpl>()
   singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
   singleBy<DatabaseTransactionRunner, DatabaseTransactionRunnerImpl>()
@@ -185,8 +177,6 @@ val appModule = module {
   singleBy<TrackRatingLiveDataProvider, TrackRatingLiveDataProviderImpl>()
   singleBy<ConnectionStatusLiveDataProvider, ConnectionStatusLiveDataProviderImpl>()
 
-  singleBy<DefaultSettingsLiveDataProvider, DefaultSettingsLiveDataProviderImpl>()
-
   singleBy<LyricsLiveDataProvider, LyricsLiveDataProviderImpl>()
 
   singleBy<MessageQueue, MessageQueueImpl>()
@@ -195,7 +185,6 @@ val appModule = module {
 
   singleBy<IClientConnectionManager, ClientConnectionManager>()
   singleBy<CommandFactory, CommandFactoryImpl>()
-  singleBy<MessageDeserializer, MessageDeserializerImpl>()
   singleBy<UiMessageQueue, UiMessageQueueImpl>()
   singleBy<RemoteServiceDiscovery, RemoteServiceDiscoveryImpl>()
   singleBy<TrackPositionLiveDataProvider, TrackPositionLiveDataProviderImpl>()

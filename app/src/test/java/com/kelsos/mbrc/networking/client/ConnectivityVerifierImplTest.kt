@@ -17,7 +17,7 @@ import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
-import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
 import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -151,10 +151,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     val server = startMockServer()
 
     coEvery { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettingsEntity()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
-      return@answers Option.fromNullable(settings)
+      return@answers server.defaultConnection()
     }
 
     assertThat(verifier.verify()).isTrue()
@@ -164,10 +161,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   fun testPrematureDisconnectDuringVerification() = runBlockingTest(testDispatcher) {
     val server = startMockServer(true)
     coEvery { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettingsEntity()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
-      return@answers Option.fromNullable(settings)
+      return@answers server.defaultConnection()
     }
 
     try {
@@ -182,10 +176,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   fun testInvalidPluginResponseVerification() = runBlockingTest(testDispatcher) {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
     coEvery { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettingsEntity()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
-      return@answers Option.fromNullable(settings)
+      return@answers server.defaultConnection()
     }
 
     try {
@@ -196,12 +187,23 @@ class ConnectivityVerifierImplTest : KoinTest {
     }
   }
 
+  private fun ServerSocket.defaultConnection(): Option<ConnectionSettings> =
+    Option.fromNullable(
+      ConnectionSettings(
+        address = inetAddress.hostAddress,
+        port = localPort,
+        name = "default",
+        id = 1,
+        isDefault = true
+      )
+    )
+
   @Test
   fun testVerificationNoConnection() = runBlockingTest(testDispatcher) {
     startMockServer(true)
 
     coEvery { connectionRepository.getDefault() } answers {
-      return@answers Option.empty<ConnectionSettingsEntity>()
+      return@answers Option.empty<ConnectionSettings>()
     }
 
     try {
@@ -217,7 +219,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     startMockServer(false, "payload", false)
 
     coEvery { connectionRepository.getDefault() } answers {
-      return@answers Option.empty<ConnectionSettingsEntity>()
+      return@answers Option.empty<ConnectionSettings>()
     }
 
     try {

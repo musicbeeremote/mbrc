@@ -1,10 +1,13 @@
 package com.kelsos.mbrc.networking.client
 
+import arrow.core.Some
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
-import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.connections.ConnectionRepository
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.connections.toSocketAddress
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Runnable
@@ -28,28 +31,24 @@ class ClientConnectionManager(
   private val activityChecker: SocketActivityChecker,
   private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,
-  private val messageSerializer: MessageSerializer,
+  private val moshi: Moshi,
+  private val connectionRepository: ConnectionRepository,
   private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
 ) : IClientConnectionManager, PingTimeoutListener {
 
-  private lateinit var connectionSettings: ConnectionSettingsEntity
+  private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }
 
   private var executor = getExecutor()
 
   private fun getExecutor() = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
   private val job = SupervisorJob()
-  private val context = job + executor.asCoroutineDispatcher()
-  private val scope = CoroutineScope(context)
+  private val scope = CoroutineScope(job + executor.asCoroutineDispatcher())
   private var connection: SocketConnection? = null
 
   private var pendingConnection: Deferred<Unit>? = null
 
   init {
     messageQueue.setOnMessageAvailable { sendData(it) }
-  }
-
-  override fun setDefaultConnectionSettings(connectionSettings: ConnectionSettingsEntity) {
-    this.connectionSettings = connectionSettings
   }
 
   override fun start() {
@@ -74,12 +73,14 @@ class ClientConnectionManager(
     scope.launch {
       delay(2000)
 
-      if (!::connectionSettings.isInitialized) {
+      val default = connectionRepository.getDefault()
+      if (default.isEmpty()) {
         Timber.v("no connection settings aborting")
         return@launch
       }
+      val settings = (default as Some).t
 
-      Timber.v("Attempting connection on $connectionSettings")
+      Timber.v("Attempting connection on $settings")
       val onConnection: (Boolean) -> Unit = { connected ->
         if (!connected) {
           activityChecker.stop()
@@ -91,7 +92,7 @@ class ClientConnectionManager(
       }
 
       connection = SocketConnection(
-        connectionSettings,
+        settings,
         messageHandler,
         onConnection
       ) {
@@ -114,7 +115,7 @@ class ClientConnectionManager(
 
   @Synchronized
   private fun sendData(message: SocketMessage) {
-    connection?.sendMessage(messageSerializer.serialize(message))
+    connection?.sendMessage("${adapter.toJson(message)}\r\n")
   }
 
   override fun onTimeout() {
@@ -124,7 +125,7 @@ class ClientConnectionManager(
   }
 
   private class SocketConnection(
-    connectionSettings: ConnectionSettingsEntity,
+    connectionSettings: ConnectionSettings,
     private val messageHandler: MessageHandler,
     private val connected: (Boolean) -> Unit,
     private val error: (Throwable) -> Unit

@@ -16,6 +16,8 @@ data class ConnectionSettingsEntity(
   var port: Int = 0,
   @ColumnInfo(name = "name")
   var name: String = "",
+  @ColumnInfo(name = "is_default")
+  var isDefault: Boolean? = null,
   @PrimaryKey(autoGenerate = true)
   var id: Long = 0
 )

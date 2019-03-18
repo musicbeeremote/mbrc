@@ -1,22 +1,21 @@
 package com.kelsos.mbrc.networking.connections
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PagingData
 import arrow.core.Option
+import kotlinx.coroutines.flow.Flow
 
 interface ConnectionRepository {
-  suspend fun save(settings: ConnectionSettingsEntity)
+  suspend fun save(settings: ConnectionSettings)
 
-  suspend fun delete(settings: ConnectionSettingsEntity)
+  suspend fun delete(settings: ConnectionSettings)
 
-  fun getAll(): LiveData<List<ConnectionSettingsEntity>>
+  fun getAll(): Flow<PagingData<ConnectionSettings>>
 
   suspend fun count(): Long
 
-  fun getDefault(): Option<ConnectionSettingsEntity>
+  fun getDefault(): Option<ConnectionSettings>
 
-  fun setDefault(settings: ConnectionSettingsEntity)
-
-  suspend fun defaultSettings(): LiveData<ConnectionSettingsEntity?>
+  fun setDefault(settings: ConnectionSettings)
 
   suspend fun discover(): Int
 }

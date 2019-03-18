@@ -7,25 +7,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.UiListConnectionSettingsBinding
-import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter.ConnectionViewHolder
 
-class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity, ConnectionViewHolder>(
-  DIFF_CALLBACK
+class ConnectionAdapter : PagingDataAdapter<ConnectionSettings, ConnectionViewHolder>(
+  CONNECTION_COMPARATOR
 ) {
-
-  private var selectionId: Long = 0
   private var changeListener: ConnectionChangeListener? = null
-
-  fun setSelectionId(selectionId: Long) {
-    this.selectionId = selectionId
-    notifyDataSetChanged()
-  }
 
   fun setChangeListener(changeListener: ConnectionChangeListener) {
     this.changeListener = changeListener
@@ -34,25 +27,29 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity, ConnectionViewHo
   override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): ConnectionViewHolder {
     val holder = ConnectionViewHolder.create(viewGroup)
 
-    holder.onOverflow {
+    holder.onOverflow { view ->
       val adapterPosition = holder.bindingAdapterPosition
-      val settings = getItem(adapterPosition)
-      showPopup(settings, it)
+      getItem(adapterPosition)?.let {
+        showPopup(it, view)
+      }
     }
 
     holder.onClick {
       val adapterPosition = holder.bindingAdapterPosition
-      val settings = getItem(adapterPosition)
-      changeListener?.onDefault(settings)
+      getItem(adapterPosition)?.let {
+        changeListener?.onDefault(it)
+      }
     }
     return holder
   }
 
   override fun onBindViewHolder(holder: ConnectionViewHolder, position: Int) {
-    holder.bind(getItem(holder.bindingAdapterPosition), selectionId)
+    getItem(holder.bindingAdapterPosition)?.let {
+      holder.bind(it)
+    }
   }
 
-  private fun showPopup(settings: ConnectionSettingsEntity, v: View) {
+  private fun showPopup(settings: ConnectionSettings, v: View) {
     val popupMenu = PopupMenu(v.context, v)
     popupMenu.menuInflater.inflate(R.menu.connection_popup, popupMenu.menu)
     popupMenu.setOnMenuItemClickListener {
@@ -80,10 +77,10 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity, ConnectionViewHo
     private val defaultSettings: ImageView = binding.connectionSettingsDefaultIndicator
     private val overflow: View = binding.connectionSettingsOverflow
 
-    fun bind(settings: ConnectionSettingsEntity, selectionId: Long) {
+    fun bind(settings: ConnectionSettings) {
       computerName.text = settings.name
       hostname.text = "${settings.address} : ${settings.port}"
-      defaultSettings.isGone = settings.id != selectionId
+      defaultSettings.isGone = !settings.isDefault
     }
 
     fun onOverflow(action: (view: View) -> Unit) {
@@ -105,27 +102,29 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity, ConnectionViewHo
   }
 
   interface ConnectionChangeListener {
-    fun onDelete(settings: ConnectionSettingsEntity)
+    fun onDelete(settings: ConnectionSettings)
 
-    fun onEdit(settings: ConnectionSettingsEntity)
+    fun onEdit(settings: ConnectionSettings)
 
-    fun onDefault(settings: ConnectionSettingsEntity)
+    fun onDefault(settings: ConnectionSettings)
   }
 
   companion object {
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ConnectionSettingsEntity>() {
+    val CONNECTION_COMPARATOR = object : DiffUtil.ItemCallback<ConnectionSettings>() {
       override fun areItemsTheSame(
-        oldItem: ConnectionSettingsEntity,
-        newItem: ConnectionSettingsEntity
+        oldItem: ConnectionSettings,
+        newItem: ConnectionSettings
       ): Boolean {
         return oldItem.id == newItem.id
       }
 
       override fun areContentsTheSame(
-        oldItem: ConnectionSettingsEntity,
-        newItem: ConnectionSettingsEntity
+        oldItem: ConnectionSettings,
+        newItem: ConnectionSettings
       ): Boolean {
-        return oldItem == newItem
+        return oldItem.address == newItem.address &&
+          oldItem.name == newItem.name &&
+          oldItem.port == newItem.port
       }
     }
   }

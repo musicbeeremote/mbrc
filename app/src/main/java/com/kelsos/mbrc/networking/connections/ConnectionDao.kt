@@ -1,11 +1,12 @@
 package com.kelsos.mbrc.networking.connections
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 
 @Dao
@@ -20,11 +21,8 @@ interface ConnectionDao {
   @Update(onConflict = OnConflictStrategy.REPLACE)
   fun update(settings: ConnectionSettingsEntity)
 
-  @Query("select * from settings where id = :defaultId")
-  fun findById(defaultId: Long): ConnectionSettingsEntity?
-
   @Query("select * from settings")
-  fun getAll(): LiveData<List<ConnectionSettingsEntity>>
+  fun getAll(): PagingSource<Int, ConnectionSettingsEntity>
 
   @Query("select count(*) from settings")
   fun count(): Long
@@ -41,6 +39,18 @@ interface ConnectionDao {
   @Query("select id from settings where address = :address and port = :port")
   fun findId(address: String, port: Int): Long?
 
-  @Query("select * from settings where id = :id")
-  fun getById(id: Long): LiveData<ConnectionSettingsEntity>
+  @Query("select * from settings where is_default = 1")
+  fun getDefault(): ConnectionSettingsEntity?
+
+  @Query("update settings set is_default = 1 where id = :id")
+  fun setDefault(id: Long)
+
+  @Query("update settings set is_default = NULL")
+  fun clearDefaults()
+
+  @Transaction
+  fun updateDefault(id: Long) {
+    clearDefaults()
+    setDefault(id)
+  }
 }
