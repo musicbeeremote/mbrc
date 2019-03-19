@@ -6,7 +6,7 @@ import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import kotlinx.coroutines.flow.Flow
 
-class BrowseAlbumViewModel(
+class AlbumViewModel(
   repository: AlbumRepository
 ) : ViewModel() {
   val albums: Flow<PagingData<Album>> = repository.getAll()

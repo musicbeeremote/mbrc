@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.Track
+import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.databinding.FragmentBrowseBinding
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
+import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
@@ -22,6 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class BrowseTrackFragment : Fragment(), MenuItemSelectedListener<Track> {
 
   private val adapter: TrackAdapter by inject()
+  private val actionHandler: PopupActionHandler by inject()
   private val viewModel: BrowseTrackViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
@@ -70,6 +73,10 @@ class BrowseTrackFragment : Fragment(), MenuItemSelectedListener<Track> {
   }
 
   override fun onMenuItemSelected(@IdRes itemId: Int, item: Track) {
+    val action = actionHandler.trackSelected(itemId)
+    if (action == LibraryPopup.PROFILE) {
+      onItemClicked(item)
+    }
   }
 
   override fun onItemClicked(item: Track) {

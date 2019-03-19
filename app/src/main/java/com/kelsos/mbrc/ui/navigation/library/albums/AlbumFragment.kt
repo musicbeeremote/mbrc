@@ -24,11 +24,11 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BrowseAlbumFragment : Fragment(), MenuItemSelectedListener<Album> {
+class AlbumFragment : Fragment(), MenuItemSelectedListener<Album> {
 
   private val adapter: AlbumAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val viewModel: BrowseAlbumViewModel by viewModel()
+  private val viewModel: AlbumViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
