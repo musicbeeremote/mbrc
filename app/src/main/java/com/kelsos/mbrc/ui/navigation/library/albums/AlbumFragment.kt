@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
@@ -15,7 +14,6 @@ import androidx.navigation.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
@@ -24,10 +22,12 @@ import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksFragmentArgs
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
+import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 
-class BrowseAlbumFragment : Fragment(),
+class AlbumFragment : Fragment(),
   MenuItemSelectedListener<Album>,
   SwipeRefreshLayout.OnRefreshListener {
 
@@ -37,11 +37,10 @@ class BrowseAlbumFragment : Fragment(),
 
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
-  private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
   private val adapter: AlbumAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseAlbumViewModel by inject()
+  private val viewModel: AlbumViewModel by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -69,6 +68,15 @@ class BrowseAlbumFragment : Fragment(),
     recycler.linear(adapter, fastScroller)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
+    viewModel.albums.nonNullObserver(this) {
+      adapter.submitList(it)
+      emptyView.isVisible = it.isEmpty()
+      swipeLayout.isRefreshing = false
+    }
+    viewModel.indexes.nonNullObserver(this) {
+      adapter.setIndexes(it)
+      Timber.v(it.toString())
+    }
   }
 
   override fun onMenuItemSelected(action: String, item: Album) {
@@ -89,26 +97,12 @@ class BrowseAlbumFragment : Fragment(),
       swipeLayout.isRefreshing = true
     }
 
-    // presenter.refresh()
+    viewModel.reload()
   }
 
   fun update(pagedList: PagedList<Album>) {
     emptyView.isVisible = pagedList.isEmpty()
     adapter.submitList(pagedList)
-    swipeLayout.isRefreshing = false
-  }
-
-  fun updateIndexes(indexes: List<String>) {
-    adapter.setIndexes(indexes)
-  }
-
-  fun failure(throwable: Throwable) {
-    swipeLayout.isRefreshing = false
-    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
-  fun hideLoading() {
-    emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
   }
 }

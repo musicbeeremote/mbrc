@@ -9,9 +9,7 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 
-class AlbumAdapter
-
-  : FastScrollableAdapter<Album, AlbumViewHolder>(DIFF_CALLBACK) {
+class AlbumAdapter : FastScrollableAdapter<Album, AlbumViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_album) {
@@ -47,10 +45,10 @@ class AlbumAdapter
       return
     }
 
-    val albumEntity = getItem(position)
+    val album = getItem(position)
 
-    if (albumEntity != null) {
-      holder.bindTo(albumEntity)
+    if (album != null) {
+      holder.bindTo(album)
     } else {
       holder.clear()
     }

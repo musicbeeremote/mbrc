@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
@@ -34,7 +33,6 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRef
 
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
-  private val emptyViewProgress: ProgressBar by bindView(R.id.library_browser__loading_bar)
 
   private val adapter: ArtistAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
@@ -94,7 +92,6 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRef
   }
 
   fun hideLoading() {
-    emptyViewProgress.isVisible = false
     swipeLayout.isRefreshing = false
   }
 }

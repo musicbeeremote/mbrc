@@ -15,7 +15,7 @@ interface AlbumDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insert(list: List<AlbumEntity>)
 
-  @Query("select * from album")
+  @Query("select * from album order by album collate nocase asc")
   fun getAll(): DataSource.Factory<Int, AlbumEntity>
 
   @Query("select * from album where album like '%' || :term || '%'")
@@ -35,6 +35,6 @@ interface AlbumDao {
   )
   fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, AlbumEntity>
 
-  @Query("select substr(album, 0, 1) from album")
+  @Query("select substr(album, 1, 1) from album order by album collate nocase asc")
   fun getIndexes(): LiveData<List<String>>
 }
