@@ -24,11 +24,11 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist> {
+class ArtistFragment : Fragment(), MenuItemSelectedListener<Artist> {
 
   private val adapter: ArtistAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val viewModel: BrowseArtistViewModel by viewModel()
+  private val viewModel: ArtistViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
@@ -61,7 +61,6 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist> {
     super.onViewCreated(view, savedInstanceState)
     binding.libraryBrowserTextTitle.setText(R.string.artists_list_empty)
     binding.libraryBrowserSync.setOnClickListener {
-      viewModel.reload()
     }
     binding.libraryBrowserContent.setHasFixedSize(true)
     binding.libraryBrowserContent.adapter = adapter
