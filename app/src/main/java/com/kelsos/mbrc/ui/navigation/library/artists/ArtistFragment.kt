@@ -9,11 +9,9 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
@@ -22,10 +20,11 @@ import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsFragmentArgs
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
+import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRefreshListener {
+class ArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRefreshListener {
 
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
@@ -36,7 +35,7 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRef
 
   private val adapter: ArtistAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseArtistViewModel by inject()
+  private val viewModel: ArtistViewModel by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -53,10 +52,13 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRef
     recycler.setHasFixedSize(true)
     recycler.linear(adapter, fastScroller)
     adapter.setMenuItemSelectedListener(this)
-  }
-
-  fun updateIndexes(indexes: List<String>) {
-    adapter.setIndexes(indexes)
+    viewModel.artists.nonNullObserver(this) { list ->
+      emptyView.isVisible = list.isEmpty()
+      adapter.submitList(list)
+    }
+    viewModel.indexes.nonNullObserver(this) { indexes ->
+      adapter.setIndexes(indexes)
+    }
   }
 
   override fun onMenuItemSelected(action: String, item: Artist) {
@@ -79,19 +81,6 @@ class BrowseArtistFragment : Fragment(), MenuItemSelectedListener<Artist>, OnRef
       swipeLayout.isRefreshing = true
     }
 
-    presenter.reload()
-  }
-
-  fun update(pagedList: PagedList<Artist>) {
-    emptyView.isVisible = pagedList.isEmpty()
-    adapter.submitList(pagedList)
-  }
-
-  fun failure(throwable: Throwable) {
-    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
-  fun hideLoading() {
-    swipeLayout.isRefreshing = false
+    viewModel.reload()
   }
 }
