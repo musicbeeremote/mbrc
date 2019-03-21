@@ -9,7 +9,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.akaita.android.easylauncher'
 apply plugin: 'com.google.firebase.firebase-perf'
 
@@ -62,6 +61,10 @@ android {
     unitTests {
       includeAndroidResources = true
       returnDefaultValues = true
+
+      all {
+        maxHeapSize = "1024m"
+      }
     }
   }
 
@@ -304,15 +307,6 @@ def initFabricPropertiesIfNeeded() {
   }
 }
 
-coveralls {
-  jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-}
-
-tasks.coveralls {
-  dependsOn 'jacocoTestReport'
-  onlyIf { System.env.'CI' }
-}
-
 repositories {
   mavenCentral()
 }
@@ -410,4 +404,8 @@ android.applicationVariants.all { variant ->
   if (variant.name != 'play') {
     project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = false
   }
+}
+
+configurations.all {
+  resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
 }
