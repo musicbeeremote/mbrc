@@ -25,7 +25,6 @@ import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 class AlbumFragment : Fragment(),
   MenuItemSelectedListener<Album>,
@@ -75,7 +74,6 @@ class AlbumFragment : Fragment(),
     }
     viewModel.indexes.nonNullObserver(this) {
       adapter.setIndexes(it)
-      Timber.v(it.toString())
     }
   }
 

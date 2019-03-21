@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.content.sync
 
-import arrow.core.Either
-
 /**
  * The class is responsible for the library metadata and playlist data network.
  */
@@ -14,7 +12,7 @@ interface LibrarySyncUseCase {
    * @param auto Marks the network process as automatic (initiated by conditions) or
    * manual (initiated by the user)
    */
-  suspend fun sync(auto: Boolean = false): Either<Throwable, Boolean>
+  suspend fun sync(auto: Boolean = false): Int
 
   /**
    * Provides access to the interactor's current status.

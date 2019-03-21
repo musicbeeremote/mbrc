@@ -12,6 +12,9 @@
       android:layout_height="wrap_content"
       android:layout_gravity="top"
       android:background="@color/primary"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
       app:tabSelectedTextColor="@color/primary_text_material_light"
       app:tabTextColor="@color/secondary_text_material_light">
 

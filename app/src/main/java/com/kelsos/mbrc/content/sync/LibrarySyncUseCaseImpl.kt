@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.sync
 
-import arrow.core.Either
 import arrow.core.Try
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
@@ -25,10 +24,10 @@ class LibrarySyncUseCaseImpl(
 
   private var running: Boolean = false
 
-  override suspend fun sync(auto: Boolean): Either<Throwable, Boolean> {
+  override suspend fun sync(auto: Boolean): Int {
 
     if (running) {
-      return Either.right(false)
+      return SyncResult.NO_OP
     }
     running = true
 
@@ -36,7 +35,7 @@ class LibrarySyncUseCaseImpl(
 
     metrics.librarySyncStarted()
 
-    val result: Either<Throwable, Boolean> = if (checkIfShouldSync(auto)) {
+    val result: Int = if (checkIfShouldSync(auto)) {
       Try {
         genreRepository.getRemote()
         artistRepository.getRemote()
@@ -44,9 +43,9 @@ class LibrarySyncUseCaseImpl(
         trackRepository.getRemote()
         playlistRepository.getRemote()
         return@Try true
-      }.toEither()
+      }.toEither().fold({ SyncResult.FAILED }, { SyncResult.SUCCESS })
     } else {
-      Either.right(false)
+      SyncResult.NO_OP
     }
 
     withContext(dispatchers.disk) {

@@ -14,7 +14,8 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.tabs.TabLayout
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.extensions.snackbar
+import com.kelsos.mbrc.content.sync.SyncResult
+import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
@@ -27,22 +28,24 @@ class LibraryFragment : Fragment(),
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
-  private var albumArtistOnly: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
 
-  private val presenter: LibraryViewModel by inject()
-
-  private var refreshDialog: SyncProgressDialog? = null
+  private val viewModel: LibraryViewModel by inject()
 
   override fun onQueryTextSubmit(query: String): Boolean {
     if (!query.isEmpty() && query.trim { it <= ' ' }.isNotEmpty()) {
       closeSearch()
-
-      // SearchResultsActivity.start(this, query.trim { it <= ' ' })
-      // navigate
     }
 
     return true
+  }
+
+  private fun onSyncResult(result: Int) {
+    when (result) {
+      SyncResult.NO_OP -> Unit
+      SyncResult.FAILED -> Unit
+      SyncResult.SUCCESS -> Unit
+    }
   }
 
   private fun closeSearch(): Boolean {
@@ -81,6 +84,12 @@ class LibraryFragment : Fragment(),
     pager.addOnPageChangeListener(this)
 
     tabs.setupWithViewPager(pager)
+    viewModel.syncProgress.nonNullObserver(this) {
+      TODO("Sync progress view")
+    }
+    viewModel.events.nonNullObserver(this) { event ->
+      event.getContentIfNotHandled()?.let { onSyncResult(it) }
+    }
   }
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -89,8 +98,6 @@ class LibraryFragment : Fragment(),
     searchMenuItem = menu.findItem(R.id.library_screen__action_search)?.apply {
       searchView = actionView as SearchView
     }
-
-    albumArtistOnly = menu.findItem(R.id.library_album_artist)
 
     searchView?.apply {
       queryHint = getString(R.string.library_search_hint)
@@ -101,21 +108,13 @@ class LibraryFragment : Fragment(),
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     if (item.itemId == R.id.library_screen__action_refresh) {
-      presenter.refresh()
-      return true
-    } else if (item.itemId == R.id.library_album_artist) {
-      albumArtistOnly?.let {
-        it.isChecked = !it.isChecked
-        presenter.setArtistPreference(it.isChecked)
-      }
-
+      viewModel.refresh()
       return true
     }
     return super.onOptionsItemSelected(item)
   }
 
   override fun onDestroy() {
-
     pagerAdapter = null
     super.onDestroy()
   }
@@ -129,10 +128,6 @@ class LibraryFragment : Fragment(),
   override fun onPageScrollStateChanged(state: Int) {
   }
 
-  fun updateArtistOnlyPreference(albumArtistOnly: Boolean?) {
-    this.albumArtistOnly?.isChecked = albumArtistOnly ?: false
-  }
-
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     outState.putInt(PAGER_POSITION, pager.currentItem)
@@ -141,23 +136,6 @@ class LibraryFragment : Fragment(),
   override fun onViewStateRestored(savedInstanceState: Bundle?) {
     super.onViewStateRestored(savedInstanceState)
     pager.currentItem = savedInstanceState?.getInt(PAGER_POSITION, 0) ?: 0
-  }
-
-  fun refreshFailed() {
-    snackbar(R.string.refresh_failed)
-  }
-
-  fun showRefreshing() {
-    refreshDialog = syncDialog()
-    refreshDialog?.show()
-  }
-
-  fun updateSyncProgress(progress: SyncProgress) {
-    refreshDialog?.updateProgress(progress)
-  }
-
-  fun hideRefreshing() {
-    refreshDialog?.dismiss()
   }
 
   companion object {

@@ -11,13 +11,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class BrowseTrackViewModel(
+class TrackViewModel(
   private val repository: TrackRepository,
   private val dispatchers: AppCoroutineDispatchers
 ) : ViewModel() {
 
-  private val viewModelJob: Job = Job()
-  private val networkScope = CoroutineScope(dispatchers.network + viewModelJob)
+  private val job: Job = Job()
+  private val networkScope = CoroutineScope(dispatchers.network + job)
   val tracks: LiveData<PagedList<Track>>
   val indexes: LiveData<List<String>>
 
@@ -34,7 +34,7 @@ class BrowseTrackViewModel(
   }
 
   override fun onCleared() {
-    viewModelJob.cancel()
+    job.cancel()
     super.onCleared()
   }
 }

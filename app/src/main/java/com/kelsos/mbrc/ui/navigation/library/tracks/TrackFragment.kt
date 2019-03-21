@@ -8,21 +8,20 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.extensions.linear
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
+import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class BrowseTrackFragment : Fragment(),
+class TrackFragment : Fragment(),
   MenuItemSelectedListener<Track>,
   OnRefreshListener {
 
@@ -35,7 +34,7 @@ class BrowseTrackFragment : Fragment(),
 
   private val adapter: TrackAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val presenter: BrowseTrackViewModel by inject()
+  private val viewModel: TrackViewModel by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -53,15 +52,13 @@ class BrowseTrackFragment : Fragment(),
     recycler.linear(adapter, fastScroller)
     recycler.setHasFixedSize(true)
     adapter.setMenuItemSelectedListener(this)
-  }
-
-  fun updateIndexes(indexes: List<String>) {
-    adapter.setIndexes(indexes)
-  }
-
-  fun update(pagedList: PagedList<Track>) {
-    emptyView.isVisible = pagedList.isEmpty()
-    adapter.submitList(pagedList)
+    viewModel.tracks.nonNullObserver(this) { list ->
+      emptyView.isVisible = list.isEmpty()
+      adapter.submitList(list)
+    }
+    viewModel.indexes.nonNullObserver(this) { indexes ->
+      adapter.setIndexes(indexes)
+    }
   }
 
   override fun onMenuItemSelected(action: String, item: Track) {
@@ -77,15 +74,6 @@ class BrowseTrackFragment : Fragment(),
       swipeLayout.isRefreshing = true
     }
 
-    presenter.reload()
-  }
-
-  fun failure(it: Throwable) {
-    swipeLayout.isRefreshing = false
-    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
-  fun hideLoading() {
-    swipeLayout.isRefreshing = false
+    viewModel.reload()
   }
 }
