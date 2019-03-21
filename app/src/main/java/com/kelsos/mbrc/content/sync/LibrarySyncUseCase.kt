@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.content.sync
 
-import arrow.core.Either
 import com.kelsos.mbrc.metrics.SyncedData
 
 /**
@@ -15,7 +14,7 @@ interface LibrarySyncUseCase {
    * @param auto Marks the network process as automatic (initiated by conditions) or
    * manual (initiated by the user)
    */
-  suspend fun sync(auto: Boolean = false): Either<Throwable, Boolean>
+  suspend fun sync(auto: Boolean = false): Int
 
   /**
    * Provides access to the interactor's current status.
@@ -24,18 +23,5 @@ interface LibrarySyncUseCase {
    */
   fun isRunning(): Boolean
 
-  fun setOnCompleteListener(onCompleteListener: OnCompleteListener?)
-  fun setOnStartListener(onStartListener: OnStartListener?)
-
   suspend fun syncStats(): SyncedData
-
-  interface OnCompleteListener {
-    fun onTermination()
-    fun onFailure(throwable: Throwable)
-    fun onSuccess(stats: SyncedData)
-  }
-
-  interface OnStartListener {
-    fun onStart()
-  }
 }

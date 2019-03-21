@@ -21,11 +21,11 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BrowseTrackFragment : Fragment(), MenuItemSelectedListener<Track> {
+class TrackFragment : Fragment(), MenuItemSelectedListener<Track> {
 
   private val adapter: TrackAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val viewModel: BrowseTrackViewModel by viewModel()
+  private val viewModel: TrackViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
@@ -58,9 +58,7 @@ class BrowseTrackFragment : Fragment(), MenuItemSelectedListener<Track> {
     super.onViewCreated(view, savedInstanceState)
 
     binding.libraryBrowserTextTitle.setText(R.string.tracks_list_empty)
-    binding.libraryBrowserSync.setOnClickListener {
-      viewModel.reload()
-    }
+    binding.libraryBrowserSync.setOnClickListener { }
     binding.libraryBrowserContent.adapter = adapter
     binding.libraryBrowserContent.layoutManager = LinearLayoutManager(requireContext())
     binding.libraryBrowserContent.setHasFixedSize(true)

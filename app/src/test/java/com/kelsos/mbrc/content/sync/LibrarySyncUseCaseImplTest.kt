@@ -77,10 +77,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
 
     val result = librarySyncUseCase.sync(true)
     advanceTimeBy(5000)
-    assertThat(result.isRight()).isTrue()
-    val resultValue = result.toOption().orNull()
-    assertThat(resultValue).isNotNull()
-    assertThat(resultValue).isTrue()
+    assertThat(result).isEqualTo(SyncResult.SUCCESS)
   }
 
   @Test
@@ -90,10 +87,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
 
     val result = librarySyncUseCase.sync(true)
     advanceTimeBy(5000)
-    assertThat(result.isRight()).isTrue()
-    val resultValue = result.toOption().orNull()
-    assertThat(resultValue).isNotNull()
-    assertThat(resultValue).isFalse()
+    assertThat(result).isEqualTo(SyncResult.NO_OP)
     assertThat(librarySyncUseCase.isRunning()).isFalse()
   }
 

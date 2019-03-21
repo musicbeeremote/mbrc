@@ -6,7 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumFragment
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistFragment
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreFragment
-import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
+import com.kelsos.mbrc.ui.navigation.library.tracks.TrackFragment
 
 class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
@@ -14,7 +14,7 @@ class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(act
     Category.SECTION_GENRE -> GenreFragment()
     Category.SECTION_ARTIST -> ArtistFragment()
     Category.SECTION_ALBUM -> AlbumFragment()
-    Category.SECTION_TRACK -> BrowseTrackFragment()
+    Category.SECTION_TRACK -> TrackFragment()
     else -> throw IllegalStateException("invalid position")
   }
 

@@ -10,9 +10,15 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.content.sync.SyncResult
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LibraryFragment : Fragment(), OnQueryTextListener {
@@ -22,7 +28,6 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
   private var albumArtistOnly: MenuItem? = null
   private var searchClear: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
-
   private val viewModel: LibraryViewModel by viewModel()
 
   private var _binding: FragmentLibraryBinding? = null
@@ -37,6 +42,14 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     }
 
     return true
+  }
+
+  private fun onSyncResult(result: Int) {
+    when (result) {
+      SyncResult.NO_OP -> Unit
+      SyncResult.FAILED -> Unit
+      SyncResult.SUCCESS -> Unit
+    }
   }
 
   private fun closeSearch(): Boolean {
@@ -82,6 +95,12 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
         else -> throw IllegalArgumentException("invalid position")
       }
     }.attach()
+
+    viewModel.events.map { it.getContentIfNotHandled() }
+      .filterNotNull()
+      .onEach { result ->
+        onSyncResult(result)
+      }.launchIn(lifecycleScope)
   }
 
   override fun onDestroyView() {
@@ -114,7 +133,6 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
       R.id.library_album_artist -> {
         albumArtistOnly?.let {
           it.isChecked = !it.isChecked
-          viewModel.setArtistPreference(it.isChecked)
         }
 
         return true
