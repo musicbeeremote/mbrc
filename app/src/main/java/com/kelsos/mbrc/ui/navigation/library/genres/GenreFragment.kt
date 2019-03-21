@@ -24,7 +24,7 @@ import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class BrowseGenreFragment : Fragment(),
+class GenreFragment : Fragment(),
   MenuItemSelectedListener<Genre>,
   OnRefreshListener {
 
@@ -37,7 +37,7 @@ class BrowseGenreFragment : Fragment(),
 
   private val adapter: GenreEntryAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val viewModel: BrowseGenreViewModel by inject()
+  private val viewModel: GenreViewModel by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,

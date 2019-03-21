@@ -11,9 +11,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class BrowseGenreViewModel(
+class GenreViewModel(
   private val repository: GenreRepository,
-  private val dispatchers: AppCoroutineDispatchers
+  dispatchers: AppCoroutineDispatchers
 ) : ViewModel() {
   private val viewModelJob: Job = Job()
   private val networkScope = CoroutineScope(dispatchers.network + viewModelJob)
