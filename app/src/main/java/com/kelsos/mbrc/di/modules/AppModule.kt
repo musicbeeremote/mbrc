@@ -114,8 +114,8 @@ import com.kelsos.mbrc.ui.navigation.library.albums.AlbumAdapter
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumViewModel
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistAdapter
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistViewModel
-import com.kelsos.mbrc.ui.navigation.library.genres.BrowseGenreViewModel
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreAdapter
+import com.kelsos.mbrc.ui.navigation.library.genres.GenreViewModel
 import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackViewModel
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackAdapter
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsViewModel
@@ -251,7 +251,7 @@ val uiModule = module {
   viewModel<ConnectionManagerViewModel>()
   viewModel<PlayerViewModel>()
   viewModel<AlbumViewModel>()
-  viewModel<BrowseGenreViewModel>()
+  viewModel<GenreViewModel>()
   viewModel<ArtistViewModel>()
   viewModel<BrowseTrackViewModel>()
   viewModel<MiniControlViewModel>()

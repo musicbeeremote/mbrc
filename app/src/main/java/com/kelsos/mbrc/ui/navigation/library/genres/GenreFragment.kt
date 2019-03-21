@@ -22,11 +22,11 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BrowseGenreFragment : Fragment(), MenuItemSelectedListener<Genre> {
+class GenreFragment : Fragment(), MenuItemSelectedListener<Genre> {
 
   private val adapter: GenreAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
-  private val viewModel: BrowseGenreViewModel by viewModel()
+  private val viewModel: GenreViewModel by viewModel()
 
   private var _binding: FragmentBrowseBinding? = null
   private val binding get() = _binding!!
