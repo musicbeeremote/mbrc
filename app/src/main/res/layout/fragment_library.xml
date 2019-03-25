@@ -20,7 +20,7 @@
 
   </com.google.android.material.tabs.TabLayout>
 
-  <androidx.viewpager.widget.ViewPager
+  <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/search_pager"
       android:layout_width="0dp"
       android:layout_height="0dp"

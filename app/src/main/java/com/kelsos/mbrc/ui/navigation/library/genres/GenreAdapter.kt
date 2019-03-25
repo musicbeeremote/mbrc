@@ -9,7 +9,7 @@ import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.ui.navigation.library.popup
 
-class GenreEntryAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(DIFF_CALLBACK) {
+class GenreAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(DIFF_CALLBACK) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_genre) {

@@ -15,21 +15,25 @@ import androidx.annotation.IdRes
 import androidx.annotation.IntDef
 import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import java.lang.ref.WeakReference
 
 class RecyclerViewFastScroller : LinearLayout {
 
   private var bubble: TextView? = null
   private lateinit var handle: View
-  private var recyclerView: RecyclerView? = null
+  private var recyclerViewRef: WeakReference<RecyclerView>? = null
   private var inHeight: Int = 0
   private var isInitialized = false
   private var currentAnimator: ObjectAnimator? = null
   private var scrollStateChangeListener: RecyclerViewFastScroller.ScrollStateChangeListener? = null
+
+  private var oldBubbleText = ""
 
   private val onScrollListener = object : OnScrollListener() {
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -75,10 +79,10 @@ class RecyclerViewFastScroller : LinearLayout {
 
   fun setViewsToUse(@LayoutRes layoutResId: Int, @IdRes bubbleResId: Int, @IdRes handleResId: Int) {
     val inflater = LayoutInflater.from(context)
-    inflater.inflate(layoutResId, this, true)
-    bubble = findViewById(bubbleResId)
+    val view = inflater.inflate(layoutResId, this, true)
+    bubble = view.findViewById(bubbleResId)
     bubble?.isInvisible = true
-    handle = findViewById(handleResId)
+    handle = view.findViewById(handleResId)
   }
 
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -99,8 +103,8 @@ class RecyclerViewFastScroller : LinearLayout {
 
         currentAnimator?.cancel()
 
-        bubble?.let {
-          if (it.isInvisible) {
+        bubble?.run {
+          if (isInvisible || isGone) {
             showBubble()
           }
         }
@@ -129,22 +133,30 @@ class RecyclerViewFastScroller : LinearLayout {
     return super.onTouchEvent(event)
   }
 
+  private val recyclerView: RecyclerView?
+    get() = this.recyclerViewRef?.get()
+
   fun setRecyclerView(recyclerView: RecyclerView) {
     if (this.recyclerView === recyclerView) {
       return
     }
 
-    this.recyclerView?.removeOnScrollListener(onScrollListener)
-    this.recyclerView = recyclerView
-    if (this.recyclerView == null)
-      return
+    recyclerViewRef = WeakReference(recyclerView)
+
+    recyclerView.removeOnScrollListener(onScrollListener)
     recyclerView.addOnScrollListener(onScrollListener)
   }
 
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
     recyclerView?.removeOnScrollListener(onScrollListener)
-    recyclerView = null
+    this.bubble?.isVisible = false
+  }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    val recyclerView = this.recyclerView ?: return
+    recyclerView.addOnScrollListener(onScrollListener)
   }
 
   private fun setRecyclerViewPosition(y: Float) {
@@ -166,8 +178,14 @@ class RecyclerViewFastScroller : LinearLayout {
       targetPos,
       0
     )
-    val bubbleText = (recyclerView.adapter as BubbleTextGetter).getTextToShowInBubble(targetPos)
-    bubble?.text = bubbleText
+
+    val textGetter = recyclerView.adapter as BubbleTextGetter
+    val bubbleText = textGetter.getTextToShowInBubble(targetPos)
+
+    if (bubbleText.toUpperCase() != oldBubbleText.toUpperCase()) {
+      oldBubbleText = bubbleText
+      bubble?.text = bubbleText
+    }
   }
 
   private fun getValueInRange(min: Int, max: Int, value: Int): Int {

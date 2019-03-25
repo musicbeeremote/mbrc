@@ -7,18 +7,18 @@ import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
   diffCallback: DiffUtil.ItemCallback<T>
-) : PagedListAdapter<T, VH>(diffCallback), BubbleTextGetter, OnFastScrollListener, CoroutineScope {
+) : PagedListAdapter<T, VH>(diffCallback), BubbleTextGetter, OnFastScrollListener {
 
-  override val coroutineContext = Job() + Dispatchers.Main
+  private val scope: CoroutineScope = CoroutineScope(Job() + Dispatchers.Main)
+  private var deferred: Deferred<Unit>? = null
   private var indexes: List<String> = emptyList()
 
   private var listener: MenuItemSelectedListener<T>? = null
@@ -35,7 +35,7 @@ abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
   }
 
   override fun submitList(pagedList: PagedList<T>?) {
-    coroutineContext.cancelChildren()
+    deferred?.cancel()
     super.submitList(pagedList)
   }
 
@@ -49,8 +49,7 @@ abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
 
   override fun onComplete(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
     fastScrolling = false
-    Timber.v("scrolling done")
-    launch {
+    deferred = scope.async {
       delay(400)
       notifyItemRangeChanged(firstVisibleItemPosition, lastVisibleItemPosition)
     }
