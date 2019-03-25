@@ -5,26 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-      android:id="@+id/library_browser__refresh_layout"
-      android:layout_width="0dp"
-      android:layout_height="0dp"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/library_browser__content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/small_margin"
-        android:paddingBottom="@dimen/small_margin"
-        android:paddingTop="@dimen/small_margin"
-        android:scrollbars="none"
-        tools:listitem="@layout/listitem_single" />
-
-  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/library_browser__content"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginEnd="@dimen/small_margin"
+      android:paddingBottom="@dimen/small_margin"
+      android:paddingTop="@dimen/small_margin"
+      android:scrollbars="none"
+      tools:listitem="@layout/listitem_single" />
 
   <ProgressBar
       android:id="@+id/library_browser__loading_bar"
@@ -87,7 +76,7 @@
       android:id="@+id/library_browser__empty_group"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:visibility="visible"
+      android:visibility="gone"
       tools:visibility="visible"
       app:constraint_referenced_ids="library_browser__text_title,library_browser__sync,library_browser__empty_icon" />
 

@@ -15,6 +15,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.sync.SyncResult
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
+import com.kelsos.mbrc.ui.navigation.library.albums.AlbumScreen
+import com.kelsos.mbrc.ui.navigation.library.artists.ArtistScreen
+import com.kelsos.mbrc.ui.navigation.library.genres.GenreScreen
+import com.kelsos.mbrc.ui.navigation.library.tracks.TrackScreen
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -79,9 +83,17 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    pagerAdapter = LibraryPagerAdapter(requireActivity())
+    pagerAdapter = LibraryPagerAdapter(viewLifecycleOwner).also {
+      it.submit(
+        listOf(
+          GenreScreen(),
+          ArtistScreen(),
+          AlbumScreen(),
+          TrackScreen()
+        )
+      )
+    }
     binding.searchPager.adapter = pagerAdapter
-    binding.searchPager.offscreenPageLimit = 4
 
     TabLayoutMediator(
       binding.pagerTabStrip,
