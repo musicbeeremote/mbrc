@@ -16,7 +16,7 @@
       tools:listitem="@layout/listitem_single" />
 
   <ProgressBar
-      android:id="@+id/library_browser__loading_bar"
+      android:id="@+id/library_browser__progress_bar"
       android:layout_width="60dp"
       android:layout_height="60dp"
       android:layout_marginBottom="16dp"
