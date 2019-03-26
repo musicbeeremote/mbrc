@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.sync.SyncResult
+import com.kelsos.mbrc.ui.navigation.library.FastScrolling.STARTED
+import com.kelsos.mbrc.ui.navigation.library.FastScrolling.STOPPED
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumScreen
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistScreen
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreScreen
@@ -92,8 +94,17 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     setupTabs()
+    var fastScrolling = false
 
-    val pagerAdapter = LibraryPagerAdapter(viewLifecycleOwner).also {
+    val pagerAdapter = LibraryPagerAdapter(viewLifecycleOwner, object : FastScrollingListener {
+      override fun onFastScrolling(@FastScrolling.State state: Int) {
+        fastScrolling = when (state) {
+          STARTED -> true
+          STOPPED -> false
+          else -> error("unsupported option")
+        }
+      }
+    }).also {
       this.pagerAdapter = it
       pager.adapter = it
       it.submit(
@@ -105,7 +116,15 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
         )
       )
     }
-    val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+    val layoutManager = object : LinearLayoutManager(
+      requireContext(),
+      RecyclerView.HORIZONTAL,
+      false
+    ) {
+      override fun canScrollHorizontally(): Boolean {
+        return !fastScrolling
+      }
+    }
     pager.layoutManager = layoutManager
     val snapHelper = PagerSnapHelper()
     snapHelper.attachToRecyclerView(pager)

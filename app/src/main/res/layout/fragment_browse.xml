@@ -26,8 +26,17 @@
 
   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+  <ProgressBar
+      android:id="@+id/library_browser__progress_bar"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
   <com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
-      android:id="@+id/fastscroller"
+      android:id="@+id/library_browser__fast_scroller"
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
       android:layout_marginBottom="16dp"
