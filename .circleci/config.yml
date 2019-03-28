@@ -6,6 +6,7 @@ jobs:
       - image: circleci/android:api-28-alpha
     environment:
       JVM_OPTS: -Xmx3200m
+      CC_TEST_REPORTER_ID: 4c45cf8b47a2ab0a5ae149b266e533747e8c3330aa3f5e7d2898d460c6d11562
     steps:
       - checkout
       - restore_cache:
@@ -21,8 +22,23 @@ jobs:
           name: Lint
           command: ./gradlew ktlint
       - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
           name: Run Tests
-          command: ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace --no-daemon --max-workers 4
+          command: |
+            ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace --no-daemon --max-workers 4
+      - run:
+          name: Set jacoco.xml path for code climate
+          command: JACOCO_SOURCE_PATH=app/src/main/java ./cc-test-reporter format-coverage app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
+      # upload coverage on code climate
+      - run:
+          name: Upload code climate report
+          command: ./cc-test-reporter upload-coverage -r $CC_TEST_REPORTER_ID
+          when: on_success
       - store_artifacts:
           path: app/build/reports
           destination: reports
