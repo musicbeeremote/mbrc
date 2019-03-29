@@ -129,7 +129,7 @@ class NowPlayingFragment : Fragment(),
     }
 
     viewModel.events.nonNullObserver(this) {
-      it.getContentIfNotHandled()?.let { code ->
+      it.contentIfNotHandled?.let { code ->
 
         val messageResId = when (code) {
           1 -> R.string.refresh_failed

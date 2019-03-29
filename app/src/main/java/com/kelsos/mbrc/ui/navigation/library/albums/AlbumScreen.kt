@@ -5,6 +5,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
 import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
+import com.kelsos.mbrc.ui.navigation.library.LibraryResult
 import com.kelsos.mbrc.ui.navigation.library.LibraryScreen
 import com.kelsos.mbrc.ui.navigation.library.LibraryViewHolder
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
@@ -31,6 +32,18 @@ class AlbumScreen : LibraryScreen,
     }
     viewModel.indexes.nonNullObserver(viewLifecycleOwner) {
       adapter.setIndexes(it)
+    }
+    viewModel.emitter.nonNullObserver(viewLifecycleOwner) {
+      it.contentIfNotHandled?.let { result ->
+        when (result) {
+          LibraryResult.RefreshSuccess -> {
+            viewHolder.refreshing(false)
+          }
+          LibraryResult.RefreshFailure -> {
+            viewHolder.refreshing(false)
+          }
+        }
+      }
     }
   }
 

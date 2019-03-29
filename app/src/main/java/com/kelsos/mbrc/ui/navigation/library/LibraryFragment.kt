@@ -45,9 +45,9 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     return true
   }
 
-  private fun onSyncResult(result: Int) {
+  private fun onSyncResult(result: SyncResult) {
     when (result) {
-      SyncResult.NO_OP -> Unit
+      SyncResult.NOOP -> Unit
       SyncResult.FAILED -> Unit
       SyncResult.SUCCESS -> Unit
     }
@@ -77,8 +77,8 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     viewModel.syncProgress.nonNullObserver(viewLifecycleOwner) {
       TODO("Sync progress view")
     }
-    viewModel.events.nonNullObserver(viewLifecycleOwner) { event ->
-      event.getContentIfNotHandled()?.let { onSyncResult(it) }
+    viewModel.emitter.nonNullObserver(viewLifecycleOwner) { event ->
+      event.contentIfNotHandled?.let { onSyncResult(it) }
     }
   }
 

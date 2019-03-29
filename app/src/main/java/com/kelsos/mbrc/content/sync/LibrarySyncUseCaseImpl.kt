@@ -24,10 +24,10 @@ class LibrarySyncUseCaseImpl(
 
   private var running: Boolean = false
 
-  override suspend fun sync(auto: Boolean): Int {
+  override suspend fun sync(auto: Boolean): SyncResult {
 
     if (running) {
-      return SyncResult.NO_OP
+      return SyncResult.NOOP
     }
     running = true
 
@@ -35,7 +35,7 @@ class LibrarySyncUseCaseImpl(
 
     metrics.librarySyncStarted()
 
-    val result: Int = if (checkIfShouldSync(auto)) {
+    val result: SyncResult = if (checkIfShouldSync(auto)) {
       Try {
         genreRepository.getRemote()
         artistRepository.getRemote()
@@ -45,7 +45,7 @@ class LibrarySyncUseCaseImpl(
         return@Try true
       }.toEither().fold({ SyncResult.FAILED }, { SyncResult.SUCCESS })
     } else {
-      SyncResult.NO_OP
+      SyncResult.NOOP
     }
 
     withContext(dispatchers.disk) {

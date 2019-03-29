@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.tracks
 
 import androidx.paging.DataSource
+import arrow.core.Try
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -41,7 +42,7 @@ class TrackRepositoryImpl(
     return dao.getNonAlbumTracks(artist).map { entity2model.map(it) }
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     val pages = remoteDataSource.getAllPages(Protocol.LibraryBrowseTracks, TrackDto::class)
     pages.blockingForEach { tracks ->

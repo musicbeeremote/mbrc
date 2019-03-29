@@ -1,23 +1,20 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
+import com.kelsos.mbrc.ui.BaseViewModel
+import com.kelsos.mbrc.ui.navigation.library.LibraryResult
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.paged
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class TrackViewModel(
   private val repository: TrackRepository,
   private val dispatchers: AppCoroutineDispatchers
-) : ViewModel() {
+) : BaseViewModel<LibraryResult>(dispatchers) {
 
-  private val job: Job = Job()
-  private val networkScope = CoroutineScope(dispatchers.network + job)
   val tracks: LiveData<PagedList<Track>>
   val indexes: LiveData<List<String>>
 
@@ -28,13 +25,8 @@ class TrackViewModel(
   }
 
   fun reload() {
-    networkScope.launch(dispatchers.network) {
+    scope.launch(dispatchers.network) {
       repository.getRemote()
     }
-  }
-
-  override fun onCleared() {
-    job.cancel()
-    super.onCleared()
   }
 }

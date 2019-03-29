@@ -35,10 +35,8 @@ class LibraryViewHolder(
     libraryScreen.bind(this)
   }
 
-  fun refreshing() {
-    if (!swipeLayout.isRefreshing) {
-      swipeLayout.isRefreshing = true
-    }
+  fun refreshing(refreshing: Boolean = true) {
+    swipeLayout.isRefreshing = refreshing
   }
 
   fun refreshingComplete(empty: Boolean) {

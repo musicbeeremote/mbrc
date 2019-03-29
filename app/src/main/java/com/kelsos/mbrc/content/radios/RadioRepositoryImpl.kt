@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.radios
 
 import androidx.paging.DataSource
+import arrow.core.Try
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -25,7 +26,7 @@ class RadioRepositoryImpl(
     return dao.getAll().map { dao2Model.map(it) }
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     val pages = remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class)
     pages.blockingForEach { page ->

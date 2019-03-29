@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.artists
 
 import androidx.paging.DataSource
+import arrow.core.Try
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -41,7 +42,7 @@ class ArtistRepositoryImpl(
     )
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class)
     data.blockingForEach { artists ->

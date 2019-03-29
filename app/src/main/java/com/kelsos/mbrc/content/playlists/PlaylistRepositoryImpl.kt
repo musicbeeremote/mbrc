@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.playlists
 
 import androidx.paging.DataSource
+import arrow.core.Try
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -25,7 +26,7 @@ class PlaylistRepositoryImpl(
     return dao.getAll().map { entity2model.map(it) }
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     val pages = remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class)
     pages.blockingForEach { page ->

@@ -12,7 +12,7 @@ interface LibrarySyncUseCase {
    * @param auto Marks the network process as automatic (initiated by conditions) or
    * manual (initiated by the user)
    */
-  suspend fun sync(auto: Boolean = false): Int
+  suspend fun sync(auto: Boolean = false): SyncResult
 
   /**
    * Provides access to the interactor's current status.

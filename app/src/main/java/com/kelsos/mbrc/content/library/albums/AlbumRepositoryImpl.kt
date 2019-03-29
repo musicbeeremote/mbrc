@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.albums
 
 import androidx.paging.DataSource
+import arrow.core.Try
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -30,7 +31,7 @@ class AlbumRepositoryImpl(
     return dao.getAll().map { view2model.map(it) }
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class)
     data.blockingForEach { albums ->

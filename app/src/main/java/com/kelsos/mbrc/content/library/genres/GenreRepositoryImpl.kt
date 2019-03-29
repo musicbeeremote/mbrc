@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.genres
 
 import androidx.paging.DataSource
+import arrow.core.Try
 import com.kelsos.mbrc.content.library.DataModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -26,7 +27,7 @@ class GenreRepositoryImpl(
     return dao.getAll().map { dao2Model.map(it) }
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     val stored = dao.genres().associate { it.genre to it.id }
     val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class)
