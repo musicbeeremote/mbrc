@@ -26,7 +26,7 @@ import com.kelsos.mbrc.databinding.NavHeaderMainBinding
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
-import com.kelsos.mbrc.networking.protocol.VolumeInteractor
+import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import com.kelsos.mbrc.platform.ServiceChecker
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -34,7 +34,7 @@ import timber.log.Timber
 class NavigationActivity : AppCompatActivity() {
 
   private val serviceChecker: ServiceChecker by inject()
-  private val volumeInteractor: VolumeInteractor by inject()
+  private val volumeModifyUseCase: VolumeModifyUseCase by inject()
   private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider by inject()
   private val clientConnectionUseCase: ClientConnectionUseCase by inject()
 
@@ -206,11 +206,11 @@ class NavigationActivity : AppCompatActivity() {
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
     return when (keyCode) {
       KeyEvent.KEYCODE_VOLUME_UP -> {
-        volumeInteractor.increment()
+        volumeModifyUseCase.increment()
         true
       }
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
-        volumeInteractor.decrement()
+        volumeModifyUseCase.decrement()
         true
       }
       else -> super.onKeyDown(keyCode, event)
