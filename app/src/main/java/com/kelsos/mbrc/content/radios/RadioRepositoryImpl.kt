@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.radios
 
 import androidx.paging.PagingData
+import arrow.core.Try
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -22,16 +23,20 @@ class RadioRepositoryImpl(
   override fun getAll(): Flow<PagingData<RadioStation>> =
     dao.getAll().paged { it.toRadioStation() }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     withContext(dispatchers.network) {
       val added = epoch()
       api.getAllPages(Protocol.RadioStations, RadioStationDto::class)
         .onCompletion {
-          dao.removePreviousEntries(added)
+          withContext(dispatchers.database) {
+            dao.removePreviousEntries(added)
+          }
         }.collect { radios ->
           val data = radios.map { it.toEntity().apply { dateAdded = added } }
           withContext(dispatchers.database) {
-            dao.insertAll(data)
+            withContext(dispatchers.database) {
+              dao.insertAll(data)
+            }
           }
         }
     }

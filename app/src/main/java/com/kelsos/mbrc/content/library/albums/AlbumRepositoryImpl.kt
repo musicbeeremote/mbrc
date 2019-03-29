@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.albums
 
 import androidx.paging.PagingData
+import arrow.core.Try
 import com.kelsos.mbrc.covers.AlbumCover
 import com.kelsos.mbrc.covers.CachedAlbumCover
 import com.kelsos.mbrc.networking.ApiBase
@@ -25,7 +26,7 @@ class AlbumRepositoryImpl(
 
   override fun getAll(): Flow<PagingData<Album>> = dao.getAll().paged { it.toAlbum() }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     val default = CachedAlbumCover(0, null)
     val cached = dao.all().associate { entry ->
@@ -34,7 +35,9 @@ class AlbumRepositoryImpl(
     withContext(dispatchers.network) {
       api.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class)
         .onCompletion {
-          dao.removePreviousEntries(added)
+          withContext(dispatchers.database) {
+            dao.removePreviousEntries(added)
+          }
         }
         .collect { albums ->
           val list = albums.map { dto ->
@@ -49,7 +52,9 @@ class AlbumRepositoryImpl(
               }
             }
           }
-          dao.insert(list)
+          withContext(dispatchers.database) {
+            dao.insert(list)
+          }
         }
     }
   }

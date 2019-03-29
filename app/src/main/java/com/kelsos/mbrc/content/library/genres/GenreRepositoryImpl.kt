@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.genres
 
 import androidx.paging.PagingData
+import arrow.core.Try
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -23,7 +24,7 @@ class GenreRepositoryImpl(
     it.toGenre()
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val stored = dao.genres().associate { it.genre to it.id }
     withContext(dispatchers.network) {
       val added = epoch()

@@ -65,7 +65,7 @@ class ConnectionManagerFragment : Fragment(), ConnectionAdapter.ConnectionChange
       }
     }
     lifecycleScope.launch {
-      viewModel.discoveryStatus.map { it.getContentIfNotHandled() }
+      viewModel.emitter.map { it.contentIfNotHandled }
         .filterNotNull()
         .collect { status ->
           onDiscoveryStopped(status)

@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.library.tracks
 
 import androidx.paging.PagingData
+import arrow.core.Try
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -30,11 +31,13 @@ class TrackRepositoryImpl(
   override fun getNonAlbumTracks(artist: String): Flow<PagingData<Track>> =
     dao.getNonAlbumTracks(artist).paged { it.toTrack() }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     withContext(dispatchers.network) {
       val added = epoch()
       api.getAllPages(Protocol.LibraryBrowseTracks, TrackDto::class).onCompletion {
-        dao.removePreviousEntries(added)
+        withContext(dispatchers.database) {
+          dao.removePreviousEntries(added)
+        }
       }.collect { items ->
         val tracks = items.map { it.toEntity().apply { dateAdded = added } }
         val sources = tracks.map { it.src }

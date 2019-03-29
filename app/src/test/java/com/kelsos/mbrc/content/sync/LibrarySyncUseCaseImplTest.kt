@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.sync
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import arrow.core.Try
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
@@ -87,7 +88,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
 
     val result = librarySyncUseCase.sync(true)
     advanceTimeBy(5000)
-    assertThat(result).isEqualTo(SyncResult.NO_OP)
+    assertThat(result).isEqualTo(SyncResult.NOOP)
     assertThat(librarySyncUseCase.isRunning()).isFalse()
   }
 
@@ -106,10 +107,25 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   }
 
   private fun mockSuccessfulRepositoryResponse() {
-    coEvery { genreRepository.getRemote() } coAnswers { delay(400) }
-    coEvery { artistRepository.getRemote() } coAnswers { delay(400) }
-    coEvery { albumRepository.getRemote() } coAnswers { delay(400) }
-    coEvery { trackRepository.getRemote() } coAnswers { delay(400) }
-    coEvery { playlistRepository.getRemote() } coAnswers { delay(400) }
+    coEvery { genreRepository.getRemote() } coAnswers {
+      delay(400)
+      Try.invoke { }
+    }
+    coEvery { artistRepository.getRemote() } coAnswers {
+      delay(400)
+      Try.invoke { }
+    }
+    coEvery { albumRepository.getRemote() } coAnswers {
+      delay(400)
+      Try.invoke { }
+    }
+    coEvery { trackRepository.getRemote() } coAnswers {
+      delay(400)
+      Try.invoke { }
+    }
+    coEvery { playlistRepository.getRemote() } coAnswers {
+      delay(400)
+      Try.invoke { }
+    }
   }
 }

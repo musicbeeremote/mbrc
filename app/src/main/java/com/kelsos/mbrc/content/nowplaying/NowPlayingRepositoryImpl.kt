@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.content.nowplaying
 
 import androidx.paging.PagingData
+import arrow.core.Try
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -23,7 +24,7 @@ class NowPlayingRepositoryImpl(
     it.toNowPlaying()
   }
 
-  override suspend fun getRemote() {
+  override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     withContext(dispatchers.network) {
       api.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class)

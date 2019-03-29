@@ -20,7 +20,7 @@ class ConnectionManagerViewModel(
 ) : ViewModel() {
   private val _discoveryStatus: MutableSharedFlow<Event<Int>> = MutableSharedFlow()
   val settings: Flow<PagingData<ConnectionSettings>> = repository.getAll().cachedIn(viewModelScope)
-  val discoveryStatus: SharedFlow<Event<Int>> get() = _discoveryStatus
+  val emitter: SharedFlow<Event<Int>> get() = _discoveryStatus
 
   fun startDiscovery() {
     viewModelScope.launch(dispatchers.network) {

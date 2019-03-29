@@ -21,7 +21,7 @@ import com.kelsos.mbrc.databinding.FragmentNowplayingBinding
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
 import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -128,15 +128,15 @@ class NowPlayingFragment :
       binding.nowPlayingEmptyGroup.isGone = adapter.itemCount != 0
     }.launchIn(lifecycleScope)
 
-    viewModel.events.filter { !it.hasBeenHandled }
-      .map { checkNotNull(it.getContentIfNotHandled()) }
+    viewModel.events.map { it.contentIfNotHandled }
+      .filterNotNull()
       .onEach { code ->
         val messageResId = when (code) {
           1 -> R.string.refresh_failed
           else -> R.string.refresh_failed
         }
         Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
-      }
+      }.launchIn(lifecycleScope)
   }
 
   override fun onDestroyView() {

@@ -19,10 +19,8 @@ import com.kelsos.mbrc.ui.navigation.library.albums.AlbumScreen
 import com.kelsos.mbrc.ui.navigation.library.artists.ArtistScreen
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreScreen
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackScreen
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LibraryFragment : Fragment(), OnQueryTextListener {
@@ -48,9 +46,9 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     return true
   }
 
-  private fun onSyncResult(result: Int) {
+  private fun onSyncResult(result: SyncResult) {
     when (result) {
-      SyncResult.NO_OP -> Unit
+      SyncResult.NOOP -> Unit
       SyncResult.FAILED -> Unit
       SyncResult.SUCCESS -> Unit
     }
@@ -95,24 +93,23 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     }
     binding.searchPager.adapter = pagerAdapter
 
-    TabLayoutMediator(
-      binding.pagerTabStrip,
-      binding.searchPager
-    ) { currentTab, currentPosition ->
-      currentTab.text = when (currentPosition) {
-        Category.SECTION_ALBUM -> getString(R.string.label_albums)
-        Category.SECTION_ARTIST -> getString(R.string.label_artists)
-        Category.SECTION_GENRE -> getString(R.string.label_genres)
-        Category.SECTION_TRACK -> getString(R.string.label_tracks)
-        else -> throw IllegalArgumentException("invalid position")
+    TabLayoutMediator(binding.pagerTabStrip, binding.searchPager) { tab, position ->
+      val resId = when (position) {
+        0 -> R.string.label_genres
+        1 -> R.string.label_artists
+        2 -> R.string.label_albums
+        3 -> R.string.label_tracks
+        else -> error("invalid position")
       }
+
+      tab.setText(resId)
     }.attach()
 
-    viewModel.events.map { it.getContentIfNotHandled() }
-      .filterNotNull()
-      .onEach { result ->
+    lifecycleScope.launch {
+      viewModel.emitter.collect { result ->
         onSyncResult(result)
-      }.launchIn(lifecycleScope)
+      }
+    }
   }
 
   override fun onDestroyView() {
