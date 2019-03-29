@@ -4,10 +4,10 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvide
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
 
-class VolumeInteractorImpl(
+class VolumeModifyUseCaseImpl(
   private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
   private val messageQueue: MessageQueue
-) : VolumeInteractor {
+) : VolumeModifyUseCase {
 
   override fun increment() {
     val volume: Int

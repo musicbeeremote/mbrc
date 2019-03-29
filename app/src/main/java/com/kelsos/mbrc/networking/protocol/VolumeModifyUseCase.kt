@@ -3,7 +3,7 @@ package com.kelsos.mbrc.networking.protocol
 /**
  * Handles the step based volume changes
  */
-interface VolumeInteractor {
+interface VolumeModifyUseCase {
   /**
    * Increases the volume by a step up to a maximum of 100
    */
