@@ -18,11 +18,11 @@ class ConnectionRepositoryImpl(
   private val default: MediatorLiveData<ConnectionSettingsEntity> = MediatorLiveData()
   private var defaultData: LiveData<ConnectionSettingsEntity>? = null
 
-  override suspend fun discover(): Int {
+  override suspend fun discover(): DiscoveryStop {
     val discover = remoteServiceDiscovery.discover()
     return discover.fold({ it }, {
       save(it)
-      DiscoveryStop.COMPLETE
+      DiscoveryStop.Complete
     })
   }
 

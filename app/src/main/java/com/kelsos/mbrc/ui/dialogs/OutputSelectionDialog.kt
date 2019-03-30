@@ -17,13 +17,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.output.OutputResponse
+import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class OutputSelectionDialog : DialogFragment(),
-  View.OnTouchListener,
-  AdapterView.OnItemSelectedListener {
+class OutputSelectionDialog() : DialogFragment(), View.OnTouchListener {
 
   private var touchInitiated: Boolean = false
   private lateinit var fm: FragmentManager
@@ -33,7 +31,36 @@ class OutputSelectionDialog : DialogFragment(),
   private val loadingProgress: ProgressBar by bindView(R.id.output_selection__loading_outputs)
   private val errorMessage: TextView by bindView(R.id.output_selection__error_message)
 
-  private val presenter: OutputSelectionViewModel by inject()
+  private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+      if (!touchInitiated) {
+        return
+      }
+
+      val selectedOutput = availableOutputs.adapter.getItem(position) as String
+      viewModel.setOutput(selectedOutput)
+      touchInitiated = false
+    }
+  }
+
+  private val viewModel: OutputSelectionViewModel by inject()
+
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+    viewModel.outputs.nonNullObserver(viewLifecycleOwner) {
+      update(it)
+    }
+    viewModel.selection.nonNullObserver(viewLifecycleOwner) {
+    }
+    viewModel.emitter.nonNullObserver(viewLifecycleOwner) {
+      it.contentIfNotHandled?.let { result ->
+        error(result)
+      }
+    }
+  }
 
   @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -53,47 +80,30 @@ class OutputSelectionDialog : DialogFragment(),
     return dialog
   }
 
-  override fun onNothingSelected(parent: AdapterView<*>?) {
-  }
-
-  override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-    if (!touchInitiated) {
-      return
-    }
-
-    val selectedOutput = availableOutputs.adapter.getItem(position) as String
-    presenter.changeOutput(selectedOutput)
-    touchInitiated = false
-  }
-
   override fun onTouch(view: View?, event: MotionEvent?): Boolean {
     touchInitiated = true
     return view?.performClick() == true
   }
 
-  fun update(data: OutputResponse) {
+  private fun update(data: List<String>) {
     availableOutputs.onItemSelectedListener = null
     availableOutputs.setOnTouchListener(null)
-    val (devices, active) = data
     val outputAdapter = ArrayAdapter<String>(
-      context,
+      requireContext(),
       R.layout.item__output_device,
       R.id.output_selection__output_device,
-      devices
+      data
     )
     availableOutputs.adapter = outputAdapter
-
-    val selection = devices.indexOf(active)
-    availableOutputs.setSelection(selection)
-    availableOutputs.onItemSelectedListener = this
+    availableOutputs.onItemSelectedListener = onItemSelectedListener
     availableOutputs.setOnTouchListener(this)
     loadingProgress.isVisible = false
     availableOutputs.isVisible = true
   }
 
-  fun error(@OutputSelectionCodes.Code code: Int) {
-    val resId = when (code) {
-      OutputSelectionCodes.CONNECTION_ERROR -> R.string.output_selection__connection_error
+  fun error(result: OutputSelectionResult) {
+    val resId = when (result) {
+      OutputSelectionResult.ConnectionError -> R.string.output_selection__connection_error
       else -> R.string.output_selection__generic_error
     }
     errorMessage.setText(resId)

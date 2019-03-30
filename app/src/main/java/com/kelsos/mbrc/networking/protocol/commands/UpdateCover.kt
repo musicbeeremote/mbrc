@@ -16,7 +16,8 @@ import com.kelsos.mbrc.interfaces.ProtocolMessage
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
@@ -34,9 +35,12 @@ class UpdateCover(
 ) : ICommand {
   private val coverDir: File
 
+  private val job = Job()
+  private val scope = CoroutineScope(dispatchers.disk + job)
+
   init {
     coverDir = File(context.filesDir, COVER_DIR)
-    GlobalScope.launch(dispatchers.disk) {
+    scope.launch(dispatchers.disk) {
       playingTrackLiveDataProvider.update {
         copy(coverUrl = coverModel.coverPath)
       }
@@ -51,7 +55,7 @@ class UpdateCover(
       playingTrackLiveDataProvider.update { copy(coverUrl = "") }
       UpdateWidgets.updateCover(context)
     } else if (payload.status == CoverPayload.READY) {
-      GlobalScope.launch(dispatchers.disk) {
+      scope.launch(dispatchers.disk) {
         retrieveCover()
       }
     }

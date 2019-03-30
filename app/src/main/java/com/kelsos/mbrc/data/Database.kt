@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.kelsos.mbrc.content.library.albums.AlbumDao
 import com.kelsos.mbrc.content.library.albums.AlbumEntity
-import com.kelsos.mbrc.content.library.albums.AlbumView
 import com.kelsos.mbrc.content.library.artists.ArtistDao
 import com.kelsos.mbrc.content.library.artists.ArtistEntity
 import com.kelsos.mbrc.content.library.genres.GenreDao
@@ -31,9 +30,6 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
     PlaylistEntity::class,
     RadioStationEntity::class,
     ConnectionSettingsEntity::class
-  ],
-  views = [
-    AlbumView::class
   ],
   version = VERSION
 )

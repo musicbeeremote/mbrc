@@ -82,16 +82,15 @@ class ConnectionManagerFragment : Fragment(),
     connectionManagerViewModel.save(settings)
   }
 
-  fun onDiscoveryStopped(status: Int) {
+  fun onDiscoveryStopped(status: DiscoveryStop) {
     progress?.dismiss()
 
     val message: String = when (status) {
-      DiscoveryStop.NO_WIFI -> getString(R.string.con_man_no_wifi)
-      DiscoveryStop.NOT_FOUND -> getString(R.string.con_man_not_found)
-      DiscoveryStop.COMPLETE -> {
+      DiscoveryStop.NoWifi -> getString(R.string.con_man_no_wifi)
+      DiscoveryStop.NotFound -> getString(R.string.con_man_not_found)
+      DiscoveryStop.Complete -> {
         getString(R.string.con_man_success)
       }
-      else -> getString(R.string.unknown_reason)
     }
 
     Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()

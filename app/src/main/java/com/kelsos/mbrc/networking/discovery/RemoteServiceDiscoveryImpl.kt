@@ -24,9 +24,9 @@ class RemoteServiceDiscoveryImpl(
 
   private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
 
-  override suspend fun discover(): Either<Int, ConnectionSettingsEntity> {
+  override suspend fun discover(): Either<DiscoveryStop, ConnectionSettingsEntity> {
     if (!isWifiConnected()) {
-      return Either.left(DiscoveryStop.NO_WIFI)
+      return Either.left(DiscoveryStop.NoWifi)
     }
 
     mLock = manager.createMulticastLock("locked")
@@ -63,10 +63,10 @@ class RemoteServiceDiscoveryImpl(
     }
 
     if (entity.isLeft()) {
-      return Either.left(DiscoveryStop.NOT_FOUND)
+      return Either.left(DiscoveryStop.NotFound)
     }
 
-    return entity.mapLeft { DiscoveryStop.COMPLETE }
+    return entity.mapLeft { DiscoveryStop.Complete }
   }
 
   private fun stopDiscovery() {

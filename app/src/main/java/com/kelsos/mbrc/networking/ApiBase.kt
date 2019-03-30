@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.networking
 
 import com.kelsos.mbrc.data.DeserializationAdapter
-import com.kelsos.mbrc.interfaces.data.RemoteDataSource
 import com.kelsos.mbrc.networking.client.GenericSocketMessage
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Page
@@ -49,7 +48,7 @@ class ApiBase(
       Observable.range(0, Integer.MAX_VALUE).flatMapSingle {
         val pageStart = now()
 
-        val limit = RemoteDataSource.LIMIT
+        val limit = 800
         val offset = it * limit
         val range = getPageRange(offset, limit)
 

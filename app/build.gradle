@@ -52,6 +52,12 @@ android {
     testInstrumentationRunner 'com.kelsos.mbrc.MockTestRunner'
     testApplicationId "com.kelsos.mbrc.test"
     vectorDrawables.useSupportLibrary = true
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+      }
+    }
   }
 
   testOptions {
@@ -253,6 +259,13 @@ dependencies {
   implementation "io.arrow-kt:arrow-typeclasses:$arrow_version"
   implementation "io.arrow-kt:arrow-extras-data:$arrow_version"
   implementation "io.arrow-kt:arrow-extras-extensions:$arrow_version"
+
+  implementation "io.arrow-kt:arrow-effects-data:$arrow_version" //optional
+  implementation "io.arrow-kt:arrow-effects-extensions:$arrow_version" //optional
+  implementation "io.arrow-kt:arrow-effects-io-extensions:$arrow_version" //optional
+  implementation "io.arrow-kt:arrow-effects-rx2-data:$arrow_version" //optional
+  implementation "io.arrow-kt:arrow-effects-rx2-extensions:$arrow_version" //optional
+
   kapt    "io.arrow-kt:arrow-meta:$arrow_version"
 
   debugImplementation "com.squareup.leakcanary:leakcanary-android:1.6.3"

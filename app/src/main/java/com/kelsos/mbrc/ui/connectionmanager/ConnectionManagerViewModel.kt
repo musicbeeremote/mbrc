@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
+import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -19,11 +20,11 @@ class ConnectionManagerViewModel(
 
   private val job: Job = Job()
   private val scope = CoroutineScope(dispatchers.database + job)
-  private val _discoveryStatus: MutableLiveData<Event<Int>> = MutableLiveData()
+  private val _discoveryStatus: MutableLiveData<Event<DiscoveryStop>> = MutableLiveData()
 
   val settings: LiveData<List<ConnectionSettingsEntity>> = repository.getAll()
   val default: LiveData<ConnectionSettingsEntity?> = repository.defaultSettings()
-  val discoveryStatus: LiveData<Event<Int>> get() = _discoveryStatus
+  val discoveryStatus: LiveData<Event<DiscoveryStop>> get() = _discoveryStatus
 
   fun startDiscovery() {
     scope.launch {

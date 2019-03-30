@@ -2,6 +2,7 @@ package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
 import arrow.core.Option
+import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 
 interface ConnectionRepository {
   suspend fun save(settings: ConnectionSettingsEntity)
@@ -18,5 +19,5 @@ interface ConnectionRepository {
 
   fun defaultSettings(): LiveData<ConnectionSettingsEntity?>
 
-  suspend fun discover(): Int
+  suspend fun discover(): DiscoveryStop
 }
