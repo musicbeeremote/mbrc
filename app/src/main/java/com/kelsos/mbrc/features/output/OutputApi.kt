@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.output
+package com.kelsos.mbrc.features.output
 
 interface OutputApi {
   suspend fun getOutputs(): OutputResponse

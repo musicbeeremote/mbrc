@@ -29,8 +29,6 @@ import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
 import com.kelsos.mbrc.content.nowplaying.cover.StoredCoverModel
-import com.kelsos.mbrc.content.output.OutputApi
-import com.kelsos.mbrc.content.output.OutputApiImpl
 import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.content.radios.RadioRepository
@@ -47,6 +45,9 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.output.OutputApi
+import com.kelsos.mbrc.features.output.OutputApiImpl
+import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
@@ -259,6 +260,7 @@ val uiModule = module {
   viewModel<RadioViewModel>()
   viewModel<NowPlayingViewModel>()
   viewModel<LibraryViewModel>()
+  viewModel<OutputSelectionViewModel>()
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()
 

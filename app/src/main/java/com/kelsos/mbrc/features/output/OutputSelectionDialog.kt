@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.dialogs
+package com.kelsos.mbrc.features.output
 
 import android.app.Dialog
 import android.os.Bundle
@@ -14,17 +14,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.DialogOutputSelectionBinding
-import com.kelsos.mbrc.output.OutputSelectionResult
-import com.kelsos.mbrc.output.OutputSelectionViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class OutputSelectionDialog :
-  DialogFragment(),
-  View.OnTouchListener,
-  AdapterView.OnItemSelectedListener {
+class OutputSelectionDialog() : DialogFragment(), View.OnTouchListener {
 
   private var touchInitiated: Boolean = false
   private lateinit var dialog: AlertDialog
@@ -38,34 +36,41 @@ class OutputSelectionDialog :
 
   private val viewModel: OutputSelectionViewModel by viewModel()
 
+  private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+      if (!touchInitiated) {
+        return
+      }
+
+      val selectedOutput = availableOutputs.adapter.getItem(position) as String
+      viewModel.setOutput(selectedOutput)
+      touchInitiated = false
+    }
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    viewModel.outputs.observe(viewLifecycleOwner) {
-      update(it)
-    }
-    viewModel.selection.observe(viewLifecycleOwner) {
-      val adapter = availableOutputs.adapter as ArrayAdapter<*>
-      for (position in 0 until adapter.count) {
-        if (it == adapter.getItem(position)) {
-          availableOutputs.setSelection(position, false)
+    lifecycleScope.launch {
+      viewModel.outputs.collect {
+        update(it.devices)
+        val adapter = availableOutputs.adapter
+        for (position in (0 until adapter.count)) {
+          val item = adapter.getItem(position) as String
+          if (item != it.active) {
+            continue
+          }
+          availableOutputs.setSelection(position)
           break
         }
       }
     }
-    viewModel.events.observe(viewLifecycleOwner) {
-      if (it.handled) {
-        return@observe
-      }
-      it.handled = true
-      when (it) {
-        OutputSelectionResult.Success -> {
-          availableOutputs.isVisible = true
-          errorMessage.isInvisible = true
-        }
-        else -> error(it)
-      }
+
+    lifecycleScope.launch {
+      viewModel.emitter.collect { result -> error(result) }
     }
-    viewModel.reload()
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -86,19 +91,6 @@ class OutputSelectionDialog :
     return dialog
   }
 
-  override fun onNothingSelected(parent: AdapterView<*>?) {
-  }
-
-  override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-    if (!touchInitiated) {
-      return
-    }
-
-    val selectedOutput = availableOutputs.adapter.getItem(position) as String
-    viewModel.setOutput(selectedOutput)
-    touchInitiated = false
-  }
-
   override fun onTouch(view: View?, event: MotionEvent?): Boolean {
     touchInitiated = true
     return view?.performClick() == true
@@ -114,7 +106,7 @@ class OutputSelectionDialog :
       data
     )
     availableOutputs.adapter = outputAdapter
-    availableOutputs.onItemSelectedListener = this
+    availableOutputs.onItemSelectedListener = onItemSelectedListener
     availableOutputs.setOnTouchListener(this)
     loadingProgress.isVisible = false
     availableOutputs.isVisible = true

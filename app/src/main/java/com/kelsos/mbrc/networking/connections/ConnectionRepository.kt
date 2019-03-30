@@ -2,6 +2,7 @@ package com.kelsos.mbrc.networking.connections
 
 import androidx.paging.PagingData
 import arrow.core.Option
+import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import kotlinx.coroutines.flow.Flow
 
 interface ConnectionRepository {
@@ -17,5 +18,5 @@ interface ConnectionRepository {
 
   fun setDefault(settings: ConnectionSettings)
 
-  suspend fun discover(): Int
+  suspend fun discover(): DiscoveryStop
 }

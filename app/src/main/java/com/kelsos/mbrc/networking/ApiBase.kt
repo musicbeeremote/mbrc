@@ -2,7 +2,6 @@ package com.kelsos.mbrc.networking
 
 import com.kelsos.mbrc.client.ResponseWithPayload
 import com.kelsos.mbrc.data.DeserializationAdapter
-import com.kelsos.mbrc.interfaces.data.RemoteDataSource.Companion.LIMIT
 import com.kelsos.mbrc.networking.client.GenericSocketMessage
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Page
@@ -39,9 +38,10 @@ class ApiBase(
       val connection = apiRequestManager.openConnection()
       for (currentPage in 0..Int.MAX_VALUE) {
         val pageStart = now()
-        val offset = currentPage * LIMIT
-        val range = getPageRange(offset, LIMIT)
-        Timber.v("fetching $request offset $offset [$LIMIT]")
+        val limit = 800
+        val offset = currentPage * limit
+        val range = getPageRange(offset, limit)
+        Timber.v("fetching $request offset $offset [$limit]")
         val message = SocketMessage.create(request, range ?: "")
         val response = apiRequestManager.request(connection, message)
         val socketMessage = adapter.objectify<GenericSocketMessage<Page<T>>>(

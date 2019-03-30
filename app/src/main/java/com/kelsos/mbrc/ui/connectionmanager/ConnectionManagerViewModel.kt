@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,9 +19,9 @@ class ConnectionManagerViewModel(
   private val repository: ConnectionRepository,
   private val dispatchers: AppCoroutineDispatchers
 ) : ViewModel() {
-  private val _discoveryStatus: MutableSharedFlow<Event<Int>> = MutableSharedFlow()
+  private val _discoveryStatus: MutableSharedFlow<Event<DiscoveryStop>> = MutableSharedFlow()
   val settings: Flow<PagingData<ConnectionSettings>> = repository.getAll().cachedIn(viewModelScope)
-  val emitter: SharedFlow<Event<Int>> get() = _discoveryStatus
+  val emitter: SharedFlow<Event<DiscoveryStop>> get() = _discoveryStatus
 
   fun startDiscovery() {
     viewModelScope.launch(dispatchers.network) {

@@ -151,7 +151,7 @@
   </fragment>
   <dialog
       android:id="@+id/nav_output"
-      android:name="com.kelsos.mbrc.ui.dialogs.OutputSelectionDialog"
+      android:name="com.kelsos.mbrc.features.output.OutputSelectionDialog"
       android:label="OutputSelectionDialog" />
   <dialog
       android:id="@+id/rating_dialog"

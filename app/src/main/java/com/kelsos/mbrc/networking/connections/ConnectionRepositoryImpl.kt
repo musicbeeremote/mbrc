@@ -16,13 +16,13 @@ class ConnectionRepositoryImpl(
   private val discovery: RemoteServiceDiscovery
 ) : ConnectionRepository {
 
-  override suspend fun discover(): Int {
+  override suspend fun discover(): DiscoveryStop {
     val discover = discovery.discover()
     return discover.fold(
       { it },
       {
         save(it.toConnection())
-        DiscoveryStop.COMPLETE
+        DiscoveryStop.Complete
       }
     )
   }

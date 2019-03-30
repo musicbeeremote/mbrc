@@ -12,6 +12,7 @@ val appCoroutineDispatchers = AppCoroutineDispatchers(
   testDispatcher,
   testDispatcher
 )
+
 val testDispatcherModule = module {
   single {
     appCoroutineDispatchers

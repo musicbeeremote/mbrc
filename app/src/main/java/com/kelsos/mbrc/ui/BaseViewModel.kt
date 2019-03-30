@@ -12,7 +12,7 @@ open class BaseViewModel<T : UiMessageBase> : ViewModel() {
   val emitter: Flow<T>
     get() = sharedFlow.map { it.contentIfNotHandled }.filterNotNull()
 
-  protected fun emit(uiMessage: T) {
-    sharedFlow.tryEmit(Event(uiMessage))
+  protected suspend fun emit(uiMessage: T) {
+    sharedFlow.emit(Event(uiMessage))
   }
 }

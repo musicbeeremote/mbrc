@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.output
+package com.kelsos.mbrc.features.output
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
