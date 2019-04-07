@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.networking.protocol.commands
+package com.kelsos.mbrc.protocol
 
 import android.app.Application
 import android.graphics.Bitmap
@@ -11,9 +11,7 @@ import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
 import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
 import com.kelsos.mbrc.extensions.md5
-import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.interfaces.ProtocolMessage
-import com.kelsos.mbrc.platform.widgets.UpdateWidgets
+import com.kelsos.mbrc.platform.widgets.WidgetUpdater
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
@@ -26,20 +24,21 @@ import java.io.File
 import java.io.FileOutputStream
 
 class UpdateCover(
-  private val context: Application,
+  private val app: Application,
+  private val updater: WidgetUpdater,
   private val mapper: Moshi,
   private val dispatchers: AppCoroutineDispatchers,
   private val coverApi: CoverApi,
   private val coverModel: CoverModel,
   private val playingTrackLiveDataProvider: PlayingTrackState
-) : ICommand {
+) : ProtocolAction {
   private val coverDir: File
 
   private val job = Job()
   private val scope = CoroutineScope(dispatchers.disk + job)
 
   init {
-    coverDir = File(context.filesDir, COVER_DIR)
+    coverDir = File(app.filesDir, COVER_DIR)
     scope.launch(dispatchers.disk) {
       playingTrackLiveDataProvider.set {
         copy(coverUrl = coverModel.coverPath)
@@ -53,7 +52,7 @@ class UpdateCover(
 
     if (payload.status == CoverPayload.NOT_FOUND) {
       playingTrackLiveDataProvider.set { copy(coverUrl = "") }
-      UpdateWidgets.updateCover(context)
+      updater.updateCover("")
     } else if (payload.status == CoverPayload.READY) {
       scope.launch(dispatchers.disk) {
         retrieveCover()
@@ -73,7 +72,7 @@ class UpdateCover(
           coverModel.coverPath = coverUri
           copy(coverUrl = coverUri)
         }
-        UpdateWidgets.updateCover(context, file.absolutePath)
+        updater.updateCover(file.absolutePath)
       } catch (e: Exception) {
         removeCover(e)
       }
@@ -116,7 +115,7 @@ class UpdateCover(
 
     val md5 = file.md5()
     val extension = file.extension
-    val newFile = File(context.filesDir, "$md5.$extension")
+    val newFile = File(app.filesDir, "$md5.$extension")
     if (newFile.exists()) {
       file.delete()
       return newFile
@@ -150,7 +149,7 @@ class UpdateCover(
   }
 
   private fun temporaryCover(): File {
-    val file = File(context.cacheDir, TEMP_COVER)
+    val file = File(app.cacheDir, TEMP_COVER)
     if (file.exists()) {
       file.delete()
     }

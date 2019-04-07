@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.interfaces
+package com.kelsos.mbrc.protocol
 
 interface ProtocolMessage {
   val type: String

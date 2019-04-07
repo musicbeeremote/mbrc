@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.networking.protocol
 
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.interfaces.ICommand
-import com.kelsos.mbrc.interfaces.ProtocolMessage
+import com.kelsos.mbrc.protocol.ProtocolAction
+import com.kelsos.mbrc.protocol.ProtocolMessage
 import timber.log.Timber
 import java.util.HashMap
 import java.util.concurrent.ExecutorService
@@ -15,7 +15,7 @@ class CommandExecutorImpl(
 
   private var executor = getExecutor()
 
-  private var commandMap: MutableMap<String, ICommand> = HashMap()
+  private var commandMap: MutableMap<String, ProtocolAction> = HashMap()
   private val eventQueue: LinkedBlockingQueue<ProtocolMessage> = LinkedBlockingQueue()
   private var running: Boolean = false
 
@@ -32,7 +32,7 @@ class CommandExecutorImpl(
 
     val command = commandMap[context]
     if (command == null) {
-      val commandInstance: ICommand
+      val commandInstance: ProtocolAction
       try {
         commandInstance = commandFactory.create(context)
       } catch (e: Exception) {
@@ -46,7 +46,7 @@ class CommandExecutorImpl(
     }
   }
 
-  private fun callExecute(command: ICommand, event: ProtocolMessage) {
+  private fun callExecute(command: ProtocolAction, event: ProtocolMessage) {
     try {
       command.execute(event)
     } catch (ex: Exception) {
