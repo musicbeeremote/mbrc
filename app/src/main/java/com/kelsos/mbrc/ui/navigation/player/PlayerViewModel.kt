@@ -2,10 +2,10 @@ package com.kelsos.mbrc.ui.navigation.player
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
+import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -19,10 +19,10 @@ import kotlinx.coroutines.launch
 @OptIn(FlowPreview::class)
 class PlayerViewModel(
   private val userActionUseCase: UserActionUseCase,
-  val playingTrack: PlayingTrackLiveDataProvider,
-  val playerStatus: PlayerStatusLiveDataProvider,
-  val trackRating: TrackRatingLiveDataProvider,
-  val trackPosition: TrackPositionLiveDataProvider,
+  val playingTrack: PlayingTrackState,
+  val playerStatus: PlayerStatusState,
+  val trackRating: TrackRatingState,
+  val trackPosition: TrackPositionState
 ) : ViewModel() {
   private val progressRelay: MutableSharedFlow<Int> = MutableStateFlow(0)
   init {

@@ -5,15 +5,14 @@ import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.launch
 
-interface PlayingTrackLiveDataProvider : LiveDataProvider<PlayingTrack>
+interface PlayingTrackState : State<PlayingTrack>
 
-class PlayingTrackLiveDataProviderImpl(
+class PlayingTrackStateImpl(
   private val playingTrackCache: PlayingTrackCache,
   appCoroutineDispatchers: AppCoroutineDispatchers
-) : BaseLiveDataProvider<PlayingTrack>(),
-  PlayingTrackLiveDataProvider {
+) : BaseState<PlayingTrack>(), PlayingTrackState {
   init {
-    update(PlayingTrack())
+    set(PlayingTrack())
 
     scope.launch(appCoroutineDispatchers.disk) {
       with(playingTrackCache) {
@@ -21,7 +20,7 @@ class PlayingTrackLiveDataProviderImpl(
           val coverUrl = restoreCover()
           val trackInfo = restoreInfo()
 
-          update(trackInfo.copy(coverUrl = coverUrl))
+          set(trackInfo.copy(coverUrl = coverUrl))
         } catch (ex: Exception) {
         }
       }

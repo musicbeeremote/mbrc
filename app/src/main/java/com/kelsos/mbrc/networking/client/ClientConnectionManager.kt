@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking.client
 
 import arrow.core.Some
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
@@ -33,7 +33,7 @@ class ClientConnectionManager(
   private val messageHandler: MessageHandler,
   private val moshi: Moshi,
   private val connectionRepository: ConnectionRepository,
-  private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider
+  private val connectionStatusLiveDataProvider: ConnectionStatusState
 ) : IClientConnectionManager, PingTimeoutListener {
 
   private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }

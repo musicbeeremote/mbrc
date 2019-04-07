@@ -3,7 +3,7 @@ package com.kelsos.mbrc.networking.protocol
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
 import io.mockk.Runs
@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 class VolumeModifyUseCaseImplTest {
 
   private lateinit var volumeModifyUseCase: VolumeModifyUseCase
-  private lateinit var provider: PlayerStatusLiveDataProvider
+  private lateinit var provider: PlayerStatusState
   private lateinit var messageQueue: MessageQueue
 
   private val slot = slot<SocketMessage>()

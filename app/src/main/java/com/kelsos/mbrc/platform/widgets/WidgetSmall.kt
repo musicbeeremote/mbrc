@@ -80,7 +80,7 @@ class WidgetSmall : AppWidgetProvider() {
       views.setOnClickPendingIntent(R.id.widget_small_next, getPendingIntent(NEXT, context))
       views.setOnClickPendingIntent(R.id.widget_small_previous, getPendingIntent(PREVIOUS, context))
 
-      // Tell the AppWidgetManager to perform an update on the current app widget
+      // Tell the AppWidgetManager to perform an set on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views)
     }
   }

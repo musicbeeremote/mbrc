@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.networking.protocol
 
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
 
 class VolumeModifyUseCaseImpl(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  private val playerStatusLiveDataProvider: PlayerStatusState,
   private val messageQueue: MessageQueue
 ) : VolumeModifyUseCase {
 

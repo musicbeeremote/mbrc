@@ -4,15 +4,14 @@ import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 
-interface TrackPositionLiveDataProvider : LiveDataProvider<PlayingPosition> {
+interface TrackPositionState : State<PlayingPosition> {
   fun setPlaying(playing: Boolean)
 }
 
-class TrackPositionLiveDataProviderImpl() : TrackPositionLiveDataProvider,
-  BaseLiveDataProvider<PlayingPosition>() {
+class TrackPositionStateImpl() : TrackPositionState, BaseState<PlayingPosition>() {
 
   init {
-    update(PlayingPosition())
+    set(PlayingPosition())
   }
 
   private var timer: Timer? = null
@@ -39,13 +38,9 @@ class TrackPositionLiveDataProviderImpl() : TrackPositionLiveDataProvider,
       period = 1000,
       initialDelay = 1000
     ) {
-      update {
+      set {
         copy(current = current + 1000)
       }
     }
-  }
-
-  init {
-    update(PlayingPosition())
   }
 }

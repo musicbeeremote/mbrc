@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.events.Event
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NowPlayingViewModel(
-  val playingTrack: PlayingTrackLiveDataProvider,
+  val playingTrack: PlayingTrackState,
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,
   private val dispatchers: AppCoroutineDispatchers,
