@@ -172,7 +172,7 @@ dependencies {
 
   androidTestUtil 'androidx.test:orchestrator:1.1.1'
 
-  androidTestImplementation "io.mockk:mockk-android:1.9.2"
+  androidTestImplementation "io.mockk:mockk-android:1.9.3"
   androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
 
   androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.0.0'
@@ -189,7 +189,7 @@ dependencies {
   testImplementation "android.arch.core:core-testing:1.1.1"
   testImplementation "android.arch.persistence.room:testing:1.1.1"
 
-  testImplementation "io.mockk:mockk:1.9.2"
+  testImplementation "io.mockk:mockk:1.9.3"
 
   testImplementation "org.robolectric:robolectric:4.2.1"
   testImplementation "org.robolectric:shadows-multidex:4.2.1"
@@ -200,10 +200,10 @@ dependencies {
 
   implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
 
-  implementation 'com.chibatching.kotpref:kotpref:2.6.0'
+  implementation 'com.chibatching.kotpref:kotpref:2.7.0'
 
-  implementation 'com.google.android.material:material:1.1.0-alpha04'
-  implementation 'androidx.databinding:databinding-runtime:3.5.0-alpha07'
+  implementation 'com.google.android.material:material:1.1.0-alpha05'
+  implementation 'androidx.databinding:databinding-runtime:3.5.0-alpha10'
 
   implementation 'androidx.appcompat:appcompat:1.0.2'
   implementation 'androidx.media:media:1.0.1'
@@ -221,9 +221,9 @@ dependencies {
 
   implementation 'androidx.paging:paging-runtime:2.1.0'
 
-  implementation 'androidx.room:room-runtime:2.1.0-alpha05'
-  implementation 'androidx.room:room-rxjava2:2.1.0-alpha05'
-  kapt "androidx.room:room-compiler:2.1.0-alpha05"
+  implementation 'androidx.room:room-runtime:2.1.0-alpha06'
+  implementation 'androidx.room:room-rxjava2:2.1.0-alpha06'
+  kapt "androidx.room:room-compiler:2.1.0-alpha06"
 
   implementation 'com.squareup.moshi:moshi:1.8.0'
   kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.8.0'
@@ -243,7 +243,7 @@ dependencies {
   implementation 'androidx.multidex:multidex:2.0.1'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
   implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
 
   implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -276,7 +276,7 @@ dependencies {
   playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
     transitive = true
   }
-  playImplementation 'com.google.firebase:firebase-perf:16.2.4'
+  playImplementation 'com.google.firebase:firebase-perf:16.2.5'
   playImplementation 'com.google.firebase:firebase-core:16.0.8'
 }
 
