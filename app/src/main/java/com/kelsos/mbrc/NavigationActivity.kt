@@ -21,7 +21,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
@@ -35,7 +35,7 @@ class NavigationActivity : AppCompatActivity() {
 
   private val serviceChecker: ServiceChecker by inject()
   private val volumeModifyUseCase: VolumeModifyUseCase by inject()
-  private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider by inject()
+  private val connectionStatusLiveDataProvider: ConnectionStatusState by inject()
   private val clientConnectionUseCase: ClientConnectionUseCase by inject()
 
   private val navigationView: NavigationView by bindView(R.id.nav_view)

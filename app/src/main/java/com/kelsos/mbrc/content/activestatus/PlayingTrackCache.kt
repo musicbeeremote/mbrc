@@ -12,13 +12,13 @@ import java.nio.charset.Charset
 class PlayingTrackCacheImpl(
   private val mapper: Moshi,
   private val appContext: Application,
-  private val appCoroutineDispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers
 ) : PlayingTrackCache {
 
   private val adapter by lazy { mapper.adapter(PlayingTrack::class.java) }
 
   override suspend fun persistInfo(track: PlayingTrack) {
-    withContext(appCoroutineDispatchers.disk) {
+    withContext(dispatchers.disk) {
       val infoFile = File(appContext.filesDir, TRACK_INFO)
       if (infoFile.exists()) {
         infoFile.delete()
@@ -28,7 +28,7 @@ class PlayingTrackCacheImpl(
   }
 
   override suspend fun restoreInfo(): PlayingTrack? {
-    return withContext(appCoroutineDispatchers.disk) {
+    return withContext(dispatchers.disk) {
       val infoFile = File(appContext.filesDir, TRACK_INFO)
       return@withContext if (infoFile.exists()) {
         adapter.fromJson(Okio.buffer(Okio.source(infoFile)))
@@ -39,7 +39,7 @@ class PlayingTrackCacheImpl(
   }
 
   override suspend fun persistCover(cover: String) {
-    withContext(appCoroutineDispatchers.disk) {
+    withContext(dispatchers.disk) {
       val coverFile = File(appContext.filesDir, COVER_INFO)
       if (coverFile.exists()) {
         coverFile.delete()
@@ -54,7 +54,7 @@ class PlayingTrackCacheImpl(
   }
 
   override suspend fun restoreCover(): String? {
-    return withContext(appCoroutineDispatchers.disk) {
+    return withContext(dispatchers.disk) {
       val coverFile = File(appContext.filesDir, COVER_INFO)
       return@withContext if (!coverFile.exists()) {
         null

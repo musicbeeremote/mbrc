@@ -80,7 +80,7 @@ class WidgetNormal : AppWidgetProvider() {
         getPendingIntent(PREVIOUS, context)
       )
 
-      // Tell the AppWidgetManager to perform an update on the current app widget
+      // Tell the AppWidgetManager to perform an set on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views)
     }
   }

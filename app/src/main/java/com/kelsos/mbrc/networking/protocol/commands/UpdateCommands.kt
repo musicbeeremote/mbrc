@@ -3,36 +3,44 @@ package com.kelsos.mbrc.networking.protocol.commands
 import android.app.Application
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerStatus
+import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.Repeat
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.LyricsState
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
+import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
 import com.kelsos.mbrc.content.nowplaying.NowPlayingTrack
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.ProtocolMessage
+import com.kelsos.mbrc.networking.SocketActivityChecker
+import com.kelsos.mbrc.networking.client.MessageQueue
+import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.networking.protocol.responses.NowPlayingMoveResponse
+import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveResponse
+import com.kelsos.mbrc.networking.protocol.responses.Position
 import com.kelsos.mbrc.platform.widgets.UpdateWidgets
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import timber.log.Timber
 
 class UpdateLastFm(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
+  private val playerStatusLiveDataProvider: PlayerStatusState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val scrobble = message.data as? Boolean ?: false
-    playerStatusLiveDataProvider.update {
+    playerStatusLiveDataProvider.set {
       copy(scrobbling = scrobble)
     }
   }
 }
 
 class UpdateLfmRating(
-  private val trackRatingLiveDataProvider: TrackRatingLiveDataProvider
+  private val trackRatingLiveDataProvider: TrackRatingState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
@@ -42,7 +50,7 @@ class UpdateLfmRating(
       else -> LfmRating.NORMAL
     }
 
-    trackRatingLiveDataProvider.update {
+    trackRatingLiveDataProvider.set {
       copy(lfmRating = lfmRating)
     }
   }
@@ -50,7 +58,7 @@ class UpdateLfmRating(
 
 class UpdateLyrics(
   private val mapper: Moshi,
-  private val lyricsLiveDataProvider: LyricsLiveDataProvider
+  private val lyricsLiveDataProvider: LyricsState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
@@ -73,7 +81,7 @@ class UpdateLyrics(
       emptyList()
     }
 
-    lyricsLiveDataProvider.update(lyrics)
+    lyricsLiveDataProvider.set(lyrics)
   }
 
   companion object {
@@ -82,17 +90,17 @@ class UpdateLyrics(
 }
 
 class UpdateMute(
-  private val statusLiveDataProvider: PlayerStatusLiveDataProvider
+  private val statusLiveDataProvider: PlayerStatusState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val mute = message.data as? Boolean ?: false
-    statusLiveDataProvider.update { copy(mute = mute) }
+    statusLiveDataProvider.set { copy(mute = mute) }
   }
 }
 
 class UpdateNowPlayingTrack(
-  private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
+  private val playingTrackLiveDataProvider: PlayingTrackState,
   private val context: Application,
   private val mapper: Moshi
 ) : ICommand {
@@ -101,7 +109,7 @@ class UpdateNowPlayingTrack(
     val adapter = mapper.adapter(NowPlayingTrack::class.java)
     val track = adapter.fromJsonValue(message.data) ?: return
 
-    playingTrackLiveDataProvider.update {
+    playingTrackLiveDataProvider.set {
       copy(
         artist = track.artist,
         title = track.title,
@@ -118,7 +126,7 @@ class UpdateNowPlayingTrack(
 }
 
 class UpdatePlayerStatus(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  private val playerStatusLiveDataProvider: PlayerStatusState,
   private val moshi: Moshi
 ) : ICommand {
 
@@ -126,7 +134,7 @@ class UpdatePlayerStatus(
     val adapter = moshi.adapter(PlayerStatus::class.java)
     val status = adapter.fromJsonValue(message.data) ?: return
 
-    playerStatusLiveDataProvider.update {
+    playerStatusLiveDataProvider.set {
       copy(
         mute = status.mute,
         state = status.playState,
@@ -140,14 +148,14 @@ class UpdatePlayerStatus(
 }
 
 class UpdatePlayState(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
+  private val playerStatusLiveDataProvider: PlayerStatusState,
   private val context: Application
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val playState = message.data as? String ?: PlayerState.UNDEFINED
 
-    playerStatusLiveDataProvider.update {
+    playerStatusLiveDataProvider.set {
       copy(state = playState)
     }
 
@@ -164,51 +172,51 @@ class UpdatePluginVersionCommand : ICommand {
 }
 
 class UpdateRating(
-  private val ratingLiveDataProvider: TrackRatingLiveDataProvider
+  private val ratingLiveDataProvider: TrackRatingState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val rating = message.data.toString().toFloatOrNull()
 
-    ratingLiveDataProvider.update {
+    ratingLiveDataProvider.set {
       copy(rating = rating ?: 0.0f)
     }
   }
 }
 
 class UpdateRepeat(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
+  private val playerStatusLiveDataProvider: PlayerStatusState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val repeat = (message.data as? String)?.toRepeat() ?: Repeat.NONE
 
-    playerStatusLiveDataProvider.update {
+    playerStatusLiveDataProvider.set {
       copy(repeat = repeat)
     }
   }
 }
 
 class UpdateShuffle(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
+  private val playerStatusLiveDataProvider: PlayerStatusState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val data = message.data as? String ?: ShuffleMode.OFF
 
-    playerStatusLiveDataProvider.update {
+    playerStatusLiveDataProvider.set {
       copy(shuffle = data)
     }
   }
 }
 
 class UpdateVolume(
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider
+  private val playerStatusLiveDataProvider: PlayerStatusState
 ) : ICommand {
 
   override fun execute(message: ProtocolMessage) {
     val volume = message.data as Number
-    playerStatusLiveDataProvider.update {
+    playerStatusLiveDataProvider.set {
       copy(volume = volume.toInt())
     }
   }
@@ -220,5 +228,62 @@ private fun String.toRepeat(): String {
     Protocol.ALL.equals(this, ignoreCase = true) -> Repeat.ALL
     Protocol.ONE.equals(this, ignoreCase = true) -> Repeat.ONE
     else -> Repeat.NONE
+  }
+}
+
+class ProtocolPingHandle(
+  private val messageQueue: MessageQueue,
+  private var activityChecker: SocketActivityChecker
+) : ICommand {
+
+  override fun execute(message: ProtocolMessage) {
+    activityChecker.ping()
+    messageQueue.queue(SocketMessage.create(Protocol.PONG))
+  }
+}
+
+class ProtocolPongHandle : ICommand {
+  override fun execute(message: ProtocolMessage) {
+    Timber.d(message.data.toString())
+  }
+}
+
+class UpdateNowPlayingTrackMoved(
+  private val moshi: Moshi
+) : ICommand {
+
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
+    val response = adapter.fromJsonValue(message.data)
+
+    // bus.post(TrackMovedEvent(response.from, response.to, response.success))
+  }
+}
+
+class UpdateNowPlayingTrackRemoval(
+  private val moshi: Moshi
+) : ICommand {
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
+    val response = adapter.fromJsonValue(message.data)
+    // bus.post(TrackRemovalEvent(response.index, response.success))
+  }
+}
+
+class UpdatePlaybackPositionCommand(
+  private val moshi: Moshi,
+  private val trackPositionLiveDataProvider: TrackPositionState
+) : ICommand {
+
+  override fun execute(message: ProtocolMessage) {
+    val adapter = moshi.adapter(Position::class.java)
+    val response = adapter.fromJsonValue(message.data) ?: return
+
+    trackPositionLiveDataProvider.set(
+      PlayingPosition(
+        response.current,
+        response.total
+      )
+    )
   }
 }

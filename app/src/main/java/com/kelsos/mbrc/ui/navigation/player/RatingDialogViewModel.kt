@@ -1,14 +1,14 @@
 package com.kelsos.mbrc.ui.navigation.player
 
 import androidx.lifecycle.ViewModel
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 
 class RatingDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
-  val trackRatingLiveDataProvider: TrackRatingLiveDataProvider
+  val trackRatingLiveDataProvider: TrackRatingState
 ) : ViewModel() {
 
   fun changeRating(rating: Float) {

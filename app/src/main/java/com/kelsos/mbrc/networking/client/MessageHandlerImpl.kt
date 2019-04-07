@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.client
 
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.networking.client.UiMessageQueue.Companion.NOT_ALLOWED
 import com.kelsos.mbrc.networking.client.UiMessageQueue.Companion.PARTY_MODE_COMMAND_UNAVAILABLE
@@ -16,7 +16,7 @@ class MessageHandlerImpl(
   private val commandExecutor: CommandExecutor,
   private val messageQueue: MessageQueue,
   private val uiMessageQueue: UiMessageQueue,
-  private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
+  private val connectionStatusLiveDataProvider: ConnectionStatusState,
   private val clientInformationStore: ClientInformationStore,
   private val moshi: Moshi
 ) : MessageHandler {

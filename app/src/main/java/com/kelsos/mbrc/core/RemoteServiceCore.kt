@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.core
 
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
@@ -13,10 +13,10 @@ import timber.log.Timber
 class RemoteServiceCore(
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,
-  private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider,
-  private val playerStatusLiveDataProvider: PlayerStatusLiveDataProvider,
-  private val connectionStatusLiveDataProvider: ConnectionStatusLiveDataProvider,
-  private val positionLiveDataProvider: TrackPositionLiveDataProvider
+  private val playingTrackLiveDataProvider: PlayingTrackState,
+  private val playerStatusLiveDataProvider: PlayerStatusState,
+  private val connectionStatusLiveDataProvider: ConnectionStatusState,
+  private val positionLiveDataProvider: TrackPositionState
 ) : IRemoteServiceCore, LifeCycleAwareService() {
 
   init {
@@ -37,10 +37,10 @@ class RemoteServiceCore(
         return@observe
       }
 
-      playerStatusLiveDataProvider.update {
+      playerStatusLiveDataProvider.set {
         copy(state = PlayerState.UNDEFINED)
       }
-      positionLiveDataProvider.update {
+      positionLiveDataProvider.set {
         copy(current = 0)
       }
       notificationManager.cancel()

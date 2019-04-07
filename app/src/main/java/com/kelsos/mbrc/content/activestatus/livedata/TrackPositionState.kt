@@ -6,16 +6,16 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
-interface TrackPositionLiveDataProvider : LiveDataProvider<PlayingPosition> {
+interface TrackPositionState : State<PlayingPosition> {
   fun setPlaying(playing: Boolean)
 }
 
-class TrackPositionLiveDataProviderImpl(
+class TrackPositionStateImpl(
   private val appRxSchedulers: AppRxSchedulers
-) : TrackPositionLiveDataProvider, BaseLiveDataProvider<PlayingPosition>() {
+) : TrackPositionState, BaseState<PlayingPosition>() {
 
   init {
-    update(PlayingPosition())
+    set(PlayingPosition())
   }
 
   private var disposable: Disposable? = null
@@ -39,13 +39,13 @@ class TrackPositionLiveDataProviderImpl(
     }
 
     disposable = Observable.interval(1, TimeUnit.SECONDS, appRxSchedulers.network).subscribe {
-      update {
+      set {
         copy(current = current + 1000)
       }
     }
   }
 
   init {
-    update(PlayingPosition())
+    set(PlayingPosition())
   }
 }

@@ -5,18 +5,18 @@ import androidx.preference.PreferenceManager
 import androidx.room.Room
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusLiveDataProviderImpl
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsLiveDataProviderImpl
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProviderImpl
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProviderImpl
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionLiveDataProviderImpl
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProvider
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingLiveDataProviderImpl
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
+import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusStateImpl
+import com.kelsos.mbrc.content.activestatus.livedata.LyricsState
+import com.kelsos.mbrc.content.activestatus.livedata.LyricsStateImpl
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusStateImpl
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackStateImpl
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
+import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionStateImpl
+import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
+import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingStateImpl
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.albums.AlbumRepositoryImpl
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
@@ -180,14 +180,14 @@ val appModule = module {
 
   single { create<SyncProgressProvider>() }
 
-  single<PlayingTrackLiveDataProvider> { create<PlayingTrackLiveDataProviderImpl>() }
-  single<PlayerStatusLiveDataProvider> { create<PlayerStatusLiveDataProviderImpl>() }
-  single<TrackRatingLiveDataProvider> { create<TrackRatingLiveDataProviderImpl>() }
-  single<ConnectionStatusLiveDataProvider> {
-    create<ConnectionStatusLiveDataProviderImpl>()
+  single<PlayingTrackState> { create<PlayingTrackStateImpl>() }
+  single<PlayerStatusState> { create<PlayerStatusStateImpl>() }
+  single<TrackRatingState> { create<TrackRatingStateImpl>() }
+  single<ConnectionStatusState> {
+    create<ConnectionStatusStateImpl>()
   }
 
-  single<LyricsLiveDataProvider> { create<LyricsLiveDataProviderImpl>() }
+  single<LyricsState> { create<LyricsStateImpl>() }
 
   single<MessageQueue> { create<MessageQueueImpl>() }
   single<MessageHandler> { create<MessageHandlerImpl>() }
@@ -197,7 +197,7 @@ val appModule = module {
   single<CommandFactory> { create<CommandFactoryImpl>() }
   single<UiMessageQueue> { create<UiMessageQueueImpl>() }
   single<RemoteServiceDiscovery> { create<RemoteServiceDiscoveryImpl>() }
-  single<TrackPositionLiveDataProvider> { create<TrackPositionLiveDataProviderImpl>() }
+  single<TrackPositionState> { create<TrackPositionStateImpl>() }
 
   single<INotificationManager> { create<SessionNotificationManager>() }
   single<IRemoteServiceCore> { create<RemoteServiceCore>() }

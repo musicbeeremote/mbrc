@@ -6,7 +6,7 @@ import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.core.net.toUri
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
 import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
@@ -31,7 +31,7 @@ class UpdateCover(
   private val dispatchers: AppCoroutineDispatchers,
   private val coverApi: CoverApi,
   private val coverModel: CoverModel,
-  private val playingTrackLiveDataProvider: PlayingTrackLiveDataProvider
+  private val playingTrackLiveDataProvider: PlayingTrackState
 ) : ICommand {
   private val coverDir: File
 
@@ -41,7 +41,7 @@ class UpdateCover(
   init {
     coverDir = File(context.filesDir, COVER_DIR)
     scope.launch(dispatchers.disk) {
-      playingTrackLiveDataProvider.update {
+      playingTrackLiveDataProvider.set {
         copy(coverUrl = coverModel.coverPath)
       }
     }
@@ -52,7 +52,7 @@ class UpdateCover(
     val payload = adapter.fromJsonValue(message.data) ?: return
 
     if (payload.status == CoverPayload.NOT_FOUND) {
-      playingTrackLiveDataProvider.update { copy(coverUrl = "") }
+      playingTrackLiveDataProvider.set { copy(coverUrl = "") }
       UpdateWidgets.updateCover(context)
     } else if (payload.status == CoverPayload.READY) {
       scope.launch(dispatchers.disk) {
@@ -68,7 +68,7 @@ class UpdateCover(
         val bitmap = getBitmap(response)
         val file = storeCover(bitmap)
 
-        playingTrackLiveDataProvider.update {
+        playingTrackLiveDataProvider.set {
           val coverUri = file.toUri().toString()
           coverModel.coverPath = coverUri
           copy(coverUrl = coverUri)
@@ -100,7 +100,7 @@ class UpdateCover(
       Timber.v(it, "Failed to store path")
     }
 
-    playingTrackLiveDataProvider.update {
+    playingTrackLiveDataProvider.set {
       copy(coverUrl = "")
     }
   }

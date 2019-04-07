@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.player
 
 import androidx.lifecycle.ViewModel
 import com.jakewharton.rxrelay2.PublishRelay
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusLiveDataProvider
+import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 class VolumeDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
   private val appRxSchedulers: AppRxSchedulers,
-  val playerStatus: PlayerStatusLiveDataProvider
+  val playerStatus: PlayerStatusState
 ) : ViewModel() {
 
   private val volumeRelay: PublishRelay<Int> = PublishRelay.create()
