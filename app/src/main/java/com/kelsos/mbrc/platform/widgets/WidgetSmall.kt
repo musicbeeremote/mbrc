@@ -23,15 +23,16 @@ class WidgetSmall : AppWidgetProvider() {
 
   override fun onReceive(context: Context?, intent: Intent?) {
     super.onReceive(context, intent)
-    if (intent == null || intent.action != AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
+    if (
+      context == null ||
+      intent == null ||
+      intent.action != AppWidgetManager.ACTION_APPWIDGET_UPDATE
+    ) {
       return
     }
 
     val extras = intent.extras
     val widgetManager = AppWidgetManager.getInstance(context)
-    if (context == null) {
-      return
-    }
     val widgets = ComponentName(context.packageName, WidgetSmall::class.java.name)
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
@@ -40,22 +41,20 @@ class WidgetSmall : AppWidgetProvider() {
     }
 
     when {
-      extras.getBoolean(UpdateWidgets.COVER, false) -> {
-        val path = extras.getString(UpdateWidgets.COVER_PATH, "")
+      extras.getBoolean(WidgetUpdater.COVER, false) -> {
+        val path = extras.getString(WidgetUpdater.COVER_PATH, "")
         updateCover(context, widgetManager, widgetsIds, path)
       }
-      extras.getBoolean(UpdateWidgets.INFO, false) -> {
-        val info = extras.getParcelable<PlayingTrack>(UpdateWidgets.TRACK_INFO)
-        info?.run {
-          updateInfo(context, widgetManager, widgetsIds, this)
-        }
-      }
-      extras.getBoolean(UpdateWidgets.STATE, false) -> {
-        updatePlayState(
-          context, widgetManager, widgetsIds,
-          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
-        )
-      }
+      extras.getBoolean(WidgetUpdater.INFO, false) -> updateInfo(
+        context,
+        widgetManager,
+        widgetsIds,
+        checkNotNull(extras.getParcelable(WidgetUpdater.TRACK_INFO))
+      )
+      extras.getBoolean(WidgetUpdater.STATE, false) -> updatePlayState(
+        context, widgetManager, widgetsIds,
+        extras.getString(WidgetUpdater.PLAYER_STATE, PlayerState.UNDEFINED)
+      )
     }
   }
 

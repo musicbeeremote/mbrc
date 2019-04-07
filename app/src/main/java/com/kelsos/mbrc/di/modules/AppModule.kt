@@ -76,24 +76,6 @@ import com.kelsos.mbrc.networking.protocol.CommandFactory
 import com.kelsos.mbrc.networking.protocol.CommandFactoryImpl
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCaseImpl
-import com.kelsos.mbrc.networking.protocol.commands.ProtocolPingHandle
-import com.kelsos.mbrc.networking.protocol.commands.ProtocolPongHandle
-import com.kelsos.mbrc.networking.protocol.commands.UpdateCover
-import com.kelsos.mbrc.networking.protocol.commands.UpdateLastFm
-import com.kelsos.mbrc.networking.protocol.commands.UpdateLfmRating
-import com.kelsos.mbrc.networking.protocol.commands.UpdateLyrics
-import com.kelsos.mbrc.networking.protocol.commands.UpdateMute
-import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrack
-import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackMoved
-import com.kelsos.mbrc.networking.protocol.commands.UpdateNowPlayingTrackRemoval
-import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayState
-import com.kelsos.mbrc.networking.protocol.commands.UpdatePlaybackPositionCommand
-import com.kelsos.mbrc.networking.protocol.commands.UpdatePlayerStatus
-import com.kelsos.mbrc.networking.protocol.commands.UpdatePluginVersionCommand
-import com.kelsos.mbrc.networking.protocol.commands.UpdateRating
-import com.kelsos.mbrc.networking.protocol.commands.UpdateRepeat
-import com.kelsos.mbrc.networking.protocol.commands.UpdateShuffle
-import com.kelsos.mbrc.networking.protocol.commands.UpdateVolume
 import com.kelsos.mbrc.platform.RemoteBroadcastReceiver
 import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.platform.ServiceCheckerImpl
@@ -101,12 +83,32 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
+import com.kelsos.mbrc.platform.widgets.WidgetUpdater
+import com.kelsos.mbrc.platform.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.preferences.ClientInformationModel
 import com.kelsos.mbrc.preferences.ClientInformationModelImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
+import com.kelsos.mbrc.protocol.ProtocolPingHandle
+import com.kelsos.mbrc.protocol.ProtocolPongHandle
+import com.kelsos.mbrc.protocol.UpdateCover
+import com.kelsos.mbrc.protocol.UpdateLastFm
+import com.kelsos.mbrc.protocol.UpdateLfmRating
+import com.kelsos.mbrc.protocol.UpdateLyrics
+import com.kelsos.mbrc.protocol.UpdateMute
+import com.kelsos.mbrc.protocol.UpdateNowPlayingTrack
+import com.kelsos.mbrc.protocol.UpdateNowPlayingTrackMoved
+import com.kelsos.mbrc.protocol.UpdateNowPlayingTrackRemoval
+import com.kelsos.mbrc.protocol.UpdatePlayState
+import com.kelsos.mbrc.protocol.UpdatePlaybackPositionCommand
+import com.kelsos.mbrc.protocol.UpdatePlayerStatus
+import com.kelsos.mbrc.protocol.UpdatePluginVersionCommand
+import com.kelsos.mbrc.protocol.UpdateRating
+import com.kelsos.mbrc.protocol.UpdateRepeat
+import com.kelsos.mbrc.protocol.UpdateShuffle
+import com.kelsos.mbrc.protocol.UpdateVolume
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
@@ -194,6 +196,8 @@ val appModule = module {
   singleBy<IRemoteServiceCore, RemoteServiceCore>()
 
   singleBy<CoverModel, StoredCoverModel>()
+
+  singleBy<WidgetUpdater, WidgetUpdaterImpl>()
 
   single {
     AppCoroutineDispatchers(

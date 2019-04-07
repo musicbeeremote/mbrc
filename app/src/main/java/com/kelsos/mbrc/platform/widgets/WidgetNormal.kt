@@ -41,23 +41,20 @@ class WidgetNormal : AppWidgetProvider() {
     }
 
     when {
-      extras.getBoolean(UpdateWidgets.COVER, false) -> {
-        val path = extras.getString(UpdateWidgets.COVER_PATH, "")
+      extras.getBoolean(WidgetUpdater.COVER, false) -> {
+        val path = extras.getString(WidgetUpdater.COVER_PATH, "")
         updateCover(context, widgetManager, widgetsIds, path)
       }
-      extras.getBoolean(UpdateWidgets.INFO, false) -> {
-        val info =
-          extras.getParcelable<PlayingTrack>(UpdateWidgets.TRACK_INFO)
-        info?.run {
-          updateInfo(context, widgetManager, widgetsIds, this)
-        }
-      }
-      extras.getBoolean(UpdateWidgets.STATE, false) -> {
-        updatePlayState(
-          context, widgetManager, widgetsIds,
-          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
-        )
-      }
+      extras.getBoolean(WidgetUpdater.INFO, false) -> updateInfo(
+        context,
+        widgetManager,
+        widgetsIds,
+        checkNotNull(extras.getParcelable(WidgetUpdater.TRACK_INFO))
+      )
+      extras.getBoolean(WidgetUpdater.STATE, false) -> updatePlayState(
+        context, widgetManager, widgetsIds,
+        extras.getString(WidgetUpdater.PLAYER_STATE, PlayerState.UNDEFINED)
+      )
     }
   }
 
