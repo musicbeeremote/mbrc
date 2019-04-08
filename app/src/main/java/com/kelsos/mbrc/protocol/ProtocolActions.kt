@@ -86,8 +86,6 @@ class UpdateLyrics(
         .replace("&quot;", "\"")
         .replace("&apos;", "'")
         .replace("&amp;", "&")
-        .replace("<p>", "\r\n")
-        .replace("<br>", "\n")
         .trim { it <= ' ' }.split(LYRICS_NEWLINE.toRegex())
         .dropLastWhile(String::isEmpty)
     } else {
