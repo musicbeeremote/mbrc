@@ -32,6 +32,9 @@ jobs:
           command: |
             ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace --no-daemon --max-workers 4
       - run:
+          name: Upload coverage
+          command: bash <(curl -s https://codecov.io/bash)
+      - run:
           name: Set jacoco.xml path for code climate
           command: JACOCO_SOURCE_PATH=app/src/main/java ./cc-test-reporter format-coverage app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
       # upload coverage on code climate
@@ -44,6 +47,3 @@ jobs:
           destination: reports
       - store_test_results:
           path: app/build/test-results
-      - run:
-          name: Upload coverage
-          command: bash <(curl -s https://codecov.io/bash)
