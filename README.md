@@ -45,7 +45,11 @@
 
 ## About the Project
 
-[![MusicBee Remote Screenshot][project-screenshot]](https://mbrc.kelsos.net)
+<p align="center">
+    <a href="https://mbrc.kelsos.net">
+    <img src="https://raw.githubusercontent.com/musicbeeremote/android-app/master/screenshot.png" alt="Project Screenshot" height="926px" width="520px">
+    <a/>
+</p>
 
 MusicBee Remote is an application that allows you to control [MusicBee](http://getmusicbee.com/) player.
 This is achieved by using a [plugin](https://github.com/kelsos/mbrc-plugin) that acts as a server.
@@ -152,5 +156,3 @@ Carlos created some really nice [mockups](https://groups.google.com/forum/#!topi
 Apollo Player was one of the original sources of inspiration for the UI of MusicBee Remote
 
 * [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music)
-
-[project-screenshot]: https://raw.githubusercontent.com/musicbeeremote/android-app/master/screenshot.png
