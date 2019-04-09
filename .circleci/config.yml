@@ -42,8 +42,5 @@ jobs:
           name: Upload code climate report
           command: ./cc-test-reporter upload-coverage -r $CC_TEST_REPORTER_ID
           when: on_success
-      - store_artifacts:
-          path: app/build/reports
-          destination: reports
       - store_test_results:
           path: app/build/test-results
