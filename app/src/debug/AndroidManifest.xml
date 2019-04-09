@@ -5,7 +5,9 @@
   <application
       android:name="com.kelsos.mbrc.DebugApp"
       android:largeHeap="true"
-      tools:replace="android:name">
+      android:allowBackup="false"
+      tools:replace="android:name,android:allowBackup"
+      tools:ignore="GoogleAppIndexingWarning">
   </application>
 
 </manifest>

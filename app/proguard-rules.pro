@@ -86,7 +86,7 @@
 #Toothpick
 # Do not obfuscate annotation scoped classes
 -keepnames @javax.inject.Singleton class *
-# Add any custom defined @Scope (e.g. @Singleton) annotations here
+# Add any custom defined @Scope (e.g. ) annotations here
 # because proguard does not allow annotation inheritance rules
 
 # Do not obfuscate classes with Injected Constructors

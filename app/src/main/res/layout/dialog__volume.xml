@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <data>
+
+    <variable
+        name="status"
+        type="com.kelsos.mbrc.content.activestatus.PlayerStatusModel" />
+
+    <variable
+        name="viewModel"
+        type="com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel" />
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="72dp">
+
+    <ImageButton
+        android:id="@+id/player_screen__mute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/main_button_mute_description"
+        android:onClick="@{()-> viewModel.mute()}"
+        android:padding="@dimen/small_margin"
+        android:src="@{status.mute ? @drawable/ic_volume_off_black_24dp : @drawable/ic_volume_up_black_24dp}"
+        android:tint="@color/light_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_volume_off_black_24dp" />
+
+    <com.kelsos.mbrc.ui.widgets.SizableSeekBar
+        android:id="@+id/player_screen__volume"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="@{status.mute ? 0 : status.volume}"
+        android:progressTint="@color/primary"
+        android:secondaryProgress="0"
+        android:thumbTint="@color/primary_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/player_screen__mute"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/player_screen__mute"
+        app:layout_constraintTop_toTopOf="@+id/player_screen__mute"
+        app:onProgressChangeByUser="@{(progress) -> viewModel.changeVolume(progress)}" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

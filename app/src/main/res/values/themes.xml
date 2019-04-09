@@ -2,7 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
   <style name="AppTheme"
-    parent="AppTheme.Base" />
+    parent="AppTheme.Base" >
+    <item name="android:colorBackground">@color/background_dark</item>
+    <item name="android:windowContentTransitions">true</item>
+    <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    <item name="android:windowAllowReturnTransitionOverlap">true</item>
+    <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+    <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+  </style>
 
   <style name="AppTheme.Base"
     parent="Theme.AppCompat">
@@ -17,23 +24,16 @@
     <item name="windowNoTitle">true</item>
     <item name="windowActionBarOverlay">true</item>
     <item name="android:actionBarWidgetTheme">@style/AppTheme.ActionBarWidget</item>
-    <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
 
   <style name="AppTheme.ActionBarWidget" parent="AppTheme">
     <item name="android:textColorHint">@color/primary_text_material_light</item>
   </style>
 
-  <style name="Theme.Settings"
-    parent="@style/AppTheme">
-    <item name="android:windowNoTitle">true</item>
-    <item name="windowActionBar">false</item>
-    <item name="toolbarStyle">@style/Widget.Toolbar</item>
-  </style>
-
   <style name="Widget.Toolbar"
     parent="@style/Widget.AppCompat.Toolbar">
     <item name="android:background">?attr/colorPrimary</item>
+    <item name="android:navigationIcon">?attr/homeAsUpIndicator</item>
     <item name="navigationIcon">?attr/homeAsUpIndicator</item>
   </style>
 
