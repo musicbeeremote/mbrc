@@ -1,65 +1,118 @@
-MusicBee Remote - for Android [![Build Status](https://travis-ci.org/kelsos/mbrc.svg?branch=v1-development)](https://travis-ci.org/kelsos/mbrc)
-=============================
-
+<!-- Shields -->
+[![CircleCI](https://circleci.com/gh/musicbeeremote/android-app/tree/master.svg?style=svg)](https://circleci.com/gh/musicbeeremote/android-app/tree/master)
+[![codecov](https://codecov.io/gh/musicbeeremote/android-app/branch/master/graph/badge.svg)](https://codecov.io/gh/musicbeeremote/android-app)
+![GitHub](https://img.shields.io/github/license/musicbeeremote/android-app.svg)
+![GitHub release](https://img.shields.io/github/release/musicbeeremote/android-app.svg)
 [![Discord](https://img.shields.io/discord/420977901215678474.svg?style=popout)](https://discordapp.com/invite/rceTb57)
 [![Join the chat at https://gitter.im/musicbee-remote/Lobby](https://badges.gitter.im/musicbee-remote/Lobby.svg)](https://gitter.im/musicbee-remote/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-About
--------
-MusicBee is a remote control application that is used to control [MusicBee](http://getmusicbee.com/) player using a network connected Android device. The application is freely available through [Google Play](https://play.google.com/store/apps/details?id=com.kelsos.mbrc) and also requires the associated [plugin](https://github.com/kelsos/mbrc-plugin) (dll) for MusicBee to function.
+<br/>
+<p align="center">
+    <a href="https://github.com/musicbeeremote/android-app">
+    <img src="logo.png" alt="Logo" width="80"   height="80" />
+    </a>
 
-The application uses TCP sockets to pass JSON encoded messages for communication.
+<h3 align="center">MusicBee Remote</h3>
+    <p align="center">
+        Application for controlling MusicBee through your Android Device 
+        <br/>
+        <a href="https://play.google.com/store/apps/details?id=com.kelsos.mbrc">Play Store</a>
+        <br/>
+        <br/>
+        <a href="https://mbrc.kelsos.net/help/">Help</a>
+        ·
+        <a href="http://getmusicbee.com/forum/index.php?topic=7221.new;topicseen#new">MusicBee Forum</a>
+        ·
+        <a href="https://github.com/musicbeeremote/android-app/issues">Report Bug</a>
+        ·
+        <a href="https://github.com/musicbeeremote/android-app/issues">Request Feature</a>
+    </p>
+</p>
 
-MusicBee Remote was presented as part of my thesis on "*Android and application development for mobile devices*".
+<!-- TABLE OF CONTENTS -->
+## Table of Contents
 
-You can find help on how to use the application and more info on the dedicated [website](http://kelsos.net/musicbeeremote/) along with links to the binary version of the plugin.
+* [About the Project](#about-the-project)
+  * [Built With](#built-with)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+  * [Installation](#installation)
+* [Usage](#usage)
+* [Contributing](#contributing)
+* [License](#license)
+* [Contact](#contact)
+* [Acknowledgements](#acknowledgements)
 
-You can also find information about the plugin and the remote to the dedicated topic in the [MusicBee forums](http://getmusicbee.com/forum/index.php?topic=7221.new;topicseen#new).
+## About the Project
 
+[![MusicBee Remote Screenshot][project-screenshot]](https://mbrc.kelsos.net)
 
-Building
--------
-Clone the repository and import on IntelliJ IDEA or Android Studio.
+MusicBee Remote is an application that allows you to control [MusicBee](http://getmusicbee.com/) player.
+This is achieved by using a [plugin](https://github.com/kelsos/mbrc-plugin) that acts as a server.
+The plugin exposes a TCP socket server and uses a JSON based protocol to communicate with the Android application.
 
-Credits
------------
-### Artwork
+The application development started in 2011 for personal usage and then it was open sourced and released to Play Store so others could use it. The application was also presented as part of my thesis title "*Android and application development for mobile devices*".
 
-Many of the icons used are created by [Tasos Papazoglou Chalikias](https://github.com/sushiperv) and are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US) some of them where taken by other projects and some awful icons during the earlier development where created by me. The original logo idea belongs to Jordan Georgiades. Any other icons introduced in version 0.9.7 and later was probably my work. Some design ideas are based on [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) by Carlos Parga
+### Built With
 
-### Inspiration
-Initially a great source of inspiration for this project was the [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
-along with [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music). Nowadays I am looking closely the material design documentation.
+* [Kotlin](https://kotlinlang.org/)
+* [Architecture Components](https://developer.android.com/topic/libraries/architecture)
+* [Koin](https://github.com/InsertKoinIO/koin)
+* [Moshi](https://github.com/square/moshi)
+* [mockk](https://mockk.io/)
+* [rxjava](https://github.com/ReactiveX/RxJava)
+* [arrow-kt](https://github.com/arrow-kt/arrow)
+* [robolectic](http://robolectric.org/)
 
-### Dependencies
+## Getting Started
 
-*   [Toothpick](https://github.com/stephanenicolas/toothpick)
+In order to get started with the project as a developer there are a few steps you need to follow.
 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+### Prerequisites
 
-*   [Jackson](http://jackson.codehaus.org/)
+Android Studio should be installed on your local machine and it should be up to date.
 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+During development the Canary version of the Android Studio is used, but for release versions the stable version of AGP is always preferred.
 
-*   [RxJava](https://github.com/ReactiveX/RxJava)
+To get started with the the project you first have to clone the project.
 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+```bash
+git clone https://github.com/musicbeeremote/android-app.git
+```
 
-*   [RxAndroid](https://github.com/ReactiveX/RxAndroid)
+Then you can open the project with Android Studio.
 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+### Installation
 
-*   [Snackbar](https://github.com/MrEngineer13/SnackBar)
+There is a number of ways you could install the application on your device. If you are a developer you can run install on Android Studio and that should take care of the installation.
 
-    License: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-               
+Alternatively you could download a stable version of the Remote from [Play Store](https://play.google.com/store/apps/details?id=com.kelsos.mbrc).
 
-License
-----------
-The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license.
+The Play Store version of the remote include FireBase and Crashlytics and collects anonymous analytics.
+
+Alternatively there is a GitHub version on the [releases](https://github.com/musicbeeremote/android-app/releases) page that doesn't include any Crash or analytics reporting for people that are cautious about their privacy.
+
+## Usage
+
+In order to use the application you need a working WiFi connection, that doesn't have [access point isolation](https://www.howtogeek.com/179089/lock-down-your-wi-fi-network-with-your-routers-wireless-isolation-option/).
+
+You have to first install the [plugin](https://github.com/musicbeeremote/android-app/releases).
+
+After installing the plugin if you are not prompted to allow MusicBee or the plugin through the Windows Firewall you might have to manually configure Windows Firewall to allow the plugin to receive connections.
+
+For more detailed information you can check the [help](https://mbrc.kelsos.net/help/) page.
+
+## Contributing
+
+Contribution is always welcome.
+The contribution guide should follow soon.
+
+## License
+
+The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license. See `LICENSE` for more information.
 
     MusicBee Remote (for Android)
-    Copyright (C) 2011-2017  Konstantinos Paparas
+    Copyright (C) 2011-2019  Konstantinos Paparas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -73,3 +126,31 @@ The source code of the application is licensed under the [GPLv3](https://www.gnu
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+## Contact
+
+MusicBee Remote - [@MusicBeeRemote](https://twitter.com/musicbeeremote)
+
+Project Link: [https://github.com/musicbeeremote/android-app](https://github.com/musicbeeremote/android-app)
+
+## Acknowledgements
+
+* [Tasos Papazoglou Chalikias](https://github.com/sushiperv)
+
+Tasos created many of the icons, and was responsible for the Holo design of the application. Most of the icons are licenced under the [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.](https://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US).
+
+* [Jordan Georgiades](https://www.linkedin.com/in/jordan-georgiadis)
+
+Jordan is responsible for the conception and creation of the application logo.
+
+* Carlos Parga
+
+Carlos created some really nice [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) from where I drew inspiration while working on the UI.
+
+* [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
+
+Apollo Player was one of the original sources of inspiration for the UI of MusicBee Remote
+
+* [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music)
+
+[project-screenshot]: https://raw.githubusercontent.com/musicbeeremote/android-app/master/screenshot.png
