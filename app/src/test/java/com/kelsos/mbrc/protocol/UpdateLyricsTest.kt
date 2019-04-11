@@ -59,4 +59,26 @@ class UpdateLyricsTest {
     updateLyrics.execute(message)
     assertThat(lyricsState.requireValue()).hasSize(0)
   }
+
+  @Test
+  fun `lyrics should be translated`() {
+    val lyrics = """
+      &lt;Lyrics&gt;
+      <p>
+      &quot;Must&quot; follow this format &apos;&amp;<br>
+      that
+    """.trimIndent()
+    val socketMessage = checkNotNull(adapter.fromJson(createMessage(LyricsPayload.SUCCESS, lyrics)))
+    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    updateLyrics.execute(message)
+    assertThat(lyricsState.requireValue()).hasSize(6)
+    assertThat(lyricsState.requireValue()).containsExactly(
+      "<Lyrics>",
+      "",
+      "",
+      "\"Must\" follow this format '&",
+      "",
+      "that"
+    )
+  }
 }

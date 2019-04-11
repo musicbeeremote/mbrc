@@ -7,7 +7,6 @@ import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusStateImpl
-import com.kelsos.mbrc.networking.protocol.Protocol
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,30 +29,23 @@ class UpdateLastFmTest {
     updateLastFm = UpdateLastFm(statusState)
   }
 
-  private fun getCreateMessage(status: Boolean, empty: Boolean = false) = object : ProtocolMessage {
-    override val type: String
-      get() = Protocol.PlayerScrobble
-    override val data: Any
-      get() = if (!empty) status else ""
-  }
-
   @Test
   fun `It should change the scrobbling status to false on incoming message`() {
     statusState.set(PlayerStatusModel(scrobbling = true))
-    updateLastFm.execute(getCreateMessage(status = false))
+    updateLastFm.execute(protocolMessage(status = false))
     assertThat(statusState.requireValue().scrobbling).isFalse()
   }
 
   @Test
   fun `It should change the scrobbling status to true on incoming message`() {
-    updateLastFm.execute(getCreateMessage(status = true))
+    updateLastFm.execute(protocolMessage(status = true))
     assertThat(statusState.requireValue().scrobbling).isTrue()
   }
 
   @Test
   fun `It should change the scrobbling status to false if the payload is not boolean`() {
     statusState.set(PlayerStatusModel(scrobbling = true))
-    updateLastFm.execute(getCreateMessage(status = false, empty = true))
+    updateLastFm.execute(protocolMessage(status = false, empty = true))
     assertThat(statusState.requireValue().scrobbling).isFalse()
   }
 }

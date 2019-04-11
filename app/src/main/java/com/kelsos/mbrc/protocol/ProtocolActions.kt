@@ -29,9 +29,8 @@ class UpdateLastFm(
 ) : ProtocolAction {
 
   override fun execute(message: ProtocolMessage) {
-    val scrobble = message.data as? Boolean ?: false
     state.set {
-      copy(scrobbling = scrobble)
+      copy(scrobbling = message.asBoolean())
     }
   }
 }
@@ -89,8 +88,7 @@ class UpdateMute(
 ) : ProtocolAction {
 
   override fun execute(message: ProtocolMessage) {
-    val mute = message.data as? Boolean ?: false
-    state.set { copy(mute = mute) }
+    state.set { copy(mute = message.asBoolean()) }
   }
 }
 
@@ -280,4 +278,8 @@ class UpdatePlaybackPositionCommand(
       )
     )
   }
+}
+
+private fun ProtocolMessage.asBoolean(): Boolean {
+  return data as? Boolean ?: false
 }
