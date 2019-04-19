@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.radio
+package com.kelsos.mbrc.features.radio.presentation
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.radios.RadioStation
+import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
 import kotterknife.bindView

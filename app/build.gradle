@@ -203,7 +203,7 @@ dependencies {
   implementation 'com.chibatching.kotpref:kotpref:2.7.0'
 
   implementation 'com.google.android.material:material:1.1.0-alpha05'
-  implementation 'androidx.databinding:databinding-runtime:3.5.0-alpha11'
+  implementation 'androidx.databinding:databinding-runtime:3.5.0-alpha12'
 
   implementation 'androidx.appcompat:appcompat:1.0.2'
   implementation 'androidx.media:media:1.0.1'

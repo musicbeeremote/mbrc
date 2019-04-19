@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.radios
+package com.kelsos.mbrc.features.radio.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

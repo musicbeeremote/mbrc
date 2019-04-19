@@ -4,7 +4,7 @@
     android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kelsos.mbrc.ui.navigation.radio.RadioFragment">
+    tools:context="com.kelsos.mbrc.features.radio.presentation.RadioFragment">
 
   <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/radio_stations__refresh_layout"

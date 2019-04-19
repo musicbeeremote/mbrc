@@ -1,7 +1,12 @@
-package com.kelsos.mbrc.content.radios
+package com.kelsos.mbrc.features.radio.repository
 
 import androidx.paging.DataSource
 import arrow.core.Try
+import com.kelsos.mbrc.features.radio.RadioDaoMapper
+import com.kelsos.mbrc.features.radio.RadioDtoMapper
+import com.kelsos.mbrc.features.radio.RadioStationDto
+import com.kelsos.mbrc.features.radio.data.RadioStationDao
+import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -15,15 +20,12 @@ class RadioRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : RadioRepository {
 
-  private val mapper = RadioDtoMapper()
-  private val dao2Model = RadioDaoMapper()
-
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
   override fun getAll(): DataSource.Factory<Int, RadioStation> {
-    return dao.getAll().map { dao2Model.map(it) }
+    return dao.getAll().map { RadioDaoMapper.map(it) }
   }
 
   override suspend fun getRemote(): Try<Unit> = Try {
@@ -31,7 +33,7 @@ class RadioRepositoryImpl(
     val pages = remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class)
     pages.blockingForEach { page ->
       runBlocking(dispatchers.disk) {
-        val items = page.map { mapper.map(it).apply { dateAdded = added } }
+        val items = page.map { RadioDtoMapper.map(it).apply { dateAdded = added } }
 
         withContext(dispatchers.database) {
           dao.insertAll(items)
@@ -45,7 +47,7 @@ class RadioRepositoryImpl(
   }
 
   override fun search(term: String): DataSource.Factory<Int, RadioStation> {
-    return dao.search(term).map { dao2Model.map(it) }
+    return dao.search(term).map { RadioDaoMapper.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean {
