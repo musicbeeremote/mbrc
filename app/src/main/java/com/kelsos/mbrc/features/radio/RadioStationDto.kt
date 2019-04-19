@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.radios
+package com.kelsos.mbrc.features.radio
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

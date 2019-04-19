@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.radio
+package com.kelsos.mbrc.features.radio.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,14 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.paging.PagingData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.radios.RadioStation
 import com.kelsos.mbrc.databinding.FragmentRadioBinding
-import com.kelsos.mbrc.ui.navigation.radio.RadioAdapter.OnRadioPressedListener
+import com.kelsos.mbrc.features.radio.presentation.RadioAdapter.OnRadioPressedListener
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -40,6 +41,10 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
     binding.radioStationsStationsList.adapter = adapter
     binding.radioStationsStationsList.layoutManager = LinearLayoutManager(requireContext())
     adapter.setOnRadioPressedListener(this)
+    viewModel.radios.onEach {
+      adapter.submitData(it)
+      binding.radioStationsEmptyGroup.isGone = adapter.itemCount != 0
+    }.launchIn(lifecycleScope)
   }
 
   override fun onDestroyView() {
@@ -52,11 +57,6 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
     super.onDestroy()
   }
 
-  suspend fun update(data: PagingData<RadioStation>) {
-    adapter.submitData(data)
-    binding.radioStationsEmptyGroup.isGone = adapter.itemCount != 0
-  }
-
   fun error() {
     Snackbar.make(requireView(), R.string.radio__loading_failed, Snackbar.LENGTH_SHORT).show()
   }
@@ -66,7 +66,7 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
   }
 
   override fun onRefresh() {
-    viewModel.refresh()
+    viewModel.reload()
   }
 
   fun radioPlayFailed() {

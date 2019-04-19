@@ -137,7 +137,7 @@
   </fragment>
   <fragment
       android:id="@+id/nav_radio"
-      android:name="com.kelsos.mbrc.ui.navigation.radio.RadioFragment"
+      android:name="com.kelsos.mbrc.features.radio.presentation.RadioFragment"
       android:label="Radio"
       tools:layout="@layout/fragment_radio" />
   <fragment

@@ -14,9 +14,9 @@ import com.kelsos.mbrc.content.nowplaying.NowPlayingDao
 import com.kelsos.mbrc.content.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.content.playlists.PlaylistDao
 import com.kelsos.mbrc.content.playlists.PlaylistEntity
-import com.kelsos.mbrc.content.radios.RadioStationDao
-import com.kelsos.mbrc.content.radios.RadioStationEntity
 import com.kelsos.mbrc.data.Database.Companion.VERSION
+import com.kelsos.mbrc.features.radio.data.RadioStationDao
+import com.kelsos.mbrc.features.radio.data.RadioStationEntity
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 
