@@ -10,15 +10,14 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.snackbar
-import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter.OnRadioPressedListener
+import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
@@ -31,7 +30,7 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
   private val emptyViewIcon: ImageView by bindView(R.id.radio_stations__empty_icon)
   private val emptyViewProgress: ProgressBar by bindView(R.id.radio_stations__loading_bar)
 
-  private val presenter: RadioViewModel by inject()
+  private val viewModel: RadioViewModel by inject()
   private val adapter: RadioAdapter by inject()
 
   override fun onCreateView(
@@ -40,6 +39,30 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
     savedInstanceState: Bundle?
   ): View? {
     return inflater.inflate(R.layout.fragment_radio, container, false)
+  }
+
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+    viewModel.radios.nonNullObserver(this) { list ->
+      emptyView.isVisible = list.isEmpty()
+      emptyViewProgress.isVisible = false
+      swipeLayout.isRefreshing = false
+      adapter.submitList(list)
+    }
+
+    viewModel.emitter.nonNullObserver(this) { event ->
+      event.contentIfNotHandled?.run {
+        val resId = when (this) {
+          RadioUiMessages.QueueFailed -> R.string.radio__queue_failed
+          RadioUiMessages.QueueSuccess -> R.string.radio__queue_success
+          RadioUiMessages.NetworkError -> R.string.radio__queue_network_error
+          RadioUiMessages.RefreshSuccess -> R.string.radio__refresh_success
+          RadioUiMessages.RefreshFailed -> R.string.radio__refresh_failed
+        }
+        snackbar(resId)
+        swipeLayout.isRefreshing = false
+      }
+    }
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,35 +88,11 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
     super.onDestroy()
   }
 
-  fun update(data: PagedList<RadioStation>) {
-    emptyView.isVisible = data.isEmpty()
-    adapter.submitList(data)
-  }
-
-  fun error(error: Throwable) {
-    snackbar(R.string.radio__loading_failed)
-  }
-
   override fun onRadioPressed(path: String) {
-    presenter.play(path)
+    viewModel.play(path)
   }
 
   override fun onRefresh() {
-    presenter.reload()
-  }
-
-  fun radioPlayFailed(error: Throwable?) {
-    snackbar(R.string.radio__play_failed)
-  }
-
-  fun radioPlaySuccessful() {
-    snackbar(R.string.radio__play_successful)
-  }
-
-  fun loading(visible: Boolean) {
-    if (!visible) {
-      emptyViewProgress.isVisible = false
-      swipeLayout.isRefreshing = false
-    }
+    viewModel.reload()
   }
 }

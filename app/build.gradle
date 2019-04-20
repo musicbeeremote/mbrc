@@ -130,6 +130,7 @@ android {
     exclude 'META-INF/LICENSE'
     exclude 'META-INF/NOTICE'
     exclude 'META-INF/services/javax.annotation.processing.Processor'
+    pickFirst("META-INF/atomicfu.kotlin_module")
   }
 
   lintOptions {
@@ -186,6 +187,7 @@ dependencies {
   testImplementation "androidx.test.espresso:espresso-intents:3.1.1"
   testImplementation "androidx.test.espresso:espresso-core:3.1.1"
   testImplementation "androidx.test.ext:truth:1.1.0"
+  testImplementation("androidx.fragment:fragment-testing:1.1.0-alpha03")
   testImplementation "android.arch.core:core-testing:1.1.1"
   testImplementation "android.arch.persistence.room:testing:1.1.1"
 
