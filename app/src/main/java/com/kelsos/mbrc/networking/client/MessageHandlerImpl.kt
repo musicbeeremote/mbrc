@@ -53,7 +53,7 @@ class MessageHandlerImpl(
       return
     } else if (context == Protocol.ProtocolTag) {
       connectionStatusLiveDataProvider.active()
-      handshakeComplete()
+      messageQueue.queue(SocketMessage.create(Protocol.INIT))
       return
     }
 
@@ -72,12 +72,7 @@ class MessageHandlerImpl(
 
   private fun clientNotAllowed() {
     uiMessageQueue.dispatch(NOT_ALLOWED)
-    // bus.post(ChangeConnectionStateEvent(STOP))
     connectionStatusLiveDataProvider.disconnected()
-  }
-
-  fun handshakeComplete() {
-    messageQueue.queue(SocketMessage.create(Protocol.INIT))
   }
 
   override fun start() {

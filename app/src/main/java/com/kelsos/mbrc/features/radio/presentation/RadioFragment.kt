@@ -44,7 +44,21 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
     viewModel.radios.onEach {
       adapter.submitData(it)
       binding.radioStationsEmptyGroup.isGone = adapter.itemCount != 0
+      binding.radioStationsLoadingBar.isGone = true
+      binding.radioStationsRefreshLayout.isRefreshing = false
     }.launchIn(lifecycleScope)
+
+    viewModel.emitter.onEach { event ->
+      val resId = when (event) {
+        RadioUiMessages.QueueFailed -> R.string.radio__queue_failed
+        RadioUiMessages.QueueSuccess -> R.string.radio__queue_success
+        RadioUiMessages.NetworkError -> R.string.radio__queue_network_error
+        RadioUiMessages.RefreshSuccess -> R.string.radio__refresh_success
+        RadioUiMessages.RefreshFailed -> R.string.radio__refresh_failed
+      }
+      Snackbar.make(requireView(), resId, Snackbar.LENGTH_SHORT).show()
+      binding.radioStationsRefreshLayout.isRefreshing = false
+    }
   }
 
   override fun onDestroyView() {
@@ -57,23 +71,11 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
     super.onDestroy()
   }
 
-  fun error() {
-    Snackbar.make(requireView(), R.string.radio__loading_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
   override fun onRadioPressed(path: String) {
     viewModel.play(path)
   }
 
   override fun onRefresh() {
     viewModel.reload()
-  }
-
-  fun radioPlayFailed() {
-    Snackbar.make(requireView(), R.string.radio__play_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
-  fun radioPlaySuccessful() {
-    Snackbar.make(requireView(), R.string.radio__play_successful, Snackbar.LENGTH_SHORT).show()
   }
 }
