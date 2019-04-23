@@ -1,10 +1,12 @@
 package com.kelsos.mbrc.utils
 
 import android.content.Context
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.room.Room
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -23,7 +25,7 @@ object TestData {
   }
 }
 
-class MockFactory<T : Any>(private val data: List<T>) : PagingSource<Int, T>() {
+class MockFactory<T : Any>(private val data: List<T> = emptyList()) : PagingSource<Int, T>() {
   override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
     return LoadResult.Page(
       data = data,
@@ -33,4 +35,6 @@ class MockFactory<T : Any>(private val data: List<T>) : PagingSource<Int, T>() {
   }
 
   override fun getRefreshKey(state: PagingState<Int, T>): Int? = null
+
+  fun flow(): Flow<PagingData<T>> = this.paged { it }
 }

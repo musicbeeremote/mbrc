@@ -11,6 +11,7 @@
       android:layout_marginStart="8dp"
       android:layout_marginEnd="8dp"
       android:src="@drawable/ic_radio_black_80dp"
+      android:contentDescription="@string/radio__empty_icon_content_description"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -32,24 +33,6 @@
       tools:visibility="gone" />
 
   <TextView
-      android:id="@+id/radio_stations__text_subtitle"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
-      android:layout_marginStart="8dp"
-      android:layout_marginTop="16dp"
-      android:layout_marginEnd="8dp"
-      android:layout_marginBottom="8dp"
-      android:fontFamily="sans-serif-light"
-      android:text="@string/swipe_to_refresh"
-      android:textSize="14sp"
-      app:layout_constraintBottom_toBottomOf="@+id/radio_stations__refresh_layout"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/radio_stations__empty_icon"
-      app:layout_constraintVertical_bias="0.0" />
-
-  <TextView
       android:id="@+id/radio_stations__text_title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -67,6 +50,24 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="1" />
+
+  <TextView
+      android:id="@+id/radio_stations__text_subtitle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="16dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
+      android:fontFamily="sans-serif-light"
+      android:text="@string/swipe_to_refresh"
+      android:textSize="14sp"
+      app:layout_constraintBottom_toBottomOf="@+id/radio_stations__refresh_layout"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/radio_stations__empty_icon"
+      app:layout_constraintVertical_bias="0.0" />
 
   <androidx.constraintlayout.widget.Group
       android:id="@+id/radio_stations__empty_group"

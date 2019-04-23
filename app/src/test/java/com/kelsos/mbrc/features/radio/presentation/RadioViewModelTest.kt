@@ -6,6 +6,7 @@ import app.cash.turbine.test
 import arrow.core.Try
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
+import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.helper.QueueResult
@@ -17,7 +18,6 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
@@ -41,7 +41,7 @@ class RadioViewModelTest {
     repository = mockk()
     queueHandler = mockk()
     slot = slot()
-    every { repository.getAll() } answers { flow { MockFactory(emptyList()) } }
+    every { repository.getAll() } answers { MockFactory<RadioStation>(emptyList()).flow() }
     radioViewModel = RadioViewModel(repository, queueHandler, appCoroutineDispatchers)
   }
 
