@@ -30,19 +30,25 @@ class MockFactory<T>(private val data: List<T>) : DataSource.Factory<Int, T>() {
   override fun create(): DataSource<Int, T> {
     return object : PositionalDataSource<T>() {
       override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<T>) {
-        callback.onResult(data.subList(
-          params.startPosition,
-          params.startPosition + params.loadSize
-        ))
+        val start = params.startPosition
+        val end = start + params.loadSize
+        callback.onResult(subList(start, end))
       }
 
       override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<T>) {
-        val page = data.subList(
-          params.requestedStartPosition,
-          params.requestedStartPosition + params.requestedLoadSize
-        )
+        val start = params.requestedStartPosition
+        val end = start + params.requestedLoadSize
+        val page = subList(start, end)
         callback.onResult(page, 0, page.size)
       }
+    }
+  }
+
+  private fun subList(start: Int, end: Int): List<T> {
+    return when {
+      data.isEmpty() -> emptyList()
+      end >= data.size -> data.subList(start, data.size)
+      else -> data.subList(start, end)
     }
   }
 }

@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.snackbar
+import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter.OnRadioPressedListener
 import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
@@ -32,6 +33,7 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
 
   private val viewModel: RadioViewModel by inject()
   private val adapter: RadioAdapter by inject()
+  private val miniControlFactory: MiniControlFactory by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -69,6 +71,7 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
     super.onViewCreated(view, savedInstanceState)
     setupEmptyView()
     setupRecycler()
+    miniControlFactory.attach(requireFragmentManager())
   }
 
   private fun setupRecycler() {

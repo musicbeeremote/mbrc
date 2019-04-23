@@ -217,4 +217,5 @@
   <string name="title_notifications">Notifications</string>
   <string name="radio__queue_network_error">Could not queue the radio due to a network error</string>
   <string name="radio__refresh_success">Radio station list was refreshed successfully</string>
+  <string name="radio__empty_icon_content_description">Empty list icon</string>
 </resources>

@@ -186,8 +186,9 @@ dependencies {
   testImplementation "androidx.test.ext:junit:1.1.0"
   testImplementation "androidx.test.espresso:espresso-intents:3.1.1"
   testImplementation "androidx.test.espresso:espresso-core:3.1.1"
+  testImplementation 'androidx.test.espresso:espresso-contrib:3.1.1'
+
   testImplementation "androidx.test.ext:truth:1.1.0"
-  testImplementation("androidx.fragment:fragment-testing:1.1.0-alpha03")
   testImplementation "android.arch.core:core-testing:1.1.1"
   testImplementation "android.arch.persistence.room:testing:1.1.1"
 
@@ -270,6 +271,7 @@ dependencies {
 
   kapt    "io.arrow-kt:arrow-meta:$arrow_version"
 
+  debugImplementation("androidx.fragment:fragment-testing:1.1.0-alpha06")
   debugImplementation "com.squareup.leakcanary:leakcanary-android:1.6.3"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
 

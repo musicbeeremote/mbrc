@@ -22,6 +22,7 @@ class TestApplication : Application(), TestLifecycleApplication {
         System.out.println("$tag: $message")
       }
     })
+    setTheme(R.style.AppTheme)
   }
 
   override fun prepareTest(test: Any?) {

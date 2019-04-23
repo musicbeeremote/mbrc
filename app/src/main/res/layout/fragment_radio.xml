@@ -55,7 +55,8 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:srcCompat="@drawable/ic_music_note_black_80dp"
-      tools:layout_editor_absoluteY="219dp" />
+      tools:layout_editor_absoluteY="219dp"
+      android:contentDescription="@string/radio__empty_icon_content_description" />
 
   <TextView
       android:id="@+id/radio_stations__text_subtitle"
@@ -96,9 +97,8 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="1" />
 
-  <fragment
+  <FrameLayout
       android:id="@+id/mini_control"
-      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mini_control_height"
       app:layout_constraintBottom_toBottomOf="parent"
