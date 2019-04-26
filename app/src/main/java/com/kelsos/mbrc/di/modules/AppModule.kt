@@ -45,6 +45,7 @@ import com.kelsos.mbrc.features.output.OutputApi
 import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter
+import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
@@ -264,6 +265,7 @@ val uiModule = module {
   viewModel<RadioViewModel>()
   viewModel<NowPlayingViewModel>()
   viewModel<LibraryViewModel>()
+  viewModel<PlaylistViewModel>()
   viewModel<OutputSelectionViewModel>()
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()

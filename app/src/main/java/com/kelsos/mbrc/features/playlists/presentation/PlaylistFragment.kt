@@ -6,19 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.paging.PagingData
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import com.google.android.material.snackbar.Snackbar
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentPlaylistsBinding
-import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter.OnPlaylistPressedListener
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistFragment :
-  Fragment(),
-  OnPlaylistPressedListener,
-  OnRefreshListener {
+class PlaylistFragment : Fragment(), OnPlaylistPressedListener {
 
   private val adapter: PlaylistAdapter by inject()
   private val viewModel: PlaylistViewModel by viewModel()
@@ -40,7 +42,35 @@ class PlaylistFragment :
     adapter.setPlaylistPressedListener(this)
     binding.playlistsPlaylistList.layoutManager = LinearLayoutManager(requireContext())
     binding.playlistsPlaylistList.adapter = adapter
-    binding.playlistsRefreshLayout.setOnRefreshListener(this)
+    binding.playlistsRefreshLayout.setOnRefreshListener { viewModel.reload() }
+
+    lifecycleScope.launch {
+      adapter.loadStateFlow.drop(1).distinctUntilChangedBy { it.refresh }.collect { state ->
+        if (state.refresh is LoadState.NotLoading) {
+          binding.playlistsLoadingBar.isGone = true
+        }
+
+        binding.playlistsRefreshLayout.isRefreshing = state.refresh is LoadState.Loading
+        val isEmpty = state.refresh is LoadState.NotLoading && adapter.itemCount == 0
+        binding.playlistsEmptyGroup.isGone = !isEmpty
+      }
+    }
+
+    lifecycleScope.launch {
+      viewModel.playlists.collect { list ->
+        adapter.submitData(list)
+      }
+    }
+
+    lifecycleScope.launch {
+      viewModel.emitter.collect { event ->
+        val resId = when (event) {
+          PlaylistUiMessages.RefreshFailed -> R.string.playlists__refresh_failed
+          PlaylistUiMessages.RefreshSuccess -> R.string.playlists__refresh_success
+        }
+        Snackbar.make(requireView(), resId, Snackbar.LENGTH_SHORT).show()
+      }
+    }
   }
 
   override fun onDestroyView() {
@@ -50,19 +80,5 @@ class PlaylistFragment :
 
   override fun playlistPressed(path: String) {
     viewModel.play(path)
-  }
-
-  override fun onRefresh() {
-    if (!binding.playlistsRefreshLayout.isRefreshing) {
-      binding.playlistsRefreshLayout.isRefreshing = true
-    }
-
-    viewModel.reload()
-  }
-
-  suspend fun update(data: PagingData<Playlist>) {
-    adapter.submitData(data)
-    binding.playlistsEmptyGroup.isGone = adapter.itemCount != 0
-    binding.playlistsRefreshLayout.isRefreshing = false
   }
 }
