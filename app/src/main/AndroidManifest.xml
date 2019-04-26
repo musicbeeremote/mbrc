@@ -28,7 +28,7 @@
         android:name=".NavigationActivity"
         android:label="@string/title_activity_bottom_navigation" />
 
-    <receiver android:name=".platform.widgets.WidgetSmall">
+    <receiver android:name="com.kelsos.mbrc.features.widgets.WidgetSmall">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
@@ -38,7 +38,7 @@
           android:resource="@xml/remote_widget_small" />
     </receiver>
 
-    <receiver android:name=".platform.widgets.WidgetNormal">
+    <receiver android:name="com.kelsos.mbrc.features.widgets.WidgetNormal">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>

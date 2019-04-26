@@ -20,6 +20,7 @@ import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
 import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.extensions.md5
+import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.client.MessageQueue
@@ -28,7 +29,6 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingMoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.Position
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi

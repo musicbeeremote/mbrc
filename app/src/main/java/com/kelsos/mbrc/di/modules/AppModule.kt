@@ -50,6 +50,8 @@ import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
 import com.kelsos.mbrc.features.radio.presentation.RadioViewModel
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.features.radio.repository.RadioRepositoryImpl
+import com.kelsos.mbrc.features.widgets.WidgetUpdater
+import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
@@ -85,8 +87,6 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater
-import com.kelsos.mbrc.platform.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.preferences.ClientInformationModel
 import com.kelsos.mbrc.preferences.ClientInformationModelImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
