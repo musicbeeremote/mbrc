@@ -5,35 +5,38 @@ import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(application = TestApplication::class)
 class MoveManagerImplTest {
 
   private lateinit var onMoveSubmit: (Int, Int) -> Unit
 
+  private val dispatcher = TestCoroutineDispatcher()
   private val dispatchers = AppCoroutineDispatchers(
-    main = Dispatchers.Default,
-    disk = Dispatchers.Default,
-    database = Dispatchers.Default,
-    network = Dispatchers.Default
+    main = dispatcher,
+    disk = dispatcher,
+    database = dispatcher,
+    network = dispatcher
   )
   private val moveManager: MoveManager = MoveManagerImpl(dispatchers)
 
   @Before
   fun setUp() {
+
     onMoveSubmit = mockk(relaxUnitFun = true)
   }
 
   @Test
-  fun moveFromOneToTen() {
+  fun `move track from first to tenth position`() {
     runBlocking {
       moveManager.onMoveSubmit(onMoveSubmit)
       moveManager.move(1, 2)
@@ -45,24 +48,35 @@ class MoveManagerImplTest {
       moveManager.move(6, 8)
       moveManager.move(8, 9)
       moveManager.move(9, 10)
-      delay(400)
     }
 
+    dispatcher.advanceTimeBy(450)
     verify(exactly = 1) { onMoveSubmit(1, 10) }
   }
 
   @Test
-  fun moveFromTenToFive() {
-
+  fun `move track from 10 to 5`() {
     runBlocking {
       moveManager.onMoveSubmit(onMoveSubmit)
       moveManager.move(10, 9)
       moveManager.move(9, 8)
       moveManager.move(8, 6)
       moveManager.move(6, 5)
-      delay(400)
     }
-
+    dispatcher.advanceTimeBy(450)
     verify(exactly = 1) { onMoveSubmit(10, 5) }
+  }
+
+  @Test
+  fun `do not notify if before 400ms have passed`() {
+    runBlocking {
+      moveManager.onMoveSubmit(onMoveSubmit)
+      moveManager.move(10, 9)
+      moveManager.move(9, 8)
+      moveManager.move(8, 6)
+      moveManager.move(6, 5)
+    }
+    dispatcher.advanceTimeBy(200)
+    verify(exactly = 0) { onMoveSubmit(any(), any()) }
   }
 }

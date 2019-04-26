@@ -175,9 +175,9 @@
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
   <string name="nav_radio">Radio</string>
-  <string name="radio__loading_failed">There was an error while loading the radio stations</string>
-  <string name="radio__play_successful">The radio stations has been queued successfully.</string>
-  <string name="radio__play_failed">There was an error while trying to play the radio station.</string>
+  <string name="radio__refresh_failed">There was an error while refreshing the radio stations</string>
+  <string name="radio__queue_success">The radio station has been queued successfully.</string>
+  <string name="radio__queue_failed">The radio station could not be queued.</string>
   <string name="title_activity_radios">Radios</string>
   <string name="radio__no_radio_stations">No radio stations found</string>
   <string name="party_mode__command_unavailable">You are not allowed to perform this action in party mode.</string>
@@ -207,12 +207,15 @@
   <string name="notification__session_channel_name">MBRC Session</string>
   <string name="notification__session_channel_description">Displays the playing information of the track and allows control.</string>
 
-  <string name="library_sync__genres_progress">%d of %d Genres</string>
-  <string name="library_sync__artists_progress">%d of %d Artists</string>
-  <string name="library_sync__albums_progress">%d of %d Albums</string>
-  <string name="library_sync__tracks_progress">%d of %d Tracks</string>
+  <string name="library_sync__genres_progress">%1$d of %2$d Genres</string>
+  <string name="library_sync__artists_progress">%1$d of %2$dArtists</string>
+  <string name="library_sync__albums_progress">%1$d of %2$d Albums</string>
+  <string name="library_sync__tracks_progress">%1$d of %2$d Tracks</string>
   <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
   <string name="title_home">Home</string>
   <string name="title_dashboard">Dashboard</string>
   <string name="title_notifications">Notifications</string>
+  <string name="radio__queue_network_error">Could not queue the radio due to a network error</string>
+  <string name="radio__refresh_success">Radio station list was refreshed successfully</string>
+  <string name="radio__empty_icon_content_description">Empty list icon</string>
 </resources>

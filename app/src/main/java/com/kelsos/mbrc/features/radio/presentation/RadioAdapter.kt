@@ -1,11 +1,13 @@
-package com.kelsos.mbrc.ui.navigation.radio
+package com.kelsos.mbrc.features.radio.presentation
 
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.kelsos.mbrc.content.radios.RadioStation
+import com.kelsos.mbrc.features.radio.domain.RadioStation
 
-class RadioAdapter : PagedListAdapter<RadioStation, RadioViewHolder>(DIFF) {
+class RadioAdapter : PagedListAdapter<RadioStation, RadioViewHolder>(
+  DIFF
+) {
 
   private var radioPressedListener: OnRadioPressedListener? = null
 
