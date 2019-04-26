@@ -54,7 +54,7 @@
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
     </receiver>
-    <receiver android:name=".platform.widgets.WidgetSmall">
+    <receiver android:name="com.kelsos.mbrc.features.widgets.WidgetSmall">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
@@ -63,7 +63,7 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_small" />
     </receiver>
-    <receiver android:name=".platform.widgets.WidgetNormal">
+    <receiver android:name="com.kelsos.mbrc.features.widgets.WidgetNormal">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>

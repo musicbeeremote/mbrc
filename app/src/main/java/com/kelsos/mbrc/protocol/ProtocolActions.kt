@@ -19,7 +19,7 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingMoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.Position
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater
+import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import timber.log.Timber

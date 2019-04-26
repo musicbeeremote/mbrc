@@ -1,16 +1,16 @@
-package com.kelsos.mbrc.platform.widgets
+package com.kelsos.mbrc.features.widgets
 
 import android.app.Application
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.COVER
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.COVER_PATH
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.INFO
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.PLAYER_STATE
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.STATE
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.TRACK_INFO
+import com.kelsos.mbrc.features.widgets.WidgetUpdater.Companion.COVER
+import com.kelsos.mbrc.features.widgets.WidgetUpdater.Companion.COVER_PATH
+import com.kelsos.mbrc.features.widgets.WidgetUpdater.Companion.INFO
+import com.kelsos.mbrc.features.widgets.WidgetUpdater.Companion.PLAYER_STATE
+import com.kelsos.mbrc.features.widgets.WidgetUpdater.Companion.STATE
+import com.kelsos.mbrc.features.widgets.WidgetUpdater.Companion.TRACK_INFO
 
 class WidgetUpdaterImpl(
   private val app: Application
