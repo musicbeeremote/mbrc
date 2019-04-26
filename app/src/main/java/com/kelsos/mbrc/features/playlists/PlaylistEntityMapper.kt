@@ -1,5 +1,7 @@
-package com.kelsos.mbrc.content.playlists
+package com.kelsos.mbrc.features.playlists
 
+import com.kelsos.mbrc.features.playlists.data.PlaylistEntity
+import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.interfaces.data.Mapper
 
 object PlaylistEntityMapper : Mapper<PlaylistEntity, Playlist> {

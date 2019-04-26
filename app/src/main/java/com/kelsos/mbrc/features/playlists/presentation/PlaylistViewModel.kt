@@ -1,11 +1,11 @@
-package com.kelsos.mbrc.ui.navigation.playlists
+package com.kelsos.mbrc.features.playlists.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.kelsos.mbrc.content.playlists.Playlist
-import com.kelsos.mbrc.content.playlists.PlaylistRepository
 import com.kelsos.mbrc.events.UserAction
+import com.kelsos.mbrc.features.playlists.domain.Playlist
+import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers

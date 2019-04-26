@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.playlists
+package com.kelsos.mbrc.features.playlists.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.databinding.FragmentPlaylistsBinding
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
+import com.kelsos.mbrc.features.playlists.domain.Playlist
+import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter.OnPlaylistPressedListener
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

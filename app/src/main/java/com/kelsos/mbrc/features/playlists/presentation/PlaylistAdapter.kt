@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.playlists
+package com.kelsos.mbrc.features.playlists.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.kelsos.mbrc.content.playlists.Playlist
 import com.kelsos.mbrc.databinding.ListitemSingleBinding
+import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.ui.BindableViewHolder
 
 class PlaylistAdapter : PagingDataAdapter<Playlist, PlaylistAdapter.ViewHolder>(
