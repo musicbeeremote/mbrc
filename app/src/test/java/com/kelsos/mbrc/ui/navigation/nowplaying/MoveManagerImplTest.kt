@@ -23,7 +23,7 @@ class MoveManagerImplTest {
   }
 
   @Test
-  fun moveFromOneToTen() = runBlockingTest(testDispatcher) {
+  fun `move track from first to tenth position`() = runBlockingTest(testDispatcher) {
     moveManager.onMoveSubmit(onMoveSubmit)
     moveManager.move(1, 2)
     moveManager.move(2, 3)
@@ -41,7 +41,7 @@ class MoveManagerImplTest {
   }
 
   @Test
-  fun moveFromTenToFive() = runBlockingTest(testDispatcher) {
+  fun `move track from tenth to fifth position`() = runBlockingTest(testDispatcher) {
     moveManager.onMoveSubmit(onMoveSubmit)
     moveManager.move(10, 9)
     moveManager.move(9, 8)
@@ -51,5 +51,16 @@ class MoveManagerImplTest {
     advanceUntilIdle()
 
     verify(exactly = 1) { onMoveSubmit.invoke(10, 5) }
+  }
+
+  @Test
+  fun `do not notify if before 400ms have passed`() = runBlockingTest(testDispatcher) {
+    moveManager.onMoveSubmit(onMoveSubmit)
+    moveManager.move(10, 9)
+    moveManager.move(9, 8)
+    moveManager.move(8, 6)
+    moveManager.move(6, 5)
+    advanceTimeBy(200)
+    verify(exactly = 0) { onMoveSubmit(any(), any()) }
   }
 }
