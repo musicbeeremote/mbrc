@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.extensions.snackbar
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
@@ -22,7 +21,7 @@ import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
+class RadioFragment : Fragment(), OnRadioPressedListener {
 
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.radio_stations__refresh_layout)
   private val radioView: RecyclerView by bindView(R.id.radio_stations__stations_list)
@@ -75,7 +74,7 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
   }
 
   private fun setupRecycler() {
-    swipeLayout.setOnRefreshListener(this)
+    swipeLayout.setOnRefreshListener { viewModel.reload() }
     radioView.adapter = adapter
     radioView.layoutManager = LinearLayoutManager(requireContext())
     adapter.setOnRadioPressedListener(this)
@@ -93,9 +92,5 @@ class RadioFragment : Fragment(), OnRefreshListener, OnRadioPressedListener {
 
   override fun onRadioPressed(path: String) {
     viewModel.play(path)
-  }
-
-  override fun onRefresh() {
-    viewModel.reload()
   }
 }
