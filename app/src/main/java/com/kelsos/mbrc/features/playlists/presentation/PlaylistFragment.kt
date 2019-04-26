@@ -12,18 +12,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.extensions.snackbar
+import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter.OnPlaylistPressedListener
+import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
-import java.net.ConnectException
 
 class PlaylistFragment : Fragment(),
-  OnPlaylistPressedListener,
-  OnRefreshListener {
+  OnPlaylistPressedListener {
 
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.playlists__refresh_layout)
   private val playlistList: RecyclerView by bindView(R.id.playlists__playlist_list)
@@ -32,7 +30,8 @@ class PlaylistFragment : Fragment(),
   private val emptyViewProgress: ProgressBar by bindView(R.id.playlists__loading_bar)
 
   private val adapter: PlaylistAdapter by lazy { PlaylistAdapter() }
-  private val presenter: PlaylistViewModel by inject()
+  private val viewModel: PlaylistViewModel by inject()
+  private val miniControlFactory: MiniControlFactory by inject()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -47,39 +46,36 @@ class PlaylistFragment : Fragment(),
     adapter.setPlaylistPressedListener(this)
     playlistList.layoutManager = LinearLayoutManager(requireContext())
     playlistList.adapter = adapter
-    swipeLayout.setOnRefreshListener(this)
+    swipeLayout.setOnRefreshListener { viewModel.reload() }
     emptyViewTitle.setText(R.string.playlists_list_empty)
+    miniControlFactory.attach(requireFragmentManager())
+  }
+
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+
+    viewModel.playlists.nonNullObserver(this) { list ->
+      adapter.submitList(list)
+      emptyView.isVisible = list.isEmpty()
+      emptyViewProgress.isVisible = false
+      swipeLayout.isRefreshing = false
+    }
+
+    viewModel.emitter.nonNullObserver(this) { event ->
+      if (event.hasBeenHandled) {
+        return@nonNullObserver
+      }
+
+      val resId = when (event.peekContent()) {
+        PlaylistUiMessages.RefreshFailed -> R.string.playlists__refresh_failed
+        PlaylistUiMessages.RefreshSuccess -> R.string.playlists__refresh_success
+      }
+      swipeLayout.isRefreshing = false
+      snackbar(resId)
+    }
   }
 
   override fun playlistPressed(path: String) {
-    presenter.play(path)
-  }
-
-  override fun onRefresh() {
-    if (!swipeLayout.isRefreshing) {
-      swipeLayout.isRefreshing = true
-    }
-
-    presenter.reload()
-  }
-
-  fun update(cursor: List<Playlist>) {
-    emptyView.isVisible = cursor.isEmpty()
-    adapter.submitList(cursor)
-    swipeLayout.isRefreshing = false
-  }
-
-  fun failure(throwable: Throwable) {
-    swipeLayout.isRefreshing = false
-    if (throwable.cause is ConnectException) {
-      snackbar(R.string.service_connection_error)
-    } else {
-      snackbar(R.string.playlists_load_failed)
-    }
-  }
-
-  fun hideLoading() {
-    emptyViewProgress.isVisible = false
-    swipeLayout.isRefreshing = false
+    viewModel.play(path)
   }
 }

@@ -160,7 +160,7 @@
   <string name="albums_list_empty">No albums found</string>
   <string name="tracks_list_empty">No tracks found</string>
   <string name="swipe_to_refresh">Swipe to refresh the list.</string>
-  <string name="playlists_load_failed">There was an error while trying to load the playlists.</string>
+  <string name="playlists__refresh_failed">There was an error while trying to load the playlists.</string>
   <string name="service_connection_error">Failed to connect to remote host.</string>
   <string name="now_playing_search_hint">Search and play a track</string>
   <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
@@ -218,4 +218,5 @@
   <string name="radio__queue_network_error">Could not queue the radio due to a network error</string>
   <string name="radio__refresh_success">Radio station list was refreshed successfully</string>
   <string name="radio__empty_icon_content_description">Empty list icon</string>
+  <string name="playlists__refresh_success">Playlist Refresh was successful</string>
 </resources>
