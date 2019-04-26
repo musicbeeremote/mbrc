@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentRadioBinding
@@ -21,7 +20,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioPressedListener {
+class RadioFragment : Fragment(), OnRadioPressedListener {
 
   private val viewModel: RadioViewModel by viewModel()
   private val adapter: RadioAdapter by inject()
@@ -40,7 +39,6 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    binding.radioStationsRefreshLayout.setOnRefreshListener(this)
     binding.radioStationsStationsList.adapter = adapter
     binding.radioStationsStationsList.layoutManager = LinearLayoutManager(requireContext())
     adapter.setOnRadioPressedListener(this)
@@ -76,10 +74,12 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
         binding.radioStationsRefreshLayout.isRefreshing = false
       }
     }
+    binding.radioStationsRefreshLayout.setOnRefreshListener { viewModel.reload() }
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
+    adapter.setOnRadioPressedListener(null)
     _binding = null
   }
 
@@ -90,9 +90,5 @@ class RadioFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRadioP
 
   override fun onRadioPressed(path: String) {
     viewModel.play(path)
-  }
-
-  override fun onRefresh() {
-    viewModel.reload()
   }
 }
