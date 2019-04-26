@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.playlists
+package com.kelsos.mbrc.features.playlists.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.playlists.Playlist
+import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.extensions.snackbar
-import com.kelsos.mbrc.ui.navigation.playlists.PlaylistAdapter.OnPlaylistPressedListener
+import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter.OnPlaylistPressedListener
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 import java.net.ConnectException

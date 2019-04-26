@@ -35,8 +35,8 @@ import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
 import com.kelsos.mbrc.content.nowplaying.queue.QueueApiImpl
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputApiImpl
-import com.kelsos.mbrc.content.playlists.PlaylistRepository
-import com.kelsos.mbrc.content.playlists.PlaylistRepositoryImpl
+import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.core.IRemoteServiceCore

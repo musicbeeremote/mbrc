@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.playlists
+package com.kelsos.mbrc.features.playlists.presentation
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +9,14 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.playlists.Playlist
+import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
 import kotterknife.bindView
 
-class PlaylistAdapter : ListAdapter<Playlist, PlaylistAdapter.ViewHolder>(DIFF_CALLBACK) {
+class PlaylistAdapter : ListAdapter<Playlist, PlaylistAdapter.ViewHolder>(
+  DIFF_CALLBACK
+) {
 
   private var playlistPressedListener: OnPlaylistPressedListener? = null
 

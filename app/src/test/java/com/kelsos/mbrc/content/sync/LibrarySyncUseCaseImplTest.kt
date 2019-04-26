@@ -8,7 +8,7 @@ import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
-import com.kelsos.mbrc.content.playlists.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
