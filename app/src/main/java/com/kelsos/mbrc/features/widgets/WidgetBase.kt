@@ -11,8 +11,6 @@ import android.widget.RemoteViews
 import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import arrow.core.Option
-import arrow.core.extensions.option.monad.binding
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
@@ -54,20 +52,19 @@ abstract class WidgetBase : AppWidgetProvider() {
   override fun onReceive(context: Context?, intent: Intent?) {
     super.onReceive(context, intent)
 
-    val intentOption = Option.fromNullable(intent)
-      .filter { it.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE }
-      .flatMap { Option.fromNullable(it.extras) }
-
-    binding {
-      val (extras) = intentOption
-      val (ctx) = Option.fromNullable(context)
-      updateWidget(ctx, extras)
+    val incomingIntent = intent ?: return
+    if (incomingIntent.action != AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
+      return
     }
+    val extras = incomingIntent.extras ?: return
+    val ctx = context ?: return
+    updateWidget(ctx, extras)
   }
 
   private fun updateWidget(context: Context, extras: Bundle) {
     val widgetManager = AppWidgetManager.getInstance(context)
-    val widgets = ComponentName(context.packageName, widgetClass().java.name)
+    val clazz = widgetClass().java
+    val widgets = ComponentName(context.packageName, clazz.name)
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
     when {
@@ -81,7 +78,9 @@ abstract class WidgetBase : AppWidgetProvider() {
         extras.playingTrack()
       )
       extras.isState() -> updatePlayState(
-        context, widgetManager, widgetsIds,
+        context,
+        widgetManager,
+        widgetsIds,
         extras.state()
       )
     }
