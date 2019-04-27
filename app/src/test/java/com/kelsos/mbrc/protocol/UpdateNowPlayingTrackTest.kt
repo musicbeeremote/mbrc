@@ -9,7 +9,7 @@ import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater
+import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.mockk.Runs

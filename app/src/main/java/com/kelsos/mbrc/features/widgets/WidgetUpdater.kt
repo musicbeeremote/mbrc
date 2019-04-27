@@ -1,37 +1,46 @@
-package com.kelsos.mbrc.platform.widgets
+package com.kelsos.mbrc.features.widgets
 
-import android.app.Application
 import android.appwidget.AppWidgetManager
+import android.content.Context
 import android.content.Intent
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.COVER
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.COVER_PATH
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.INFO
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.PLAYER_STATE
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.STATE
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater.Companion.TRACK_INFO
+
+interface WidgetUpdater {
+  fun updatePlayingTrack(track: PlayingTrack)
+  fun updatePlayState(state: String)
+  fun updateCover(path: String = "")
+
+  companion object {
+    const val COVER = "com.kelsos.mbrc.features.widgets.COVER"
+    const val COVER_PATH = "com.kelsos.mbrc.features.widgets.COVER_PATH"
+    const val STATE = "com.kelsos.mbrc.features.widgets.STATE"
+    const val INFO = "com.kelsos.mbrc.features.widgets.INFO"
+    const val TRACK_INFO = "com.kelsos.mbrc.features.widgets.TRACKINFO"
+    const val PLAYER_STATE = "com.kelsos.mbrc.features.widgets.PLAYER_STATE"
+  }
+}
 
 class WidgetUpdaterImpl(
-  private val app: Application
+  private val context: Context
 ) : WidgetUpdater {
 
   private fun createIntent(clazz: Class<*>): Intent {
-    val widgetUpdateIntent = Intent(app, clazz)
+    val widgetUpdateIntent = Intent(context, clazz)
     widgetUpdateIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
     return widgetUpdateIntent
   }
 
   private fun Intent.payload(track: PlayingTrack): Intent {
-    return putExtra(INFO, true).putExtra(TRACK_INFO, track)
+    return putExtra(WidgetUpdater.INFO, true).putExtra(WidgetUpdater.TRACK_INFO, track)
   }
 
   private fun Intent.payload(path: String): Intent {
-    return putExtra(COVER, true).putExtra(COVER_PATH, path)
+    return putExtra(WidgetUpdater.COVER, true).putExtra(WidgetUpdater.COVER_PATH, path)
   }
 
   private fun Intent.statePayload(@PlayerState.State state: String): Intent {
-    return putExtra(STATE, true).putExtra(PLAYER_STATE, state)
+    return putExtra(WidgetUpdater.STATE, true).putExtra(WidgetUpdater.PLAYER_STATE, state)
   }
 
   override fun updatePlayingTrack(track: PlayingTrack) {
@@ -52,7 +61,7 @@ class WidgetUpdaterImpl(
     broadcast(smallIntent, normalIntent)
   }
 
-  private fun broadcast(smallIntent: Intent, normalIntent: Intent) = with(app) {
+  private fun broadcast(smallIntent: Intent, normalIntent: Intent) = with(context) {
     sendBroadcast(smallIntent)
     sendBroadcast(normalIntent)
   }

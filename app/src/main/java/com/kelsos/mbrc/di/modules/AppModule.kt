@@ -89,8 +89,8 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import com.kelsos.mbrc.platform.widgets.WidgetUpdater
-import com.kelsos.mbrc.platform.widgets.WidgetUpdaterImpl
+import com.kelsos.mbrc.features.widgets.WidgetUpdater
+import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.preferences.ClientInformationModel
 import com.kelsos.mbrc.preferences.ClientInformationModelImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
