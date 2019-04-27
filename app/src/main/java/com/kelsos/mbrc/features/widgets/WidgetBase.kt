@@ -67,7 +67,8 @@ abstract class WidgetBase : AppWidgetProvider() {
 
   private fun updateWidget(context: Context, extras: Bundle) {
     val widgetManager = AppWidgetManager.getInstance(context)
-    val widgets = ComponentName(context.packageName, widgetClass().java.name)
+    val clazz = widgetClass().java
+    val widgets = ComponentName(clazz.getPackage()!!.name, clazz.name)
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
     when {
