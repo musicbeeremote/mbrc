@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.nowplaying
+package com.kelsos.mbrc.features.nowplaying.domain
 
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
@@ -7,7 +7,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 
-class MoveManagerImpl(dispatchers: AppCoroutineDispatchers) : MoveManager {
+class MoveManagerImpl(dispatchers: AppCoroutineDispatchers) :
+  MoveManager {
   private var originalPosition: Int = -1
   private var finalPosition: Int = -1
   private val job = SupervisorJob()

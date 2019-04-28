@@ -1,7 +1,13 @@
-package com.kelsos.mbrc.content.nowplaying
+package com.kelsos.mbrc.features.nowplaying.repository
 
 import androidx.paging.PagingData
 import arrow.core.Try
+import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
+import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
+import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
+import com.kelsos.mbrc.features.nowplaying.toEntity
+import com.kelsos.mbrc.features.nowplaying.toNowPlaying
+import com.kelsos.mbrc.interfaces.data.Repository
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -11,6 +17,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
+
+interface NowPlayingRepository : Repository<NowPlaying> {
+  fun move(from: Int, to: Int)
+}
 
 class NowPlayingRepositoryImpl(
   private val api: ApiBase,
@@ -27,7 +37,10 @@ class NowPlayingRepositoryImpl(
   override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     withContext(dispatchers.network) {
-      api.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class)
+      api.getAllPages(
+        Protocol.NowPlayingList,
+        NowPlayingDto::class
+      )
         .onCompletion {
           withContext(dispatchers.database) {
             dao.removePreviousEntries(added)

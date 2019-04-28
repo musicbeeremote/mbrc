@@ -15,11 +15,11 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
-import com.kelsos.mbrc.content.nowplaying.NowPlayingTrack
-import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
-import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.extensions.md5
+import com.kelsos.mbrc.features.player.NowPlayingTrack
+import com.kelsos.mbrc.features.player.cover.CoverModel
+import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.SocketActivityChecker

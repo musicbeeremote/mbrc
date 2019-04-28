@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.nowplaying
+package com.kelsos.mbrc.features.nowplaying.domain
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.utils.appCoroutineDispatchers

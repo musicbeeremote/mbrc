@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.nowplaying
+package com.kelsos.mbrc.features.nowplaying.presentation
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -10,8 +10,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.nowplaying.NowPlaying
 import com.kelsos.mbrc.databinding.UiListTrackItemBinding
+import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
 import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
@@ -149,7 +149,11 @@ class NowPlayingAdapter(
         onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
       ): NowPlayingTrackViewHolder {
         val binding = UiListTrackItemBinding.inflate(LayoutInflater.from(parent.context))
-        return NowPlayingTrackViewHolder(binding, onHolderItemPressed, onDragStart)
+        return NowPlayingTrackViewHolder(
+          binding,
+          onHolderItemPressed,
+          onDragStart
+        )
       }
     }
   }

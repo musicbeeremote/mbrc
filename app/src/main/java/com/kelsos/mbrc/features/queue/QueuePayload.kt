@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.nowplaying.queue
+package com.kelsos.mbrc.features.queue
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

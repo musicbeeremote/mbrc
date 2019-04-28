@@ -2,10 +2,10 @@ package com.kelsos.mbrc.helper
 
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
-import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
-import com.kelsos.mbrc.content.nowplaying.queue.QueuePayload
-import com.kelsos.mbrc.content.nowplaying.queue.QueueResponse
+import com.kelsos.mbrc.features.player.cover.CoverPayload
+import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.QueuePayload
+import com.kelsos.mbrc.features.queue.QueueResponse
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
@@ -16,7 +16,7 @@ import timber.log.Timber
 class QueueHandler(
   private val settings: DefaultActionPreferenceStore,
   private val trackRepository: TrackRepository,
-  private val service: ApiBase,
+  private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers
 ) {
   private suspend fun queue(
@@ -27,7 +27,7 @@ class QueueHandler(
     return withContext(dispatchers.network) {
       Timber.v("Queueing ${tracks.size} $type")
       try {
-        val response = service.getItem(
+        val response = api.getItem(
           Protocol.NowPlayingQueue,
           QueueResponse::class,
           QueuePayload(type, tracks, play)

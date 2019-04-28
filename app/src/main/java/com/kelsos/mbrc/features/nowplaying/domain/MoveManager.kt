@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.nowplaying
+package com.kelsos.mbrc.features.nowplaying.domain
 
 interface MoveManager {
   suspend fun move(from: Int, to: Int)

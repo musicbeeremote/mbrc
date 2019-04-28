@@ -25,10 +25,6 @@ import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepositoryImpl
-import com.kelsos.mbrc.content.nowplaying.NowPlayingRepository
-import com.kelsos.mbrc.content.nowplaying.NowPlayingRepositoryImpl
-import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
-import com.kelsos.mbrc.content.nowplaying.cover.StoredCoverModel
 import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.core.IRemoteServiceCore
@@ -41,9 +37,16 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
+import com.kelsos.mbrc.features.nowplaying.domain.MoveManagerImpl
+import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingViewModel
+import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
+import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.features.output.OutputApi
 import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
+import com.kelsos.mbrc.features.player.cover.CoverModel
+import com.kelsos.mbrc.features.player.cover.StoredCoverModel
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
@@ -126,9 +129,6 @@ import com.kelsos.mbrc.ui.navigation.library.genres.GenreViewModel
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackAdapter
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackViewModel
 import com.kelsos.mbrc.ui.navigation.lyrics.LyricsViewModel
-import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManager
-import com.kelsos.mbrc.ui.navigation.nowplaying.MoveManagerImpl
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingViewModel
 import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
 import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel

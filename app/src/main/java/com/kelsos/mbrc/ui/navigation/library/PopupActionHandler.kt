@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import androidx.annotation.IdRes
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.LibraryPopup
 
 class PopupActionHandler {
 

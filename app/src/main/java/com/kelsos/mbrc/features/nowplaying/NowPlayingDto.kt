@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.nowplaying
+package com.kelsos.mbrc.features.nowplaying
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.nowplaying.cover
+package com.kelsos.mbrc.features.player.cover
 
 interface CoverModel {
   var coverPath: String

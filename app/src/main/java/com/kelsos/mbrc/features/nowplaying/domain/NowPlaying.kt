@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.nowplaying
+package com.kelsos.mbrc.features.nowplaying.domain
 
 data class NowPlaying(
   val title: String,

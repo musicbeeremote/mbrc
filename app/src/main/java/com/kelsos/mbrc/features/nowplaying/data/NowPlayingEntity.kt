@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.nowplaying
+package com.kelsos.mbrc.features.nowplaying.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

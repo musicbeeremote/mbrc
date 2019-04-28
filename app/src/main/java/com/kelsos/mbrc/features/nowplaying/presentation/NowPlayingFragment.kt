@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.nowplaying
+package com.kelsos.mbrc.features.nowplaying.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,19 +12,23 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentNowplayingBinding
+import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingAdapter.NowPlayingListener
 import com.kelsos.mbrc.ui.drag.OnStartDragListener
 import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
-import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingAdapter.NowPlayingListener
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NowPlayingFragment :
@@ -121,22 +125,35 @@ class NowPlayingFragment :
       adapter.setPlayingTrack(it.path)
     }
 
-    viewModel.nowPlayingTracks.onEach {
-      binding.nowPlayingRefreshLayout.isRefreshing = false
-      binding.nowPlayingLoadingBar.isGone = true
-      adapter.submitData(it)
-      binding.nowPlayingEmptyGroup.isGone = adapter.itemCount != 0
-    }.launchIn(lifecycleScope)
-
-    viewModel.events.map { it.contentIfNotHandled }
-      .filterNotNull()
-      .onEach { code ->
-        val messageResId = when (code) {
-          1 -> R.string.refresh_failed
-          else -> R.string.refresh_failed
+    lifecycleScope.launch {
+      adapter.loadStateFlow.drop(1).distinctUntilChangedBy { it.refresh }.collect { state ->
+        if (state.refresh is LoadState.NotLoading) {
+          binding.nowPlayingLoadingBar.isGone = true
         }
-        Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
-      }.launchIn(lifecycleScope)
+
+        binding.nowPlayingRefreshLayout.isRefreshing = state.refresh is LoadState.Loading
+        val isEmpty = state.refresh is LoadState.NotLoading && adapter.itemCount == 0
+        binding.nowPlayingEmptyGroup.isGone = !isEmpty
+      }
+    }
+
+    lifecycleScope.launch {
+      viewModel.nowPlayingTracks.collect {
+        adapter.submitData(it)
+      }
+    }
+
+    lifecycleScope.launch {
+      viewModel.events.map { it.contentIfNotHandled }
+        .filterNotNull()
+        .onEach { code ->
+          val messageResId = when (code) {
+            1 -> R.string.refresh_failed
+            else -> R.string.refresh_failed
+          }
+          Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
+        }
+    }
   }
 
   override fun onDestroyView() {
