@@ -5,10 +5,10 @@ import com.kelsos.mbrc.content.library.artists.Artist
 import com.kelsos.mbrc.content.library.genres.Genre
 import com.kelsos.mbrc.content.library.tracks.Track
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.Action
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
-import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
+import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.LibraryPopup.Action
+import com.kelsos.mbrc.features.queue.LibraryPopup.PROFILE
+import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 
 class PopupActionHandler(

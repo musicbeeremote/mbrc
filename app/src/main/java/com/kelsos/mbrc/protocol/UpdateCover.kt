@@ -7,9 +7,9 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.core.net.toUri
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
-import com.kelsos.mbrc.content.nowplaying.cover.CoverApi
-import com.kelsos.mbrc.content.nowplaying.cover.CoverModel
-import com.kelsos.mbrc.content.nowplaying.cover.CoverPayload
+import com.kelsos.mbrc.features.player.cover.CoverApi
+import com.kelsos.mbrc.features.player.cover.CoverModel
+import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers

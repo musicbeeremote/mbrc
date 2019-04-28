@@ -4,7 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.artists.Artist
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup.PROFILE
+import com.kelsos.mbrc.features.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.ui.navigation.library.LibraryScreen
 import com.kelsos.mbrc.ui.navigation.library.LibraryViewHolder
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
