@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.playlists
+package com.kelsos.mbrc.features.playlists.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

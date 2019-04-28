@@ -10,6 +10,7 @@ import androidx.room.Room
 import arrow.core.Either
 import arrow.core.Try
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.features.playlists.PlaylistDto
 import io.reactivex.Observable
 import java.io.File
 import java.io.FileOutputStream
@@ -84,4 +85,11 @@ object ImageCreator {
     bmp.recycle()
     path.absolutePath
   }.toEither()
+}
+
+object TestDataFactories {
+  fun playlist(num: Int): PlaylistDto = PlaylistDto(
+    name = "Songs $num",
+    url = """C:\library\$num.m3u"""
+  )
 }

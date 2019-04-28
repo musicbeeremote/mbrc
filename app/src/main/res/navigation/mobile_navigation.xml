@@ -59,7 +59,7 @@
       tools:layout="@layout/fragment_lyrics" />
   <fragment
       android:id="@+id/nav_playlists"
-      android:name="com.kelsos.mbrc.ui.navigation.playlists.PlaylistFragment"
+      android:name="com.kelsos.mbrc.features.playlists.presentation.PlaylistFragment"
       android:label="Playlists"
       tools:layout="@layout/fragment_playlists" />
 
