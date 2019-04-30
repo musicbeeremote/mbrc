@@ -2,6 +2,7 @@ package com.kelsos.mbrc.features.widgets
 
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -45,11 +46,14 @@ class WidgetNormalTest {
 
   @Before
   fun setUp() {
-    contextWrapper = ContextWrapper(ApplicationProvider.getApplicationContext())
+    val applicationContext = ApplicationProvider.getApplicationContext<Context>()
+    contextWrapper = ContextWrapper(applicationContext)
     appWidgetManager = AppWidgetManager.getInstance(contextWrapper)
     shadowAppWidgetManager = shadowOf(appWidgetManager)
     widgetId = shadowAppWidgetManager.createWidget(WidgetNormal::class.java, R.layout.widget_normal)
     widgetView = shadowAppWidgetManager.getViewFor(widgetId)
+    val provider = ComponentName(applicationContext.packageName, WidgetNormal::class.java.name)
+    shadowAppWidgetManager.bindAppWidgetId(widgetId, provider)
   }
 
   @Test
@@ -66,9 +70,6 @@ class WidgetNormalTest {
   @Test
   fun `widget should update track info on broadcast`() {
     val updater = WidgetUpdaterImpl(contextWrapper)
-    val lineOne = widgetView.findViewById<TextView>(R.id.widget_normal_line_one)
-    val lineTwo = widgetView.findViewById<TextView>(R.id.widget_normal_line_two)
-    val lineThree = widgetView.findViewById<TextView>(R.id.widget_normal_line_three)
 
     updater.updatePlayingTrack(
       PlayingTrack(
@@ -78,6 +79,12 @@ class WidgetNormalTest {
       )
     )
 
+    widgetView = shadowAppWidgetManager.getViewFor(widgetId)
+
+    val lineOne = widgetView.findViewById<TextView>(R.id.widget_normal_line_one)
+    val lineTwo = widgetView.findViewById<TextView>(R.id.widget_normal_line_two)
+    val lineThree = widgetView.findViewById<TextView>(R.id.widget_normal_line_three)
+
     assertThat(lineOne.text).isEqualTo("Title")
     assertThat(lineTwo.text).isEqualTo("Artist")
     assertThat(lineThree.text).isEqualTo("Album")
@@ -86,13 +93,14 @@ class WidgetNormalTest {
   @Test
   fun `widget should update play state on broadcast`() {
     val updater = WidgetUpdaterImpl(contextWrapper)
-    val playPause = widgetView.findViewById<ImageView>(R.id.widget_normal_play)
-
-    val originalDrawable = playPause.drawable
+    val before = widgetView.findViewById<ImageView>(R.id.widget_normal_play)
 
     updater.updatePlayState(PlayerState.PLAYING)
 
-    assertThat(originalDrawable).isNotEqualTo(playPause.drawable)
+    widgetView = shadowAppWidgetManager.getViewFor(widgetId)
+    val after = widgetView.findViewById<ImageView>(R.id.widget_normal_play)
+
+    assertThat(before.drawable).isNotEqualTo(after.drawable)
   }
 
   @Test
