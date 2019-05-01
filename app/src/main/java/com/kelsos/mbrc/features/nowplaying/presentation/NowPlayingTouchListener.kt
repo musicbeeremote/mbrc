@@ -9,14 +9,14 @@ import timber.log.Timber
 
 class NowPlayingTouchListener(
   context: Context,
-  private val onLongClick: (Boolean) -> Unit
+  private val onLongPress: (Boolean) -> Unit
 ) : OnItemTouchListener {
   private val gestureDetector: GestureDetector = GestureDetector(
     context,
     object : GestureDetector.SimpleOnGestureListener() {
       override fun onLongPress(e: MotionEvent?) {
         Timber.v("Marking start of long press event")
-        onLongClick.invoke(true)
+        onLongPress.invoke(true)
         super.onLongPress(e)
       }
     }
@@ -29,7 +29,7 @@ class NowPlayingTouchListener(
     val action = e.actionMasked
     if (action == MotionEvent.ACTION_UP) {
       Timber.v("Marking end of long press event")
-      onLongClick.invoke(false)
+      onLongPress.invoke(false)
     }
 
     return false

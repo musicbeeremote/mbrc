@@ -19,7 +19,9 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 
 interface NowPlayingRepository : Repository<NowPlaying> {
-  fun move(from: Int, to: Int)
+  suspend fun move(from: Int, to: Int)
+  suspend fun remove(position: Int)
+  suspend fun findPosition(query: String): Int
 }
 
 class NowPlayingRepositoryImpl(
@@ -64,7 +66,15 @@ class NowPlayingRepositoryImpl(
       dao.count() == 0L
     }
 
-  override fun move(from: Int, to: Int) {
-    TODO("implement move")
+  override suspend fun move(from: Int, to: Int) = withContext(dispatchers.database) {
+    dao.move(from, to)
+  }
+
+  override suspend fun remove(position: Int) = withContext(dispatchers.database) {
+    dao.remove(position)
+  }
+
+  override suspend fun findPosition(query: String): Int = withContext(dispatchers.database) {
+    return@withContext dao.findPositionByQuery(query) ?: -1
   }
 }

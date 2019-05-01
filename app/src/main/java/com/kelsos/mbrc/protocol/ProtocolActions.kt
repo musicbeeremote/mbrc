@@ -17,6 +17,7 @@ import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.extensions.md5
+import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
 import com.kelsos.mbrc.features.player.NowPlayingTrack
 import com.kelsos.mbrc.features.player.cover.CoverModel
 import com.kelsos.mbrc.features.player.cover.CoverPayload
@@ -394,21 +395,38 @@ class ProtocolPongHandle : ProtocolAction {
 }
 
 class UpdateNowPlayingTrackMoved(
-  private val moshi: Moshi
+  moshi: Moshi,
+  dispatchers: AppCoroutineDispatchers,
+  private val nowPlayingRepository: NowPlayingRepository
 ) : ProtocolAction {
+  private val scope = CoroutineScope(dispatchers.network)
+  private val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
 
   override fun execute(message: ProtocolMessage) {
-    val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
-    val response = adapter.fromJsonValue(message.data)
+    scope.launch {
+      val response = adapter.fromJsonValue(message.data)
+      if (response != null && response.success) {
+        nowPlayingRepository.move(from = response.from + 1, to = response.to + 1)
+      }
+    }
   }
 }
 
 class UpdateNowPlayingTrackRemoval(
-  private val moshi: Moshi
+  moshi: Moshi,
+  dispatchers: AppCoroutineDispatchers,
+  private val nowPlayingRepository: NowPlayingRepository
 ) : ProtocolAction {
+  private val scope = CoroutineScope(dispatchers.network)
+  private val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
+
   override fun execute(message: ProtocolMessage) {
-    val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
-    val response = adapter.fromJsonValue(message.data)
+    scope.launch {
+      val response = adapter.fromJsonValue(message.data)
+      if (response != null && response.success) {
+        nowPlayingRepository.remove(response.index + 1)
+      }
+    }
   }
 }
 

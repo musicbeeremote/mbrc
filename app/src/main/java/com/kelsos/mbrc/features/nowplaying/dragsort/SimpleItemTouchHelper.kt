@@ -1,12 +1,13 @@
-package com.kelsos.mbrc.ui.drag
+package com.kelsos.mbrc.features.nowplaying.dragsort
 
 import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
-class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
-  ItemTouchHelper.Callback() {
+class SimpleItemTouchHelper(
+  private val adapter: ItemTouchHelperAdapter
+) : ItemTouchHelper.Callback() {
 
   override fun getMovementFlags(
     recyclerView: RecyclerView,
@@ -22,11 +23,6 @@ class SimpleItemTouchHelper(private val adapter: ItemTouchHelperAdapter) :
     viewHolder: RecyclerView.ViewHolder,
     target: RecyclerView.ViewHolder
   ): Boolean {
-    if (viewHolder.itemViewType != target.itemViewType) {
-      return false
-    }
-
-    // Notify the adapter of the move
     adapter.onItemMove(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
     return true
   }

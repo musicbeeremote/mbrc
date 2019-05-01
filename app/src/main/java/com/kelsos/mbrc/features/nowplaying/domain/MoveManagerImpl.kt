@@ -7,8 +7,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 
-class MoveManagerImpl(dispatchers: AppCoroutineDispatchers) :
-  MoveManager {
+class MoveManagerImpl(dispatchers: AppCoroutineDispatchers) : MoveManager {
   private var originalPosition: Int = -1
   private var finalPosition: Int = -1
   private val job = SupervisorJob()
@@ -31,7 +30,7 @@ class MoveManagerImpl(dispatchers: AppCoroutineDispatchers) :
     }
 
     notify = scope.async {
-      delay(400)
+      delay(600)
       onMoveSubmit(originalPosition, finalPosition)
       originalPosition = -1
       finalPosition = -1

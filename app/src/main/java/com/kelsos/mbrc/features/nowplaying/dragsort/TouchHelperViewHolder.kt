@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.drag
+package com.kelsos.mbrc.features.nowplaying.dragsort
 
 interface TouchHelperViewHolder {
 

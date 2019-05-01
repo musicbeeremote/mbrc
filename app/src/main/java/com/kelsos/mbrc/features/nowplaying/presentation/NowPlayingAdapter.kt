@@ -9,25 +9,26 @@ import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import arrow.core.Option
+import arrow.core.extensions.option.monad.binding
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.UiListTrackItemBinding
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
+import com.kelsos.mbrc.features.nowplaying.dragsort.ItemTouchHelperAdapter
+import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
+import com.kelsos.mbrc.features.nowplaying.dragsort.TouchHelperViewHolder
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
-import com.kelsos.mbrc.ui.drag.ItemTouchHelperAdapter
-import com.kelsos.mbrc.ui.drag.OnStartDragListener
-import com.kelsos.mbrc.ui.drag.TouchHelperViewHolder
 
 class NowPlayingAdapter(
-  private val dragStartListener: OnStartDragListener
+  private val dragStartListener: OnStartDragListener,
+  private val nowPlayingListener: NowPlayingListener
 ) : PagingDataAdapter<NowPlaying, NowPlayingAdapter.NowPlayingTrackViewHolder>(
   NOW_PLAYING_COMPARATOR
 ),
   ItemTouchHelperAdapter {
   private var currentTrack = ""
   private var playingTrackIndex = -1
-
-  private var listener: NowPlayingListener? = null
 
   fun getPlayingTrackIndex(): Int = this.playingTrackIndex
 
@@ -39,7 +40,7 @@ class NowPlayingAdapter(
     return NowPlayingTrackViewHolder.create(
       parent,
       { position ->
-        listener?.onPress(position)
+        nowPlayingListener.onPress(position)
         playingTrackIndex = position
         currentTrack = getItem(position)?.path ?: ""
       }
@@ -47,23 +48,22 @@ class NowPlayingAdapter(
   }
 
   override fun onBindViewHolder(holder: NowPlayingTrackViewHolder, position: Int) {
-    with(holder) {
-      getItem(bindingAdapterPosition)?.let {
-        bindTo(it)
+    val track = Option.fromNullable(getItem(holder.bindingAdapterPosition))
+    binding {
+      val (nowPlayingTrack) = track
+      val isPlayingTrack = nowPlayingTrack.path == currentTrack
+      holder.bindTo(nowPlayingTrack)
+      holder.setPlayingTrack(isPlayingTrack)
 
-        val isPlayingTrack = it.path == currentTrack
-        setPlayingTrack(isPlayingTrack)
-
-        if (isPlayingTrack) {
-          playingTrackIndex = bindingAdapterPosition
-        }
+      if (isPlayingTrack) {
+        playingTrackIndex = holder.bindingAdapterPosition
       }
     }
   }
 
   override fun onItemMove(from: Int, to: Int): Boolean {
-    listener?.onMove(from, to)
     notifyItemMoved(from, to)
+    nowPlayingListener.onMove(from, to)
 
     if (currentTrack.isNotBlank()) {
       setPlayingTrack(currentTrack)
@@ -73,16 +73,9 @@ class NowPlayingAdapter(
   }
 
   override fun onItemDismiss(position: Int) {
-    val nowPlaying = getItem(position)
-
-    nowPlaying?.let {
-      notifyItemRemoved(position)
-      listener?.onDismiss(position)
+    getItem(position)?.let {
+      nowPlayingListener.onDismiss(position)
     }
-  }
-
-  fun setListener(listener: NowPlayingListener) {
-    this.listener = listener
   }
 
   interface NowPlayingListener {
@@ -104,13 +97,11 @@ class NowPlayingAdapter(
     init {
       itemView.setOnClickListener { onHolderItemPressed(bindingAdapterPosition) }
       binding.dragHandle.setOnTouchListener { view, motionEvent ->
-        return@setOnTouchListener if (motionEvent.action == ACTION_DOWN) {
+        if (motionEvent.action == ACTION_DOWN) {
           view.performClick()
           onDragStart(this)
-          true
-        } else {
-          false
         }
+        true
       }
     }
 
