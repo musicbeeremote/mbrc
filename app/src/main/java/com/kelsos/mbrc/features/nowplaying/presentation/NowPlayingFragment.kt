@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
@@ -16,48 +17,72 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.extensions.snackbar
-import com.kelsos.mbrc.ui.drag.OnStartDragListener
-import com.kelsos.mbrc.ui.drag.SimpleItemTouchHelper
+import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
+import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper
 import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingAdapter.NowPlayingListener
 import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class NowPlayingFragment : Fragment(),
-  OnQueryTextListener,
-  OnStartDragListener,
-  NowPlayingListener {
+class NowPlayingFragment : Fragment() {
 
-  private val nowPlayingList: RecyclerView by bindView(R.id.now_playing__track_list)
-  private val swipeRefreshLayout: SwipeRefreshLayout by bindView(R.id.now_playing__refresh_layout)
-  private val emptyGroup: Group by bindView(R.id.now_playing__empty_group)
-  private val emptyViewProgress: ProgressBar by bindView(R.id.now_playing__loading_bar)
-
-  private val adapter: NowPlayingAdapter by lazy {
-    NowPlayingAdapter(
-      this@NowPlayingFragment
-    )
-  }
+  private val recycler: RecyclerView by bindView(R.id.now_playing__track_list)
+  private val refreshLayout: SwipeRefreshLayout by bindView(R.id.now_playing__refresh_layout)
+  private val empty: Group by bindView(R.id.now_playing__empty_group)
+  private val loading: ProgressBar by bindView(R.id.now_playing__loading_bar)
 
   private val viewModel: NowPlayingViewModel by inject()
 
-  private var searchView: SearchView? = null
+  private var search: SearchView? = null
   private var searchMenuItem: MenuItem? = null
   private lateinit var touchListener: NowPlayingTouchListener
   private var itemTouchHelper: ItemTouchHelper? = null
 
-  override fun onQueryTextSubmit(query: String): Boolean {
-    closeSearch()
-    viewModel.search(query)
-    return true
+  private val queryListener: OnQueryTextListener = object : OnQueryTextListener {
+    override fun onQueryTextSubmit(query: String): Boolean {
+      closeSearch()
+      viewModel.search(query)
+      return true
+    }
+
+    override fun onQueryTextChange(newText: String): Boolean = true
+  }
+
+  private val dragStartListener: OnStartDragListener by lazy {
+    object : OnStartDragListener {
+      override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
+        itemTouchHelper?.startDrag(viewHolder)
+      }
+    }
+  }
+
+  private val npAdapter: NowPlayingAdapter by lazy {
+    NowPlayingAdapter(
+      dragStartListener,
+      nowPlayingListener
+    )
+  }
+
+  private val nowPlayingListener: NowPlayingListener = object : NowPlayingListener {
+    override fun onPress(position: Int) {
+      viewModel.play(position + 1)
+    }
+
+    override fun onMove(from: Int, to: Int) {
+      viewModel.moveTrack(from, to)
+    }
+
+    override fun onDismiss(position: Int) {
+      viewModel.removeTrack(position)
+    }
   }
 
   private fun closeSearch(): Boolean {
-    searchView?.let {
+    search?.let {
       if (it.isShown) {
         it.isIconified = true
         it.isFocusable = false
@@ -70,20 +95,21 @@ class NowPlayingFragment : Fragment(),
     return false
   }
 
-  override fun onQueryTextChange(newText: String): Boolean {
-    return true
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setHasOptionsMenu(true)
   }
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     inflater.inflate(R.menu.nowplaying_search, menu)
     searchMenuItem = menu.findItem(R.id.now_playing_search)?.apply {
-      searchView = actionView as SearchView
+      search = actionView as SearchView
     }
 
-    searchView?.apply {
+    search?.apply {
       queryHint = getString(R.string.now_playing_search_hint)
       setIconifiedByDefault(true)
-      setOnQueryTextListener(this@NowPlayingFragment)
+      setOnQueryTextListener(queryListener)
     }
 
     super.onCreateOptionsMenu(menu, inflater)
@@ -97,84 +123,81 @@ class NowPlayingFragment : Fragment(),
     return inflater.inflate(R.layout.fragment_nowplaying, container, false)
   }
 
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+
+    viewModel.trackState.observe(this) {
+      npAdapter.setPlayingTrack(it.path)
+      recycler.scrollToPosition(npAdapter.getPlayingTrackIndex())
+    }
+
+    viewModel.list.nonNullObserver(this) {
+      refreshLayout.isRefreshing = false
+      loading.isVisible = false
+
+      empty.isVisible = it.isEmpty()
+      if (npAdapter.itemCount == 0) {
+        val resId = R.anim.layout_animation_from_bottom
+        val animation = AnimationUtils.loadLayoutAnimation(requireContext(), resId)
+        recycler.layoutAnimation = animation
+      }
+      npAdapter.submitList(it)
+    }
+
+    viewModel.emitter.nonNullObserver(this) { event ->
+      if (event.hasBeenHandled) {
+        return@nonNullObserver
+      }
+
+      val resId = when (event.peekContent()) {
+        NowPlayingUiMessages.RefreshFailed -> R.string.refresh_failed
+        NowPlayingUiMessages.RefreshSuccess -> R.string.now_playing__refresh_success
+      }
+      snackbar(resId)
+      refreshLayout.isRefreshing = false
+    }
+  }
+
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     val manager = LinearLayoutManager(requireContext())
-    nowPlayingList.layoutManager = manager
-    nowPlayingList.adapter = adapter
-    nowPlayingList.itemAnimator?.changeDuration = 0
-    touchListener = NowPlayingTouchListener(requireContext()) {
-      if (it) {
-        swipeRefreshLayout.isRefreshing = false
-        swipeRefreshLayout.isEnabled = false
-        swipeRefreshLayout.cancelPendingInputEvents()
-      } else {
-        swipeRefreshLayout.isEnabled = true
-      }
-    }
-    nowPlayingList.addOnItemTouchListener(touchListener)
-    val callback = SimpleItemTouchHelper(adapter)
-    itemTouchHelper = ItemTouchHelper(callback).apply {
-      attachToRecyclerView(nowPlayingList)
-    }
-    adapter.setListener(this)
-    swipeRefreshLayout.setOnRefreshListener { this.refresh() }
+    val callback = SimpleItemTouchHelper(npAdapter)
+    refreshLayout.setOnRefreshListener { viewModel.refresh() }
 
-    viewModel.playingTrack.observe(this) {
-      adapter.setPlayingTrack(it.path)
-    }
-
-    viewModel.nowPlayingTracks.nonNullObserver(this) {
-      swipeRefreshLayout.isRefreshing = false
-      emptyViewProgress.isVisible = false
-
-      emptyGroup.isVisible = it.isEmpty()
-      adapter.submitList(it)
-    }
-
-    viewModel.events.nonNullObserver(this) {
-      it.contentIfNotHandled?.let { code ->
-
-        val messageResId = when (code) {
-          1 -> R.string.refresh_failed
-          else -> R.string.refresh_failed
+    touchListener = NowPlayingTouchListener(requireContext()) { start ->
+      if (start) {
+        refreshLayout.apply {
+          isRefreshing = false
+          isEnabled = false
+          cancelPendingInputEvents()
         }
-        snackbar(messageResId)
+      } else {
+        refreshLayout.isEnabled = true
       }
     }
-  }
 
-  private fun refresh() {
-    viewModel.refresh()
-  }
+    recycler.apply {
+      layoutManager = manager
+      adapter = npAdapter
+      itemAnimator?.apply {
+        changeDuration = 0
+        removeDuration = 0
+        addDuration = 0
+      }
+      (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
-  override fun onPress(position: Int) {
-    viewModel.play(position + 1)
-  }
+      addOnItemTouchListener(touchListener)
+    }
 
-  override fun onMove(from: Int, to: Int) {
-    viewModel.moveTrack(from, to)
-  }
-
-  override fun onDismiss(position: Int) {
-    viewModel.removeTrack(position)
-  }
-
-  fun trackChanged(track: PlayingTrack, scrollToTrack: Boolean) {
-    adapter.setPlayingTrack(track.path)
-    if (scrollToTrack) {
-      nowPlayingList.scrollToPosition(adapter.getPlayingTrackIndex())
+    itemTouchHelper = ItemTouchHelper(callback).apply {
+      attachToRecyclerView(recycler)
     }
   }
 
-//  override fun onBackPressed() {
+  //  override fun onBackPressed() {
 //    if (closeSearch()) {
 //      return
 //    }
 //    super.onBackPressed()
 //  }
-
-  override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
-    itemTouchHelper?.startDrag(viewHolder)
-  }
 }

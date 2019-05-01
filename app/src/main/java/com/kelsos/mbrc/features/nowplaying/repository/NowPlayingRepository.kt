@@ -2,11 +2,11 @@ package com.kelsos.mbrc.features.nowplaying.repository
 
 import androidx.paging.DataSource
 import arrow.core.Try
-import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
-import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDtoMapper
 import com.kelsos.mbrc.features.nowplaying.NowPlayingEntityMapper
+import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
+import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.interfaces.data.Repository
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -17,7 +17,9 @@ import kotlinx.coroutines.withContext
 
 interface NowPlayingRepository : Repository<NowPlaying> {
 
-  fun move(from: Int, to: Int)
+  suspend fun move(from: Int, to: Int)
+  suspend fun remove(position: Int)
+  suspend fun findPosition(query: String): Int
 }
 
 class NowPlayingRepositoryImpl(
@@ -26,15 +28,12 @@ class NowPlayingRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : NowPlayingRepository {
 
-  private val mapper = NowPlayingDtoMapper()
-  private val entity2model = NowPlayingEntityMapper()
-
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
   override fun getAll(): DataSource.Factory<Int, NowPlaying> {
-    return dao.getAll().map { entity2model.map(it) }
+    return dao.getAll().map { NowPlayingEntityMapper.map(it) }
   }
 
   override suspend fun getRemote(): Try<Unit> = Try {
@@ -45,7 +44,7 @@ class NowPlayingRepositoryImpl(
     )
     pages.blockingForEach { nowPlaying ->
       runBlocking(dispatchers.disk) {
-        val list = nowPlaying.map { mapper.map(it).apply { dateAdded = added } }
+        val list = nowPlaying.map { NowPlayingDtoMapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insertAll(list)
         }
@@ -58,14 +57,22 @@ class NowPlayingRepositoryImpl(
   }
 
   override fun search(term: String): DataSource.Factory<Int, NowPlaying> {
-    return dao.search(term).map { entity2model.map(it) }
+    return dao.search(term).map { NowPlayingEntityMapper.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) {
     dao.count() == 0L
   }
 
-  override fun move(from: Int, to: Int) {
-    TODO("implement move")
+  override suspend fun move(from: Int, to: Int) = withContext(dispatchers.database) {
+    dao.move(from, to)
+  }
+
+  override suspend fun remove(position: Int) = withContext(dispatchers.database) {
+    dao.remove(position)
+  }
+
+  override suspend fun findPosition(query: String): Int = withContext(dispatchers.database) {
+    return@withContext dao.findPositionByQuery(query) ?: -1
   }
 }

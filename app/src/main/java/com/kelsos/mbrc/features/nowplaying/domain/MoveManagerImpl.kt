@@ -32,7 +32,7 @@ class MoveManagerImpl(dispatchers: AppCoroutineDispatchers) :
     }
 
     deferred = moveScope.async {
-      delay(400)
+      delay(600)
       onMoveSubmit(originalPosition, finalPosition)
       originalPosition = -1
       finalPosition = -1

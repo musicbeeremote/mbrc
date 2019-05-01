@@ -1,80 +1,85 @@
 package com.kelsos.mbrc.features.nowplaying.presentation
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MediatorLiveData
 import androidx.paging.PagedList
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
+import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
-import com.kelsos.mbrc.events.Event
-import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
 import com.kelsos.mbrc.networking.client.UserActionUseCase
+import com.kelsos.mbrc.networking.client.moveTrack
+import com.kelsos.mbrc.networking.client.playTrack
+import com.kelsos.mbrc.networking.client.removeTrack
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
-import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.paged
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class NowPlayingViewModel(
-  val playingTrack: PlayingTrackState,
+  dispatchers: AppCoroutineDispatchers,
+  val trackState: PlayingTrackState,
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,
-  private val dispatchers: AppCoroutineDispatchers,
   private val userActionUseCase: UserActionUseCase
-) : ViewModel() {
+) : BaseViewModel<NowPlayingUiMessages>(dispatchers) {
 
-  private val viewModelJob: Job = Job()
-  private val networkScope: CoroutineScope = CoroutineScope(dispatchers.network + viewModelJob)
-  private val eventStream: MutableLiveData<Event<Int>> = MutableLiveData()
+  private val _list: MediatorLiveData<PagedList<NowPlaying>> = MediatorLiveData()
 
-  val nowPlayingTracks: LiveData<PagedList<NowPlaying>> = repository.getAll().paged()
-  val events: LiveData<Event<Int>>
-    get() = eventStream
+  val list: LiveData<PagedList<NowPlaying>>
+    get() = _list
 
   init {
     moveManager.onMoveSubmit { originalPosition, finalPosition ->
-      val data = NowPlayingMoveRequest(originalPosition, finalPosition)
-      userActionUseCase.perform(UserAction(Protocol.NowPlayingListMove, data))
+      userActionUseCase.moveTrack(
+        NowPlayingMoveRequest(
+          originalPosition,
+          finalPosition
+        )
+      )
+    }
+    _list.addSource(repository.getAll().paged()) { list ->
+      _list.value = list
     }
   }
 
   fun refresh() {
-    networkScope.launch {
-      try {
-        repository.getRemote()
-      } catch (ex: Exception) {
-        withContext(dispatchers.main) {
-          eventStream.value = Event(0)
-        }
-      }
+    scope.launch {
+      val result = repository.getRemote()
+        .fold({
+          NowPlayingUiMessages.RefreshFailed
+        }, {
+          NowPlayingUiMessages.RefreshSuccess
+        })
+      emit(result)
     }
   }
 
   fun search(query: String) {
-    // todo: drop and upgrade to do this locally,
+    scope.launch {
+      val position = repository.findPosition(query)
+      if (position > 0) {
+        play(position)
+      }
+    }
   }
 
   fun moveTrack(from: Int, to: Int) {
-    networkScope.launch {
+    scope.launch {
       moveManager.move(from, to)
     }
   }
 
   fun play(position: Int) {
-    userActionUseCase.perform(UserAction(Protocol.NowPlayingListPlay, position))
+    userActionUseCase.playTrack(position)
   }
 
   fun removeTrack(position: Int) {
-    userActionUseCase.perform(UserAction(Protocol.NowPlayingListRemove, position))
-  }
-
-  override fun onCleared() {
-    viewModelJob.cancel()
-    super.onCleared()
+    scope.launch {
+      delay(400)
+      userActionUseCase.removeTrack(position)
+    }
   }
 }
