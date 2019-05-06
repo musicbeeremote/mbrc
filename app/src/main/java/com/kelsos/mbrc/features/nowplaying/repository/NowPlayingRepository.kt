@@ -5,7 +5,9 @@ import arrow.core.Try
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDtoMapper
 import com.kelsos.mbrc.features.nowplaying.NowPlayingEntityMapper
+import com.kelsos.mbrc.features.nowplaying.data.CachedNowPlaying
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
+import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.interfaces.data.Repository
 import com.kelsos.mbrc.networking.ApiBase
@@ -14,6 +16,7 @@ import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.epoch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 interface NowPlayingRepository : Repository<NowPlaying> {
 
@@ -27,6 +30,14 @@ class NowPlayingRepositoryImpl(
   private val dao: NowPlayingDao,
   private val dispatchers: AppCoroutineDispatchers
 ) : NowPlayingRepository {
+
+  private fun NowPlayingEntity.key(): String {
+    return "$path-$position"
+  }
+
+  private fun CachedNowPlaying.key(): String {
+    return "$path-$position"
+  }
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
@@ -42,11 +53,21 @@ class NowPlayingRepositoryImpl(
       Protocol.NowPlayingList,
       NowPlayingDto::class
     )
+    val cached = dao.cached().associateBy { it.key() }
     pages.blockingForEach { nowPlaying ->
       runBlocking(dispatchers.disk) {
         val list = nowPlaying.map { NowPlayingDtoMapper.map(it).apply { dateAdded = added } }
+
+        val existing = list.filter { cached.containsKey(it.key()) }
+        val new = list.minus(existing)
+        for (entity in existing) {
+          entity.id = checkNotNull(cached[entity.key()]).id
+        }
+
         withContext(dispatchers.database) {
-          dao.insertAll(list)
+          Timber.v("updating ${existing.size} and inserting ${new.size} items")
+          dao.update(existing)
+          dao.insertAll(new)
         }
       }
     }

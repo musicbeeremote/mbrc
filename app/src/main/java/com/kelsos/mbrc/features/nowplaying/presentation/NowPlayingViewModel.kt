@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.features.nowplaying.presentation
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.paging.PagedList
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
@@ -26,13 +25,10 @@ class NowPlayingViewModel(
   private val userActionUseCase: UserActionUseCase
 ) : BaseViewModel<NowPlayingUiMessages>(dispatchers) {
 
-  private val _list: MediatorLiveData<PagedList<NowPlaying>> = MediatorLiveData()
-
-  val list: LiveData<PagedList<NowPlaying>>
-    get() = _list
+  val list: LiveData<PagedList<NowPlaying>> = repository.getAll().paged()
 
   init {
-    moveManager.onMoveSubmit { originalPosition, finalPosition ->
+    moveManager.onMoveCommit { originalPosition, finalPosition ->
       userActionUseCase.moveTrack(
         NowPlayingMoveRequest(
           originalPosition,
@@ -40,12 +36,9 @@ class NowPlayingViewModel(
         )
       )
     }
-    _list.addSource(repository.getAll().paged()) { list ->
-      _list.value = list
-    }
   }
 
-  fun refresh() {
+  fun reload() {
     scope.launch {
       val result = repository.getRemote()
         .fold({
@@ -80,6 +73,12 @@ class NowPlayingViewModel(
     scope.launch {
       delay(400)
       userActionUseCase.removeTrack(position)
+    }
+  }
+
+  fun move() {
+    scope.launch {
+      moveManager.commit()
     }
   }
 }

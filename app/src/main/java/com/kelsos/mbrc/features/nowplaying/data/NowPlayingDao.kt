@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import timber.log.Timber
 
 @Dao
@@ -22,6 +23,9 @@ interface NowPlayingDao {
 
   @Query("select * from now_playing order by position")
   fun all(): List<NowPlayingEntity>
+
+  @Query("select id, position, path from now_playing")
+  fun cached(): List<CachedNowPlaying>
 
   @Query(
     """
@@ -42,12 +46,12 @@ interface NowPlayingDao {
   fun removeByPosition(position: Int): Int
 
   @Query("update now_playing set position = position - 1 where position > :position ")
-  fun updatePositions(position: Int): Int
+  fun updateRemoved(position: Int): Int
 
   @Transaction
   fun remove(position: Int) {
     val deleted = removeByPosition(position)
-    val updated = updatePositions(position)
+    val updated = updateRemoved(position)
     Timber.v("deleted $deleted rows and updated $updated")
   }
 
@@ -57,12 +61,34 @@ interface NowPlayingDao {
   @Query("update now_playing set position = :position where id = :id")
   fun updatePosition(id: Long, position: Int)
 
+  @Query(
+    """
+    update now_playing set position = position + 1
+    where position < :from
+    and position >= :to
+    """
+  )
+  fun updateMovedDown(from: Int, to: Int): Int
+
+  @Query(
+    """
+    update now_playing set position = position - 1
+    where position > :from
+    and position <= :to
+     """
+  )
+  fun updateMovedUp(from: Int, to: Int): Int
+
   @Transaction
   fun move(from: Int, to: Int) {
     val fromId = findIdByPosition(from)
-    val toId = findIdByPosition(to)
+    if (from > to) {
+      updateMovedDown(from, to)
+    } else {
+      updateMovedUp(from, to)
+    }
+
     updatePosition(fromId, to)
-    updatePosition(toId, from)
   }
 
   @Query(
@@ -73,4 +99,7 @@ interface NowPlayingDao {
         """
   )
   fun findPositionByQuery(query: String): Int?
+
+  @Update
+  fun update(existing: List<NowPlayingEntity>)
 }

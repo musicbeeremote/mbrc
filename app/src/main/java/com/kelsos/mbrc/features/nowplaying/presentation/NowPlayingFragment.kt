@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.helpers.VisibleRange
+import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.extensions.snackbar
 import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
 import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper
@@ -39,7 +41,6 @@ class NowPlayingFragment : Fragment() {
 
   private var search: SearchView? = null
   private var searchMenuItem: MenuItem? = null
-  private lateinit var touchListener: NowPlayingTouchListener
   private var itemTouchHelper: ItemTouchHelper? = null
 
   private val queryListener: OnQueryTextListener = object : OnQueryTextListener {
@@ -54,16 +55,36 @@ class NowPlayingFragment : Fragment() {
 
   private val dragStartListener: OnStartDragListener by lazy {
     object : OnStartDragListener {
-      override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
-        itemTouchHelper?.startDrag(viewHolder)
+      override fun onStartDrag(start: Boolean, viewHolder: RecyclerView.ViewHolder) {
+        if (start) {
+          itemTouchHelper?.startDrag(viewHolder)
+          refreshLayout.apply {
+            isRefreshing = false
+            isEnabled = false
+            cancelPendingInputEvents()
+          }
+        } else {
+          refreshLayout.isEnabled = true
+          viewModel.move()
+        }
       }
+    }
+  }
+
+  private val visibleRangeGetter: VisibleRangeGetter = object : VisibleRangeGetter {
+    override fun visibleRange(): VisibleRange {
+      val layoutManager = recycler.layoutManager as LinearLayoutManager
+      val firstItem = layoutManager.findFirstVisibleItemPosition()
+      val lastItem = layoutManager.findLastVisibleItemPosition()
+      return VisibleRange(firstItem, lastItem)
     }
   }
 
   private val npAdapter: NowPlayingAdapter by lazy {
     NowPlayingAdapter(
       dragStartListener,
-      nowPlayingListener
+      nowPlayingListener,
+      visibleRangeGetter
     )
   }
 
@@ -162,19 +183,7 @@ class NowPlayingFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
     val manager = LinearLayoutManager(requireContext())
     val callback = SimpleItemTouchHelper(npAdapter)
-    refreshLayout.setOnRefreshListener { viewModel.refresh() }
-
-    touchListener = NowPlayingTouchListener(requireContext()) { start ->
-      if (start) {
-        refreshLayout.apply {
-          isRefreshing = false
-          isEnabled = false
-          cancelPendingInputEvents()
-        }
-      } else {
-        refreshLayout.isEnabled = true
-      }
-    }
+    refreshLayout.setOnRefreshListener { viewModel.reload() }
 
     recycler.apply {
       layoutManager = manager
@@ -185,8 +194,6 @@ class NowPlayingFragment : Fragment() {
         addDuration = 0
       }
       (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-
-      addOnItemTouchListener(touchListener)
     }
 
     itemTouchHelper = ItemTouchHelper(callback).apply {

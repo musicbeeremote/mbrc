@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import arrow.core.Option
 import arrow.core.extensions.option.monad.binding
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.dragsort.ItemTouchHelperAdapter
 import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
@@ -23,7 +24,8 @@ import kotterknife.bindView
 
 class NowPlayingAdapter(
   private val dragStartListener: OnStartDragListener,
-  private val nowPlayingListener: NowPlayingListener
+  private val nowPlayingListener: NowPlayingListener,
+  private val visibleRangeGetter: VisibleRangeGetter
 ) :
   PagedListAdapter<NowPlaying, NowPlayingAdapter.NowPlayingTrackViewHolder>(
     DIFF_CALLBACK
@@ -37,8 +39,12 @@ class NowPlayingAdapter(
 
   fun setPlayingTrack(path: String) {
     this.currentTrack = path
-
-    // todo notify range change with paylaod
+    val range = visibleRangeGetter.visibleRange()
+    notifyItemRangeChanged(
+      range.firstItem,
+      range.itemCount,
+      PLAYING_CHANGED
+    )
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NowPlayingTrackViewHolder {
@@ -48,7 +54,27 @@ class NowPlayingAdapter(
         nowPlayingListener.onPress(position)
         playingTrackIndex = position
         currentTrack = getItem(position)?.path ?: ""
-      }) { holder -> dragStartListener.onStartDrag(holder) }
+      }) { start, holder -> dragStartListener.onStartDrag(start, holder) }
+  }
+
+  override fun onBindViewHolder(
+    holder: NowPlayingTrackViewHolder,
+    position: Int,
+    payloads: MutableList<Any>
+  ) {
+    if (payloads.contains(PLAYING_CHANGED)) {
+      val track = Option.fromNullable(getItem(holder.adapterPosition))
+      binding {
+        val (nowPlayingTrack) = track
+        val isPlayingTrack = nowPlayingTrack.path == currentTrack
+        holder.setPlayingTrack(isPlayingTrack)
+        if (isPlayingTrack) {
+          playingTrackIndex = holder.adapterPosition
+        }
+      }
+    } else {
+      onBindViewHolder(holder, position)
+    }
   }
 
   override fun onBindViewHolder(holder: NowPlayingTrackViewHolder, position: Int) {
@@ -91,7 +117,7 @@ class NowPlayingAdapter(
   class NowPlayingTrackViewHolder(
     itemView: View,
     onHolderItemPressed: OnViewItemPressed,
-    onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
+    private val onDrag: (start: Boolean, holder: RecyclerView.ViewHolder) -> Unit
   ) : BindableViewHolder<NowPlaying>(itemView),
     TouchHelperViewHolder {
 
@@ -104,7 +130,7 @@ class NowPlayingAdapter(
       itemView.setOnClickListener { onHolderItemPressed(adapterPosition) }
       dragHandle.setOnTouchListener { _, motionEvent ->
         if (motionEvent.action == ACTION_DOWN) {
-          onDragStart(this)
+          onDrag(true, this)
         }
         true
       }
@@ -116,6 +142,7 @@ class NowPlayingAdapter(
 
     override fun onItemClear() {
       this.itemView.setBackgroundColor(0)
+      onDrag(false, this)
     }
 
     override fun bindTo(item: NowPlaying) {
@@ -142,23 +169,24 @@ class NowPlayingAdapter(
       fun create(
         parent: ViewGroup,
         onHolderItemPressed: OnViewItemPressed,
-        onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
+        onDrag: (start: Boolean, holder: RecyclerView.ViewHolder) -> Unit
       ): NowPlayingTrackViewHolder {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.ui_list_track_item, parent, false)
         return NowPlayingTrackViewHolder(
           view,
           onHolderItemPressed,
-          onDragStart
+          onDrag
         )
       }
     }
   }
 
   companion object {
+    const val PLAYING_CHANGED = "playing_changed"
     val DIFF_CALLBACK = object : DiffUtil.ItemCallback<NowPlaying>() {
       override fun areItemsTheSame(oldItem: NowPlaying, newItem: NowPlaying): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.path == newItem.path
       }
 
       override fun areContentsTheSame(
