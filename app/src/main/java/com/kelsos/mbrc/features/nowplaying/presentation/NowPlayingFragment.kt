@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.helpers.VisibleRange
+import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.databinding.FragmentNowplayingBinding
 import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
 import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper
@@ -39,7 +41,6 @@ class NowPlayingFragment : Fragment() {
 
   private var search: SearchView? = null
   private var searchMenuItem: MenuItem? = null
-  private lateinit var touchListener: NowPlayingTouchListener
   private var itemTouchHelper: ItemTouchHelper? = null
 
   private val queryListener: OnQueryTextListener = object : OnQueryTextListener {
@@ -54,16 +55,35 @@ class NowPlayingFragment : Fragment() {
 
   private val dragStartListener: OnStartDragListener by lazy {
     object : OnStartDragListener {
-      override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
-        itemTouchHelper?.startDrag(viewHolder)
+      override fun onStartDrag(start: Boolean, viewHolder: RecyclerView.ViewHolder) {
+        val swipeRefreshLayout = binding.nowPlayingRefreshLayout
+        if (start) {
+          itemTouchHelper?.startDrag(viewHolder)
+          swipeRefreshLayout.isRefreshing = false
+          swipeRefreshLayout.isEnabled = false
+          swipeRefreshLayout.cancelPendingInputEvents()
+        } else {
+          swipeRefreshLayout.isEnabled = true
+          viewModel.move()
+        }
       }
+    }
+  }
+
+  private val visibleRangeGetter: VisibleRangeGetter = object : VisibleRangeGetter {
+    override fun visibleRange(): VisibleRange {
+      val layoutManager = binding.nowPlayingTrackList.layoutManager as LinearLayoutManager
+      val firstItem = layoutManager.findFirstVisibleItemPosition()
+      val lastItem = layoutManager.findLastVisibleItemPosition()
+      return VisibleRange(firstItem, lastItem)
     }
   }
 
   private val adapter: NowPlayingAdapter by lazy {
     NowPlayingAdapter(
       dragStartListener,
-      nowPlayingListener
+      nowPlayingListener,
+      visibleRangeGetter
     )
   }
 
@@ -129,16 +149,7 @@ class NowPlayingFragment : Fragment() {
     val manager = LinearLayoutManager(requireContext())
     val callback = SimpleItemTouchHelper(adapter)
     binding.nowPlayingRefreshLayout.setOnRefreshListener {
-      this.viewModel.refresh()
-    }
-    touchListener = NowPlayingTouchListener(requireContext()) { start ->
-      if (start) {
-        binding.nowPlayingRefreshLayout.isRefreshing = false
-        binding.nowPlayingRefreshLayout.isEnabled = false
-        binding.nowPlayingRefreshLayout.cancelPendingInputEvents()
-      } else {
-        binding.nowPlayingRefreshLayout.isEnabled = true
-      }
+      this.viewModel.reload()
     }
 
     binding.nowPlayingTrackList.layoutManager = manager
@@ -150,7 +161,7 @@ class NowPlayingFragment : Fragment() {
     }
     val itemAnimator = binding.nowPlayingTrackList.itemAnimator as SimpleItemAnimator
     itemAnimator.supportsChangeAnimations = false
-    binding.nowPlayingTrackList.addOnItemTouchListener(touchListener)
+
     itemTouchHelper = ItemTouchHelper(callback).apply {
       attachToRecyclerView(binding.nowPlayingTrackList)
     }

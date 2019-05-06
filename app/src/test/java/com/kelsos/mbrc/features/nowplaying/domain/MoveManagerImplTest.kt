@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.features.nowplaying.domain
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.kelsos.mbrc.utils.appCoroutineDispatchers
-import com.kelsos.mbrc.utils.testDispatcher
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,18 +13,20 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MoveManagerImplTest {
 
-  private lateinit var onMoveSubmit: (Int, Int) -> Unit
+  private lateinit var onCommit: (Int, Int) -> Unit
 
-  private val moveManager: MoveManager = MoveManagerImpl(appCoroutineDispatchers)
+  private val moveManager: MoveManager = MoveManagerImpl()
 
   @Before
   fun setUp() {
-    onMoveSubmit = mockk(relaxUnitFun = true)
+    onCommit = mockk(relaxUnitFun = true)
+    every { onCommit(any(), any()) } just Runs
+    moveManager.onMoveCommit(onCommit)
   }
 
   @Test
-  fun `move track from first to tenth position`() = runBlockingTest(testDispatcher) {
-    moveManager.onMoveSubmit(onMoveSubmit)
+  fun `move track from first to tenth position`() {
+    moveManager.onMoveCommit(onCommit)
     moveManager.move(1, 2)
     moveManager.move(2, 3)
     moveManager.move(3, 4)
@@ -35,32 +37,31 @@ class MoveManagerImplTest {
     moveManager.move(8, 9)
     moveManager.move(9, 10)
 
-    advanceUntilIdle()
+    moveManager.commit()
 
-    verify(exactly = 1) { onMoveSubmit.invoke(1, 10) }
+    verify(exactly = 1) { onCommit(1, 10) }
   }
 
   @Test
-  fun `move track from tenth to fifth position`() = runBlockingTest(testDispatcher) {
-    moveManager.onMoveSubmit(onMoveSubmit)
+  fun `move track from 10 to 5`() {
+    moveManager.onMoveCommit(onCommit)
     moveManager.move(10, 9)
     moveManager.move(9, 8)
     moveManager.move(8, 6)
     moveManager.move(6, 5)
 
-    advanceUntilIdle()
+    moveManager.commit()
 
-    verify(exactly = 1) { onMoveSubmit.invoke(10, 5) }
+    verify(exactly = 1) { onCommit(10, 5) }
   }
 
   @Test
-  fun `do not notify if before 400ms have passed`() = runBlockingTest(testDispatcher) {
-    moveManager.onMoveSubmit(onMoveSubmit)
+  fun `do not notify if before commit have is called`() {
+    moveManager.onMoveCommit(onCommit)
     moveManager.move(10, 9)
     moveManager.move(9, 8)
     moveManager.move(8, 6)
     moveManager.move(6, 5)
-    advanceTimeBy(200)
-    verify(exactly = 0) { onMoveSubmit(any(), any()) }
+    verify(exactly = 0) { onCommit(any(), any()) }
   }
 }

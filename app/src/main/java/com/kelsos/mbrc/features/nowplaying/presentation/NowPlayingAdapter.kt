@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import arrow.core.Option
 import arrow.core.extensions.option.monad.binding
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.databinding.UiListTrackItemBinding
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.dragsort.ItemTouchHelperAdapter
@@ -22,7 +23,8 @@ import com.kelsos.mbrc.ui.OnViewItemPressed
 
 class NowPlayingAdapter(
   private val dragStartListener: OnStartDragListener,
-  private val nowPlayingListener: NowPlayingListener
+  private val nowPlayingListener: NowPlayingListener,
+  private val visibleRangeGetter: VisibleRangeGetter
 ) : PagingDataAdapter<NowPlaying, NowPlayingAdapter.NowPlayingTrackViewHolder>(
   NOW_PLAYING_COMPARATOR
 ),
@@ -34,6 +36,12 @@ class NowPlayingAdapter(
 
   fun setPlayingTrack(path: String) {
     this.currentTrack = path
+    val range = visibleRangeGetter.visibleRange()
+    notifyItemRangeChanged(
+      range.firstItem,
+      range.itemCount,
+      PLAYING_CHANGED
+    )
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NowPlayingTrackViewHolder {
@@ -44,7 +52,27 @@ class NowPlayingAdapter(
         playingTrackIndex = position
         currentTrack = getItem(position)?.path ?: ""
       }
-    ) { holder -> dragStartListener.onStartDrag(holder) }
+    ) { start, holder -> dragStartListener.onStartDrag(start, holder) }
+  }
+
+  override fun onBindViewHolder(
+    holder: NowPlayingTrackViewHolder,
+    position: Int,
+    payloads: MutableList<Any>
+  ) {
+    if (payloads.contains(PLAYING_CHANGED)) {
+      val track = Option.fromNullable(getItem(holder.bindingAdapterPosition))
+      binding {
+        val (nowPlayingTrack) = track
+        val isPlayingTrack = nowPlayingTrack.path == currentTrack
+        holder.setPlayingTrack(isPlayingTrack)
+        if (isPlayingTrack) {
+          playingTrackIndex = holder.bindingAdapterPosition
+        }
+      }
+    } else {
+      onBindViewHolder(holder, position)
+    }
   }
 
   override fun onBindViewHolder(holder: NowPlayingTrackViewHolder, position: Int) {
@@ -87,7 +115,7 @@ class NowPlayingAdapter(
   class NowPlayingTrackViewHolder(
     binding: UiListTrackItemBinding,
     onHolderItemPressed: OnViewItemPressed,
-    onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
+    private val onDrag: (start: Boolean, holder: RecyclerView.ViewHolder) -> Unit
   ) : BindableViewHolder<NowPlaying>(binding), TouchHelperViewHolder {
 
     private val title: TextView = binding.trackTitle
@@ -99,7 +127,7 @@ class NowPlayingAdapter(
       binding.dragHandle.setOnTouchListener { view, motionEvent ->
         if (motionEvent.action == ACTION_DOWN) {
           view.performClick()
-          onDragStart(this)
+          onDrag(true, this)
         }
         true
       }
@@ -111,6 +139,7 @@ class NowPlayingAdapter(
 
     override fun onItemClear() {
       this.itemView.setBackgroundColor(0)
+      onDrag(false, this)
     }
 
     override fun bindTo(item: NowPlaying) {
@@ -137,22 +166,23 @@ class NowPlayingAdapter(
       fun create(
         parent: ViewGroup,
         onHolderItemPressed: OnViewItemPressed,
-        onDragStart: (holder: RecyclerView.ViewHolder) -> Unit
+        onDrag: (start: Boolean, holder: RecyclerView.ViewHolder) -> Unit
       ): NowPlayingTrackViewHolder {
         val binding = UiListTrackItemBinding.inflate(LayoutInflater.from(parent.context))
         return NowPlayingTrackViewHolder(
           binding,
           onHolderItemPressed,
-          onDragStart
+          onDrag
         )
       }
     }
   }
 
   companion object {
+    const val PLAYING_CHANGED = "playing_changed"
     val NOW_PLAYING_COMPARATOR = object : DiffUtil.ItemCallback<NowPlaying>() {
       override fun areItemsTheSame(oldItem: NowPlaying, newItem: NowPlaying): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.path == newItem.path
       }
 
       override fun areContentsTheSame(oldItem: NowPlaying, newItem: NowPlaying): Boolean {

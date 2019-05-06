@@ -3,7 +3,9 @@ package com.kelsos.mbrc.features.nowplaying.repository
 import androidx.paging.PagingData
 import arrow.core.Try
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
+import com.kelsos.mbrc.features.nowplaying.data.CachedNowPlaying
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
+import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.toEntity
 import com.kelsos.mbrc.features.nowplaying.toNowPlaying
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 interface NowPlayingRepository : Repository<NowPlaying> {
   suspend fun move(from: Int, to: Int)
@@ -30,6 +33,14 @@ class NowPlayingRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : NowPlayingRepository {
 
+  private fun NowPlayingEntity.key(): String {
+    return "$path-$position"
+  }
+
+  private fun CachedNowPlaying.key(): String {
+    return "$path-$position"
+  }
+
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAll(): Flow<PagingData<NowPlaying>> = dao.getAll().paged {
@@ -39,6 +50,9 @@ class NowPlayingRepositoryImpl(
   override suspend fun getRemote(): Try<Unit> = Try {
     val added = epoch()
     withContext(dispatchers.network) {
+      val cached = withContext(dispatchers.database) {
+        dao.cached().associateBy { it.key() }
+      }
       api.getAllPages(
         Protocol.NowPlayingList,
         NowPlayingDto::class
@@ -50,8 +64,16 @@ class NowPlayingRepositoryImpl(
         }
         .collect { item ->
           val list = item.map { it.toEntity().apply { dateAdded = added } }
+
+          val existing = list.filter { cached.containsKey(it.key()) }
+          val new = list.minus(existing)
+          for (entity in existing) {
+            entity.id = checkNotNull(cached[entity.key()]).id
+          }
           withContext(dispatchers.database) {
-            dao.insertAll(list)
+            Timber.v("updating ${existing.size} and inserting ${new.size} items")
+            dao.update(existing)
+            dao.insertAll(new)
           }
         }
     }

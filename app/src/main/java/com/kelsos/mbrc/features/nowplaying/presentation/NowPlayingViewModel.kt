@@ -26,13 +26,10 @@ class NowPlayingViewModel(
   val trackState: PlayingTrackState,
 ) : BaseViewModel<NowPlayingUiMessages>() {
 
-  private val _list: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
-
-  val list: Flow<PagingData<NowPlaying>>
-    get() = _list
+  val list: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
 
   init {
-    moveManager.onMoveSubmit { originalPosition, finalPosition ->
+    moveManager.onMoveCommit { originalPosition, finalPosition ->
       userActionUseCase.moveTrack(
         NowPlayingMoveRequest(
           originalPosition,
@@ -42,7 +39,7 @@ class NowPlayingViewModel(
     }
   }
 
-  fun refresh() {
+  fun reload() {
     viewModelScope.launch(dispatchers.network) {
       val result = repository.getRemote()
         .fold(
@@ -80,6 +77,12 @@ class NowPlayingViewModel(
     viewModelScope.launch(dispatchers.network) {
       delay(400)
       userActionUseCase.removeTrack(position)
+    }
+  }
+
+  fun move() {
+    viewModelScope.launch {
+      moveManager.commit()
     }
   }
 }

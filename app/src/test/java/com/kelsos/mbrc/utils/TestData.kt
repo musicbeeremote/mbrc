@@ -6,6 +6,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.room.Room
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.playlists.PlaylistDto
 import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
@@ -44,5 +45,12 @@ object TestDataFactories {
   fun playlist(num: Int): PlaylistDto = PlaylistDto(
     name = "Songs $num",
     url = """C:\library\$num.m3u"""
+  )
+
+  fun nowPlayingList(index: Int): NowPlayingDto = NowPlayingDto(
+    title = "Song ${index + 1}",
+    artist = "Artist",
+    position = index + 1,
+    path = """C:\library\album\${index + 1}.mp3"""
   )
 }
