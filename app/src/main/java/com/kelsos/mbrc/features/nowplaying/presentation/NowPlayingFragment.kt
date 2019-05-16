@@ -11,7 +11,6 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.common.ui.helpers.VisibleRange
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.databinding.FragmentNowplayingBinding
@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class NowPlayingFragment : Fragment() {
+class NowPlayingFragment : BaseFragment() {
 
   private var _binding: FragmentNowplayingBinding? = null
   private val binding get() = _binding!!
@@ -123,7 +123,7 @@ class NowPlayingFragment : Fragment() {
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     inflater.inflate(R.menu.nowplaying_search, menu)
     searchMenuItem = menu.findItem(R.id.now_playing_search)?.apply {
-      search = actionView as SearchView
+      search = actionView as? SearchView
     }
 
     search?.apply {
@@ -203,5 +203,9 @@ class NowPlayingFragment : Fragment() {
         Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
       }
     }
+  }
+
+  override fun onBackPressed(): Boolean {
+    return closeSearch()
   }
 }

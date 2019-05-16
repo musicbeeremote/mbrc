@@ -20,6 +20,8 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
+import arrow.core.firstOrNone
+import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.databinding.ActivityNavigationBinding
 import com.kelsos.mbrc.databinding.NavHeaderMainBinding
@@ -235,6 +237,15 @@ class NavigationActivity : AppCompatActivity() {
     super.onConfigurationChanged(newConfig)
     // Pass any configuration change to the drawer toggle.
     drawerToggle.onConfigurationChanged(newConfig)
+  }
+
+  override fun onBackPressed() {
+    val fragments = supportFragmentManager.fragments
+
+    fragments.filterIsInstance<BaseFragment>()
+      .firstOrNone { fragment ->
+        fragment.onBackPressed()
+      }.fold({ super.onBackPressed() }, {})
   }
 
   companion object {
