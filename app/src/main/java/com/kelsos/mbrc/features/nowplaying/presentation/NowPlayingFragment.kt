@@ -13,16 +13,17 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.common.ui.helpers.VisibleRange
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.extensions.snackbar
+import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
 import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper
 import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingAdapter.NowPlayingListener
@@ -30,7 +31,7 @@ import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class NowPlayingFragment : Fragment() {
+class NowPlayingFragment : BaseFragment() {
 
   private val recycler: RecyclerView by bindView(R.id.now_playing__track_list)
   private val refreshLayout: SwipeRefreshLayout by bindView(R.id.now_playing__refresh_layout)
@@ -38,6 +39,7 @@ class NowPlayingFragment : Fragment() {
   private val loading: ProgressBar by bindView(R.id.now_playing__loading_bar)
 
   private val viewModel: NowPlayingViewModel by inject()
+  private val miniControlFactory: MiniControlFactory by inject()
 
   private var search: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -124,7 +126,7 @@ class NowPlayingFragment : Fragment() {
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     inflater.inflate(R.menu.nowplaying_search, menu)
     searchMenuItem = menu.findItem(R.id.now_playing_search)?.apply {
-      search = actionView as SearchView
+      search = actionView as? SearchView
     }
 
     search?.apply {
@@ -199,12 +201,10 @@ class NowPlayingFragment : Fragment() {
     itemTouchHelper = ItemTouchHelper(callback).apply {
       attachToRecyclerView(recycler)
     }
+    miniControlFactory.attach(requireFragmentManager())
   }
 
-  //  override fun onBackPressed() {
-//    if (closeSearch()) {
-//      return
-//    }
-//    super.onBackPressed()
-//  }
+  override fun onBackPressed(): Boolean {
+    return closeSearch()
+  }
 }

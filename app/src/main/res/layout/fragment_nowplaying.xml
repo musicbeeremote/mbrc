@@ -98,9 +98,8 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="1.0" />
 
-  <fragment
+  <FrameLayout
       android:id="@+id/mini_control"
-      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mini_control_height"
       app:layout_constraintBottom_toBottomOf="parent"
