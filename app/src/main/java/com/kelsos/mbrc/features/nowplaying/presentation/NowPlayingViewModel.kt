@@ -66,7 +66,7 @@ class NowPlayingViewModel(
   }
 
   fun play(position: Int) {
-    userActionUseCase.playTrack(position)
+    userActionUseCase.playTrack(position + 1)
   }
 
   fun removeTrack(position: Int) {
