@@ -3,6 +3,11 @@ package com.kelsos.mbrc.utils
 import android.view.View
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.GeneralLocation
+import androidx.test.espresso.action.GeneralSwipeAction
+import androidx.test.espresso.action.Press
+import androidx.test.espresso.action.Swipe
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
@@ -30,4 +35,17 @@ fun ViewInteraction.isVisible() {
 
 fun ViewInteraction.isGone() {
   check(matches(withEffectiveVisibility(Visibility.GONE)))
+}
+
+fun ViewInteraction.doesNotExist() {
+  check(ViewAssertions.doesNotExist())
+}
+
+fun swipeToRemove(): GeneralSwipeAction {
+  return GeneralSwipeAction(
+    Swipe.SLOW,
+    GeneralLocation.CENTER_LEFT,
+    GeneralLocation.CENTER_RIGHT,
+    Press.FINGER
+  )
 }

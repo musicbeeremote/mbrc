@@ -89,7 +89,7 @@ class NowPlayingFragment : BaseFragment() {
 
   private val nowPlayingListener: NowPlayingListener = object : NowPlayingListener {
     override fun onPress(position: Int) {
-      viewModel.play(position + 1)
+      viewModel.play(position)
     }
 
     override fun onMove(from: Int, to: Int) {
@@ -197,7 +197,7 @@ class NowPlayingFragment : BaseFragment() {
     lifecycleScope.launch {
       viewModel.emitter.collect { code ->
         val messageResId = when (code) {
-          NowPlayingUiMessages.RefreshFailed -> R.string.refresh_failed
+          NowPlayingUiMessages.RefreshFailed -> R.string.now_playing__refresh_failed
           NowPlayingUiMessages.RefreshSuccess -> R.string.now_playing__refresh_success
         }
         Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
