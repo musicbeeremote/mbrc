@@ -1,12 +1,17 @@
 package com.kelsos.mbrc.features.nowplaying.presentation
 
+import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.pressImeActionButton
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -15,6 +20,7 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.utils.MockFactory
+import com.kelsos.mbrc.utils.SingleFragmentActivity
 import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.isGone
 import com.kelsos.mbrc.utils.isVisible
@@ -180,6 +186,24 @@ class NowPlayingFragmentTest {
     NowPlayingRobot()
       .done()
       .messageDisplayed(R.string.now_playing__refresh_failed)
+  }
+
+  @Test
+  fun `searching on the toolbar should pass to the viewmodel`() {
+    val scenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
+    every { viewModel.search(any()) } just Runs
+    every { viewModel.list } answers { emptyFlow() }
+    every { viewModel.emitter } answers { emptyFlow() }
+
+    scenario.onActivity {
+      it.setFragment(NowPlayingFragment())
+    }
+
+    onView(withId(R.id.now_playing_search)).perform(click())
+    onView(isAssignableFrom(EditText::class.java))
+      .perform(typeText("track"), pressImeActionButton())
+
+    verify(exactly = 1) { viewModel.search("track") }
   }
 }
 
