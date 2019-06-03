@@ -6,9 +6,11 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
@@ -19,6 +21,7 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
+import com.kelsos.mbrc.utils.DragAndDropAction
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.SingleFragmentActivity
 import com.kelsos.mbrc.utils.TestDataFactories
@@ -161,6 +164,31 @@ class NowPlayingFragmentTest {
   }
 
   @Test
+  fun `should be able to drag and drop`() {
+    val data = MockFactory(
+      TestDataFactories.nowPlayingListEntities(10)
+    ).flow()
+    every { viewModel.list } answers { data }
+    every { viewModel.emitter } answers { emptyFlow() }
+    every { viewModel.moveTrack(any(), any()) } just Runs
+    every { viewModel.move() } just Runs
+
+    launchFragmentInContainer<NowPlayingFragment>()
+
+    NowPlayingRobot()
+      .drag(0, 5)
+      .done()
+      .listVisible()
+
+    verify(exactly = 1) { viewModel.moveTrack(0, 1) }
+    verify(exactly = 1) { viewModel.moveTrack(1, 2) }
+    verify(exactly = 1) { viewModel.moveTrack(2, 3) }
+    verify(exactly = 1) { viewModel.moveTrack(3, 4) }
+    verify(exactly = 1) { viewModel.moveTrack(4, 5) }
+    verify(exactly = 1) { viewModel.move() }
+  }
+
+  @Test
   fun `show a queue success message when queue succeeds`() {
     val events = flow { emit(NowPlayingUiMessages.RefreshSuccess) }
 
@@ -205,6 +233,23 @@ class NowPlayingFragmentTest {
 
     verify(exactly = 1) { viewModel.search("track") }
   }
+
+  @Test
+  fun `back button should close the search menu`() {
+    val scenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
+    every { viewModel.search(any()) } just Runs
+    every { viewModel.list } answers { emptyFlow() }
+    every { viewModel.emitter } answers { emptyFlow() }
+
+    scenario.onActivity {
+      it.setFragment(NowPlayingFragment())
+    }
+
+    onView(withId(R.id.now_playing_search)).perform(click())
+    onView(isAssignableFrom(EditText::class.java)).isVisible()
+    pressBack()
+    onView(isAssignableFrom(EditText::class.java)).check(doesNotExist())
+  }
 }
 
 class NowPlayingRobot {
@@ -221,6 +266,12 @@ class NowPlayingRobot {
   fun swipe(position: Int): NowPlayingRobot {
     onView(withId(R.id.now_playing__track_list))
       .perform(actionOnItemAtPosition<NowPlayingTrackViewHolder>(position, swipeToRemove()))
+    return this
+  }
+
+  fun drag(source: Int, target: Int): NowPlayingRobot {
+    onView(withId(R.id.now_playing__track_list))
+      .perform(DragAndDropAction(source, target, R.id.drag_handle))
     return this
   }
 }
