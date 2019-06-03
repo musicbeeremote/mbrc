@@ -4,9 +4,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Try
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.TestApplication
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
-import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
-import com.kelsos.mbrc.content.nowplaying.queue.QueueResponse
+import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.QueueApi
+import com.kelsos.mbrc.features.queue.QueueResponse
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.utils.MockFactory

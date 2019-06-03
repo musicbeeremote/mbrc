@@ -219,4 +219,6 @@
   <string name="radio__refresh_success">Radio station list was refreshed successfully</string>
   <string name="radio__empty_icon_content_description">Empty list icon</string>
   <string name="playlists__refresh_success">Playlist Refresh was successful</string>
+  <string name="now_playing__refresh_success">Now playing list was refreshed successfully</string>
+  <string name="now_playing__refresh_failed">There was a problem refreshing the now playing list</string>
 </resources>

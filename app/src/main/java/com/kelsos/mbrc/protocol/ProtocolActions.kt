@@ -10,8 +10,10 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.content.lyrics.LyricsPayload
-import com.kelsos.mbrc.content.nowplaying.NowPlayingTrack
 import com.kelsos.mbrc.events.ShuffleMode
+import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
+import com.kelsos.mbrc.features.player.NowPlayingTrack
+import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
@@ -19,9 +21,11 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingMoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.Position
-import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
+import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class UpdateLastFm(
@@ -241,24 +245,38 @@ class ProtocolPongHandle : ProtocolAction {
 }
 
 class UpdateNowPlayingTrackMoved(
-  private val moshi: Moshi
+  moshi: Moshi,
+  dispatchers: AppCoroutineDispatchers,
+  private val nowPlayingRepository: NowPlayingRepository
 ) : ProtocolAction {
+  private val scope = CoroutineScope(dispatchers.network)
+  private val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
 
   override fun execute(message: ProtocolMessage) {
-    val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
-    val response = adapter.fromJsonValue(message.data)
-
-    // bus.post(TrackMovedEvent(response.from, response.to, response.success))
+    scope.launch {
+      val response = adapter.fromJsonValue(message.data)
+      if (response != null && response.success) {
+        nowPlayingRepository.move(from = response.from + 1, to = response.to + 1)
+      }
+    }
   }
 }
 
 class UpdateNowPlayingTrackRemoval(
-  private val moshi: Moshi
+  moshi: Moshi,
+  dispatchers: AppCoroutineDispatchers,
+  private val nowPlayingRepository: NowPlayingRepository
 ) : ProtocolAction {
+  private val scope = CoroutineScope(dispatchers.network)
+  private val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
+
   override fun execute(message: ProtocolMessage) {
-    val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
-    val response = adapter.fromJsonValue(message.data)
-    // bus.post(TrackRemovalEvent(response.index, response.success))
+    scope.launch {
+      val response = adapter.fromJsonValue(message.data)
+      if (response != null && response.success) {
+        nowPlayingRepository.remove(response.index + 1)
+      }
+    }
   }
 }
 

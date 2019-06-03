@@ -3,8 +3,8 @@ package com.kelsos.mbrc.features.radio.presentation
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import arrow.core.Try
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
-import com.kelsos.mbrc.content.nowplaying.queue.QueueApi
+import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.ui.BaseViewModel

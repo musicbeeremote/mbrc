@@ -10,6 +10,8 @@ import androidx.room.Room
 import arrow.core.Either
 import arrow.core.Try
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
+import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.playlists.PlaylistDto
 import io.reactivex.Observable
 import java.io.File
@@ -92,4 +94,23 @@ object TestDataFactories {
     name = "Songs $num",
     url = """C:\library\$num.m3u"""
   )
+
+  fun nowPlayingList(index: Int): NowPlayingDto = NowPlayingDto(
+    title = "Song ${index + 1}",
+    artist = "Artist",
+    position = index + 1,
+    path = """C:\library\album\${index + 1}.mp3"""
+  )
+
+  fun nowPlayingListEntities(total: Int): List<NowPlaying> {
+    return (1..total + 1).map {
+      NowPlaying(
+        artist = "Test artist",
+        title = "Test title $it",
+        id = it.toLong(),
+        position = it,
+        path = """C:\library\album\$it.mp3"""
+      )
+    }
+  }
 }

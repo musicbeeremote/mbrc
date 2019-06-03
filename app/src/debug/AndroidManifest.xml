@@ -8,6 +8,7 @@
       android:allowBackup="false"
       tools:replace="android:name,android:allowBackup"
       tools:ignore="GoogleAppIndexingWarning">
+    <activity android:name="com.kelsos.mbrc.utils.SingleFragmentActivity" />
   </application>
 
 </manifest>

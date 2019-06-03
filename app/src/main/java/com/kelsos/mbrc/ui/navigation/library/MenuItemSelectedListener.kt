@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import com.kelsos.mbrc.content.nowplaying.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.LibraryPopup
 
 interface MenuItemSelectedListener<in T> {
 
