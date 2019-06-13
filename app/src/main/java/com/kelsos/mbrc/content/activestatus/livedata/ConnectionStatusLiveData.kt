@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.content.activestatus.livedata
 
+import com.kelsos.mbrc.common.state.BaseState
+import com.kelsos.mbrc.common.state.State
 import com.kelsos.mbrc.networking.connections.Connection.ACTIVE
 import com.kelsos.mbrc.networking.connections.Connection.ON
 import com.kelsos.mbrc.networking.connections.ConnectionStatus

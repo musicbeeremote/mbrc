@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.extensions
+package com.kelsos.mbrc.common.ui.extensions
 
 import android.content.Context
 import android.text.SpannedString

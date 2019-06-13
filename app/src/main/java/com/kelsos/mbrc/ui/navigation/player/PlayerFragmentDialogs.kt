@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.player
 
 import androidx.appcompat.app.AlertDialog
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.extensions.coloredSpan
+import com.kelsos.mbrc.common.ui.extensions.coloredSpan
 
 fun PlayerFragment.showChangeLogDialog(): AlertDialog {
   return requireContext().run {

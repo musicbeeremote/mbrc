@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.BaseFragment
+import com.kelsos.mbrc.common.ui.extensions.snackbar
 import com.kelsos.mbrc.common.ui.helpers.VisibleRange
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
-import com.kelsos.mbrc.extensions.snackbar
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
 import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper

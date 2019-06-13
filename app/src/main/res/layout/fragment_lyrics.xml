@@ -14,8 +14,7 @@
       android:paddingLeft="@dimen/normal_margin"
       android:paddingTop="@dimen/small_margin"
       android:paddingRight="@dimen/normal_margin"
-      android:scrollbars="vertical"
-      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintBottom_toTopOf="@+id/mini_control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
@@ -51,6 +50,7 @@
       style="@style/empty_view_image"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:contentDescription="@string/lyrics__empty_icon_content_description"
       android:paddingEnd="@dimen/small_margin"
       app:layout_constraintBottom_toTopOf="@+id/mini_control"
       app:layout_constraintEnd_toEndOf="parent"
@@ -59,9 +59,8 @@
       app:srcCompat="@drawable/ic_view_headline_black_120dp"
       tools:ignore="RtlSymmetry" />
 
-  <fragment
+  <FrameLayout
       android:id="@+id/mini_control"
-      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mini_control_height"
       app:layout_constraintBottom_toBottomOf="parent"

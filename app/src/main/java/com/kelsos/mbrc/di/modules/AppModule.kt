@@ -7,8 +7,6 @@ import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusStateImpl
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsState
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsStateImpl
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusStateImpl
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
@@ -25,14 +23,6 @@ import com.kelsos.mbrc.content.library.genres.GenreRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepositoryImpl
 import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.content.library.tracks.TrackRepositoryImpl
-import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
-import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepositoryImpl
-import com.kelsos.mbrc.features.player.cover.CoverApi
-import com.kelsos.mbrc.features.player.cover.CoverApiImpl
-import com.kelsos.mbrc.features.player.cover.CoverModel
-import com.kelsos.mbrc.features.player.cover.StoredCoverModel
-import com.kelsos.mbrc.features.queue.QueueApi
-import com.kelsos.mbrc.features.queue.QueueApiImpl
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputApiImpl
 import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
@@ -46,15 +36,32 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.lyrics.LyricsState
+import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
+import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
+import com.kelsos.mbrc.features.lyrics.presentation.LyricsViewModel
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactoryImpl
+import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
+import com.kelsos.mbrc.features.nowplaying.domain.MoveManagerImpl
+import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingViewModel
+import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
+import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepositoryImpl
+import com.kelsos.mbrc.features.player.cover.CoverApi
+import com.kelsos.mbrc.features.player.cover.CoverApiImpl
+import com.kelsos.mbrc.features.player.cover.CoverModel
+import com.kelsos.mbrc.features.player.cover.StoredCoverModel
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
+import com.kelsos.mbrc.features.queue.QueueApi
+import com.kelsos.mbrc.features.queue.QueueApiImpl
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
 import com.kelsos.mbrc.features.radio.presentation.RadioViewModel
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.features.radio.repository.RadioRepositoryImpl
+import com.kelsos.mbrc.features.widgets.WidgetUpdater
+import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
@@ -90,8 +97,6 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import com.kelsos.mbrc.features.widgets.WidgetUpdater
-import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.preferences.ClientInformationModel
 import com.kelsos.mbrc.preferences.ClientInformationModelImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
@@ -128,10 +133,6 @@ import com.kelsos.mbrc.ui.navigation.library.genres.GenreAdapter
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreViewModel
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackAdapter
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackViewModel
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsViewModel
-import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
-import com.kelsos.mbrc.features.nowplaying.domain.MoveManagerImpl
-import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingViewModel
 import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
@@ -144,6 +145,7 @@ import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 import org.koin.experimental.builder.create
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 val appModule = module {
@@ -193,6 +195,12 @@ val appModule = module {
   }
 
   single<LyricsState> { create<LyricsStateImpl>() }
+  single { LyricsAdapter(get("diffExecutor")) }
+  single(name = "diffExecutor") {
+    Executors.newSingleThreadExecutor { runnable ->
+      Thread(runnable, "diffExecutor")
+    } as Executor
+  }
 
   single<MessageQueue> { create<MessageQueueImpl>() }
   single<MessageHandler> { create<MessageHandlerImpl>() }

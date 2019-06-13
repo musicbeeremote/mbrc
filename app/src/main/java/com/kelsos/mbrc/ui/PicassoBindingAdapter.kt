@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.extensions.getDimens
+import com.kelsos.mbrc.common.ui.extensions.getDimens
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
