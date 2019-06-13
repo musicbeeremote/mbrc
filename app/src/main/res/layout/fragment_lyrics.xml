@@ -13,8 +13,7 @@
       android:paddingLeft="@dimen/normal_margin"
       android:paddingTop="@dimen/small_margin"
       android:paddingRight="@dimen/normal_margin"
-      android:scrollbars="vertical"
-      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintBottom_toTopOf="@+id/lyrics__mini_control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
@@ -49,6 +48,7 @@
       style="@style/empty_view_image"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:contentDescription="@string/lyrics__empty_icon_content_description"
       android:paddingEnd="@dimen/small_margin"
       android:src="@drawable/ic_view_headline_black_120dp"
       app:layout_constraintBottom_toTopOf="@+id/lyrics__mini_control"
