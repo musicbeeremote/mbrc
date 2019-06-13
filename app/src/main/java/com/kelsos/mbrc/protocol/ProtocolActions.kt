@@ -4,13 +4,13 @@ import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerStatus
 import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.Repeat
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
-import com.kelsos.mbrc.content.lyrics.LyricsPayload
 import com.kelsos.mbrc.events.ShuffleMode
+import com.kelsos.mbrc.features.lyrics.LyricsPayload
+import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
 import com.kelsos.mbrc.features.player.NowPlayingTrack
 import com.kelsos.mbrc.features.widgets.WidgetUpdater

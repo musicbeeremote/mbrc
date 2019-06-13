@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
-class OneTimeObserver<T>(private val handler: (T) -> Unit) : Observer<T>, LifecycleOwner {
+class OneTimeObserver<T>(private val handler: (T) -> Unit = {}) : Observer<T>, LifecycleOwner {
   private val lifecycle = LifecycleRegistry(this)
   init {
     lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)

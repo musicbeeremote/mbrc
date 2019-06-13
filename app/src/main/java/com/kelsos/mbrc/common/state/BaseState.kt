@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.activestatus.livedata
+package com.kelsos.mbrc.common.state
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData

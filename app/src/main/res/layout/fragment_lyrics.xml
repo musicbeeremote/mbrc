@@ -59,9 +59,8 @@
       app:srcCompat="@drawable/ic_view_headline_black_120dp"
       tools:ignore="RtlSymmetry" />
 
-  <fragment
+  <FrameLayout
       android:id="@+id/mini_control"
-      android:name="com.kelsos.mbrc.ui.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mini_control_height"
       app:layout_constraintBottom_toBottomOf="parent"

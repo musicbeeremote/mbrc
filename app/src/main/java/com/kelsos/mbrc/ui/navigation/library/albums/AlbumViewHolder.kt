@@ -9,7 +9,7 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.library.albums.Album
-import com.kelsos.mbrc.extensions.string
+import com.kelsos.mbrc.common.ui.extensions.string
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
 

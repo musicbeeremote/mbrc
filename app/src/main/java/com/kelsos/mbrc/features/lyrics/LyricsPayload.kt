@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.lyrics
+package com.kelsos.mbrc.features.lyrics
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

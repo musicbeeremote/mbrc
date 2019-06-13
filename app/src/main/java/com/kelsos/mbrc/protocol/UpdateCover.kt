@@ -10,7 +10,7 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.player.cover.CoverApi
 import com.kelsos.mbrc.features.player.cover.CoverModel
 import com.kelsos.mbrc.features.player.cover.CoverPayload
-import com.kelsos.mbrc.extensions.md5
+import com.kelsos.mbrc.common.ui.extensions.md5
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
