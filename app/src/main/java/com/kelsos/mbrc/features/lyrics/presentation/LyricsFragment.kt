@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.lyrics
+package com.kelsos.mbrc.features.lyrics.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,13 +7,15 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kelsos.mbrc.common.ui.extensions.animateIfEmpty
 import com.kelsos.mbrc.databinding.FragmentLyricsBinding
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LyricsFragment : Fragment() {
 
   private val viewModel: LyricsViewModel by viewModel()
-  private val lyricsAdapter: LyricsAdapter by lazy { LyricsAdapter() }
+  private val adapter: LyricsAdapter by inject()
   private var _binding: FragmentLyricsBinding? = null
   private val binding get() = _binding!!
 
@@ -28,16 +30,15 @@ class LyricsFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    val lyricsRecycler = binding.lyricsLyricsList
     val layoutManager = LinearLayoutManager(requireContext())
-    val adapter = LyricsAdapter()
-    lyricsRecycler.setHasFixedSize(true)
-    lyricsRecycler.layoutManager = layoutManager
-    lyricsRecycler.adapter = adapter
+    binding.lyricsLyricsList.setHasFixedSize(true)
+    binding.lyricsLyricsList.layoutManager = layoutManager
+    binding.lyricsLyricsList.adapter = adapter
 
-    viewModel.lyricsLiveDataProvider.observe(this) { lyrics ->
+    viewModel.lyrics.observe(viewLifecycleOwner) { lyrics ->
+      binding.lyricsLyricsList.animateIfEmpty(adapter.itemCount)
       binding.lyricsEmptyGroup.isGone = lyrics.isNotEmpty()
-      lyricsAdapter.submitList(lyrics)
+      adapter.submitList(lyrics)
     }
   }
 

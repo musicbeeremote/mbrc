@@ -11,10 +11,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.extensions.setIcon
+import com.kelsos.mbrc.common.ui.extensions.setStatusColor
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
-import com.kelsos.mbrc.extensions.setIcon
-import com.kelsos.mbrc.extensions.setStatusColor
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerFragment : Fragment() {

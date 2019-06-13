@@ -7,8 +7,6 @@ import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusStateImpl
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsState
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsStateImpl
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusStateImpl
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
@@ -37,6 +35,10 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.lyrics.LyricsState
+import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
+import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
+import com.kelsos.mbrc.features.lyrics.presentation.LyricsViewModel
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManagerImpl
 import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingViewModel
@@ -128,7 +130,6 @@ import com.kelsos.mbrc.ui.navigation.library.genres.GenreAdapter
 import com.kelsos.mbrc.ui.navigation.library.genres.GenreViewModel
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackAdapter
 import com.kelsos.mbrc.ui.navigation.library.tracks.TrackViewModel
-import com.kelsos.mbrc.ui.navigation.lyrics.LyricsViewModel
 import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
 import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
@@ -136,11 +137,14 @@ import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.experimental.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.experimental.builder.factory
 import org.koin.experimental.builder.factoryBy
 import org.koin.experimental.builder.single
 import org.koin.experimental.builder.singleBy
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 val appModule = module {
   single { Moshi.Builder().build() }
@@ -182,6 +186,12 @@ val appModule = module {
   singleBy<ConnectionStatusState, ConnectionStatusStateImpl>()
 
   singleBy<LyricsState, LyricsStateImpl>()
+  single { LyricsAdapter(get(named("diffExecutor"))) }
+  single(named("diffExecutor")) {
+    Executors.newSingleThreadExecutor { runnable ->
+      Thread(runnable, "diffExecutor")
+    } as Executor
+  }
 
   singleBy<MessageQueue, MessageQueueImpl>()
   singleBy<MessageHandler, MessageHandlerImpl>()

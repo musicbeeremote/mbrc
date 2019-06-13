@@ -3,10 +3,10 @@ package com.kelsos.mbrc.protocol
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsState
-import com.kelsos.mbrc.content.activestatus.livedata.LyricsStateImpl
-import com.kelsos.mbrc.content.lyrics.LyricsPayload
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.features.lyrics.LyricsPayload
+import com.kelsos.mbrc.features.lyrics.LyricsState
+import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.squareup.moshi.JsonAdapter

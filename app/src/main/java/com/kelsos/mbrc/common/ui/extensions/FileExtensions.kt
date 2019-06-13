@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.extensions
+package com.kelsos.mbrc.common.ui.extensions
 
 import java.io.File
 import java.io.FileInputStream

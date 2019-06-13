@@ -1,4 +1,7 @@
-package com.kelsos.mbrc.content.activestatus.livedata
+package com.kelsos.mbrc.features.lyrics
+
+import com.kelsos.mbrc.common.state.BaseState
+import com.kelsos.mbrc.common.state.State
 
 interface LyricsState : State<List<String>>
 

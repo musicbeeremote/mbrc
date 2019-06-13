@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.extensions.getDimens
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.databinding.FragmentMiniControlBinding
-import com.kelsos.mbrc.extensions.getDimens
 import com.squareup.picasso.Picasso
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
