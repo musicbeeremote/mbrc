@@ -142,82 +142,82 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.asCoroutineDispatcher
-import org.koin.androidx.viewmodel.ext.koin.viewModel
-import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
+import org.koin.androidx.experimental.dsl.viewModel
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
+import org.koin.experimental.builder.factory
+import org.koin.experimental.builder.factoryBy
+import org.koin.experimental.builder.single
+import org.koin.experimental.builder.singleBy
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 val appModule = module {
   single { Moshi.Builder().build() }
-  single<CoverApi> { create<CoverApiImpl>() }
-  single<QueueApi> { create<QueueApiImpl>() }
+  singleBy<CoverApi, CoverApiImpl>()
+  singleBy<QueueApi, QueueApiImpl>()
 
-  single<ConnectionRepository> { create<ConnectionRepositoryImpl>() }
+  singleBy<ConnectionRepository, ConnectionRepositoryImpl>()
 
-  single<TrackRepository> { create<TrackRepositoryImpl>() }
-  single<AlbumRepository> { create<AlbumRepositoryImpl>() }
-  single<ArtistRepository> { create<ArtistRepositoryImpl>() }
-  single<GenreRepository> { create<GenreRepositoryImpl>() }
+  singleBy<TrackRepository, TrackRepositoryImpl>()
+  singleBy<AlbumRepository, AlbumRepositoryImpl>()
+  singleBy<ArtistRepository, ArtistRepositoryImpl>()
+  singleBy<GenreRepository, GenreRepositoryImpl>()
 
-  single<NowPlayingRepository> { create<NowPlayingRepositoryImpl>() }
-  single<PlaylistRepository> { create<PlaylistRepositoryImpl>() }
+  singleBy<NowPlayingRepository, NowPlayingRepositoryImpl>()
+  singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
 
-  single<SerializationAdapter> { create<SerializationAdapterImpl>() }
-  single<DeserializationAdapter> { create<DeserializationAdapterImpl>() }
-  single<DatabaseTransactionRunner> { create<DatabaseTransactionRunnerImpl>() }
-  single<RequestManager> { create<RequestManagerImpl>() }
+  singleBy<SerializationAdapter, SerializationAdapterImpl>()
+  singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
+  singleBy<DatabaseTransactionRunner, DatabaseTransactionRunnerImpl>()
+  singleBy<RequestManager, RequestManagerImpl>()
 
-  single<UserActionUseCase> { create<UserActionUseCaseImpl>() }
+  singleBy<UserActionUseCase, UserActionUseCaseImpl>()
 
-  single<ClientConnectionUseCase> { create<ClientConnectionUseCaseImpl>() }
+  singleBy<ClientConnectionUseCase, ClientConnectionUseCaseImpl>()
 
-  single<SettingsManager> { create<SettingsManagerImpl>() }
-  single<PlayingTrackCache> { create<PlayingTrackCacheImpl>() }
-  single<ServiceChecker> { create<ServiceCheckerImpl>() }
+  singleBy<SettingsManager, SettingsManagerImpl>()
+  singleBy<PlayingTrackCache, PlayingTrackCacheImpl>()
+  singleBy<ServiceChecker, ServiceCheckerImpl>()
 
-  single<LibrarySyncUseCase> {
-    create<LibrarySyncUseCaseImpl>()
-  }
+  singleBy<LibrarySyncUseCase, LibrarySyncUseCaseImpl>()
 
-  single<RadioRepository> { create<RadioRepositoryImpl>() }
-  single<ClientInformationStore> { create<ClientInformationStoreImpl>() }
-  single<VolumeModifyUseCase> { create<VolumeModifyUseCaseImpl>() }
-  single<OutputApi> { create<OutputApiImpl>() }
+  singleBy<RadioRepository, RadioRepositoryImpl>()
+  singleBy<ClientInformationStore, ClientInformationStoreImpl>()
+  singleBy<VolumeModifyUseCase, VolumeModifyUseCaseImpl>()
+  singleBy<OutputApi, OutputApiImpl>()
 
-  single { create<SyncProgressProvider>() }
+  single<SyncProgressProvider>()
 
-  single<PlayingTrackState> { create<PlayingTrackStateImpl>() }
-  single<PlayerStatusState> { create<PlayerStatusStateImpl>() }
-  single<TrackRatingState> { create<TrackRatingStateImpl>() }
-  single<ConnectionStatusState> {
-    create<ConnectionStatusStateImpl>()
-  }
+  singleBy<PlayingTrackState, PlayingTrackStateImpl>()
+  singleBy<PlayerStatusState, PlayerStatusStateImpl>()
+  singleBy<TrackRatingState, TrackRatingStateImpl>()
+  singleBy<ConnectionStatusState, ConnectionStatusStateImpl>()
 
-  single<LyricsState> { create<LyricsStateImpl>() }
-  single { LyricsAdapter(get("diffExecutor")) }
-  single(name = "diffExecutor") {
+  singleBy<LyricsState, LyricsStateImpl>()
+  single { LyricsAdapter(get(named("diffExecutor"))) }
+  single(named("diffExecutor")) {
     Executors.newSingleThreadExecutor { runnable ->
       Thread(runnable, "diffExecutor")
     } as Executor
   }
 
-  single<MessageQueue> { create<MessageQueueImpl>() }
-  single<MessageHandler> { create<MessageHandlerImpl>() }
-  single<CommandExecutor> { create<CommandExecutorImpl>() }
+  singleBy<MessageQueue, MessageQueueImpl>()
+  singleBy<MessageHandler, MessageHandlerImpl>()
+  singleBy<CommandExecutor, CommandExecutorImpl>()
 
-  single<IClientConnectionManager> { create<ClientConnectionManager>() }
-  single<CommandFactory> { create<CommandFactoryImpl>() }
-  single<UiMessageQueue> { create<UiMessageQueueImpl>() }
-  single<RemoteServiceDiscovery> { create<RemoteServiceDiscoveryImpl>() }
-  single<TrackPositionState> { create<TrackPositionStateImpl>() }
+  singleBy<IClientConnectionManager, ClientConnectionManager>()
+  singleBy<CommandFactory, CommandFactoryImpl>()
+  singleBy<UiMessageQueue, UiMessageQueueImpl>()
+  singleBy<RemoteServiceDiscovery, RemoteServiceDiscoveryImpl>()
+  singleBy<TrackPositionState, TrackPositionStateImpl>()
 
-  single<INotificationManager> { create<SessionNotificationManager>() }
-  single<IRemoteServiceCore> { create<RemoteServiceCore>() }
+  singleBy<INotificationManager, SessionNotificationManager>()
+  singleBy<IRemoteServiceCore, RemoteServiceCore>()
 
   single<CoverModel> { StoredCoverModel }
 
-  single<WidgetUpdater> { create<WidgetUpdaterImpl>() }
+  singleBy<WidgetUpdater, WidgetUpdaterImpl>()
   single<MiniControlFactory> { MiniControlFactoryImpl }
 
   single {
@@ -241,7 +241,7 @@ val appModule = module {
     )
   }
 
-  single { create<ApiBase>() }
+  single<ApiBase>()
 
   single { Room.databaseBuilder(get(), Database::class.java, "cache.db").build() }
   single { get<Database>().genreDao() }
@@ -253,57 +253,57 @@ val appModule = module {
   single { get<Database>().radioStationDao() }
   single { get<Database>().connectionDao() }
 
-  single { create<UpdateNowPlayingTrack>() }
-  single { create<UpdateCover>() }
-  single { create<UpdateRating>() }
-  single { create<UpdatePlayerStatus>() }
-  single { create<UpdatePlayState>() }
-  single { create<UpdateRepeat>() }
-  single { create<UpdateVolume>() }
-  single { create<UpdateMute>() }
-  single { create<UpdateShuffle>() }
-  single { create<UpdateLastFm>() }
-  single { create<UpdateLyrics>() }
-  single { create<UpdateLfmRating>() }
-  single { create<UpdateNowPlayingTrackRemoval>() }
-  single { create<UpdateNowPlayingTrackMoved>() }
-  single { create<UpdatePlaybackPositionCommand>() }
-  single { create<UpdatePluginVersionCommand>() }
-  single { create<ProtocolPingHandle>() }
-  single { create<ProtocolPongHandle>() }
+  single<UpdateNowPlayingTrack>()
+  single<UpdateCover>()
+  single<UpdateRating>()
+  single<UpdatePlayerStatus>()
+  single<UpdatePlayState>()
+  single<UpdateRepeat>()
+  single<UpdateVolume>()
+  single<UpdateMute>()
+  single<UpdateShuffle>()
+  single<UpdateLastFm>()
+  single<UpdateLyrics>()
+  single<UpdateLfmRating>()
+  single<UpdateNowPlayingTrackRemoval>()
+  single<UpdateNowPlayingTrackMoved>()
+  single<UpdatePlaybackPositionCommand>()
+  single<UpdatePluginVersionCommand>()
+  single<ProtocolPingHandle>()
+  single<ProtocolPongHandle>()
 
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
 
-  factory { DefaultSettingsModelImpl as DefaultSettingsModel }
-  factory { ClientInformationModelImpl as ClientInformationModel }
-  factory { create<MoveManagerImpl>() as MoveManager }
+  factoryBy<DefaultSettingsModel, DefaultSettingsModelImpl>()
+  factoryBy<ClientInformationModel, ClientInformationModelImpl>()
+  factoryBy<MoveManager, MoveManagerImpl>()
 
-  factory { create<SocketActivityChecker>() }
-  factory { create<RemoteBroadcastReceiver>() }
-  factory { create<SessionNotificationManager>() }
-  factory { create<RemoteSessionManager>() }
-  factory { create<RemoteVolumeProvider>() }
+  factory<SocketActivityChecker>()
+  factory<RemoteBroadcastReceiver>()
+  factory<SessionNotificationManager>()
+  factory<RemoteSessionManager>()
+  factory<RemoteVolumeProvider>()
 }
 
 val uiModule = module {
-  viewModel { create<ConnectionManagerViewModel>() }
-  viewModel { create<PlayerViewModel>() }
-  viewModel { create<AlbumViewModel>() }
-  viewModel { create<GenreViewModel>() }
-  viewModel { create<ArtistViewModel>() }
-  viewModel { create<TrackViewModel>() }
-  viewModel { create<MiniControlViewModel>() }
-  viewModel { create<LyricsViewModel>() }
-  viewModel { create<RadioViewModel>() }
-  viewModel { create<NowPlayingViewModel>() }
-  viewModel { create<LibraryViewModel>() }
-  viewModel { create<PlaylistViewModel>() }
+  viewModel<ConnectionManagerViewModel>()
+  viewModel<PlayerViewModel>()
+  viewModel<AlbumViewModel>()
+  viewModel<GenreViewModel>()
+  viewModel<ArtistViewModel>()
+  viewModel<TrackViewModel>()
+  viewModel<MiniControlViewModel>()
+  viewModel<LyricsViewModel>()
+  viewModel<RadioViewModel>()
+  viewModel<NowPlayingViewModel>()
+  viewModel<LibraryViewModel>()
+  viewModel<PlaylistViewModel>()
 
-  viewModel { create<VolumeDialogViewModel>() }
+  viewModel<VolumeDialogViewModel>()
 
-  factory { create<RadioAdapter>() }
-  factory { create<GenreAdapter>() }
-  factory { create<ArtistAdapter>() }
-  factory { create<AlbumAdapter>() }
-  factory { create<TrackAdapter>() }
+  factory<RadioAdapter>()
+  factory<GenreAdapter>()
+  factory<ArtistAdapter>()
+  factory<AlbumAdapter>()
+  factory<TrackAdapter>()
 }

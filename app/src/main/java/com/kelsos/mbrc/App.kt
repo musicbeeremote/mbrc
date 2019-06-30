@@ -20,9 +20,10 @@ import com.kelsos.mbrc.di.modules.uiModule
 import com.kelsos.mbrc.utilities.CustomLoggingTree
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-import org.koin.android.ext.android.startKoin
-import org.koin.dsl.module.Module
-import org.koin.dsl.module.module
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import timber.log.Timber
 
 @SuppressLint("Registered")
@@ -55,7 +56,10 @@ open class App : MultiDexApplication() {
       AndroidThreeTen.init(this)
     }
 
-    startKoin(this, modules())
+    startKoin {
+      androidContext(this@App)
+      modules(modules())
+    }
 
     initializeTimber()
     initializeLeakCanary()

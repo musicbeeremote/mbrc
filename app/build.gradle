@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 apply plugin: 'androidx.navigation.safeargs'
-apply plugin: 'io.fabric'
+//apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
@@ -180,7 +180,7 @@ dependencies {
   androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.0.0@apk'
 
   // Test dependencies
-  testImplementation 'org.koin:koin-test:1.0.2'
+  testImplementation 'org.koin:koin-test:2.0.1'
 
   testImplementation "androidx.test:runner:1.1.1"
   testImplementation "androidx.test.ext:junit:1.1.0"
@@ -207,7 +207,7 @@ dependencies {
   implementation 'com.chibatching.kotpref:kotpref:2.8.0'
 
   implementation 'com.google.android.material:material:1.1.0-alpha06'
-  implementation 'androidx.databinding:databinding-runtime:3.5.0-beta01'
+  implementation 'androidx.databinding:databinding-runtime:3.6.0-alpha04'
 
   implementation 'androidx.appcompat:appcompat:1.0.2'
   implementation 'androidx.media:media:1.0.1'
@@ -234,9 +234,11 @@ dependencies {
 
   implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
-  implementation 'org.koin:koin-android:1.0.2'
-  implementation 'org.koin:koin-androidx-scope:1.0.2'
-  implementation 'org.koin:koin-androidx-viewmodel:1.0.2'
+  implementation "org.koin:koin-core-ext:2.0.1"
+  implementation 'org.koin:koin-android:2.0.1'
+  implementation 'org.koin:koin-androidx-ext:2.0.1'
+  implementation 'org.koin:koin-androidx-scope:2.0.1'
+  implementation 'org.koin:koin-androidx-viewmodel:2.0.1'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1"

@@ -4,7 +4,7 @@ import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.rx2.asCoroutineDispatcher
-import org.koin.dsl.module.module
+import org.koin.dsl.module
 
 object TestDispatchers {
   private val trampoline = Schedulers.trampoline()

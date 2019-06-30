@@ -10,8 +10,8 @@ import com.kelsos.mbrc.ui.navigation.library.LibraryViewHolder
 import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
 import com.kelsos.mbrc.ui.navigation.library.PopupActionHandler
 import com.kelsos.mbrc.utilities.nonNullObserver
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class ArtistScreen : LibraryScreen,
   KoinComponent,
