@@ -274,8 +274,8 @@ val appModule = module {
 
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
 
-  factoryBy<DefaultSettingsModel, DefaultSettingsModelImpl>()
-  factoryBy<ClientInformationModel, ClientInformationModelImpl>()
+  factory<DefaultSettingsModel> { DefaultSettingsModelImpl }
+  factory<ClientInformationModel> { ClientInformationModelImpl }
   factoryBy<MoveManager, MoveManagerImpl>()
 
   factory<SocketActivityChecker>()

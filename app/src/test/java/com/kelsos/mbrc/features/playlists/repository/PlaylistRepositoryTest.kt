@@ -27,12 +27,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.robolectric.annotation.Config
 import java.net.SocketTimeoutException
 
@@ -57,11 +57,13 @@ class PlaylistRepositoryTest : KoinTest {
     dao = database.playlistDao()
     apiBase = mockk()
 
-    startKoin(listOf(module {
-      single { dao }
-      single<PlaylistRepository> { create<PlaylistRepositoryImpl>() }
-      single { apiBase }
-    }, testDispatcherModule))
+    startKoin {
+      modules(listOf(module {
+        single { dao }
+        singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
+        single { apiBase }
+      }, testDispatcherModule))
+    }
   }
 
   @After

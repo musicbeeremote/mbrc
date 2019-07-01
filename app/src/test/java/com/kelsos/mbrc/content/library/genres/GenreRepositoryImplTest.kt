@@ -22,12 +22,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -49,7 +49,9 @@ class GenreRepositoryImplTest : KoinTest {
       .allowMainThreadQueries()
       .build()
     genreDao = db.genreDao()
-    startKoin(listOf(testModule, testDispatcherModule))
+    startKoin {
+      modules(listOf(testModule, testDispatcherModule))
+    }
   }
 
   @After
@@ -71,7 +73,7 @@ class GenreRepositoryImplTest : KoinTest {
   }
 
   val testModule = module {
-    single<GenreRepository> { create<GenreRepositoryImpl>() }
+    singleBy<GenreRepository, GenreRepositoryImpl>()
 
     val mockApi = mockk<ApiBase>()
 

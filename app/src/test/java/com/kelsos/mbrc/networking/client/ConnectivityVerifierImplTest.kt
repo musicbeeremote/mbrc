@@ -206,7 +206,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     single { Moshi.Builder().build() }
     single { mockk<ConnectionRepository>() }
     singleBy<ClientInformationStore, ClientInformationStoreImpl>()
-    singleBy<ClientInformationModel, ClientInformationModelImpl>()
+    single<ClientInformationModel> { ClientInformationModelImpl }
     singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
     singleBy<SerializationAdapter, SerializationAdapterImpl>()
     singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
