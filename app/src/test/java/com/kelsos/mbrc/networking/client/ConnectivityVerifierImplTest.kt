@@ -23,12 +23,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.robolectric.annotation.Config
 import timber.log.Timber
 import java.io.BufferedReader
@@ -54,7 +54,9 @@ class ConnectivityVerifierImplTest : KoinTest {
 
   @Before
   fun setUp() {
-    startKoin(listOf(testModule))
+    startKoin {
+      modules(listOf(testModule))
+    }
   }
 
   @After
@@ -203,11 +205,11 @@ class ConnectivityVerifierImplTest : KoinTest {
   private val testModule = module {
     single { Moshi.Builder().build() }
     single { mockk<ConnectionRepository>() }
-    single<ClientInformationStore> { create<ClientInformationStoreImpl>() }
+    singleBy<ClientInformationStore, ClientInformationStoreImpl>()
     single<ClientInformationModel> { ClientInformationModelImpl }
-    single<ConnectivityVerifier> { create<ConnectivityVerifierImpl>() }
-    single<SerializationAdapter> { create<SerializationAdapterImpl>() }
-    single<DeserializationAdapter> { create<DeserializationAdapterImpl>() }
-    single<RequestManager> { create<RequestManagerImpl>() }
+    singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
+    singleBy<SerializationAdapter, SerializationAdapterImpl>()
+    singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
+    singleBy<RequestManager, RequestManagerImpl>()
   }
 }

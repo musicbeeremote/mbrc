@@ -23,12 +23,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.robolectric.annotation.Config
 import java.util.ArrayList
 
@@ -52,7 +52,9 @@ class ConnectionRepositoryTest : KoinTest {
       .build()
     connectionDao = db.connectionDao()
 
-    startKoin(listOf(getTestModule(), testDispatcherModule))
+    startKoin {
+      modules(listOf(getTestModule(), testDispatcherModule))
+    }
     Kotpref.init(context)
   }
 
@@ -354,13 +356,13 @@ class ConnectionRepositoryTest : KoinTest {
 
     single { mockk<RemoteServiceDiscovery>() }
 
-    single<ConnectionRepository> { create<ConnectionRepositoryImpl>() }
+    singleBy<ConnectionRepository, ConnectionRepositoryImpl>()
     single {
       val resources = mockk<Resources>()
       every { resources.getString(any()) } returns "preferences_key"
       resources
     }
     single { connectionDao }
-    factory { DefaultSettingsModelImpl as DefaultSettingsModel }
+    factory<DefaultSettingsModel> { DefaultSettingsModelImpl }
   }
 }

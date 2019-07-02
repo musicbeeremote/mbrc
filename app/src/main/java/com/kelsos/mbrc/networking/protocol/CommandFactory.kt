@@ -19,8 +19,8 @@ import com.kelsos.mbrc.protocol.UpdateRating
 import com.kelsos.mbrc.protocol.UpdateRepeat
 import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
+import org.koin.core.KoinComponent
+import org.koin.core.get
 
 class CommandFactoryImpl : CommandFactory, KoinComponent {
 

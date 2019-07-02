@@ -20,12 +20,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -41,7 +41,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   private val syncMetrics: SyncMetrics by inject()
 
   private val testModule = module {
-    single<LibrarySyncUseCase> { create<LibrarySyncUseCaseImpl>() }
+    singleBy<LibrarySyncUseCase, LibrarySyncUseCaseImpl>()
     single { mockk<GenreRepository>() }
     single { mockk<ArtistRepository>() }
     single { mockk<AlbumRepository>() }
@@ -52,7 +52,9 @@ class LibrarySyncUseCaseImplTest : KoinTest {
 
   @Before
   fun setUp() {
-    startKoin(listOf(testModule, testDispatcherModule))
+    startKoin {
+      modules(listOf(testModule, testDispatcherModule))
+    }
     every { syncMetrics.librarySyncComplete(any()) } answers { }
     every { syncMetrics.librarySyncStarted() } answers { }
     every { syncMetrics.librarySyncFailed() } answers { }

@@ -43,10 +43,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.dsl.module.module
-import org.koin.experimental.builder.create
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.experimental.builder.single
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.LooperMode
 import org.robolectric.annotation.TextLayoutMode
@@ -71,11 +71,13 @@ class NowPlayingFragmentTest {
     every { miniControlFactory.attach(any()) } just Runs
     every { viewModel.trackState } answers { state }
     every { state.observe(any(), any()) } just Runs
-    startKoin(listOf(module {
-      single { create<NowPlayingAdapter>() }
-      single { viewModel }
-      single { miniControlFactory }
-    }))
+    startKoin {
+      modules(listOf(module {
+        single<NowPlayingAdapter>()
+        single { viewModel }
+        single { miniControlFactory }
+      }))
+    }
   }
 
   @After
