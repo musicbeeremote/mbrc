@@ -284,11 +284,11 @@ dependencies {
 
   debugImplementation 'com.facebook.stetho:stetho:1.5.1'
 
-  playImplementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
+  playImplementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
     transitive = true
   }
-  playImplementation 'com.google.firebase:firebase-perf:17.0.0'
-  playImplementation 'com.google.firebase:firebase-core:16.0.9'
+  playImplementation 'com.google.firebase:firebase-perf:18.0.1'
+  playImplementation 'com.google.firebase:firebase-core:17.0.0'
 }
 
 allprojects {
