@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.minicontrol
+package com.kelsos.mbrc.features.minicontrol
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -28,27 +28,32 @@ class MiniControlFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    viewModel.playerStatus.observe(this) { status ->
+    val playPause = binding.miniControlPlayPause
+    viewModel.playerStatus.observe(viewLifecycleOwner) { status ->
       when (status.state) {
-        PlayerState.PLAYING -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_pause)
-        else -> binding.mcPlayPause.setImageResource(R.drawable.ic_action_play)
+        PlayerState.PLAYING -> playPause.setImageResource(R.drawable.ic_action_pause)
+        else -> playPause.setImageResource(R.drawable.ic_action_play)
       }
     }
 
-    viewModel.playingTrack.observe(this) { track ->
-      binding.mcTrackArtist.text = track.artist
-      binding.mcTrackTitle.text = track.title
+    viewModel.playingTrack.observe(viewLifecycleOwner) { track ->
+      binding.miniControlArtist.text = getString(
+        R.string.mini_control__artist,
+        track.artist,
+        track.album
+      )
+      binding.miniControlTitle.text = track.title
       updateCover(track.coverUrl)
     }
 
-    viewModel.trackPosition.observe(this) { position ->
+    viewModel.trackPosition.observe(viewLifecycleOwner) { position ->
       binding.miniControlProgress.max = position.total.toInt()
       binding.miniControlProgress.progress = position.current.toInt()
     }
     binding.miniControl.setOnClickListener { onControlClick() }
-    binding.mcNextTrack.setOnClickListener { viewModel.next() }
-    binding.mcPlayPause.setOnClickListener { viewModel.playPause() }
-    binding.mcPrevTrack.setOnClickListener { viewModel.previous() }
+    binding.miniControlPlayNext.setOnClickListener { viewModel.next() }
+    playPause.setOnClickListener { viewModel.playPause() }
+    binding.miniControlPlayPrevious.setOnClickListener { viewModel.previous() }
   }
 
   override fun onCreateView(
@@ -76,9 +81,9 @@ class MiniControlFragment : Fragment() {
         .config(Bitmap.Config.RGB_565)
         .resize(dimens, dimens)
         .centerCrop()
-        .into(binding.mcTrackCover)
+        .into(binding.miniControlCover)
     } else {
-      binding.mcTrackCover.setImageResource(R.drawable.ic_image_no_cover)
+      binding.miniControlCover.setImageResource(R.drawable.ic_image_no_cover)
     }
   }
 }

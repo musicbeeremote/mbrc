@@ -9,45 +9,41 @@
     android:background="@color/background_dark">
 
   <ImageButton
-      android:id="@+id/mc_prev_track"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
+      android:id="@+id/mini_control__play_previous"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
       android:layout_marginEnd="8dp"
-      android:layout_marginBottom="8dp"
-      android:background="?attr/selectableItemBackground"
+      android:background="?attr/selectableItemBackgroundBorderless"
       android:baselineAlignBottom="false"
       android:contentDescription="@string/main_button_previous_description"
       android:src="@drawable/ic_skip_previous_black_24dp"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/mc_play_pause"
+      app:layout_constraintEnd_toStartOf="@+id/mini_control__play_pause"
       app:layout_constraintTop_toTopOf="parent"
       app:tint="@color/white" />
 
   <ImageButton
-      android:id="@+id/mc_play_pause"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:id="@+id/mini_control__play_pause"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
       android:layout_marginTop="8dp"
       android:layout_marginEnd="8dp"
       android:layout_marginBottom="8dp"
-      android:background="?attr/selectableItemBackground"
+      android:background="?attr/selectableItemBackgroundBorderless"
       android:baselineAlignBottom="false"
       android:contentDescription="@string/main_button_play_pause_description"
       android:src="@drawable/ic_play_arrow_black_36dp"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/mc_next_track"
+      app:layout_constraintEnd_toStartOf="@+id/mini_control__play_next"
       app:layout_constraintTop_toTopOf="parent"
       app:tint="@color/white" />
 
   <ImageButton
-      android:id="@+id/mc_next_track"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
+      android:id="@+id/mini_control__play_next"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
       android:layout_marginEnd="8dp"
-      android:layout_marginBottom="8dp"
-      android:background="?attr/selectableItemBackground"
+      android:background="?attr/selectableItemBackgroundBorderless"
       android:baselineAlignBottom="false"
       android:contentDescription="@string/main_button_next_description"
       android:src="@drawable/ic_skip_next_black_24dp"
@@ -57,7 +53,7 @@
       app:tint="@color/white" />
 
   <ImageView
-      android:id="@+id/mc_track_cover"
+      android:id="@+id/mini_control__cover"
       android:layout_width="@dimen/mini_control_height"
       android:layout_height="wrap_content"
       android:contentDescription="@string/description_album_cover"
@@ -81,7 +77,7 @@
       app:layout_constraintTop_toTopOf="parent" />
 
   <TextView
-      android:id="@+id/mc_track_artist"
+      android:id="@+id/mini_control__artist"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
@@ -93,14 +89,14 @@
       android:textColor="@color/secondary_text"
       android:textSize="@dimen/mini_control_subtitle_text_size"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/mc_prev_track"
-      app:layout_constraintStart_toEndOf="@+id/mc_track_cover"
-      app:layout_constraintTop_toBottomOf="@+id/mc_track_title"
+      app:layout_constraintEnd_toStartOf="@+id/mini_control__play_previous"
+      app:layout_constraintStart_toEndOf="@+id/mini_control__cover"
+      app:layout_constraintTop_toBottomOf="@+id/mini_control__title"
       tools:ignore="UnusedAttribute"
       tools:text="Parov Stelar" />
 
   <TextView
-      android:id="@+id/mc_track_title"
+      android:id="@+id/mini_control__title"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
@@ -111,9 +107,9 @@
       android:maxLines="1"
       android:textColor="@color/primary_text"
       android:textSize="@dimen/mini_control_title_text_size"
-      app:layout_constraintBottom_toTopOf="@id/mc_track_artist"
-      app:layout_constraintEnd_toStartOf="@+id/mc_prev_track"
-      app:layout_constraintStart_toEndOf="@+id/mc_track_cover"
+      app:layout_constraintBottom_toTopOf="@id/mini_control__artist"
+      app:layout_constraintEnd_toStartOf="@+id/mini_control__play_previous"
+      app:layout_constraintStart_toEndOf="@+id/mini_control__cover"
       app:layout_constraintTop_toBottomOf="@id/mini_control__progress"
       tools:ignore="MissingPrefix,UnusedAttribute"
       tools:text="All night" />

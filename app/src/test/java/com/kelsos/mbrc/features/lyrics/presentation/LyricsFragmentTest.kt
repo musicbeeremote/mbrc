@@ -9,7 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
-import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
+import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.utils.MainThreadExecutor
 import com.kelsos.mbrc.utils.doesNotExist
 import com.kelsos.mbrc.utils.isGone

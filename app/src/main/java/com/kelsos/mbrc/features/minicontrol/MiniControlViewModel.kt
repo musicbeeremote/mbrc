@@ -1,14 +1,13 @@
-package com.kelsos.mbrc.ui.minicontrol
+package com.kelsos.mbrc.features.minicontrol
 
 import androidx.lifecycle.ViewModel
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
-import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
-import com.kelsos.mbrc.networking.protocol.Protocol.PlayerNext
-import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPlayPause
-import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPrevious
+import com.kelsos.mbrc.networking.client.next
+import com.kelsos.mbrc.networking.client.playPause
+import com.kelsos.mbrc.networking.client.previous
 
 class MiniControlViewModel(
   val playingTrack: PlayingTrackState,
@@ -18,14 +17,14 @@ class MiniControlViewModel(
 ) : ViewModel() {
 
   fun next() {
-    userActionUseCase.perform(UserAction.create(PlayerNext))
+    userActionUseCase.next()
   }
 
   fun previous() {
-    userActionUseCase.perform(UserAction.create(PlayerPrevious))
+    userActionUseCase.previous()
   }
 
   fun playPause() {
-    userActionUseCase.perform(UserAction.create(PlayerPlayPause))
+    userActionUseCase.playPause()
   }
 }
