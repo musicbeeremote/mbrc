@@ -2,7 +2,6 @@ package com.kelsos.mbrc.features.minicontrol
 
 import androidx.fragment.app.FragmentManager
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.ui.minicontrol.MiniControlFragment
 
 object MiniControlFactoryImpl : MiniControlFactory {
   override fun attach(fragmentManager: FragmentManager) {

@@ -122,7 +122,7 @@ import com.kelsos.mbrc.protocol.UpdateRepeat
 import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
-import com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel
+import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.ui.navigation.library.LibraryViewModel
 import com.kelsos.mbrc.ui.navigation.library.SyncProgressProvider
 import com.kelsos.mbrc.ui.navigation.library.albums.AlbumAdapter

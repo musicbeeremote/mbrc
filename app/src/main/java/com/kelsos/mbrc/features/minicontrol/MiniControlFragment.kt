@@ -1,10 +1,12 @@
-package com.kelsos.mbrc.ui.minicontrol
+package com.kelsos.mbrc.features.minicontrol
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentMiniControlBinding
 import org.koin.android.ext.android.inject
 
@@ -15,6 +17,7 @@ class MiniControlFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    binding.viewModel = viewModel
 
     viewModel.playerStatus.observe(this) {
       binding.status = it
@@ -34,8 +37,7 @@ class MiniControlFragment : Fragment() {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return FragmentMiniControlBinding.inflate(inflater, container, false).also {
-      binding = it
-    }.root
+    binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mini_control, container, false)
+    return binding.root
   }
 }

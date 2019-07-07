@@ -16,7 +16,7 @@
 
     <variable
         name="viewModel"
-        type="com.kelsos.mbrc.ui.minicontrol.MiniControlViewModel" />
+        type="com.kelsos.mbrc.features.minicontrol.MiniControlViewModel" />
 
     <variable
         name="position"
@@ -34,7 +34,7 @@
         android:id="@+id/mini_control__progress"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="3dp"
+        android:layout_height="2dp"
         android:max="@{position.total}"
         android:progress="@{position.current}"
         android:progressTint="@color/accent"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/mc_track_cover"
+        android:id="@+id/mini_control__cover"
         android:layout_width="@dimen/mini_control_height"
         android:layout_height="wrap_content"
         android:contentDescription="@string/description_album_cover"
@@ -56,7 +56,7 @@
         app:layout_constraintTop_toBottomOf="@id/mini_control__progress" />
 
     <TextView
-        android:id="@+id/mc_track_title"
+        android:id="@+id/mini_control__title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -69,15 +69,15 @@
         android:textColor="@color/primary_text"
         android:textSize="@dimen/mini_control_title_text_size"
         app:fontFamily="@font/roboto_medium"
-        app:layout_constraintBottom_toTopOf="@id/mc_track_artist"
-        app:layout_constraintEnd_toStartOf="@+id/mc_prev_track"
-        app:layout_constraintStart_toEndOf="@+id/mc_track_cover"
+        app:layout_constraintBottom_toTopOf="@id/mini_control__artist"
+        app:layout_constraintEnd_toStartOf="@+id/mini_control__play_previous"
+        app:layout_constraintStart_toEndOf="@+id/mini_control__cover"
         app:layout_constraintTop_toBottomOf="@id/mini_control__progress"
         tools:ignore="MissingPrefix,UnusedAttribute"
         tools:text="All night" />
 
     <TextView
-        android:id="@+id/mc_track_artist"
+        android:id="@+id/mini_control__artist"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -90,55 +90,54 @@
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/mini_control_subtitle_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/mc_prev_track"
-        app:layout_constraintStart_toEndOf="@+id/mc_track_cover"
-        app:layout_constraintTop_toBottomOf="@+id/mc_track_title"
+        app:layout_constraintEnd_toStartOf="@+id/mini_control__play_previous"
+        app:layout_constraintStart_toEndOf="@+id/mini_control__cover"
+        app:layout_constraintTop_toBottomOf="@+id/mini_control__title"
         tools:ignore="UnusedAttribute"
         tools:text="Parov Stelar" />
 
     <ImageButton
-        android:id="@+id/mc_prev_track"
+        android:id="@+id/mini_control__play_previous"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_previous_description"
+        android:onClick="@{() -> viewModel.previous()}"
         android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/mc_play_pause"
+        app:layout_constraintEnd_toStartOf="@+id/mini_control__play_pause"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_skip_previous_black_24dp" />
 
     <ImageButton
-        android:id="@+id/mc_play_pause"
+        android:id="@+id/mini_control__play_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_play_pause_description"
+        android:onClick="@{() -> viewModel.playPause()}"
         android:src="@{status.isPlaying() ? @drawable/ic_action_pause : @drawable/ic_action_play}"
         android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/mc_next_track"
+        app:layout_constraintEnd_toStartOf="@+id/mini_control__play_next"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_play_arrow_black_36dp" />
 
     <ImageButton
-        android:id="@+id/mc_next_track"
+        android:id="@+id/mini_control__play_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/main_button_next_description"
+        android:onClick="@{() -> viewModel.next()}"
         android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
