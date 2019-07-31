@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.common.state
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
@@ -32,5 +33,9 @@ abstract class BaseState<T> : State<T> where T : Any {
 
   override fun removeObservers(owner: LifecycleOwner) {
     liveData.removeObservers(owner)
+  }
+
+  override fun liveData(): LiveData<T> {
+    return liveData
   }
 }
