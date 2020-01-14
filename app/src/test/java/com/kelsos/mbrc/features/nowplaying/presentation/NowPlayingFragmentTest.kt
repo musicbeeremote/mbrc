@@ -20,7 +20,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
@@ -47,12 +46,10 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.experimental.builder.single
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.LooperMode
 import org.robolectric.annotation.TextLayoutMode
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 @TextLayoutMode(TextLayoutMode.Mode.REALISTIC)
 @LooperMode(LooperMode.Mode.PAUSED)
 class NowPlayingFragmentTest {

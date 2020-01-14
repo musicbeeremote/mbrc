@@ -3,7 +3,6 @@ package com.kelsos.mbrc.protocol
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.Repeat
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
@@ -18,10 +17,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class UpdatePlayerStatusTest {
   @get:Rule
   val rule = InstantTaskExecutorRule()

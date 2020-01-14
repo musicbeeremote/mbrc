@@ -5,7 +5,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
@@ -32,11 +31,9 @@ import org.koin.dsl.module
 import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class NowPlayingRepositoryTest : KoinTest {
   private lateinit var apiBase: ApiBase
   private lateinit var database: Database

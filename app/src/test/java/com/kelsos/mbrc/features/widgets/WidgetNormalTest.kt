@@ -14,7 +14,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
@@ -22,12 +21,9 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowAppWidgetManager
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
-
 class WidgetNormalTest {
   private lateinit var appWidgetManager: AppWidgetManager
   private lateinit var shadowAppWidgetManager: ShadowAppWidgetManager

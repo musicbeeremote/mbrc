@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.minicontrol
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.common.state.BaseState
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
@@ -20,7 +21,9 @@ import io.mockk.verify
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class MiniControlViewModelTest {
 
   val positionState: TrackPositionState =
