@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.content.sync
 
 import arrow.core.Try
-import com.kelsos.mbrc.content.library.albums.AlbumRepository
-import com.kelsos.mbrc.content.library.artists.ArtistRepository
-import com.kelsos.mbrc.content.library.genres.GenreRepository
-import com.kelsos.mbrc.content.library.tracks.TrackRepository
 import com.kelsos.mbrc.covers.CoverCache
+import com.kelsos.mbrc.features.library.albums.AlbumRepository
+import com.kelsos.mbrc.features.library.artists.ArtistRepository
+import com.kelsos.mbrc.features.library.genres.GenreRepository
+import com.kelsos.mbrc.features.library.tracks.TrackRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.metrics.SyncedData

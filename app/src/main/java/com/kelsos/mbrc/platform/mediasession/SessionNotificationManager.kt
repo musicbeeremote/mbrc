@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat.Action
 import arrow.core.Option
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.tracks.PlayingTrack
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.platform.mediasession
 
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.tracks.PlayingTrack
 
 interface INotificationManager {
 

@@ -42,7 +42,7 @@
       tools:layout="@layout/fragment_nowplaying" />
   <fragment
       android:id="@+id/nav_library"
-      android:name="com.kelsos.mbrc.ui.navigation.library.LibraryFragment"
+      android:name="com.kelsos.mbrc.features.library.LibraryFragment"
       android:label="Library"
       tools:layout="@layout/fragment_library">
     <action
@@ -101,7 +101,7 @@
 
   <fragment
       android:id="@+id/album_tracks_fragment"
-      android:name="com.kelsos.mbrc.ui.navigation.library.albumtracks.AlbumTracksFragment"
+      android:name="com.kelsos.mbrc.features.library.albumtracks.AlbumTracksFragment"
       android:label="AlbumTracksFragment"
       tools:layout="@layout/fragment_album_tracks">
     <argument
@@ -113,7 +113,7 @@
   </fragment>
   <fragment
       android:id="@+id/genre_artists_fragment"
-      android:name="com.kelsos.mbrc.ui.navigation.library.genreartists.GenreArtistsFragment"
+      android:name="com.kelsos.mbrc.features.library.genreartists.GenreArtistsFragment"
       android:label="GenreArtistsActivity"
       tools:layout="@layout/fragment_genre_artists">
     <action
@@ -125,7 +125,7 @@
   </fragment>
   <fragment
       android:id="@+id/artist_albums_fragment"
-      android:name="com.kelsos.mbrc.ui.navigation.library.artistalbums.ArtistAlbumsFragment"
+      android:name="com.kelsos.mbrc.features.library.artistalbums.ArtistAlbumsFragment"
       android:label="ArtistAlbumsFragment"
       tools:layout="@layout/fragment_artist_albums">
     <action

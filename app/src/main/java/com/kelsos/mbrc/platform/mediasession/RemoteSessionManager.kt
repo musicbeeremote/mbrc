@@ -10,8 +10,8 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.events.UserAction
+import com.kelsos.mbrc.features.library.tracks.PlayingTrack
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.protocol.Protocol

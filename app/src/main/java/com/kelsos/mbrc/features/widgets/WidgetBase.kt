@@ -13,7 +13,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.tracks.PlayingTrack
 import com.kelsos.mbrc.ui.navigation.player.PlayerFragment
 import com.squareup.picasso.Picasso
 import java.io.File

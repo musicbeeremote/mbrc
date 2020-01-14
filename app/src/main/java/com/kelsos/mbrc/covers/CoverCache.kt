@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.covers
 
 import android.app.Application
-import com.kelsos.mbrc.content.library.albums.AlbumRepository
+import com.kelsos.mbrc.features.library.albums.AlbumRepository
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
