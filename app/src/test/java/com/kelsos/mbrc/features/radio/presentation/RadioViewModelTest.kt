@@ -3,11 +3,10 @@ package com.kelsos.mbrc.features.radio.presentation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Try
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
+import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.features.queue.LibraryPopup
 import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.features.queue.QueueResponse
-import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
@@ -24,11 +23,9 @@ import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class RadioViewModelTest {
 
   private lateinit var repository: RadioRepository

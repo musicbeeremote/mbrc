@@ -5,7 +5,9 @@ import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.withContext
-import okio.Okio
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.File
 import java.nio.charset.Charset
 
@@ -23,7 +25,7 @@ class PlayingTrackCacheImpl(
       if (infoFile.exists()) {
         infoFile.delete()
       }
-      adapter.toJson(Okio.buffer(Okio.sink(infoFile)), track)
+      adapter.toJson(infoFile.sink().buffer(), track)
     }
   }
 
@@ -31,7 +33,7 @@ class PlayingTrackCacheImpl(
     return withContext(dispatchers.disk) {
       val infoFile = File(appContext.filesDir, TRACK_INFO)
       return@withContext if (infoFile.exists()) {
-        adapter.fromJson(Okio.buffer(Okio.source(infoFile)))
+        adapter.fromJson(infoFile.source().buffer())
       } else {
         null
       }
@@ -45,7 +47,7 @@ class PlayingTrackCacheImpl(
         coverFile.delete()
       }
 
-      Okio.buffer(Okio.sink(coverFile)).use {
+      coverFile.sink().buffer().use {
         it.write(coverFile.readBytes())
         it.emit()
         it.close()
@@ -59,7 +61,7 @@ class PlayingTrackCacheImpl(
       return@withContext if (!coverFile.exists()) {
         null
       } else {
-        Okio.buffer(Okio.source(coverFile)).use {
+        coverFile.source().buffer().use {
           return@use it.readString(Charset.forName("UTF-8"))
         }
       }

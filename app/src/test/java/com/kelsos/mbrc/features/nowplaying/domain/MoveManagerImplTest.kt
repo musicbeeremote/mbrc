@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.features.nowplaying.domain
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.kelsos.mbrc.TestApplication
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -11,11 +10,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class MoveManagerImplTest {
 
   private lateinit var onCommit: (Int, Int) -> Unit

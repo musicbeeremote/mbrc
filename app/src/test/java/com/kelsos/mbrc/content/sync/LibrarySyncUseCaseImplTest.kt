@@ -3,7 +3,6 @@ package com.kelsos.mbrc.content.sync
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Try
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.library.albums.AlbumRepository
 import com.kelsos.mbrc.content.library.artists.ArtistRepository
 import com.kelsos.mbrc.content.library.genres.GenreRepository
@@ -26,10 +25,8 @@ import org.koin.dsl.module
 import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class LibrarySyncUseCaseImplTest : KoinTest {
 
   private val genreRepository: GenreRepository by inject()

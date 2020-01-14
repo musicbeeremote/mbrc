@@ -7,7 +7,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
@@ -28,14 +27,8 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
-import org.robolectric.annotation.Config
-import org.robolectric.annotation.LooperMode
-import org.robolectric.annotation.TextLayoutMode
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
-@TextLayoutMode(TextLayoutMode.Mode.REALISTIC)
-@LooperMode(LooperMode.Mode.PAUSED)
 class LyricsFragmentTest : KoinTest {
 
   @get:Rule

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Application
 import android.app.NotificationManager
-import android.content.Context
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
@@ -18,8 +17,6 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.di.modules.appModule
 import com.kelsos.mbrc.di.modules.uiModule
 import com.kelsos.mbrc.utilities.CustomLoggingTree
-import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -28,8 +25,6 @@ import timber.log.Timber
 
 @SuppressLint("Registered")
 open class App : MultiDexApplication() {
-
-  private var refWatcher: RefWatcher? = null
 
   @CallSuper
   override fun onCreate() {
@@ -62,7 +57,7 @@ open class App : MultiDexApplication() {
     }
 
     initializeTimber()
-    initializeLeakCanary()
+
     ANRWatchDog()
       .setANRListener { onAnr(it) }
       .setIgnoreDebugger(true)
@@ -75,32 +70,10 @@ open class App : MultiDexApplication() {
     Timber.v(anrError, "ANR error")
   }
 
-  private fun initializeLeakCanary() {
-    if (testMode()) {
-      return
-    }
-
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      // You should not init your app in this process.
-      return
-    }
-    refWatcher = installLeakCanary()
-  }
-
   private fun initializeTimber() {
     if (BuildConfig.DEBUG) {
       Timber.plant(CustomLoggingTree.create())
     }
-  }
-
-  internal open fun installLeakCanary(): RefWatcher {
-    return RefWatcher.DISABLED
-  }
-
-  fun getRefWatcher(context: Context): RefWatcher? {
-    val application = context.applicationContext as App
-    return application.refWatcher
   }
 
   internal open fun testMode(): Boolean = false

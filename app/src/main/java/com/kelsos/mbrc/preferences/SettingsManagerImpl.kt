@@ -24,10 +24,12 @@ class SettingsManagerImpl(
 
   init {
     setupManager()
-    displayAlbumArtist.postValue(preferences.getBoolean(
-      getKey(R.string.settings_key_album_artists_only),
-      false
-    ))
+    displayAlbumArtist.postValue(
+      preferences.getBoolean(
+        getKey(R.string.settings_key_album_artists_only),
+        false
+      )
+    )
   }
 
   private fun setupManager() {
@@ -59,8 +61,9 @@ class SettingsManagerImpl(
 
   @CallAction
   override fun getCallAction(): String = preferences.getString(
-    getKey(R.string.settings_key_incoming_call_action), NONE
-  )
+    getKey(R.string.settings_key_incoming_call_action),
+    NONE
+  ) ?: NONE
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)

@@ -5,7 +5,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.radio.RadioStationDto
 import com.kelsos.mbrc.features.radio.data.RadioStationDao
@@ -31,11 +30,9 @@ import org.koin.dsl.module
 import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import org.robolectric.annotation.Config
 import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class RadioRepositoryTest : KoinTest {
 
   private val repository: RadioRepository by inject()

@@ -10,16 +10,13 @@ import android.os.Bundle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class WidgetUpdaterTest {
 
   private lateinit var widgetUpdater: WidgetUpdater

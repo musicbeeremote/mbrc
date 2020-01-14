@@ -3,7 +3,6 @@ package com.kelsos.mbrc.protocol
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingStateImpl
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -12,10 +11,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class UpdateLfmRatingTest {
 
   @get:Rule

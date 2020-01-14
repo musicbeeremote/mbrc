@@ -3,7 +3,6 @@ package com.kelsos.mbrc.ui.dialogs
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.utils.TestDispatchers
@@ -15,13 +14,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
-@Config(application = TestApplication::class)
 class OutputSelectionViewModelTest {
 
   @get:Rule
