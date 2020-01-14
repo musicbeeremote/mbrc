@@ -3,8 +3,8 @@ package com.kelsos.mbrc.ui
 import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.kelsos.mbrc.ui.navigation.library.MenuItemSelectedListener
-import com.kelsos.mbrc.ui.navigation.library.OnFastScrollListener
+import com.kelsos.mbrc.features.library.MenuItemSelectedListener
+import com.kelsos.mbrc.features.library.OnFastScrollListener
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred

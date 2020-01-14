@@ -14,7 +14,7 @@ import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.TrackRating
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.tracks.PlayingTrack
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
 import org.koin.android.ext.android.inject
 
