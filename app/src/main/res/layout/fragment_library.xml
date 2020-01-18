@@ -20,19 +20,27 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/pager_tab_strip" />
 
+  <androidx.fragment.app.FragmentContainerView
+      android:id="@+id/library_control"
+      android:name="com.kelsos.mbrc.features.minicontrol.MiniControlFragment"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/mini_control_height"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent" />
+
   <androidx.viewpager2.widget.ViewPager2
       android:id="@+id/search_pager"
       android:layout_width="0dp"
       android:layout_height="0dp"
-      android:layout_marginBottom="@dimen/mini_control_height"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      android:orientation="horizontal"
       app:layout_constraintBottom_toTopOf="@id/library_control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/sync_progress" />
+      app:layout_constraintTop_toBottomOf="@id/library_container__progress" />
 
   <com.google.android.material.progressindicator.LinearProgressIndicator
-      android:id="@+id/sync_progress"
+      android:id="@+id/library_container__progress"
       style="@style/Widget.MaterialComponents.LinearProgressIndicator"
       android:layout_width="match_parent"
       android:layout_height="2dp"
@@ -54,14 +62,5 @@
       app:tabTextColor="@color/secondary_text_material_light">
 
   </com.google.android.material.tabs.TabLayout>
-
-  <fragment
-      android:id="@+id/library_control"
-      android:name="com.kelsos.mbrc.features.minicontrol.MiniControlFragment"
-      android:layout_width="match_parent"
-      android:layout_height="@dimen/mini_control_height"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

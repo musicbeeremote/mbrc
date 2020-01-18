@@ -5,7 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.features.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -85,7 +85,9 @@ class UpdateNowPlayingTrackTest {
   @Test
   fun `it should not try to update the widget if no data exist`() {
     every { state.set(any<PlayingTrack.() -> PlayingTrack>()) } answers {
-      firstArg<PlayingTrack.() -> PlayingTrack>().invoke(PlayingTrack())
+      firstArg<PlayingTrack.() -> PlayingTrack>().invoke(
+        PlayingTrack()
+      )
     }
     every { widgetUpdater.updatePlayingTrack(any()) } just Runs
     every { state.hint(PlayingTrack::class).getValue() } answers { null }

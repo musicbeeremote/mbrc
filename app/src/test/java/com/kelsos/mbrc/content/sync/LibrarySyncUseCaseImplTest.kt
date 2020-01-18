@@ -3,11 +3,11 @@ package com.kelsos.mbrc.content.sync
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Try
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.covers.CoverCache
-import com.kelsos.mbrc.features.library.albums.AlbumRepository
-import com.kelsos.mbrc.features.library.artists.ArtistRepository
-import com.kelsos.mbrc.features.library.genres.GenreRepository
-import com.kelsos.mbrc.features.library.tracks.TrackRepository
+import com.kelsos.mbrc.features.library.repositories.AlbumRepository
+import com.kelsos.mbrc.features.library.repositories.ArtistRepository
+import com.kelsos.mbrc.features.library.repositories.CoverCache
+import com.kelsos.mbrc.features.library.repositories.GenreRepository
+import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.utils.testDispatcher

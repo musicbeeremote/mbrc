@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.helper
 
-import com.kelsos.mbrc.features.library.tracks.Track
-import com.kelsos.mbrc.features.library.tracks.TrackRepository
+import com.kelsos.mbrc.features.library.data.Track
+import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.features.queue.LibraryPopup
 import com.kelsos.mbrc.features.queue.QueuePayload

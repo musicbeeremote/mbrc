@@ -42,7 +42,7 @@
       tools:layout="@layout/fragment_nowplaying" />
   <fragment
       android:id="@+id/nav_library"
-      android:name="com.kelsos.mbrc.features.library.LibraryFragment"
+      android:name="com.kelsos.mbrc.features.library.presentation.LibraryFragment"
       android:label="Library"
       tools:layout="@layout/fragment_library">
     <action

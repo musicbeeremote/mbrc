@@ -2,7 +2,7 @@ package com.kelsos.mbrc.content.activestatus
 
 import android.app.Application
 import androidx.datastore.core.DataStore
-import com.kelsos.mbrc.features.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.store.Store
 import com.kelsos.mbrc.store.Track
 import com.kelsos.mbrc.store.dataStore
