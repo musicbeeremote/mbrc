@@ -20,16 +20,25 @@
 
   </com.google.android.material.tabs.TabLayout>
 
-  <androidx.recyclerview.widget.RecyclerView
+  <ProgressBar
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      android:id="@+id/library_container__progress"
+      app:layout_constraintTop_toBottomOf="@id/pager_tab_strip"
+      android:layout_width="0dp"
+      android:layout_height="4dp" />
+
+  <androidx.viewpager2.widget.ViewPager2
       android:id="@+id/search_pager"
       android:layout_width="0dp"
       android:layout_height="0dp"
+      android:orientation="horizontal"
       app:layout_constraintBottom_toTopOf="@id/mini_control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/pager_tab_strip" />
+      app:layout_constraintTop_toBottomOf="@id/library_container__progress" />
 
-  <fragment
+  <androidx.fragment.app.FragmentContainerView
       android:id="@+id/mini_control"
       android:name="com.kelsos.mbrc.features.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"

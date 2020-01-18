@@ -11,7 +11,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.library.FastScrolling.STARTED
 import com.kelsos.mbrc.features.library.FastScrolling.STOPPED
@@ -23,7 +22,6 @@ class LibraryViewHolder(
   private val fastScrollingListener: FastScrollingListener
 ) : RecyclerView.ViewHolder(itemView) {
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
-  private val swipeLayout: SwipeRefreshLayout by bindView(R.id.library_browser__refresh_layout)
   private val scroller: RecyclerViewFastScroller by bindView(R.id.library_browser__fast_scroller)
 
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)
@@ -35,22 +33,15 @@ class LibraryViewHolder(
     libraryScreen.bind(this)
   }
 
-  fun refreshing(refreshing: Boolean = true) {
-    swipeLayout.isRefreshing = refreshing
-  }
-
   fun refreshingComplete(empty: Boolean) {
     emptyView.isVisible = empty
-    swipeLayout.isRefreshing = false
     progressBar.isGone = true
   }
 
   fun setup(
     @StringRes empty: Int,
-    screen: SwipeRefreshLayout.OnRefreshListener,
     adapter: RecyclerView.Adapter<*>
   ) {
-    swipeLayout.setOnRefreshListener(screen)
     emptyViewTitle.setText(empty)
     recycler.adapter = adapter
 
@@ -96,7 +87,6 @@ class LibraryViewHolder(
       }
 
       private fun scrollStarted() {
-        swipeLayout.setOnRefreshListener(null)
         fastScrollingListener.onFastScrolling(STARTED)
         fastScrollListener?.onStart()
       }
@@ -105,7 +95,6 @@ class LibraryViewHolder(
         val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
         val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
         fastScrollListener?.onComplete(firstVisibleItemPosition, lastVisibleItemPosition)
-        swipeLayout.setOnRefreshListener(screen)
         fastScrollingListener.onFastScrolling(STOPPED)
       }
     }

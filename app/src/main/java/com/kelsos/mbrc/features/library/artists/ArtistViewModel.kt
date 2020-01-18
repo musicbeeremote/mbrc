@@ -2,14 +2,13 @@ package com.kelsos.mbrc.features.library.artists
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.features.library.LibraryResult
+import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.utilities.paged
-import kotlinx.coroutines.launch
 
 class ArtistViewModel(
-  private val repository: ArtistRepository,
+  repository: ArtistRepository,
   dispatchers: AppCoroutineDispatchers
 ) : BaseViewModel<LibraryResult>(dispatchers) {
 
@@ -20,9 +19,5 @@ class ArtistViewModel(
     val data = repository.allArtists()
     artists = data.factory.paged()
     indexes = data.indexes
-  }
-
-  fun reload() {
-    scope.launch { repository.getRemote() }
   }
 }

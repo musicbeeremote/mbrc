@@ -1,22 +1,19 @@
 package com.kelsos.mbrc.features.library.albums
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.queue.LibraryPopup.PROFILE
-import com.kelsos.mbrc.features.library.LibraryResult
 import com.kelsos.mbrc.features.library.LibraryScreen
 import com.kelsos.mbrc.features.library.LibraryViewHolder
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.PopupActionHandler
+import com.kelsos.mbrc.features.queue.LibraryPopup.PROFILE
 import com.kelsos.mbrc.utilities.nonNullObserver
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class AlbumScreen : LibraryScreen,
   KoinComponent,
-  MenuItemSelectedListener<Album>,
-  SwipeRefreshLayout.OnRefreshListener {
+  MenuItemSelectedListener<Album> {
 
   private val adapter: AlbumAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
@@ -32,23 +29,11 @@ class AlbumScreen : LibraryScreen,
     viewModel.indexes.nonNullObserver(viewLifecycleOwner) {
       adapter.setIndexes(it)
     }
-    viewModel.emitter.nonNullObserver(viewLifecycleOwner) {
-      it.contentIfNotHandled?.let { result ->
-        when (result) {
-          LibraryResult.RefreshSuccess -> {
-            viewHolder.refreshing(false)
-          }
-          LibraryResult.RefreshFailure -> {
-            viewHolder.refreshing(false)
-          }
-        }
-      }
-    }
   }
 
   override fun bind(viewHolder: LibraryViewHolder) {
     this.viewHolder = viewHolder
-    viewHolder.setup(R.string.albums_list_empty, this, adapter)
+    viewHolder.setup(R.string.albums_list_empty, adapter)
     adapter.setMenuItemSelectedListener(this)
   }
 
@@ -61,10 +46,5 @@ class AlbumScreen : LibraryScreen,
   }
 
   override fun onItemClicked(item: Album) {
-  }
-
-  override fun onRefresh() {
-    viewHolder.refreshing()
-    viewModel.reload()
   }
 }

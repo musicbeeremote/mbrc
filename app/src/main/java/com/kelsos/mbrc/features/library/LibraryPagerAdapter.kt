@@ -4,11 +4,10 @@ import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LibraryPagerAdapter(
   private val viewLifecycleOwner: LifecycleOwner,
@@ -18,7 +17,6 @@ class LibraryPagerAdapter(
   private val screens: MutableList<LibraryScreen> = mutableListOf()
   private val job: Job = Job()
   private val scope: CoroutineScope = CoroutineScope(job + Dispatchers.Main)
-  private var deferred: Deferred<Unit>? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LibraryViewHolder {
     return LibraryViewHolder.create(parent, fastScrollingListener)
@@ -33,8 +31,7 @@ class LibraryPagerAdapter(
   override fun onBindViewHolder(holder: LibraryViewHolder, position: Int) {
     val screen = screens[position]
     holder.bind(screen, visiblePosition == position)
-    deferred?.cancel()
-    deferred = scope.async {
+    scope.launch {
       delay(400)
       screen.observe(viewLifecycleOwner)
     }

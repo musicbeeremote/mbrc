@@ -7,13 +7,13 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.sync.SyncResult
 import com.kelsos.mbrc.features.library.FastScrolling.STARTED
@@ -28,8 +28,9 @@ import org.koin.android.ext.android.inject
 
 class LibraryFragment : Fragment(), OnQueryTextListener {
 
-  private val pager: RecyclerView by bindView(R.id.search_pager)
+  private val pager: ViewPager2 by bindView(R.id.search_pager)
   private val tabs: TabLayout by bindView(R.id.pager_tab_strip)
+  private val syncProgress: ProgressBar by bindView(R.id.library_container__progress)
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -38,7 +39,7 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
   private val viewModel: LibraryViewModel by inject()
 
   override fun onQueryTextSubmit(query: String): Boolean {
-    if (!query.isEmpty() && query.trim { it <= ' ' }.isNotEmpty()) {
+    if (query.isNotEmpty() && query.trim { it <= ' ' }.isNotEmpty()) {
       closeSearch()
     }
 
@@ -75,8 +76,11 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     super.onActivityCreated(savedInstanceState)
 
     viewModel.syncProgress.nonNullObserver(viewLifecycleOwner) {
-      TODO("Sync progress view")
+      syncProgress.max = it.total
+      syncProgress.progress = it.current
+      //TODO: include maybe steps
     }
+
     viewModel.emitter.nonNullObserver(viewLifecycleOwner) { event ->
       event.contentIfNotHandled?.let { onSyncResult(it) }
     }
@@ -93,20 +97,18 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    setupTabs()
-    var fastScrolling = false
-
     val pagerAdapter = LibraryPagerAdapter(viewLifecycleOwner, object : FastScrollingListener {
       override fun onFastScrolling(@FastScrolling.State state: Int) {
-        fastScrolling = when (state) {
-          STARTED -> true
-          STOPPED -> false
+        pager.isUserInputEnabled = when (state) {
+          STARTED -> false
+          STOPPED -> true
           else -> error("unsupported option")
         }
       }
     }).also {
       this.pagerAdapter = it
       pager.adapter = it
+      pager.isUserInputEnabled = true
       it.submit(
         listOf(
           GenreScreen(),
@@ -116,47 +118,20 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
         )
       )
     }
-    val layoutManager = object : LinearLayoutManager(
-      requireContext(),
-      RecyclerView.HORIZONTAL,
-      false
-    ) {
-      override fun canScrollHorizontally(): Boolean {
-        return !fastScrolling
-      }
-    }
-    pager.layoutManager = layoutManager
-    val snapHelper = PagerSnapHelper()
-    snapHelper.attachToRecyclerView(pager)
-    pager.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-        super.onScrolled(recyclerView, dx, dy)
-        val itemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
-        pagerAdapter.setVisiblePosition(itemPosition)
 
-        tabs.getTabAt(itemPosition)?.select()
-      }
-    })
-    tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-      override fun onTabReselected(tab: TabLayout.Tab?) {
+    pager.adapter = pagerAdapter
+
+    TabLayoutMediator(tabs, pager) { tab, position ->
+      val resId = when (position) {
+        0 -> R.string.label_genres
+        1 -> R.string.label_artists
+        2 -> R.string.label_albums
+        3 -> R.string.label_tracks
+        else -> error("invalid position")
       }
 
-      override fun onTabUnselected(tab: TabLayout.Tab?) {
-      }
-
-      override fun onTabSelected(tab: TabLayout.Tab?) {
-        tab?.run {
-          layoutManager.scrollToPosition(position)
-        }
-      }
-    })
-  }
-
-  private fun setupTabs() {
-    tabs.addTab(tabs.newTab().setText(R.string.label_genres))
-    tabs.addTab(tabs.newTab().setText(R.string.label_artists))
-    tabs.addTab(tabs.newTab().setText(R.string.label_albums))
-    tabs.addTab(tabs.newTab().setText(R.string.label_tracks))
+      tab.setText(resId)
+    }.attach()
   }
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -184,16 +159,6 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
   override fun onDestroy() {
     pagerAdapter = null
     super.onDestroy()
-  }
-
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    // outState.putInt(PAGER_POSITION, pager.currentItem)
-  }
-
-  override fun onViewStateRestored(savedInstanceState: Bundle?) {
-    super.onViewStateRestored(savedInstanceState)
-    // pager.currentItem = savedInstanceState?.getInt(PAGER_POSITION, 0) ?: 0
   }
 
   companion object {

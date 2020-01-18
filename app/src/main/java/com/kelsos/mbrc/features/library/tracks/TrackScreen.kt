@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.features.library.tracks
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.library.LibraryScreen
 import com.kelsos.mbrc.features.library.LibraryViewHolder
@@ -13,8 +12,7 @@ import org.koin.core.inject
 
 class TrackScreen : LibraryScreen,
   KoinComponent,
-  MenuItemSelectedListener<Track>,
-  OnRefreshListener {
+  MenuItemSelectedListener<Track>{
 
   private val adapter: TrackAdapter by inject()
   private val actionHandler: PopupActionHandler by inject()
@@ -24,7 +22,7 @@ class TrackScreen : LibraryScreen,
 
   override fun bind(viewHolder: LibraryViewHolder) {
     this.viewHolder = viewHolder
-    viewHolder.setup(R.string.albums_list_empty, this, adapter)
+    viewHolder.setup(R.string.albums_list_empty, adapter)
     adapter.setMenuItemSelectedListener(this)
   }
 
@@ -44,10 +42,5 @@ class TrackScreen : LibraryScreen,
 
   override fun onItemClicked(item: Track) {
     actionHandler.trackSelected(item)
-  }
-
-  override fun onRefresh() {
-    viewHolder.refreshing()
-    viewModel.reload()
   }
 }
