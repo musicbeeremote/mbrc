@@ -2,9 +2,9 @@ package com.kelsos.mbrc.content.activestatus.livedata
 
 import com.kelsos.mbrc.common.state.BaseState
 import com.kelsos.mbrc.common.state.State
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.features.library.PlayingTrack
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 
 interface PlayingTrackState : State<PlayingTrack>

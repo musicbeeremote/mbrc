@@ -13,8 +13,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.logging.LogHelper
-import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotterknife.bindView

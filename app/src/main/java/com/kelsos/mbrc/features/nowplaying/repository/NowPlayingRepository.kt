@@ -2,6 +2,9 @@ package com.kelsos.mbrc.features.nowplaying.repository
 
 import androidx.paging.DataSource
 import arrow.core.Try
+import com.kelsos.mbrc.common.data.Repository
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDtoMapper
 import com.kelsos.mbrc.features.nowplaying.NowPlayingEntityMapper
@@ -9,16 +12,14 @@ import com.kelsos.mbrc.features.nowplaying.data.CachedNowPlaying
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
-import com.kelsos.mbrc.interfaces.data.Repository
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.utilities.epoch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-interface NowPlayingRepository : Repository<NowPlaying> {
+interface NowPlayingRepository :
+  Repository<NowPlaying> {
 
   suspend fun move(from: Int, to: Int)
   suspend fun remove(position: Int)

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.sync
+package com.kelsos.mbrc.features.library.sync
 
 /**
  * The class is responsible for the library metadata and playlist data network.

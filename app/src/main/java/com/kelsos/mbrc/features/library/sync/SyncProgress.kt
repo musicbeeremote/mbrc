@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.library
+package com.kelsos.mbrc.features.library.sync
 
 import androidx.annotation.IntDef
 

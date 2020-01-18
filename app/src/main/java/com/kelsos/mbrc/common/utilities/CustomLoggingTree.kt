@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.utilities
+package com.kelsos.mbrc.common.utilities
 
 import timber.log.Timber
 

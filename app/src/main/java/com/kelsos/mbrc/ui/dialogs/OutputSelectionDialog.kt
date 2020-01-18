@@ -17,11 +17,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.utilities.nonNullObserver
+import com.kelsos.mbrc.common.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class OutputSelectionDialog() : DialogFragment(), View.OnTouchListener {
+class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
   private var touchInitiated: Boolean = false
   private lateinit var fm: FragmentManager

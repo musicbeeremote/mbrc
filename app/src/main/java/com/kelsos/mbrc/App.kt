@@ -14,9 +14,7 @@ import com.chibatching.kotpref.Kotpref
 import com.github.anrwatchdog.ANRError
 import com.github.anrwatchdog.ANRWatchDog
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.kelsos.mbrc.di.modules.appModule
-import com.kelsos.mbrc.di.modules.uiModule
-import com.kelsos.mbrc.utilities.CustomLoggingTree
+import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -43,7 +41,10 @@ open class App : MultiDexApplication() {
       single { checkNotNull(app.getSystemService<WifiManager>()) }
       single { checkNotNull(app.getSystemService<ConnectivityManager>()) }
     }
-    return listOf(appModule, uiModule, androidModule)
+    return listOf(
+      appModule,
+      uiModule, androidModule
+    )
   }
 
   protected open fun initialize() {

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.sync
+package com.kelsos.mbrc.features.library.sync
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Try

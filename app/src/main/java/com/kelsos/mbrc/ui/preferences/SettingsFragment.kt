@@ -12,9 +12,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.ui.dialogs.webDialog
-import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {

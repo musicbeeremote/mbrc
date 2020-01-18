@@ -20,11 +20,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
-import com.kelsos.mbrc.utilities.paged
 import com.kelsos.mbrc.utils.DragAndDropAction
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.SingleFragmentActivity

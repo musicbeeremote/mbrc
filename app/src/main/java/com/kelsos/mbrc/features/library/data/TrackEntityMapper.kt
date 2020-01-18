@@ -1,8 +1,9 @@
 package com.kelsos.mbrc.features.library.data
 
-import com.kelsos.mbrc.interfaces.data.Mapper
+import com.kelsos.mbrc.common.data.Mapper
 
-class TrackEntityMapper : Mapper<TrackEntity, Track> {
+class TrackEntityMapper :
+  Mapper<TrackEntity, Track> {
   override fun map(from: TrackEntity): Track {
     return Track(
       artist = from.artist,

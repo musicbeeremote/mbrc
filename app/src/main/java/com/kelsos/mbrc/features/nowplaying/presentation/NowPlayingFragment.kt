@@ -23,11 +23,11 @@ import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.common.ui.extensions.snackbar
 import com.kelsos.mbrc.common.ui.helpers.VisibleRange
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
+import com.kelsos.mbrc.common.utilities.nonNullObserver
 import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
 import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper
 import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingAdapter.NowPlayingListener
-import com.kelsos.mbrc.utilities.nonNullObserver
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 

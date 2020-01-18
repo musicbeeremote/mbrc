@@ -6,11 +6,11 @@ import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.preferences.SettingsManager.CallAction
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.REDUCE
-import com.kelsos.mbrc.utilities.RemoteUtils
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.Date
