@@ -4,7 +4,7 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import com.kelsos.mbrc.interfaces.SimpleLifecycle
+import com.kelsos.mbrc.common.SimpleLifecycle
 
 abstract class LifeCycleAwareService : SimpleLifecycle, LifecycleOwner {
 

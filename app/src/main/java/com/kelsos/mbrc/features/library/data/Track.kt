@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.features.library.data
 
-import com.kelsos.mbrc.utilities.RemoteUtils.sha1
+import com.kelsos.mbrc.common.utilities.RemoteUtils.sha1
 
 data class Track(
   var artist: String,

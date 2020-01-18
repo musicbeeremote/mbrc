@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.networking
 
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.networking.client.SocketMessage
@@ -8,7 +9,6 @@ import com.kelsos.mbrc.networking.connections.toSocketAddress
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException

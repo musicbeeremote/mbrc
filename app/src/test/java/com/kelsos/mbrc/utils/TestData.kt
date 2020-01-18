@@ -5,11 +5,11 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.room.Room
+import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.playlists.PlaylistDto
-import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

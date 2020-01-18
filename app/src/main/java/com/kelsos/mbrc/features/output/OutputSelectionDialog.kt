@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class OutputSelectionDialog() : DialogFragment(), View.OnTouchListener {
+class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
   private var touchInitiated: Boolean = false
   private lateinit var dialog: AlertDialog

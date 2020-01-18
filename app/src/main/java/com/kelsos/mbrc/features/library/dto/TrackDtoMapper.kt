@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.library.dto
 
+import com.kelsos.mbrc.common.data.Mapper
 import com.kelsos.mbrc.features.library.data.TrackEntity
-import com.kelsos.mbrc.interfaces.data.Mapper
 import java.util.regex.Pattern
 
 object TrackDtoMapper : Mapper<TrackDto, TrackEntity> {

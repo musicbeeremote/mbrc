@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking
 
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob

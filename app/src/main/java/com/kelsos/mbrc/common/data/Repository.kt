@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.interfaces.data
+package com.kelsos.mbrc.common.data
 
 import androidx.paging.PagingData
 import arrow.core.Try

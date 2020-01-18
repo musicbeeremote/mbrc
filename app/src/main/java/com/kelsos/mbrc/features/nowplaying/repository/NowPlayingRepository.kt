@@ -2,6 +2,10 @@ package com.kelsos.mbrc.features.nowplaying.repository
 
 import androidx.paging.PagingData
 import arrow.core.Try
+import com.kelsos.mbrc.common.data.Repository
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.epoch
+import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.data.CachedNowPlaying
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
@@ -9,12 +13,8 @@ import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.toEntity
 import com.kelsos.mbrc.features.nowplaying.toNowPlaying
-import com.kelsos.mbrc.interfaces.data.Repository
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.utilities.epoch
-import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion

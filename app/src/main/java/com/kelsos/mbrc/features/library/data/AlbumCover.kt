@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.library.data
 
 import androidx.room.ColumnInfo
-import com.kelsos.mbrc.utilities.RemoteUtils
+import com.kelsos.mbrc.common.utilities.RemoteUtils.sha1
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -18,4 +18,4 @@ data class AlbumCover(
   val hash: String?
 )
 
-fun AlbumCover.key(): String = RemoteUtils.sha1("${artist}_$album")
+fun AlbumCover.key(): String = sha1("${artist}_$album")

@@ -13,12 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.sync.SyncResult
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
 import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
+import com.kelsos.mbrc.features.library.sync.SyncResult
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

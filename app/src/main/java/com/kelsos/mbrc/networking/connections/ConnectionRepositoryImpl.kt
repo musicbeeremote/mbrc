@@ -2,10 +2,10 @@ package com.kelsos.mbrc.networking.connections
 
 import androidx.paging.PagingData
 import arrow.core.Option
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.utilities.paged
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 

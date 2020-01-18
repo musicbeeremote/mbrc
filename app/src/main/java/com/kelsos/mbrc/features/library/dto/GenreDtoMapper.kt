@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.library.dto
 
+import com.kelsos.mbrc.common.data.Mapper
 import com.kelsos.mbrc.features.library.data.GenreEntity
-import com.kelsos.mbrc.interfaces.data.Mapper
 
 object GenreDtoMapper : Mapper<GenreDto, GenreEntity> {
   override fun map(from: GenreDto): GenreEntity {

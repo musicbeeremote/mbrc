@@ -11,9 +11,9 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.BuildConfig.APPLICATION_ID
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.RemoteUtils.getVersion
 import com.kelsos.mbrc.databinding.FragmentFeedbackBinding
 import com.kelsos.mbrc.logging.LogHelper
-import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import java.io.File
 
 class FeedbackFragment : Fragment() {

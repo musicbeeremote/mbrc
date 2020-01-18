@@ -4,9 +4,9 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.RemoteUtils.getVersionCode
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
-import com.kelsos.mbrc.utilities.RemoteUtils.getVersionCode
 import org.threeten.bp.Instant
 import timber.log.Timber
 

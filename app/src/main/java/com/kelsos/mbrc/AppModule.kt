@@ -1,8 +1,9 @@
-package com.kelsos.mbrc.di.modules
+package com.kelsos.mbrc
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
@@ -15,8 +16,6 @@ import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionStateImpl
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingStateImpl
-import com.kelsos.mbrc.content.sync.LibrarySyncUseCase
-import com.kelsos.mbrc.content.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.core.RemoteServiceCore
 import com.kelsos.mbrc.data.Database
@@ -44,6 +43,8 @@ import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepositoryImpl
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepositoryImpl
+import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCase
+import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
@@ -133,7 +134,6 @@ import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
 import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.experimental.dsl.viewModel

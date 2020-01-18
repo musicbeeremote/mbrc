@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

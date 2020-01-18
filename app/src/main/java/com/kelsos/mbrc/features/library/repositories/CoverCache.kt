@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.features.library.repositories
 
 import android.app.Application
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.data.AlbumCover
 import com.kelsos.mbrc.features.library.data.Cover
 import com.kelsos.mbrc.features.library.data.key
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext

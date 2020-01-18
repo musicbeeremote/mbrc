@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.features.library.data
 
-import com.kelsos.mbrc.interfaces.data.Mapper
+import com.kelsos.mbrc.common.data.Mapper
 
 object AlbumEntityMapper : Mapper<AlbumEntity, Album> {
   override fun map(from: AlbumEntity): Album {

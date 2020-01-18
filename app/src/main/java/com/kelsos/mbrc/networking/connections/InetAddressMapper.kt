@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
-import com.kelsos.mbrc.interfaces.data.Mapper
+import com.kelsos.mbrc.common.data.Mapper
 import java.net.InetSocketAddress
 import java.net.SocketAddress
 

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.library.dto
 
+import com.kelsos.mbrc.common.data.Mapper
 import com.kelsos.mbrc.features.library.data.ArtistEntity
-import com.kelsos.mbrc.interfaces.data.Mapper
 
 object ArtistDtoMapper : Mapper<ArtistDto, ArtistEntity> {
   override fun map(from: ArtistDto): ArtistEntity {
