@@ -140,7 +140,7 @@ class UpdateCover(
     if (!coverDir.exists()) {
       return
     }
-    val storedCovers = coverDir.listFiles()
+    val storedCovers = coverDir.listFiles() ?: return
     storedCovers.sortByDescending(File::lastModified)
     val elementsToKeep = if (storedCovers.size - keep < 0) 0 else storedCovers.size - keep
     storedCovers.takeLast(elementsToKeep).forEach {
