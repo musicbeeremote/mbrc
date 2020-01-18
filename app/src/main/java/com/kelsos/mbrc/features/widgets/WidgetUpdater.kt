@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.features.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 
 interface WidgetUpdater {
   fun updatePlayingTrack(track: PlayingTrack)

@@ -11,7 +11,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.features.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

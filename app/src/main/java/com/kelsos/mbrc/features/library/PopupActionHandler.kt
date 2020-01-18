@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.features.library
 
-import com.kelsos.mbrc.features.library.albums.Album
-import com.kelsos.mbrc.features.library.artists.Artist
-import com.kelsos.mbrc.features.library.genres.Genre
-import com.kelsos.mbrc.features.library.tracks.Track
-import com.kelsos.mbrc.features.library.tracks.TrackRepository
+import com.kelsos.mbrc.features.library.data.Album
+import com.kelsos.mbrc.features.library.data.Artist
+import com.kelsos.mbrc.features.library.data.Genre
+import com.kelsos.mbrc.features.library.data.Track
+import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.queue.LibraryPopup
 import com.kelsos.mbrc.features.queue.LibraryPopup.Action
 import com.kelsos.mbrc.features.queue.LibraryPopup.PROFILE

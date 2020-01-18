@@ -2,14 +2,14 @@ package com.kelsos.mbrc.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.kelsos.mbrc.features.library.albums.AlbumDao
-import com.kelsos.mbrc.features.library.albums.AlbumEntity
-import com.kelsos.mbrc.features.library.artists.ArtistDao
-import com.kelsos.mbrc.features.library.artists.ArtistEntity
-import com.kelsos.mbrc.features.library.genres.GenreDao
-import com.kelsos.mbrc.features.library.genres.GenreEntity
-import com.kelsos.mbrc.features.library.tracks.TrackDao
-import com.kelsos.mbrc.features.library.tracks.TrackEntity
+import com.kelsos.mbrc.features.library.data.AlbumDao
+import com.kelsos.mbrc.features.library.data.AlbumEntity
+import com.kelsos.mbrc.features.library.data.ArtistDao
+import com.kelsos.mbrc.features.library.data.ArtistEntity
+import com.kelsos.mbrc.features.library.data.GenreDao
+import com.kelsos.mbrc.features.library.data.GenreEntity
+import com.kelsos.mbrc.features.library.data.TrackDao
+import com.kelsos.mbrc.features.library.data.TrackEntity
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
 import com.kelsos.mbrc.features.playlists.data.PlaylistDao

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.content.activestatus
 
 import android.app.Application
-import com.kelsos.mbrc.features.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.withContext

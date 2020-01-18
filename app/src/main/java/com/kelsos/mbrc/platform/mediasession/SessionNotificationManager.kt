@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat.Action
 import arrow.core.Option
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.features.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.platform.ForegroundHooks
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.NOW_PLAYING_PLACEHOLDER

@@ -11,7 +11,7 @@
 
     <variable
         name="track"
-        type="com.kelsos.mbrc.features.library.tracks.PlayingTrack" />
+        type="com.kelsos.mbrc.features.library.PlayingTrack" />
 
     <variable
         name="position"
