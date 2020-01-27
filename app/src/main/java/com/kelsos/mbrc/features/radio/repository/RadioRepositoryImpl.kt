@@ -55,4 +55,8 @@ class RadioRepositoryImpl(
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }
+
+  override suspend fun getById(id: Int): RadioStation? {
+    TODO("Not yet implemented")
+  }
 }

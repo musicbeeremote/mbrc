@@ -25,6 +25,7 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.library.presentation.adapters.AlbumAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.ArtistAdapter
@@ -109,6 +110,7 @@ import com.kelsos.mbrc.preferences.ClientInformationModel
 import com.kelsos.mbrc.preferences.ClientInformationModelImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
+import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.protocol.ProtocolPingHandle
@@ -207,6 +209,9 @@ val appModule = module {
   singleBy<IRemoteServiceCore, RemoteServiceCore>()
 
   singleBy<CoverModel, StoredCoverModel>()
+
+  single<PopupActionHandler>()
+  single<DefaultActionPreferenceStore>()
 
   singleBy<WidgetUpdater, WidgetUpdaterImpl>()
 

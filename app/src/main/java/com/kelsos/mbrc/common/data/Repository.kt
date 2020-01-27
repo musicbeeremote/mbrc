@@ -10,4 +10,5 @@ interface Repository<T : Any> {
   fun search(term: String): Flow<PagingData<T>>
   suspend fun cacheIsEmpty(): Boolean
   suspend fun count(): Long
+  suspend fun getById(id: Int): T?
 }

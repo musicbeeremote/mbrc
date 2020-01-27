@@ -77,4 +77,8 @@ class AlbumRepositoryImpl(
   override suspend fun getCovers(): List<AlbumCover> {
     return dao.getCovers()
   }
+
+  override suspend fun getById(id: Int): Album? {
+    TODO("Not yet implemented")
+  }
 }

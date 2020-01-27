@@ -9,7 +9,7 @@ import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
 import com.kelsos.mbrc.features.library.presentation.adapters.TrackAdapter
 import com.kelsos.mbrc.features.library.presentation.viewmodels.TrackViewModel
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
@@ -49,7 +49,7 @@ class TrackScreen : LibraryScreen, KoinComponent, MenuItemSelectedListener<Track
 
   override fun onMenuItemSelected(itemId: Int, item: Track) {
     val action = actionHandler.genreSelected(itemId)
-    if (action === LibraryPopup.PROFILE) {
+    if (action === Queue.DEFAULT) {
       onItemClicked(item)
     }
   }

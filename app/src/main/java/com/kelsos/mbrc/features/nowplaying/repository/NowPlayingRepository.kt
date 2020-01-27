@@ -99,4 +99,8 @@ class NowPlayingRepositoryImpl(
   override suspend fun findPosition(query: String): Int = withContext(dispatchers.database) {
     return@withContext dao.findPositionByQuery(query) ?: -1
   }
+
+  override suspend fun getById(id: Int): NowPlaying? {
+    TODO("Not yet implemented")
+  }
 }

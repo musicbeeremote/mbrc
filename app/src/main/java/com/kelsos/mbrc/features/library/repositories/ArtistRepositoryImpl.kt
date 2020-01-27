@@ -61,4 +61,8 @@ class ArtistRepositoryImpl(
   override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) {
     dao.count() == 0L
   }
+
+  override suspend fun getById(id: Int): Artist? {
+    TODO("Not yet implemented")
+  }
 }

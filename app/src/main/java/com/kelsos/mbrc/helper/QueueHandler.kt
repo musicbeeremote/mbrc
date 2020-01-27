@@ -4,7 +4,7 @@ import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.player.cover.CoverPayload
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.QueuePayload
 import com.kelsos.mbrc.features.queue.QueueResponse
 import com.kelsos.mbrc.networking.ApiBase
@@ -20,7 +20,7 @@ class QueueHandler(
   private val dispatchers: AppCoroutineDispatchers
 ) {
   private suspend fun queue(
-    @LibraryPopup.Action type: String,
+    @Queue.Action type: String,
     tracks: List<String>,
     play: String? = null
   ): Boolean {
@@ -42,7 +42,7 @@ class QueueHandler(
   }
 
   suspend fun queueAlbum(
-    @LibraryPopup.Action type: String,
+    @Queue.Action type: String,
     album: String,
     artist: String
   ): QueueResult {
@@ -59,7 +59,7 @@ class QueueHandler(
   }
 
   suspend fun queueArtist(
-    @LibraryPopup.Action type: String,
+    @Queue.Action type: String,
     artist: String
   ): QueueResult {
     var tracks = 0
@@ -75,7 +75,7 @@ class QueueHandler(
   }
 
   suspend fun queueGenre(
-    @LibraryPopup.Action type: String,
+    @Queue.Action type: String,
     genre: String
   ): QueueResult {
     var tracks = 0
@@ -93,7 +93,7 @@ class QueueHandler(
   suspend fun queuePath(path: String): QueueResult {
     var success = false
     try {
-      success = queue(LibraryPopup.NOW, listOf(path))
+      success = queue(Queue.NOW, listOf(path))
     } catch (e: Exception) {
       Timber.e(e)
     }
@@ -102,7 +102,7 @@ class QueueHandler(
 
   suspend fun queueTrack(
     track: Track,
-    @LibraryPopup.Action type: String,
+    @Queue.Action type: String,
     queueAlbum: Boolean = false
   ): QueueResult {
     val trackSource: List<String>
@@ -110,7 +110,7 @@ class QueueHandler(
     val success: Boolean
     var action = type
     trackSource = when (type) {
-      LibraryPopup.ADD_ALL -> {
+      Queue.ADD_ALL -> {
         path = track.src
         if (queueAlbum) {
           trackRepository.getAlbumTrackPaths(track.album, track.albumArtist)
@@ -118,13 +118,13 @@ class QueueHandler(
           trackRepository.getAllTrackPaths()
         }
       }
-      LibraryPopup.PLAY_ALBUM -> {
-        action = LibraryPopup.ADD_ALL
+      Queue.PLAY_ALBUM -> {
+        action = Queue.ADD_ALL
         path = track.src
         trackRepository.getAlbumTrackPaths(track.album, track.albumArtist)
       }
-      LibraryPopup.PLAY_ARTIST -> {
-        action = LibraryPopup.ADD_ALL
+      Queue.PLAY_ARTIST -> {
+        action = Queue.ADD_ALL
         path = track.src
         trackRepository.getArtistTrackPaths(track.artist)
       }

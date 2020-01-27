@@ -9,7 +9,7 @@ import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
 import com.kelsos.mbrc.features.library.presentation.adapters.GenreAdapter
 import com.kelsos.mbrc.features.library.presentation.viewmodels.GenreViewModel
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
@@ -49,7 +49,7 @@ class GenreScreen : LibraryScreen, KoinComponent, MenuItemSelectedListener<Genre
 
   override fun onMenuItemSelected(itemId: Int, item: Genre) {
     val action = actionHandler.genreSelected(itemId)
-    if (action === LibraryPopup.PROFILE) {
+    if (action === Queue.DEFAULT) {
       onItemClicked(item)
     }
   }

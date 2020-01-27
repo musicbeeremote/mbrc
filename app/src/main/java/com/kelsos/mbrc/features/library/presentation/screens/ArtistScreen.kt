@@ -9,7 +9,7 @@ import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
 import com.kelsos.mbrc.features.library.presentation.adapters.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.viewmodels.ArtistViewModel
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
@@ -49,7 +49,7 @@ class ArtistScreen : LibraryScreen, KoinComponent, MenuItemSelectedListener<Arti
 
   override fun onMenuItemSelected(itemId: Int, item: Artist) {
     val action = actionHandler.genreSelected(itemId)
-    if (action === LibraryPopup.PROFILE) {
+    if (action === Queue.DEFAULT) {
       onItemClicked(item)
     }
   }
