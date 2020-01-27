@@ -4,7 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.Try
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.features.queue.QueueResponse
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
@@ -66,7 +66,7 @@ class RadioViewModelTest {
   @Test
   fun `should call queue and notify success`() {
     val playArguments = slot<List<String>>()
-    every { queueApi.queue(LibraryPopup.NOW, capture(playArguments)) } answers {
+    every { queueApi.queue(Queue.NOW, capture(playArguments)) } answers {
       Single.just(QueueResponse(200))
     }
 
@@ -79,7 +79,7 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify on network error`() {
-    every { queueApi.queue(LibraryPopup.NOW, any()) } throws SocketTimeoutException()
+    every { queueApi.queue(Queue.NOW, any()) } throws SocketTimeoutException()
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.NetworkError)
@@ -87,7 +87,7 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify on queue failure`() {
-    every { queueApi.queue(LibraryPopup.NOW, any()) } answers {
+    every { queueApi.queue(Queue.NOW, any()) } answers {
       Single.just(QueueResponse(500))
     }
     radioViewModel.emitter.observeOnce(observer)

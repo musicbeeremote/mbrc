@@ -5,7 +5,7 @@ import androidx.paging.PagedList
 import arrow.core.Try
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.paged
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
@@ -36,7 +36,7 @@ class RadioViewModel(
 
   fun play(path: String) {
     scope.launch(dispatchers.network) {
-      val response = Try { queueApi.queue(LibraryPopup.NOW, listOf(path)).await() }
+      val response = Try { queueApi.queue(Queue.NOW, listOf(path)).await() }
         .toEither()
         .fold<RadioUiMessages>({
           RadioUiMessages.NetworkError

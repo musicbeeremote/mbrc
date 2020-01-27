@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.presentation.viewholders.ArtistViewHolder
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.features.library.popup
 
@@ -18,10 +18,10 @@ class ArtistAdapter : FastScrollableAdapter<Artist, ArtistViewHolder>(
     view.popup(R.menu.popup_artist) {
 
       val action = when (it) {
-        R.id.popup_artist_album -> LibraryPopup.PROFILE
-        R.id.popup_artist_queue_next -> LibraryPopup.NEXT
-        R.id.popup_artist_queue_last -> LibraryPopup.LAST
-        R.id.popup_artist_play -> LibraryPopup.NOW
+        R.id.popup_artist_album -> Queue.PROFILE
+        R.id.popup_artist_queue_next -> Queue.NEXT
+        R.id.popup_artist_queue_last -> Queue.LAST
+        R.id.popup_artist_play -> Queue.NOW
         else -> throw IllegalArgumentException("invalid menuItem id $it")
       }
 

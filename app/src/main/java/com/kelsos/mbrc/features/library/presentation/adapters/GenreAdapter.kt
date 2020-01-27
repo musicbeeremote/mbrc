@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.presentation.viewholders.GenreViewHolder
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.ui.FastScrollableAdapter
 import com.kelsos.mbrc.features.library.popup
 
@@ -17,10 +17,10 @@ class GenreAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_genre) {
       val action = when (it) {
-        R.id.popup_genre_play -> LibraryPopup.NOW
-        R.id.popup_genre_artists -> LibraryPopup.PROFILE
-        R.id.popup_genre_queue_next -> LibraryPopup.NEXT
-        R.id.popup_genre_queue_last -> LibraryPopup.LAST
+        R.id.popup_genre_play -> Queue.NOW
+        R.id.popup_genre_artists -> Queue.PROFILE
+        R.id.popup_genre_queue_next -> Queue.NEXT
+        R.id.popup_genre_queue_last -> Queue.LAST
         else -> throw IllegalArgumentException("invalid menuItem id $it")
       }
       val listener = requireListener()

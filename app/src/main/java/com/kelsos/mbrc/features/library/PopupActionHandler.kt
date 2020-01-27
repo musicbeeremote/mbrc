@@ -5,9 +5,10 @@ import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
-import com.kelsos.mbrc.features.queue.LibraryPopup
-import com.kelsos.mbrc.features.queue.LibraryPopup.Action
-import com.kelsos.mbrc.features.queue.LibraryPopup.PROFILE
+import com.kelsos.mbrc.features.queue.Queue
+import com.kelsos.mbrc.features.queue.Queue.Action
+import com.kelsos.mbrc.features.queue.Queue.DEFAULT
+import com.kelsos.mbrc.features.queue.Queue.PROFILE
 import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 
@@ -17,66 +18,43 @@ class PopupActionHandler(
   private val queueApi: QueueApi
 ) {
 
-  fun albumSelected(
+  fun queue(
     @Action action: String,
-    entry: Album,
-    result: (success: Boolean) -> Unit = {}
+    entry: Album
   ) {
     require(action != PROFILE) { "action should not be profile" }
-    queueAlbum(entry, action, result)
+    queueApi.queue(action, trackRepository.getAlbumTrackPaths(entry.album, entry.artist))
   }
 
-  private fun queueAlbum(
-    entry: Album,
-    @Action type: String,
-    result: (success: Boolean) -> Unit
-  ) {
-    val paths = trackRepository.getAlbumTrackPaths(entry.album, entry.artist)
-    val response = queueApi.queue(type, paths)
-  }
-
-  fun artistSelected(
+  fun queue(
     @Action action: String,
-    entry: Artist,
-    result: (success: Boolean) -> Unit = {}
+    entry: Artist
   ) {
     require(action != PROFILE) { "action should not be profile" }
-    queueArtist(entry, action, result)
+    queueApi.queue(action, trackRepository.getArtistTrackPaths(artist = entry.artist))
   }
 
-  private fun queueArtist(entry: Artist, type: String, result: (success: Boolean) -> Unit) {
-    val paths = trackRepository.getArtistTrackPaths(artist = entry.artist)
-    queueApi.queue(type, paths)
-  }
-
-  fun genreSelected(
+  fun queue(
     @Action action: String,
-    entry: Genre,
-    result: (success: Boolean) -> Unit = {}
+    entry: Genre
   ) {
     require(action != PROFILE) { "action should not be profile" }
-    queueGenre(entry, action, result)
+    queueApi.queue(action, trackRepository.getGenreTrackPaths(genre = entry.genre))
   }
 
-  private fun queueGenre(entry: Genre, type: String, result: (success: Boolean) -> Unit) {
-    val paths = trackRepository.getGenreTrackPaths(genre = entry.genre)
-    queueApi.queue(type, paths)
-  }
-
-  // todo album detection -> queue album tracks
-  fun trackSelected(
-    @Action action: String,
+  fun queue(
     entry: Track,
-    album: Boolean = false
+    album: Boolean = false,
+    @Action action: String = DEFAULT
   ) {
-    queueTrack(entry, action, album)
-  }
-
-  private fun queueTrack(entry: Track, @Action type: String, album: Boolean = false) {
-
+    val actualAction = if (action == DEFAULT) {
+      settings.defaultAction
+    } else {
+      action
+    }
     val paths: List<String>
     val path: String?
-    if (type == LibraryPopup.ADD_ALL) {
+    if (actualAction == Queue.ADD_ALL) {
       paths = if (album) {
         trackRepository.getAlbumTrackPaths(entry.album, entry.albumArtist)
       } else {
@@ -88,11 +66,6 @@ class PopupActionHandler(
       paths = listOf(entry.src)
       path = null
     }
-
-    queueApi.queue(type, paths, path)
-  }
-
-  fun trackSelected(track: Track, album: Boolean = false) {
-    queueTrack(track, settings.defaultAction, album)
+    queueApi.queue(actualAction, paths, path)
   }
 }

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.queue
 
 import com.kelsos.mbrc.features.player.cover.CoverPayload
-import com.kelsos.mbrc.features.queue.LibraryPopup.Action
+import com.kelsos.mbrc.features.queue.Queue.Action
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import io.reactivex.Single

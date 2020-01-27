@@ -39,10 +39,10 @@ class TrackScreen : LibraryScreen,
   }
 
   override fun onMenuItemSelected(action: String, item: Track) {
-    actionHandler.trackSelected(action, item)
+    actionHandler.queue(item, action = action)
   }
 
   override fun onItemClicked(item: Track) {
-    actionHandler.trackSelected(item)
+    actionHandler.queue(item)
   }
 }

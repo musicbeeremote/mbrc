@@ -10,7 +10,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.0.0-alpha08'
+    classpath 'com.android.tools.build:gradle:4.0.0-alpha09'
     classpath 'org.jacoco:org.jacoco.core:0.8.4'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
     classpath 'android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0'

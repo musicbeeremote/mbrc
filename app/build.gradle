@@ -212,8 +212,8 @@ dependencies {
 
   implementation 'com.chibatching.kotpref:kotpref:2.8.0'
 
-  implementation 'com.google.android.material:material:1.2.0-alpha03'
-  implementation 'androidx.databinding:databinding-runtime:4.0.0-alpha08'
+  implementation 'com.google.android.material:material:1.2.0-alpha04'
+  implementation 'androidx.databinding:databinding-runtime:4.0.0-alpha09'
 
   implementation 'androidx.appcompat:appcompat:1.1.0'
   implementation 'androidx.media:media:1.1.0'
@@ -234,6 +234,11 @@ dependencies {
   implementation 'androidx.room:room-runtime:2.2.3'
   implementation 'androidx.room:room-rxjava2:2.2.3'
   kapt "androidx.room:room-compiler:2.2.3"
+
+  def work_version = "2.3.0"
+  
+  implementation "androidx.work:work-runtime:$work_version"
+  implementation "androidx.work:work-runtime-ktx:$work_version"
 
   implementation 'com.squareup.moshi:moshi:1.9.2'
   kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.9.2'
@@ -280,7 +285,7 @@ dependencies {
 
   kapt "io.arrow-kt:arrow-meta:$arrow_version"
 
-  debugImplementation("androidx.fragment:fragment-testing:1.2.0-rc04") {
+  debugImplementation("androidx.fragment:fragment-testing:1.2.0") {
     exclude group: 'androidx.test', module: 'core'
   }
   debugImplementation "com.squareup.leakcanary:leakcanary-android:2.1"
@@ -289,8 +294,8 @@ dependencies {
   playImplementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
     transitive = true
   }
-  playImplementation 'com.google.firebase:firebase-perf:19.0.4'
-  playImplementation 'com.google.firebase:firebase-core:17.2.1'
+  playImplementation 'com.google.firebase:firebase-perf:19.0.5'
+  playImplementation 'com.google.firebase:firebase-core:17.2.2'
 }
 
 allprojects {

@@ -9,7 +9,7 @@ import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
 import com.kelsos.mbrc.features.library.presentation.adapters.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.viewmodels.ArtistViewModel
-import com.kelsos.mbrc.features.queue.LibraryPopup.PROFILE
+import com.kelsos.mbrc.features.queue.Queue.PROFILE
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -44,7 +44,7 @@ class ArtistScreen : LibraryScreen,
       onItemClicked(item)
       return
     }
-    actionHandler.artistSelected(action, item)
+    actionHandler.queue(action, item)
   }
 
   override fun onItemClicked(item: Artist) {
