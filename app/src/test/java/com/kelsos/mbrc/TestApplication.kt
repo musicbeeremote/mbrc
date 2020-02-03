@@ -1,9 +1,9 @@
 package com.kelsos.mbrc
 
 import android.app.Application
+import java.lang.reflect.Method
 import org.robolectric.TestLifecycleApplication
 import timber.log.Timber
-import java.lang.reflect.Method
 
 class TestApplication : Application(), TestLifecycleApplication {
 

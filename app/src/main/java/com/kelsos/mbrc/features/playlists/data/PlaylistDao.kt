@@ -25,4 +25,7 @@ interface PlaylistDao {
 
   @Query("delete from playlists where dated_added != :added")
   fun removePreviousEntries(added: Long)
+
+  @Query("select * from playlists where id = :id")
+  fun getById(id: Long): PlaylistEntity?
 }

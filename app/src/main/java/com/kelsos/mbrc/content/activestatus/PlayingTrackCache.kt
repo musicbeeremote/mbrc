@@ -4,12 +4,12 @@ import android.app.Application
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.squareup.moshi.Moshi
+import java.io.File
+import java.nio.charset.Charset
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.sink
 import okio.source
-import java.io.File
-import java.nio.charset.Charset
 
 class PlayingTrackCacheImpl(
   private val mapper: Moshi,

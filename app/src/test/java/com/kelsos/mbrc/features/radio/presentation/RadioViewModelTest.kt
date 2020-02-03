@@ -20,10 +20,10 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.reactivex.Single
+import java.net.SocketTimeoutException
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
 class RadioViewModelTest {

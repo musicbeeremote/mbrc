@@ -17,8 +17,8 @@ import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.logging.LogHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotterknife.bindView
 import java.io.File
+import kotterknife.bindView
 
 class FeedbackFragment : Fragment() {
 

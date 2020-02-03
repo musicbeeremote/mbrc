@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.library.data.Genre
+import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.GenreViewHolder
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.ui.FastScrollableAdapter
-import com.kelsos.mbrc.features.library.popup
 
 class GenreAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(
   DIFF_CALLBACK
@@ -18,7 +18,7 @@ class GenreAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(
     view.popup(R.menu.popup_genre) {
       val action = when (it) {
         R.id.popup_genre_play -> Queue.NOW
-        R.id.popup_genre_artists -> Queue.PROFILE
+        R.id.popup_genre_artists -> Queue.DEFAULT
         R.id.popup_genre_queue_next -> Queue.NEXT
         R.id.popup_genre_queue_last -> Queue.LAST
         else -> throw IllegalArgumentException("invalid menuItem id $it")

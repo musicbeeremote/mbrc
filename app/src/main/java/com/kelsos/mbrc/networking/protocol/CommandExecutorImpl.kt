@@ -3,11 +3,11 @@ package com.kelsos.mbrc.networking.protocol
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.protocol.ProtocolAction
 import com.kelsos.mbrc.protocol.ProtocolMessage
-import timber.log.Timber
 import java.util.HashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
+import timber.log.Timber
 
 class CommandExecutorImpl(
   private val commandFactory: CommandFactory

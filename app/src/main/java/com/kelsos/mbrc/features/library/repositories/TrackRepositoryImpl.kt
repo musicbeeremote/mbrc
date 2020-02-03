@@ -21,35 +21,34 @@ class TrackRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : TrackRepository {
 
-  private val mapper = TrackDtoMapper()
-  private val entity2model =
-    TrackEntityMapper()
+  private val dtoMapper = TrackDtoMapper()
+  private val entityMapper = TrackEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
   override fun getAll(): DataSource.Factory<Int, Track> {
-    return dao.getAll().map { entity2model.map(it) }
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
   override fun getAlbumTracks(
     album: String,
     artist: String
   ): DataSource.Factory<Int, Track> {
-    return dao.getAlbumTracks(album, artist).map { entity2model.map(it) }
+    return dao.getAlbumTracks(album, artist).map { entityMapper.map(it) }
   }
 
   override fun allTracks(): DataModel<Track> {
     return DataModel(dao.getAll().map {
-      entity2model.map(
+      entityMapper.map(
         it
       )
     }, dao.getAllIndexes())
   }
 
   override fun getNonAlbumTracks(artist: String): DataSource.Factory<Int, Track> {
-    return dao.getNonAlbumTracks(artist).map { entity2model.map(it) }
+    return dao.getNonAlbumTracks(artist).map { entityMapper.map(it) }
   }
 
   override suspend fun getRemote(): Try<Unit> = Try {
@@ -57,7 +56,7 @@ class TrackRepositoryImpl(
     val pages = remoteDataSource.getAllPages(Protocol.LibraryBrowseTracks, TrackDto::class)
     pages.blockingForEach { tracks ->
       runBlocking(dispatchers.disk) {
-        val trackData = tracks.map { mapper.map(it).apply { dateAdded = added } }
+        val trackData = tracks.map { dtoMapper.map(it).apply { dateAdded = added } }
         val sources = trackData.map { it.src }
 
         withContext(dispatchers.database) {
@@ -82,7 +81,7 @@ class TrackRepositoryImpl(
   }
 
   override fun search(term: String): DataSource.Factory<Int, Track> {
-    return dao.search(term).map { entity2model.map(it) }
+    return dao.search(term).map { entityMapper.map(it) }
   }
 
   override fun getGenreTrackPaths(genre: String): List<String> {
@@ -103,5 +102,12 @@ class TrackRepositoryImpl(
 
   override suspend fun cacheIsEmpty(): Boolean {
     return dao.count() == 0L
+  }
+
+  override suspend fun getById(id: Long): Track? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entityMapper.map(entity)
+    }
   }
 }

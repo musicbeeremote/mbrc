@@ -51,4 +51,7 @@ interface ArtistDao {
       "where track.album_artist = artist.artist group by artist.artist order by artist.artist asc"
   )
   fun getAlbumArtistIndexes(): LiveData<List<String>>
+
+  @Query("select * from artist where id = :id")
+  fun getById(id: Long): ArtistEntity?
 }

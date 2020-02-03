@@ -37,4 +37,7 @@ interface AlbumDao {
 
   @Query("select substr(album, 1, 1) from album order by album collate nocase asc")
   fun getIndexes(): LiveData<List<String>>
+
+  @Query("select * from album where id = :id")
+  fun getById(id: Long): AlbumEntity?
 }

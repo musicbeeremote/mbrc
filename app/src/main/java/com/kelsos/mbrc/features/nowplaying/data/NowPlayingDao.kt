@@ -102,4 +102,7 @@ interface NowPlayingDao {
 
   @Update
   fun update(existing: List<NowPlayingEntity>)
+
+  @Query("select * from now_playing where id = :id")
+  fun getById(id: Long): NowPlayingEntity?
 }

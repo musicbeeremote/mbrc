@@ -57,4 +57,11 @@ class PlaylistRepositoryImpl(
   }
 
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
+
+  override suspend fun getById(id: Long): Playlist? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext PlaylistEntityMapper.map(entity)
+    }
+  }
 }

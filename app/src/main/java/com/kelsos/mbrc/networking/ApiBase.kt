@@ -9,11 +9,10 @@ import com.kelsos.mbrc.networking.protocol.Protocol.Context
 import com.squareup.moshi.Types
 import io.reactivex.Observable
 import io.reactivex.Single
-import timber.log.Timber
 import java.net.NoRouteToHostException
 import java.net.SocketTimeoutException
-
 import kotlin.reflect.KClass
+import timber.log.Timber
 
 class ApiBase(
   private val deserializationAdapter: DeserializationAdapter,

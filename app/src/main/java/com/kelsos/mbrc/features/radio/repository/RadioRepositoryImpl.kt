@@ -53,4 +53,11 @@ class RadioRepositoryImpl(
   override suspend fun cacheIsEmpty(): Boolean {
     return withContext(dispatchers.database) { dao.count() == 0L }
   }
+
+  override suspend fun getById(id: Long): RadioStation? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext RadioDaoMapper.map(entity)
+    }
+  }
 }

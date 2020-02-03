@@ -5,6 +5,8 @@ package kotterknife
 import android.app.Activity
 import android.app.Dialog
 import android.view.View
+import androidx.fragment.app.DialogFragment as SupportDialogFragment
+import androidx.fragment.app.Fragment as SupportFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -12,8 +14,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-import androidx.fragment.app.DialogFragment as SupportDialogFragment
-import androidx.fragment.app.Fragment as SupportFragment
 
 // pulled from
 // https://gist.github.com/chrisbanes/fc4392dcbdc0aa5d99147dc551616676

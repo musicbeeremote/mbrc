@@ -10,13 +10,13 @@ import com.kelsos.mbrc.utils.observeOnce
 import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Single
+import java.io.IOException
+import java.net.SocketException
+import java.net.SocketTimeoutException
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.IOException
-import java.net.SocketException
-import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
 class OutputSelectionViewModelTest {

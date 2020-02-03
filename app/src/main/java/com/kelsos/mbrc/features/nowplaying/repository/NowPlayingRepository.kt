@@ -97,4 +97,11 @@ class NowPlayingRepositoryImpl(
   override suspend fun findPosition(query: String): Int = withContext(dispatchers.database) {
     return@withContext dao.findPositionByQuery(query) ?: -1
   }
+
+  override suspend fun getById(id: Long): NowPlaying? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext NowPlayingEntityMapper.map(entity)
+    }
+  }
 }

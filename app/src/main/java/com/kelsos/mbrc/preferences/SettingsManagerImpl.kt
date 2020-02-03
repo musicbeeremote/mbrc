@@ -12,8 +12,8 @@ import com.kelsos.mbrc.preferences.SettingsManager.CallAction
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.REDUCE
 import io.reactivex.Single
-import timber.log.Timber
 import java.util.Date
+import timber.log.Timber
 
 class SettingsManagerImpl(
   private val context: Application,

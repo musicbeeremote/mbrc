@@ -2,12 +2,12 @@ package com.kelsos.mbrc.logging
 
 import android.content.Context
 import android.util.Log
-import timber.log.Timber
 import java.io.File
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.logging.SimpleFormatter
+import timber.log.Timber
 
 class FileLoggingTree(context: Context) : Timber.DebugTree() {
 

@@ -4,12 +4,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.features.library.OnFastScrollListener
+import com.kelsos.mbrc.features.library.data.Track
+import com.kelsos.mbrc.features.library.popup
+import com.kelsos.mbrc.features.library.presentation.viewholders.TrackViewHolder
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.ui.FastScrollableAdapter
-import com.kelsos.mbrc.features.library.OnFastScrollListener
-import com.kelsos.mbrc.features.library.popup
-import com.kelsos.mbrc.features.library.data.Track
-import com.kelsos.mbrc.features.library.presentation.viewholders.TrackViewHolder
 import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 
 class TrackAdapter : FastScrollableAdapter<Track, TrackViewHolder>(

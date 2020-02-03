@@ -3,6 +3,7 @@ package com.kelsos.mbrc
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.AppRxSchedulers
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
@@ -28,7 +29,6 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
-import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.library.presentation.adapters.AlbumAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.ArtistAdapter
@@ -70,12 +70,16 @@ import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.features.queue.QueueApiImpl
+import com.kelsos.mbrc.features.queue.QueueUseCase
+import com.kelsos.mbrc.features.queue.QueueUseCaseImpl
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
 import com.kelsos.mbrc.features.radio.presentation.RadioViewModel
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.features.radio.repository.RadioRepositoryImpl
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
+import com.kelsos.mbrc.features.work.WorkHandler
+import com.kelsos.mbrc.features.work.WorkHandlerImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
@@ -142,6 +146,8 @@ import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
 import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.koin.androidx.experimental.dsl.viewModel
@@ -151,13 +157,12 @@ import org.koin.experimental.builder.factory
 import org.koin.experimental.builder.factoryBy
 import org.koin.experimental.builder.single
 import org.koin.experimental.builder.singleBy
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 val appModule = module {
   single { Moshi.Builder().build() }
   singleBy<CoverApi, CoverApiImpl>()
   singleBy<QueueApi, QueueApiImpl>()
+  singleBy<QueueUseCase, QueueUseCaseImpl>()
 
   singleBy<ConnectionRepository, ConnectionRepositoryImpl>()
 
@@ -219,7 +224,6 @@ val appModule = module {
 
   single<CoverModel> { StoredCoverModel }
 
-  single<PopupActionHandler>()
   single<DefaultActionPreferenceStore>()
 
   singleBy<WidgetUpdater, WidgetUpdaterImpl>()
@@ -245,6 +249,9 @@ val appModule = module {
       appRxSchedulers.database.asCoroutineDispatcher()
     )
   }
+
+  single { WorkManager.getInstance(get()) }
+  singleBy<WorkHandler, WorkHandlerImpl>()
 
   single<ApiBase>()
 

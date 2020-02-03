@@ -9,5 +9,5 @@ interface Repository<T> {
   fun search(term: String): DataSource.Factory<Int, T>
   suspend fun cacheIsEmpty(): Boolean
   suspend fun count(): Long
-  suspend fun getById(id: Int): T?
+  suspend fun getById(id: Long): T?
 }

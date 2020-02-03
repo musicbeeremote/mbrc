@@ -11,11 +11,11 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import io.reactivex.Single
-import timber.log.Timber
 import java.io.IOException
 import java.net.Socket
 import java.net.SocketException
 import java.nio.charset.Charset
+import timber.log.Timber
 
 class RequestManagerImpl(
   private val serializationAdapter: SerializationAdapter,

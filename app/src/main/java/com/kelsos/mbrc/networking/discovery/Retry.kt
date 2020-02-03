@@ -2,9 +2,9 @@ package com.kelsos.mbrc.networking.discovery
 
 import arrow.core.Either
 import arrow.core.Try
+import java.io.IOException
 import kotlinx.coroutines.delay
 import timber.log.Timber
-import java.io.IOException
 
 suspend fun <T> retryIO(
   times: Int = Int.MAX_VALUE,

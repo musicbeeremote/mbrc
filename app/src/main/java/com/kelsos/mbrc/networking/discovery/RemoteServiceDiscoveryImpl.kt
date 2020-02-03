@@ -7,12 +7,12 @@ import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.squareup.moshi.Moshi
-import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
 import java.util.Locale
+import timber.log.Timber
 
 class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,

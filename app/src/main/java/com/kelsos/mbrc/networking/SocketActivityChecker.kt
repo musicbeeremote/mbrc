@@ -2,8 +2,8 @@ package com.kelsos.mbrc.networking
 
 import io.reactivex.Completable
 import io.reactivex.disposables.Disposable
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import timber.log.Timber
 
 class SocketActivityChecker {
   private var disposable: Disposable? = null

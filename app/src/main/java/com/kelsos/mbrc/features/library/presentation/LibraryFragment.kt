@@ -80,7 +80,7 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     viewModel.syncProgress.nonNullObserver(viewLifecycleOwner) {
       syncProgress.max = it.total
       syncProgress.progress = it.current
-      //TODO: include maybe steps
+      // TODO: include maybe steps
     }
 
     viewModel.emitter.nonNullObserver(viewLifecycleOwner) { event ->

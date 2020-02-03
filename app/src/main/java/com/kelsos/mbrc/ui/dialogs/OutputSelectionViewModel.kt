@@ -7,10 +7,10 @@ import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.ui.BaseViewModel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
 import java.net.SocketException
 import java.net.SocketTimeoutException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.await
 
 class OutputSelectionViewModel(
   private val outputApi: OutputApi,

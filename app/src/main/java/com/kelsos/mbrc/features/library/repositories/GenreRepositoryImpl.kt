@@ -21,16 +21,15 @@ class GenreRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : GenreRepository {
 
-  private val mapper = GenreDtoMapper()
-  private val dao2Model =
-    GenreEntityMapper()
+  private val dtoMapper = GenreDtoMapper()
+  private val entityMapper = GenreEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
   override fun getAll(): DataSource.Factory<Int, Genre> {
-    return dao.getAll().map { dao2Model.map(it) }
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
   override suspend fun getRemote(): Try<Unit> = Try {
@@ -41,7 +40,7 @@ class GenreRepositoryImpl(
       runBlocking(dispatchers.disk) {
 
         val items = genres.map {
-          mapper.map(it).apply {
+          dtoMapper.map(it).apply {
             dateAdded = added
 
             val id = stored[it.genre]
@@ -63,7 +62,7 @@ class GenreRepositoryImpl(
   }
 
   override fun search(term: String): DataSource.Factory<Int, Genre> {
-    return dao.search(term).map { dao2Model.map(it) }
+    return dao.search(term).map { entityMapper.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) {
@@ -72,9 +71,16 @@ class GenreRepositoryImpl(
 
   override fun allGenres(): DataModel<Genre> {
     return DataModel(dao.getAll().map {
-      dao2Model.map(
+      entityMapper.map(
         it
       )
     }, dao.getAllIndexes())
+  }
+
+  override suspend fun getById(id: Long): Genre? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entityMapper.map(entity)
+    }
   }
 }

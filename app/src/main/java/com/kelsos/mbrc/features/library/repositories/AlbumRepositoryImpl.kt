@@ -21,20 +21,19 @@ class AlbumRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : AlbumRepository {
 
-  private val mapper = AlbumDtoMapper()
-  private val view2model =
-    AlbumEntityMapper()
+  private val dtoMapper = AlbumDtoMapper()
+  private val entityMapper = AlbumEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
   override fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, Album> {
-    return dao.getAlbumsByArtist(artist).map { view2model.map(it) }
+    return dao.getAlbumsByArtist(artist).map { entityMapper.map(it) }
   }
 
   override fun getAll(): DataSource.Factory<Int, Album> {
-    return dao.getAll().map { view2model.map(it) }
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
   override suspend fun getRemote(): Try<Unit> = Try {
@@ -42,7 +41,7 @@ class AlbumRepositoryImpl(
     val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class)
     data.blockingForEach { albums ->
       runBlocking(dispatchers.disk) {
-        val list = albums.map { mapper.map(it).apply { dateAdded = added } }
+        val list = albums.map { dtoMapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insert(list)
         }
@@ -55,15 +54,22 @@ class AlbumRepositoryImpl(
   }
 
   override fun search(term: String): DataSource.Factory<Int, Album> {
-    return dao.search(term).map { view2model.map(it) }
+    return dao.search(term).map { entityMapper.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
   override fun getAlbumsSorted(): DataModel<Album> {
     return DataModel(
-      factory = dao.getAll().map { view2model.map(it) },
+      factory = dao.getAll().map { entityMapper.map(it) },
       indexes = dao.getIndexes()
     )
+  }
+
+  override suspend fun getById(id: Long): Album? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entityMapper.map(entity)
+    }
   }
 }

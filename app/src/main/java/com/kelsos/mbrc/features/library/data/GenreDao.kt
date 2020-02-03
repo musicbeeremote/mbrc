@@ -33,4 +33,7 @@ interface GenreDao {
 
   @Query("select substr(genre,1,1) from genre order by genre")
   fun getAllIndexes(): LiveData<List<String>>
+
+  @Query("select * from genre where id = :id")
+  fun getById(id: Long): GenreEntity?
 }

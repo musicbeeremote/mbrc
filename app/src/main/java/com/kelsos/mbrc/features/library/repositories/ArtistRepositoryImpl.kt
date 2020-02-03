@@ -21,25 +21,24 @@ class ArtistRepositoryImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : ArtistRepository {
 
-  private val mapper = ArtistDtoMapper()
-  private val entity2model =
-    ArtistEntityMapper()
+  private val dtoMapper = ArtistDtoMapper()
+  private val entityMapper = ArtistEntityMapper()
 
   override suspend fun count(): Long {
     return withContext(dispatchers.database) { dao.count() }
   }
 
   override fun getArtistByGenre(genre: String): DataSource.Factory<Int, Artist> {
-    return dao.getArtistByGenre(genre).map { entity2model.map(it) }
+    return dao.getArtistByGenre(genre).map { entityMapper.map(it) }
   }
 
   override fun getAll(): DataSource.Factory<Int, Artist> {
-    return dao.getAll().map { entity2model.map(it) }
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
   override fun allArtists(): DataModel<Artist> {
     return DataModel(dao.getAll().map {
-      entity2model.map(
+      entityMapper.map(
         it
       )
     }, dao.getAllIndexes())
@@ -47,7 +46,7 @@ class ArtistRepositoryImpl(
 
   override fun albumArtists(): DataModel<Artist> {
     return DataModel(
-      factory = dao.getAlbumArtists().map { entity2model.map(it) },
+      factory = dao.getAlbumArtists().map { entityMapper.map(it) },
       indexes = dao.getAlbumArtistIndexes()
     )
   }
@@ -57,7 +56,7 @@ class ArtistRepositoryImpl(
     val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class)
     data.blockingForEach { artists ->
       runBlocking(dispatchers.disk) {
-        val items = artists.map { mapper.map(it).apply { dateAdded = added } }
+        val items = artists.map { dtoMapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insertAll(items)
         }
@@ -70,14 +69,21 @@ class ArtistRepositoryImpl(
   }
 
   override fun search(term: String): DataSource.Factory<Int, Artist> {
-    return dao.search(term).map { entity2model.map(it) }
+    return dao.search(term).map { entityMapper.map(it) }
   }
 
   override fun getAlbumArtistsOnly(): DataSource.Factory<Int, Artist> {
-    return dao.getAlbumArtists().map { entity2model.map(it) }
+    return dao.getAlbumArtists().map { entityMapper.map(it) }
   }
 
   override suspend fun cacheIsEmpty(): Boolean {
     return withContext(dispatchers.database) { dao.count() == 0L }
+  }
+
+  override suspend fun getById(id: Long): Artist? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entityMapper.map(entity)
+    }
   }
 }
