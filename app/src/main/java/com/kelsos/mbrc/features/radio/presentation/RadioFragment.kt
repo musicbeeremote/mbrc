@@ -70,7 +70,7 @@ class RadioFragment : Fragment(), OnRadioPressedListener {
     super.onViewCreated(view, savedInstanceState)
     setupEmptyView()
     setupRecycler()
-    miniControlFactory.attach(requireFragmentManager())
+    miniControlFactory.attach(parentFragmentManager)
   }
 
   private fun setupRecycler() {

@@ -201,7 +201,7 @@ class NowPlayingFragment : BaseFragment() {
     itemTouchHelper = ItemTouchHelper(callback).apply {
       attachToRecyclerView(recycler)
     }
-    miniControlFactory.attach(requireFragmentManager())
+    miniControlFactory.attach(parentFragmentManager)
   }
 
   override fun onBackPressed(): Boolean {

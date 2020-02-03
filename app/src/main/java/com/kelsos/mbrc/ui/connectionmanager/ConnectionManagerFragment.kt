@@ -34,7 +34,7 @@ class ConnectionManagerFragment : Fragment(),
   private val scanButton: Button by bindView(R.id.connection_manager__scan)
 
   private fun onAddButtonClick() {
-    val settingsDialog = SettingsDialogFragment.create(requireFragmentManager())
+    val settingsDialog = SettingsDialogFragment.create(parentFragmentManager)
     settingsDialog.show(this)
   }
 
@@ -65,13 +65,13 @@ class ConnectionManagerFragment : Fragment(),
     adapter = ConnectionAdapter()
     adapter.setChangeListener(this)
     recyclerView.adapter = adapter
-    connectionManagerViewModel.settings.nonNullObserver(this) {
+    connectionManagerViewModel.settings.nonNullObserver(viewLifecycleOwner) {
       adapter.submitList(it)
     }
-    connectionManagerViewModel.default.observe(this, Observer {
+    connectionManagerViewModel.default.observe(viewLifecycleOwner, Observer {
       adapter.setDefault(it)
     })
-    connectionManagerViewModel.discoveryStatus.nonNullObserver(this) {
+    connectionManagerViewModel.discoveryStatus.nonNullObserver(viewLifecycleOwner) {
       it.contentIfNotHandled?.let { status ->
         onDiscoveryStopped(status)
       }
@@ -101,7 +101,7 @@ class ConnectionManagerFragment : Fragment(),
   }
 
   override fun onEdit(settings: ConnectionSettingsEntity) {
-    val settingsDialog = SettingsDialogFragment.newInstance(settings, requireFragmentManager())
+    val settingsDialog = SettingsDialogFragment.newInstance(settings, parentFragmentManager)
     settingsDialog.show(this)
   }
 

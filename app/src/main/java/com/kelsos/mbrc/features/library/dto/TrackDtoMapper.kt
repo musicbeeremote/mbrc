@@ -13,7 +13,7 @@ class TrackDtoMapper :
   private val parseYear: (year: String) -> String = { year ->
     with(matcher.reset(year)) {
       if (find()) {
-        group(1)
+        group(1) ?: ""
       } else {
         ""
       }

@@ -50,6 +50,6 @@ class LyricsFragment : Fragment() {
       lyricsAdapter.submitList(lyrics)
     }
 
-    miniControlFactory.attach(requireFragmentManager())
+    miniControlFactory.attach(parentFragmentManager)
   }
 }

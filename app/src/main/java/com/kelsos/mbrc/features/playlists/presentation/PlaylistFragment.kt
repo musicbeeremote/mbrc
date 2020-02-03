@@ -48,7 +48,7 @@ class PlaylistFragment : Fragment(),
     playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener { viewModel.reload() }
     emptyViewTitle.setText(R.string.playlists_list_empty)
-    miniControlFactory.attach(requireFragmentManager())
+    miniControlFactory.attach(parentFragmentManager)
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
