@@ -44,4 +44,7 @@ interface ArtistDao {
     """
   )
   fun getAlbumArtists(): PagingSource<Int, ArtistEntity>
+
+  @Query("select * from artist where id = :id")
+  fun getById(id: Long): ArtistEntity?
 }

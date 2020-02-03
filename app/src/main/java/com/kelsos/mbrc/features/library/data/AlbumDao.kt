@@ -58,4 +58,7 @@ interface AlbumDao {
       )
     }
   }
+
+  @Query("select * from album where id = :id")
+  fun getById(id: Long): AlbumEntity?
 }

@@ -29,4 +29,7 @@ interface GenreDao {
 
   @Query("delete from genre where date_added < :added")
   fun removePreviousEntries(added: Long)
+
+  @Query("select * from genre where id = :id")
+  fun getById(id: Long): GenreEntity?
 }

@@ -78,7 +78,10 @@ class AlbumRepositoryImpl(
     return dao.getCovers()
   }
 
-  override suspend fun getById(id: Int): Album? {
-    TODO("Not yet implemented")
+  override suspend fun getById(id: Long): Album? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entity.toAlbum()
+    }
   }
 }

@@ -3,6 +3,7 @@ package com.kelsos.mbrc
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
@@ -65,12 +66,16 @@ import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
+import com.kelsos.mbrc.features.queue.QueueUseCase
+import com.kelsos.mbrc.features.queue.QueueUseCaseImpl
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
 import com.kelsos.mbrc.features.radio.presentation.RadioViewModel
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.features.radio.repository.RadioRepositoryImpl
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
+import com.kelsos.mbrc.features.work.WorkHandler
+import com.kelsos.mbrc.features.work.WorkHandlerImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
@@ -150,6 +155,7 @@ import java.util.concurrent.Executors
 
 val appModule = module {
   single { Moshi.Builder().build() }
+  singleBy<QueueUseCase, QueueUseCaseImpl>()
 
   singleBy<ConnectionRepository, ConnectionRepositoryImpl>()
 
@@ -223,6 +229,9 @@ val appModule = module {
       Dispatchers.IO
     )
   }
+
+  single { WorkManager.getInstance(get()) }
+  singleBy<WorkHandler, WorkHandlerImpl>()
 
   single<ApiBase>()
 

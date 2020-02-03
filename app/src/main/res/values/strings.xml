@@ -129,6 +129,7 @@
   <string name="setting_miscellaneous_debug_logging">Debug Logging</string>
   <string name="now_playing_list_empty">No tracks found</string>
   <string name="playlists_list_empty">No playlists found</string>
+  <string name="artists_list_empty">No artists found</string>
   <string name="albums_list_empty">No albums found</string>
   <string name="swipe_to_refresh">Swipe to refresh the list.</string>
   <string name="playlists__refresh_failed">There was an error while trying to load the playlists.</string>
@@ -186,5 +187,9 @@
   <string name="now_playing__refresh_failed">There was a problem refreshing the now playing list</string>
   <string name="lyrics__empty_icon_content_description">An icon that is displayed when the list is empty</string>
   <string name="mini_control__artist">%1$s - %2$s</string>
-  <string name="artists_list_empty">No artists found</string>
+  <string name="notification__actions_id">mbrc__actions</string>
+  <string name="notification__queue_title">Add tracks to the queue</string>
+  <string name="notification__queue_description">Adding tracks to the queue</string>
+  <string name="notification__actions_name">Actions</string>
+  <string name="notification__actions_description">Notifications that are the result of user actions such as sync or queue</string>
 </resources>

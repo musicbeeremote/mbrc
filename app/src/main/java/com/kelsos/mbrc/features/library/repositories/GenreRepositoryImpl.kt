@@ -64,7 +64,10 @@ class GenreRepositoryImpl(
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }
 
-  override suspend fun getById(id: Int): Genre? {
-    TODO("Not yet implemented")
+  override suspend fun getById(id: Long): Genre? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entity.toGenre()
+    }
   }
 }

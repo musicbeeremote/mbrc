@@ -62,7 +62,10 @@ class ArtistRepositoryImpl(
     dao.count() == 0L
   }
 
-  override suspend fun getById(id: Int): Artist? {
-    TODO("Not yet implemented")
+  override suspend fun getById(id: Long): Artist? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entity.toArtist()
+    }
   }
 }

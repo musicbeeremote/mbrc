@@ -100,7 +100,10 @@ class NowPlayingRepositoryImpl(
     return@withContext dao.findPositionByQuery(query) ?: -1
   }
 
-  override suspend fun getById(id: Int): NowPlaying? {
-    TODO("Not yet implemented")
+  override suspend fun getById(id: Long): NowPlaying? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext entity.toNowPlaying()
+    }
   }
 }
