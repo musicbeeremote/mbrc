@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.library.repositories
 
 import androidx.paging.PagingData
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
@@ -29,16 +30,23 @@ class GenreRepositoryImpl(
     it.toGenre()
   }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
-    val stored = dao.genres().associate { it.genre to it.id }
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
       val added = epoch()
-      api.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class)
-        .onCompletion {
-          withContext(dispatchers.database) {
-            dao.removePreviousEntries(added)
-          }
+      val stored = withContext(dispatchers.database) {
+        dao.genres().associate { it.genre to it.id }
+      }
+      val allPages = api.getAllPages(
+        Protocol.LibraryBrowseGenres,
+        GenreDto::class,
+        progress
+      )
+
+      allPages.onCompletion {
+        withContext(dispatchers.database) {
+          dao.removePreviousEntries(added)
         }
+      }
         .collect { genres ->
           val items = genres.map {
             it.toEntity().apply {

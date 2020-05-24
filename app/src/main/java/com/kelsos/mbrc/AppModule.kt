@@ -47,6 +47,8 @@ import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepositoryImpl
 import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCaseImpl
+import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
+import com.kelsos.mbrc.features.library.sync.SyncWorkHandlerImpl
 import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
@@ -182,6 +184,7 @@ val appModule = module {
   singleBy<ServiceChecker, ServiceCheckerImpl>()
 
   singleBy<LibrarySyncUseCase, LibrarySyncUseCaseImpl>()
+  singleBy<SyncWorkHandler, SyncWorkHandlerImpl>()
 
   singleBy<RadioRepository, RadioRepositoryImpl>()
   singleBy<ClientInformationStore, ClientInformationStoreImpl>()

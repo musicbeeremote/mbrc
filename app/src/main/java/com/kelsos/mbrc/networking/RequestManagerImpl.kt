@@ -73,7 +73,7 @@ class RequestManagerImpl(
     }
 
   private fun connect(firstMessage: SocketMessage?): Socket {
-    val connectionSettings = checkNotNull(repository.getDefault().orNull())
+    val connectionSettings = checkNotNull(repository.getDefault())
 
     try {
       val socketAddress = connectionSettings.toSocketAddress()

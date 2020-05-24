@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.library.sync
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Try
+import arrow.core.right
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
@@ -76,7 +76,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     mockCacheState(true)
     mockSuccessfulRepositoryResponse()
 
-    val result = librarySyncUseCase.sync(true)
+    val result = librarySyncUseCase.sync(true, mockk())
     advanceTimeBy(5000)
     assertThat(result).isEqualTo(SyncResult.SUCCESS)
   }
@@ -86,7 +86,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     mockCacheState(false)
     mockSuccessfulRepositoryResponse()
 
-    val result = librarySyncUseCase.sync(true)
+    val result = librarySyncUseCase.sync(true, mockk())
     advanceTimeBy(5000)
     assertThat(result).isEqualTo(SyncResult.NOOP)
     assertThat(librarySyncUseCase.isRunning()).isFalse()
@@ -107,25 +107,25 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   }
 
   private fun mockSuccessfulRepositoryResponse() {
-    coEvery { genreRepository.getRemote() } coAnswers {
+    coEvery { genreRepository.getRemote(any()) } coAnswers {
       delay(400)
-      Try.invoke { }
+      Unit.right()
     }
-    coEvery { artistRepository.getRemote() } coAnswers {
+    coEvery { artistRepository.getRemote(any()) } coAnswers {
       delay(400)
-      Try.invoke { }
+      Unit.right()
     }
-    coEvery { albumRepository.getRemote() } coAnswers {
+    coEvery { albumRepository.getRemote(any()) } coAnswers {
       delay(400)
-      Try.invoke { }
+      Unit.right()
     }
-    coEvery { trackRepository.getRemote() } coAnswers {
+    coEvery { trackRepository.getRemote(any()) } coAnswers {
       delay(400)
-      Try.invoke { }
+      Unit.right()
     }
-    coEvery { playlistRepository.getRemote() } coAnswers {
+    coEvery { playlistRepository.getRemote(any()) } coAnswers {
       delay(400)
-      Try.invoke { }
+      Unit.right()
     }
   }
 }

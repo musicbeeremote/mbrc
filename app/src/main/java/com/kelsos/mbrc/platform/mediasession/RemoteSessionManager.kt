@@ -8,7 +8,6 @@ import android.media.AudioManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
 import com.kelsos.mbrc.events.UserAction
@@ -88,7 +87,7 @@ class RemoteSessionManager(
     get() = mediaSession.sessionToken
 
   private fun metadataUpdate(track: PlayingTrack) {
-    val bitmap = RemoteUtils.coverBitmapSync(track.coverUrl)
+    val bitmap = null // RemoteUtils.coverBitmap(track.coverUrl) n
 
     val builder = MediaMetadataCompat.Builder()
       .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.album)

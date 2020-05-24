@@ -192,4 +192,6 @@
   <string name="notification__queue_description">Adding tracks to the queue</string>
   <string name="notification__actions_name">Actions</string>
   <string name="notification__actions_description">Notifications that are the result of user actions such as sync or queue</string>
+  <string name="notification__sync_title">Library Sync</string>
+  <string name="notification__sync_description">Library sync is in progress</string>
 </resources>

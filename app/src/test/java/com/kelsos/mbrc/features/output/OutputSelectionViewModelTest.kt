@@ -3,6 +3,8 @@ package com.kelsos.mbrc.features.output
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
+import arrow.core.left
+import arrow.core.right
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.utils.appCoroutineDispatchers
 import com.kelsos.mbrc.utils.testDispatcher
@@ -60,7 +62,8 @@ class OutputSelectionViewModelTest {
       devices = listOf("Output 1", "Output 2"),
       active = "Output 2"
     )
-    coEvery { outputApi.getOutputs() } answers { outputResponse }
+
+    coEvery { outputApi.getOutputs() } answers { outputResponse.right() }
 
     viewmodel.outputs.test {
       viewmodel.reload()
@@ -73,7 +76,7 @@ class OutputSelectionViewModelTest {
   fun `if there is a socket timeout the emitter should have the proper result`() = runBlockingTest(
     testDispatcher
   ) {
-    coEvery { outputApi.getOutputs() } throws SocketTimeoutException()
+    coEvery { outputApi.getOutputs() } answers { SocketTimeoutException().left() }
 
     viewmodel.emitter.test {
       viewmodel.reload()
@@ -86,7 +89,7 @@ class OutputSelectionViewModelTest {
   fun `if there is a socket exception the emitter should have a result`() = runBlockingTest(
     testDispatcher
   ) {
-    coEvery { outputApi.getOutputs() } throws SocketException()
+    coEvery { outputApi.getOutputs() } answers { SocketException().left() }
 
     viewmodel.outputs.test {
       viewmodel.reload()
@@ -104,7 +107,7 @@ class OutputSelectionViewModelTest {
   fun `if there is an exception the emitter should have the proper result`() = runBlockingTest(
     testDispatcher
   ) {
-    coEvery { outputApi.getOutputs() } throws IOException()
+    coEvery { outputApi.getOutputs() } answers { IOException().left() }
 
     viewmodel.emitter.test {
       viewmodel.reload()
@@ -122,7 +125,7 @@ class OutputSelectionViewModelTest {
       active = "Output 2"
     )
 
-    coEvery { outputApi.setOutput(any()) } answers { outputResponse }
+    coEvery { outputApi.setOutput(any()) } answers { outputResponse.right() }
 
     viewmodel.outputs.test {
       viewmodel.setOutput("Output 2")

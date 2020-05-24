@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.core.IRemoteServiceCore
+import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
@@ -24,6 +25,7 @@ class RemoteService : Service() {
   private val receiver: RemoteBroadcastReceiver by inject()
   private val core: IRemoteServiceCore by inject()
   private val notifications: SessionNotificationManager by inject()
+  private val syncWorkHandler: SyncWorkHandler by inject()
   private lateinit var handler: Handler
 
   private fun placeholderNotification(): Notification {
@@ -63,7 +65,7 @@ class RemoteService : Service() {
     Timber.d("Background Service::Started")
     startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
     core.start()
-    core.setSyncStartAction { LibrarySyncService.startActionSync(this, true) }
+    core.setSyncStartAction { syncWorkHandler.sync(true) }
     return super.onStartCommand(intent, flags, startId)
   }
 

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking.discovery
 
 import arrow.core.Either
-import arrow.core.Try
+import arrow.core.right
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.io.IOException
@@ -17,7 +17,7 @@ suspend fun <T> retryIO(
   repeat(times - 1) {
     try {
       val value = block()
-      return Either.right(value)
+      return value.right()
     } catch (e: IOException) {
       // you can log an error here and/or make a more finer-grained
       // analysis of the cause to see if retry is needed
@@ -26,5 +26,5 @@ suspend fun <T> retryIO(
     delay(currentDelay)
     currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)
   }
-  return Try { block() }.toEither() // last attempt
+  return Either.catch { block() } // last attempt
 }

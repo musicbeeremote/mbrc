@@ -40,7 +40,8 @@ open class App : MultiDexApplication() {
     }
     return listOf(
       appModule,
-      uiModule, androidModule
+      uiModule,
+      androidModule
     )
   }
 

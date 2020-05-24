@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.radio.repository
 
 import androidx.paging.PagingData
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
@@ -30,22 +31,26 @@ class RadioRepositoryImpl(
   override fun getAll(): Flow<PagingData<RadioStation>> =
     dao.getAll().paged { it.toRadioStation() }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
-    withContext(dispatchers.network) {
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
+    return@catch withContext(dispatchers.network) {
       val added = epoch()
-      api.getAllPages(Protocol.RadioStations, RadioStationDto::class)
-        .onCompletion {
+      val allPages = api.getAllPages(
+        Protocol.RadioStations,
+        RadioStationDto::class,
+        progress
+      )
+      allPages.onCompletion {
+        withContext(dispatchers.database) {
+          dao.removePreviousEntries(added)
+        }
+      }.collect { radios ->
+        val data = radios.map { it.toEntity().apply { dateAdded = added } }
+        withContext(dispatchers.database) {
           withContext(dispatchers.database) {
-            dao.removePreviousEntries(added)
-          }
-        }.collect { radios ->
-          val data = radios.map { it.toEntity().apply { dateAdded = added } }
-          withContext(dispatchers.database) {
-            withContext(dispatchers.database) {
-              dao.insertAll(data)
-            }
+            dao.insertAll(data)
           }
         }
+      }
     }
   }
 

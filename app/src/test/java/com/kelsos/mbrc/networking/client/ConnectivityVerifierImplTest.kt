@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import arrow.core.Option
+import arrow.core.Either
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.data.DeserializationAdapter
@@ -154,7 +154,7 @@ class ConnectivityVerifierImplTest : KoinTest {
       return@answers server.defaultConnection()
     }
 
-    assertThat(verifier.verify()).isTrue()
+    assertThat(verifier.verify().isRight()).isTrue()
   }
 
   @Test
@@ -164,12 +164,11 @@ class ConnectivityVerifierImplTest : KoinTest {
       return@answers server.defaultConnection()
     }
 
-    try {
-      verifier.verify()
-      error("Test should throw")
-    } catch (e: Exception) {
-      assertThat(e).isInstanceOf(RuntimeException::class.java)
-    }
+    val result = verifier.verify()
+    assertThat(result.isLeft()).isTrue()
+    val value = (result as Either.Left).value
+    assertThat(value).isInstanceOf(ConnectivityVerifierImpl.NoValidPluginConnection::class.java)
+    assertThat(value).hasCauseThat().isInstanceOf(RuntimeException::class.java)
   }
 
   @Test
@@ -179,23 +178,20 @@ class ConnectivityVerifierImplTest : KoinTest {
       return@answers server.defaultConnection()
     }
 
-    try {
-      println(verifier.verify())
-      error("Test should throw")
-    } catch (e: Exception) {
-      assertThat(e).isInstanceOf(ConnectivityVerifierImpl.NoValidPluginConnection::class.java)
-    }
+    val result = verifier.verify()
+    assertThat(result.isLeft()).isTrue()
+    val value = (result as Either.Left).value
+    assertThat(value).isInstanceOf(ConnectivityVerifierImpl.NoValidPluginConnection::class.java)
+    assertThat(value).hasCauseThat().isNull()
   }
 
-  private fun ServerSocket.defaultConnection(): Option<ConnectionSettings> =
-    Option.fromNullable(
-      ConnectionSettings(
-        address = inetAddress.hostAddress,
-        port = localPort,
-        name = "default",
-        id = 1,
-        isDefault = true
-      )
+  private fun ServerSocket.defaultConnection(): ConnectionSettings =
+    ConnectionSettings(
+      address = inetAddress.hostAddress,
+      port = localPort,
+      name = "default",
+      id = 1,
+      isDefault = true
     )
 
   @Test
@@ -203,15 +199,14 @@ class ConnectivityVerifierImplTest : KoinTest {
     startMockServer(true)
 
     coEvery { connectionRepository.getDefault() } answers {
-      return@answers Option.empty<ConnectionSettings>()
+      return@answers null
     }
 
-    try {
-      verifier.verify()
-      error("Test should throw")
-    } catch (e: Exception) {
-      assertThat(e).isInstanceOf(RuntimeException::class.java)
-    }
+    val result = verifier.verify()
+    assertThat(result.isLeft()).isTrue()
+    val value = (result as Either.Left).value
+    assertThat(value).isInstanceOf(ConnectivityVerifierImpl.NoValidPluginConnection::class.java)
+    assertThat(value).hasCauseThat().isInstanceOf(RuntimeException::class.java)
   }
 
   @Test
@@ -219,15 +214,14 @@ class ConnectivityVerifierImplTest : KoinTest {
     startMockServer(false, "payload", false)
 
     coEvery { connectionRepository.getDefault() } answers {
-      return@answers Option.empty<ConnectionSettings>()
+      return@answers null
     }
 
-    try {
-      verifier.verify()
-      error("Test should throw")
-    } catch (e: Exception) {
-      assertThat(e).isInstanceOf(RuntimeException::class.java)
-    }
+    val result = verifier.verify()
+    assertThat(result.isLeft()).isTrue()
+    val value = (result as Either.Left).value
+    assertThat(value).isInstanceOf(ConnectivityVerifierImpl.NoValidPluginConnection::class.java)
+    assertThat(value).hasCauseThat().isInstanceOf(RuntimeException::class.java)
   }
 
   private val testModule = module {

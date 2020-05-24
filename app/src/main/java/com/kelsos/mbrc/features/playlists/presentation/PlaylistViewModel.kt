@@ -27,7 +27,6 @@ class PlaylistViewModel(
   fun reload() {
     viewModelScope.launch(dispatchers.network) {
       val message = repository.getRemote()
-        .toEither()
         .fold(
           {
             PlaylistUiMessages.RefreshFailed

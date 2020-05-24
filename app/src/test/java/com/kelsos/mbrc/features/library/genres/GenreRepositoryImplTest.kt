@@ -111,7 +111,7 @@ class GenreRepositoryImplTest : KoinTest {
 
     val mockApi = mockk<ApiBase>()
 
-    coEvery { mockApi.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class) } answers {
+    coEvery { mockApi.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class, any()) } answers {
       flow {
         emit((0 until 1200).map { GenreDto("Metal$it") })
       }

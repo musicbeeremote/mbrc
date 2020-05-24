@@ -3,8 +3,6 @@ package com.kelsos.mbrc.features.nowplaying.presentation
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import arrow.core.Option
-import arrow.core.extensions.option.monad.binding
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.dragsort.ItemTouchHelperAdapter
@@ -50,14 +48,11 @@ class NowPlayingAdapter(
     payloads: MutableList<Any>
   ) {
     if (payloads.contains(PLAYING_CHANGED)) {
-      val track = Option.fromNullable(getItem(holder.bindingAdapterPosition))
-      binding {
-        val (nowPlayingTrack) = track
-        val isPlayingTrack = nowPlayingTrack.path == currentTrack
-        holder.setPlayingTrack(isPlayingTrack)
-        if (isPlayingTrack) {
-          playingTrackIndex = holder.bindingAdapterPosition
-        }
+      val track = getItem(holder.bindingAdapterPosition) ?: return
+      val isPlayingTrack = track.path == currentTrack
+      holder.setPlayingTrack(isPlayingTrack)
+      if (isPlayingTrack) {
+        playingTrackIndex = holder.bindingAdapterPosition
       }
     } else {
       onBindViewHolder(holder, position)
@@ -65,16 +60,13 @@ class NowPlayingAdapter(
   }
 
   override fun onBindViewHolder(holder: NowPlayingTrackViewHolder, position: Int) {
-    val track = Option.fromNullable(getItem(holder.bindingAdapterPosition))
-    binding {
-      val (nowPlayingTrack) = track
-      val isPlayingTrack = nowPlayingTrack.path == currentTrack
-      holder.bindTo(nowPlayingTrack)
-      holder.setPlayingTrack(isPlayingTrack)
+    val track = getItem(holder.bindingAdapterPosition) ?: return
+    val isPlayingTrack = track.path == currentTrack
+    holder.bindTo(track)
+    holder.setPlayingTrack(isPlayingTrack)
 
-      if (isPlayingTrack) {
-        playingTrackIndex = holder.bindingAdapterPosition
-      }
+    if (isPlayingTrack) {
+      playingTrackIndex = holder.bindingAdapterPosition
     }
   }
 

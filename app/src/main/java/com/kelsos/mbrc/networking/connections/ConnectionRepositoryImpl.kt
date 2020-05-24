@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
 import androidx.paging.PagingData
-import arrow.core.Option
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
@@ -62,8 +61,8 @@ class ConnectionRepositoryImpl(
     return dao.getPrevious(id)?.toConnection()
   }
 
-  override fun getDefault(): Option<ConnectionSettings> {
-    return Option.fromNullable(dao.getDefault()?.toConnection())
+  override fun getDefault(): ConnectionSettings? {
+    return dao.getDefault()?.toConnection()
   }
 
   override fun setDefault(settings: ConnectionSettings) {

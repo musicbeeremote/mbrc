@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.networking.client
 
-import arrow.core.Some
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
@@ -73,12 +72,11 @@ class ClientConnectionManager(
     scope.launch {
       delay(2000)
 
-      val default = connectionRepository.getDefault()
-      if (default.isEmpty()) {
+      val settings = connectionRepository.getDefault()
+      if (settings == null) {
         Timber.v("no connection settings aborting")
         return@launch
       }
-      val settings = (default as Some).t
 
       Timber.v("Attempting connection on $settings")
       val onConnection: (Boolean) -> Unit = { connected ->

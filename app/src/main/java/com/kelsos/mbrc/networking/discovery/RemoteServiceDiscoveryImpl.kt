@@ -4,6 +4,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import arrow.core.Either
+import arrow.core.left
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.toConnection
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -27,7 +28,7 @@ class RemoteServiceDiscoveryImpl(
 
   override suspend fun discover(): Either<DiscoveryStop, ConnectionSettingsEntity> {
     if (!isWifiConnected()) {
-      return Either.left(DiscoveryStop.NoWifi)
+      return DiscoveryStop.NoWifi.left()
     }
 
     multicastLock = manager.createMulticastLock("locked").apply {
@@ -62,7 +63,7 @@ class RemoteServiceDiscoveryImpl(
     }
 
     if (entity.isLeft()) {
-      return Either.left(DiscoveryStop.NotFound)
+      return DiscoveryStop.NotFound.left()
     }
 
     return entity.mapLeft { DiscoveryStop.Complete }

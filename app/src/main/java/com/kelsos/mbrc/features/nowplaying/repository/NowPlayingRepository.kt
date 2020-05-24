@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.nowplaying.repository
 
 import androidx.paging.PagingData
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.data.Repository
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
@@ -47,35 +48,34 @@ class NowPlayingRepositoryImpl(
     it.toNowPlaying()
   }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
-    val added = epoch()
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
+      val added = epoch()
       val cached = withContext(dispatchers.database) {
         dao.cached().associateBy { it.key() }
       }
       api.getAllPages(
         Protocol.NowPlayingList,
-        NowPlayingDto::class
-      )
-        .onCompletion {
-          withContext(dispatchers.database) {
-            dao.removePreviousEntries(added)
-          }
+        NowPlayingDto::class,
+        progress
+      ).onCompletion {
+        withContext(dispatchers.database) {
+          dao.removePreviousEntries(added)
         }
-        .collect { item ->
-          val list = item.map { it.toEntity().apply { dateAdded = added } }
+      }.collect { item ->
+        val list = item.map { it.toEntity().apply { dateAdded = added } }
 
-          val existing = list.filter { cached.containsKey(it.key()) }
-          val new = list.minus(existing)
-          for (entity in existing) {
-            entity.id = checkNotNull(cached[entity.key()]).id
-          }
-          withContext(dispatchers.database) {
-            Timber.v("updating ${existing.size} and inserting ${new.size} items")
-            dao.update(existing)
-            dao.insertAll(new)
-          }
+        val existing = list.filter { cached.containsKey(it.key()) }
+        val new = list.minus(existing)
+        for (entity in existing) {
+          entity.id = checkNotNull(cached[entity.key()]).id
         }
+        withContext(dispatchers.database) {
+          Timber.v("updating ${existing.size} and inserting ${new.size} items")
+          dao.update(existing)
+          dao.insertAll(new)
+        }
+      }
     }
   }
 

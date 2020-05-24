@@ -3,7 +3,8 @@ package com.kelsos.mbrc.features.nowplaying.presentation
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
-import arrow.core.Try
+import arrow.core.left
+import arrow.core.right
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.events.Event
@@ -64,7 +65,7 @@ class NowPlayingViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() = runBlockingTest(testDispatcher) {
-    coEvery { repository.getRemote() } coAnswers { Try.raiseError(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
     viewModel.emitter.test {
       viewModel.reload()
       advanceUntilIdle()
@@ -74,7 +75,7 @@ class NowPlayingViewModelTest {
 
   @Test
   fun `should notify the observer that refresh succeeded`() = runBlockingTest(testDispatcher) {
-    coEvery { repository.getRemote() } coAnswers { Try.invoke { } }
+    coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
     viewModel.emitter.test {
       viewModel.reload()
       advanceUntilIdle()

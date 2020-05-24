@@ -109,13 +109,13 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user moves track from position 1 to position 5`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       mockApi(20) {
         nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(1, 5)
@@ -161,13 +161,13 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user moves track from position 6 to position 1`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       mockApi(20) {
         nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(6, 1)
@@ -213,13 +213,13 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user removes a track`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       mockApi(20) {
         nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     repository.remove(2)
@@ -264,13 +264,13 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user search should return filtered results`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       mockApi(20) {
         nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     val differ = AsyncPagingDataDiffer(
@@ -314,15 +314,15 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `updated items should keep the same ids`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       mockApi(5) {
         nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(5)
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
 
     val differ = AsyncPagingDataDiffer(
       diffCallback = NowPlayingAdapter.NOW_PLAYING_COMPARATOR,
@@ -365,25 +365,25 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `search should return -1 if item is not found`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       mockApi(5) {
         nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.findPosition("Song 15")).isEqualTo(-1)
   }
 
   @Test
   fun `search should return the position if item is found`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       mockApi(5) {
         nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.findPosition("Song 5")).isEqualTo(5)
   }
 }

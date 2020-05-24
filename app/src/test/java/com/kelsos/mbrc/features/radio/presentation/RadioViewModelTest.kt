@@ -3,7 +3,8 @@ package com.kelsos.mbrc.features.radio.presentation
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
-import arrow.core.Try
+import arrow.core.left
+import arrow.core.right
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.features.queue.QueueResult
@@ -34,7 +35,6 @@ class RadioViewModelTest {
   private lateinit var repository: RadioRepository
   private lateinit var radioViewModel: RadioViewModel
   private lateinit var queue: QueueUseCase
-  private lateinit var observer: (Event<RadioUiMessages>) -> Unit
   private lateinit var slot: CapturingSlot<Event<RadioUiMessages>>
 
   @Before
@@ -48,7 +48,7 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() = runBlockingTest(testDispatcher) {
-    coEvery { repository.getRemote() } coAnswers { Try.raiseError(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
     radioViewModel.emitter.test {
       radioViewModel.reload()
       assertThat(expectItem()).isEqualTo(RadioUiMessages.RefreshFailed)
@@ -58,7 +58,7 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify the observer that refresh succeeded`() = runBlockingTest(testDispatcher) {
-    coEvery { repository.getRemote() } coAnswers { Try.invoke { } }
+    coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
     radioViewModel.emitter.test {
       radioViewModel.reload()
       assertThat(expectItem()).isEqualTo(RadioUiMessages.RefreshSuccess)
@@ -76,16 +76,6 @@ class RadioViewModelTest {
     radioViewModel.emitter.test {
       radioViewModel.play("http://radio.station")
       assertThat(expectItem()).isEqualTo(RadioUiMessages.QueueSuccess)
-      cancelAndConsumeRemainingEvents()
-    }
-  }
-
-  @Test
-  fun `should notify on network error`() = runBlockingTest(testDispatcher) {
-    coEvery { queue.queuePath(any()) } throws SocketTimeoutException()
-    radioViewModel.emitter.test {
-      radioViewModel.play("http://radio.station")
-      assertThat(expectItem()).isEqualTo(RadioUiMessages.NetworkError)
       cancelAndConsumeRemainingEvents()
     }
   }

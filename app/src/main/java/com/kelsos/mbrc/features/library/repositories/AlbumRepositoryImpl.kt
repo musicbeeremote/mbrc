@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.library.repositories
 
 import androidx.paging.PagingData
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
@@ -31,19 +32,24 @@ class AlbumRepositoryImpl(
 
   override fun getAll(): Flow<PagingData<Album>> = dao.getAll().paged { it.toAlbum() }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
-    val added = epoch()
-    val default = CachedAlbumCover(0, null)
-    val cached = dao.all().associate { entry ->
-      entry.album + entry.artist to CachedAlbumCover(entry.id, entry.cover)
-    }
-    withContext(dispatchers.network) {
-      api.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class)
-        .onCompletion {
-          withContext(dispatchers.database) {
-            dao.removePreviousEntries(added)
-          }
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
+    return@catch withContext(dispatchers.network) {
+      val added = epoch()
+      val default = CachedAlbumCover(0, null)
+      val cached = dao.all().associate { entry ->
+        entry.album + entry.artist to CachedAlbumCover(entry.id, entry.cover)
+      }
+      val allPages = api.getAllPages(
+        Protocol.LibraryBrowseAlbums,
+        AlbumDto::class,
+        progress
+      )
+
+      allPages.onCompletion {
+        withContext(dispatchers.database) {
+          dao.removePreviousEntries(added)
         }
+      }
         .collect { albums ->
           val list = albums.map { dto ->
             dto.toEntity().apply {

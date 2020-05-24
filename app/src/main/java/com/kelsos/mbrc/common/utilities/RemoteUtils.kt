@@ -2,13 +2,10 @@ package com.kelsos.mbrc.common.utilities
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import arrow.core.Option
-import arrow.core.Try
+import arrow.core.Either
 import com.kelsos.mbrc.BuildConfig
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.io.File
 import java.security.MessageDigest
 
@@ -22,39 +19,28 @@ object RemoteUtils {
     return BuildConfig.VERSION_CODE
   }
 
-  private fun bitmapFromFile(path: String): Bitmap? = runBlocking {
-    return@runBlocking try {
-      withContext(Dispatchers.IO) {
-        val options = BitmapFactory.Options()
-        options.inPreferredConfig = Bitmap.Config.RGB_565
-        BitmapFactory.decodeFile(path, options)
+  private suspend fun bitmapFromFile(path: String): Bitmap = withContext(Dispatchers.IO) {
+    val options = BitmapFactory.Options()
+    options.inPreferredConfig = Bitmap.Config.RGB_565
+    return@withContext BitmapFactory.decodeFile(path, options)
+      ?: throw RuntimeException("Unable to decode the image")
+  }
+
+  suspend fun loadBitmap(path: String): Either<Throwable, Bitmap> = Either.catch {
+    BitmapFactory.decodeFile(
+      path,
+      BitmapFactory.Options().apply {
+        inPreferredConfig = Bitmap.Config.RGB_565
       }
+    )
+  }
+
+  suspend fun coverBitmap(coverPath: String): Bitmap? {
+    return try {
+      bitmapFromFile(File(coverPath).absolutePath)
     } catch (e: Exception) {
-      Timber.v(e)
       null
     }
-  }
-
-  fun loadBitmap(path: String): Option<Bitmap> {
-    return Try {
-      BitmapFactory.decodeFile(
-        path,
-        BitmapFactory.Options().apply {
-          inPreferredConfig = Bitmap.Config.RGB_565
-        }
-      )
-    }.toOption()
-  }
-
-  private fun coverBitmap(coverPath: String): Bitmap? {
-    val cover = File(coverPath)
-    return bitmapFromFile(cover.absolutePath)
-  }
-
-  fun coverBitmapSync(coverPath: String): Bitmap? = try {
-    coverBitmap(coverPath)
-  } catch (e: Exception) {
-    null
   }
 
   fun sha1(input: String) = hashString("SHA-1", input)

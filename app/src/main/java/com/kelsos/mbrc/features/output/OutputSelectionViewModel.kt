@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.features.output
 
 import androidx.lifecycle.viewModelScope
-import arrow.core.Try
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,28 +27,34 @@ class OutputSelectionViewModel(
     }
   }
 
-  private fun Try<OutputResponse>.toResult(): OutputSelectionResult {
-    return toEither().fold({ code(it) }, { OutputSelectionResult.Success })
-  }
-
   fun reload() {
     viewModelScope.launch(dispatchers.network) {
-      val result = Try {
-        outputApi.getOutputs().also {
-          _outputs.emit(it)
-        }
-      }.toResult()
+      val result = outputApi.getOutputs()
+        .fold(
+          {
+            code(it)
+          },
+          {
+            _outputs.emit(it)
+            OutputSelectionResult.Success
+          }
+        )
       emit(result)
     }
   }
 
   fun setOutput(output: String) {
     viewModelScope.launch(dispatchers.network) {
-      val result = Try {
-        outputApi.setOutput(output).also {
-          _outputs.emit(it)
-        }
-      }.toResult()
+      val result = outputApi.setOutput(output)
+        .fold(
+          {
+            code(it)
+          },
+          {
+            _outputs.emit(it)
+            OutputSelectionResult.Success
+          }
+        )
       emit(result)
     }
   }

@@ -86,7 +86,7 @@ class PlaylistRepositoryTest : KoinTest {
         PlaylistDto::class
       )
     } throws SocketTimeoutException()
-    assertThat(repository.getRemote().isFailure()).isTrue()
+    assertThat(repository.getRemote().isLeft()).isTrue()
   }
 
   @Test
@@ -125,12 +125,12 @@ class PlaylistRepositoryTest : KoinTest {
 
   @Test
   fun `sync remote playlists and update database`() = runBlockingTest {
-    coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(20) {
         TestDataFactories.playlist(it)
       }
     }
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
     val differ = AsyncPagingDataDiffer(
       diffCallback = PlaylistAdapter.PLAYLIST_COMPARATOR,
@@ -164,13 +164,13 @@ class PlaylistRepositoryTest : KoinTest {
   @Test
   fun `it should filter the playlists when searching`() = runBlockingTest {
     val extra = listOf(PlaylistDto(name = "Heavy Metal", url = """C:\library\metal.m3u"""))
-    coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(5, extra) {
         TestDataFactories.playlist(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     val differ = AsyncPagingDataDiffer(
       diffCallback = PlaylistAdapter.PLAYLIST_COMPARATOR,
       updateCallback = noopListUpdateCallback,

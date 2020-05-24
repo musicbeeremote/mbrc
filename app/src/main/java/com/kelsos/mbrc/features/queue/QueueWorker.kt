@@ -37,14 +37,10 @@ class QueueWorker(
 
     setForeground(createForegroundInfo())
 
-    try {
-      val result = queueUseCase.queue(id, meta, action)
-      if (result.success) {
-        Result.success()
-      } else {
-        Result.failure()
-      }
-    } catch (e: Exception) {
+    val result = queueUseCase.queue(id, meta, action)
+    if (result.success) {
+      Result.success()
+    } else {
       Result.failure()
     }
   }

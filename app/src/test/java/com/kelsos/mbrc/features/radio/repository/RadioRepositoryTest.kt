@@ -82,24 +82,25 @@ class RadioRepositoryTest : KoinTest {
     coEvery {
       apiBase.getAllPages(
         Protocol.RadioStations,
-        RadioStationDto::class
+        RadioStationDto::class,
+        any()
       )
     } throws SocketTimeoutException()
 
-    assertThat(repository.getRemote().isFailure()).isTrue()
+    assertThat(repository.getRemote().isLeft()).isTrue()
   }
 
   @Test
   fun `sync remote data and update the database`() = runBlockingTest(testDispatcher) {
     assertThat(repository.cacheIsEmpty())
 
-    coEvery { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
       mockApi(2) {
         RadioStationDto(name = "Radio $it", url = "http://radio.statio/$it")
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(2)
 
     val differ = AsyncPagingDataDiffer(
@@ -132,13 +133,13 @@ class RadioRepositoryTest : KoinTest {
 
   @Test
   fun `it should filter the stations when searching`() = runBlockingTest(testDispatcher) {
-    coEvery { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class) } answers {
+    coEvery { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
       mockApi(5, listOf(RadioStationDto(name = "Heavy Metal", url = "http://heavy.metal.ru"))) {
         RadioStationDto(name = "Radio $it", url = "http://radio.statio/$it")
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
 
     val differ = AsyncPagingDataDiffer(
       diffCallback = RadioAdapter.RADIO_COMPARATOR,

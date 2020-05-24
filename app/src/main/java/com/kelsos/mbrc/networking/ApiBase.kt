@@ -29,16 +29,21 @@ class ApiBase(
     return adapter.objectify<GenericSocketMessage<T>>(response, type).data
   }
 
-  suspend fun <T : Any> getAllPages(request: String, clazz: KClass<T>): Flow<List<T>> {
+  suspend fun <T : Any> getAllPages(
+    request: String,
+    clazz: KClass<T>,
+    progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> }
+  ): Flow<List<T>> {
     val inner = Types.newParameterizedType(Page::class.java, clazz.java)
     val type = Types.newParameterizedType(GenericSocketMessage::class.java, inner)
 
     return flow {
       val start = now()
       val connection = apiRequestManager.openConnection()
+
       for (currentPage in 0..Int.MAX_VALUE) {
         val pageStart = now()
-        val limit = 800
+        val limit = LIMIT
         val offset = currentPage * limit
         val range = getPageRange(offset, limit)
         Timber.v("fetching $request offset $offset [$limit]")
@@ -51,6 +56,7 @@ class ApiBase(
 
         Timber.v("duration ${now() - pageStart} ms")
         val page = socketMessage.data
+        progress(page.limit + page.offset, page.total)
         emit(page.data)
         if (page.offset > page.total) {
           break
@@ -99,5 +105,9 @@ class ApiBase(
 
   private fun now(): Long {
     return System.currentTimeMillis()
+  }
+
+  companion object {
+    const val LIMIT = 800
   }
 }
