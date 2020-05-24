@@ -42,9 +42,6 @@
         <action android:name="com.kelsos.mbrc.notification.previous" />
       </intent-filter>
     </service>
-    <service
-        android:name=".platform.LibrarySyncService"
-        android:exported="false" />
 
     <receiver android:name=".platform.mediasession.MediaButtonReceiver">
       <intent-filter>

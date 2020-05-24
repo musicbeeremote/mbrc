@@ -1,11 +1,16 @@
 package com.kelsos.mbrc.features.library.sync
 
-import arrow.core.Try
+import arrow.core.Either
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
+import com.kelsos.mbrc.features.library.sync.SyncCategory.ALBUMS
+import com.kelsos.mbrc.features.library.sync.SyncCategory.ARTISTS
+import com.kelsos.mbrc.features.library.sync.SyncCategory.GENRES
+import com.kelsos.mbrc.features.library.sync.SyncCategory.PLAYLISTS
+import com.kelsos.mbrc.features.library.sync.SyncCategory.TRACKS
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.metrics.SyncedData
@@ -24,7 +29,7 @@ class LibrarySyncUseCaseImpl(
 
   private var running: Boolean = false
 
-  override suspend fun sync(auto: Boolean): SyncResult {
+  override suspend fun sync(auto: Boolean, progress: SyncProgress): SyncResult {
 
     if (running) {
       return SyncResult.NOOP
@@ -36,14 +41,14 @@ class LibrarySyncUseCaseImpl(
     metrics.librarySyncStarted()
 
     val result: SyncResult = if (checkIfShouldSync(auto)) {
-      Try {
-        genreRepository.getRemote()
-        artistRepository.getRemote()
-        albumRepository.getRemote()
-        trackRepository.getRemote()
-        playlistRepository.getRemote()
-        return@Try true
-      }.toEither().fold({ SyncResult.FAILED }, { SyncResult.SUCCESS })
+      Either.catch {
+        genreRepository.getRemote { current, total -> progress(current, total, GENRES) }
+        artistRepository.getRemote { current, total -> progress(current, total, ARTISTS) }
+        albumRepository.getRemote { current, total -> progress(current, total, ALBUMS) }
+        trackRepository.getRemote { current, total -> progress(current, total, TRACKS) }
+        playlistRepository.getRemote { current, total -> progress(current, total, PLAYLISTS) }
+        true
+      }.fold({ SyncResult.FAILED }, { SyncResult.SUCCESS })
     } else {
       SyncResult.NOOP
     }

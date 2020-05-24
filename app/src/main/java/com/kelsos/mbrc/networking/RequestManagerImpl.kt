@@ -10,10 +10,8 @@ import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
-import io.reactivex.Single
 import java.io.IOException
 import java.net.Socket
-import java.net.SocketException
 import java.nio.charset.Charset
 import timber.log.Timber
 
@@ -60,23 +58,15 @@ class RequestManagerImpl(
     }
   }
 
-  override fun request(connection: ActiveConnection, message: SocketMessage): Single<String> {
-    return Single.create {
-      try {
-        connection.send(message.getBytes())
+  override fun request(connection: ActiveConnection, message: SocketMessage): String {
+    connection.send(message.getBytes())
 
-        val readLine = connection.readLine()
+    val readLine = connection.readLine()
 
-        val line = if (readLine.isEmpty()) {
-          connection.readLine()
-        } else {
-          readLine
-        }
-
-        it.onSuccess(line)
-      } catch (ex: SocketException) {
-        it.tryOnError(ex)
-      }
+    return if (readLine.isEmpty()) {
+      connection.readLine()
+    } else {
+      readLine
     }
   }
 

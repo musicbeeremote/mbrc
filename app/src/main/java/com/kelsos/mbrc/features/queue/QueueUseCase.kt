@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.queue
 
+import arrow.core.Either
 import com.kelsos.mbrc.common.Meta.Type
 import com.kelsos.mbrc.features.queue.Queue.Action
 
@@ -8,5 +9,5 @@ interface QueueUseCase {
     id: Long,
     @Type meta: Int,
     @Action action: String = Queue.DEFAULT
-  ): Int
+  ): Either<Throwable, Int>
 }

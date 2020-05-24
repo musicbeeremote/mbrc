@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import arrow.core.Option
-import arrow.core.extensions.option.monad.binding
+import arrow.core.extensions.fx
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.dragsort.ItemTouchHelperAdapter
@@ -52,8 +52,8 @@ class NowPlayingAdapter(
   ) {
     if (payloads.contains(PLAYING_CHANGED)) {
       val track = Option.fromNullable(getItem(holder.adapterPosition))
-      binding {
-        val (nowPlayingTrack) = track
+      Option.fx {
+        val nowPlayingTrack = track.bind()
         val isPlayingTrack = nowPlayingTrack.path == currentTrack
         holder.setPlayingTrack(isPlayingTrack)
         if (isPlayingTrack) {
@@ -67,8 +67,8 @@ class NowPlayingAdapter(
 
   override fun onBindViewHolder(holder: NowPlayingTrackViewHolder, position: Int) {
     val track = Option.fromNullable(getItem(holder.adapterPosition))
-    binding {
-      val (nowPlayingTrack) = track
+    Option.fx {
+      val nowPlayingTrack = track.bind()
       val isPlayingTrack = nowPlayingTrack.path == currentTrack
       holder.bindTo(nowPlayingTrack)
       holder.setPlayingTrack(isPlayingTrack)

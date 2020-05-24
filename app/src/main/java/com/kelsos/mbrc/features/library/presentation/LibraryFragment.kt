@@ -77,12 +77,6 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
 
-    viewModel.syncProgress.nonNullObserver(viewLifecycleOwner) {
-      syncProgress.max = it.total
-      syncProgress.progress = it.current
-      // TODO: include maybe steps
-    }
-
     viewModel.emitter.nonNullObserver(viewLifecycleOwner) { event ->
       event.contentIfNotHandled?.let { onSyncResult(it) }
     }

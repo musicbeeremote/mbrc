@@ -1,12 +1,10 @@
 package com.kelsos.mbrc.networking.client
 
+import arrow.core.Either
 import com.kelsos.mbrc.data.DeserializationAdapter
-import com.kelsos.mbrc.networking.ActiveConnection
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.protocol.Protocol
-import io.reactivex.Single
-import java.net.SocketTimeoutException
 
 class ConnectivityVerifierImpl(
   private val deserializationAdapter: DeserializationAdapter,
@@ -14,25 +12,20 @@ class ConnectivityVerifierImpl(
   val repository: ConnectionRepository
 ) : ConnectivityVerifier {
 
-  private fun openConnection(): Single<ActiveConnection> = Single.create<ActiveConnection> {
-    try {
-      it.onSuccess(requestManager.openConnection(false))
-    } catch (ex: SocketTimeoutException) {
-      it.tryOnError(ex)
-    }
-  }
+  override suspend fun verify(): Either<Throwable, Boolean> {
+    return Either.catch {
+      val connection = requestManager.openConnection(false)
+      val response = requestManager.request(
+        connection,
+        SocketMessage.create(Protocol.VerifyConnection)
+      )
+      connection.close()
+      val (context, data) = deserializationAdapter.objectify(response, SocketMessage::class)
 
-  override fun verify(): Single<Boolean> {
-    return openConnection().flatMap {
-      requestManager.request(it, SocketMessage.create(Protocol.VerifyConnection)).map {
-        deserializationAdapter.objectify(it, SocketMessage::class)
-      }.map {
-        if (it.context == Protocol.VerifyConnection) {
-          return@map true
-        }
+      if (context != Protocol.VerifyConnection) {
         throw NoValidPluginConnection()
       }
-        .doFinally { it.close() }
+      true
     }
   }
 

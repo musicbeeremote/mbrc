@@ -2,7 +2,6 @@ package com.kelsos.mbrc.ui.dialogs
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import arrow.core.Try
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputResponse
@@ -10,7 +9,6 @@ import com.kelsos.mbrc.ui.BaseViewModel
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
 
 class OutputSelectionViewModel(
   private val outputApi: OutputApi,
@@ -37,37 +35,35 @@ class OutputSelectionViewModel(
   }
 
   private fun code(throwable: Throwable?): OutputSelectionResult {
-    val cause = throwable?.cause ?: throwable
 
-    return when (cause) {
+    return when (throwable?.cause ?: throwable) {
       is SocketException -> OutputSelectionResult.ConnectionError
       is SocketTimeoutException -> OutputSelectionResult.ConnectionError
       else -> OutputSelectionResult.UnknownError
     }
   }
 
-  private fun Try<OutputResponse>.toResult(): OutputSelectionResult {
-    return toEither().fold({ code(it) }, { OutputSelectionResult.Success })
-  }
-
   fun reload() {
     scope.launch {
-      val result = Try {
-        outputApi.getOutputs().await().also {
+      val result = outputApi.getOutputs()
+        .fold({
+          code(it) }, {
           updateState(it)
-        }
-      }.toResult()
+          OutputSelectionResult.Success
+        })
       emit(result)
     }
   }
 
   fun setOutput(output: String) {
     scope.launch {
-      val result = Try {
-        outputApi.setOutput(output).await().also {
+      val result = outputApi.setOutput(output)
+        .fold({
+          code(it)
+        }, {
           updateState(it)
-        }
-      }.toResult()
+          OutputSelectionResult.Success
+        })
       emit(result)
     }
   }

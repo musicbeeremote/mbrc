@@ -30,7 +30,7 @@ open class App : MultiDexApplication() {
     initialize()
   }
 
-  protected open fun modules(): List<Module> {
+  protected open fun appModules(): List<Module> {
     val androidModule = module {
       val app = this@App as Application
 
@@ -43,7 +43,8 @@ open class App : MultiDexApplication() {
     }
     return listOf(
       appModule,
-      uiModule, androidModule
+      uiModule,
+      androidModule
     )
   }
 
@@ -54,7 +55,7 @@ open class App : MultiDexApplication() {
 
     startKoin {
       androidContext(this@App)
-      modules(modules())
+      modules(appModules())
     }
 
     initializeTimber()

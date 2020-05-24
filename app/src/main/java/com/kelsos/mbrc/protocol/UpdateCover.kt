@@ -19,7 +19,6 @@ import java.io.FileOutputStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -62,9 +61,10 @@ class UpdateCover(
 
   private suspend fun retrieveCover() {
     withContext(dispatchers.network) {
-      try {
-        val response = coverApi.getCover().await()
-        val bitmap = getBitmap(response)
+      coverApi.getCover().fold({
+        removeCover(it)
+      }, {
+        val bitmap = getBitmap(it)
         val file = storeCover(bitmap)
 
         playingTrackLiveDataProvider.set {
@@ -73,9 +73,7 @@ class UpdateCover(
           copy(coverUrl = coverUri)
         }
         updater.updateCover(file.absolutePath)
-      } catch (e: Exception) {
-        removeCover(e)
-      }
+      })
     }
 
     Timber.v("Message received for available cover")

@@ -32,7 +32,7 @@ def version_code = 114
 
 android {
   compileSdkVersion 29
-  buildToolsVersion '29.0.2'
+  buildToolsVersion '29.0.3'
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
@@ -88,7 +88,7 @@ android {
   }
 
   dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
   }
 
   signingConfigs {
@@ -185,13 +185,13 @@ dependencies {
 
   androidTestUtil 'androidx.test:orchestrator:1.2.0'
 
-  androidTestImplementation "io.mockk:mockk-android:1.9.3"
+  androidTestImplementation "io.mockk:mockk-android:1.10.0"
 
-  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.0.0'
+  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.1.0'
   androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.0.0@apk'
 
   // Test dependencies
-  testImplementation 'org.koin:koin-test:2.0.1'
+  testImplementation 'org.koin:koin-test:2.1.5'
 
   testImplementation "androidx.test:runner:1.2.0"
   testImplementation "androidx.test.ext:junit:1.1.1"
@@ -202,44 +202,44 @@ dependencies {
   testImplementation "androidx.test.ext:truth:1.2.0"
   testImplementation "android.arch.core:core-testing:1.1.1"
   testImplementation "android.arch.persistence.room:testing:1.1.1"
-  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.3'
+  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.6'
 
-  testImplementation "io.mockk:mockk:1.9.3"
+  testImplementation "io.mockk:mockk:1.10.0"
 
   testImplementation "org.robolectric:robolectric:4.3.1"
   testImplementation "org.robolectric:shadows-multidex:4.3.1"
 
   //The android library only will fail the robolectric tests
-  testImplementation 'org.threeten:threetenbp:1.4.0'
+  testImplementation 'org.threeten:threetenbp:1.4.4'
 
   implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
 
-  implementation 'com.chibatching.kotpref:kotpref:2.8.0'
+  implementation 'com.chibatching.kotpref:kotpref:2.10.0'
 
-  implementation 'com.google.android.material:material:1.2.0-alpha04'
-  implementation 'androidx.databinding:databinding-runtime:4.0.0-alpha09'
+  implementation 'com.google.android.material:material:1.2.0-alpha06'
+  implementation 'androidx.databinding:databinding-runtime:4.1.0-alpha09'
 
   implementation 'androidx.appcompat:appcompat:1.1.0'
   implementation 'androidx.media:media:1.1.0'
 
-  implementation 'androidx.core:core:1.2.0-rc01'
-  implementation 'androidx.core:core-ktx:1.1.0'
+  implementation 'androidx.core:core:1.3.0-rc01'
+  implementation 'androidx.core:core-ktx:1.2.0'
 
   implementation 'androidx.annotation:annotation:1.1.0'
   implementation 'androidx.recyclerview:recyclerview:1.1.0'
-  implementation 'androidx.preference:preference:1.1.0'
-  implementation 'androidx.preference:preference-ktx:1.1.0'
+  implementation 'androidx.preference:preference:1.1.1'
+  implementation 'androidx.preference:preference-ktx:1.1.1'
 
   implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0'
   implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0'
 
-  implementation 'androidx.paging:paging-runtime:2.1.1'
+  implementation 'androidx.paging:paging-runtime:2.1.2'
 
-  implementation 'androidx.room:room-runtime:2.2.3'
-  implementation 'androidx.room:room-rxjava2:2.2.3'
-  kapt "androidx.room:room-compiler:2.2.3"
+  implementation 'androidx.room:room-runtime:2.2.5'
+  implementation 'androidx.room:room-rxjava2:2.2.5'
+  kapt 'androidx.room:room-compiler:2.2.5'
 
-  def work_version = "2.3.0"
+  def work_version = '2.3.4'
   
   implementation "androidx.work:work-runtime:$work_version"
   implementation "androidx.work:work-runtime-ktx:$work_version"
@@ -249,57 +249,48 @@ dependencies {
 
   implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
-  implementation "org.koin:koin-core-ext:2.0.1"
-  implementation 'org.koin:koin-android:2.0.1'
-  implementation 'org.koin:koin-androidx-ext:2.0.1'
-  implementation 'org.koin:koin-androidx-scope:2.0.1'
-  implementation 'org.koin:koin-androidx-viewmodel:2.0.1'
+  implementation "org.koin:koin-core-ext:2.1.5"
+  implementation 'org.koin:koin-android:2.1.5'
+  implementation 'org.koin:koin-androidx-ext:2.1.5'
+  implementation 'org.koin:koin-androidx-scope:2.1.5'
+  implementation 'org.koin:koin-androidx-viewmodel:2.1.5'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.3.3"
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.3.6'
 
   implementation 'com.squareup.picasso:picasso:2.71828'
   implementation 'androidx.multidex:multidex:2.0.1'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.16'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
   implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
 
   implementation 'com.jakewharton.timber:timber:4.7.1'
   implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
   implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-  implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
+  implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
 
-  def arrow_version = "0.9.0"
-  implementation "io.arrow-kt:arrow-core-data:$arrow_version"
-  implementation "io.arrow-kt:arrow-core-extensions:$arrow_version"
+  def arrow_version = '0.10.5'
+  implementation "io.arrow-kt:arrow-fx:$arrow_version"
   implementation "io.arrow-kt:arrow-syntax:$arrow_version"
-  implementation "io.arrow-kt:arrow-typeclasses:$arrow_version"
-  implementation "io.arrow-kt:arrow-extras-data:$arrow_version"
-  implementation "io.arrow-kt:arrow-extras-extensions:$arrow_version"
-
-  implementation "io.arrow-kt:arrow-effects-data:$arrow_version" //optional
-  implementation "io.arrow-kt:arrow-effects-extensions:$arrow_version" //optional
-  implementation "io.arrow-kt:arrow-effects-io-extensions:$arrow_version" //optional
-  implementation "io.arrow-kt:arrow-effects-rx2-data:$arrow_version" //optional
-  implementation "io.arrow-kt:arrow-effects-rx2-extensions:$arrow_version" //optional
+  kapt    "io.arrow-kt:arrow-meta:$arrow_version"
 
   kapt "io.arrow-kt:arrow-meta:$arrow_version"
 
-  debugImplementation("androidx.fragment:fragment-testing:1.2.0") {
+  debugImplementation('androidx.fragment:fragment-testing:1.2.4') {
     exclude group: 'androidx.test', module: 'core'
   }
-  debugImplementation "com.squareup.leakcanary:leakcanary-android:2.1"
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
   debugImplementation 'com.facebook.stetho:stetho:1.5.1'
 
   playImplementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
     transitive = true
   }
-  playImplementation 'com.google.firebase:firebase-perf:19.0.5'
-  playImplementation 'com.google.firebase:firebase-core:17.2.2'
+  playImplementation 'com.google.firebase:firebase-perf:19.0.7'
+  playImplementation 'com.google.firebase:firebase-core:17.4.1'
 }
 
 allprojects {

@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.library.repositories
 
 import androidx.paging.DataSource
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.library.data.DataModel
@@ -12,7 +13,7 @@ import com.kelsos.mbrc.features.library.dto.GenreDto
 import com.kelsos.mbrc.features.library.dto.GenreDtoMapper
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 class GenreRepositoryImpl(
@@ -32,12 +33,13 @@ class GenreRepositoryImpl(
     return dao.getAll().map { entityMapper.map(it) }
   }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     val added = epoch()
     val stored = dao.genres().associate { it.genre to it.id }
-    val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class)
-    data.blockingForEach { genres ->
-      runBlocking(dispatchers.disk) {
+    val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class, progress)
+
+    data.collect { genres ->
+      withContext(dispatchers.disk) {
 
         val items = genres.map {
           dtoMapper.map(it).apply {

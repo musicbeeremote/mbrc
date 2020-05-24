@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.radio.repository
 
 import androidx.paging.DataSource
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.radio.RadioDaoMapper
@@ -11,7 +12,7 @@ import com.kelsos.mbrc.features.radio.data.RadioStationDao
 import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 class RadioRepositoryImpl(
@@ -28,11 +29,15 @@ class RadioRepositoryImpl(
     return dao.getAll().map { RadioDaoMapper.map(it) }
   }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     val added = epoch()
-    val pages = remoteDataSource.getAllPages(Protocol.RadioStations, RadioStationDto::class)
-    pages.blockingForEach { page ->
-      runBlocking(dispatchers.disk) {
+    val pages = remoteDataSource.getAllPages(
+      Protocol.RadioStations,
+      RadioStationDto::class,
+      progress
+    )
+    pages.collect { page ->
+      withContext(dispatchers.disk) {
         val items = page.map { RadioDtoMapper.map(it).apply { dateAdded = added } }
 
         withContext(dispatchers.database) {

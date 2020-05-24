@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.queue
 
+import arrow.core.Either
 import com.kelsos.mbrc.common.Meta.ALBUM
 import com.kelsos.mbrc.common.Meta.ARTIST
 import com.kelsos.mbrc.common.Meta.GENRE
@@ -13,7 +14,6 @@ import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.queue.Queue.Action
 import com.kelsos.mbrc.features.queue.Queue.DEFAULT
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
-import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
 
 class QueueUseCaseImpl(
@@ -29,9 +29,10 @@ class QueueUseCaseImpl(
     id: Long,
     @Type meta: Int,
     @Action action: String
-  ) = withContext(dispatchers.disk) {
+  ): Either<Throwable, Int> {
+
     val selectedAction = if (action == DEFAULT) settings.defaultAction else action
-    val response = withContext(dispatchers.network) {
+    return withContext(dispatchers.network) {
       val (paths, path) = when (meta) {
         GENRE -> Pair(tracksForGenre(id), null)
         ARTIST -> Pair(tracksForArtist(id), null)
@@ -40,9 +41,8 @@ class QueueUseCaseImpl(
         else -> error("Invalid value $meta")
       }
 
-      queueApi.queue(selectedAction, paths, path).await()
+      queueApi.queue(selectedAction, paths, path).map { it.code }
     }
-    response.code
   }
 
   private suspend fun tracksForGenre(id: Long): List<String> =

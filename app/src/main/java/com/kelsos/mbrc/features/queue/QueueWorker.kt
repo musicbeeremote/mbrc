@@ -37,16 +37,13 @@ class QueueWorker(
 
     setForeground(createForegroundInfo())
 
-    try {
-      val responseCode = queueUseCase.queue(id, meta, action)
-      if (responseCode == 200) {
+    queueUseCase.queue(id, meta, action).fold({ Result.failure() }, { status ->
+      if (status == 200) {
         Result.success()
       } else {
         Result.failure()
       }
-    } catch (e: Exception) {
-      Result.failure()
-    }
+    })
   }
 
   private fun createForegroundInfo(): ForegroundInfo {

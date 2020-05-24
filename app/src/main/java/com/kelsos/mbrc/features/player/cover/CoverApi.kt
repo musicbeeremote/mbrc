@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.player.cover
 
-import io.reactivex.Single
+import arrow.core.Either
 
 interface CoverApi {
-  fun getCover(): Single<String>
+  suspend fun getCover(): Either<Throwable, String>
 }

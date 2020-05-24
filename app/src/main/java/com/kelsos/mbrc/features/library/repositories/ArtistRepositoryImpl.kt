@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.library.repositories
 
 import androidx.paging.DataSource
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.library.data.Artist
@@ -12,7 +13,7 @@ import com.kelsos.mbrc.features.library.dto.ArtistDto
 import com.kelsos.mbrc.features.library.dto.ArtistDtoMapper
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 class ArtistRepositoryImpl(
@@ -51,11 +52,16 @@ class ArtistRepositoryImpl(
     )
   }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     val added = epoch()
-    val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseArtists, ArtistDto::class)
-    data.blockingForEach { artists ->
-      runBlocking(dispatchers.disk) {
+    val data = remoteDataSource.getAllPages(
+      Protocol.LibraryBrowseArtists,
+      ArtistDto::class,
+      progress
+    )
+
+    data.collect { artists ->
+      withContext(dispatchers.disk) {
         val items = artists.map { dtoMapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insertAll(items)

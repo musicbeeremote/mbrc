@@ -30,7 +30,6 @@ class PlaylistViewModel(
   fun reload() {
     scope.launch {
       val message = repository.getRemote()
-        .toEither()
         .fold({
           PlaylistUiMessages.RefreshFailed
         }, {

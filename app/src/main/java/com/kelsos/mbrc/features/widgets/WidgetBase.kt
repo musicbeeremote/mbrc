@@ -12,7 +12,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import arrow.core.Option
-import arrow.core.extensions.option.monad.binding
+import arrow.core.extensions.fx
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
@@ -58,9 +58,9 @@ abstract class WidgetBase : AppWidgetProvider() {
       .filter { it.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE }
       .flatMap { Option.fromNullable(it.extras) }
 
-    binding {
-      val (extras) = intentOption
-      val (ctx) = Option.fromNullable(context)
+    Option.fx {
+      val extras = intentOption.bind()
+      val ctx = Option.fromNullable(context).bind()
       updateWidget(ctx, extras)
     }
   }

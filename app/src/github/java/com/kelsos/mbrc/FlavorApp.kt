@@ -7,8 +7,8 @@ import org.koin.dsl.module
 
 open class FlavorApp : App() {
 
-  override fun modules(): List<Module> {
-    return super.modules().plus(module {
+  override fun appModules(): List<Module> {
+    return super.appModules().plus(module {
       single<SyncMetrics> { DummySyncMetrics() }
     })
   }

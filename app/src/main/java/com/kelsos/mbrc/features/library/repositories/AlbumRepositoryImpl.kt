@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.features.library.repositories
 
 import androidx.paging.DataSource
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.library.data.Album
@@ -12,7 +13,7 @@ import com.kelsos.mbrc.features.library.dto.AlbumDto
 import com.kelsos.mbrc.features.library.dto.AlbumDtoMapper
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 class AlbumRepositoryImpl(
@@ -36,11 +37,12 @@ class AlbumRepositoryImpl(
     return dao.getAll().map { entityMapper.map(it) }
   }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     val added = epoch()
-    val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class)
-    data.blockingForEach { albums ->
-      runBlocking(dispatchers.disk) {
+    val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class, progress)
+
+    data.collect { albums ->
+      withContext(dispatchers.disk) {
         val list = albums.map { dtoMapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insert(list)
