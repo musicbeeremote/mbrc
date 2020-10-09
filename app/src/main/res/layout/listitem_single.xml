@@ -26,7 +26,7 @@
       android:layout_height="14dp"
       android:layout_marginTop="4dp"
       android:layout_marginBottom="4dp"
-      android:background="@color/item__placeholder_color"
+      android:background="@drawable/line_placeholder"
       app:layout_constraintBottom_toBottomOf="@id/line_one"
       app:layout_constraintEnd_toEndOf="@id/line_one"
       app:layout_constraintHorizontal_bias="0"

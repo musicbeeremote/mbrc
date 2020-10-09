@@ -91,13 +91,15 @@ class LibraryViewHolder(
 
       private fun scrollStarted() {
         fastScrollingListener.onFastScrolling(STARTED)
-        fastScrollListener?.onStart()
+        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+        fastScrollListener?.onStart((firstVisibleItemPosition - 2).coerceAtLeast(0), (lastVisibleItemPosition + 2).coerceAtMost(layoutManager.itemCount))
       }
 
       private fun scrollEnded() {
         val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
         val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-        fastScrollListener?.onComplete(firstVisibleItemPosition, lastVisibleItemPosition)
+        fastScrollListener?.onComplete((firstVisibleItemPosition - 2).coerceAtLeast(0), (lastVisibleItemPosition + 2).coerceAtMost(layoutManager.itemCount))
         fastScrollingListener.onFastScrolling(STOPPED)
       }
     }

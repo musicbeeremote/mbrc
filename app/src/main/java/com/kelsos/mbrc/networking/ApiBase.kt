@@ -36,7 +36,7 @@ class ApiBase(
     progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> }
   ): Flow<List<T>> where T : Any {
     val inner = Types.newParameterizedType(Page::class.java, kClazz.java)
-    val type = Types.newParameterizedType(GenericSocketMessage::class.java, kClazz.java, inner)
+    val type = Types.newParameterizedType(GenericSocketMessage::class.java, inner)
 
     return flow {
       val start = now()
@@ -56,14 +56,15 @@ class ApiBase(
 
         Timber.v("duration ${now() - pageStart} ms")
         val page = socketMessage.data
-        progress(page.limit + page.offset, page.total)
+
+        progress(page.offset + page.data.size, page.total)
         emit(page.data)
-        if (page.offset > page.total) {
+        if (page.offset + page.limit > page.total) {
           break
         }
       }
       connection.close()
-      Timber.v("duration ${System.currentTimeMillis() - start} ms")
+      Timber.v("total duration ${System.currentTimeMillis() - start} ms")
     }
   }
 

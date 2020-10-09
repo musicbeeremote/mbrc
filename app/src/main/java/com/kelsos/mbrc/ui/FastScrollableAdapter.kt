@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import timber.log.Timber
 
 abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
   diffCallback: DiffUtil.ItemCallback<T>
@@ -35,6 +36,7 @@ abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
   }
 
   override fun submitList(pagedList: PagedList<T>?) {
+    Timber.v("submit")
     deferred?.cancel()
     super.submitList(pagedList)
   }
@@ -43,15 +45,20 @@ abstract class FastScrollableAdapter<T, VH : BindableViewHolder<T>>(
     return if (pos < indexes.size) indexes[pos] else "-"
   }
 
-  override fun onStart() {
+  override fun onStart(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
+    deferred?.cancel()
     fastScrolling = true
+    notifyItemRangeChanged(firstVisibleItemPosition, lastVisibleItemPosition)
   }
 
   override fun onComplete(firstVisibleItemPosition: Int, lastVisibleItemPosition: Int) {
-    fastScrolling = false
+    Timber.v("notify")
+    deferred?.cancel()
     deferred = scope.async {
       delay(400)
+      Timber.v("notifying")
       notifyItemRangeChanged(firstVisibleItemPosition, lastVisibleItemPosition)
+      fastScrolling = false
     }
   }
 

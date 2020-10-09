@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import java.lang.ref.WeakReference
+import java.util.*
 
 class RecyclerViewFastScroller : LinearLayout {
 
@@ -31,7 +32,7 @@ class RecyclerViewFastScroller : LinearLayout {
   private var inHeight: Int = 0
   private var isInitialized = false
   private var currentAnimator: ObjectAnimator? = null
-  private var scrollStateChangeListener: RecyclerViewFastScroller.ScrollStateChangeListener? = null
+  private var scrollStateChangeListener: ScrollStateChangeListener? = null
 
   private var oldBubbleText = ""
 
@@ -73,7 +74,7 @@ class RecyclerViewFastScroller : LinearLayout {
     if (isInitialized)
       return
     isInitialized = true
-    orientation = LinearLayout.HORIZONTAL
+    orientation = HORIZONTAL
     clipChildren = false
   }
 
@@ -93,9 +94,8 @@ class RecyclerViewFastScroller : LinearLayout {
 
   @SuppressLint("ClickableViewAccessibility")
   override fun onTouchEvent(event: MotionEvent): Boolean {
-    val action = event.action
 
-    when (action) {
+    when (event.action) {
       MotionEvent.ACTION_DOWN -> {
         if (event.x < handle.x - ViewCompat.getPaddingStart(handle)) {
           return false
@@ -182,15 +182,15 @@ class RecyclerViewFastScroller : LinearLayout {
     val textGetter = recyclerView.adapter as BubbleTextGetter
     val bubbleText = textGetter.getTextToShowInBubble(targetPos)
 
-    if (bubbleText.toUpperCase() != oldBubbleText.toUpperCase()) {
+    if (bubbleText.toUpperCase(Locale.getDefault()) != oldBubbleText.toUpperCase(Locale.getDefault())) {
       oldBubbleText = bubbleText
       bubble?.text = bubbleText
     }
   }
 
   private fun getValueInRange(min: Int, max: Int, value: Int): Int {
-    val minimum = Math.max(min, value)
-    return Math.min(minimum, max)
+    val minimum = min.coerceAtLeast(value)
+    return minimum.coerceAtMost(max)
   }
 
   private fun updateBubbleAndHandlePosition() {

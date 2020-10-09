@@ -7,6 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.extensions.string
 import com.kelsos.mbrc.features.library.data.Track
