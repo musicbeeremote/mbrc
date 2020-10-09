@@ -56,14 +56,15 @@ class ApiBase(
 
         Timber.v("duration ${now() - pageStart} ms")
         val page = socketMessage.data
-        progress(page.limit + page.offset, page.total)
+
+        progress(page.offset + page.data.size, page.total)
         emit(page.data)
-        if (page.offset > page.total) {
+        if (page.offset + page.limit > page.total) {
           break
         }
       }
       connection.close()
-      Timber.v("duration ${System.currentTimeMillis() - start} ms")
+      Timber.v("total duration ${System.currentTimeMillis() - start} ms")
     }
   }
 

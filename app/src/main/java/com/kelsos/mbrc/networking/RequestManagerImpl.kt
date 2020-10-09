@@ -76,6 +76,7 @@ class RequestManagerImpl(
     val connectionSettings = checkNotNull(repository.getDefault())
 
     try {
+      Timber.v("Preparing connection to $connectionSettings")
       val socketAddress = connectionSettings.toSocketAddress()
       Timber.v("Creating new socket")
 
@@ -87,7 +88,7 @@ class RequestManagerImpl(
         }
       }
     } catch (e: IOException) {
-      Timber.v("failed to create socket")
+      Timber.v(e, "failed to create socket")
       throw e
     }
   }

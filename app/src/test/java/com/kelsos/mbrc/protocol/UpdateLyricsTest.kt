@@ -59,12 +59,13 @@ class UpdateLyricsTest {
 
   @Test
   fun `lyrics should be translated`() {
-    val lyrics = """
+    val lyrics =
+      """
       &lt;Lyrics&gt;
       <p>
       &quot;Must&quot; follow this format &apos;&amp;<br>
       that
-    """.trimIndent()
+      """.trimIndent()
     val socketMessage = checkNotNull(adapter.fromJson(createMessage(LyricsPayload.SUCCESS, lyrics)))
     val message = MessageEvent(socketMessage.context, socketMessage.data)
     updateLyrics.execute(message)

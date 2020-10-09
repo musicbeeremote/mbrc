@@ -77,7 +77,6 @@ class RemoteService : Service() {
     handler.postDelayed(
       {
         core.stop()
-        core.stop()
         SERVICE_STOPPING = false
         SERVICE_RUNNING = false
         Timber.d("Background Service::Destroyed")

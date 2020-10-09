@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.features.library.sync
 
-import arrow.core.Either
+import arrow.core.computations.either
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
@@ -44,14 +44,14 @@ class LibrarySyncUseCaseImpl(
     metrics.librarySyncStarted()
 
     val result: SyncResult = if (checkIfShouldSync(auto)) {
-      Either.catch {
-        genreRepository.getRemote { current, total -> progress(current, total, GENRES) }
-        artistRepository.getRemote { current, total -> progress(current, total, ARTISTS) }
-        albumRepository.getRemote { current, total -> progress(current, total, ALBUMS) }
-        trackRepository.getRemote { current, total -> progress(current, total, TRACKS) }
+      either<Throwable, Unit> {
+        genreRepository.getRemote { current, total -> progress(current, total, GENRES) }.bind()
+        artistRepository.getRemote { current, total -> progress(current, total, ARTISTS) }.bind()
+        albumRepository.getRemote { current, total -> progress(current, total, ALBUMS) }.bind()
+        trackRepository.getRemote { current, total -> progress(current, total, TRACKS) }.bind()
         playlistRepository.getRemote { current, total -> progress(current, total, PLAYLISTS) }
-        coverCache.cache()
-        true
+          .bind()
+        coverCache.cache().bind()
       }.fold({ SyncResult.FAILED }, { SyncResult.SUCCESS })
     } else {
       SyncResult.NOOP

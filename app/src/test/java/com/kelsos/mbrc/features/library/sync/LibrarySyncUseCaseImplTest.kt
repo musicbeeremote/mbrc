@@ -12,10 +12,8 @@ import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -63,7 +61,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     every { syncMetrics.librarySyncComplete(any()) } answers { }
     every { syncMetrics.librarySyncStarted() } answers { }
     every { syncMetrics.librarySyncFailed() } answers { }
-    coEvery { coverCache.cache() } just Runs
+    coEvery { coverCache.cache() } coAnswers { Unit.right() }
   }
 
   @After

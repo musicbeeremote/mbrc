@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.features.library.repositories
 
 import android.app.Application
+import arrow.core.Either
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.data.AlbumCover
 import com.kelsos.mbrc.features.library.data.Cover
@@ -30,7 +31,7 @@ class CoverCache(
     }
   }
 
-  suspend fun cache() {
+  suspend fun cache(): Either<Throwable, Unit> = Either.catch {
     val covers = withContext(dispatchers.database) {
       val albumCovers = mutableListOf<AlbumCover>()
       val covers = albumRepository.getCovers()
