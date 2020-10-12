@@ -4,17 +4,17 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
-import android.support.v4.app.NavUtils
-import android.support.v4.app.TaskStackBuilder
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.Toolbar
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.app.NavUtils
+import androidx.core.app.TaskStackBuilder
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.widget.ImageView
@@ -39,6 +39,7 @@ import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
 import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -56,12 +57,14 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   protected abstract fun active(): Int
 
   private fun onConnectLongClick(): Boolean {
+    Timber.v("Connect long pressed")
     serviceChecker.startServiceIfNotRunning()
     bus.post(MessageEvent(UserInputEventType.ResetConnection))
     return true
   }
 
   private fun onConnectClick() {
+    Timber.v("Connect pressed")
     serviceChecker.startServiceIfNotRunning()
     bus.post(MessageEvent(UserInputEventType.StartConnection))
   }
@@ -156,7 +159,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     }
 
     if (itemId == R.id.nav_home) {
-      val upIntent = NavUtils.getParentActivityIntent(this)
+      val upIntent = NavUtils.getParentActivityIntent(this) ?: throw Exception("invalid intent")
       if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
         createBackStack(Intent(this, MainActivity::class.java))
       } else {
@@ -214,10 +217,10 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     navigationView.setNavigationItemSelectedListener(this)
 
     val header = navigationView.getHeaderView(0)
-    connectText = ButterKnife.findById<TextView>(header, R.id.nav_connect_text)
-    connect = ButterKnife.findById<ImageView>(header, R.id.connect_button)
-    connect!!.setOnClickListener({ this.onConnectClick() })
-    connect!!.setOnLongClickListener({ this.onConnectLongClick() })
+    connectText = header.findViewById(R.id.nav_connect_text)
+    connect = header.findViewById(R.id.connect_button)
+    connect!!.setOnClickListener { this.onConnectClick() }
+    connect!!.setOnLongClickListener { this.onConnectLongClick() }
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setHomeButtonEnabled(true)

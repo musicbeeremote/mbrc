@@ -3,8 +3,8 @@ package com.kelsos.mbrc.ui.mini_control
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.TaskStackBuilder
+import androidx.fragment.app.Fragment
+import androidx.core.app.TaskStackBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +36,7 @@ class MiniControlFragment : Fragment(), MiniControlView {
 
   @OnClick(R.id.mini_control)
   internal fun onControlClick() {
-    val builder = TaskStackBuilder.create(context)
+    val builder = TaskStackBuilder.create(requireContext())
     builder.addNextIntentWithParentStack(Intent(context, MainActivity::class.java))
     builder.startActivities()
   }
@@ -57,14 +57,14 @@ class MiniControlFragment : Fragment(), MiniControlView {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(activity.application, this)
+    val scope = Toothpick.openScopes(requireActivity().application, this)
     scope.installModules(MiniControlModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
   }
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.ui_fragment_mini_control, container, false)
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false)
     ButterKnife.bind(this, view)
     return view
   }
@@ -88,8 +88,8 @@ class MiniControlFragment : Fragment(), MiniControlView {
     val file = File(path)
 
     if (file.exists()) {
-      val dimens = context.getDimens()
-      Picasso.with(context)
+      val dimens = requireContext().getDimens()
+      Picasso.get()
           .load(file)
           .noFade()
           .config(Bitmap.Config.RGB_565)

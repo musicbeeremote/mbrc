@@ -25,6 +25,7 @@ import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.Exception
 import javax.inject.Inject
 
 class UpdateCover
@@ -110,9 +111,9 @@ class UpdateCover
   }
 
   private fun prefetch(newFile: File): Single<File> {
-    return Single.create<File> {
+    return Single.create {
       val dimens = context.getDimens()
-      Picasso.with(context).load(newFile)
+      Picasso.get().load(newFile)
           .config(Bitmap.Config.RGB_565)
           .resize(dimens, dimens)
           .centerCrop().fetch(object : Callback {
@@ -120,8 +121,8 @@ class UpdateCover
           it.onSuccess(newFile)
         }
 
-        override fun onError() {
-          it.onError(RuntimeException("Couldn't prefetch cover"))
+        override fun onError(e: Exception) {
+          it.onError(e)
         }
       })
     }

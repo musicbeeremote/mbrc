@@ -7,7 +7,7 @@
     android:id="@+id/library_search_item"
     android:icon="@drawable/ic_search_black_24dp"
     android:title="@string/now_playing_search"
-    mbrc:actionViewClass="android.support.v7.widget.SearchView"
+    mbrc:actionViewClass="androidx.appcompat.widget.SearchView"
     mbrc:showAsAction="always|collapseActionView"/>
   <item
     android:id="@+id/library_refresh_item"

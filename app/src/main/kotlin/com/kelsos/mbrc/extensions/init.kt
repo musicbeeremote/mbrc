@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.extensions
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
@@ -14,7 +14,8 @@ fun EmptyRecyclerView.initLinear(adapter: RecyclerView.Adapter<*>, emptyView: Vi
   this.adapter = adapter
   this.emptyView = emptyView
   if (fastScroller == null) {
-    this.layoutManager = LinearLayoutManager(this.context)
+    this.layoutManager =
+      LinearLayoutManager(this.context)
   } else {
     this.layoutManager = object : LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false) {
       override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State) {

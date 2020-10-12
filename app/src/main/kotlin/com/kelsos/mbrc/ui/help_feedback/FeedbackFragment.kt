@@ -4,7 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -29,13 +29,13 @@ class FeedbackFragment : Fragment() {
   @BindView(R.id.include_log_info) lateinit var logInfo: CheckBox
   @BindView(R.id.feedback_button) lateinit var feedbackButton: Button
 
-  override fun onCreateView(inflater: LayoutInflater?,
+  override fun onCreateView(inflater: LayoutInflater,
                             container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_feedback, container, false)
+    val view = inflater.inflate(R.layout.fragment_feedback, container, false)
     ButterKnife.bind(this, view)
 
-    LogHelper.logsExist(context)
+    LogHelper.logsExist(requireContext())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
@@ -58,7 +58,7 @@ class FeedbackFragment : Fragment() {
     if (deviceInfo.isChecked) {
       val device = Build.DEVICE
       val manufacturer = Build.MANUFACTURER
-      val appVersion = RemoteUtils.getVersion(context)
+      val appVersion = RemoteUtils.getVersion(requireContext())
       val androidVersion = Build.VERSION.RELEASE
 
       feedbackText += getString(R.string.feedback_version_info,
@@ -73,7 +73,7 @@ class FeedbackFragment : Fragment() {
       return
     }
 
-    LogHelper.zipLogs(context)
+    LogHelper.zipLogs(requireContext())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({

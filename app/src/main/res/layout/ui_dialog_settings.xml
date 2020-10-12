@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-  <android.support.design.widget.TextInputLayout
+  <com.google.android.material.textfield.TextInputLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
@@ -18,9 +18,9 @@
         android:layout_marginRight="@dimen/small_margin"
         android:layout_marginTop="@dimen/small_margin"
         android:hint="@string/settings_dialog_hint_name" />
-  </android.support.design.widget.TextInputLayout>
+  </com.google.android.material.textfield.TextInputLayout>
 
-  <android.support.design.widget.TextInputLayout
+  <com.google.android.material.textfield.TextInputLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
@@ -33,9 +33,9 @@
         android:layout_marginRight="@dimen/small_margin"
         android:layout_marginTop="@dimen/small_margin"
         android:hint="@string/settings_dialog_hint_host" />
-  </android.support.design.widget.TextInputLayout>
+  </com.google.android.material.textfield.TextInputLayout>
 
-  <android.support.design.widget.TextInputLayout
+  <com.google.android.material.textfield.TextInputLayout
       android:id="@+id/settings_dialog_port_wrapper"
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
@@ -51,7 +51,7 @@
         android:hint="@string/settings_dialog_hint_port"
         android:inputType="number"
         android:maxLength="5" />
-  </android.support.design.widget.TextInputLayout>
+  </com.google.android.material.textfield.TextInputLayout>
 
 
 </LinearLayout>

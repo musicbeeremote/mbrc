@@ -4,7 +4,7 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import com.kelsos.mbrc.ui.navigation.main.MainActivity
 
 object RemoteViewIntentBuilder {
@@ -68,12 +68,12 @@ object RemoteViewIntentBuilder {
     }
   }
 
-  @IntDef(OPEN.toLong(),
-      PLAY.toLong(),
-      CLOSE.toLong(),
-      PREVIOUS.toLong(),
-      NEXT.toLong(),
-      CANCEL.toLong())
+  @IntDef(OPEN,
+      PLAY,
+      CLOSE,
+      PREVIOUS,
+      NEXT,
+      CANCEL)
   @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
   annotation class ButtonAction
 }

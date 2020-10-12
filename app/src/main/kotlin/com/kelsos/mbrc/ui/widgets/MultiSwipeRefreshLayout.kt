@@ -17,8 +17,8 @@ package com.kelsos.mbrc.ui.widgets
  */
 
 import android.content.Context
-import android.support.v4.view.ViewCompat
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.core.view.ViewCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.util.AttributeSet
 import android.view.View
 import android.widget.AbsListView
@@ -28,7 +28,8 @@ import android.widget.AbsListView
  * child views triggering a refresh gesture. You set the views which can trigger the gesture via
  * [.setSwipeableChildren], providing it the child ids.
  */
-class MultiSwipeRefreshLayout : SwipeRefreshLayout {
+class MultiSwipeRefreshLayout :
+  SwipeRefreshLayout {
 
   private lateinit var swipeableChildren: Array<View?>
 

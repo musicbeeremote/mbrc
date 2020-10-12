@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.widgets
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
 
@@ -22,6 +22,7 @@ class EmptyRecyclerView : RecyclerView {
   }
 
   internal fun checkIfEmpty() {
+    val adapter = adapter
     emptyView?.visibility = if (adapter != null && adapter.itemCount > 0) View.GONE else View.VISIBLE
   }
 

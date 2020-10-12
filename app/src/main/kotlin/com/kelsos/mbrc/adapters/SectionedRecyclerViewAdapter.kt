@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.adapters
 
-import android.support.annotation.IntRange
-import android.support.v4.util.ArrayMap
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
+import androidx.annotation.IntRange
+import androidx.collection.ArrayMap
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import android.view.ViewGroup
 
 /**
@@ -139,15 +139,6 @@ abstract class SectionedRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : Recy
           sectionAndPos[1], absPos)
     }
     if (layoutParams != null) holder.itemView.layoutParams = layoutParams
-  }
-
-  /**
-   * @hide
-   * *
-   */
-  @Deprecated("")
-  override fun onBindViewHolder(holder: VH, position: Int, payloads: List<Any>?) {
-    super.onBindViewHolder(holder, position, payloads)
   }
 
   companion object {

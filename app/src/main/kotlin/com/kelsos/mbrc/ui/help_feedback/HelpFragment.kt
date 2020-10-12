@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.help_feedback
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,20 +27,20 @@ class HelpFragment : Fragment() {
 
     val url: String
     url = try {
-      String.format("http://kelsos.net/musicbeeremote/help?version=%s", RemoteUtils.getVersion(context))
+      String.format("https://mbrc.kelsos.net/help?version=%s", RemoteUtils.getVersion(requireContext()))
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.v(e, "Failed to get version")
-      "http://kelsos.net/musicbeeremote/help"
+      "https://mbrc.kelsos.net/help"
     }
 
     helpWebview.loadUrl(url)
   }
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     // Inflate the layout for this fragment
-    val view = inflater!!.inflate(R.layout.fragment_help, container, false)
+    val view = inflater.inflate(R.layout.fragment_help, container, false)
     ButterKnife.bind(this, view)
-    helpWebview.setWebViewClient(RemoteWebViewClient())
+    helpWebview.webViewClient = RemoteWebViewClient()
     return view
   }
 

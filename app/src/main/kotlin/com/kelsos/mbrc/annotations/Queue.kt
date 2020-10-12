@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.annotations
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 
 object Queue {
   @StringDef(NEXT, LAST, NOW, ADD_ALL)

@@ -3,12 +3,12 @@ package com.kelsos.mbrc.ui.navigation.main
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.widget.ShareActionProvider
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
+import androidx.core.view.MenuItemCompat
+import androidx.appcompat.widget.ShareActionProvider
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -133,19 +133,19 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
-    if (intent?.getBooleanExtra(EXIT_APP, false) ?: false) {
+    if (intent?.getBooleanExtra(EXIT_APP, false) == true) {
       exitApplication()
       return
     }
   }
 
   override fun showChangeLog() {
-    changeLogDialog = MaterialDialog.Builder(this)
-        .title(R.string.main__dialog_change_log)
-        .customView(R.layout.change_log_dialog, false)
-        .positiveText(android.R.string.ok)
-        .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
-        .show()
+//    changeLogDialog = MaterialDialog.Builder(this)
+//        .title(R.string.main__dialog_change_log)
+//        .customView(R.layout.change_log_dialog, false)
+//        .positiveText(android.R.string.ok)
+//        .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
+//        .show()
   }
 
   override fun notifyPluginOutOfDate() {
@@ -153,7 +153,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
         .title(R.string.main__dialog_plugin_outdated_title)
         .content(R.string.main__dialog_plugin_outdated_message)
         .positiveText(android.R.string.ok)
-        .onPositive { materialDialog, dialogAction -> materialDialog.dismiss() }
+        .onPositive { materialDialog, _ -> materialDialog.dismiss() }
         .show()
   }
 
@@ -181,20 +181,20 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (item.itemId) {
+    return when (item.itemId) {
       R.id.menu_lastfm_scrobble -> {
         presenter.toggleScrobbling()
-        return true
+        true
       }
       R.id.menu_rating_dialog -> {
         val ratingDialog = RatingDialogFragment()
         ratingDialog.show(supportFragmentManager, "RatingDialog")
-        return true
+        true
       }
       R.id.menu_lastfm_love -> {
-        return presenter.lfmLove()
+        presenter.lfmLove()
       }
-      else -> return false
+      else -> false
     }
   }
 
@@ -239,7 +239,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     }
 
     val dimens = getDimens()
-    Picasso.with(this)
+    Picasso.get()
         .load(file)
         .noFade()
         .error(R.drawable.ic_image_no_cover)

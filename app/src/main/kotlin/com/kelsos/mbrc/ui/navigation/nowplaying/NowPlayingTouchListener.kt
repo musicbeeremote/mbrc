@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.OnItemTouchListener
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import android.view.GestureDetector
 import android.view.MotionEvent
 import timber.log.Timber
@@ -20,18 +20,16 @@ class NowPlayingTouchListener(context: Context, private val onLongClick : (Boole
         })
   }
 
-  override fun onTouchEvent(rv: RecyclerView?, e: MotionEvent?) {
+  override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
 
   }
 
-  override fun onInterceptTouchEvent(rv: RecyclerView?, e: MotionEvent?): Boolean {
-    if (e != null) {
-      gestureDetector.onTouchEvent(e)
-      val action = e.actionMasked
-      if (action == MotionEvent.ACTION_UP) {
-        Timber.v("Marking end of long press event")
-        onLongClick.invoke(false)
-      }
+  override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+    gestureDetector.onTouchEvent(e)
+    val action = e.actionMasked
+    if (action == MotionEvent.ACTION_UP) {
+      Timber.v("Marking end of long press event")
+      onLongClick.invoke(false)
     }
 
     return false

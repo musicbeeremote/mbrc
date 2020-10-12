@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events.ui
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 
 class ShuffleChange(@ShuffleState val shuffleState: String) {
 

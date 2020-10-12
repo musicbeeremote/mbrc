@@ -1,42 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <android.support.v7.preference.PreferenceCategory android:title="@string/settings_connection">
+  <androidx.preference.PreferenceCategory android:title="@string/settings_connection">
     <Preference
       android:key="@string/preferences_key_connection_manager"
       android:title="@string/settings_manage_connections"/>
-  </android.support.v7.preference.PreferenceCategory>
+  </androidx.preference.PreferenceCategory>
 
-  <android.support.v7.preference.PreferenceCategory android:title="@string/settings_miscellaneous">
+  <androidx.preference.PreferenceCategory android:title="@string/settings_miscellaneous">
 
-    <android.support.v7.preference.ListPreference
-      android:defaultValue="@string/incoming_action_default_value"
-      android:entries="@array/incoming_action_options"
-      android:entryValues="@array/incoming_action_options_values"
-      android:key="@string/settings_key_incoming_call_action"
-      android:summary="@string/settings_miscellaneous_incoming_call_description"
-      android:title="@string/settings_miscellaneous_incoming_call_action"/>
-
-    <android.support.v7.preference.CheckBoxPreference
-      android:defaultValue="true"
-      android:key="@string/settings_key_notification_control"
-      android:summary="@string/settings_sum_notification_control"
-      android:title="@string/settings_title_notification_control"/>
-
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
       android:defaultValue="false"
       android:key="@string/settings_key_plugin_check"
       android:summary="@string/setting_miscellaneous_plugin_updates_summary"
       android:title="@string/setting_miscellaneous_plugin_updates"/>
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
       android:defaultValue="false"
       android:key="@string/settings_key_debug_logging"
       android:summary="@string/setting_miscellaneous_debug_logging_summary"
       android:title="@string/setting_miscellaneous_debug_logging"/>
 
-  </android.support.v7.preference.PreferenceCategory>
-  <android.support.v7.preference.ListPreference
+  </androidx.preference.PreferenceCategory>
+  <androidx.preference.ListPreference
     android:defaultValue="@string/preferences_library_track_default_action_default_value"
     android:dialogTitle="@string/preferences_library_track_default_action_title"
     android:entries="@array/preferences_library_track_default_action_option_labels"
@@ -45,23 +31,23 @@
     android:summary="@string/preferences_library_track_default_action_summary"
     android:title="@string/preferences_library_track_default_action_title"/>
 
-  <android.support.v7.preference.PreferenceCategory android:title="@string/preferences_category_about">
-    <android.support.v7.preference.Preference
+  <androidx.preference.PreferenceCategory android:title="@string/preferences_category_about">
+    <androidx.preference.Preference
       android:key="@string/preferences_open_source"
       android:title="@string/settings_oss_license"/>
-    <android.support.v7.preference.Preference
+    <androidx.preference.Preference
       android:key="@string/settings_key_license"
       android:title="@string/settings_title_license"/>
-    <android.support.v7.preference.Preference
+    <androidx.preference.Preference
       android:key="@string/settings_version"
       android:summary="@string/settings_version_number"
       android:title="@string/preferences_about_version"/>
-    <android.support.v7.preference.Preference
+    <androidx.preference.Preference
       android:key="@string/pref_key_build_time"
       android:title="Build Time"/>
-    <android.support.v7.preference.Preference
+    <androidx.preference.Preference
       android:key="@string/pref_key_revision"
       android:title="Revision"/>
-  </android.support.v7.preference.PreferenceCategory>
+  </androidx.preference.PreferenceCategory>
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

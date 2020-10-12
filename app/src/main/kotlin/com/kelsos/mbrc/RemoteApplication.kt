@@ -1,25 +1,20 @@
 package com.kelsos.mbrc
 
-import android.content.Context
-import android.support.annotation.CallSuper
-import android.support.multidex.MultiDexApplication
+
+import androidx.annotation.CallSuper
+import androidx.multidex.MultiDexApplication
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.di.modules.RemoteModule
 import com.raizlabs.android.dbflow.config.FlowConfig
 import com.raizlabs.android.dbflow.config.FlowManager
-import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import toothpick.registries.FactoryRegistryLocator
 import toothpick.registries.MemberInjectorRegistryLocator
 import toothpick.smoothie.module.SmoothieApplicationModule
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
 open class RemoteApplication : MultiDexApplication() {
-
-  private var refWatcher: RefWatcher? = null
 
   @CallSuper
   override fun onCreate() {
@@ -27,29 +22,15 @@ open class RemoteApplication : MultiDexApplication() {
     initialize()
   }
 
-  open protected fun initialize() {
+  protected open fun initialize() {
     if (!testMode()) {
       AndroidThreeTen.init(this);
     }
     initializeDbflow()
     initializeToothpick()
-    initializeCalligraphy()
     initializeTimber()
-    initializeLeakCanary()
   }
 
-  private fun initializeLeakCanary() {
-    if (testMode()){
-      return
-    }
-
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      // You should not init your app in this process.
-      return
-    }
-    refWatcher = installLeakCanary()
-  }
 
   private fun initializeTimber() {
     if (BuildConfig.DEBUG) {
@@ -65,19 +46,11 @@ open class RemoteApplication : MultiDexApplication() {
     FlowManager.init(FlowConfig.Builder(this).openDatabasesOnInit(true).build())
   }
 
-  private fun initializeCalligraphy() {
-    CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
-        .setDefaultFontPath("fonts/roboto_regular.ttf")
-        .setFontAttrId(R.attr.fontPath)
-        .build())
-  }
-
-  protected fun initializeToothpick() {
-    val configuration: Configuration
-    if (BuildConfig.DEBUG) {
-      configuration = Configuration.forDevelopment().disableReflection()
+  private fun initializeToothpick() {
+    val configuration: Configuration = if (BuildConfig.DEBUG) {
+      Configuration.forDevelopment().disableReflection()
     } else {
-      configuration = Configuration.forProduction().disableReflection()
+      Configuration.forProduction().disableReflection()
     }
 
     Toothpick.setConfiguration(configuration)
@@ -90,14 +63,7 @@ open class RemoteApplication : MultiDexApplication() {
     }
   }
 
-  open internal fun installLeakCanary(): RefWatcher {
-    return RefWatcher.DISABLED
-  }
 
-  fun getRefWatcher(context: Context): RefWatcher? {
-    val application = context.applicationContext as RemoteApplication
-    return application.refWatcher
-  }
 
-  open internal fun testMode(): Boolean = false
+  internal open fun testMode(): Boolean = false
 }

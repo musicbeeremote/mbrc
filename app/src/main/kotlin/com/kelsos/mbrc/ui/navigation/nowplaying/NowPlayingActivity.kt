@@ -2,13 +2,13 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.SearchView.OnQueryTextListener
-import android.support.v7.widget.helper.ItemTouchHelper
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.MenuItemCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -96,20 +96,18 @@ class NowPlayingActivity : BaseActivity(),
     val manager = LinearLayoutManager(this)
     nowPlayingList.layoutManager = manager
     nowPlayingList.adapter = adapter
-    nowPlayingList.itemAnimator.changeDuration = 0
-    touchListener = NowPlayingTouchListener(this, {
+    nowPlayingList.itemAnimator?.changeDuration = 0
+    touchListener = NowPlayingTouchListener(this) {
       if (it) {
         swipeRefreshLayout.clearSwipeableChildren()
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.isEnabled = false
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-          swipeRefreshLayout.cancelPendingInputEvents()
-        }
+        swipeRefreshLayout.cancelPendingInputEvents()
       } else {
         swipeRefreshLayout.setSwipeableChildren(R.id.now_playing_list, R.id.empty_view)
         swipeRefreshLayout.isEnabled = true
       }
-    })
+    }
     nowPlayingList.addOnItemTouchListener(touchListener)
     val callback = SimpleItemTouchHelper(adapter)
     itemTouchHelper = ItemTouchHelper(callback)

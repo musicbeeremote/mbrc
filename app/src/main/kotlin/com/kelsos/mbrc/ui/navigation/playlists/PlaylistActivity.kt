@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.widget.TextView
 import butterknife.BindView
@@ -53,7 +53,8 @@ class PlaylistActivity : BaseActivity(),
 
     swipeLayout.setSwipeableChildren(R.id.playlist_list, R.id.empty_view)
     adapter.setPlaylistPressedListener(this)
-    playlistList.layoutManager = LinearLayoutManager(this)
+    playlistList.layoutManager =
+      LinearLayoutManager(this)
     playlistList.emptyView = emptyView
     playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener(this)

@@ -4,11 +4,11 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.support.annotation.IdRes
-import android.support.annotation.LayoutRes
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -29,7 +29,7 @@ class RecyclerViewFastScroller : LinearLayout {
   private var currentAnimator: ObjectAnimator? = null
 
   private val onScrollListener = object : RecyclerView.OnScrollListener() {
-    override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
       updateBubbleAndHandlePosition()
     }
   }
@@ -77,6 +77,7 @@ class RecyclerViewFastScroller : LinearLayout {
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
     val action = event.action
+    val handle = this.handle;
     when (action) {
       MotionEvent.ACTION_DOWN -> {
         if (event.x < handle!!.getX() - ViewCompat.getPaddingStart(handle))
@@ -127,14 +128,12 @@ class RecyclerViewFastScroller : LinearLayout {
 
   private fun setRecyclerViewPosition(y: Float) {
     if (recyclerView != null) {
-      val itemCount = recyclerView!!.adapter.itemCount
-      val proportion: Float
-      if (handle!!.y === 0F)
-        proportion = 0f
-      else if (handle!!.getY() + handle!!.getHeight() >= inHeight - TRACK_SNAP_RANGE)
-        proportion = 1f
-      else
-        proportion = y / inHeight.toFloat()
+      val itemCount = recyclerView!!.adapter?.itemCount ?: 0
+      val proportion: Float = when {
+        handle!!.y == 0F -> 0f
+        handle!!.y + handle!!.height >= inHeight - TRACK_SNAP_RANGE -> 1f
+        else -> y / inHeight.toFloat()
+      }
       val targetPos = getValueInRange(0, itemCount - 1, (proportion * itemCount.toFloat()).toInt())
       (recyclerView!!.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(targetPos, 0)
       val bubbleText = (recyclerView!!.adapter as BubbleTextGetter).getTextToShowInBubble(targetPos)

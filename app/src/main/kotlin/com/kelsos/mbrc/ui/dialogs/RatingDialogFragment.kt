@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.widget.RatingBar
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
@@ -27,9 +27,9 @@ class RatingDialogFragment : DialogFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    scope = Toothpick.openScopes(activity.application, this)
+    scope = Toothpick.openScopes(requireActivity().application, this)
     Toothpick.inject(this, scope)
-    bus.register(this, RatingChanged::class.java, { this.handleRatingChange(it) })
+    bus.register(this, RatingChanged::class.java) { this.handleRatingChange(it) }
   }
 
   override fun onDestroy() {
@@ -44,12 +44,12 @@ class RatingDialogFragment : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     rating = model.rating
-    val builder = MaterialDialog.Builder(activity)
+    val builder = MaterialDialog.Builder(requireActivity())
     builder.title(R.string.rate_the_playing_track)
     builder.customView(R.layout.ui_dialog_rating, false)
     val dialog = builder.build()
-    ratingBar = ButterKnife.findById<RatingBar>(dialog.customView!!, R.id.ratingBar)
-    ratingBar!!.setOnRatingBarChangeListener { ratingBar, ratingValue, isUserInitiated ->
+    ratingBar = dialog.customView!!.findViewById(R.id.ratingBar)
+    ratingBar!!.setOnRatingBarChangeListener { _, ratingValue, isUserInitiated ->
       if (isUserInitiated) {
         bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingRating, ratingValue)))
       }

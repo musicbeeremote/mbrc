@@ -2,8 +2,8 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.app.Activity
 import android.graphics.Color
-import android.support.v4.view.MotionEventCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.view.MotionEventCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN

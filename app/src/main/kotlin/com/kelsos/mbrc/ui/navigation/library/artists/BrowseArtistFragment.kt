@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.artists
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -43,7 +43,7 @@ class BrowseArtistFragment : Fragment(),
   private var scope: Scope? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(activity.application, activity, this)
+    scope = Toothpick.openScopes(requireActivity().application, activity, this)
     scope?.installModules(BrowseArtistModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -60,7 +60,7 @@ class BrowseArtistFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setOnRefreshListener(this)
@@ -69,7 +69,7 @@ class BrowseArtistFragment : Fragment(),
     return view
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     recycler.setHasFixedSize(true)
     recycler.initLinear(adapter, emptyView, fastScroller)
@@ -79,11 +79,11 @@ class BrowseArtistFragment : Fragment(),
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
-    actionHandler.artistSelected(menuItem, entry, activity)
+    actionHandler.artistSelected(menuItem, entry, requireActivity())
   }
 
   override fun onItemClicked(artist: Artist) {
-    actionHandler.artistSelected(artist, activity)
+    actionHandler.artistSelected(artist, requireActivity())
   }
 
   override fun onRefresh() {

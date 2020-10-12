@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,7 +20,7 @@
       android:layout_marginTop="16dp"
       android:adjustViewBounds="false"
       android:contentDescription="@string/description_album_cover"
-      android:scaleType="centerCrop"
+      android:scaleType="fitCenter"
       android:src="@drawable/ic_image_no_cover"
       app:layout_constraintBottom_toTopOf="@+id/main_track_progress_seeker"
       app:layout_constraintHorizontal_bias="0.0"
@@ -34,8 +34,7 @@
       fontPath="fonts/roboto_medium.ttf"
       android:layout_width="wrap_content"
       android:layout_height="17dp"
-      android:layout_marginLeft="16dp"
-      android:layout_marginStart="16dp"
+    android:layout_marginStart="16dp"
       android:paddingEnd="@dimen/small_margin"
       android:paddingLeft="@dimen/small_margin"
       android:paddingRight="@dimen/small_margin"
@@ -57,10 +56,8 @@
       android:layout_width="wrap_content"
       android:layout_height="17dp"
       android:layout_alignParentEnd="true"
-      android:layout_alignParentRight="true"
-      android:layout_marginEnd="16dp"
-      android:layout_marginRight="16dp"
-      android:paddingEnd="@dimen/small_margin"
+    android:layout_marginEnd="16dp"
+    android:paddingEnd="@dimen/small_margin"
       android:paddingLeft="@dimen/small_margin"
       android:paddingRight="@dimen/small_margin"
       android:shadowColor="@android:color/black"
@@ -99,7 +96,6 @@
       android:layout_marginRight="16dp"
       android:layout_marginStart="16dp"
       android:orientation="vertical"
-      app:layout_constraintBottom_toTopOf="@+id/main_volume_seeker"
       app:layout_constraintHorizontal_bias="0.0"
       app:layout_constraintLeft_toLeftOf="parent"
       app:layout_constraintRight_toRightOf="parent"
@@ -294,4 +290,4 @@
       app:layout_constraintRight_toRightOf="parent"
       app:layout_constraintTop_toTopOf="@+id/main_button_play_pause"/>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

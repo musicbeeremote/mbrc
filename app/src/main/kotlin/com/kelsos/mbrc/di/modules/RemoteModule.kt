@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.di.modules
 
-import android.support.v4.app.NotificationManagerCompat
+import androidx.core.app.NotificationManagerCompat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider

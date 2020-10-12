@@ -2,10 +2,13 @@ package com.kelsos.mbrc.messaging
 
 import android.app.Application
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.graphics.BitmapFactory
-import android.support.v4.app.NotificationCompat.Action
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v7.app.NotificationCompat
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Action
+import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
@@ -32,26 +35,51 @@ import javax.inject.Singleton
 @Singleton
 class NotificationService
 @Inject
-constructor(bus: RxBus,
+constructor(
+  bus: RxBus,
             private val context: Application,
             private val sessionManager: RemoteSessionManager,
             private val settings: SettingsManager,
             private val model: NotificationModel,
-            private val notificationManager: NotificationManagerCompat) {
+            private val notificationManager: NotificationManagerCompat
+) {
   private var notification: Notification? = null
   private val previous: String
   private val play: String
   private val next: String
   private var hooks: ForegroundHooks? = null
+  private val CHANNEL_ID = "mbrc_session"
 
   init {
-    bus.register(this, TrackInfoChangeEvent::class.java, { this.handleTrackInfo(it) })
-    bus.register(this, CoverChangedEvent::class.java, { this.coverChanged(it.path) })
-    bus.register(this, PlayStateChange::class.java, { this.playStateChanged(it) })
-    bus.register(this, ConnectionStatusChangeEvent::class.java, { this.connectionChanged(it) })
+    bus.register(this, TrackInfoChangeEvent::class.java) { this.handleTrackInfo(it) }
+    bus.register(this, CoverChangedEvent::class.java) { this.coverChanged(it.path) }
+    bus.register(this, PlayStateChange::class.java) { this.playStateChanged(it) }
+    bus.register(this, ConnectionStatusChangeEvent::class.java) { this.connectionChanged(it) }
     previous = context.getString(R.string.notification_action_previous)
     play = context.getString(R.string.notification_action_play)
     next = context.getString(R.string.notification_action_next)
+    createNotificationChannels()
+  }
+
+  private fun createNotificationChannels() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+      return
+    }
+
+    val channel = NotificationChannel(
+      CHANNEL_ID,
+      "MusicBee Remote",
+      NotificationManager.IMPORTANCE_DEFAULT
+    )
+
+    channel.apply {
+      this.description = "MusicBee Remote: Service"
+      enableLights(false)
+      enableVibration(false)
+      setSound(null, null)
+    }
+
+    notificationManager.createNotificationChannel(channel)
   }
 
   private fun handleTrackInfo(event: TrackInfoChangeEvent) {
@@ -82,15 +110,12 @@ constructor(bus: RxBus,
   }
 
   private fun update() {
-    notification = createBuilder().build()
-    notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
+    notification = createBuilder().build().also { notification ->
+      notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
+    }
   }
 
   private fun connectionChanged(event: ConnectionStatusChangeEvent) {
-    if (!settings.isNotificationControlEnabled()) {
-      Timber.v("Notification is off doing nothing")
-      return
-    }
 
     if (event.status == Connection.OFF) {
       cancelNotification(NOW_PLAYING_PLACEHOLDER)
@@ -103,10 +128,10 @@ constructor(bus: RxBus,
   }
 
   private fun createBuilder(): NotificationCompat.Builder {
-    val mediaStyle = NotificationCompat.MediaStyle()
+    val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
-    val builder = NotificationCompat.Builder(context)
+    val builder = NotificationCompat.Builder(context, CHANNEL_ID)
     val resId = if (model.playState == PlayerState.PLAYING) R.drawable.ic_action_pause else R.drawable.ic_action_play
 
     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -164,9 +189,11 @@ constructor(bus: RxBus,
 
   fun setForegroundHooks(hooks: ForegroundHooks) {
     this.hooks = hooks
+    update()
+    hooks.start(NOW_PLAYING_PLACEHOLDER, notification!!)
   }
 
   companion object {
-    val NOW_PLAYING_PLACEHOLDER = 15613
+    const val NOW_PLAYING_PLACEHOLDER = 15613
   }
 }

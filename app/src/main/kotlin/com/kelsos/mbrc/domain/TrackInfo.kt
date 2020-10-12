@@ -15,11 +15,11 @@ data class TrackInfo(var artist: String = "",
     }
   }
 
-  constructor(source: Parcel) : this(source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString(),
-      source.readString())
+  constructor(source: Parcel) : this(source.readString()?:"",
+      source.readString()?:"",
+      source.readString()?:"",
+      source.readString()?:"",
+      source.readString()?:"")
 
   override fun describeContents() = 0
 

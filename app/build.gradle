@@ -1,8 +1,9 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
@@ -21,17 +22,17 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.1.0"
-def version_code = 113
+def version = "1.1.1"
+def version_code = 114
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.2"
+  compileSdkVersion 30
+  buildToolsVersion "29.0.3"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
-    minSdkVersion 16
-    targetSdkVersion 25
+    minSdkVersion 23
+    targetSdkVersion 30
     versionCode version_code
     versionName version
     buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
@@ -54,8 +55,19 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
+    // Flag to enable support for the new language APIs
+    coreLibraryDesugaringEnabled true
+    // Sets Java compatibility to Java 8
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
+  }
+
+  dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
   }
 
   signingConfigs {
@@ -66,6 +78,8 @@ android {
       keyPassword "placeholder"
     }
   }
+
+  flavorDimensions "basic"
 
   buildTypes {
     release {
@@ -84,7 +98,6 @@ android {
       applicationIdSuffix ".dev"
       versionNameSuffix "-dev"
       testCoverageEnabled true
-      ext.enableCrashlytics = false
 
       buildConfigField "String", "GIT_SHA", "\"debug_build\""
       buildConfigField "String", "BUILD_TIME", "\"debug_build\""
@@ -108,6 +121,7 @@ android {
     exclude 'META-INF/LICENSE'
     exclude 'META-INF/NOTICE'
     exclude 'META-INF/services/javax.annotation.processing.Processor'
+    pickFirst("META-INF/atomicfu.kotlin_module")
   }
 
   lintOptions {
@@ -123,15 +137,9 @@ android {
     javaMaxHeapSize "2G"
   }
 
-  applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-      def originalFilename = output.outputFile
-      def versionInfo = "-v${variant.mergedFlavor.versionCode}-${variant.mergedFlavor.versionName}"
-      def filename = originalFilename.name
-          .replace(".apk", versionInfo + ".apk")
-          .replace(project.name, defaultConfig.applicationId)
-      filename = "${originalFilename.parent}/${filename}"
-      output.outputFile = file(filename)
+  android.applicationVariants.all { variant ->
+    variant.outputs.all {
+      outputFileName = "${defaultConfig.applicationId}-${variant.flavorName}-${variant.versionCode}-v${variant.versionName}.apk"
     }
   }
 
@@ -155,8 +163,8 @@ ext {
   support_library_version = "25.1.1"
   dbflow_version = "4.0.0-beta5"
   toothpick_version = "1.0.5"
-  jackson_version = "2.8.6"
-  butterknife_version = "8.5.1"
+  jackson_version = "2.11.3"
+  butterknife_version = "10.2.3"
   material_dialogs_version = "0.9.2.3"
   runner_version = "0.5"
   espresso_version = "2.2.2"
@@ -164,27 +172,28 @@ ext {
   mockito_version = "2.7.1"
   robolectric_version = "3.2.2"
   truth_version = "0.31"
-  leakcanary_version = "1.5"
+  leakcanary_version = "2.5"
 }
 
 dependencies {
-  //Instrumentation Test dependencies
-  androidTestCompile("com.android.support.test.espresso:espresso-core:${espresso_version}", {
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+
+    //Instrumentation Test dependencies
+  androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
-  androidTestCompile "com.android.support.test.espresso:espresso-intents:${espresso_version}"
+  androidTestCompile 'androidx.test.espresso:espresso-intents:3.3.0'
   androidTestCompile "junit:junit:${junit_version}"
-  // 2017-01-04 (I spend a couple of days until I figured out that if I specify the mockito
+  // 2017-01-04 (I spend a couple of days until I figured out that if I specify the mockitoA
   // version to an different than the one dexmaker supports the tests would crash...)
   androidTestCompile "org.mockito:mockito-core:${mockito_version}"
   androidTestCompile "org.mockito:mockito-android:${mockito_version}"
 
   androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  androidTestCompile "com.android.support:support-annotations:${support_library_version}"
-  androidTestCompile "com.android.support.test:runner:${runner_version}"
-  androidTestCompile "com.android.support.test:rules:${runner_version}"
-  androidTestCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
-  androidTestCompile 'com.linkedin.testbutler:test-butler-library:1.2.0'
+  androidTestCompile 'androidx.annotation:annotation:1.1.0'
+  androidTestCompile 'androidx.test.ext:junit:1.1.2'
+  androidTestCompile 'androidx.test:rules:1.3.0'
+  androidTestCompile 'com.linkedin.testbutler:test-butler-library:2.1.0'
 
   // Test dependencies
   testCompile "junit:junit:${junit_version}"
@@ -193,20 +202,19 @@ dependencies {
   testCompile "org.robolectric:shadows-multidex:${robolectric_version}"
   testCompile "com.google.truth:truth:${truth_version}"
   testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
   //The android library only will fail the robolectric tests
-  testCompile 'org.threeten:threetenbp:1.3.3'
+  testCompile 'org.threeten:threetenbp:1.4.4'
 
-  compile "com.android.support:appcompat-v7:${support_library_version}"
-  compile "com.android.support:support-v4:${support_library_version}"
-  compile "com.android.support:support-annotations:${support_library_version}"
-  compile "com.android.support:recyclerview-v7:${support_library_version}"
-  compile "com.android.support:design:${support_library_version}"
-  compile "com.android.support:preference-v7:${support_library_version}"
-  compile "com.android.support:preference-v14:${support_library_version}"
+  compile 'androidx.appcompat:appcompat:1.2.0'
+  compile 'androidx.legacy:legacy-support-v4:1.0.0'
+  compile 'androidx.annotation:annotation:1.1.0'
+  compile 'androidx.recyclerview:recyclerview:1.1.0'
+  compile 'com.google.android.material:material:1.2.1'
+  compile 'androidx.preference:preference-ktx:1.1.1'
+  compile 'androidx.legacy:legacy-preference-v14:1.0.0'
 
   //Some of the dependencies pull the wrong version support v13
-  compile "com.android.support:support-v13:${support_library_version}"
+  compile 'androidx.legacy:legacy-support-v13:1.0.0'
 
   kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
 
@@ -225,30 +233,34 @@ dependencies {
 
   compile "com.afollestad.material-dialogs:core:${material_dialogs_version}"
   compile "com.afollestad.material-dialogs:commons:${material_dialogs_version}"
-  compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-  compile 'com.android.support:multidex:1.0.1'
-  compile 'com.squareup.picasso:picasso:2.5.2'
+  compile 'androidx.multidex:multidex:2.0.1'
+  compile 'com.squareup.picasso:picasso:2.71828'
 
   compile 'io.reactivex:rxandroid:1.2.1'
   compile 'io.reactivex:rxjava:1.2.5'
   compile 'io.reactivex:rxkotlin:0.60.0'
-  compile 'uk.co.chrisjenx:calligraphy:2.2.0'
-  compile 'com.jakewharton.timber:timber:4.5.1'
+  compile 'com.jakewharton.timber:timber:4.7.1'
   compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
-  compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+  compile 'androidx.constraintlayout:constraintlayout:2.0.2'
 
-  compile 'com.jakewharton.threetenabp:threetenabp:1.0.4'
+  compile 'com.jakewharton.threetenabp:threetenabp:1.2.4'
 
   debugCompile "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
-  releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakcanary_version}"
 
-  playCompile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
-    transitive = true
-  }
+  // Import the BoM for the Firebase platform
+  playCompile platform('com.google.firebase:firebase-bom:25.12.0')
+
+  // Declare the dependencies for the Crashlytics and Analytics libraries
+  // When using the BoM, you don't specify versions in Firebase library dependencies
+  playCompile 'com.google.firebase:firebase-crashlytics-ktx'
+  playCompile 'com.google.firebase:firebase-analytics-ktx'
+
+
 }
 
 allprojects {
@@ -311,36 +323,36 @@ kapt {
   }
 }
 
-task jacocoTestReport(type: JacocoReport,
-    dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
-  group = "Reporting"
-  description "Generate jacoco coverage reports"
-
-  reports {
-    xml.enabled = true
-    html.enabled = true
-  }
-
-  def fileFilter = ['**/R.class',
-                    '**/R$*.class',
-                    '**/BuildConfig.*',
-                    '**/Manifest*.*',
-                    '**/*Test*.*',
-                    '**/FactoryRegistry.*',
-                    '**/*_ViewBinding*',
-                    '**/*MemberInjector*',
-                    '**/*$$Factory*.*',
-                    '**/MemberInjectorRegistry.*',
-                    '**/**_Table.*',
-                    '**/GeneratedDatabaseHolder.*',
-                    '**/*_Database.*',
-                    'android/**/*.*']
-  def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug",
-      excludes: fileFilter)
-  def mainSrc = "${project.projectDir}/src/main/kotlin"
-
-  sourceDirectories = files([mainSrc])
-  classDirectories = files([debugTree])
-  executionData = fileTree(dir: "$buildDir", includes: ["**/*.exec",
-                                                        "**/*.ec"])
-}
+//task jacocoTestReport(type: JacocoReport,
+//    dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
+//  group = "Reporting"
+//  description "Generate jacoco coverage reports"
+//
+//  reports {
+//    xml.enabled = true
+//    html.enabled = true
+//  }
+//
+//  def fileFilter = ['**/R.class',
+//                    '**/R$*.class',
+//                    '**/BuildConfig.*',
+//                    '**/Manifest*.*',
+//                    '**/*Test*.*',
+//                    '**/FactoryRegistry.*',
+//                    '**/*_ViewBinding*',
+//                    '**/*MemberInjector*',
+//                    '**/*$$Factory*.*',
+//                    '**/MemberInjectorRegistry.*',
+//                    '**/**_Table.*',
+//                    '**/GeneratedDatabaseHolder.*',
+//                    '**/*_Database.*',
+//                    'android/**/*.*']
+//  def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug",
+//      excludes: fileFilter)
+//  def mainSrc = "${project.projectDir}/src/main/kotlin"
+//
+//  sourceDirectories = files([mainSrc])
+//  classDirectories = files([debugTree])
+//  executionData = fileTree(dir: "$buildDir", includes: ["**/*.exec",
+//                                                        "**/*.ec"])
+//}

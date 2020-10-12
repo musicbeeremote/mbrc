@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class AlbumInfo(val album: String, val artist: String) : Parcelable {
-  constructor(source: Parcel): this(source.readString(), source.readString())
+  constructor(source: Parcel): this(source.readString()?:"", source.readString()?:"")
 
   override fun describeContents() = 0
 

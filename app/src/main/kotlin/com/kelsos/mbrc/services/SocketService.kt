@@ -84,6 +84,7 @@ constructor(
   }
 
   fun socketManager(@Action action: Int) {
+    Timber.v("received action $action")
     when (action) {
       RESET -> {
         startSocket()

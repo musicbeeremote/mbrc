@@ -2,12 +2,8 @@ package com.kelsos.mbrc.utilities
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.support.annotation.StringDef
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
-import com.kelsos.mbrc.utilities.SettingsManager.CallAction
-import com.kelsos.mbrc.utilities.SettingsManager.Companion.NONE
-import com.kelsos.mbrc.utilities.SettingsManager.Companion.REDUCE
 import rx.Single
 import timber.log.Timber
 import java.util.*
@@ -25,7 +21,6 @@ constructor(private val context: Application,
   }
 
   private fun setupManager() {
-    updatePreferences()
     val loggingEnabled = loggingEnabled()
     if (loggingEnabled) {
       Timber.plant(FileLoggingTree(this.context.applicationContext))
@@ -38,20 +33,6 @@ constructor(private val context: Application,
   private fun loggingEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_debug_logging), false)
   }
-
-  private fun updatePreferences() {
-    val enabled = preferences.getBoolean(getKey(R.string.settings_legacy_key_reduce_volume), false)
-    if (enabled) {
-      preferences.edit().putString(getKey(R.string.settings_key_incoming_call_action), REDUCE).apply()
-    }
-  }
-
-  override fun isNotificationControlEnabled(): Boolean {
-    return preferences.getBoolean(getKey(R.string.settings_key_notification_control), true)
-  }
-
-  @CallAction override fun getCallAction(): String = preferences.getString(
-      getKey(R.string.settings_key_incoming_call_action), NONE)
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
@@ -104,25 +85,7 @@ interface SettingsManager {
   fun shouldDisplayOnlyAlbumArtists() : Single<Boolean>
   fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
   fun shouldShowChangeLog(): Single<Boolean>
-  fun isNotificationControlEnabled(): Boolean
   fun isPluginUpdateCheckEnabled(): Boolean
-
-  @CallAction fun getCallAction(): String
-
-  @StringDef(NONE,
-      PAUSE,
-      STOP,
-      REDUCE)
-  @Retention(AnnotationRetention.SOURCE)
-  annotation class CallAction
-
-  companion object {
-    const val NONE = "none"
-    const val PAUSE = "pause"
-    const val STOP = "stop"
-    const val REDUCE = "reduce"
-  }
-
   fun getLastUpdated(): Date
   fun setLastUpdated(lastChecked: Date)
 }

@@ -29,21 +29,31 @@ class WidgetSmall : AppWidgetProvider() {
 
     val extras = intent.extras
     val widgetManager = AppWidgetManager.getInstance(context)
-    val widgets = ComponentName(context?.packageName, WidgetSmall::class.java.name)
+    if (context == null) {
+      return
+    }
+    val widgets = ComponentName(context.packageName, WidgetSmall::class.java.name)
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
     if (extras == null) {
       return
     }
 
-    if (extras.getBoolean(UpdateWidgets.COVER, false)) {
-      val path = extras.getString(UpdateWidgets.COVER_PATH, "")
-      updateCover(context, widgetManager, widgetsIds, path)
-    } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
-      updateInfo(context, widgetManager, widgetsIds, extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO))
-    } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
-      updatePlayState(context, widgetManager, widgetsIds,
+    when {
+      extras.getBoolean(UpdateWidgets.COVER, false) -> {
+        val path = extras.getString(UpdateWidgets.COVER_PATH, "")
+        updateCover(context, widgetManager, widgetsIds, path)
+      }
+      extras.getBoolean(UpdateWidgets.INFO, false) -> {
+        val info = extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO)
+        info?.run {
+          updateInfo(context, widgetManager, widgetsIds, this)
+        }
+      }
+      extras.getBoolean(UpdateWidgets.STATE, false) -> {
+        updatePlayState(context, widgetManager, widgetsIds,
           extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED))
+      }
     }
   }
 
@@ -94,8 +104,8 @@ class WidgetSmall : AppWidgetProvider() {
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
     val coverFile = File(path)
     if (coverFile.exists()) {
-      Picasso.with(context).invalidate(coverFile)
-      Picasso.with(context).load(coverFile)
+      Picasso.get().invalidate(coverFile)
+      Picasso.get().load(coverFile)
           .centerCrop()
           .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
           .into(smallWidget, R.id.widget_small_image, widgetsIds)

@@ -26,7 +26,6 @@ class RemoteBroadcastReceiver
    */
   fun filter(): IntentFilter {
     val filter = IntentFilter()
-    filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
     filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
     filter.addAction(RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED)
     filter.addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED)
@@ -37,27 +36,12 @@ class RemoteBroadcastReceiver
   }
 
   override fun onReceive(context: Context, intent: Intent) {
-    if (TelephonyManager.ACTION_PHONE_STATE_CHANGED == intent.action) {
-      val bundle = intent.extras ?: return
-      val state = bundle.getString(TelephonyManager.EXTRA_STATE)
-      if (TelephonyManager.EXTRA_STATE_RINGING.equals(state!!, ignoreCase = true)) {
-
-        when (settingsManager.getCallAction()) {
-          SettingsManager.PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
-          SettingsManager.STOP -> postAction(UserAction(Protocol.PlayerStop, true))
-          SettingsManager.NONE -> {
-          }
-          SettingsManager.REDUCE -> bus.post(MessageEvent(ProtocolEventType.ReduceVolume))
-          else -> {
-          }
-        }
-      }
-    } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action) {
+     if (WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action) {
       val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
-      if (networkInfo.state == NetworkInfo.State.CONNECTED) {
+      if (networkInfo?.state == NetworkInfo.State.CONNECTED) {
         bus.post(MessageEvent(UserInputEventType.StartConnection))
       } else //noinspection StatementWithEmptyBody
-        if (NetworkInfo.State.DISCONNECTING == networkInfo.state) {
+        if (NetworkInfo.State.DISCONNECTING == networkInfo?.state) {
         }
     } else if (RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED == intent.action) {
       postAction(UserAction(Protocol.PlayerPlayPause, true))

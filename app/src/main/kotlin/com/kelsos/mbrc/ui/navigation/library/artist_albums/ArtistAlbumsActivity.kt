@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.widget.LinearLayout
 import butterknife.BindView
@@ -63,7 +63,8 @@ class ArtistAlbumsActivity : FontActivity(),
     }
 
     adapter.setMenuItemSelectedListener(this)
-    recyclerView.layoutManager = LinearLayoutManager(this)
+    recyclerView.layoutManager =
+      LinearLayoutManager(this)
     recyclerView.adapter = adapter
     recyclerView.emptyView = emptyView
     presenter.attach(this)

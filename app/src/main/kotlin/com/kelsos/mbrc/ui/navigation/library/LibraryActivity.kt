@@ -2,21 +2,22 @@ package com.kelsos.mbrc.ui.navigation.library
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.view.MenuItemCompat
-import android.support.v4.view.ViewPager
-import android.support.v4.view.ViewPager.OnPageChangeListener
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.SearchView.OnQueryTextListener
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
+import androidx.core.view.MenuItemCompat
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import androidx.viewpager2.widget.ViewPager2
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter
+import com.kelsos.mbrc.annotations.Search
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
 import toothpick.Scope
@@ -26,10 +27,9 @@ import javax.inject.Inject
 
 class LibraryActivity : BaseActivity(),
     LibraryView,
-    OnQueryTextListener,
-    OnPageChangeListener {
+    OnQueryTextListener {
 
-  @BindView(R.id.search_pager) lateinit var pager: ViewPager
+  @BindView(R.id.search_pager) lateinit var pager: ViewPager2
   @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
 
   private var searchView: SearchView? = null
@@ -81,9 +81,19 @@ class LibraryActivity : BaseActivity(),
     ButterKnife.bind(this)
     super.setup()
     pagerAdapter = LibraryPagerAdapter(this)
-    pager.adapter = pagerAdapter
-    tabs.setupWithViewPager(pager)
-    pager.addOnPageChangeListener(this)
+    pager.apply {
+      adapter = pagerAdapter
+    }
+
+    TabLayoutMediator(tabs, pager) { currentTab, currentPosition ->
+      currentTab.text = when(currentPosition) {
+        Search.SECTION_ALBUM -> getString(R.string.label_albums)
+        Search.SECTION_ARTIST -> getString(R.string.label_artists)
+        Search.SECTION_GENRE -> getString(R.string.label_genres)
+        Search.SECTION_TRACK -> getString(R.string.label_tracks)
+        else -> throw IllegalArgumentException("invalid position")
+      }
+    }.attach()
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -98,11 +108,11 @@ class LibraryActivity : BaseActivity(),
     return super.onCreateOptionsMenu(menu)
   }
 
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    if (item?.itemId == R.id.library_refresh_item) {
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == R.id.library_refresh_item) {
       presenter.refresh()
       return true
-    } else if (item?.itemId == R.id.library_album_artist) {
+    } else if (item.itemId == R.id.library_album_artist) {
       albumArtistOnly?.let {
         it.isChecked = !it.isChecked
         presenter.setArtistPreference(it.isChecked)
@@ -136,18 +146,6 @@ class LibraryActivity : BaseActivity(),
     super.onBackPressed()
   }
 
-  override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
-  }
-
-  override fun onPageSelected(position: Int) {
-
-  }
-
-  override fun onPageScrollStateChanged(state: Int) {
-
-  }
-
   override fun updateArtistOnlyPreference(albumArtistOnly: Boolean?) {
     this.albumArtistOnly?.isChecked = albumArtistOnly ?: false
   }
@@ -157,6 +155,7 @@ class LibraryActivity : BaseActivity(),
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
     outState.putInt(PAGER_POSITION, pager.currentItem)
   }
 

@@ -1,10 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
 import android.app.Activity
-import android.support.annotation.MenuRes
-import android.support.annotation.Nullable
-import android.support.v7.widget.PopupMenu
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.MenuRes
+import androidx.annotation.Nullable
+import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View

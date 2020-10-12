@@ -2,7 +2,7 @@ package com.kelsos.mbrc.di.providers
 
 import android.app.Application
 import android.content.Context
-import android.support.v4.app.NotificationManagerCompat
+import androidx.core.app.NotificationManagerCompat
 import javax.inject.Inject
 import javax.inject.Provider
 

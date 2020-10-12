@@ -7,7 +7,7 @@
   <uses-sdk tools:overrideLibrary="timber.log"/>
 
   <uses-permission android:name="android.permission.INTERNET"/>
-  <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
   <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
@@ -91,10 +91,8 @@
 
     <service
       android:name=".controller.RemoteService"
-      android:description="@string/info_service_description"
-      android:permission="android.permission.READ_PHONE_STATE">
+      android:description="@string/info_service_description">
       <intent-filter>
-        <action android:name="android.intent.action.PHONE_STATE"/>
         <action android:name="android.net.wifi.STATE_CHANGE"/>
         <action android:name="com.kelsos.mbrc.notification.play"/>
         <action android:name="com.kelsos.mbrc.notification.next"/>

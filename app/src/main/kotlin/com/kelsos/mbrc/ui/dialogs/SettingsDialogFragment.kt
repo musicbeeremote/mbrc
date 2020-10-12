@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.dialogs
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.text.TextUtils
 import android.widget.EditText
 import butterknife.BindView
@@ -27,18 +27,18 @@ class SettingsDialogFragment : DialogFragment() {
     this.settings = settings
   }
 
-  override fun onAttach(context: Context?) {
+  override fun onAttach(context: Context) {
     super.onAttach(context)
     try {
       mListener = context as SettingsSaveListener?
     } catch (e: ClassCastException) {
-      throw ClassCastException(context!!.toString() + " must implement SettingsDialogListener")
+      throw ClassCastException("$context must implement SettingsDialogListener")
     }
 
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val builder = MaterialDialog.Builder(activity)
+    val builder = MaterialDialog.Builder(requireActivity())
     builder.theme(Theme.DARK)
     builder.customView(R.layout.ui_dialog_settings, false)
     builder.title(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
@@ -84,15 +84,15 @@ class SettingsDialogFragment : DialogFragment() {
   }
 
   private fun isValid(port: Int): Boolean {
-    if (port < MIN_PORT || port > MAX_PORT) {
-      val alert = MaterialDialog.Builder(activity)
+    return if (port < MIN_PORT || port > MAX_PORT) {
+      val alert = MaterialDialog.Builder(requireActivity())
       alert.title(R.string.alert_invalid_range)
       alert.content(R.string.alert_invalid_port_number)
       alert.positiveText(android.R.string.ok)
       alert.show()
-      return false
+      false
     } else {
-      return true
+      true
     }
   }
 

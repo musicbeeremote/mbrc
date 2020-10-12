@@ -32,7 +32,7 @@ class FileLoggingTree(context: Context): Timber.DebugTree() {
     logger.addHandler(handler)
   }
 
-  override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
+  override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
     val logMessage = "[$tag]\t$message"
 
     when (priority) {

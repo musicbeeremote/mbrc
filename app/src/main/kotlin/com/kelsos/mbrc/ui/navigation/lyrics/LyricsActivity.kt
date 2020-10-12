@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView

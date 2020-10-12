@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.albums
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -39,8 +39,8 @@ class BrowseAlbumFragment : Fragment(),
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseAlbumPresenter
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setOnRefreshListener(this)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
@@ -60,8 +60,8 @@ class BrowseAlbumFragment : Fragment(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val scope = Toothpick.openScopes(activity.application, activity, this)
-    scope.installModules(SmoothieActivityModule(activity),
+    val scope = Toothpick.openScopes(requireActivity().application, activity, this)
+    scope.installModules(SmoothieActivityModule(requireActivity()),
         BrowseAlbumModule())
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
@@ -69,7 +69,7 @@ class BrowseAlbumFragment : Fragment(),
     presenter.load()
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     recycler.initLinear(adapter, emptyView, fastScroller)
     recycler.setHasFixedSize(true)
@@ -77,11 +77,11 @@ class BrowseAlbumFragment : Fragment(),
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
-    actionHandler.albumSelected(menuItem, entry, activity)
+    actionHandler.albumSelected(menuItem, entry, requireActivity())
   }
 
   override fun onItemClicked(album: Album) {
-    actionHandler.albumSelected(album, activity)
+    actionHandler.albumSelected(album, requireActivity())
   }
 
   override fun onRefresh() {

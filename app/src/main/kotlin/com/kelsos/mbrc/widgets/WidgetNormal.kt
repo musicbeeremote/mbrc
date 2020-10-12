@@ -30,7 +30,10 @@ class WidgetNormal : AppWidgetProvider() {
 
     val extras = intent.extras
     val widgetManager = AppWidgetManager.getInstance(context)
-    val widgets = ComponentName(context?.packageName, WidgetNormal::class.java.name)
+    if (context === null) {
+      return
+    }
+    val widgets = ComponentName(context.packageName, WidgetNormal::class.java.name)
     val widgetsIds = widgetManager.getAppWidgetIds(widgets)
 
     if (extras == null) {
@@ -41,7 +44,11 @@ class WidgetNormal : AppWidgetProvider() {
       val path = extras.getString(UpdateWidgets.COVER_PATH, "")
       updateCover(context, widgetManager, widgetsIds, path)
     } else if (extras.getBoolean(UpdateWidgets.INFO, false)) {
-      updateInfo(context, widgetManager, widgetsIds, extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO))
+      val info = extras.getParcelable<TrackInfo>(UpdateWidgets.TRACK_INFO)
+      info?.run {
+        updateInfo(context, widgetManager, widgetsIds, this)
+      }
+
     } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
       updatePlayState(context, widgetManager, widgetsIds,
           extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED))
@@ -98,8 +105,8 @@ class WidgetNormal : AppWidgetProvider() {
 
     val coverFile = File(path)
     if (coverFile.exists()) {
-      Picasso.with(context).invalidate(coverFile)
-      Picasso.with(context).load(coverFile)
+      Picasso.get().invalidate(coverFile)
+      Picasso.get().load(coverFile)
           .centerCrop()
           .resizeDimen(R.dimen.widget_normal_height, R.dimen.widget_normal_height)
           .into(widget, R.id.widget_normal_image, widgetsIds)

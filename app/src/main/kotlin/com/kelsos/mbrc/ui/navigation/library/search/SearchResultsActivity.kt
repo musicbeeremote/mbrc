@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -48,7 +48,7 @@ class SearchResultsActivity : FontActivity(),
 
     presenter.attach(this)
 
-    if (TextUtils.isEmpty(query)) {
+    if (query.isNullOrEmpty()) {
       finish()
     } else {
       presenter.search(query)
@@ -61,7 +61,8 @@ class SearchResultsActivity : FontActivity(),
 
     searchResultsRecycler.adapter = adapter
     searchResultsRecycler.emptyView = emptyView
-    searchResultsRecycler.layoutManager = LinearLayoutManager(this)
+    searchResultsRecycler.layoutManager =
+      LinearLayoutManager(this)
     adapter.setOnSearchItemSelectedListener(this)
     emptyViewText.setText(R.string.no_results_found)
 

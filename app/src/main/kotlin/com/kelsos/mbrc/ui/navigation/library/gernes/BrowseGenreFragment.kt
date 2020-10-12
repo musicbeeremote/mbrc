@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.gernes
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -39,10 +39,10 @@ class BrowseGenreFragment : Fragment(),
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseGenrePresenter
 
-  override fun onCreateView(inflater: LayoutInflater?,
+  override fun onCreateView(inflater: LayoutInflater,
                             container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
+    val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
     emptyTitle.setText(R.string.genres_list_empty)
@@ -51,7 +51,7 @@ class BrowseGenreFragment : Fragment(),
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val scope = Toothpick.openScopes(activity.application, activity, this)
+    val scope = Toothpick.openScopes(requireActivity().application, activity, this)
     scope.installModules(BrowseGenreModule())
     Toothpick.inject(this, scope)
     presenter.attach(this)
@@ -74,7 +74,7 @@ class BrowseGenreFragment : Fragment(),
     adapter.update(cursor)
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     swipeLayout.setOnRefreshListener(this)
     recycler.initLinear(adapter, emptyView, fastScroller)
@@ -83,12 +83,12 @@ class BrowseGenreFragment : Fragment(),
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean {
-    actionHandler.genreSelected(menuItem, entry, activity)
+    actionHandler.genreSelected(menuItem, entry, requireActivity())
     return true
   }
 
   override fun onItemClicked(genre: Genre) {
-    actionHandler.genreSelected(genre, activity)
+    actionHandler.genreSelected(genre, requireActivity())
   }
 
   override fun onRefresh() {

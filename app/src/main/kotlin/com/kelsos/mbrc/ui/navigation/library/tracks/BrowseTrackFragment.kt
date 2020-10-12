@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.library.tracks
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -39,8 +39,8 @@ class BrowseTrackFragment : Fragment(),
   @Inject lateinit var actionHandler: PopupActionHandler
   @Inject lateinit var presenter: BrowseTrackPresenter
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
     emptyTitle.setText(R.string.tracks_list_empty)
@@ -49,7 +49,7 @@ class BrowseTrackFragment : Fragment(),
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val scope = Toothpick.openScopes(activity.application, activity, this)
+    val scope = Toothpick.openScopes(requireActivity().application, activity, this)
     scope.installModules(BrowseTrackModule())
     Toothpick.inject(this, scope)
     presenter.attach(this)
@@ -67,7 +67,7 @@ class BrowseTrackFragment : Fragment(),
     presenter.detach()
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     swipeLayout.setOnRefreshListener(this)
     recycler.initLinear(adapter, emptyView, fastScroller)
