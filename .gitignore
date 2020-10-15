@@ -43,3 +43,4 @@ build
 target/
 gen-external-apklibs/
 gradle.properties
+/.gradletasknamecache

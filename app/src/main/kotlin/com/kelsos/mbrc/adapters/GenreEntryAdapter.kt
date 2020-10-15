@@ -15,14 +15,12 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Genre
-import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import javax.inject.Inject
 
 class GenreEntryAdapter
 @Inject
-constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHolder>(),
-    BubbleTextGetter {
+constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHolder>() {
   private var data: FlowCursorList<Genre>? = null
   private var listener: MenuItemSelectedListener? = null
   private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -113,14 +111,6 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
   fun refresh() {
     data?.refresh()
     notifyDataSetChanged()
-  }
-
-  override fun getTextToShowInBubble(pos: Int): String {
-    val genre = data?.getItem(pos.toLong())?.genre
-    if (genre != null && genre.isNotBlank()) {
-      return genre.substring(0, 1)
-    }
-    return "-"
   }
 
   interface MenuItemSelectedListener {

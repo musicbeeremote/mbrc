@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -11,7 +12,6 @@ import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.extensions.enableHome
-import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
@@ -59,7 +59,9 @@ class GenreArtistsActivity : FontActivity(),
       supportActionBar?.setTitle(R.string.empty)
     }
     adapter.setMenuItemSelectedListener(this)
-    recyclerView.initLinear(adapter, emptyView)
+    recyclerView.adapter = adapter
+    recyclerView.emptyView = emptyView
+    recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
     presenter.attach(this)
     presenter.load(genre!!)
   }

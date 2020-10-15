@@ -9,17 +9,16 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
 import com.kelsos.mbrc.data.library.Artist
-import com.kelsos.mbrc.extensions.initLinear
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
-import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Scope
 import toothpick.Toothpick
@@ -34,7 +33,6 @@ class BrowseArtistFragment : Fragment(),
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
-  @BindView(R.id.fastscroller) lateinit var fastScroller: RecyclerViewFastScroller
 
   @Inject lateinit var adapter: ArtistEntryAdapter
   @Inject lateinit var actionHandler: PopupActionHandler
@@ -61,7 +59,7 @@ class BrowseArtistFragment : Fragment(),
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    val view = inflater!!.inflate(R.layout.fragment_library_search, container, false)
+    val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     swipeLayout.setOnRefreshListener(this)
     swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
@@ -72,7 +70,9 @@ class BrowseArtistFragment : Fragment(),
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     recycler.setHasFixedSize(true)
-    recycler.initLinear(adapter, emptyView, fastScroller)
+    recycler.adapter = adapter
+    recycler.emptyView = emptyView
+    recycler.layoutManager = LinearLayoutManager(recycler.context)
     adapter.setMenuItemSelectedListener(this)
     presenter.attach(this)
     presenter.load()
