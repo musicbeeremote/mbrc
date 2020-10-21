@@ -44,3 +44,4 @@ target/
 gen-external-apklibs/
 gradle.properties
 /.gradletasknamecache
+/app/google-services.json

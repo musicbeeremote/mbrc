@@ -31,7 +31,6 @@ class BrowseArtistFragment : Fragment(),
 
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
 
   @Inject lateinit var adapter: ArtistEntryAdapter
@@ -61,8 +60,6 @@ class BrowseArtistFragment : Fragment(),
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
-    swipeLayout.setOnRefreshListener(this)
-    swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
     emptyTitle.setText(R.string.artists_list_empty)
     return view
   }
@@ -87,20 +84,14 @@ class BrowseArtistFragment : Fragment(),
   }
 
   override fun onRefresh() {
-    if (!swipeLayout.isRefreshing) {
-      swipeLayout.isRefreshing = true
-    }
-
     presenter.reload()
   }
 
   override fun update(data: FlowCursorList<Artist>) {
-    swipeLayout.isRefreshing = false
     adapter.update(data)
   }
 
   override fun failure(throwable: Throwable) {
-    swipeLayout.isRefreshing = false
     Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 }

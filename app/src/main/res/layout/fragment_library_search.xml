@@ -1,36 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+<FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/swipe_layout"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <FrameLayout
+  <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+      android:layout_marginEnd="@dimen/small_margin"
+      android:id="@+id/library_data_list"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
-      <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
-        android:layout_marginEnd="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:id="@+id/library_data_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/small_margin"
-        android:paddingTop="@dimen/small_margin"
-        android:scrollbars="none"
-        tools:listitem="@layout/listitem_single"/>
-    </RelativeLayout>
+      android:layout_height="match_parent"
+      android:paddingBottom="@dimen/small_margin"
+      android:paddingTop="@dimen/small_margin"
+      android:scrollbars="none"
+      tools:listitem="@layout/listitem_single"/>
+  </RelativeLayout>
 
 
-    <include
-      layout="@layout/list_empty_view"
-      android:visibility="gone"/>
-  </FrameLayout>
-
-
-</com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout>
+  <include
+    layout="@layout/list_empty_view"
+    android:visibility="gone"/>
+</FrameLayout>

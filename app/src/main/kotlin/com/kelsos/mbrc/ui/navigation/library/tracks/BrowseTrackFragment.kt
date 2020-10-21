@@ -28,7 +28,6 @@ class BrowseTrackFragment : Fragment(),
     MenuItemSelectedListener,
     OnRefreshListener {
 
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
   @BindView(R.id.list_empty_title) lateinit var emptyTitle: TextView
@@ -40,7 +39,6 @@ class BrowseTrackFragment : Fragment(),
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
-    swipeLayout.setSwipeableChildren(R.id.library_data_list, R.id.empty_view)
     emptyTitle.setText(R.string.tracks_list_empty)
     return view
   }
@@ -67,7 +65,6 @@ class BrowseTrackFragment : Fragment(),
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    swipeLayout.setOnRefreshListener(this)
     recycler.adapter = adapter
     recycler.emptyView = emptyView
     recycler.layoutManager = LinearLayoutManager(recycler.context)
@@ -77,7 +74,6 @@ class BrowseTrackFragment : Fragment(),
 
   override fun update(it: FlowCursorList<Track>) {
     adapter.update(it)
-    swipeLayout.isRefreshing = false
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
@@ -89,15 +85,10 @@ class BrowseTrackFragment : Fragment(),
   }
 
   override fun onRefresh() {
-    if (!swipeLayout.isRefreshing) {
-      swipeLayout.isRefreshing = true
-    }
-
     presenter.reload()
   }
 
   override fun failure(it: Throwable) {
-    swipeLayout.isRefreshing = false
     Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 }
