@@ -1,41 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-  <style name="AppTheme"
-    parent="AppTheme.Base" />
-
-  <style name="AppTheme.Base"
-    parent="Theme.AppCompat">
+  <style name="Theme.App" parent="Theme.MaterialComponents">
     <item name="colorPrimary">@color/primary</item>
-    <item name="colorPrimaryDark">@color/primary_dark</item>
-    <item name="colorAccent">@color/accent</item>
-    <item name="background">@color/background_dark</item>
+    <item name="colorPrimaryVariant">@color/primary_dark</item>
+    <item name="colorSecondary">@color/accent</item>
     <item name="android:textColorPrimary">@color/primary_text</item>
     <item name="android:textColor">@color/secondary_text</item>
+    <item name="android:colorBackground">@color/background</item>
+    <item name="android:statusBarColor">@color/primary_dark</item>
+    <item name="android:navigationBarColor">@color/primary_dark</item>
     <item name="android:windowNoTitle">true</item>
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
     <item name="windowActionBarOverlay">true</item>
-    <item name="md_dark_theme">true</item>
-    <item name="android:actionBarWidgetTheme">@style/AppTheme.ActionBarWidget</item>
     <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    <item name="android:windowContentTransitions">true</item>
+    <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    <item name="android:windowAllowReturnTransitionOverlap">true</item>
+    <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+    <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
   </style>
 
-  <style name="AppTheme.ActionBarWidget" parent="AppTheme">
-    <item name="android:textColorHint">@color/primary_text_material_light</item>
-  </style>
-
-  <style name="Theme.Settings"
-    parent="@style/AppTheme">
-    <item name="android:windowNoTitle">true</item>
-    <item name="windowActionBar">false</item>
-    <item name="toolbarStyle">@style/Widget.Toolbar</item>
-  </style>
-
-  <style name="Widget.Toolbar"
-    parent="@style/Widget.AppCompat.Toolbar">
-    <item name="android:background">?attr/colorPrimary</item>
-    <item name="navigationIcon">?attr/homeAsUpIndicator</item>
-  </style>
-
+  <color name="background">#121212</color>
 </resources>

@@ -12,6 +12,6 @@ interface BrowseArtistView : BaseView {
 
 interface BrowseArtistPresenter : Presenter<BrowseArtistView> {
   fun load()
-  fun reload()
+  fun sync()
 }
 

@@ -1,14 +1,13 @@
 package com.kelsos.mbrc.ui.navigation.library.search
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.appcompat.widget.Toolbar
-import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.google.android.material.appbar.MaterialToolbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Artist
@@ -24,16 +23,23 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class SearchResultsActivity : FontActivity(),
-                              SearchResultsView,
-                              OnSearchItemSelected {
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.search_results_recycler) lateinit var searchResultsRecycler: EmptyRecyclerView
-  @BindView(R.id.empty_view_text) lateinit var emptyViewText: TextView
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
+  SearchResultsView,
+  OnSearchItemSelected {
+  @BindView(R.id.toolbar)
+  lateinit var toolbar: MaterialToolbar
+  @BindView(R.id.search_results_recycler)
+  lateinit var searchResultsRecycler: EmptyRecyclerView
+  @BindView(R.id.empty_view_text)
+  lateinit var emptyViewText: TextView
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: LinearLayout
 
-  @Inject lateinit var adapter: SearchResultAdapter
-  @Inject lateinit var presenter: SearchResultsPresenter
-  @Inject lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var adapter: SearchResultAdapter
+  @Inject
+  lateinit var presenter: SearchResultsPresenter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
   private var scope: Scope? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {

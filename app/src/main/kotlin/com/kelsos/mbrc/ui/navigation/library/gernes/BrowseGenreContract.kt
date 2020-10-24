@@ -7,7 +7,7 @@ import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface BrowseGenrePresenter : Presenter<BrowseGenreView> {
   fun load()
-  fun reload()
+  fun sync()
 }
 
 interface BrowseGenreView : BaseView {

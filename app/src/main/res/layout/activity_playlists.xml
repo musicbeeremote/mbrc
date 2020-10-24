@@ -1,26 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.drawerlayout.widget.DrawerLayout android:id="@+id/drawer_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/drawer_layout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fitsSystemWindows="true">
+
+  <androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    tools:context=".ui.activities.nav.PlaylistActivity">
 
-  <include
-      layout="@layout/app_bar_playlists"
+    <com.google.android.material.appbar.AppBarLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:theme="@style/Theme.App.AppBarOverlay">
+
+      <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        tools:showIn="@layout/activity_playlists" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
+      android:id="@+id/swipe_layout"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      />
+      android:layout_marginBottom="@dimen/mini_control_height"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      tools:context="com.kelsos.mbrc.ui.activities.nav.PlaylistActivity">
+
+      <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+          android:id="@+id/playlist_list"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:paddingTop="@dimen/list_padding_top"
+          tools:listitem="@layout/listitem_single" />
+
+        <include
+          layout="@layout/list_empty_view"
+          android:visibility="gone" />
+
+      </FrameLayout>
+
+
+    </com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout>
+
+    <include
+      android:id="@+id/playlist_mini_control"
+      layout="@layout/mini_control_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      app:behavior_peekHeight="@dimen/mini_control_peek_height"
+      app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+
+  </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
   <com.google.android.material.navigation.NavigationView
-      android:id="@+id/nav_view"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_gravity="start"
-      android:fitsSystemWindows="true"
-      app:headerLayout="@layout/nav_header_main"
-      app:menu="@menu/activity_main_drawer" />
+    android:id="@+id/nav_view"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:fitsSystemWindows="true"
+    app:headerLayout="@layout/nav_header_main"
+    app:menu="@menu/activity_main_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
 

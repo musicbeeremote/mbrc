@@ -181,85 +181,83 @@ dependencies {
   androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
-  androidTestCompile 'androidx.test.espresso:espresso-intents:3.3.0'
-  androidTestCompile "junit:junit:${junit_version}"
+  androidTestImplementation 'androidx.test.espresso:espresso-intents:3.3.0'
+  androidTestImplementation "junit:junit:${junit_version}"
   // 2017-01-04 (I spend a couple of days until I figured out that if I specify the mockitoA
   // version to an different than the one dexmaker supports the tests would crash...)
-  androidTestCompile "org.mockito:mockito-core:${mockito_version}"
-  androidTestCompile "org.mockito:mockito-android:${mockito_version}"
+  androidTestImplementation "org.mockito:mockito-core:${mockito_version}"
+  androidTestImplementation "org.mockito:mockito-android:${mockito_version}"
 
-  androidTestCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  androidTestCompile 'androidx.annotation:annotation:1.1.0'
-  androidTestCompile 'androidx.test.ext:junit:1.1.2'
-  androidTestCompile 'androidx.test:rules:1.3.0'
-  androidTestCompile 'com.linkedin.testbutler:test-butler-library:2.1.0'
+  androidTestImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  androidTestImplementation 'androidx.annotation:annotation:1.1.0'
+  androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+  androidTestImplementation 'androidx.test:rules:1.3.0'
+  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.1.0'
 
   // Test dependencies
-  testCompile "junit:junit:${junit_version}"
-  testCompile "org.mockito:mockito-core:${mockito_version}"
-  testCompile "org.robolectric:robolectric:${robolectric_version}"
-  testCompile "org.robolectric:shadows-multidex:${robolectric_version}"
-  testCompile "com.google.truth:truth:${truth_version}"
-  testCompile "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  testImplementation "junit:junit:${junit_version}"
+  testImplementation "org.mockito:mockito-core:${mockito_version}"
+  testImplementation "org.robolectric:robolectric:${robolectric_version}"
+  testImplementation "org.robolectric:shadows-multidex:${robolectric_version}"
+  testImplementation "com.google.truth:truth:${truth_version}"
+  testImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
   //The android library only will fail the robolectric tests
-  testCompile 'org.threeten:threetenbp:1.4.4'
+  testImplementation 'org.threeten:threetenbp:1.4.4'
 
-  compile 'androidx.appcompat:appcompat:1.2.0'
-  compile 'androidx.legacy:legacy-support-v4:1.0.0'
-  compile 'androidx.annotation:annotation:1.1.0'
-  compile 'androidx.recyclerview:recyclerview:1.1.0'
-  compile 'com.google.android.material:material:1.2.1'
-  compile 'androidx.preference:preference-ktx:1.1.1'
-  compile 'androidx.legacy:legacy-preference-v14:1.0.0'
+  implementation 'androidx.appcompat:appcompat:1.2.0'
+  implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+  implementation 'androidx.annotation:annotation:1.1.0'
+  implementation 'androidx.recyclerview:recyclerview:1.1.0'
+  implementation 'com.google.android.material:material:1.3.0-alpha03'
+  implementation 'androidx.preference:preference-ktx:1.1.1'
+  implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
 
   //Some of the dependencies pull the wrong version support v13
-  compile 'androidx.legacy:legacy-support-v13:1.0.0'
+  implementation 'androidx.legacy:legacy-support-v13:1.0.0'
 
   kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
 
-  compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-  compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-  compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}@aar"
+  implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+  implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+  implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}@aar"
 
-  compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
-  compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
-  compile "com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}"
-  compile "com.jakewharton:butterknife:${butterknife_version}"
+  implementation "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
+  implementation "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
+  implementation "com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}"
+  implementation "com.jakewharton:butterknife:${butterknife_version}"
 
-  compile "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
-  compile "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
+  implementation "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
+  implementation "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
   kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
 
-  compile "com.afollestad.material-dialogs:core:${material_dialogs_version}"
-  compile "com.afollestad.material-dialogs:commons:${material_dialogs_version}"
+  implementation "com.afollestad.material-dialogs:core:${material_dialogs_version}"
+  implementation "com.afollestad.material-dialogs:commons:${material_dialogs_version}"
 
   kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-  compile 'androidx.multidex:multidex:2.0.1'
-  compile 'com.squareup.picasso:picasso:2.71828'
+  implementation 'androidx.multidex:multidex:2.0.1'
+  implementation 'com.squareup.picasso:picasso:2.71828'
 
-  compile 'io.reactivex:rxandroid:1.2.1'
-  compile 'io.reactivex:rxjava:1.2.5'
-  compile 'io.reactivex:rxkotlin:0.60.0'
-  compile 'com.jakewharton.timber:timber:4.7.1'
-  compile 'com.jakewharton.rxrelay:rxrelay:1.2.0'
-  compile 'androidx.constraintlayout:constraintlayout:2.0.2'
+  implementation 'io.reactivex:rxandroid:1.2.1'
+  implementation 'io.reactivex:rxjava:1.2.5'
+  implementation 'io.reactivex:rxkotlin:0.60.0'
+  implementation 'com.jakewharton.timber:timber:4.7.1'
+  implementation 'com.jakewharton.rxrelay:rxrelay:1.2.0'
+  implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
 
-  compile 'com.jakewharton.threetenabp:threetenabp:1.2.4'
+  implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
 
-  debugCompile "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
 
   // Import the BoM for the Firebase platform
-  playCompile platform('com.google.firebase:firebase-bom:25.12.0')
+  playImplementation platform('com.google.firebase:firebase-bom:25.12.0')
 
   // Declare the dependencies for the Crashlytics and Analytics libraries
   // When using the BoM, you don't specify versions in Firebase library dependencies
-  playCompile 'com.google.firebase:firebase-crashlytics-ktx'
-  playCompile 'com.google.firebase:firebase-analytics-ktx'
-
-
+  playImplementation 'com.google.firebase:firebase-crashlytics-ktx'
+  playImplementation 'com.google.firebase:firebase-analytics-ktx'
 }
 
 allprojects {

@@ -1,104 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/list_item_height"
-                android:foreground="?attr/selectableItemBackground"
-                android:orientation="horizontal">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/track_container"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/list_item_height"
+  android:foreground="?attr/selectableItemBackground">
 
-  <FrameLayout
-    android:id="@+id/track_container"
-    android:layout_width="match_parent"
+  <ImageView
+    android:id="@+id/track_indicator_view"
+    android:layout_width="@dimen/normal_margin"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:foreground="?attr/selectableItemBackground"
-    android:orientation="horizontal"
-    tools:ignore="UselessParent">
+    android:clickable="false"
+    android:contentDescription="@string/now_playing_indicator"
+    android:scaleType="fitCenter"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="horizontal"
-      tools:ignore="UselessParent">
+  <LinearLayout
+    android:id="@+id/drag_handle"
+    android:layout_width="42dp"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/normal_margin"
+    android:paddingRight="@dimen/normal_margin"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-      <LinearLayout
-        android:id="@+id/drag_handle"
-        android:layout_width="42dp"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/normal_margin"
-        android:paddingRight="@dimen/normal_margin">
+    <ImageView
+      android:layout_width="@dimen/mbrc_list_drag_icon"
+      android:layout_height="@dimen/mbrc_list_drag_icon"
+      android:background="@drawable/ic_list_drag_icon"
+      android:contentDescription="@string/drag_n_drop_description" />
+  </LinearLayout>
 
-        <ImageView
-          android:layout_width="@dimen/mbrc_list_drag_icon"
-          android:layout_height="@dimen/mbrc_list_drag_icon"
-          android:background="@drawable/ic_list_drag_icon"
-          android:contentDescription="@string/drag_n_drop_description" />
-      </LinearLayout>
+  <TextView
+    android:id="@+id/track_title"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:textColor="@color/primary_text"
+    android:textSize="@dimen/dual_list_title"
+    app:layout_constraintBottom_toTopOf="@id/track_artist"
+    app:layout_constraintEnd_toStartOf="@id/track_indicator_view"
+    app:layout_constraintStart_toEndOf="@+id/drag_handle"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:text="Track title" />
 
-      <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginEnd="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+  <TextView
+    android:id="@+id/track_artist"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:textColor="@color/secondary_text"
+    android:textSize="@dimen/dual_list_subtitle"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toStartOf="@id/track_indicator_view"
+    app:layout_constraintStart_toEndOf="@+id/drag_handle"
+    app:layout_constraintTop_toBottomOf="@id/track_title"
+    tools:text="Artist Name" />
 
-        <TextView
-          android:id="@+id/track_title"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:textColor="@color/primary_text"
-          android:textSize="@dimen/dual_list_title"
-          tools:text="Track title" />
-
-        <TextView
-          android:id="@+id/track_artist"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:textColor="@color/secondary_text"
-          android:textSize="@dimen/dual_list_subtitle"
-          tools:text="Artist Name" />
-      </LinearLayout>
-
-      <ImageView
-        android:id="@+id/track_indicator_view"
-        android:layout_width="@dimen/normal_margin"
-        android:layout_height="match_parent"
-        android:layout_gravity="end|center_vertical"
-        android:clickable="false"
-        android:contentDescription="@string/now_playing_indicator"
-        android:scaleType="fitCenter" />
-
-      <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end|center_vertical"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/normal_margin"
-        android:paddingRight="@dimen/normal_margin">
-
-        <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical"
-          android:contentDescription="@string/menu_overflow_description"
-          android:tint="@android:color/transparent" />
-
-      </LinearLayout>
-
-
-    </LinearLayout>
-
-
-  </FrameLayout>
-
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

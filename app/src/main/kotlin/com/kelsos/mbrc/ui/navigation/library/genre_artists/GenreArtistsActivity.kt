@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.ui.navigation.library.genre_artists
 
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.google.android.material.appbar.MaterialToolbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
@@ -22,16 +22,22 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class GenreArtistsActivity : FontActivity(),
-    GenreArtistsView,
-    MenuItemSelectedListener {
+  GenreArtistsView,
+  MenuItemSelectedListener {
 
-  @BindView(R.id.genre_artists_recycler) lateinit var recyclerView: EmptyRecyclerView
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
+  @BindView(R.id.genre_artists_recycler)
+  lateinit var recyclerView: EmptyRecyclerView
+  @BindView(R.id.toolbar)
+  lateinit var toolbar: MaterialToolbar
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: LinearLayout
 
-  @Inject lateinit var adapter: ArtistEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: GenreArtistsPresenter
+  @Inject
+  lateinit var adapter: ArtistEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: GenreArtistsPresenter
 
   private var genre: String? = null
   private var scope: Scope? = null
@@ -40,8 +46,10 @@ class GenreArtistsActivity : FontActivity(),
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_genre_artists)
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this),
-        GenreArtistsModule())
+    scope!!.installModules(
+      SmoothieActivityModule(this),
+      GenreArtistsModule()
+    )
     Toothpick.inject(this, scope)
 
     ButterKnife.bind(this)
@@ -86,7 +94,7 @@ class GenreArtistsActivity : FontActivity(),
   }
 
   override fun update(data: FlowCursorList<Artist>) {
-   adapter.update(data)
+    adapter.update(data)
   }
 
   override fun onStart() {

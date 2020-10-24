@@ -2,15 +2,15 @@ package com.kelsos.mbrc.ui.connection_manager
 
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
-import android.view.MenuItem
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
 import com.kelsos.mbrc.data.ConnectionSettings
@@ -29,13 +29,17 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class ConnectionManagerActivity : FontActivity(),
-    ConnectionManagerView,
-    SettingsDialogFragment.SettingsSaveListener,
-    ConnectionAdapter.ConnectionChangeListener {
-  @Inject lateinit var bus: RxBus
-  @Inject lateinit var presenter: ConnectionManagerPresenter
-  @BindView(R.id.connection_list) lateinit var mRecyclerView: RecyclerView
-  @BindView(R.id.toolbar) lateinit var mToolbar: Toolbar
+  ConnectionManagerView,
+  SettingsDialogFragment.SettingsSaveListener,
+  ConnectionAdapter.ConnectionChangeListener {
+  @Inject
+  lateinit var bus: RxBus
+  @Inject
+  lateinit var presenter: ConnectionManagerPresenter
+  @BindView(R.id.connection_list)
+  lateinit var mRecyclerView: RecyclerView
+  @BindView(R.id.toolbar)
+  lateinit var mToolbar: MaterialToolbar
   private var mProgress: MaterialDialog? = null
   private var mContext: Context? = null
   private var adapter: ConnectionAdapter? = null
@@ -91,7 +95,12 @@ class ConnectionManagerActivity : FontActivity(),
   override fun onResume() {
     super.onResume()
     presenter.attach(this)
-    bus.register(this, ConnectionSettingsChanged::class.java, { this.onConnectionSettingsChange(it) }, true)
+    bus.register(
+      this,
+      ConnectionSettingsChanged::class.java,
+      { this.onConnectionSettingsChange(it) },
+      true
+    )
     bus.register(this, DiscoveryStopped::class.java, { this.onDiscoveryStopped(it) }, true)
     bus.register(this, NotifyUser::class.java, { this.onUserNotification(it) }, true)
   }

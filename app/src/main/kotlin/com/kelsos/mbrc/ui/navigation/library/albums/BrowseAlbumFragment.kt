@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
@@ -25,8 +26,7 @@ import javax.inject.Inject
 
 class BrowseAlbumFragment : Fragment(),
     BrowseAlbumView,
-    AlbumEntryAdapter.MenuItemSelectedListener,
-    SwipeRefreshLayout.OnRefreshListener {
+    AlbumEntryAdapter.MenuItemSelectedListener  {
 
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
@@ -40,6 +40,9 @@ class BrowseAlbumFragment : Fragment(),
     val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     emptyTitle.setText(R.string.albums_list_empty)
+    view.findViewById<Button>(R.id.list_empty_sync).setOnClickListener {
+      presenter.sync()
+    }
     return view
   }
 
@@ -79,10 +82,6 @@ class BrowseAlbumFragment : Fragment(),
 
   override fun onItemClicked(album: Album) {
     actionHandler.albumSelected(album, requireActivity())
-  }
-
-  override fun onRefresh() {
-    presenter.reload()
   }
 
   override fun onStop() {

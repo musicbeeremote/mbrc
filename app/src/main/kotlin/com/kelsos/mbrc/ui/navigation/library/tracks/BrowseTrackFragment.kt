@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
@@ -25,8 +26,7 @@ import javax.inject.Inject
 
 class BrowseTrackFragment : Fragment(),
     BrowseTrackView,
-    MenuItemSelectedListener,
-    OnRefreshListener {
+    MenuItemSelectedListener{
 
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
@@ -40,6 +40,9 @@ class BrowseTrackFragment : Fragment(),
     val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     emptyTitle.setText(R.string.tracks_list_empty)
+    view.findViewById<Button>(R.id.list_empty_sync).setOnClickListener {
+      presenter.sync()
+    }
     return view
   }
 
@@ -82,10 +85,6 @@ class BrowseTrackFragment : Fragment(),
 
   override fun onItemClicked(track: Track) {
     actionHandler.trackSelected(track)
-  }
-
-  override fun onRefresh() {
-    presenter.reload()
   }
 
   override fun failure(it: Throwable) {

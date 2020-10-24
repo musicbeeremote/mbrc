@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.ui.navigation.lyrics
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.Group
+import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -18,11 +18,15 @@ import javax.inject.Inject
 class LyricsActivity : BaseActivity(), LyricsView {
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
-  @BindView(R.id.lyrics_recycler_view) lateinit var lyricsRecycler: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
-  @BindView(R.id.empty_view_text) lateinit var emptyText: TextView
+  @BindView(R.id.lyrics_recycler_view)
+  lateinit var lyricsRecycler: EmptyRecyclerView
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: Group
+  @BindView(R.id.empty_view_text)
+  lateinit var emptyText: TextView
 
-  @Inject lateinit var presenter: LyricsPresenter
+  @Inject
+  lateinit var presenter: LyricsPresenter
 
   private lateinit var scope: Scope
   private lateinit var adapter: LyricsAdapter
@@ -44,7 +48,6 @@ class LyricsActivity : BaseActivity(), LyricsView {
     adapter = LyricsAdapter()
     lyricsRecycler.adapter = adapter
   }
-
 
 
   override fun onDestroy() {

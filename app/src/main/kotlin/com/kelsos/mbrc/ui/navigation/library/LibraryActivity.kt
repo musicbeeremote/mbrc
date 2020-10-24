@@ -10,10 +10,14 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.progressindicator.ProgressIndicator
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter
@@ -38,8 +42,6 @@ class LibraryActivity : BaseActivity(),
   private var pagerAdapter: LibraryPagerAdapter? = null
   private var scope: Scope? = null
   @Inject lateinit var presenter: LibraryPresenter
-
-  private var refreshDialog: MaterialDialog? = null
 
   override fun onQueryTextSubmit(query: String): Boolean {
     if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
@@ -168,17 +170,13 @@ class LibraryActivity : BaseActivity(),
   }
 
   override fun showRefreshing() {
-    refreshDialog = MaterialDialog.Builder(this)
-        .content(R.string.refreshing_library_data)
-        .progress(true, 100, false)
-        .cancelable(false)
-        .build()
-
-    refreshDialog?.show()
+    findViewById<ProgressIndicator>(R.id.sync_progress).isGone = false
+    findViewById<TextView>(R.id.sync_progress_text).isGone = false
   }
 
   override fun hideRefreshing() {
-    refreshDialog?.dismiss()
+    findViewById<ProgressIndicator>(R.id.sync_progress).isGone = true
+    findViewById<TextView>(R.id.sync_progress_text).isGone = true
   }
 
   companion object {

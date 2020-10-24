@@ -15,7 +15,8 @@ class LibraryPresenterImpl
     private val settingsManager: SettingsManager,
     private val bus: RxBus,
     private val librarySyncInteractor: LibrarySyncInteractor
-) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>() {
+) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>(),
+  LibrarySyncInteractor.OnStartListener {
 
   override fun refresh() {
     view?.showRefreshing()
@@ -25,6 +26,7 @@ class LibraryPresenterImpl
   override fun attach(view: LibraryView) {
     super.attach(view)
     librarySyncInteractor.setOnCompleteListener(this)
+    librarySyncInteractor.setOnStartListener(this)
     if (!librarySyncInteractor.isRunning()) {
       view.hideRefreshing()
     }
@@ -33,6 +35,7 @@ class LibraryPresenterImpl
   override fun detach() {
     super.detach()
     librarySyncInteractor.setOnCompleteListener(null)
+    librarySyncInteractor.setOnStartListener(null)
   }
 
   override fun onTermination() {
@@ -61,6 +64,10 @@ class LibraryPresenterImpl
 
   override fun onSuccess() {
     //todo show success message
+  }
+
+  override fun onStart() {
+    view?.showRefreshing()
   }
 }
 

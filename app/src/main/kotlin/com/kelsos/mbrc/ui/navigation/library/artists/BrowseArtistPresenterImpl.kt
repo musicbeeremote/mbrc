@@ -6,6 +6,7 @@ import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.ui.navigation.library.ArtistTabRefreshEvent
+import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.kelsos.mbrc.utilities.SettingsManager
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import rx.Scheduler
@@ -18,6 +19,7 @@ class BrowseArtistPresenterImpl
 @Inject constructor(private val bus: RxBus,
                     private val repository: ArtistRepository,
                     private val settingsManager: SettingsManager,
+                    private val librarySyncInteractor: LibrarySyncInteractor,
                     @Named("io") private val ioScheduler: Scheduler,
                     @Named("main") private val mainScheduler: Scheduler) :
     BasePresenter<BrowseArtistView>(),
@@ -50,19 +52,10 @@ class BrowseArtistPresenterImpl
 
   }
 
-  override fun reload() {
-    val artistObservable = settingsManager.shouldDisplayOnlyAlbumArtists().flatMap {
-      if (it) {
-        return@flatMap repository.getAllRemoteAndShowAlbumArtist()
-      } else {
-        return@flatMap repository.getAndSaveRemote()
-      }
+  override fun sync() {
+    if (!librarySyncInteractor.isRunning()) {
+      librarySyncInteractor.sync()
     }
-    addSubcription(artistObservable.compose { schedule(it) }.subscribe({
-      view?.update(it)
-    }, {
-      Timber.v(it, "Error retrieving the data")
-    }))
   }
 
   private fun schedule(it: Single<FlowCursorList<Artist>>) = it.observeOn(mainScheduler)

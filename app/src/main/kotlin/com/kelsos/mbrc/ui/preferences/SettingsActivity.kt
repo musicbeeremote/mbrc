@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.preferences
 
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
+import com.google.android.material.appbar.MaterialToolbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.ui.activities.FontActivity
@@ -13,7 +13,8 @@ import javax.inject.Inject
 
 class SettingsActivity : FontActivity() {
 
-  @Inject lateinit var bus: RxBus
+  @Inject
+  lateinit var bus: RxBus
   private lateinit var scope: Scope
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +24,7 @@ class SettingsActivity : FontActivity() {
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_settings)
 
-    val mToolbar = findViewById(R.id.toolbar) as Toolbar
+    val mToolbar = findViewById<MaterialToolbar>(R.id.toolbar)
     setSupportActionBar(mToolbar)
     supportActionBar?.setHomeButtonEnabled(true)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
@@ -26,8 +27,7 @@ import javax.inject.Inject
 
 class BrowseArtistFragment : Fragment(),
     BrowseArtistView,
-    MenuItemSelectedListener,
-    OnRefreshListener {
+    MenuItemSelectedListener{
 
   @BindView(R.id.library_data_list) lateinit var recycler: EmptyRecyclerView
   @BindView(R.id.empty_view) lateinit var emptyView: View
@@ -61,6 +61,9 @@ class BrowseArtistFragment : Fragment(),
     val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     emptyTitle.setText(R.string.artists_list_empty)
+    view.findViewById<Button>(R.id.list_empty_sync).setOnClickListener {
+      presenter.sync()
+    }
     return view
   }
 
@@ -81,10 +84,6 @@ class BrowseArtistFragment : Fragment(),
 
   override fun onItemClicked(artist: Artist) {
     actionHandler.artistSelected(artist, requireActivity())
-  }
-
-  override fun onRefresh() {
-    presenter.reload()
   }
 
   override fun update(data: FlowCursorList<Artist>) {

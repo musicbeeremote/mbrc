@@ -1,14 +1,14 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.google.android.material.appbar.MaterialToolbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.TrackEntryAdapter
 import com.kelsos.mbrc.data.library.Track
@@ -23,24 +23,32 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class AlbumTracksActivity : FontActivity(),
-    AlbumTracksView,
-    TrackEntryAdapter.MenuItemSelectedListener {
+  AlbumTracksView,
+  TrackEntryAdapter.MenuItemSelectedListener {
 
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.list_tracks) lateinit var listTracks: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: LinearLayout
+  @BindView(R.id.toolbar)
+  lateinit var toolbar: MaterialToolbar
+  @BindView(R.id.list_tracks)
+  lateinit var listTracks: EmptyRecyclerView
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: LinearLayout
 
-  @Inject lateinit var adapter: TrackEntryAdapter
-  @Inject lateinit var actionHandler: PopupActionHandler
-  @Inject lateinit var presenter: AlbumTracksPresenter
+  @Inject
+  lateinit var adapter: TrackEntryAdapter
+  @Inject
+  lateinit var actionHandler: PopupActionHandler
+  @Inject
+  lateinit var presenter: AlbumTracksPresenter
 
   private var album: AlbumInfo? = null
   private var scope: Scope? = null
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this),
-        AlbumTracksModule())
+    scope!!.installModules(
+      SmoothieActivityModule(this),
+      AlbumTracksModule()
+    )
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_album_tracks)

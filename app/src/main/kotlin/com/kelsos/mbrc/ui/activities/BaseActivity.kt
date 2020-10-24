@@ -4,23 +4,22 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
-import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.widget.Toolbar
-import android.view.KeyEvent
-import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.TextView
 import butterknife.BindView
-import butterknife.ButterKnife
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.constants.UserInputEventType
@@ -39,16 +38,20 @@ import com.kelsos.mbrc.ui.navigation.nowplaying.NowPlayingActivity
 import com.kelsos.mbrc.ui.navigation.playlists.PlaylistActivity
 import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 
 abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
-  @Inject lateinit var bus: RxBus
-  @Inject lateinit var serviceChecker: ServiceChecker
-  @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-  @BindView(R.id.drawer_layout) lateinit var drawer: DrawerLayout
-  @BindView(R.id.nav_view) lateinit var navigationView: NavigationView
+  @Inject
+  lateinit var bus: RxBus
+  @Inject
+  lateinit var serviceChecker: ServiceChecker
+  @BindView(R.id.toolbar)
+  lateinit var toolbar: MaterialToolbar
+  @BindView(R.id.drawer_layout)
+  lateinit var drawer: DrawerLayout
+  @BindView(R.id.nav_view)
+  lateinit var navigationView: NavigationView
 
   private var connectText: TextView? = null
   private var toggle: ActionBarDrawerToggle? = null
@@ -210,7 +213,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     Timber.v("Initializing base activity")
     setSupportActionBar(toolbar)
 
-    toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
+    toggle =
+      ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close)
     drawer.addDrawerListener(toggle!!)
     drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
     toggle!!.syncState()
@@ -231,7 +235,12 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   override fun onResume() {
     super.onResume()
     this.bus.register(this, NotifyUser::class.java, { this.handleUserNotification(it) }, true)
-    this.bus.register(this, ConnectionStatusChangeEvent::class.java, { this.onConnection(it) }, true)
+    this.bus.register(
+      this,
+      ConnectionStatusChangeEvent::class.java,
+      { this.onConnection(it) },
+      true
+    )
     this.bus.post(RequestConnectionStateEvent())
   }
 

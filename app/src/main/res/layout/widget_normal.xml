@@ -1,116 +1,115 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/widget_normal_height"
-    android:background="@color/background_dark"
-    android:gravity="top"
-    android:orientation="horizontal"
-    android:padding="0dp"
-    tools:ignore="NestedWeights">
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/widget_normal_height"
+  android:background="@color/background_dark"
+  android:gravity="top"
+  android:orientation="horizontal"
+  android:padding="0dp"
+  tools:ignore="NestedWeights">
 
   <ImageView
-      android:id="@+id/widget_normal_image"
-      android:layout_width="@dimen/widget_normal_height"
-      android:layout_height="@dimen/widget_normal_height"
-      android:background="@drawable/ic_image_no_cover"
-      android:contentDescription="@string/description_album_cover"
-      android:scaleType="centerInside" />
+    android:id="@+id/widget_normal_image"
+    android:layout_width="@dimen/widget_normal_height"
+    android:layout_height="@dimen/widget_normal_height"
+    android:background="@drawable/ic_image_no_cover"
+    android:contentDescription="@string/description_album_cover"
+    android:scaleType="centerInside" />
 
   <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="@dimen/widget_normal_height"
-      android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/widget_normal_height"
+    android:orientation="vertical">
 
     <LinearLayout
       android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="fill"
-        android:layout_marginTop="2dp"
-        android:layout_weight="1.3"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/small_margin"
-        android:paddingRight="@dimen/small_margin">
+      android:layout_height="0dp"
+      android:layout_gravity="fill"
+      android:layout_marginTop="2dp"
+      android:layout_weight="1.3"
+      android:focusable="true"
+      android:gravity="center_vertical"
+      android:orientation="vertical"
+      android:paddingLeft="@dimen/small_margin"
+      android:paddingRight="@dimen/small_margin">
 
       <TextView
-          android:id="@+id/widget_normal_line_one"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:textColor="@color/primary_text"
-          android:textSize="@dimen/widget_normal_text"
-          android:textStyle="bold"
-          tools:text="Rock it for me" />
+        android:id="@+id/widget_normal_line_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/widget_normal_text"
+        android:textStyle="bold"
+        tools:text="Rock it for me" />
 
       <TextView
-          android:id="@+id/widget_normal_line_two"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:textColor="@color/secondary_text"
-          android:textSize="@dimen/widget_small_text"
-          tools:text="Caravan Palace" />
+        android:id="@+id/widget_normal_line_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/secondary_text"
+        android:textSize="@dimen/widget_small_text"
+        tools:text="Caravan Palace" />
 
       <TextView
-          android:id="@+id/widget_normal_line_three"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:textColor="@color/secondary_text"
-          android:textSize="@dimen/widget_small_text"
-          tools:text="Panic" />
+        android:id="@+id/widget_normal_line_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/secondary_text"
+        android:textSize="@dimen/widget_small_text"
+        tools:text="Panic" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="0.8"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_gravity="center_vertical"
+      android:layout_weight="0.8"
+      android:focusable="true"
+      android:gravity="center_horizontal"
+      android:orientation="horizontal">
+
+      <ImageButton
+        android:id="@+id/widget_normal_previous"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/notification_button_background"
+        android:contentDescription="@string/main_button_previous_description"
         android:focusable="true"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        >
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_action_previous" />
 
       <ImageButton
-          android:id="@+id/widget_normal_previous"
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_weight="1"
-          android:background="@drawable/notification_button_background"
-          android:contentDescription="@string/main_button_previous_description"
-          android:focusable="true"
-          android:padding="0dp"
-          android:scaleType="centerInside"
-          android:src="@drawable/ic_action_previous" />
+        android:id="@+id/widget_normal_play"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/notification_button_background"
+        android:contentDescription="@string/main_button_play_pause_description"
+        android:focusable="true"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_action_play" />
 
       <ImageButton
-          android:id="@+id/widget_normal_play"
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_weight="1"
-          android:background="@drawable/notification_button_background"
-          android:contentDescription="@string/main_button_play_pause_description"
-          android:focusable="true"
-          android:padding="0dp"
-          android:scaleType="centerInside"
-          android:src="@drawable/ic_action_play" />
-
-      <ImageButton
-          android:id="@+id/widget_normal_next"
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_weight="1"
-          android:background="@drawable/notification_button_background"
-          android:contentDescription="@string/main_button_next_description"
-          android:focusable="true"
-          android:padding="0dp"
-          android:scaleType="centerInside"
-          android:src="@drawable/ic_action_next" />
+        android:id="@+id/widget_normal_next"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/notification_button_background"
+        android:contentDescription="@string/main_button_next_description"
+        android:focusable="true"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_action_next" />
 
     </LinearLayout>
 

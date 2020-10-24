@@ -12,5 +12,5 @@ interface BrowseTrackView : BaseView {
 
 interface BrowseTrackPresenter : Presenter<BrowseTrackView> {
   fun load()
-  fun reload()
+  fun sync()
 }

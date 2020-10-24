@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="mbrc_selected_item">#11ffffff</color>
-  <color name="mbrc_transparent_dark">#99000000</color>
   <color name="primary">#FFC107</color>
   <color name="primary_dark">#FFA000</color>
   <color name="primary_light">#FFECB3</color>

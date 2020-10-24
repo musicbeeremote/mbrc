@@ -25,14 +25,15 @@
     android:textSize="22sp"
     tools:ignore="MissingPrefix" />
 
-  <TextView
-    android:id="@+id/list_empty_subtitle"
+  <Button
+    style="@style/Widget.MaterialComponents.Button.TextButton"
+    android:id="@+id/list_empty_sync"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_below="@+id/list_empty_icon"
     android:layout_centerHorizontal="true"
     android:fontFamily="sans-serif-light"
-    android:text="@string/swipe_to_refresh"
+    android:text="@string/press_to_sync"
     android:textSize="14sp"
     tools:ignore="MissingPrefix" />
 

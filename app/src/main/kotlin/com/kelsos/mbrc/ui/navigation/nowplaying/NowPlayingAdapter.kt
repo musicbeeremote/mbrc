@@ -2,16 +2,16 @@ package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.app.Activity
 import android.graphics.Color
-import androidx.core.view.MotionEventCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.MotionEventCompat
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -28,8 +28,8 @@ import javax.inject.Inject
 
 class NowPlayingAdapter
 @Inject constructor(context: Activity) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
-    ItemTouchHelperAdapter,
-    OnCursorRefreshListener<NowPlaying> {
+  ItemTouchHelperAdapter,
+  OnCursorRefreshListener<NowPlaying> {
 
   private val dragStartListener: OnStartDragListener = context as OnStartDragListener
 
@@ -177,11 +177,16 @@ class NowPlayingAdapter
 
   class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView), TouchHelperViewHolder {
 
-    @BindView(R.id.track_title) lateinit var title: TextView
-    @BindView(R.id.track_artist) lateinit var artist: TextView
-    @BindView(R.id.track_indicator_view) lateinit var trackPlaying: ImageView
-    @BindView(R.id.track_container) lateinit var container: FrameLayout
-    @BindView(R.id.drag_handle) lateinit var dragHandle: View
+    @BindView(R.id.track_title)
+    lateinit var title: TextView
+    @BindView(R.id.track_artist)
+    lateinit var artist: TextView
+    @BindView(R.id.track_indicator_view)
+    lateinit var trackPlaying: ImageView
+    @BindView(R.id.track_container)
+    lateinit var container: ConstraintLayout
+    @BindView(R.id.drag_handle)
+    lateinit var dragHandle: View
 
     init {
       ButterKnife.bind(this, itemView)

@@ -30,6 +30,7 @@ class LibrarySyncInteractorImpl
   private var subscription: Subscription? = null
   private var running: Boolean = false
   private var onCompleteListener: LibrarySyncInteractor.OnCompleteListener? = null
+  private var onStartListener: LibrarySyncInteractor.OnStartListener? = null
 
   override fun sync(auto: Boolean) {
     if (subscription != null && !subscription!!.isUnsubscribed) {
@@ -38,6 +39,8 @@ class LibrarySyncInteractorImpl
     running = true
 
     Timber.v("Starting library metadata sync")
+    
+    onStartListener?.onStart()
 
     subscription = checkIfShouldSync(auto)
         .andThen(genreRepository.getRemote())
@@ -79,14 +82,18 @@ class LibrarySyncInteractorImpl
     return Single.zip(genreRepository.cacheIsEmpty(),
         artistRepository.cacheIsEmpty(),
         albumRepository.cacheIsEmpty(),
-        trackRepository.cacheIsEmpty(),
-        { noGenres, noArtists, noAlbums, noTracks ->
-          noGenres && noArtists && noAlbums && noTracks
-        })
+        trackRepository.cacheIsEmpty()
+    ) { noGenres, noArtists, noAlbums, noTracks ->
+      noGenres && noArtists && noAlbums && noTracks
+    }
   }
 
   override fun setOnCompleteListener(onCompleteListener: LibrarySyncInteractor.OnCompleteListener?) {
     this.onCompleteListener = onCompleteListener
+  }
+
+  override fun setOnStartListener(onStartListener: LibrarySyncInteractor.OnStartListener?) {
+    this.onStartListener = onStartListener;
   }
 
   override fun isRunning(): Boolean {

@@ -5,6 +5,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.AlbumRepository
+import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import rx.Scheduler
 import rx.Single
@@ -15,6 +16,7 @@ import javax.inject.Named
 class BrowseAlbumPresenterImpl
 @Inject constructor(private val bus: RxBus,
                     private val repository: AlbumRepository,
+                    private val librarySyncInteractor: LibrarySyncInteractor,
                     @Named("io") private val ioScheduler: Scheduler,
                     @Named("main") private val mainScheduler: Scheduler) :
     BasePresenter<BrowseAlbumView>(),
@@ -38,13 +40,10 @@ class BrowseAlbumPresenterImpl
     })
   }
 
-  override fun reload() {
-    addSubcription(repository.getAndSaveRemote().compose { schedule(it) }.subscribe({
-      view?.update(it)
-    }) {
-      Timber.v(it)
-    })
-
+  override fun sync() {
+    if (!librarySyncInteractor.isRunning()) {
+      librarySyncInteractor.sync()
+    }
   }
 
   private fun schedule(it: Single<FlowCursorList<Album>>) = it.observeOn(mainScheduler)
