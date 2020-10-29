@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription
 
@@ -32,7 +33,7 @@ open class BasePresenter<T : BaseView> : Presenter<T>, LifecycleOwner {
     lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
     this.view = null
     compositeSubscription.clear()
-    job.cancel()
+    scope.cancel()
   }
 
   protected fun addSubscription(subscription: Subscription) {
