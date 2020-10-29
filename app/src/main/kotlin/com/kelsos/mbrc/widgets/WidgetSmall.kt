@@ -51,13 +51,19 @@ class WidgetSmall : AppWidgetProvider() {
         }
       }
       extras.getBoolean(UpdateWidgets.STATE, false) -> {
-        updatePlayState(context, widgetManager, widgetsIds,
-          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED))
+        updatePlayState(
+          context, widgetManager, widgetsIds,
+          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
+        )
       }
     }
   }
 
-  override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+  override fun onUpdate(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetIds: IntArray
+  ) {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
 
     for (appWidgetId in appWidgetIds) {
@@ -79,10 +85,12 @@ class WidgetSmall : AppWidgetProvider() {
     }
   }
 
-  private fun updateInfo(context: Context?,
-                         widgetManager: AppWidgetManager,
-                         widgetsIds: IntArray,
-                         info: TrackInfo) {
+  private fun updateInfo(
+    context: Context?,
+    widgetManager: AppWidgetManager,
+    widgetsIds: IntArray,
+    info: TrackInfo
+  ) {
 
     if (context == null) {
       return
@@ -94,9 +102,11 @@ class WidgetSmall : AppWidgetProvider() {
     widgetManager.updateAppWidget(widgetsIds, smallWidget)
   }
 
-  private fun updateCover(context: Context?,
-                          widgetManager: AppWidgetManager,
-                          widgetsIds: IntArray, path: String) {
+  private fun updateCover(
+    context: Context?,
+    widgetManager: AppWidgetManager,
+    widgetsIds: IntArray, path: String
+  ) {
     if (context == null) {
       return
     }
@@ -106,31 +116,35 @@ class WidgetSmall : AppWidgetProvider() {
     if (coverFile.exists()) {
       Picasso.get().invalidate(coverFile)
       Picasso.get().load(coverFile)
-          .centerCrop()
-          .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
-          .into(smallWidget, R.id.widget_small_image, widgetsIds)
+        .centerCrop()
+        .resizeDimen(R.dimen.widget_small_height, R.dimen.widget_small_height)
+        .into(smallWidget, R.id.widget_small_image, widgetsIds)
     } else {
       smallWidget.setImageViewResource(R.id.widget_small_image, R.drawable.ic_image_no_cover)
       widgetManager.updateAppWidget(widgetsIds, smallWidget)
     }
   }
 
-  private fun updatePlayState(context: Context?,
-                              manager: AppWidgetManager,
-                              widgetsIds: IntArray,
-                              @State state: String) {
+  private fun updatePlayState(
+    context: Context?,
+    manager: AppWidgetManager,
+    widgetsIds: IntArray,
+    @State state: String
+  ) {
     if (context == null) {
       return
     }
 
     val smallWidget = RemoteViews(context.packageName, R.layout.widget_small)
 
-    smallWidget.setImageViewResource(R.id.widget_small_play,
-        if (PlayerState.PLAYING == state) {
-          R.drawable.ic_action_pause
-        } else {
-          R.drawable.ic_action_play
-        })
+    smallWidget.setImageViewResource(
+      R.id.widget_small_play,
+      if (PlayerState.PLAYING == state) {
+        R.drawable.ic_action_pause
+      } else {
+        R.drawable.ic_action_play
+      }
+    )
     manager.updateAppWidget(widgetsIds, smallWidget)
   }
 }

@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
+import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
@@ -9,7 +10,8 @@ interface ArtistAlbumsView : BaseView {
   fun update(albums: FlowCursorList<Album>)
 }
 
-interface ArtistAlbumsPresenter: Presenter<ArtistAlbumsView> {
+interface ArtistAlbumsPresenter : Presenter<ArtistAlbumsView> {
   fun load(artist: String)
+  fun queue(@Queue.Action action: String, album: Album)
 }
 

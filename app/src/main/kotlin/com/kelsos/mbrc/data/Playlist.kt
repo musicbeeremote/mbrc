@@ -14,15 +14,17 @@ import com.raizlabs.android.dbflow.structure.Model
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder("name", "url")
 @Table(database = RemoteDatabase::class, name = "playlists")
-data class Playlist(@Column(name = "name")
-                    @JsonProperty var name: String = "",
-                    @Column(name = "url")
-                    @JsonProperty var url: String = "",
-                    @Column(name = "id")
-                    @PrimaryKey(autoincrement = true)
-                    @JsonIgnore
-                    var id: Long = 0) : Model {
-  
+data class Playlist(
+  @Column(name = "name")
+  @JsonProperty var name: String = "",
+  @Column(name = "url")
+  @JsonProperty var url: String = "",
+  @Column(name = "id")
+  @PrimaryKey(autoincrement = true)
+  @JsonIgnore
+  var id: Long = 0
+) : Model {
+
   override fun load() = modelAdapter<Playlist>().load(this)
 
   override fun insert(): Long = modelAdapter<Playlist>().insert(this)

@@ -2,10 +2,9 @@ package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.webkit.WebView
+import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
-import java.lang.Exception
 
 class WebViewDialog : DialogFragment() {
 

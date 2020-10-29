@@ -5,7 +5,7 @@ import toothpick.config.Module
 class BrowseTrackModule : Module() {
   init {
     bind(BrowseTrackPresenter::class.java)
-        .to(BrowseTrackPresenterImpl::class.java)
-        .singletonInScope()
+      .to(BrowseTrackPresenterImpl::class.java)
+      .singletonInScope()
   }
 }

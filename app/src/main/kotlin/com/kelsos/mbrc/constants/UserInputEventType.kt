@@ -1,12 +1,12 @@
 package com.kelsos.mbrc.constants
 
 object UserInputEventType {
-  val StartConnection = "StartConnection"
-  val SettingsChanged = "SettingsChanged"
-  val ResetConnection = "ResetConnection"
-  val CancelNotification = "CancelNotification"
-  val StartDiscovery = "StartDiscovery"
-  val KeyVolumeUp = "KeyVolumeUp"
-  val KeyVolumeDown = "KeyVolumeDown"
-  val TerminateConnection = "TerminateConnection"
+  const val StartConnection = "StartConnection"
+  const val SettingsChanged = "SettingsChanged"
+  const val ResetConnection = "ResetConnection"
+  const val CancelNotification = "CancelNotification"
+  const val StartDiscovery = "StartDiscovery"
+  const val KeyVolumeUp = "KeyVolumeUp"
+  const val KeyVolumeDown = "KeyVolumeDown"
+  const val TerminateConnection = "TerminateConnection"
 }

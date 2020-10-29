@@ -8,7 +8,8 @@ import toothpick.Toothpick
 import javax.inject.Inject
 
 class MediaButtonReceiver : BroadcastReceiver() {
-  @Inject lateinit var handler: MediaIntentHandler
+  @Inject
+  lateinit var handler: MediaIntentHandler
   private var scope: Scope? = null
 
   override fun onReceive(context: Context, intent: Intent) {

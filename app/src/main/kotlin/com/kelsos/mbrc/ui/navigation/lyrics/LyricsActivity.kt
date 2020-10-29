@@ -20,8 +20,10 @@ class LyricsActivity : BaseActivity(), LyricsView {
 
   @BindView(R.id.lyrics_recycler_view)
   lateinit var lyricsRecycler: EmptyRecyclerView
+
   @BindView(R.id.empty_view)
   lateinit var emptyView: Group
+
   @BindView(R.id.empty_view_text)
   lateinit var emptyText: TextView
 

@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library
 
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.repository.AlbumRepository
@@ -7,85 +8,77 @@ import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.repository.PlaylistRepository
 import com.kelsos.mbrc.repository.TrackRepository
-import rx.Completable
-import rx.Scheduler
-import rx.Single
-import rx.Subscription
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class LibrarySyncInteractorImpl
 @Inject constructor(
-    private val genreRepository: GenreRepository,
-    private val artistRepository: ArtistRepository,
-    private val albumRepository: AlbumRepository,
-    private val trackRepository: TrackRepository,
-    private val playlistRepository: PlaylistRepository,
-    @Named("io") private val ioScheduler: Scheduler,
-    @Named("main") private val mainScheduler: Scheduler,
-    private val bus: RxBus
+  private val genreRepository: GenreRepository,
+  private val artistRepository: ArtistRepository,
+  private val albumRepository: AlbumRepository,
+  private val trackRepository: TrackRepository,
+  private val playlistRepository: PlaylistRepository,
+  private val bus: RxBus,
+  private val dispatchers: AppDispatchers
 ) : LibrarySyncInteractor {
 
-  private var subscription: Subscription? = null
   private var running: Boolean = false
   private var onCompleteListener: LibrarySyncInteractor.OnCompleteListener? = null
   private var onStartListener: LibrarySyncInteractor.OnStartListener? = null
 
+  private val job = SupervisorJob()
+  private val scope = CoroutineScope(job + dispatchers.io)
+
   override fun sync(auto: Boolean) {
-    if (subscription != null && !subscription!!.isUnsubscribed) {
+    if (isRunning()) {
+      Timber.v("Sync is already running")
       return
     }
+
     running = true
+    scope.launch {
+      Timber.v("Starting library metadata sync")
 
-    Timber.v("Starting library metadata sync")
-    
-    onStartListener?.onStart()
+      onStartListener?.onStart()
 
-    subscription = checkIfShouldSync(auto)
-        .andThen(genreRepository.getRemote())
-        .andThen(artistRepository.getRemote())
-        .andThen(albumRepository.getRemote())
-        .andThen(trackRepository.getRemote())
-        .andThen(playlistRepository.getRemote())
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
-        .doOnTerminate {
-          onCompleteListener?.onTermination()
-          bus.post(LibraryRefreshCompleteEvent())
-          running = false
-        }
-        .subscribe({
-          onCompleteListener?.onSuccess()
-          Timber.v("Library refresh was complete")
-        }) {
-          Timber.e(it, "Refresh couldn't complete")
-          onCompleteListener?.onFailure(it)
-        }
-  }
+      val shouldSync = checkIfShouldSync(auto)
+      if (!shouldSync) {
+        onCompleteListener?.onTermination()
+        running = false
+        return@launch
+      }
 
-  private fun checkIfShouldSync(auto: Boolean): Completable {
-    if (auto) {
-      return isEmpty().flatMap {
-        if (it) {
-          return@flatMap Single.just(it)
-        } else {
-          return@flatMap Single.error<Boolean>(ShouldNotProceedException())
-        }
-      }.toCompletable()
-    } else {
-      return Completable.complete()
+      try {
+        genreRepository.getRemote()
+        artistRepository.getRemote()
+        albumRepository.getRemote()
+        trackRepository.getRemote()
+        playlistRepository.getRemote()
+        bus.post(LibraryRefreshCompleteEvent())
+        onCompleteListener?.onSuccess()
+        running = false
+        Timber.v("Library refresh was complete")
+      } catch (e: Exception) {
+        Timber.e(e, "Refresh couldn't complete")
+        onCompleteListener?.onFailure(e)
+      } finally {
+        onCompleteListener?.onTermination()
+      }
     }
   }
 
-  private fun isEmpty(): Single<Boolean> {
-    return Single.zip(genreRepository.cacheIsEmpty(),
-        artistRepository.cacheIsEmpty(),
-        albumRepository.cacheIsEmpty(),
+  private suspend fun checkIfShouldSync(auto: Boolean): Boolean {
+    return if (auto) isEmpty() else true
+  }
+
+  private suspend fun isEmpty(): Boolean {
+    return genreRepository.cacheIsEmpty() &&
+        artistRepository.cacheIsEmpty() &&
+        albumRepository.cacheIsEmpty() &&
         trackRepository.cacheIsEmpty()
-    ) { noGenres, noArtists, noAlbums, noTracks ->
-      noGenres && noArtists && noAlbums && noTracks
-    }
   }
 
   override fun setOnCompleteListener(onCompleteListener: LibrarySyncInteractor.OnCompleteListener?) {
@@ -93,12 +86,8 @@ class LibrarySyncInteractorImpl
   }
 
   override fun setOnStartListener(onStartListener: LibrarySyncInteractor.OnStartListener?) {
-    this.onStartListener = onStartListener;
+    this.onStartListener = onStartListener
   }
 
-  override fun isRunning(): Boolean {
-    return running
-  }
-
-  inner class ShouldNotProceedException : Exception()
+  override fun isRunning(): Boolean = running
 }

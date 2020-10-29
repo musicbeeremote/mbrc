@@ -13,8 +13,10 @@ import javax.inject.Singleton
 @Singleton
 class SettingsManagerImpl
 @Inject
-constructor(private val context: Application,
-            private val preferences: SharedPreferences) : SettingsManager {
+constructor(
+  private val context: Application,
+  private val preferences: SharedPreferences
+) : SettingsManager {
 
   init {
     setupManager()
@@ -44,18 +46,17 @@ constructor(private val context: Application,
 
   override fun setLastUpdated(lastChecked: Date) {
     preferences.edit()
-        .putLong(getKey(R.string.settings_key_last_update_check), lastChecked.time)
-        .apply()
+      .putLong(getKey(R.string.settings_key_last_update_check), lastChecked.time)
+      .apply()
   }
 
-  override fun shouldDisplayOnlyAlbumArtists(): Single<Boolean> {
-    return Single.fromCallable {
-      return@fromCallable preferences.getBoolean(getKey(R.string.settings_key_album_artists_only), false)
-    }
+  override suspend fun shouldDisplayOnlyAlbumArtists(): Boolean {
+    return preferences.getBoolean(getKey(R.string.settings_key_album_artists_only), false)
   }
 
   override fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean) {
-    preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist).apply()
+    preferences.edit().putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
+      .apply()
   }
 
   override fun shouldShowChangeLog(): Single<Boolean> {
@@ -66,8 +67,8 @@ constructor(private val context: Application,
 
       if (lastVersionCode < currentVersion) {
         preferences.edit()
-            .putLong(getKey(R.string.settings_key_last_version_run), currentVersion)
-            .apply()
+          .putLong(getKey(R.string.settings_key_last_version_run), currentVersion)
+          .apply()
         Timber.d("Update or fresh install")
 
         return@fromCallable true
@@ -82,7 +83,7 @@ constructor(private val context: Application,
 
 interface SettingsManager {
 
-  fun shouldDisplayOnlyAlbumArtists() : Single<Boolean>
+  suspend fun shouldDisplayOnlyAlbumArtists(): Boolean
   fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
   fun shouldShowChangeLog(): Single<Boolean>
   fun isPluginUpdateCheckEnabled(): Boolean

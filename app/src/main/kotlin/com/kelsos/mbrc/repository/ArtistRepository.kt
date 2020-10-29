@@ -2,10 +2,9 @@ package com.kelsos.mbrc.repository
 
 import com.kelsos.mbrc.data.library.Artist
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Single
 
 interface ArtistRepository : Repository<Artist> {
-  fun getArtistByGenre(genre: String): Single<FlowCursorList<Artist>>
-  fun getAlbumArtistsOnly(): Single<FlowCursorList<Artist>>
-  fun getAllRemoteAndShowAlbumArtist(): Single<FlowCursorList<Artist>>
+  suspend fun getArtistByGenre(genre: String): FlowCursorList<Artist>
+  suspend fun getAlbumArtistsOnly(): FlowCursorList<Artist>
+  suspend fun getAllRemoteAndShowAlbumArtist(): FlowCursorList<Artist>
 }

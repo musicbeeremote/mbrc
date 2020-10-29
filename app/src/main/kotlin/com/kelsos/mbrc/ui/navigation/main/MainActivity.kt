@@ -3,12 +3,6 @@ package com.kelsos.mbrc.ui.navigation.main
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
-import androidx.core.view.MenuItemCompat
-import androidx.appcompat.widget.ShareActionProvider
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +10,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.ShareActionProvider
+import androidx.core.content.ContextCompat
+import androidx.core.view.MenuItemCompat
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -51,22 +50,38 @@ import javax.inject.Singleton
 class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
+
   // Injects
-  @Inject lateinit var presenter: MainViewPresenter
-  @Inject lateinit var progressHelper: ProgressSeekerHelper
+  @Inject
+  lateinit var presenter: MainViewPresenter
+  @Inject
+  lateinit var progressHelper: ProgressSeekerHelper
+
   // Inject elements of the view
-  @BindView(R.id.main_artist_label) lateinit var artistLabel: TextView
-  @BindView(R.id.main_title_label) lateinit var titleLabel: TextView
-  @BindView(R.id.main_label_album) lateinit var albumLabel: TextView
-  @BindView(R.id.main_track_progress_current) lateinit var trackProgressCurrent: TextView
-  @BindView(R.id.main_track_duration_total) lateinit var trackDuration: TextView
-  @BindView(R.id.main_button_play_pause) lateinit var playPauseButton: ImageButton
-  @BindView(R.id.main_volume_seeker) lateinit var volumeBar: SeekBar
-  @BindView(R.id.main_track_progress_seeker) lateinit var progressBar: SeekBar
-  @BindView(R.id.main_mute_button) lateinit var muteButton: ImageButton
-  @BindView(R.id.main_shuffle_button) lateinit var shuffleButton: ImageButton
-  @BindView(R.id.main_repeat_button) lateinit var repeatButton: ImageButton
-  @BindView(R.id.main_album_cover_image_view) lateinit var albumCover: ImageView
+  @BindView(R.id.main_artist_label)
+  lateinit var artistLabel: TextView
+  @BindView(R.id.main_title_label)
+  lateinit var titleLabel: TextView
+  @BindView(R.id.main_label_album)
+  lateinit var albumLabel: TextView
+  @BindView(R.id.main_track_progress_current)
+  lateinit var trackProgressCurrent: TextView
+  @BindView(R.id.main_track_duration_total)
+  lateinit var trackDuration: TextView
+  @BindView(R.id.main_button_play_pause)
+  lateinit var playPauseButton: ImageButton
+  @BindView(R.id.main_volume_seeker)
+  lateinit var volumeBar: SeekBar
+  @BindView(R.id.main_track_progress_seeker)
+  lateinit var progressBar: SeekBar
+  @BindView(R.id.main_mute_button)
+  lateinit var muteButton: ImageButton
+  @BindView(R.id.main_shuffle_button)
+  lateinit var shuffleButton: ImageButton
+  @BindView(R.id.main_repeat_button)
+  lateinit var repeatButton: ImageButton
+  @BindView(R.id.main_album_cover_image_view)
+  lateinit var albumCover: ImageView
   private var mShareActionProvider: ShareActionProvider? = null
 
   var changeLogDialog: MaterialDialog? = null
@@ -128,7 +143,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     ButterKnife.bind(this)
     super.setup()
     presenter.attach(this)
-    presenter.load()
   }
 
   override fun onNewIntent(intent: Intent?) {
@@ -150,11 +164,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   override fun notifyPluginOutOfDate() {
     outOfDateDialog = MaterialDialog.Builder(this)
-        .title(R.string.main__dialog_plugin_outdated_title)
-        .content(R.string.main__dialog_plugin_outdated_message)
-        .positiveText(android.R.string.ok)
-        .onPositive { materialDialog, _ -> materialDialog.dismiss() }
-        .show()
+      .title(R.string.main__dialog_plugin_outdated_title)
+      .content(R.string.main__dialog_plugin_outdated_message)
+      .positiveText(android.R.string.ok)
+      .onPositive { materialDialog, _ -> materialDialog.dismiss() }
+      .show()
   }
 
   override fun onStart() {
@@ -162,7 +176,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
     if (!presenter.isAttached) {
       presenter.attach(this)
-      presenter.load()
     }
 
     progressHelper.setProgressListener(this)
@@ -240,13 +253,13 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
     val dimens = getDimens()
     Picasso.get()
-        .load(file)
-        .noFade()
-        .error(R.drawable.ic_image_no_cover)
-        .config(Bitmap.Config.RGB_565)
-        .resize(dimens, dimens)
-        .centerCrop()
-        .into(albumCover)
+      .load(file)
+      .noFade()
+      .error(R.drawable.ic_image_no_cover)
+      .config(Bitmap.Config.RGB_565)
+      .resize(dimens, dimens)
+      .centerCrop()
+      .into(albumCover)
 
   }
 
@@ -377,9 +390,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     val finalCurrentSeconds = currentSeconds
 
     trackDuration.text = getString(R.string.playback_progress, totalMinutes, finalTotalSeconds)
-    trackProgressCurrent.text = getString(R.string.playback_progress,
-        currentMinutes,
-        finalCurrentSeconds)
+    trackProgressCurrent.text = getString(
+      R.string.playback_progress,
+      currentMinutes,
+      finalCurrentSeconds
+    )
 
     progressBar.max = total
     progressBar.progress = current
@@ -418,9 +433,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     val currentSeconds = currentProgress % 60
 
     progressBar.progress = progressBar.progress + 1000
-    trackProgressCurrent.text = getString(R.string.playback_progress,
-        currentMinutes,
-        currentSeconds)
+    trackProgressCurrent.text = getString(
+      R.string.playback_progress,
+      currentMinutes,
+      currentSeconds
+    )
   }
 
   override fun onDestroy() {

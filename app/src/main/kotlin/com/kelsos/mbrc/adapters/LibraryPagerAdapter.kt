@@ -11,7 +11,6 @@ import com.kelsos.mbrc.ui.navigation.library.tracks.BrowseTrackFragment
 
 class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
-
   override fun createFragment(position: Int): Fragment {
     return when (position) {
       Search.SECTION_GENRE -> BrowseGenreFragment()

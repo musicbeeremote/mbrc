@@ -42,10 +42,10 @@ import javax.inject.Singleton
 class SocketService
 @Inject
 constructor(
-    private val activityChecker: SocketActivityChecker,
-    private val bus: RxBus,
-    private val mapper: ObjectMapper,
-    private val connectionRepository: ConnectionRepository
+  private val activityChecker: SocketActivityChecker,
+  private val bus: RxBus,
+  private val mapper: ObjectMapper,
+  private val connectionRepository: ConnectionRepository
 ) : PingTimeoutListener {
   private var numOfRetries: Int = 0
   private var shouldStop: Boolean = false
@@ -145,7 +145,8 @@ constructor(
 
   }
 
-  @Synchronized fun sendData(message: SocketMessage) {
+  @Synchronized
+  fun sendData(message: SocketMessage) {
     try {
       if (isConnected()) {
         output!!.print(mapper.writeValueAsString(message) + Const.NEWLINE)
@@ -164,7 +165,8 @@ constructor(
     socketManager(RESET)
   }
 
-  private inner class SocketConnection internal constructor(connectionSettings: ConnectionSettings) : Runnable {
+  private inner class SocketConnection(connectionSettings: ConnectionSettings) :
+    Runnable {
     private val socketAddress: SocketAddress?
     private val mapper: InetAddressMapper = InetAddressMapper()
 
@@ -232,8 +234,8 @@ constructor(
   }
 
   companion object {
-    private val DELAY = 3
-    private val MAX_RETRIES = 3
-    private val SOCKET_BUFFER = 2 * 4096
+    private const val DELAY = 3
+    private const val MAX_RETRIES = 3
+    private const val SOCKET_BUFFER = 2 * 4096
   }
 }

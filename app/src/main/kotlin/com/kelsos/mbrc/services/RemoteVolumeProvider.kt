@@ -13,12 +13,14 @@ import javax.inject.Singleton
 @Singleton
 class RemoteVolumeProvider
 @Inject
-constructor(private val mainDataModel: MainDataModel,
-            private val bus: RxBus) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0) {
+constructor(
+  private val mainDataModel: MainDataModel,
+  private val bus: RxBus
+) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0) {
 
   init {
     super.setCurrentVolume(mainDataModel.volume)
-    bus.register(this, VolumeChange::class.java, { super.setCurrentVolume(it.volume) })
+    bus.register(this, VolumeChange::class.java) { super.setCurrentVolume(it.volume) }
   }
 
   override fun onSetVolumeTo(volume: Int) {

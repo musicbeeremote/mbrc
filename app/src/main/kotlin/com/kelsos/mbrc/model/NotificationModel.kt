@@ -12,6 +12,7 @@ class NotificationModel
 constructor() {
   var trackInfo: TrackInfo? = null
   var cover: Bitmap? = null
+
   @State
   var playState: String = PlayerState.STOPPED
 }

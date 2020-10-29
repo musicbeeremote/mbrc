@@ -3,14 +3,14 @@ package com.kelsos.mbrc.data
 import com.fasterxml.jackson.annotation.JsonProperty
 
 class SocketMessage {
-  @JsonProperty var context: String? = null
+  @JsonProperty
+  var context: String? = null
 
-  @JsonProperty var data: Any? = null
+  @JsonProperty
+  var data: Any? = null
 
   @SuppressWarnings("unused")
-  constructor() {
-
-  }
+  constructor()
 
   private constructor(context: String, data: Any) {
     this.context = context

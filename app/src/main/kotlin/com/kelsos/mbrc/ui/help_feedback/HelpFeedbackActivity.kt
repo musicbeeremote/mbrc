@@ -15,8 +15,10 @@ class HelpFeedbackActivity : FontActivity() {
 
   @BindView(R.id.toolbar)
   lateinit var toolbar: MaterialToolbar
+
   @BindView(R.id.feedback_tab_layout)
   lateinit var tabLayout: TabLayout
+
   @BindView(R.id.pager_help_feedback)
   lateinit var viewPager: ViewPager2
 

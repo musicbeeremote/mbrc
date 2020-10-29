@@ -49,7 +49,7 @@ object RemoteUtils {
           it.onError(RuntimeException("Unable to decode the image"))
         }
 
-      } catch(e: Exception) {
+      } catch (e: Exception) {
         it.onError(e)
       }
     }, Emitter.BackpressureMode.LATEST)

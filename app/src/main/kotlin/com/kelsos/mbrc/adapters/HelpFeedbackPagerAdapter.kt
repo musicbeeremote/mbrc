@@ -16,7 +16,6 @@ class HelpFeedbackPagerAdapter(activity: FragmentActivity) : FragmentStateAdapte
     }
   }
 
-
   override fun getItemCount(): Int {
     return PAGES
   }

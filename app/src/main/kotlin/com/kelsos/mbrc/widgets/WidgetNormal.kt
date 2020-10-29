@@ -50,12 +50,18 @@ class WidgetNormal : AppWidgetProvider() {
       }
 
     } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
-      updatePlayState(context, widgetManager, widgetsIds,
-          extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED))
+      updatePlayState(
+        context, widgetManager, widgetsIds,
+        extras.getString(UpdateWidgets.PLAYER_STATE, PlayerState.UNDEFINED)
+      )
     }
   }
 
-  override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+  override fun onUpdate(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetIds: IntArray
+  ) {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
     Timber.v("Update widget received")
 
@@ -71,7 +77,10 @@ class WidgetNormal : AppWidgetProvider() {
       views.setOnClickPendingIntent(R.id.widget_normal_image, pendingIntent)
       views.setOnClickPendingIntent(R.id.widget_normal_play, getPendingIntent(PLAY, context))
       views.setOnClickPendingIntent(R.id.widget_normal_next, getPendingIntent(NEXT, context))
-      views.setOnClickPendingIntent(R.id.widget_normal_previous, getPendingIntent(PREVIOUS, context))
+      views.setOnClickPendingIntent(
+        R.id.widget_normal_previous,
+        getPendingIntent(PREVIOUS, context)
+      )
 
       // Tell the AppWidgetManager to perform an update on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -79,10 +88,12 @@ class WidgetNormal : AppWidgetProvider() {
   }
 
 
-  private fun updateInfo(context: Context?,
-                         widgetManager: AppWidgetManager,
-                         widgetsIds: IntArray,
-                         info: TrackInfo) {
+  private fun updateInfo(
+    context: Context?,
+    widgetManager: AppWidgetManager,
+    widgetsIds: IntArray,
+    info: TrackInfo
+  ) {
     if (context == null) {
       return
     }
@@ -94,9 +105,11 @@ class WidgetNormal : AppWidgetProvider() {
     widgetManager.updateAppWidget(widgetsIds, widget)
   }
 
-  private fun updateCover(context: Context?,
-                          widgetManager: AppWidgetManager,
-                          widgetsIds: IntArray, path: String) {
+  private fun updateCover(
+    context: Context?,
+    widgetManager: AppWidgetManager,
+    widgetsIds: IntArray, path: String
+  ) {
     if (context == null) {
       return
     }
@@ -107,9 +120,9 @@ class WidgetNormal : AppWidgetProvider() {
     if (coverFile.exists()) {
       Picasso.get().invalidate(coverFile)
       Picasso.get().load(coverFile)
-          .centerCrop()
-          .resizeDimen(R.dimen.widget_normal_height, R.dimen.widget_normal_height)
-          .into(widget, R.id.widget_normal_image, widgetsIds)
+        .centerCrop()
+        .resizeDimen(R.dimen.widget_normal_height, R.dimen.widget_normal_height)
+        .into(widget, R.id.widget_normal_image, widgetsIds)
     } else {
       widget.setImageViewResource(R.id.widget_normal_image, R.drawable.ic_image_no_cover)
     }
@@ -117,22 +130,26 @@ class WidgetNormal : AppWidgetProvider() {
   }
 
 
-  private fun updatePlayState(context: Context?,
-                              manager: AppWidgetManager,
-                              widgetsIds: IntArray,
-                              @State state: String) {
+  private fun updatePlayState(
+    context: Context?,
+    manager: AppWidgetManager,
+    widgetsIds: IntArray,
+    @State state: String
+  ) {
     if (context == null) {
       return
     }
 
     val widget = RemoteViews(context.packageName, R.layout.widget_normal)
 
-    widget.setImageViewResource(R.id.widget_normal_play,
-        if (PlayerState.PLAYING == state) {
-          R.drawable.ic_action_pause
-        } else {
-          R.drawable.ic_action_play
-        })
+    widget.setImageViewResource(
+      R.id.widget_normal_play,
+      if (PlayerState.PLAYING == state) {
+        R.drawable.ic_action_pause
+      } else {
+        R.drawable.ic_action_play
+      }
+    )
     manager.updateAppWidget(widgetsIds, widget)
   }
 }

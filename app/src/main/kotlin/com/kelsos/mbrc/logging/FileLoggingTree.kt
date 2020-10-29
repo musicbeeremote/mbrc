@@ -9,10 +9,11 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.logging.SimpleFormatter
 
-class FileLoggingTree(context: Context): Timber.DebugTree() {
+class FileLoggingTree(context: Context) : Timber.DebugTree() {
 
   private val handler: FileHandler
   private val logger: Logger
+
   init {
 
     logger = Logger.getLogger(LOGGER_NAME)
@@ -40,7 +41,7 @@ class FileLoggingTree(context: Context): Timber.DebugTree() {
       Log.DEBUG -> logger.log(Level.FINE, logMessage)
       Log.INFO -> logger.log(Level.INFO, logMessage)
       Log.WARN -> logger.log(Level.WARNING, logMessage)
-      Log.ERROR ->logger.log(Level.SEVERE, logMessage)
+      Log.ERROR -> logger.log(Level.SEVERE, logMessage)
     }
   }
 
@@ -52,7 +53,7 @@ class FileLoggingTree(context: Context): Timber.DebugTree() {
     const val LOGGER_NAME = "mbrc-logger"
     const val LOGS_DIR = "logs"
     const val LOG_FILE = "mbrc.log"
-    const val LOG_SIZE = 1024*1024
+    const val LOG_SIZE = 1024 * 1024
     const val MAX_LOGS = 3
   }
 }

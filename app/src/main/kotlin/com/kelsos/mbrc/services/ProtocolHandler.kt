@@ -16,7 +16,11 @@ import javax.inject.Singleton
 @Singleton
 class ProtocolHandler
 @Inject
-constructor(private val bus: RxBus, private val mapper: ObjectMapper, private val model: MainDataModel) {
+constructor(
+  private val bus: RxBus,
+  private val mapper: ObjectMapper,
+  private val model: MainDataModel
+) {
   private var isHandshakeComplete: Boolean = false
 
   fun resetHandshake() {
@@ -26,8 +30,8 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
   fun preProcessIncoming(incoming: String): Completable {
     return Completable.fromAction {
       val replies = incoming.split("\r\n".toRegex())
-          .dropLastWhile(String::isEmpty)
-          .toTypedArray()
+        .dropLastWhile(String::isEmpty)
+        .toTypedArray()
 
       replies.forEach {
         Timber.v("message -> %s", it)
@@ -41,22 +45,26 @@ constructor(private val bus: RxBus, private val mapper: ObjectMapper, private va
         }
 
         if (!isHandshakeComplete) {
-          if (context.contains(Protocol.Player)) {
-            bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
-          } else if (context.contains(Protocol.ProtocolTag)) {
+          when {
+            context.contains(Protocol.Player) -> bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
+            context.contains(Protocol.ProtocolTag) -> {
 
-            val protocolVersion: Int
-            protocolVersion = try {
-              Integer.parseInt(node.path(Const.DATA).asText())
-            } catch (ignore: Exception) {
-              2
+              val protocolVersion: Int = try {
+                Integer.parseInt(node.path(Const.DATA).asText())
+              } catch (ignore: Exception) {
+                2
+              }
+
+              model.pluginProtocol = protocolVersion
+              if (model.apiOutOfDate) {
+                bus.post(MessageEvent(ProtocolEventType.InformClientPluginOutOfDate))
+              }
+              isHandshakeComplete = true
+              bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
             }
-
-            model.pluginProtocol = protocolVersion
-            isHandshakeComplete = true
-            bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
-          } else {
-            return@fromAction
+            else -> {
+              return@fromAction
+            }
           }
         }
 

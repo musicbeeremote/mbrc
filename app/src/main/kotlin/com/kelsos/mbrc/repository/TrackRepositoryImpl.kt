@@ -1,61 +1,58 @@
 package com.kelsos.mbrc.repository
 
 import com.kelsos.mbrc.data.library.Track
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.repository.data.LocalTrackDataSource
 import com.kelsos.mbrc.repository.data.RemoteTrackDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Completable
-import rx.Single
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class TrackRepositoryImpl
-@Inject constructor(private val localDataSource: LocalTrackDataSource,
-                    private val remoteDataSource: RemoteTrackDataSource) : TrackRepository {
+@Inject constructor(
+  private val localDataSource: LocalTrackDataSource,
+  private val remoteDataSource: RemoteTrackDataSource,
+  private val dispatchers: AppDispatchers
+) : TrackRepository {
 
-  override fun getAllCursor(): Single<FlowCursorList<Track>> {
-    return localDataSource.loadAllCursor().toSingle()
+  override suspend fun getAllCursor(): FlowCursorList<Track> = localDataSource.loadAllCursor()
+
+  override suspend fun getAlbumTracks(album: String, artist: String): FlowCursorList<Track> =
+    localDataSource.getAlbumTracks(album, artist)
+
+  override suspend fun getNonAlbumTracks(artist: String): FlowCursorList<Track> =
+    localDataSource.getNonAlbumTracks(artist)
+
+  override suspend fun getAndSaveRemote(): FlowCursorList<Track> {
+    getRemote()
+    return localDataSource.loadAllCursor()
   }
 
-  override fun getAlbumTracks(album: String, artist: String): Single<FlowCursorList<Track>> {
-    return localDataSource.getAlbumTracks(album, artist)
-  }
-
-  override fun getNonAlbumTracks(artist: String): Single<FlowCursorList<Track>> {
-    return localDataSource.getNonAlbumTracks(artist)
-  }
-
-  override fun getAndSaveRemote(): Single<FlowCursorList<Track>> {
-    return getRemote().andThen(localDataSource.loadAllCursor().toSingle())
-  }
-
-  override fun getRemote(): Completable {
+  override suspend fun getRemote() {
     localDataSource.deleteAll()
-    return remoteDataSource.fetch().doOnNext {
-      localDataSource.saveAll(it)
-    }.toCompletable()
+    withContext(dispatchers.io) {
+      remoteDataSource.fetch().collect {
+        localDataSource.saveAll(it)
+      }
+    }
   }
 
-  override fun search(term: String): Single<FlowCursorList<Track>> {
+  override suspend fun search(term: String): FlowCursorList<Track> {
     return localDataSource.search(term)
   }
 
-  override fun getGenreTrackPaths(genre: String): Single<List<String>> {
+  override suspend fun getGenreTrackPaths(genre: String): List<String> {
     return localDataSource.getGenreTrackPaths(genre)
   }
 
-  override fun getArtistTrackPaths(artist: String): Single<List<String>> {
-    return localDataSource.getArtistTrackPaths(artist)
-  }
+  override suspend fun getArtistTrackPaths(artist: String): List<String> =
+    localDataSource.getArtistTrackPaths(artist)
 
-  override fun getAlbumTrackPaths(album: String, artist: String): Single<List<String>> {
-    return localDataSource.getAlbumTrackPaths(album, artist)
-  }
+  override suspend fun getAlbumTrackPaths(album: String, artist: String): List<String> =
+    localDataSource.getAlbumTrackPaths(album, artist)
 
-  override fun getAllTrackPaths(): Single<List<String>> {
-    return localDataSource.getAllTrackPaths()
-  }
+  override suspend fun getAllTrackPaths(): List<String> = localDataSource.getAllTrackPaths()
 
-  override fun cacheIsEmpty(): Single<Boolean> {
-    return localDataSource.isEmpty()
-  }
+  override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
 }

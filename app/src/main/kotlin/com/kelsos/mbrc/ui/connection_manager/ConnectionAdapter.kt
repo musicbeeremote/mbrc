@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.ui.connection_manager
 
-import androidx.core.content.ContextCompat
-import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
@@ -104,11 +104,16 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
   }
 
   inner class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(R.id.cs_list_host) lateinit var hostname: TextView
-    @BindView(R.id.cs_list_port) lateinit var portNum: TextView
-    @BindView(R.id.cs_list_name) lateinit var computerName: TextView
-    @BindView(R.id.cs_list_default) lateinit var defaultSettings: ImageView
-    @BindView(R.id.cs_list_overflow) lateinit var overflow: View
+    @BindView(R.id.cs_list_host)
+    lateinit var hostname: TextView
+    @BindView(R.id.cs_list_port)
+    lateinit var portNum: TextView
+    @BindView(R.id.cs_list_name)
+    lateinit var computerName: TextView
+    @BindView(R.id.cs_list_default)
+    lateinit var defaultSettings: ImageView
+    @BindView(R.id.cs_list_overflow)
+    lateinit var overflow: View
 
     init {
       ButterKnife.bind(this, itemView)

@@ -3,14 +3,14 @@ package com.kelsos.mbrc.ui.mini_control
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.core.app.TaskStackBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.TaskStackBuilder
+import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -27,12 +27,17 @@ import javax.inject.Inject
 
 class MiniControlFragment : Fragment(), MiniControlView {
 
-  @BindView(R.id.mc_track_cover) lateinit var trackCover: ImageView
-  @BindView(R.id.mc_track_artist) lateinit var trackArtist: TextView
-  @BindView(R.id.mc_track_title) lateinit var trackTitle: TextView
-  @BindView(R.id.mc_play_pause) lateinit var playPause: ImageButton
+  @BindView(R.id.mc_track_cover)
+  lateinit var trackCover: ImageView
+  @BindView(R.id.mc_track_artist)
+  lateinit var trackArtist: TextView
+  @BindView(R.id.mc_track_title)
+  lateinit var trackTitle: TextView
+  @BindView(R.id.mc_play_pause)
+  lateinit var playPause: ImageButton
 
-  @Inject lateinit var presenter: MiniControlPresenter
+  @Inject
+  lateinit var presenter: MiniControlPresenter
 
   @OnClick(R.id.mini_control)
   internal fun onControlClick() {
@@ -63,7 +68,11 @@ class MiniControlFragment : Fragment(), MiniControlView {
     Toothpick.inject(this, scope)
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     val view = inflater.inflate(R.layout.ui_fragment_mini_control, container, false)
     ButterKnife.bind(this, view)
     return view
@@ -90,12 +99,12 @@ class MiniControlFragment : Fragment(), MiniControlView {
     if (file.exists()) {
       val dimens = requireContext().getDimens()
       Picasso.get()
-          .load(file)
-          .noFade()
-          .config(Bitmap.Config.RGB_565)
-          .resize(dimens, dimens)
-          .centerCrop()
-          .into(trackCover)
+        .load(file)
+        .noFade()
+        .config(Bitmap.Config.RGB_565)
+        .resize(dimens, dimens)
+        .centerCrop()
+        .into(trackCover)
 
     } else {
       trackCover.setImageResource(R.drawable.ic_image_no_cover)

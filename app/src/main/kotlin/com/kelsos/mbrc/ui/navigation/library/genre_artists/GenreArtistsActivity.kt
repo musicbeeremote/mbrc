@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.navigation.library.genre_artists
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -10,6 +10,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
+import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.data.library.Artist
 import com.kelsos.mbrc.extensions.enableHome
 import com.kelsos.mbrc.helper.PopupActionHandler
@@ -27,15 +28,19 @@ class GenreArtistsActivity : FontActivity(),
 
   @BindView(R.id.genre_artists_recycler)
   lateinit var recyclerView: EmptyRecyclerView
+
   @BindView(R.id.toolbar)
   lateinit var toolbar: MaterialToolbar
+
   @BindView(R.id.empty_view)
-  lateinit var emptyView: LinearLayout
+  lateinit var emptyView: ConstraintLayout
 
   @Inject
   lateinit var adapter: ArtistEntryAdapter
+
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var presenter: GenreArtistsPresenter
 
@@ -85,8 +90,11 @@ class GenreArtistsActivity : FontActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Artist) {
-    actionHandler.artistSelected(menuItem, entry, this)
+  override fun onMenuItemSelected(menuItem: MenuItem, artist: Artist) {
+    val action = actionHandler.artistSelected(menuItem, artist, this)
+    if (action != Queue.PROFILE) {
+      presenter.queue(action, artist)
+    }
   }
 
   override fun onItemClicked(artist: Artist) {

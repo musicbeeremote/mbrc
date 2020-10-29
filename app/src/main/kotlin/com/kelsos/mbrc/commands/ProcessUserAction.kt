@@ -11,7 +11,11 @@ class ProcessUserAction
 @Inject constructor(private val socket: SocketService) : ICommand {
 
   override fun execute(e: IEvent) {
-    socket.sendData(SocketMessage.create((e.data as UserAction).context,
-        (e.data as UserAction).data))
+    socket.sendData(
+      SocketMessage.create(
+        (e.data as UserAction).context,
+        (e.data as UserAction).data
+      )
+    )
   }
 }

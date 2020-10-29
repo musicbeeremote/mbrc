@@ -24,7 +24,7 @@ open class RemoteApplication : MultiDexApplication() {
 
   protected open fun initialize() {
     if (!testMode()) {
-      AndroidThreeTen.init(this);
+      AndroidThreeTen.init(this)
     }
     initializeDbflow()
     initializeToothpick()
@@ -62,7 +62,6 @@ open class RemoteApplication : MultiDexApplication() {
       applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
     }
   }
-
 
 
   internal open fun testMode(): Boolean = false

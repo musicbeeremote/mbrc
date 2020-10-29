@@ -1,55 +1,60 @@
 package com.kelsos.mbrc.ui.navigation.library
 
-import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.core.view.MenuItemCompat
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.progressindicator.ProgressIndicator
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.LibraryPagerAdapter
 import com.kelsos.mbrc.annotations.Search
 import com.kelsos.mbrc.ui.activities.BaseActivity
-import com.kelsos.mbrc.ui.navigation.library.search.SearchResultsActivity
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class LibraryActivity : BaseActivity(),
-    LibraryView,
-    OnQueryTextListener {
+  LibraryView,
+  OnQueryTextListener {
 
-  @BindView(R.id.search_pager) lateinit var pager: ViewPager2
-  @BindView(R.id.pager_tab_strip) lateinit var tabs: TabLayout
+  @BindView(R.id.search_pager)
+  lateinit var pager: ViewPager2
+
+  @BindView(R.id.pager_tab_strip)
+  lateinit var tabs: TabLayout
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
   private var albumArtistOnly: MenuItem? = null
+  private var searchClear: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
   private var scope: Scope? = null
-  @Inject lateinit var presenter: LibraryPresenter
+
+  @Inject
+  lateinit var presenter: LibraryPresenter
 
   override fun onQueryTextSubmit(query: String): Boolean {
-    if (!TextUtils.isEmpty(query) && query.trim { it <= ' ' }.isNotEmpty()) {
+    val search = query.trim()
+    if (search.isNotEmpty()) {
       closeSearch()
+      presenter.search(search)
+      supportActionBar?.title = search
+      supportActionBar?.setSubtitle(R.string.library_search_subtitle)
+      searchMenuItem?.isVisible = false
+      searchClear?.isVisible = true
 
-      val searchIntent = Intent(this, SearchResultsActivity::class.java)
-      searchIntent.putExtra(SearchResultsActivity.QUERY, query.trim { it <= ' ' })
-      startActivity(searchIntent)
+    } else {
+      presenter.search("")
     }
 
     return true
@@ -61,22 +66,19 @@ class LibraryActivity : BaseActivity(),
         it.isIconified = true
         it.isFocusable = false
         it.clearFocus()
-        it.setQuery("", false)
         searchMenuItem?.collapseActionView()
-        MenuItemCompat.collapseActionView(searchMenuItem)
         return true
       }
     }
     return false
   }
 
-  override fun onQueryTextChange(newText: String): Boolean {
-    return false
-  }
+  override fun onQueryTextChange(newText: String): Boolean = false
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    scope = Toothpick.openScopes(application, this)
-    scope!!.installModules(SmoothieActivityModule(this), LibraryModule())
+    Toothpick.openScope(LIBRARY_SCOPE).installModules(LibraryModule())
+    scope = Toothpick.openScopes(application, LIBRARY_SCOPE, this)
+    scope!!.installModules(SmoothieActivityModule(this))
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_library)
@@ -88,7 +90,7 @@ class LibraryActivity : BaseActivity(),
     }
 
     TabLayoutMediator(tabs, pager) { currentTab, currentPosition ->
-      currentTab.text = when(currentPosition) {
+      currentTab.text = when (currentPosition) {
         Search.SECTION_ALBUM -> getString(R.string.label_albums)
         Search.SECTION_ARTIST -> getString(R.string.label_artists)
         Search.SECTION_GENRE -> getString(R.string.label_genres)
@@ -101,8 +103,9 @@ class LibraryActivity : BaseActivity(),
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.library_search, menu)
     searchMenuItem = menu.findItem(R.id.library_search_item)
+    searchClear = menu.findItem(R.id.library_search_clear)
     albumArtistOnly = menu.findItem(R.id.library_album_artist)
-    searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
+    searchView = searchMenuItem?.actionView as SearchView
     searchView!!.queryHint = getString(R.string.library_search_hint)
     searchView!!.setIconifiedByDefault(true)
     searchView!!.setOnQueryTextListener(this)
@@ -111,16 +114,27 @@ class LibraryActivity : BaseActivity(),
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == R.id.library_refresh_item) {
-      presenter.refresh()
-      return true
-    } else if (item.itemId == R.id.library_album_artist) {
-      albumArtistOnly?.let {
-        it.isChecked = !it.isChecked
-        presenter.setArtistPreference(it.isChecked)
+    when (item.itemId) {
+      R.id.library_refresh_item -> {
+        presenter.refresh()
+        return true
       }
+      R.id.library_album_artist -> {
+        albumArtistOnly?.let {
+          it.isChecked = !it.isChecked
+          presenter.setArtistPreference(it.isChecked)
+        }
 
-      return true
+        return true
+      }
+      R.id.library_search_clear -> {
+        supportActionBar?.setTitle(R.string.nav_library)
+        supportActionBar?.subtitle = ""
+        presenter.search("")
+        searchMenuItem?.isVisible = true
+        searchClear?.isVisible = false
+        return true
+      }
     }
     return super.onOptionsItemSelected(item)
   }
@@ -129,6 +143,10 @@ class LibraryActivity : BaseActivity(),
     Toothpick.closeScope(this)
     super.onDestroy()
     pagerAdapter = null
+
+    if (isDestroyed) {
+      Toothpick.closeScope(LIBRARY_SCOPE)
+    }
   }
 
   override fun onStart() {
@@ -180,6 +198,7 @@ class LibraryActivity : BaseActivity(),
   }
 
   companion object {
-    private val PAGER_POSITION = "com.kelsos.mbrc.ui.activities.nav.PAGER_POSITION"
+    private const val PAGER_POSITION = "com.kelsos.mbrc.ui.activities.nav.PAGER_POSITION"
+    val LIBRARY_SCOPE: Class<*> = LibraryActivity::class.java
   }
 }

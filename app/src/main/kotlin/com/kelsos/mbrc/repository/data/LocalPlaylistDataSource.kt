@@ -2,53 +2,48 @@ package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
 import com.kelsos.mbrc.data.Playlist_Table.name
-import com.kelsos.mbrc.data.library.Album
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.extensions.escapeLike
-import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.raizlabs.android.dbflow.kotlinextensions.database
+import com.raizlabs.android.dbflow.kotlinextensions.delete
+import com.raizlabs.android.dbflow.kotlinextensions.from
+import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
+import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
-import rx.Emitter
-import rx.Observable
-import rx.Single
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LocalPlaylistDataSource
-@Inject constructor(): LocalDataSource<Playlist> {
-  override fun deleteAll() {
+@Inject constructor(private val dispatchers: AppDispatchers) : LocalDataSource<Playlist> {
+  override suspend fun deleteAll() = withContext(dispatchers.db) {
     delete(Playlist::class).execute()
   }
 
-  override fun saveAll(list: List<Playlist>) {
+  override suspend fun saveAll(list: List<Playlist>) = withContext(dispatchers.db) {
     val adapter = modelAdapter<Playlist>()
 
     val transaction = FastStoreModelTransaction.insertBuilder(adapter)
-        .addAll(list)
-        .build()
+      .addAll(list)
+      .build()
 
     database<Playlist>().executeTransaction(transaction)
   }
 
-  override fun loadAllCursor(): Observable<FlowCursorList<Playlist>> {
-    return Observable.fromEmitter({
-      val modelQueriable = (select from Playlist::class)
-      val cursor = FlowCursorList.Builder(Playlist::class.java).modelQueriable(modelQueriable).build()
-      it.onNext(cursor)
-      it.onCompleted()
-    }, Emitter.BackpressureMode.LATEST)
+  override suspend fun loadAllCursor(): FlowCursorList<Playlist> = withContext(dispatchers.db) {
+    val query = (select from Playlist::class)
+    return@withContext FlowCursorList.Builder(Playlist::class.java).modelQueriable(query).build()
   }
 
-  override fun search(term: String): Single<FlowCursorList<Playlist>> {
-    return Single.create<FlowCursorList<Playlist>> {
-      val modelQueriable = (select from Playlist::class where name.like("%${term.escapeLike()}%"))
-      val cursor = FlowCursorList.Builder(Playlist::class.java).modelQueriable(modelQueriable).build()
-      it.onSuccess(cursor)
+  override suspend fun search(term: String): FlowCursorList<Playlist> =
+    withContext(dispatchers.db) {
+      val query = (select from Playlist::class where name.like("%${term.escapeLike()}%"))
+      return@withContext FlowCursorList.Builder(Playlist::class.java).modelQueriable(query).build()
     }
-  }
 
-  override fun isEmpty(): Single<Boolean> {
-    return Single.fromCallable {
-      return@fromCallable SQLite.selectCountOf().from(Playlist::class.java).count() == 0L
-    }
+  override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {
+    return@withContext SQLite.selectCountOf().from(Playlist::class.java).count() == 0L
   }
 }

@@ -1,8 +1,6 @@
 package com.kelsos.mbrc.adapters
 
 import android.app.Activity
-import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -10,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindString
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -92,7 +92,7 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
       popupMenu.show()
     }
 
-    holder.itemView.setOnClickListener { v ->
+    holder.itemView.setOnClickListener {
       if (listener != null) {
         listener!!.onItemClicked(entry)
       }
@@ -114,15 +114,18 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
   }
 
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, entry: Genre): Boolean
+    fun onMenuItemSelected(menuItem: MenuItem, genre: Genre): Boolean
 
     fun onItemClicked(genre: Genre)
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(R.id.line_one) lateinit var title: TextView
-    @BindView(R.id.ui_item_context_indicator) lateinit var indicator: LinearLayout
-    @BindString(R.string.empty) lateinit var empty: String
+    @BindView(R.id.line_one)
+    lateinit var title: TextView
+    @BindView(R.id.ui_item_context_indicator)
+    lateinit var indicator: LinearLayout
+    @BindString(R.string.empty)
+    lateinit var empty: String
 
     init {
       ButterKnife.bind(this, itemView)

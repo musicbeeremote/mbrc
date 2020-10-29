@@ -17,11 +17,11 @@ package com.kelsos.mbrc.ui.widgets
  */
 
 import android.content.Context
-import androidx.core.view.ViewCompat
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.util.AttributeSet
 import android.view.View
 import android.widget.AbsListView
+import androidx.core.view.ViewCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 /**
  * A descendant of [android.support.v4.widget.SwipeRefreshLayout] which supports multiple
@@ -33,11 +33,9 @@ class MultiSwipeRefreshLayout :
 
   private lateinit var swipeableChildren: Array<View?>
 
-  constructor(context: Context) : super(context) {
-  }
+  constructor(context: Context) : super(context)
 
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-  }
+  constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
   /**
    * Set the children which can trigger a refresh by swiping down when they are visible. These
@@ -92,7 +90,9 @@ class MultiSwipeRefreshLayout :
         // Pre-ICS we need to manually check the first visible item and the child view's top
         // value
         val listView = view
-        return listView.childCount > 0 && (listView.firstVisiblePosition > 0 || listView.getChildAt(0).top < listView.getPaddingTop())
+        return listView.childCount > 0 && (listView.firstVisiblePosition > 0 || listView.getChildAt(
+          0
+        ).top < listView.getPaddingTop())
       } else {
         // For all other view types we just check the getScrollY() value
         return view.scrollY > 0

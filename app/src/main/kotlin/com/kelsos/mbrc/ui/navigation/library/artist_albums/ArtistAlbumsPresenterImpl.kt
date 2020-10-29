@@ -1,19 +1,35 @@
 package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
+import com.kelsos.mbrc.data.library.Album
+import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.AlbumRepository
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class ArtistAlbumsPresenterImpl
-@Inject constructor(private val repository: AlbumRepository) :
-    BasePresenter<ArtistAlbumsView>(),
-    ArtistAlbumsPresenter {
+@Inject
+constructor(
+  private val repository: AlbumRepository,
+  private val queue: QueueHandler
+) : BasePresenter<ArtistAlbumsView>(),
+  ArtistAlbumsPresenter {
   override fun load(artist: String) {
-    addSubcription(repository.getAlbumsByArtist(artist).subscribe ({
-      view?.update(it)
-    }) {
-      Timber.v(it)
-    })
+    scope.launch {
+      try {
+        view?.update(repository.getAlbumsByArtist(artist))
+      } catch (e: Exception) {
+        Timber.v(e)
+      }
+    }
+  }
+
+  override fun queue(action: String, album: Album) {
+    scope.launch {
+      val artist = album.artist ?: throw IllegalArgumentException("artist is null")
+      val albumName = album.album ?: throw java.lang.IllegalArgumentException("album is null")
+      queue.queueAlbum(action, artist, albumName)
+    }
   }
 }

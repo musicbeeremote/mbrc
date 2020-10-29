@@ -2,9 +2,8 @@ package com.kelsos.mbrc.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.widget.RatingBar
-import butterknife.ButterKnife
+import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.Protocol
@@ -19,8 +18,10 @@ import javax.inject.Inject
 
 class RatingDialogFragment : DialogFragment() {
 
-  @Inject lateinit var bus: RxBus
-  @Inject lateinit var model: MainDataModel
+  @Inject
+  lateinit var bus: RxBus
+  @Inject
+  lateinit var model: MainDataModel
   private var ratingBar: RatingBar? = null
   private var rating: Float = 0.toFloat()
   private var scope: Scope? = null

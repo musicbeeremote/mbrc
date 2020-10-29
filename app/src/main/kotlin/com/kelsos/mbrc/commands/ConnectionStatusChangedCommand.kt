@@ -11,8 +11,10 @@ import javax.inject.Inject
 
 class ConnectionStatusChangedCommand
 @Inject
-constructor(private val model: ConnectionModel, private val service: SocketService,
-            private val notificationService: NotificationService) : ICommand {
+constructor(
+  private val model: ConnectionModel, private val service: SocketService,
+  private val notificationService: NotificationService
+) : ICommand {
 
   override fun execute(e: IEvent) {
     model.setConnectionState(e.dataString)

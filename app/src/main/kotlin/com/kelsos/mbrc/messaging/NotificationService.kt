@@ -37,11 +37,11 @@ class NotificationService
 @Inject
 constructor(
   bus: RxBus,
-            private val context: Application,
-            private val sessionManager: RemoteSessionManager,
-            private val settings: SettingsManager,
-            private val model: NotificationModel,
-            private val notificationManager: NotificationManagerCompat
+  private val context: Application,
+  private val sessionManager: RemoteSessionManager,
+  private val settings: SettingsManager,
+  private val model: NotificationModel,
+  private val notificationManager: NotificationManagerCompat
 ) {
   private var notification: Notification? = null
   private val previous: String
@@ -132,14 +132,15 @@ constructor(
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-    val resId = if (model.playState == PlayerState.PLAYING) R.drawable.ic_action_pause else R.drawable.ic_action_play
+    val resId =
+      if (model.playState == PlayerState.PLAYING) R.drawable.ic_action_pause else R.drawable.ic_action_play
 
     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .setSmallIcon(R.drawable.ic_mbrc_status)
-        .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
-        .addAction(previousAction)
-        .addAction(getPlayAction(resId))
-        .addAction(nextAction)
+      .setSmallIcon(R.drawable.ic_mbrc_status)
+      .setStyle(mediaStyle.setShowActionsInCompactView(1, 2))
+      .addAction(previousAction)
+      .addAction(getPlayAction(resId))
+      .addAction(nextAction)
 
     builder.priority = NotificationCompat.PRIORITY_LOW
     builder.setOnlyAlertOnce(true)

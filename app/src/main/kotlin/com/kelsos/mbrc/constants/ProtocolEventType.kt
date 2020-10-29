@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.constants
 
 object ProtocolEventType {
-  val InitiateProtocolRequest = "InitiateProtocolRequest"
-  val ReduceVolume = "ReduceVolume"
-  val HandshakeComplete = "HandshakeComplete"
-  val InformClientNotAllowed = "InformClientNotAllowed"
-  val InformClientPluginOutOfDate = "InformClientPluginOutOfDate"
-  val UserAction = "UserAction"
-  val PluginVersionCheck = "PluginVersionCheck"
+  const val InitiateProtocolRequest = "InitiateProtocolRequest"
+  const val ReduceVolume = "ReduceVolume"
+  const val HandshakeComplete = "HandshakeComplete"
+  const val InformClientNotAllowed = "InformClientNotAllowed"
+  const val InformClientPluginOutOfDate = "InformClientPluginOutOfDate"
+  const val UserAction = "UserAction"
+  const val PluginVersionCheck = "PluginVersionCheck"
 }

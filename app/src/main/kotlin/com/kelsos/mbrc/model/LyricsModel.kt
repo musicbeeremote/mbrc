@@ -16,15 +16,15 @@ constructor(private val bus: RxBus) {
         return
       }
       field = value.replace("<p>", "\r\n")
-          .replace("<br>", "\n")
-          .replace("&lt;", "<")
-          .replace("&gt;", ">")
-          .replace("&quot;", "\"")
-          .replace("&apos;", "'")
-          .replace("&amp;", "&")
-          .replace("<p>", "\r\n")
-          .replace("<br>", "\n")
-          .trim { it <= ' ' }
+        .replace("<br>", "\n")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&apos;", "'")
+        .replace("&amp;", "&")
+        .replace("<p>", "\r\n")
+        .replace("<br>", "\n")
+        .trim { it <= ' ' }
 
       bus.post(LyricsUpdatedEvent(field))
     }

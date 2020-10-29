@@ -14,9 +14,11 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import javax.inject.Inject
 
 class MiniControlPresenterImpl
-@Inject constructor(private val model: MainDataModel,
-                    private val bus: RxBus) :
-    BasePresenter<MiniControlView>(), MiniControlPresenter {
+@Inject constructor(
+  private val model: MainDataModel,
+  private val bus: RxBus
+) :
+  BasePresenter<MiniControlView>(), MiniControlPresenter {
 
   override fun load() {
     if (!isAttached) {
@@ -30,7 +32,12 @@ class MiniControlPresenterImpl
   override fun attach(view: MiniControlView) {
     super.attach(view)
     bus.register(this, CoverChangedEvent::class.java, { this.view?.updateCover(it.path) }, true)
-    bus.register(this, TrackInfoChangeEvent::class.java, { this.view?.updateTrackInfo(it.trackInfo) }, true)
+    bus.register(
+      this,
+      TrackInfoChangeEvent::class.java,
+      { this.view?.updateTrackInfo(it.trackInfo) },
+      true
+    )
     bus.register(this, PlayStateChange::class.java, { this.view?.updateState(it.state) }, true)
   }
 

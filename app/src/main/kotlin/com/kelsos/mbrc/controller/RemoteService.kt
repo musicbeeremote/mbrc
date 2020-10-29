@@ -23,10 +23,14 @@ import javax.inject.Singleton
 class RemoteService : Service(), ForegroundHooks {
 
   private val controllerBinder = ControllerBinder()
-  @Inject lateinit var remoteController: RemoteController
-  @Inject lateinit var discovery: ServiceDiscovery
-  @Inject lateinit var receiver: RemoteBroadcastReceiver
-  @Inject lateinit var notificationService: NotificationService
+  @Inject
+  lateinit var remoteController: RemoteController
+  @Inject
+  lateinit var discovery: ServiceDiscovery
+  @Inject
+  lateinit var receiver: RemoteBroadcastReceiver
+  @Inject
+  lateinit var notificationService: NotificationService
 
   private var threadPoolExecutor: ExecutorService? = null
   private var scope: Scope? = null
@@ -46,10 +50,10 @@ class RemoteService : Service(), ForegroundHooks {
     Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
     CommandRegistration.register(remoteController, scope!!)
-    threadPoolExecutor = Executors.newSingleThreadExecutor { Thread(it, "message-thread")}
+    threadPoolExecutor = Executors.newSingleThreadExecutor { Thread(it, "message-thread") }
     threadPoolExecutor!!.execute(remoteController)
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
-    discovery.startDiscovery {  }
+    discovery.startDiscovery { }
 
     return super.onStartCommand(intent, flags, startId)
   }
@@ -76,7 +80,7 @@ class RemoteService : Service(), ForegroundHooks {
   }
 
   private inner class ControllerBinder : Binder() {
-    internal val service: ControllerBinder
+    val service: ControllerBinder
       @SuppressWarnings("unused")
       get() = this@ControllerBinder
   }

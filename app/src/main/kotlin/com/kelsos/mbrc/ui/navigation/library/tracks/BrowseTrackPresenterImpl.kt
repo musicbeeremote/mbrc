@@ -3,24 +3,30 @@ package com.kelsos.mbrc.ui.navigation.library.tracks
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
+import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.TrackRepository
+import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Scheduler
-import rx.Single
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class BrowseTrackPresenterImpl
-@Inject constructor(private val bus: RxBus,
-                    private val repository: TrackRepository,
-                    private val librarySyncInteractor: LibrarySyncInteractor,
-                    @Named("io") private val ioScheduler: Scheduler,
-                    @Named("main") private val mainScheduler: Scheduler) :
-    BasePresenter<BrowseTrackView>(),
-    BrowseTrackPresenter {
+@Inject
+constructor(
+  private val bus: RxBus,
+  private val repository: TrackRepository,
+  private val librarySyncInteractor: LibrarySyncInteractor,
+  private val queue: QueueHandler,
+  private val searchModel: LibrarySearchModel
+) : BasePresenter<BrowseTrackView>(),
+  BrowseTrackPresenter {
+
+  init {
+    searchModel.term.observe(this) { term -> updateUi(term) }
+  }
 
   override fun attach(view: BrowseTrackView) {
     super.attach(view)
@@ -33,21 +39,42 @@ class BrowseTrackPresenterImpl
   }
 
   override fun load() {
-    addSubcription(repository.getAllCursor().compose { schedule(it) }.subscribe({
-      view?.update(it)
-    }, {
-      Timber.v(it, "Error while loading the data from the database")
-      view?.failure(it)
-    }))
+    updateUi(searchModel.term.value ?: "")
+  }
+
+  private fun updateUi(term: String) {
+    scope.launch {
+      view?.search(term)
+      try {
+        view?.update(getData(term))
+      } catch (e: Exception) {
+        Timber.v(e, "Error while loading the data from the database")
+        view?.failure(e)
+      }
+    }
+  }
+
+  private suspend fun getData(term: String): FlowCursorList<Track> {
+    return if (term.isEmpty()) {
+      repository.getAllCursor()
+    } else {
+      repository.search(term)
+    }
   }
 
   override fun sync() {
-    if (!librarySyncInteractor.isRunning()) {
+    scope.launch {
       librarySyncInteractor.sync()
     }
   }
 
-  private fun schedule(it: Single<FlowCursorList<Track>>) = it.observeOn(mainScheduler)
-      .subscribeOn(ioScheduler)
-
+  override fun queue(track: Track, action: String?) {
+    scope.launch {
+      if (action == null) {
+        queue.queueTrack(track)
+      } else {
+        queue.queueTrack(track, action)
+      }
+    }
+  }
 }

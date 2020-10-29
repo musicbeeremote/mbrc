@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -24,25 +24,31 @@ import java.io.File
 
 class FeedbackFragment : Fragment() {
 
-  @BindView(R.id.feedback_content) lateinit var feedbackEditText: EditText
-  @BindView(R.id.include_device_info) lateinit var deviceInfo: CheckBox
-  @BindView(R.id.include_log_info) lateinit var logInfo: CheckBox
-  @BindView(R.id.feedback_button) lateinit var feedbackButton: Button
+  @BindView(R.id.feedback_content)
+  lateinit var feedbackEditText: EditText
+  @BindView(R.id.include_device_info)
+  lateinit var deviceInfo: CheckBox
+  @BindView(R.id.include_log_info)
+  lateinit var logInfo: CheckBox
+  @BindView(R.id.feedback_button)
+  lateinit var feedbackButton: Button
 
-  override fun onCreateView(inflater: LayoutInflater,
-                            container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     val view = inflater.inflate(R.layout.fragment_feedback, container, false)
     ButterKnife.bind(this, view)
 
     LogHelper.logsExist(requireContext())
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          logInfo.isEnabled = true
-        }) {
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe({
+        logInfo.isEnabled = true
+      }) {
 
-        }
+      }
     return view
   }
 
@@ -61,11 +67,13 @@ class FeedbackFragment : Fragment() {
       val appVersion = RemoteUtils.getVersion(requireContext())
       val androidVersion = Build.VERSION.RELEASE
 
-      feedbackText += getString(R.string.feedback_version_info,
-          manufacturer,
-          device,
-          androidVersion,
-          appVersion)
+      feedbackText += getString(
+        R.string.feedback_version_info,
+        manufacturer,
+        device,
+        androidVersion,
+        appVersion
+      )
     }
 
     if (!logInfo.isChecked) {
@@ -74,13 +82,13 @@ class FeedbackFragment : Fragment() {
     }
 
     LogHelper.zipLogs(requireContext())
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          openChooser(feedbackText, it)
-        }) {
-          openChooser(feedbackText)
-        }
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe({
+        openChooser(feedbackText, it)
+      }) {
+        openChooser(feedbackText)
+      }
   }
 
   private fun openChooser(feedbackText: String, logs: File? = null) {

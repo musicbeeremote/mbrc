@@ -12,7 +12,8 @@ constructor(private val preferences: SharedPreferences, private var resources: R
   val defaultAction: String
     get() {
       val key = resources.getString(R.string.preferences_library_track_default_action_key)
-      val defaultValue = resources.getString(R.string.preferences_library_track_default_action_default_value)
+      val defaultValue =
+        resources.getString(R.string.preferences_library_track_default_action_default_value)
       return preferences.getString(key, defaultValue) ?: defaultValue
     }
 }

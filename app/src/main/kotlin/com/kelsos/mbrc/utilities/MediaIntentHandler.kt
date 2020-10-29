@@ -26,14 +26,14 @@ class MediaIntentHandler
     if (mediaIntent?.action == android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
       // Handle somehow
     } else if (mediaIntent?.action == Intent.ACTION_MEDIA_BUTTON) {
-      val extras = mediaIntent?.extras
+      val extras = mediaIntent.extras
       val keyEvent = extras?.get(Intent.EXTRA_KEY_EVENT) as KeyEvent?
 
       if (keyEvent?.action != KeyEvent.ACTION_DOWN) {
         return false
       }
 
-      when (keyEvent?.keyCode) {
+      when (keyEvent.keyCode) {
         KeyEvent.KEYCODE_HEADSETHOOK -> {
           val currentClick = System.currentTimeMillis()
           if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
@@ -42,12 +42,14 @@ class MediaIntentHandler
           previousClick = currentClick
           result = postAction(UserAction(Protocol.PlayerPlayPause, true))
         }
-        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> result = postAction(UserAction(Protocol.PlayerPlayPause, true))
+        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> result =
+          postAction(UserAction(Protocol.PlayerPlayPause, true))
         KeyEvent.KEYCODE_MEDIA_PLAY -> result = postAction(UserAction(Protocol.PlayerPlay, true))
         KeyEvent.KEYCODE_MEDIA_PAUSE -> result = postAction(UserAction(Protocol.PlayerPause, true))
         KeyEvent.KEYCODE_MEDIA_STOP -> result = postAction(UserAction(Protocol.PlayerStop, true))
         KeyEvent.KEYCODE_MEDIA_NEXT -> result = postAction(UserAction(Protocol.PlayerNext, true))
-        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> result = postAction(UserAction(Protocol.PlayerPrevious, true))
+        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> result =
+          postAction(UserAction(Protocol.PlayerPrevious, true))
         else -> {
         }
       }

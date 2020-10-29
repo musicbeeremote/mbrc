@@ -10,7 +10,8 @@ import javax.inject.Inject
 
 class ProtocolPingHandle
 @Inject constructor(private val service: SocketService) : ICommand {
-  @Inject lateinit var activityChecker: SocketActivityChecker
+  @Inject
+  lateinit var activityChecker: SocketActivityChecker
 
   override fun execute(e: IEvent) {
     activityChecker.ping()

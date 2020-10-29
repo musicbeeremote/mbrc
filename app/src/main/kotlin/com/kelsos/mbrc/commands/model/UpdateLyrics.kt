@@ -10,8 +10,10 @@ import javax.inject.Inject
 
 class UpdateLyrics
 @Inject
-constructor(private val model: LyricsModel,
-            private val mapper: ObjectMapper) : ICommand {
+constructor(
+  private val model: LyricsModel,
+  private val mapper: ObjectMapper
+) : ICommand {
 
   override fun execute(e: IEvent) {
     val payload = mapper.treeToValue((e.data as JsonNode), LyricsPayload::class.java)

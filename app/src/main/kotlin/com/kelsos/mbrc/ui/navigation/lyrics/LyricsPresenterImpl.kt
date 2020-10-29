@@ -11,7 +11,8 @@ import javax.inject.Inject
 
 class LyricsPresenterImpl
 @Inject constructor(private val bus: RxBus) : BasePresenter<LyricsView>(), LyricsPresenter {
-  @Inject lateinit var model: LyricsModel
+  @Inject
+  lateinit var model: LyricsModel
 
   override fun attach(view: LyricsView) {
     super.attach(view)
@@ -40,9 +41,13 @@ class LyricsPresenterImpl
     if (!isAttached) {
       return
     }
-    val lyrics = ArrayList(Arrays.asList<String>(*text.split(Const.LYRICS_NEWLINE.toRegex())
-        .dropLastWhile(String::isEmpty)
-        .toTypedArray()))
+    val lyrics = ArrayList(
+      Arrays.asList<String>(
+        *text.split(Const.LYRICS_NEWLINE.toRegex())
+          .dropLastWhile(String::isEmpty)
+          .toTypedArray()
+      )
+    )
     view?.updateLyrics(lyrics)
   }
 }

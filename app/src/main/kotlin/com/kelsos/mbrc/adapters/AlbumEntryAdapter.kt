@@ -1,8 +1,6 @@
 package com.kelsos.mbrc.adapters
 
 import android.app.Activity
-import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -10,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindString
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -39,7 +39,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
       popupMenu.show()
     }
 
-    holder.itemView.setOnClickListener { v ->
+    holder.itemView.setOnClickListener {
       mListener!!.onItemClicked(data!!.getItem(holder.adapterPosition.toLong()))
     }
     return holder
@@ -65,17 +65,22 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   }
 
   interface MenuItemSelectedListener {
-    fun onMenuItemSelected(menuItem: MenuItem, entry: Album)
+    fun onMenuItemSelected(menuItem: MenuItem, album: Album)
 
     fun onItemClicked(album: Album)
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(R.id.line_two) lateinit var artist: TextView
-    @BindView(R.id.line_one) lateinit var album: TextView
-    @BindView(R.id.ui_item_context_indicator) lateinit var indicator: LinearLayout
-    @BindString(R.string.unknown_artist) lateinit var unknownArtist: String
-    @BindString(R.string.non_album_tracks) lateinit var emptyAlbum: String
+    @BindView(R.id.line_two)
+    lateinit var artist: TextView
+    @BindView(R.id.line_one)
+    lateinit var album: TextView
+    @BindView(R.id.ui_item_context_indicator)
+    lateinit var indicator: LinearLayout
+    @BindString(R.string.unknown_artist)
+    lateinit var unknownArtist: String
+    @BindString(R.string.non_album_tracks)
+    lateinit var emptyAlbum: String
 
     init {
       ButterKnife.bind(this, itemView)

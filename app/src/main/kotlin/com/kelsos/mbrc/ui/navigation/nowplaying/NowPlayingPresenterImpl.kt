@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import com.kelsos.mbrc.constants.Protocol
-import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.data.NowPlayingMoveRequest
 import com.kelsos.mbrc.data.UserAction
 import com.kelsos.mbrc.events.MessageEvent
@@ -10,44 +9,48 @@ import com.kelsos.mbrc.events.ui.TrackInfoChangeEvent
 import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.NowPlayingRepository
-import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Scheduler
-import rx.Single
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 class NowPlayingPresenterImpl
-@Inject constructor(private val repository: NowPlayingRepository,
-                    private val bus: RxBus,
-                    private val model: MainDataModel,
-                    @Named("io") private val ioScheduler: Scheduler,
-                    @Named("main") private val mainScheduler: Scheduler) :
-    BasePresenter<NowPlayingView>(),
-    NowPlayingPresenter {
+@Inject
+constructor(
+  private val repository: NowPlayingRepository,
+  private val bus: RxBus,
+  private val model: MainDataModel
+) : BasePresenter<NowPlayingView>(),
+  NowPlayingPresenter {
 
   override fun reload(scrollToTrack: Boolean) {
-    addSubcription(repository.getAndSaveRemote()
-        .compose { schedule(it) }
-        .subscribe({
-          view?.update(it)
-          view?.trackChanged(model.trackInfo, scrollToTrack)
-        }) {
-          view?.failure(it)
-        })
+    scope.launch {
+      try {
+        view?.update(repository.getAndSaveRemote())
+        view?.trackChanged(model.trackInfo, scrollToTrack)
+      } catch (e: Exception) {
+        view?.failure(e)
+      }
+    }
   }
 
   override fun load() {
-    addSubcription(repository.getAllCursor().compose { schedule(it) }
-        .subscribe({
-          view?.update(it)
-          view?.trackChanged(model.trackInfo, true)
-        }) {
-          view?.failure(it)
-        })
+    scope.launch {
+      try {
+        view?.update(repository.getAllCursor())
+        view?.trackChanged(model.trackInfo, true)
+      } catch (e: Exception) {
+        view?.failure(e)
+      }
+    }
   }
 
   override fun search(query: String) {
-    bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListSearch, query.trim { it <= ' ' })))
+    bus.post(
+      MessageEvent.action(
+        UserAction(
+          Protocol.NowPlayingListSearch,
+          query.trim { it <= ' ' })
+      )
+    )
   }
 
   override fun moveTrack(from: Int, to: Int) {
@@ -61,7 +64,12 @@ class NowPlayingPresenterImpl
 
   override fun attach(view: NowPlayingView) {
     super.attach(view)
-    bus.register(this, TrackInfoChangeEvent::class.java, { this.view?.trackChanged(it.trackInfo) }, true)
+    bus.register(
+      this,
+      TrackInfoChangeEvent::class.java,
+      { this.view?.trackChanged(it.trackInfo) },
+      true
+    )
   }
 
   override fun detach() {
@@ -72,7 +80,4 @@ class NowPlayingPresenterImpl
   override fun removeTrack(position: Int) {
     bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingListRemove, position)))
   }
-
-  private fun schedule(it: Single<FlowCursorList<NowPlaying>>) = it.observeOn(mainScheduler)
-      .subscribeOn(ioScheduler)
 }

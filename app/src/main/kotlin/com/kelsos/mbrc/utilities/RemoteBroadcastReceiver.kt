@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
-import android.telephony.TelephonyManager
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.constants.UserInputEventType
@@ -17,7 +16,8 @@ import com.kelsos.mbrc.events.bus.RxBus
 import javax.inject.Inject
 
 class RemoteBroadcastReceiver
-@Inject constructor(private val settingsManager: SettingsManager, private val bus: RxBus) : BroadcastReceiver() {
+@Inject constructor(private val settingsManager: SettingsManager, private val bus: RxBus) :
+  BroadcastReceiver() {
 
   /**
    * Initialized and installs the IntentFilter listening for the SONG_CHANGED
@@ -36,7 +36,7 @@ class RemoteBroadcastReceiver
   }
 
   override fun onReceive(context: Context, intent: Intent) {
-     if (WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action) {
+    if (WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action) {
       val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
       if (networkInfo?.state == NetworkInfo.State.CONNECTED) {
         bus.post(MessageEvent(UserInputEventType.StartConnection))

@@ -7,7 +7,9 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.CoverPayload
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
 import com.kelsos.mbrc.events.ui.RemoteClientMetaData
@@ -16,25 +18,35 @@ import com.kelsos.mbrc.extensions.md5
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.MainDataModel
-import com.kelsos.mbrc.services.CoverService
+import com.kelsos.mbrc.networking.ApiBase
+import com.kelsos.mbrc.repository.ModelCache
 import com.kelsos.mbrc.widgets.UpdateWidgets
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import rx.Single
-import rx.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.Exception
 import javax.inject.Inject
+import kotlin.coroutines.resumeWithException
 
 class UpdateCover
-@Inject constructor(private val bus: RxBus,
-                    private val context: Application,
-                    private val mapper: ObjectMapper,
-                    private val coverService: CoverService,
-                    private val model: MainDataModel) : ICommand {
+@Inject
+constructor(
+  private val bus: RxBus,
+  private val context: Application,
+  private val mapper: ObjectMapper,
+  private val coverService: ApiBase,
+  private val model: MainDataModel,
+  private val cache: ModelCache,
+  appDispatchers: AppDispatchers
+) : ICommand {
   private val coverDir: File
+  private val job = SupervisorJob()
+  private val scope = CoroutineScope(job + appDispatchers.io)
 
   init {
     coverDir = File(context.filesDir, COVER_DIR)
@@ -47,28 +59,46 @@ class UpdateCover
       bus.post(CoverChangedEvent())
       UpdateWidgets.updateCover(context)
     } else if (payload.status == CoverPayload.READY) {
-      retrieveCover()
+      scope.launch {
+        retrieveCover()
+      }
     }
   }
 
-  private fun retrieveCover() {
-    coverService.getCover().subscribeOn(Schedulers.io()).flatMap {
-      Single.fromCallable { getBitmap(it) }
-    }.flatMap {
-      return@flatMap Single.fromCallable { storeCover(it) }
-    }.flatMap {
-      return@flatMap prefetch(it)
-    }.subscribeOn(Schedulers.io()).subscribe({
-      model.coverPath = it.absolutePath
-      bus.post(CoverChangedEvent(it.absolutePath))
+  private suspend fun retrieveCover() {
+    val (status, cover) = coverService.getItem(Protocol.NowPlayingCover, CoverPayload::class)
+    if (status != CoverPayload.SUCCESS) {
+      removeCover()
+      return
+    }
+
+    try {
+      val bitmap = getBitmap(cover)
+      val file = storeCover(bitmap)
+      val pre = prefetch(file)
+      val path = pre.absolutePath
+      model.coverPath = path
+      savePath(path)
+      bus.post(CoverChangedEvent(path))
       bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath))
-      UpdateWidgets.updateCover(context, it.absolutePath)
-    }, {
-      removeCover(it)
-    })
+      UpdateWidgets.updateCover(context, path)
+    } catch (e: Exception) {
+      removeCover(e)
+    }
 
     Timber.v("Message received for available cover")
     return
+  }
+
+  private fun savePath(path: String) {
+    scope.launch {
+      try {
+        cache.persistCover(path)
+        Timber.v("Playing track cover $path successfully persisted")
+      } catch (e: Exception) {
+        Timber.v(e, "Failed to persist the playing track cover")
+      }
+    }
   }
 
   private fun getBitmap(base64: String): Bitmap {
@@ -101,7 +131,7 @@ class UpdateCover
     if (success) {
       val md5 = file.md5()
       val extension = file.extension
-      val newFile = File(context.filesDir, "$md5.$extension")
+      val newFile = File(coverDir, "$md5.$extension")
       file.renameTo(newFile)
       Timber.v("file was renamed to %s", newFile.absolutePath)
       return newFile
@@ -110,22 +140,21 @@ class UpdateCover
     }
   }
 
-  private fun prefetch(newFile: File): Single<File> {
-    return Single.create {
-      val dimens = context.getDimens()
-      Picasso.get().load(newFile)
-          .config(Bitmap.Config.RGB_565)
-          .resize(dimens, dimens)
-          .centerCrop().fetch(object : Callback {
+  private suspend fun prefetch(newFile: File): File = suspendCancellableCoroutine { cont ->
+    val dimens = context.getDimens()
+    Picasso.get().load(newFile)
+      .config(Bitmap.Config.RGB_565)
+      .resize(dimens, dimens)
+      .centerCrop()
+      .fetch(object : Callback {
         override fun onSuccess() {
-          it.onSuccess(newFile)
+          cont.resume(newFile, onCancellation = {})
         }
 
         override fun onError(e: Exception) {
-          it.onError(e)
+          cont.resumeWithException(e)
         }
       })
-    }
   }
 
   private fun checkIfExists() {
@@ -135,11 +164,14 @@ class UpdateCover
   }
 
   private fun clearPreviousCovers(keep: Int = 2) {
-    val storedCovers = coverDir.listFiles()
-    storedCovers.sortByDescending(File::lastModified)
-    val elementsToKeep = if (storedCovers.size - keep < 0) 0 else storedCovers.size - keep
-    storedCovers.takeLast(elementsToKeep).forEach {
-      it.delete()
+    coverDir.listFiles()?.run {
+      sortByDescending(File::lastModified)
+      Timber.v(size.toString())
+      val toDelete = if (size - keep < 0) 0 else size - keep
+      Timber.v("deleting last $toDelete items")
+      takeLast(toDelete).forEach {
+        it.delete()
+      }
     }
   }
 

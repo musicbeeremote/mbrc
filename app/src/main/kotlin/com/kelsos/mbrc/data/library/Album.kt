@@ -10,19 +10,21 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.structure.Model
 
 @Table(name = "album", database = RemoteDatabase::class)
-data class Album(@JsonProperty("artist")
-                 @Column
-                 var artist: String? = null,
-                 @JsonProperty("album")
-                 @Column
-                 var album: String? = null,
-                 @JsonProperty("count")
-                 @Column
-                 var count: Int = 0,
-                 @JsonIgnore
-                 @Column
-                 @PrimaryKey(autoincrement = true)
-                 var id: Long = 0) : Model {
+data class Album(
+  @JsonProperty("artist")
+  @Column
+  var artist: String? = null,
+  @JsonProperty("album")
+  @Column
+  var album: String? = null,
+  @JsonProperty("count")
+  @Column
+  var count: Int = 0,
+  @JsonIgnore
+  @Column
+  @PrimaryKey(autoincrement = true)
+  var id: Long = 0
+) : Model {
   /**
    * Loads from the database the most recent version of the model based on it's primary keys.
    */

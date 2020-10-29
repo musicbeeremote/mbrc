@@ -19,7 +19,9 @@ object RxUtils {
   }
 
   private fun createUiCompletableScheduler(): Completable.Transformer {
-    return Completable.Transformer { it -> it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()) }
+    return Completable.Transformer { it ->
+      it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
   }
 
   /**
@@ -32,7 +34,9 @@ object RxUtils {
    */
   @SuppressWarnings("unchecked")
   private fun <T> createIoToMain(): Observable.Transformer<T, T> {
-    return Observable.Transformer { tObservable -> tObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()) }
+    return Observable.Transformer { tObservable ->
+      tObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
   }
 
   @Suppress("UNCHECKED_CAST")

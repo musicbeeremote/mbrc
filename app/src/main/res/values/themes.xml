@@ -14,7 +14,6 @@
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
     <item name="windowActionBarOverlay">true</item>
-    <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     <item name="android:windowContentTransitions">true</item>
     <item name="android:windowAllowEnterTransitionOverlap">true</item>
     <item name="android:windowAllowReturnTransitionOverlap">true</item>

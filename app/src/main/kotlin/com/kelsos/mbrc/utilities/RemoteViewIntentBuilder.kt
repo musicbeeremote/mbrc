@@ -24,56 +24,70 @@ object RemoteViewIntentBuilder {
     when (id) {
       OPEN -> {
         val notificationIntent = Intent(mContext, MainActivity::class.java)
-        return PendingIntent.getActivity(mContext,
-            0,
-            notificationIntent,
-            FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(
+          mContext,
+          0,
+          notificationIntent,
+          FLAG_UPDATE_CURRENT
+        )
       }
       PLAY -> {
         val playPressedIntent = Intent(REMOTE_PLAY_PRESSED)
-        return PendingIntent.getBroadcast(mContext,
-            1,
-            playPressedIntent,
-            FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+          mContext,
+          1,
+          playPressedIntent,
+          FLAG_UPDATE_CURRENT
+        )
       }
       NEXT -> {
         val mediaNextButtonIntent = Intent(REMOTE_NEXT_PRESSED)
-        return PendingIntent.getBroadcast(mContext,
-            2,
-            mediaNextButtonIntent,
-            FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+          mContext,
+          2,
+          mediaNextButtonIntent,
+          FLAG_UPDATE_CURRENT
+        )
       }
       CLOSE -> {
         val clearNotificationIntent = Intent(REMOTE_CLOSE_PRESSED)
-        return PendingIntent.getBroadcast(mContext,
-            3,
-            clearNotificationIntent,
-            FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+          mContext,
+          3,
+          clearNotificationIntent,
+          FLAG_UPDATE_CURRENT
+        )
       }
       PREVIOUS -> {
         val mediaPreviousButtonIntent = Intent(REMOTE_PREVIOUS_PRESSED)
-        return PendingIntent.getBroadcast(mContext,
-            4,
-            mediaPreviousButtonIntent,
-            FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+          mContext,
+          4,
+          mediaPreviousButtonIntent,
+          FLAG_UPDATE_CURRENT
+        )
       }
       CANCEL -> {
         val cancelIntent = Intent(CANCELLED_NOTIFICATION)
-        return PendingIntent.getBroadcast(mContext,
-            4,
-            cancelIntent,
-            FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+          mContext,
+          4,
+          cancelIntent,
+          FLAG_UPDATE_CURRENT
+        )
       }
       else -> throw IndexOutOfBoundsException()
     }
   }
 
-  @IntDef(OPEN,
-      PLAY,
-      CLOSE,
-      PREVIOUS,
-      NEXT,
-      CANCEL)
+  @IntDef(
+    OPEN,
+    PLAY,
+    CLOSE,
+    PREVIOUS,
+    NEXT,
+    CANCEL
+  )
   @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
   annotation class ButtonAction
 }

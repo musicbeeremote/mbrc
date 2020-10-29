@@ -16,17 +16,25 @@
 package com.kelsos.mbrc.ui.widgets
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.AttributeSet
+import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import android.util.AttributeSet
-import android.widget.ImageView
 import com.kelsos.mbrc.R
 
 class CircleImageView : ImageView {
@@ -71,13 +79,20 @@ class CircleImageView : ImageView {
     init()
   }
 
-  @JvmOverloads constructor(context: Context, attrs: AttributeSet, defStyle: Int = 0) : super(context, attrs, defStyle) {
+  @JvmOverloads
+  constructor(context: Context, attrs: AttributeSet, defStyle: Int = 0) : super(
+    context,
+    attrs,
+    defStyle
+  ) {
 
     val a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0)
 
-    mBorderWidth = a.getDimensionPixelSize(R.styleable.CircleImageView_civ_border_width, DEFAULT_BORDER_WIDTH)
+    mBorderWidth =
+      a.getDimensionPixelSize(R.styleable.CircleImageView_civ_border_width, DEFAULT_BORDER_WIDTH)
     mBorderColor = a.getColor(R.styleable.CircleImageView_civ_border_color, DEFAULT_BORDER_COLOR)
-    mBorderOverlay = a.getBoolean(R.styleable.CircleImageView_civ_border_overlay, DEFAULT_BORDER_OVERLAY)
+    mBorderOverlay =
+      a.getBoolean(R.styleable.CircleImageView_civ_border_overlay, DEFAULT_BORDER_OVERLAY)
     mFillColor = a.getColor(R.styleable.CircleImageView_civ_fill_color, DEFAULT_FILL_COLOR)
 
     a.recycle()
@@ -122,9 +137,19 @@ class CircleImageView : ImageView {
     }
 
     if (mFillColor != Color.TRANSPARENT) {
-      canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mFillPaint)
+      canvas.drawCircle(
+        mDrawableRect.centerX(),
+        mDrawableRect.centerY(),
+        mDrawableRadius,
+        mFillPaint
+      )
     }
-    canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mBitmapPaint)
+    canvas.drawCircle(
+      mDrawableRect.centerX(),
+      mDrawableRect.centerY(),
+      mDrawableRadius,
+      mBitmapPaint
+    )
     if (mBorderWidth != 0) {
       canvas.drawCircle(mBorderRect.centerX(), mBorderRect.centerY(), mBorderRadius, mBorderPaint)
     }
@@ -240,9 +265,11 @@ class CircleImageView : ImageView {
       val bitmap: Bitmap
 
       if (drawable is ColorDrawable) {
-        bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG)
+        bitmap =
+          Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG)
       } else {
-        bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, BITMAP_CONFIG)
+        bitmap =
+          Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, BITMAP_CONFIG)
       }
 
       val canvas = Canvas(bitmap)
@@ -298,7 +325,10 @@ class CircleImageView : ImageView {
     mBitmapWidth = mBitmap!!.width
 
     mBorderRect.set(calculateBounds())
-    mBorderRadius = Math.min((mBorderRect.height() - mBorderWidth) / 2.0f, (mBorderRect.width() - mBorderWidth) / 2.0f)
+    mBorderRadius = Math.min(
+      (mBorderRect.height() - mBorderWidth) / 2.0f,
+      (mBorderRect.width() - mBorderWidth) / 2.0f
+    )
 
     mDrawableRect.set(mBorderRect)
     if (!mBorderOverlay) {
@@ -339,7 +369,10 @@ class CircleImageView : ImageView {
     }
 
     mShaderMatrix.setScale(scale, scale)
-    mShaderMatrix.postTranslate((dx + 0.5f).toInt() + mDrawableRect.left, (dy + 0.5f).toInt() + mDrawableRect.top)
+    mShaderMatrix.postTranslate(
+      (dx + 0.5f).toInt() + mDrawableRect.left,
+      (dy + 0.5f).toInt() + mDrawableRect.top
+    )
 
     mBitmapShader!!.setLocalMatrix(mShaderMatrix)
   }

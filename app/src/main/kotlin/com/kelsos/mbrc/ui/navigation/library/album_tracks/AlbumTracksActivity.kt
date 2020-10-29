@@ -3,7 +3,7 @@ package com.kelsos.mbrc.ui.navigation.library.album_tracks
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.MenuItem
-import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -28,15 +28,19 @@ class AlbumTracksActivity : FontActivity(),
 
   @BindView(R.id.toolbar)
   lateinit var toolbar: MaterialToolbar
+
   @BindView(R.id.list_tracks)
   lateinit var listTracks: EmptyRecyclerView
+
   @BindView(R.id.empty_view)
-  lateinit var emptyView: LinearLayout
+  lateinit var emptyView: ConstraintLayout
 
   @Inject
   lateinit var adapter: TrackEntryAdapter
+
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var presenter: AlbumTracksPresenter
 
@@ -99,12 +103,13 @@ class AlbumTracksActivity : FontActivity(),
 
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Track) {
-    actionHandler.trackSelected(menuItem, entry, true)
+  override fun onMenuItemSelected(menuItem: MenuItem, track: Track) {
+    val action = actionHandler.trackSelected(menuItem)
+    presenter.queue(track, action)
   }
 
   override fun onItemClicked(track: Track) {
-    actionHandler.trackSelected(track, true)
+    presenter.queue(track)
   }
 
   override fun update(cursor: FlowCursorList<Track>) {

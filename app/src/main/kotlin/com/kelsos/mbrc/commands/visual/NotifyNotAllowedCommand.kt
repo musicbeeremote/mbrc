@@ -13,8 +13,10 @@ import javax.inject.Inject
 
 class NotifyNotAllowedCommand
 @Inject
-constructor(private val socketService: SocketService, private val model: ConnectionModel,
-            private val handler: ProtocolHandler, private val bus: RxBus) : ICommand {
+constructor(
+  private val socketService: SocketService, private val model: ConnectionModel,
+  private val handler: ProtocolHandler, private val bus: RxBus
+) : ICommand {
 
   override fun execute(e: IEvent) {
     bus.post(NotifyUser(R.string.notification_not_allowed))

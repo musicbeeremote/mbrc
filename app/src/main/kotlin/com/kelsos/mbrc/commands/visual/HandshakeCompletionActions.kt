@@ -16,10 +16,10 @@ import javax.inject.Inject
 
 class HandshakeCompletionActions
 @Inject constructor(
-    private val service: SocketService,
-    private val model: MainDataModel,
-    private val connectionModel: ConnectionModel,
-    private val syncInteractor: LibrarySyncInteractor
+  private val service: SocketService,
+  private val model: MainDataModel,
+  private val connectionModel: ConnectionModel,
+  private val syncInteractor: LibrarySyncInteractor
 ) : ICommand {
 
   override fun execute(e: IEvent) {
@@ -47,10 +47,10 @@ class HandshakeCompletionActions
 
       val totalMessages = messages.size
       Observable.interval(150, TimeUnit.MILLISECONDS)
-          .take(totalMessages)
-          .subscribe({ service.sendData(messages.removeAt(0)) }) {
-            Timber.v(it, "Failure while sending the init messages")
-          }
+        .take(totalMessages)
+        .subscribe({ service.sendData(messages.removeAt(0)) }) {
+          Timber.v(it, "Failure while sending the init messages")
+        }
     }
 
     syncInteractor.sync(true)

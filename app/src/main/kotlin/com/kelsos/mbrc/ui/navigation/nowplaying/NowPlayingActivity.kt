@@ -1,19 +1,18 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
-import android.os.Build
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.view.MenuItemCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.view.MenuItemCompat
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.NowPlaying
 import com.kelsos.mbrc.domain.TrackInfo
@@ -30,17 +29,22 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
 class NowPlayingActivity : BaseActivity(),
-    NowPlayingView,
-    OnQueryTextListener,
-    OnStartDragListener,
-    NowPlayingListener {
+  NowPlayingView,
+  OnQueryTextListener,
+  OnStartDragListener,
+  NowPlayingListener {
 
-  @BindView(R.id.now_playing_list) lateinit var nowPlayingList: EmptyRecyclerView
-  @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @Inject lateinit var adapter: NowPlayingAdapter
+  @BindView(R.id.now_playing_list)
+  lateinit var nowPlayingList: EmptyRecyclerView
+  @BindView(R.id.swipe_layout)
+  lateinit var swipeRefreshLayout: MultiSwipeRefreshLayout
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: View
+  @Inject
+  lateinit var adapter: NowPlayingAdapter
 
-  @Inject lateinit var presenter: NowPlayingPresenter
+  @Inject
+  lateinit var presenter: NowPlayingPresenter
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
   private lateinit var scope: Scope

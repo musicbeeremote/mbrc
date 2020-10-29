@@ -28,13 +28,19 @@ constructor() : RxBus {
     updateSubscriptions(receiver, subscription)
   }
 
-  override fun <T> register(receiver: Any, eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean) {
+  override fun <T> register(
+    receiver: Any,
+    eventClass: Class<T>,
+    onNext: (T) -> Unit,
+    main: Boolean
+  ) {
     val subscription = register(eventClass, onNext, true)
     updateSubscriptions(receiver, subscription)
   }
 
   private fun updateSubscriptions(receiver: Any, subscription: Subscription) {
-    val subscriptions: MutableList<Subscription> = activeSubscriptions[receiver] ?: LinkedList<Subscription>()
+    val subscriptions: MutableList<Subscription> =
+      activeSubscriptions[receiver] ?: LinkedList<Subscription>()
     subscriptions.add(subscription)
     activeSubscriptions.put(receiver, subscriptions)
   }
@@ -47,7 +53,11 @@ constructor() : RxBus {
   }
 
   @Suppress("UNCHECKED_CAST")
-  override fun <T> register(eventClass: Class<T>, onNext: (T) -> Unit, main: Boolean): Subscription {
+  override fun <T> register(
+    eventClass: Class<T>,
+    onNext: (T) -> Unit,
+    main: Boolean
+  ): Subscription {
     //noinspection unchecked
     val observable = serializedRelay.filter { it.javaClass == eventClass }.map { obj -> obj as T }
     val scheduler = if (main) AndroidSchedulers.mainThread() else Schedulers.immediate()

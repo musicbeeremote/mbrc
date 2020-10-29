@@ -26,11 +26,13 @@ import javax.inject.Inject
 
 class ServiceDiscovery
 @Inject
-internal constructor(private val manager: WifiManager,
-                     private val connectivityManager: ConnectivityManager,
-                     private val mapper: ObjectMapper,
-                     private val bus: RxBus,
-                     private val connectionRepository: ConnectionRepository) {
+internal constructor(
+  private val manager: WifiManager,
+  private val connectivityManager: ConnectivityManager,
+  private val mapper: ObjectMapper,
+  private val bus: RxBus,
+  private val connectionRepository: ConnectionRepository
+) {
   private var mLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
 
@@ -47,10 +49,11 @@ internal constructor(private val manager: WifiManager,
 
     val mapper = ConnectionMapper()
     discoveryObservable().subscribeOn(Schedulers.io())
-        .unsubscribeOn(Schedulers.io())
-        .doOnTerminate({
-          this.stopDiscovery()
-        }).map<ConnectionSettings>(Func1<DiscoveryMessage, ConnectionSettings> { mapper.map(it) }).subscribe(
+      .unsubscribeOn(Schedulers.io())
+      .doOnTerminate({
+        this.stopDiscovery()
+      }).map<ConnectionSettings>(Func1<DiscoveryMessage, ConnectionSettings> { mapper.map(it) })
+      .subscribe(
         { settings ->
           bus.post(DiscoveryStopped(DiscoveryStop.COMPLETE))
           connectionRepository.save(settings)
@@ -58,9 +61,9 @@ internal constructor(private val manager: WifiManager,
           callback.invoke()
 
         }) {
-      Timber.v(it, "Discovery incomplete")
-      bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
-    }
+        Timber.v(it, "Discovery incomplete")
+        bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
+      }
   }
 
   private fun stopDiscovery() {
@@ -74,12 +77,14 @@ internal constructor(private val manager: WifiManager,
     get() {
       val mInfo = manager.connectionInfo
       val address = mInfo.ipAddress
-      return String.format(Locale.getDefault(),
-          "%d.%d.%d.%d",
-          address and 0xff,
-          address shr 8 and 0xff,
-          address shr 16 and 0xff,
-          address shr 24 and 0xff)
+      return String.format(
+        Locale.getDefault(),
+        "%d.%d.%d.%d",
+        address and 0xff,
+        address shr 8 and 0xff,
+        address shr 16 and 0xff,
+        address shr 24 and 0xff
+      )
     }
 
   private val isWifiConnected: Boolean
@@ -94,9 +99,9 @@ internal constructor(private val manager: WifiManager,
     }, {
       this.getObservable(it)
     },
-        {
-          this.cleanup(it)
-        })
+      {
+        this.cleanup(it)
+      })
   }
 
   private fun cleanup(resource: MulticastSocket) {
@@ -112,8 +117,7 @@ internal constructor(private val manager: WifiManager,
 
   private fun getObservable(socket: MulticastSocket): Observable<DiscoveryMessage> {
     return Observable.interval(1000, TimeUnit.MILLISECONDS).take(15).flatMap {
-      Observable.fromEmitter<DiscoveryMessage>({
-        emitter: Emitter<DiscoveryMessage> ->
+      Observable.fromEmitter<DiscoveryMessage>({ emitter: Emitter<DiscoveryMessage> ->
         try {
           val mPacket: DatagramPacket
           val buffer = ByteArray(512)
@@ -152,9 +156,9 @@ internal constructor(private val manager: WifiManager,
     }
 
   companion object {
-    private val NOTIFY = "notify"
-    private val SO_TIMEOUT = 15 * 1000
-    private val MULTICASTPORT = 45345
-    private val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
+    private const val NOTIFY = "notify"
+    private const val SO_TIMEOUT = 15 * 1000
+    private const val MULTICASTPORT = 45345
+    private const val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
   }
 }

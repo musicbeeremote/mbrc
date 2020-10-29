@@ -19,7 +19,7 @@ constructor(private val bus: RxBus) {
   init {
     isConnectionActive = false
     isHandShakeDone = false
-    this.bus.register(this, RequestConnectionStateEvent::class.java, { notifyState() })
+    this.bus.register(this, RequestConnectionStateEvent::class.java) { notifyState() }
   }
 
   val connection: Int

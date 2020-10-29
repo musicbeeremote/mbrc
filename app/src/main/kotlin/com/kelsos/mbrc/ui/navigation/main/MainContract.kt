@@ -38,7 +38,6 @@ interface MainView : BaseView {
 
 
 interface MainViewPresenter : Presenter<MainView> {
-  fun load()
   fun requestNowPlayingPosition()
   fun toggleScrobbling()
   fun seek(position: Int)

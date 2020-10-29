@@ -14,4 +14,5 @@ interface LibraryPresenter : Presenter<LibraryView> {
   fun refresh()
   fun loadArtistPreference()
   fun setArtistPreference(albumArtistOnly: Boolean)
+  fun search(keyword: String)
 }

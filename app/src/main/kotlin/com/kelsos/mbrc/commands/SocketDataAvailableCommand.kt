@@ -12,11 +12,11 @@ class SocketDataAvailableCommand
 
   override fun execute(e: IEvent) {
     handler.preProcessIncoming(e.dataString)
-        .subscribeOn(Schedulers.io())
-        .subscribe({
+      .subscribeOn(Schedulers.io())
+      .subscribe({
 
-        }) {
-          Timber.d(it, "message processing")
-        }
+      }) {
+        Timber.d(it, "message processing")
+      }
   }
 }

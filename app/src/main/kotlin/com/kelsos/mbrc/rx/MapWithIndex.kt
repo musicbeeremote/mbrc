@@ -14,7 +14,7 @@ class MapWithIndex<T> : Transformer<T, MapWithIndex.Indexed<T>> {
   }
 
   private object Holder {
-    internal val INSTANCE: MapWithIndex<*> = MapWithIndex<Any>()
+    val INSTANCE: MapWithIndex<*> = MapWithIndex<Any>()
   }
 
   class Indexed<out T>(private val value: T, private val index: Long) {
@@ -50,7 +50,7 @@ class MapWithIndex<T> : Transformer<T, MapWithIndex.Indexed<T>> {
     }
 
     private object Holder {
-      internal val INSTANCE = NaturalNumbers()
+      val INSTANCE = NaturalNumbers()
     }
 
     companion object {
@@ -63,7 +63,8 @@ class MapWithIndex<T> : Transformer<T, MapWithIndex.Indexed<T>> {
 
   companion object {
 
-    @Suppress("UNCHECKED_CAST") fun <T> instance(): MapWithIndex<T> {
+    @Suppress("UNCHECKED_CAST")
+    fun <T> instance(): MapWithIndex<T> {
       return Holder.INSTANCE as MapWithIndex<T>
     }
   }

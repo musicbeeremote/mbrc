@@ -2,13 +2,14 @@ package com.kelsos.mbrc.ui.navigation.library.artist_albums
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.appbar.MaterialToolbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter
+import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
@@ -25,15 +26,19 @@ class ArtistAlbumsActivity : FontActivity(),
 
   @BindView(R.id.album_recycler)
   lateinit var recyclerView: EmptyRecyclerView
+
   @BindView(R.id.toolbar)
   lateinit var toolbar: MaterialToolbar
+
   @BindView(R.id.empty_view)
-  lateinit var emptyView: LinearLayout
+  lateinit var emptyView: ConstraintLayout
 
   @Inject
   lateinit var actionHandler: PopupActionHandler
+
   @Inject
   lateinit var adapter: AlbumEntryAdapter
+
   @Inject
   lateinit var presenter: ArtistAlbumsPresenter
 
@@ -90,8 +95,11 @@ class ArtistAlbumsActivity : FontActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  override fun onMenuItemSelected(menuItem: MenuItem, entry: Album) {
-    actionHandler.albumSelected(menuItem, entry, this)
+  override fun onMenuItemSelected(menuItem: MenuItem, album: Album) {
+    val action = actionHandler.albumSelected(menuItem, album, this)
+    if (action != Queue.PROFILE) {
+      presenter.queue(action, album)
+    }
   }
 
   override fun onItemClicked(album: Album) {

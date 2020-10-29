@@ -1,15 +1,14 @@
 package com.kelsos.mbrc.repository.data
 
+import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.NowPlaying
-import com.kelsos.mbrc.services.NowPlayingService
-import rx.Observable
+import com.kelsos.mbrc.networking.ApiBase
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class RemoteNowPlayingDataSource
-@Inject constructor(private val service: NowPlayingService) : RemoteDataSource<NowPlaying> {
-  override fun fetch(): Observable<List<NowPlaying>> {
-    return Observable.range(0, Integer.MAX_VALUE).flatMap {
-      service.getNowPlaying(it!! * RemoteDataSource.LIMIT, RemoteDataSource.LIMIT)
-    }.takeWhile { it.offset < it.total }.map { it.data }
+@Inject constructor(private val service: ApiBase) : RemoteDataSource<NowPlaying> {
+  override fun fetch(): Flow<List<NowPlaying>> {
+    return service.getAllPages(Protocol.NowPlayingList, NowPlaying::class)
   }
 }

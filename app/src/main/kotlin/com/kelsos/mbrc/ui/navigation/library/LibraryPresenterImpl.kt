@@ -4,23 +4,26 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor.OnCompleteListener
 import com.kelsos.mbrc.utilities.SettingsManager
-import rx.Scheduler
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 class LibraryPresenterImpl
-@Inject constructor(
-    @Named("io") private val ioScheduler: Scheduler,
-    @Named("main") private val mainScheduler: Scheduler,
-    private val settingsManager: SettingsManager,
-    private val bus: RxBus,
-    private val librarySyncInteractor: LibrarySyncInteractor
-) : LibraryPresenter, OnCompleteListener, BasePresenter<LibraryView>(),
+@Inject
+constructor(
+  private val settingsManager: SettingsManager,
+  private val bus: RxBus,
+  private val librarySyncInteractor: LibrarySyncInteractor,
+  private val searchModel: LibrarySearchModel
+) : LibraryPresenter,
+  OnCompleteListener,
+  BasePresenter<LibraryView>(),
   LibrarySyncInteractor.OnStartListener {
 
   override fun refresh() {
     view?.showRefreshing()
-    librarySyncInteractor.sync()
+    scope.launch {
+      librarySyncInteractor.sync()
+    }
   }
 
   override fun attach(view: LibraryView) {
@@ -39,22 +42,22 @@ class LibraryPresenterImpl
   }
 
   override fun onTermination() {
-    view?.hideRefreshing()
+    scope.launch {
+      view?.hideRefreshing()
+    }
   }
 
   override fun onFailure(throwable: Throwable) {
-    view?.refreshFailed()
+    scope.launch {
+      view?.refreshFailed()
+    }
   }
 
   override fun loadArtistPreference() {
-    settingsManager.shouldDisplayOnlyAlbumArtists()
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
-        .subscribe({
-          view?.updateArtistOnlyPreference(it)
-        }, {
-
-        })
+    scope.launch {
+      val shouldDisplay = settingsManager.shouldDisplayOnlyAlbumArtists()
+      view?.updateArtistOnlyPreference(shouldDisplay)
+    }
   }
 
   override fun setArtistPreference(albumArtistOnly: Boolean) {
@@ -62,12 +65,18 @@ class LibraryPresenterImpl
     bus.post(ArtistTabRefreshEvent())
   }
 
+  override fun search(keyword: String) {
+    searchModel.search(keyword)
+  }
+
   override fun onSuccess() {
     //todo show success message
   }
 
   override fun onStart() {
-    view?.showRefreshing()
+    scope.launch {
+      view?.showRefreshing()
+    }
   }
 }
 

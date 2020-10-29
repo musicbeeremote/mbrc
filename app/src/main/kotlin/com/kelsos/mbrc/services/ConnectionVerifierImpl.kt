@@ -1,103 +1,40 @@
 package com.kelsos.mbrc.services
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.SocketMessage
-import com.kelsos.mbrc.mappers.InetAddressMapper
-import com.kelsos.mbrc.repository.ConnectionRepository
-import rx.Observable
-import rx.Single
-import timber.log.Timber
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.Socket
+import com.kelsos.mbrc.di.modules.AppDispatchers
+import com.kelsos.mbrc.networking.RequestManager
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ConnectionVerifierImpl
 @Inject constructor(
-    private val mapper: ObjectMapper,
-    private val repository: ConnectionRepository
+  private val mapper: ObjectMapper,
+  private val requestManager: RequestManager,
+  private val dispatchers: AppDispatchers
 ) : ConnectionVerifier {
 
-  private lateinit var socket: Socket
+  private fun getMessage(response: String) =
+    mapper.readValue(response, SocketMessage::class.java)
 
-  override fun verify(): Single<Boolean> {
-    return Observable.using<String, Socket>({
-      this.getSocket()
-    }, {
-      this.getObservable(it)
-    }, {
-      this.cleanup(it)
-    }).first().toSingle().flatMap { checkIfSuccess(it) }
-  }
+  override suspend fun verify(): Boolean {
+    return withContext(dispatchers.io) {
+      val connection = requestManager.openConnection(false)
+      val response =
+        requestManager.request(connection, SocketMessage.create(Protocol.VerifyConnection))
+      connection.close()
+      val message = getMessage(response)
 
-  @Throws(JsonProcessingException::class)
-  private fun getMessage(message: SocketMessage): ByteArray {
-    return (mapper.writeValueAsString(message) + "\r\n").toByteArray()
-  }
-
-  private fun checkIfSuccess(s: String): Single<Boolean> {
-    return Single.fromEmitter {
-      try {
-        val message = mapper.readValue(s, SocketMessage::class.java)
-        if (Protocol.VerifyConnection == message.context) {
-          it.onSuccess(true)
-        } else {
-          it.onError(NoValidPluginConnection())
-        }
-      } catch (e: IOException) {
-        it.onError(e)
+      if (Protocol.VerifyConnection == message.context) {
+        return@withContext true
+      } else {
+        throw NoValidPluginConnection()
       }
     }
+
   }
 
-  @Throws(IOException::class)
-  private fun sendMessage(socketMessage: SocketMessage) {
-    socket.outputStream.write(getMessage(socketMessage))
-  }
-
-  private fun cleanup(socket: Socket) {
-    Timber.v("Cleaning auxiliary socket")
-    if (!socket.isClosed) {
-      try {
-        socket.close()
-      } catch (ex: IOException) {
-        Timber.v(ex, "Failed to clause the auxiliary socket")
-      }
-    }
-  }
-
-  private fun getObservable(socket: Socket): Observable<out String> {
-    try {
-      val `in` = InputStreamReader(socket.inputStream, Const.UTF_8)
-      val bufferedReader = BufferedReader(`in`)
-      return Observable.create(OnSubscribeReader(bufferedReader))
-    } catch (ex: IOException) {
-      return Observable.error<String>(ex)
-    }
-  }
-
-  private fun getSocket(): Socket {
-    val mapper = InetAddressMapper()
-    val connectionSettings = repository.default
-    try {
-      if (connectionSettings == null) {
-        throw RuntimeException("no settings")
-      }
-      val socketAddress = mapper.map(connectionSettings)
-      Timber.v("Creating new socket")
-      socket = Socket()
-      socket.soTimeout = 40 * 1000
-      socket.connect(socketAddress)
-      sendMessage(SocketMessage.create(Protocol.VerifyConnection))
-      return socket
-    } catch (e: IOException) {
-      throw RuntimeException(e)
-    }
-  }
 
   class NoValidPluginConnection : Exception()
 }

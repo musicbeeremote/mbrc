@@ -7,10 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 class DiscoveryMessage {
   @JsonProperty("name")
   var name: String? = null
+
   @JsonProperty("address")
   var address: String? = null
+
   @JsonProperty("port")
   var port: Int = 0
+
   @JsonProperty("context")
   var context: String? = null
 

@@ -44,12 +44,16 @@ import javax.inject.Inject
 abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
   @Inject
   lateinit var bus: RxBus
+
   @Inject
   lateinit var serviceChecker: ServiceChecker
+
   @BindView(R.id.toolbar)
   lateinit var toolbar: MaterialToolbar
+
   @BindView(R.id.drawer_layout)
   lateinit var drawer: DrawerLayout
+
   @BindView(R.id.nav_view)
   lateinit var navigationView: NavigationView
 

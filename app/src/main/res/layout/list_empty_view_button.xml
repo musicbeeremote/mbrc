@@ -15,14 +15,13 @@
     android:src="@drawable/ic_music_note_black_80dp" />
 
   <TextView
+    style="@style/TextAppearance.MaterialComponents.Headline4"
     android:id="@+id/list_empty_title"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
-    android:fontFamily="sans-serif-medium"
     android:maxLines="1"
     android:text="@string/now_playing_list_empty"
-    android:textSize="22sp"
     tools:ignore="MissingPrefix" />
 
   <Button

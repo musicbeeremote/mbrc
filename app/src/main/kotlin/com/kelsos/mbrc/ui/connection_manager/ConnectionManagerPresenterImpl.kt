@@ -10,20 +10,26 @@ import javax.inject.Inject
 
 class ConnectionManagerPresenterImpl
 @Inject
-constructor(private val repository: ConnectionRepository) : BasePresenter<ConnectionManagerView>(), ConnectionManagerPresenter {
+constructor(private val repository: ConnectionRepository) : BasePresenter<ConnectionManagerView>(),
+  ConnectionManagerPresenter {
 
   override fun load() {
     checkIfAttached()
     val all = Observable.defer { Observable.just(repository.all) }
     val defaultId = Observable.defer { Observable.just(repository.defaultId) }
 
-    addSubcription(Observable.zip<Long, List<ConnectionSettings>, ConnectionModel>(defaultId, all, { defaultId, settings ->
-      ConnectionModel(defaultId, settings)
-    }).subscribe({
-      view?.updateModel(it)
-    }, {
-      this.onLoadError(it)
-    }))
+    addSubscription(
+      Observable.zip<Long, List<ConnectionSettings>, ConnectionModel>(
+        defaultId,
+        all,
+        { defaultId, settings ->
+          ConnectionModel(defaultId, settings)
+        }).subscribe({
+        view?.updateModel(it)
+      }, {
+        this.onLoadError(it)
+      })
+    )
   }
 
   override fun setDefault(settings: ConnectionSettings) {

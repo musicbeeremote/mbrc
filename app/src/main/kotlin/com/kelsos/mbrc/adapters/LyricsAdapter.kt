@@ -1,15 +1,16 @@
 package com.kelsos.mbrc.adapters
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 
-class LyricsAdapter(private var data: List<String> = emptyList()) : RecyclerView.Adapter<LyricsAdapter.ViewHolder>() {
+class LyricsAdapter(private var data: List<String> = emptyList()) :
+  RecyclerView.Adapter<LyricsAdapter.ViewHolder>() {
 
   /**
    * Called when RecyclerView needs a new [ViewHolder] of the given type to represent
@@ -37,7 +38,8 @@ class LyricsAdapter(private var data: List<String> = emptyList()) : RecyclerView
    * @see .onBindViewHolder
    */
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val view = LayoutInflater.from(parent.context).inflate(R.layout.ui_list_lyrics_item, parent, false)
+    val view =
+      LayoutInflater.from(parent.context).inflate(R.layout.ui_list_lyrics_item, parent, false)
     return ViewHolder(view)
   }
 
@@ -80,7 +82,8 @@ class LyricsAdapter(private var data: List<String> = emptyList()) : RecyclerView
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @BindView(android.R.id.text1) lateinit var title: TextView
+    @BindView(android.R.id.text1)
+    lateinit var title: TextView
 
     init {
       ButterKnife.bind(this, itemView)

@@ -21,11 +21,13 @@ import javax.inject.Inject
 
 class VersionCheckCommand
 @Inject
-internal constructor(private val model: MainDataModel,
-                     private val mapper: ObjectMapper,
-                     private val context: Application,
-                     private val manager: SettingsManager,
-                     private val bus: RxBus) : ICommand {
+internal constructor(
+  private val model: MainDataModel,
+  private val mapper: ObjectMapper,
+  private val context: Application,
+  private val manager: SettingsManager,
+  private val bus: RxBus
+) : ICommand {
 
   override fun execute(e: IEvent) {
 
@@ -40,13 +42,13 @@ internal constructor(private val model: MainDataModel,
     val now = Date()
 
     if (nextCheck.after(now)) {
-      Timber.d("waiting for next check: %s", java.lang.Long.toString(nextCheck.time))
+      Timber.d("waiting for next check: %s", nextCheck.time.toString())
       return
     }
 
     val jsonNode: JsonNode
     try {
-      jsonNode = mapper.readValue<JsonNode>(URL(CHECK_URL), JsonNode::class.java)
+      jsonNode = mapper.readValue(URL(CHECK_URL), JsonNode::class.java)
     } catch (e1: IOException) {
       Timber.d(e1, "While reading json node")
       return
@@ -66,8 +68,10 @@ internal constructor(private val model: MainDataModel,
     if (suggestedVersion != model.pluginVersion) {
       var isOutOfDate = false
 
-      val currentVersion = model.pluginVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
-      val latestVersion = suggestedVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
+      val currentVersion =
+        model.pluginVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
+      val latestVersion =
+        suggestedVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
 
       var i = 0
       while (i < currentVersion.size && i < latestVersion.size && currentVersion[i] == latestVersion[i]) {
@@ -75,7 +79,7 @@ internal constructor(private val model: MainDataModel,
       }
 
       if (i < currentVersion.size && i < latestVersion.size) {
-        val diff = Integer.valueOf(currentVersion[i])!!.compareTo(Integer.valueOf(latestVersion[i]))
+        val diff = Integer.valueOf(currentVersion[i]).compareTo(Integer.valueOf(latestVersion[i]))
         isOutOfDate = diff < 0
       }
 
@@ -85,12 +89,12 @@ internal constructor(private val model: MainDataModel,
     }
 
     manager.setLastUpdated(now)
-    Timber.d("last check on: %s", java.lang.Long.toString(now.time))
+    Timber.d("last check on: %s", now.time.toString())
     Timber.d("plugin reported version: %s", model.pluginVersion)
     Timber.d("plugin suggested version: %s", suggestedVersion)
   }
 
   companion object {
-    private val CHECK_URL = "http://kelsos.net/musicbeeremote/versions.json"
+    private const val CHECK_URL = "http://kelsos.net/musicbeeremote/versions.json"
   }
 }

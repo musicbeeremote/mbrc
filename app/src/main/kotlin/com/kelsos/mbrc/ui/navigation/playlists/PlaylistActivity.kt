@@ -1,18 +1,17 @@
 package com.kelsos.mbrc.ui.navigation.playlists
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.PlaylistAdapter
 import com.kelsos.mbrc.adapters.PlaylistAdapter.OnPlaylistPressedListener
 import com.kelsos.mbrc.data.Playlist
-import com.kelsos.mbrc.services.PlaylistService
 import com.kelsos.mbrc.ui.activities.BaseActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.kelsos.mbrc.ui.widgets.MultiSwipeRefreshLayout
@@ -24,20 +23,25 @@ import java.net.ConnectException
 import javax.inject.Inject
 
 class PlaylistActivity : BaseActivity(),
-                         PlaylistView,
-                         OnPlaylistPressedListener,
-                         OnRefreshListener {
+  PlaylistView,
+  OnPlaylistPressedListener,
+  OnRefreshListener {
 
   private val PRESENTER_SCOPE: Class<*> = Presenter::class.java
 
-  @BindView(R.id.swipe_layout) lateinit var swipeLayout: MultiSwipeRefreshLayout
-  @BindView(R.id.playlist_list) lateinit var playlistList: EmptyRecyclerView
-  @BindView(R.id.empty_view) lateinit var emptyView: View
-  @BindView(R.id.list_empty_title) lateinit var emptyViewTitle: TextView
+  @BindView(R.id.swipe_layout)
+  lateinit var swipeLayout: MultiSwipeRefreshLayout
+  @BindView(R.id.playlist_list)
+  lateinit var playlistList: EmptyRecyclerView
+  @BindView(R.id.empty_view)
+  lateinit var emptyView: View
+  @BindView(R.id.list_empty_title)
+  lateinit var emptyViewTitle: TextView
 
-  @Inject lateinit var adapter: PlaylistAdapter
-  @Inject lateinit var service: PlaylistService
-  @Inject lateinit var presenter: PlaylistPresenter
+  @Inject
+  lateinit var adapter: PlaylistAdapter
+  @Inject
+  lateinit var presenter: PlaylistPresenter
   private lateinit var scope: Scope
 
   public override fun onCreate(savedInstanceState: Bundle?) {

@@ -3,9 +3,9 @@ package com.kelsos.mbrc.ui.dialogs
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.text.TextUtils
 import android.widget.EditText
+import androidx.fragment.app.DialogFragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
@@ -15,9 +15,12 @@ import com.kelsos.mbrc.data.ConnectionSettings
 
 class SettingsDialogFragment : DialogFragment() {
 
-  @BindView(R.id.settings_dialog_host) lateinit var hostEdit: EditText
-  @BindView(R.id.settings_dialog_name) lateinit var nameEdit: EditText
-  @BindView(R.id.settings_dialog_port) lateinit var portEdit: EditText
+  @BindView(R.id.settings_dialog_host)
+  lateinit var hostEdit: EditText
+  @BindView(R.id.settings_dialog_name)
+  lateinit var nameEdit: EditText
+  @BindView(R.id.settings_dialog_port)
+  lateinit var portEdit: EditText
 
   private var mListener: SettingsSaveListener? = null
   private lateinit var settings: ConnectionSettings

@@ -15,16 +15,18 @@ import com.raizlabs.android.dbflow.structure.Model
 
 @JsonPropertyOrder("genre", "count")
 @Table(name = "genre", database = RemoteDatabase::class)
-data class Genre(@JsonProperty("genre")
-                 @Column
-                 var genre: String? = null,
-                 @JsonProperty("count")
-                 @Column
-                 var count: Int = 0,
-                 @JsonIgnore
-                 @Column
-                 @PrimaryKey(autoincrement = true)
-                 var id: Long = 0) : Model {
+data class Genre(
+  @JsonProperty("genre")
+  @Column
+  var genre: String? = null,
+  @JsonProperty("count")
+  @Column
+  var count: Int = 0,
+  @JsonIgnore
+  @Column
+  @PrimaryKey(autoincrement = true)
+  var id: Long = 0
+) : Model {
   /**
    * Loads from the database the most recent version of the model based on it's primary keys.
    */

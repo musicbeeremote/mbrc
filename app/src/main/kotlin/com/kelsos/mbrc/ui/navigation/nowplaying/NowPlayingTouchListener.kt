@@ -1,23 +1,25 @@
 package com.kelsos.mbrc.ui.navigation.nowplaying
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import android.view.GestureDetector
 import android.view.MotionEvent
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import timber.log.Timber
 
-class NowPlayingTouchListener(context: Context, private val onLongClick : (Boolean) -> Unit): OnItemTouchListener {
+class NowPlayingTouchListener(context: Context, private val onLongClick: (Boolean) -> Unit) :
+  OnItemTouchListener {
   private val gestureDetector: GestureDetector
+
   init {
     gestureDetector = GestureDetector(context,
-        object : GestureDetector.SimpleOnGestureListener() {
-          override fun onLongPress(e: MotionEvent?) {
-            Timber.v("Marking start of long press event")
-            onLongClick.invoke(true)
-            super.onLongPress(e)
-          }
-        })
+      object : GestureDetector.SimpleOnGestureListener() {
+        override fun onLongPress(e: MotionEvent?) {
+          Timber.v("Marking start of long press event")
+          onLongClick.invoke(true)
+          super.onLongPress(e)
+        }
+      })
   }
 
   override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {

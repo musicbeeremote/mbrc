@@ -1,26 +1,47 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
+import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.domain.AlbumInfo
+import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.TrackRepository
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class AlbumTracksPresenterImpl
-@Inject constructor(private val repository: TrackRepository) :
-    BasePresenter<AlbumTracksView>(),
-    AlbumTracksPresenter {
+@Inject
+constructor(
+  private val repository: TrackRepository,
+  private val queue: QueueHandler
+) : BasePresenter<AlbumTracksView>(),
+  AlbumTracksPresenter {
   override fun load(album: AlbumInfo) {
-    val request = if (album.album.isNullOrEmpty()) {
-      repository.getNonAlbumTracks(album.artist)
-    } else {
-      repository.getAlbumTracks(album.album, album.artist)
+    scope.launch {
+      try {
+        view?.update(
+          when {
+            album.album.isEmpty() -> {
+              repository.getNonAlbumTracks(album.artist)
+            }
+            else -> {
+              repository.getAlbumTracks(album.album, album.artist)
+            }
+          }
+        )
+      } catch (e: Exception) {
+        Timber.v(e)
+      }
     }
+  }
 
-    addSubcription(request.subscribe ({
-      view?.update(it)
-    }) {
-      Timber.v(it)
-    })
+  override fun queue(entry: Track, action: String?) {
+    scope.launch {
+      if (action == null) {
+        queue.queueTrack(entry, true)
+      } else {
+        queue.queueTrack(entry, action, true)
+      }
+    }
   }
 }

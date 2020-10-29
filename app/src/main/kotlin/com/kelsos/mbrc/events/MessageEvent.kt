@@ -9,15 +9,11 @@ data class MessageEvent(override var type: String = "", override var data: Any =
 
   override val dataString: String
     get() {
-      val result: String
-      if (data.javaClass == TextNode::class.java) {
-        result = (data as TextNode).asText()
-      } else if (data.javaClass == String::class.java) {
-        result = data as String
-      } else {
-        result = ""
+      return when (data.javaClass) {
+        TextNode::class.java -> (data as TextNode).asText()
+        String::class.java -> data as String
+        else -> ""
       }
-      return result
     }
 
   companion object {

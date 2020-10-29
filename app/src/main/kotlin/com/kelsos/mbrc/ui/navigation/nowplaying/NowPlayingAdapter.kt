@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.MotionEventCompat
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -63,12 +62,13 @@ class NowPlayingAdapter
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
-    val view = inflater.inflate(R.layout.ui_list_track_item, parent, false)
-    val holder = TrackHolder(view)
+    val inflatedView = inflater.inflate(R.layout.ui_list_track_item, parent, false)
+    val holder = TrackHolder(inflatedView)
     holder.itemView.setOnClickListener { onClick(holder) }
     holder.container.setOnClickListener { onClick(holder) }
     holder.dragHandle.setOnTouchListener { view, motionEvent ->
-      if (MotionEventCompat.getActionMasked(motionEvent) == ACTION_DOWN) {
+      view.performClick()
+      if (motionEvent.action == ACTION_DOWN) {
         dragStartListener.onStartDrag(holder)
       }
       return@setOnTouchListener false
@@ -179,12 +179,16 @@ class NowPlayingAdapter
 
     @BindView(R.id.track_title)
     lateinit var title: TextView
+
     @BindView(R.id.track_artist)
     lateinit var artist: TextView
+
     @BindView(R.id.track_indicator_view)
     lateinit var trackPlaying: ImageView
+
     @BindView(R.id.track_container)
     lateinit var container: ConstraintLayout
+
     @BindView(R.id.drag_handle)
     lateinit var dragHandle: View
 

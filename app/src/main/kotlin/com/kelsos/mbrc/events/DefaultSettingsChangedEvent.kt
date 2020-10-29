@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.events
 
-class DefaultSettingsChangedEvent() {
+class DefaultSettingsChangedEvent {
 
   companion object {
     fun create(): DefaultSettingsChangedEvent {

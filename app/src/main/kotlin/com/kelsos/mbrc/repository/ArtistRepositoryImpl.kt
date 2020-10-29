@@ -1,49 +1,50 @@
 package com.kelsos.mbrc.repository
 
 import com.kelsos.mbrc.data.library.Artist
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.repository.data.LocalArtistDataSource
 import com.kelsos.mbrc.repository.data.RemoteArtistDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
-import rx.Completable
-import rx.Single
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ArtistRepositoryImpl
-@Inject constructor(private val localDataSource: LocalArtistDataSource,
-                    private val remoteDataSource: RemoteArtistDataSource) : ArtistRepository {
+@Inject
+constructor(
+  private val localDataSource: LocalArtistDataSource,
+  private val remoteDataSource: RemoteArtistDataSource,
+  private val dispatchers: AppDispatchers
+) : ArtistRepository {
 
-  override fun getArtistByGenre(genre: String): Single<FlowCursorList<Artist>> {
-    return localDataSource.getArtistByGenre(genre)
+  override suspend fun getArtistByGenre(genre: String): FlowCursorList<Artist> =
+    localDataSource.getArtistByGenre(genre)
+
+  override suspend fun getAllCursor(): FlowCursorList<Artist> = localDataSource.loadAllCursor()
+
+  override suspend fun getAndSaveRemote(): FlowCursorList<Artist> {
+    getRemote()
+    return localDataSource.loadAllCursor()
   }
 
-  override fun getAllCursor(): Single<FlowCursorList<Artist>> {
-    return localDataSource.loadAllCursor().toSingle()
-  }
-
-  override fun getAndSaveRemote(): Single<FlowCursorList<Artist>> {
-    return getRemote().andThen(localDataSource.loadAllCursor().toSingle())
-  }
-
-  override fun getRemote(): Completable {
+  override suspend fun getRemote() {
     localDataSource.deleteAll()
-    return remoteDataSource.fetch().doOnNext {
-      localDataSource.saveAll(it)
-    }.toCompletable()
+    withContext(dispatchers.io) {
+      remoteDataSource.fetch().collect {
+        localDataSource.saveAll(it)
+      }
+    }
   }
 
-  override fun search(term: String): Single<FlowCursorList<Artist>> {
-    return localDataSource.search(term)
-  }
+  override suspend fun search(term: String): FlowCursorList<Artist> = localDataSource.search(term)
 
-  override fun getAlbumArtistsOnly(): Single<FlowCursorList<Artist>> {
+  override suspend fun getAlbumArtistsOnly(): FlowCursorList<Artist> =
+    localDataSource.getAlbumArtists()
+
+  override suspend fun getAllRemoteAndShowAlbumArtist(): FlowCursorList<Artist> {
+    getRemote()
     return localDataSource.getAlbumArtists()
   }
 
-  override fun getAllRemoteAndShowAlbumArtist():  Single<FlowCursorList<Artist>> {
-    return getRemote().andThen(localDataSource.getAlbumArtists())
-  }
-
-  override fun cacheIsEmpty(): Single<Boolean> {
-    return localDataSource.isEmpty()
-  }
+  override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
 }

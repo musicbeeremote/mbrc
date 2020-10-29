@@ -34,10 +34,13 @@ class ConnectionManagerActivity : FontActivity(),
   ConnectionAdapter.ConnectionChangeListener {
   @Inject
   lateinit var bus: RxBus
+
   @Inject
   lateinit var presenter: ConnectionManagerPresenter
+
   @BindView(R.id.connection_list)
   lateinit var mRecyclerView: RecyclerView
+
   @BindView(R.id.toolbar)
   lateinit var mToolbar: MaterialToolbar
   private var mProgress: MaterialDialog? = null
