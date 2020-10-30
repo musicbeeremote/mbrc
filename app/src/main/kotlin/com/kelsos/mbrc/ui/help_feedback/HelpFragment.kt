@@ -8,16 +8,13 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.utilities.RemoteUtils
+import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import timber.log.Timber
 
 class HelpFragment : Fragment() {
 
-  @BindView(R.id.help_webview)
-  lateinit var helpWebview: WebView
+  lateinit var helpView: WebView
 
   override fun onStart() {
     super.onStart()
@@ -26,14 +23,14 @@ class HelpFragment : Fragment() {
     url = try {
       String.format(
         "https://mbrc.kelsos.net/help?version=%s",
-        RemoteUtils.getVersion(requireContext())
+        requireContext().getVersion()
       )
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.v(e, "Failed to get version")
       "https://mbrc.kelsos.net/help"
     }
 
-    helpWebview.loadUrl(url)
+    helpView.loadUrl(url)
   }
 
   override fun onCreateView(
@@ -43,8 +40,8 @@ class HelpFragment : Fragment() {
   ): View? {
     // Inflate the layout for this fragment
     val view = inflater.inflate(R.layout.fragment_help, container, false)
-    ButterKnife.bind(this, view)
-    helpWebview.webViewClient = RemoteWebViewClient()
+    helpView = view.findViewById(R.id.help_webview)
+    helpView.webViewClient = RemoteWebViewClient()
     return view
   }
 

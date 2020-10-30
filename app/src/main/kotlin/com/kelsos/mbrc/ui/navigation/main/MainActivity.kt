@@ -12,6 +12,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.ShareActionProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
@@ -19,7 +20,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.OnLongClick
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
@@ -84,8 +85,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   lateinit var albumCover: ImageView
   private var mShareActionProvider: ShareActionProvider? = null
 
-  var changeLogDialog: MaterialDialog? = null
-  var outOfDateDialog: MaterialDialog? = null
+  var changeLogDialog: AlertDialog? = null
+  var outOfDateDialog: AlertDialog? = null
 
   private var menu: Menu? = null
   private var volumeChangeListener: SeekBarThrottler? = null
@@ -163,11 +164,10 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun notifyPluginOutOfDate() {
-    outOfDateDialog = MaterialDialog.Builder(this)
-      .title(R.string.main__dialog_plugin_outdated_title)
-      .content(R.string.main__dialog_plugin_outdated_message)
-      .positiveText(android.R.string.ok)
-      .onPositive { materialDialog, _ -> materialDialog.dismiss() }
+    outOfDateDialog = MaterialAlertDialogBuilder(this)
+      .setTitle(R.string.main__dialog_plugin_outdated_title)
+      .setMessage(R.string.main__dialog_plugin_outdated_message)
+      .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
       .show()
   }
 

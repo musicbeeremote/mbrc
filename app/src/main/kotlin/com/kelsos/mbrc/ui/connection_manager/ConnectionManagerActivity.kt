@@ -1,15 +1,15 @@
 package com.kelsos.mbrc.ui.connection_manager
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.progressindicator.ProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
@@ -43,8 +43,6 @@ class ConnectionManagerActivity : FontActivity(),
 
   @BindView(R.id.toolbar)
   lateinit var mToolbar: MaterialToolbar
-  private var mProgress: MaterialDialog? = null
-  private var mContext: Context? = null
   private var adapter: ConnectionAdapter? = null
   private var scope: Scope? = null
 
@@ -56,11 +54,7 @@ class ConnectionManagerActivity : FontActivity(),
 
   @OnClick(R.id.connection_scan)
   internal fun onScanButtonClick() {
-    val mBuilder = MaterialDialog.Builder(mContext!!)
-    mBuilder.title(R.string.progress_scanning)
-    mBuilder.content(R.string.progress_scanning_message)
-    mBuilder.progress(true, 0)
-    mProgress = mBuilder.show()
+    findViewById<ProgressIndicator>(R.id.connection_manager__progress).isGone = false
     bus.post(MessageEvent(UserInputEventType.StartDiscovery))
   }
 
@@ -89,7 +83,6 @@ class ConnectionManagerActivity : FontActivity(),
 
   override fun onStart() {
     super.onStart()
-    mContext = this
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setTitle(R.string.connection_manager_title)
@@ -131,20 +124,15 @@ class ConnectionManagerActivity : FontActivity(),
   }
 
   private fun onDiscoveryStopped(event: DiscoveryStopped) {
+    findViewById<ProgressIndicator>(R.id.connection_manager__progress).isGone = true
 
-    if (mProgress != null) {
-      mProgress!!.dismiss()
-    }
-
-    val message: String
-    when (event.reason) {
-      DiscoveryStop.NO_WIFI -> message = getString(R.string.con_man_no_wifi)
-      DiscoveryStop.NOT_FOUND -> message = getString(R.string.con_man_not_found)
+    val message: String = when (event.reason) {
+      DiscoveryStop.NO_WIFI -> getString(R.string.con_man_no_wifi)
+      DiscoveryStop.NOT_FOUND -> getString(R.string.con_man_not_found)
       DiscoveryStop.COMPLETE -> {
-        message = getString(R.string.con_man_success)
         presenter.load()
+        getString(R.string.con_man_success)
       }
-      else -> message = getString(R.string.unknown_reason)
     }
 
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
@@ -152,7 +140,6 @@ class ConnectionManagerActivity : FontActivity(),
 
   private fun onUserNotification(event: NotifyUser) {
     val message = if (event.isFromResource) getString(event.resId) else event.message
-
     Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show()
   }
 

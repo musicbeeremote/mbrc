@@ -1,14 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.MenuItem
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.google.android.material.appbar.MaterialToolbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.TrackEntryAdapter
 import com.kelsos.mbrc.data.library.Track
@@ -25,15 +21,6 @@ import javax.inject.Inject
 class AlbumTracksActivity : FontActivity(),
   AlbumTracksView,
   TrackEntryAdapter.MenuItemSelectedListener {
-
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: MaterialToolbar
-
-  @BindView(R.id.list_tracks)
-  lateinit var listTracks: EmptyRecyclerView
-
-  @BindView(R.id.empty_view)
-  lateinit var emptyView: ConstraintLayout
 
   @Inject
   lateinit var adapter: TrackEntryAdapter
@@ -60,31 +47,34 @@ class AlbumTracksActivity : FontActivity(),
     val extras = intent.extras
 
     if (extras != null) {
-      album = extras.getParcelable<AlbumInfo>(ALBUM)
+      album = extras.getParcelable(ALBUM)
     }
 
-    if (album == null) {
+    val selectedAlbum = album
+    if (selectedAlbum == null) {
       finish()
       return
     }
 
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.setDisplayShowHomeEnabled(true)
+    setSupportActionBar(findViewById(R.id.toolbar))
+    val supportActionBar = supportActionBar ?: error("Actionbar should not be null")
+    supportActionBar.setDisplayHomeAsUpEnabled(true)
+    supportActionBar.setDisplayShowHomeEnabled(true)
 
-    if (TextUtils.isEmpty(album!!.album)) {
-      supportActionBar?.setTitle(R.string.non_album_tracks)
+    if (selectedAlbum.album.isEmpty()) {
+      supportActionBar.setTitle(R.string.non_album_tracks)
     } else {
-      supportActionBar?.title = album!!.album
+      supportActionBar.title = selectedAlbum.album
     }
+    supportActionBar.subtitle = selectedAlbum.artist
 
     presenter.attach(this)
-    presenter.load(album!!)
+    presenter.load(selectedAlbum)
     adapter.setMenuItemSelectedListener(this)
-    listTracks.layoutManager =
-      LinearLayoutManager(baseContext)
+    val listTracks: EmptyRecyclerView = findViewById(R.id.list_tracks)
+    listTracks.layoutManager = LinearLayoutManager(baseContext)
     listTracks.adapter = adapter
-    listTracks.emptyView = emptyView
+    listTracks.emptyView = findViewById(R.id.empty_view)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -104,8 +94,7 @@ class AlbumTracksActivity : FontActivity(),
   }
 
   override fun onMenuItemSelected(menuItem: MenuItem, track: Track) {
-    val action = actionHandler.trackSelected(menuItem)
-    presenter.queue(track, action)
+    presenter.queue(track, actionHandler.trackSelected(menuItem))
   }
 
   override fun onItemClicked(track: Track) {
@@ -136,6 +125,6 @@ class AlbumTracksActivity : FontActivity(),
   }
 
   companion object {
-    val ALBUM = "albumName"
+    const val ALBUM = "albumName"
   }
 }

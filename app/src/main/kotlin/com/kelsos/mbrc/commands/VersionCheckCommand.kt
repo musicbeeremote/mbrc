@@ -11,7 +11,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.MainDataModel
-import com.kelsos.mbrc.utilities.RemoteUtils
+import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import com.kelsos.mbrc.utilities.SettingsManager
 import timber.log.Timber
 import java.io.IOException
@@ -56,7 +56,7 @@ internal constructor(
 
     var version: String? = null
     try {
-      version = RemoteUtils.getVersion(context)
+      version = context.getVersion()
     } catch (e1: PackageManager.NameNotFoundException) {
       Timber.d(e1, "While reading the current version")
     }

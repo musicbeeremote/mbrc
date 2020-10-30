@@ -18,7 +18,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
 import com.kelsos.mbrc.ui.dialogs.WebViewDialog
-import com.kelsos.mbrc.utilities.RemoteUtils
+import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -68,7 +68,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     try {
-      val version = RemoteUtils.getVersion(requireContext())
+      val version = requireContext().getVersion()
       mVersion?.summary = resources.getString(R.string.settings_version_number, version)
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.d(e, "failed")

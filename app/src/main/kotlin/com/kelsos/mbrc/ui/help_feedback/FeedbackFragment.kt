@@ -17,7 +17,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.LogHelper
-import com.kelsos.mbrc.utilities.RemoteUtils
+import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
@@ -64,7 +64,7 @@ class FeedbackFragment : Fragment() {
     if (deviceInfo.isChecked) {
       val device = Build.DEVICE
       val manufacturer = Build.MANUFACTURER
-      val appVersion = RemoteUtils.getVersion(requireContext())
+      val appVersion = requireContext().getVersion()
       val androidVersion = Build.VERSION.RELEASE
 
       feedbackText += getString(

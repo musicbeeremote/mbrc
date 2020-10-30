@@ -20,7 +20,7 @@ class SocketActivityChecker {
     get() = Completable.timer(DELAY.toLong(), TimeUnit.SECONDS).subscribe({
       Timber.v("Ping was more than %d seconds ago", DELAY)
       pingTimeoutListener?.onTimeout()
-    }) { throwable -> Timber.v("Subscription failed") }
+    }) { Timber.v("Subscription failed") }
 
   fun stop() {
     Timber.v("Stopping activity checker")

@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.view.MenuItemCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -66,7 +65,6 @@ class NowPlayingActivity : BaseActivity(),
         it.clearFocus()
         it.setQuery("", false)
         searchMenuItem?.collapseActionView()
-        MenuItemCompat.collapseActionView(searchMenuItem)
         return true
       }
     }
@@ -80,7 +78,7 @@ class NowPlayingActivity : BaseActivity(),
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.nowplaying_search, menu)
     searchMenuItem = menu.findItem(R.id.now_playing_search)
-    searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
+    searchView = searchMenuItem?.actionView as SearchView
     searchView?.queryHint = getString(R.string.now_playing_search_hint)
     searchView?.setIconifiedByDefault(true)
     searchView?.setOnQueryTextListener(this)

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
+import com.kelsos.mbrc.utilities.RemoteUtils.getVersionCode
 import rx.Single
 import timber.log.Timber
 import java.util.*
@@ -63,7 +64,7 @@ constructor(
     return Single.fromCallable {
 
       val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
-      val currentVersion = RemoteUtils.getVersionCode(context)
+      val currentVersion = context.getVersionCode()
 
       if (lastVersionCode < currentVersion) {
         preferences.edit()

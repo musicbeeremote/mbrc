@@ -4,25 +4,24 @@ import android.app.Dialog
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.fragment.app.DialogFragment
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class WebViewDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val activity = requireActivity()
-    val builder = MaterialDialog.Builder(activity)
-    val webView = WebView(activity)
-    webView.loadUrl(arguments?.getString(ARG_URL) ?: throw Exception("argument null"))
-    builder.customView(webView, false)
-    builder.title(arguments?.getInt(ARG_TITLE) ?: throw Exception("argument null"))
-    builder.positiveText(android.R.string.ok)
-    builder.onPositive { dialog, _ -> dialog.dismiss() }
-    return builder.build()
+    val title = arguments?.getInt(ARG_TITLE) ?: throw Exception("argument null")
+    val url = arguments?.getString(ARG_URL) ?: throw Exception("argument null")
+
+    return MaterialAlertDialogBuilder(requireActivity())
+      .setTitle(title)
+      .setView(WebView(requireActivity()).apply {
+        loadUrl(url)
+      }).setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+      .show()
   }
 
   companion object {
-
-    val ARG_URL = "url"
-    val ARG_TITLE = "title"
+    const val ARG_URL = "url"
+    const val ARG_TITLE = "title"
   }
 }
