@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.services
 
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.constants.Protocol
@@ -89,8 +90,9 @@ internal constructor(
 
   private val isWifiConnected: Boolean
     get() {
-      val current = connectivityManager.activeNetworkInfo
-      return current != null && current.type == ConnectivityManager.TYPE_WIFI
+      val network = connectivityManager.activeNetwork ?: return false
+      val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+      return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
     }
 
   private fun discoveryObservable(): Observable<DiscoveryMessage> {

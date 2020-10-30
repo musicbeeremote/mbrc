@@ -8,8 +8,8 @@ import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.MainDataModel
-import rx.Completable
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,50 +27,49 @@ constructor(
     isHandshakeComplete = false
   }
 
-  fun preProcessIncoming(incoming: String): Completable {
-    return Completable.fromAction {
+  fun preProcessIncoming(incoming: String) {
       val replies = incoming.split("\r\n".toRegex())
         .dropLastWhile(String::isEmpty)
         .toTypedArray()
 
       replies.forEach {
-        Timber.v("message -> %s", it)
+        Timber.v("received:: $it")
 
         val node = mapper.readValue(it, JsonNode::class.java)
-        val context = node.path("context").textValue()
+        val context = node.path("context")
+          .textValue()
+          .trim()
+          .toLowerCase(Locale.getDefault())
 
-        if (context.contains(Protocol.ClientNotAllowed)) {
+        if (context == Protocol.ClientNotAllowed) {
           bus.post(MessageEvent(ProtocolEventType.InformClientNotAllowed))
-          return@fromAction
+          return
         }
 
         if (!isHandshakeComplete) {
-          when {
-            context.contains(Protocol.Player) -> bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
-            context.contains(Protocol.ProtocolTag) -> {
-
-              val protocolVersion: Int = try {
-                Integer.parseInt(node.path(Const.DATA).asText())
-              } catch (ignore: Exception) {
-                2
-              }
-
-              model.pluginProtocol = protocolVersion
-              if (model.apiOutOfDate) {
-                bus.post(MessageEvent(ProtocolEventType.InformClientPluginOutOfDate))
-              }
-              isHandshakeComplete = true
-              bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
-            }
-            else -> {
-              return@fromAction
-            }
+          when(context) {
+            Protocol.Player -> bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
+            Protocol.ProtocolTag -> handleProtocolMessage(node)
+            else -> return
           }
         }
 
         bus.post(MessageEvent(context, node.path(Const.DATA)))
       }
-    }
+  }
 
+  private fun handleProtocolMessage(node: JsonNode) {
+    model.pluginProtocol = getProtocolVersion(node)
+    if (model.apiOutOfDate) {
+      bus.post(MessageEvent(ProtocolEventType.InformClientPluginOutOfDate))
+    }
+    isHandshakeComplete = true
+    bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))
+  }
+
+  private fun getProtocolVersion(node: JsonNode): Int = try {
+    Integer.parseInt(node.path(Const.DATA).asText())
+  } catch (ignore: Exception) {
+    2
   }
 }

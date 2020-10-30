@@ -26,7 +26,6 @@ import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.OPEN
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PLAY
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.utilities.SettingsManager
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -39,7 +38,6 @@ constructor(
   bus: RxBus,
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
-  private val settings: SettingsManager,
   private val model: NotificationModel,
   private val notificationManager: NotificationManagerCompat
 ) {

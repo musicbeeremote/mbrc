@@ -42,7 +42,7 @@ constructor() : RxBus {
     val subscriptions: MutableList<Subscription> =
       activeSubscriptions[receiver] ?: LinkedList<Subscription>()
     subscriptions.add(subscription)
-    activeSubscriptions.put(receiver, subscriptions)
+    activeSubscriptions[receiver] = subscriptions
   }
 
   override fun unregister(receiver: Any) {

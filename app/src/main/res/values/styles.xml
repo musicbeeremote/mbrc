@@ -8,7 +8,15 @@
     <item name="android:textColorSecondary">@color/secondary_text_material_light</item>
   </style>
 
-  <style name="Theme.App.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+  <style name="Theme.App.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" >
+    <item name="autoCompleteTextViewStyle">@style/Widget.App.AutoCompleteTextView.SearchView</item>
+
+  </style>
+
+  <style name="Widget.App.AutoCompleteTextView.SearchView" parent="Widget.AppCompat.Light.AutoCompleteTextView" >
+    <item name="android:textColorHint">#5000</item>
+    <item name="android:textColor">@color/secondary_text_material_light</item>
+  </style>>
 
   <style name="Theme.App.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 

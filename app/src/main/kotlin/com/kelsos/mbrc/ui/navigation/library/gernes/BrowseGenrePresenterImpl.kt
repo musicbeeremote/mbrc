@@ -46,7 +46,6 @@ constructor(
     scope.launch {
       view?.search(term)
       try {
-
         view?.update(getData(term))
       } catch (e: Exception) {
         Timber.v(e, "Error while loading the data from the database")

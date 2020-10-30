@@ -10,19 +10,21 @@ import com.kelsos.mbrc.model.MainDataModel
 import javax.inject.Inject
 
 class KeyVolumeUpCommand
-@Inject constructor(private val model: MainDataModel, private val bus: RxBus) : ICommand {
+@Inject
+constructor(
+  private val model: MainDataModel,
+  private val bus: RxBus
+) : ICommand {
 
   override fun execute(e: IEvent) {
     if (model.volume <= 90) {
       val mod = model.volume % 10
       val volume: Int
 
-      if (mod == 0) {
-        volume = model.volume + 10
-      } else if (mod < 5) {
-        volume = model.volume + (10 - mod)
-      } else {
-        volume = model.volume + (20 - mod)
+      volume = when {
+        mod == 0 -> model.volume + 10
+        mod < 5 -> model.volume + (10 - mod)
+        else -> model.volume + (20 - mod)
       }
 
       bus.post(MessageEvent.action(UserAction(Protocol.PlayerVolume, volume)))

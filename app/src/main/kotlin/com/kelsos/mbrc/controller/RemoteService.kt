@@ -23,17 +23,21 @@ import javax.inject.Singleton
 class RemoteService : Service(), ForegroundHooks {
 
   private val controllerBinder = ControllerBinder()
+
   @Inject
   lateinit var remoteController: RemoteController
+
   @Inject
   lateinit var discovery: ServiceDiscovery
+
   @Inject
   lateinit var receiver: RemoteBroadcastReceiver
+
   @Inject
   lateinit var notificationService: NotificationService
 
-  private var threadPoolExecutor: ExecutorService? = null
-  private var scope: Scope? = null
+  private lateinit var threadPoolExecutor: ExecutorService
+  private lateinit var scope: Scope
 
   override fun onBind(intent: Intent?): IBinder {
     return controllerBinder
@@ -49,11 +53,14 @@ class RemoteService : Service(), ForegroundHooks {
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
-    CommandRegistration.register(remoteController, scope!!)
-    threadPoolExecutor = Executors.newSingleThreadExecutor { Thread(it, "message-thread") }
-    threadPoolExecutor!!.execute(remoteController)
+    CommandRegistration.register(remoteController, scope)
+    threadPoolExecutor = Executors.newSingleThreadExecutor {
+      Thread(it, "message-thread")
+    }
+    threadPoolExecutor.execute(remoteController)
+
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
-    discovery.startDiscovery { }
+    discovery.startDiscovery()
 
     return super.onStartCommand(intent, flags, startId)
   }
@@ -64,7 +71,7 @@ class RemoteService : Service(), ForegroundHooks {
     remoteController.executeCommand(MessageEvent(UserInputEventType.CancelNotification))
     remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
     CommandRegistration.unregister(remoteController)
-    threadPoolExecutor?.shutdownNow()
+    threadPoolExecutor.shutdownNow()
     Timber.d("Background Service::Destroyed")
     Toothpick.closeScope(this)
   }
