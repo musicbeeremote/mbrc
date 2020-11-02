@@ -20,8 +20,12 @@ import com.kelsos.mbrc.mappers.InetAddressMapper
 import com.kelsos.mbrc.repository.ConnectionRepository
 import com.kelsos.mbrc.utilities.SocketActivityChecker
 import com.kelsos.mbrc.utilities.SocketActivityChecker.PingTimeoutListener
-import rx.Completable
-import rx.Subscription
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -34,7 +38,6 @@ import java.net.SocketAddress
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,8 +55,9 @@ constructor(
   private var socket: Socket? = null
   private var output: PrintWriter? = null
   private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
-
-  private var subscription: Subscription? = null
+  private val job = SupervisorJob()
+  private val context = job + executor.asCoroutineDispatcher()
+  private val scope = CoroutineScope(context)
 
   init {
     startSocket()
@@ -64,23 +68,23 @@ constructor(
   }
 
   private fun startSocket() {
-    if (subscription != null && !subscription!!.isUnsubscribed) {
-      Timber.v("A subscription is already active")
-      return
-    }
+    context.cancelChildren()
+    scope.launch {
+      try {
+        delay(3000)
+        val settings = connectionRepository.getDefault()
+        if (settings == null) {
+          socketManager(STOP)
+          return@launch
+        }
 
-    subscription = Completable.timer(DELAY.toLong(), TimeUnit.SECONDS).subscribe({
-      val connectionSettings = connectionRepository.default
-
-      if (connectionSettings == null) {
-        socketManager(STOP)
-        return@subscribe
+        Timber.v("Starting connection to mbrc://${settings.address}:${settings.port}", )
+        executor.execute(SocketConnection(settings))
+        numOfRetries++
+      } catch (e: Exception) {
+        Timber.v(e, "Connection was unsuccessful")
       }
-
-      Timber.v("Attempting connection on %s", connectionSettings)
-      executor.execute(SocketConnection(connectionSettings))
-      numOfRetries++
-    }) { Timber.v(it, "Failed") }
+    }
   }
 
   fun socketManager(@Action action: Int) {
@@ -110,7 +114,7 @@ constructor(
       }
       STOP -> shouldStop = true
       TERMINATE -> {
-        subscription?.unsubscribe()
+        context.cancelChildren()
         shouldStop = true
         cleanupSocket()
       }
@@ -234,7 +238,6 @@ constructor(
   }
 
   companion object {
-    private const val DELAY = 3
     private const val MAX_RETRIES = 3
     private const val SOCKET_BUFFER = 2 * 4096
   }

@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class RemotePlaylistDataSource
 @Inject constructor(private val service: ApiBase) : RemoteDataSource<Playlist> {
-  override fun fetch(): Flow<List<Playlist>> {
+  override suspend fun fetch(): Flow<List<Playlist>> {
     return service.getAllPages(Protocol.PlaylistList, Playlist::class)
   }
 }

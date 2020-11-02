@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class RemoteTrackDataSource
 @Inject constructor(private val service: ApiBase) : RemoteDataSource<Track> {
-  override fun fetch(): Flow<List<Track>> {
+  override suspend fun fetch(): Flow<List<Track>> {
     return service.getAllPages(Protocol.LibraryBrowseTracks, Track::class)
   }
 }

@@ -18,11 +18,6 @@ class DiscoveryMessage {
   var context: String? = null
 
   override fun toString(): String {
-    return "{" +
-        "name='" + name + '\'' +
-        ", address='" + address + '\'' +
-        ", port=" + port +
-        ", context='" + context + '\'' +
-        '}'
+    return "{name='$name', address='$address', port=$port, context='$context'}"
   }
 }

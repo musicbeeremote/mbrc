@@ -20,7 +20,7 @@ constructor(
   private val repository: ConnectionRepository
 ) : RequestManager {
 
-  override fun openConnection(handshake: Boolean): ActiveConnection {
+  override suspend fun openConnection(handshake: Boolean): ActiveConnection {
     val firstMessage = if (handshake) SocketMessage.create(Protocol.Player, "Android") else null
     val socket = connect(firstMessage)
 
@@ -68,9 +68,9 @@ constructor(
     }
   }
 
-  private fun connect(firstMessage: SocketMessage?): Socket {
+  private suspend fun connect(firstMessage: SocketMessage?): Socket {
     val mapper = InetAddressMapper()
-    val connectionSettings = checkNotNull(repository.default)
+    val connectionSettings = checkNotNull(repository.getDefault())
 
     try {
       val socketAddress = mapper.map(connectionSettings)

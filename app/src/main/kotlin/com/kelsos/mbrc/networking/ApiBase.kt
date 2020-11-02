@@ -19,7 +19,7 @@ constructor(
   private val apiRequestManager: RequestManager
 ) {
 
-  fun <T> getItem(
+  suspend fun <T> getItem(
     request: String,
     kClazz: KClass<T>,
     payload: Any = ""
@@ -32,7 +32,7 @@ constructor(
     return mapper.readValue<GenericSocketMessage<T>>(response, type).data
   }
 
-  fun <T : Any> getAllPages(request: String, clazz: KClass<T>): Flow<List<T>> {
+  suspend fun <T : Any> getAllPages(request: String, clazz: KClass<T>): Flow<List<T>> {
     val factory = mapper.typeFactory
     val inner = factory.constructParametricType(Page::class.java, clazz.java)
     val type = factory.constructParametricType(GenericSocketMessage::class.java, inner)

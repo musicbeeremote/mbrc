@@ -6,7 +6,7 @@ interface RemoteDataSource<T> {
   /**
    * Retrieves all the available data from a remote data source
    */
-  fun fetch(): Flow<List<T>>
+  suspend fun fetch(): Flow<List<T>>
 
   companion object {
     const val LIMIT = 800

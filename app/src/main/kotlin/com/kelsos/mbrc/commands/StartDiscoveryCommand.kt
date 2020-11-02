@@ -6,9 +6,12 @@ import com.kelsos.mbrc.services.ServiceDiscovery
 import javax.inject.Inject
 
 class StartDiscoveryCommand
-@Inject constructor(private val mDiscovery: ServiceDiscovery) : ICommand {
+@Inject
+constructor(
+  private val discovery: ServiceDiscovery
+) : ICommand {
 
   override fun execute(e: IEvent) {
-    mDiscovery.startDiscovery()
+    discovery.startDiscovery()
   }
 }

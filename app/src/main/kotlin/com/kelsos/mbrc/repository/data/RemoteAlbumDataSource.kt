@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class RemoteAlbumDataSource
 @Inject constructor(private val service: ApiBase) : RemoteDataSource<Album> {
-  override fun fetch(): Flow<List<Album>> {
+  override suspend fun fetch(): Flow<List<Album>> {
     return service.getAllPages(Protocol.LibraryBrowseAlbums, Album::class)
   }
 }

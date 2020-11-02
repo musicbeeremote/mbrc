@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class RemoteNowPlayingDataSource
 @Inject constructor(private val service: ApiBase) : RemoteDataSource<NowPlaying> {
-  override fun fetch(): Flow<List<NowPlaying>> {
+  override suspend fun fetch(): Flow<List<NowPlaying>> {
     return service.getAllPages(Protocol.NowPlayingList, NowPlaying::class)
   }
 }

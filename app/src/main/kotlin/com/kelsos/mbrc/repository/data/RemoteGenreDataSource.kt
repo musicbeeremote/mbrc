@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class RemoteGenreDataSource
 @Inject constructor(private val service: ApiBase) : RemoteDataSource<Genre> {
-  override fun fetch(): Flow<List<Genre>> {
+  override suspend fun fetch(): Flow<List<Genre>> {
     return service.getAllPages(Protocol.LibraryBrowseGenres, Genre::class)
   }
 }

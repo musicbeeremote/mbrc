@@ -6,38 +6,46 @@ import android.content.res.Resources
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.data.ConnectionSettings_Table
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.raizlabs.android.dbflow.sql.language.SQLite
+import kotlinx.coroutines.withContext
 
 import javax.inject.Inject
 
 class ConnectionRepositoryImpl
 @Inject constructor(
   private val preferences: SharedPreferences,
-  private val resources: Resources
+  private val resources: Resources,
+  private val dispatchers: AppDispatchers
 ) : ConnectionRepository {
 
-  override fun save(settings: ConnectionSettings) {
+  override suspend fun save(settings: ConnectionSettings) = withContext(dispatchers.db) {
     settings.save()
 
     if (count() == 1L) {
-      default = last
+      last?.let { settings ->
+        setDefault(settings)
+      }
     }
   }
 
-  override fun delete(settings: ConnectionSettings) {
+  override suspend fun delete(settings: ConnectionSettings) = withContext(dispatchers.db) {
     val oldId = settings.id
 
     settings.delete()
 
     if (oldId != defaultId) {
-      return
+      return@withContext
     }
 
     val count = count()
     if (count == 0L) {
       defaultId = -1
     } else {
-      default = getItemBefore(oldId) ?: first
+      val connectionSettings = getItemBefore(oldId) ?: first
+      connectionSettings?.let { settings ->
+        setDefault(settings)
+      }
     }
   }
 
@@ -61,29 +69,26 @@ class ConnectionRepositoryImpl
       .orderBy(ConnectionSettings_Table.id, false)
       .querySingle()
 
-  override fun update(settings: ConnectionSettings) {
+  override suspend fun update(settings: ConnectionSettings) = withContext(dispatchers.db) {
     settings.update()
   }
 
-  override var default: ConnectionSettings?
-    get() {
-      val defaultId = defaultId
-      if (defaultId < 0) {
-        return null
-      }
+  override suspend fun setDefault(settings: ConnectionSettings) {
+    defaultId = settings.id
+  }
 
-      return SQLite.select()
-        .from(ConnectionSettings::class.java)
-        .where(ConnectionSettings_Table.id.`is`(defaultId))
-        .querySingle()
+  override suspend fun getDefault(): ConnectionSettings? = withContext(dispatchers.db) {
+    val defaultId = defaultId
+    if (defaultId < 0) {
+      return@withContext null
     }
-    set(settings) {
-      if (settings == null) {
-        return
-      }
 
-      defaultId = settings.id
-    }
+    return@withContext SQLite.select()
+      .from(ConnectionSettings::class.java)
+      .where(ConnectionSettings_Table.id.`is`(defaultId))
+      .querySingle()
+
+  }
 
   override var defaultId: Long
     get() {
@@ -95,11 +100,12 @@ class ConnectionRepositoryImpl
       this.preferences.edit().putLong(key, id).apply()
     }
 
-  override val all: List<ConnectionSettings>
-    get() = SQLite.select().from(ConnectionSettings::class.java).queryList()
+  override suspend fun getAll(): List<ConnectionSettings>  = withContext(dispatchers.db) {
+    return@withContext SQLite.select().from(ConnectionSettings::class.java).queryList()
+  }
 
-  override fun count(): Long {
-    return SQLite.selectCountOf().from(ConnectionSettings::class.java).count()
+  override suspend fun count(): Long = withContext(dispatchers.db) {
+    return@withContext SQLite.selectCountOf().from(ConnectionSettings::class.java).count()
   }
 
 }
