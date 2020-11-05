@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:tools="http://schemas.android.com/tools">
+
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/changelog"
+    android:layout_width="match_parent"
+    tools:listitem="@layout/changelog_dialog__header"
+    tools:itemCount="5"
+    android:layout_height="match_parent"/>
+
+</FrameLayout>

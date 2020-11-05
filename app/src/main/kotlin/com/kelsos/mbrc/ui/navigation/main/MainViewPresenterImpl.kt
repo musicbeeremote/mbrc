@@ -78,13 +78,9 @@ class MainViewPresenterImpl
       }
     }
 
-    addSubscription(settingsManager.shouldShowChangeLog().subscribe({
-      if (it) {
-        view?.showChangeLog()
-      }
-    }) {
-
-    })
+    if (settingsManager.shouldShowChangeLog()) {
+      view?.showChangeLog()
+    }
   }
 
   override fun requestNowPlayingPosition() {
@@ -98,6 +94,7 @@ class MainViewPresenterImpl
 
   override fun attach(view: MainView) {
     super.attach(view)
+    load()
     this.bus.register(
       this,
       CoverChangedEvent::class.java,
@@ -153,7 +150,6 @@ class MainViewPresenterImpl
         this.view?.notifyPluginOutOfDate()
       }
     }, true)
-    load()
   }
 
   override fun detach() {

@@ -61,7 +61,7 @@ constructor() : RxBus {
     //noinspection unchecked
     val observable = serializedRelay.filter { it.javaClass == eventClass }.map { obj -> obj as T }
     val scheduler = if (main) AndroidSchedulers.mainThread() else Schedulers.immediate()
-    return observable.observeOn(scheduler).subscribe(onNext)
+    return observable.onBackpressureBuffer().observeOn(scheduler).subscribe(onNext)
   }
 
   override fun post(event: Any) {

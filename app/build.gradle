@@ -1,8 +1,6 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'idea'
@@ -109,6 +107,8 @@ android {
   productFlavors {
     play {
       ext.enableCrashlytics = true
+      apply plugin: 'com.google.gms.google-services'
+      apply plugin: 'com.google.firebase.crashlytics'
     }
 
     github {
@@ -176,7 +176,8 @@ ext {
 }
 
 dependencies {
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+  implementation project(path: ':changelog')
+  implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
     //Instrumentation Test dependencies
   androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
@@ -246,7 +247,7 @@ dependencies {
   implementation 'io.reactivex:rxkotlin:0.60.0'
   implementation 'com.jakewharton.timber:timber:4.7.1'
   implementation 'com.jakewharton.rxrelay:rxrelay:1.2.0'
-  implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+  implementation 'androidx.constraintlayout:constraintlayout:2.0.3'
 
   implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
 
@@ -268,17 +269,17 @@ allprojects {
     if (signProperties.exists()) {
       def prop = new Properties()
       prop.load(new FileInputStream(signProperties))
-      def filepath = prop.getAt("keys")
+      def filepath = prop["keys"]
       def keyProperties = file(filepath)
       if (keyProperties.exists()) {
         def props = new Properties()
         props.load(new FileInputStream(keyProperties))
-        def keystorePath = props.getAt('keystore')
+        def keystorePath = props['keystore']
         def releaseConfig = android.signingConfigs['release']
         releaseConfig.storeFile = file(keystorePath)
-        releaseConfig.storePassword = props.getAt('storePass')
-        releaseConfig.keyAlias = props.getAt('keyAlias')
-        releaseConfig.keyPassword = props.getAt('keyPass')
+        releaseConfig.storePassword = props['storePass']
+        releaseConfig.keyAlias = props['keyAlias']
+        releaseConfig.keyPassword = props['keyPass']
       }
     }
   }

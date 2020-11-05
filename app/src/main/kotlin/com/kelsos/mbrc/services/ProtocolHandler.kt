@@ -28,6 +28,7 @@ constructor(
   }
 
   fun preProcessIncoming(incoming: String) {
+    try {
       val replies = incoming.split("\r\n".toRegex())
         .dropLastWhile(String::isEmpty)
         .toTypedArray()
@@ -47,7 +48,7 @@ constructor(
         }
 
         if (!isHandshakeComplete) {
-          when(context) {
+          when (context) {
             Protocol.Player -> bus.post(MessageEvent(ProtocolEventType.InitiateProtocolRequest))
             Protocol.ProtocolTag -> handleProtocolMessage(node)
             else -> return
@@ -56,6 +57,9 @@ constructor(
 
         bus.post(MessageEvent(context, node.path(Const.DATA)))
       }
+    } catch (e: Exception) {
+      Timber.v(e, "Failure while processing incoming data")
+    }
   }
 
   private fun handleProtocolMessage(node: JsonNode) {
