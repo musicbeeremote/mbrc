@@ -3,6 +3,7 @@ package com.kelsos.mbrc.ui.preferences
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
@@ -12,8 +13,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.constants.UserInputEventType
-import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.controller.RemoteService
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.ui.connection_manager.ConnectionManagerActivity
@@ -74,17 +74,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
       Timber.d(e, "failed")
     }
 
-    val showNotification =
-      findPreference<CheckBoxPreference>(resources.getString(R.string.settings_key_notification_control))
-
-    showNotification?.setOnPreferenceChangeListener { _, newValue ->
-      val value = newValue as Boolean
-      if (!value) {
-        bus!!.post(MessageEvent(UserInputEventType.CancelNotification))
-      }
-      true
-    }
-
     val mLicense = findPreference<Preference>(resources.getString(R.string.settings_key_license))
     mLicense?.setOnPreferenceClickListener {
       showLicenseDialog()
@@ -97,11 +86,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
   private fun requestPhoneStatePermission() {
-    ActivityCompat.requestPermissions(
-      requireActivity(),
-      arrayOf(Manifest.permission.READ_PHONE_STATE),
-      REQUEST_CODE
-    )
+    requestPermissions(arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_CODE)
   }
 
   private fun hasPhonePermission(): Boolean {
@@ -141,6 +126,31 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
   fun setBus(bus: RxBus) {
     this.bus = bus
+  }
+
+  override fun onRequestPermissionsResult(
+    requestCode: Int,
+    permissions: Array<out String>,
+    grantResults: IntArray
+  ) {
+    if (
+      requestCode == REQUEST_CODE &&
+      grantResults.isNotEmpty() &&
+      grantResults.first() == PackageManager.PERMISSION_GRANTED
+    ) {
+      requireActivity().run {
+        Timber.v("Restarting service")
+        stopService(Intent(this, RemoteService::class.java))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          startForegroundService(Intent(this, RemoteService::class.java))
+        } else {
+          startService(Intent(this, RemoteService::class.java))
+        }
+      }
+    } else {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
   }
 
   companion object {

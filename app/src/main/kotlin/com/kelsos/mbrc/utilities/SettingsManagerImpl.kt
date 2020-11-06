@@ -2,9 +2,11 @@ package com.kelsos.mbrc.utilities
 
 import android.app.Application
 import android.content.SharedPreferences
+import androidx.annotation.StringDef
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersionCode
+import com.kelsos.mbrc.utilities.SettingsManager.Companion.NONE
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -35,6 +37,10 @@ constructor(
   private fun loggingEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_debug_logging), false)
   }
+
+  @SettingsManager.CallAction
+  override fun getCallAction(): String = preferences.getString(
+    getKey(R.string.settings_key_incoming_call_action), NONE) ?: NONE
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
@@ -79,7 +85,21 @@ constructor(
 }
 
 interface SettingsManager {
+  @CallAction fun getCallAction(): String
 
+  @StringDef(NONE,
+    PAUSE,
+    STOP,
+    REDUCE)
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class CallAction
+
+  companion object {
+    const val NONE = "none"
+    const val PAUSE = "pause"
+    const val STOP = "stop"
+    const val REDUCE = "reduce"
+  }
   suspend fun shouldDisplayOnlyAlbumArtists(): Boolean
   fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
   fun shouldShowChangeLog(): Boolean

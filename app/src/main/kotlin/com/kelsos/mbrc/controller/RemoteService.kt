@@ -47,7 +47,7 @@ class RemoteService : Service(), ForegroundHooks {
     super.onCreate()
     scope = Toothpick.openScope(application)
     Toothpick.inject(this, scope)
-    this.registerReceiver(receiver, receiver.filter())
+    this.registerReceiver(receiver, receiver.filter(this))
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
