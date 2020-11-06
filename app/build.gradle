@@ -1,11 +1,14 @@
 import java.text.SimpleDateFormat
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'idea'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
+plugins {
+  id "com.google.protobuf" version "0.8.12"
+  id 'com.android.application'
+  id 'kotlin-android'
+  id 'kotlin-kapt'
+  id 'idea'
+  id 'jacoco'
+  id 'com.github.kt3k.coveralls'
+}
 
 repositories {
   maven { url 'https://maven.fabric.io/public' }
@@ -66,7 +69,7 @@ android {
   }
 
   dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.0'
   }
 
   signingConfigs {
@@ -247,9 +250,13 @@ dependencies {
   implementation 'io.reactivex:rxkotlin:0.60.0'
   implementation 'com.jakewharton.timber:timber:4.7.1'
   implementation 'com.jakewharton.rxrelay:rxrelay:1.2.0'
-  implementation 'androidx.constraintlayout:constraintlayout:2.0.3'
+  implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
   implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
+
+  implementation  "androidx.datastore:datastore-core:1.0.0-alpha02"
+  implementation  "com.google.protobuf:protobuf-javalite:3.10.0"
+
 
   debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
 
@@ -261,6 +268,26 @@ dependencies {
   playImplementation 'com.google.firebase:firebase-crashlytics-ktx'
   playImplementation 'com.google.firebase:firebase-analytics-ktx'
 }
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:3.10.0"
+  }
+
+  // Generates the java Protobuf-lite code for the Protobufs in this project. See
+  // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+  // for more information.
+  generateProtoTasks {
+    all().each { task ->
+      task.builtins {
+        java {
+          option 'lite'
+        }
+      }
+    }
+  }
+}
+
 
 allprojects {
   afterEvaluate { project ->
