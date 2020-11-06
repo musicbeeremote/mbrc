@@ -9,6 +9,7 @@
     <feature>Integrates the library search functionality to the library screen.</feature>
     <removed>Removes the ability to hide the notification due to background execution limitations introduced in Android.</removed>
     <removed>Removes fast scrolling due to performance issues.</removed>
+    <feature>Improves media integration with Android</feature>
   </version>
   <version
     release="Jan 25,2017"

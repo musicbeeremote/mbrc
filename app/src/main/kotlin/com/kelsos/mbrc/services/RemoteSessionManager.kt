@@ -1,15 +1,11 @@
-@file:Suppress("DEPRECATION")
 
 package com.kelsos.mbrc.services
 
-import android.annotation.TargetApi
 import android.app.Application
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
 import android.media.AudioManager
-import android.media.RemoteControlClient
-import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
@@ -34,7 +30,6 @@ import javax.inject.Singleton
 
 @Singleton
 class RemoteSessionManager
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 @Inject
 constructor(
   context: Application,
@@ -48,10 +43,8 @@ constructor(
   lateinit var handler: MediaIntentHandler
 
   init {
-
     bus.register(this, RemoteClientMetaData::class.java) { this.metadataUpdate(it) }
     bus.register(this, PlayStateChange::class.java) { this.updateState(it) }
-    bus.register(this, PlayStateChange::class.java) { this.onPlayStateChange(it) }
     bus.register(
       this,
       ConnectionStatusChangeEvent::class.java
@@ -93,6 +86,10 @@ constructor(
       override fun onStop() {
         postAction(UserAction(Protocol.PlayerStop, true))
       }
+
+      override fun onSeekTo(pos: Long) {
+        postAction(UserAction.create(Protocol.NowPlayingPosition, pos))
+      }
     })
   }
 
@@ -104,7 +101,6 @@ constructor(
         val playbackState = builder.build()
         mediaSession.isActive = false
         mediaSession.setPlaybackState(playbackState)
-        ensureTransportControls(playbackState)
       }
       abandonFocus()
     }
@@ -126,94 +122,42 @@ constructor(
     val bitmap = RemoteUtils.coverBitmapSync(data.coverPath)
 
     val builder = MediaMetadataCompat.Builder()
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
-    builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
-    builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+      .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, trackInfo.album)
+      .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
+      .putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.title)
+      .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+      .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, data.duration)
     mediaSession.setMetadata(builder.build())
+
   }
 
-  private fun updateState(stateChange: PlayStateChange) {
+  private fun updateState(change: PlayStateChange) {
+    when (change.state) {
+      PlayerState.PLAYING -> requestFocus()
+      else -> abandonFocus()
+    }
+
     if (mediaSession == null) {
       return
     }
 
     val builder = PlaybackStateCompat.Builder()
     builder.setActions(PLAYBACK_ACTIONS)
-    when (stateChange.state) {
+    when (change.state) {
       PlayerState.PLAYING -> {
-        builder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 1f)
+        builder.setState(PlaybackStateCompat.STATE_PLAYING, change.position, 1f)
         mediaSession.isActive = true
-
       }
       PlayerState.PAUSED -> {
-        builder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0f)
+        builder.setState(PlaybackStateCompat.STATE_PAUSED, change.position, 0f)
         mediaSession.isActive = true
-
       }
       else -> {
-        builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+        builder.setState(PlaybackStateCompat.STATE_STOPPED, change.position, 0f)
         mediaSession.isActive = false
       }
     }
-    val playbackState = builder.build()
-    mediaSession.setPlaybackState(playbackState)
-    ensureTransportControls(playbackState)
-  }
-
-  private fun onPlayStateChange(change: PlayStateChange) {
-    when (change.state) {
-      PlayerState.PLAYING -> {
-        requestFocus()
-      }
-      else -> {
-        abandonFocus()
-
-      }
-    }
-  }
-
-  private fun ensureTransportControls(playbackState: PlaybackStateCompat) {
-    val actions = playbackState.actions
-    val remoteObj = mediaSession!!.remoteControlClient
-    if (actions != 0L && remoteObj != null) {
-
-      var transportControls = 0
-
-      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_REWIND != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_REWIND
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_PLAY != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PLAY
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_PLAY_PAUSE != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_PAUSE != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_PAUSE
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_STOP != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_STOP
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_FAST_FORWARD != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_FAST_FORWARD
-      }
-
-      if (actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L) {
-        transportControls = transportControls or RemoteControlClient.FLAG_KEY_MEDIA_NEXT
-      }
-
-      (remoteObj as RemoteControlClient).setTransportControlFlags(transportControls)
-    }
+    mediaSession.setPlaybackState(builder.build())
   }
 
   private fun requestFocus(): Boolean {
@@ -237,6 +181,12 @@ constructor(
 
   companion object {
     private const val PLAYBACK_ACTIONS =
-      PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_STOP
+      PlaybackStateCompat.ACTION_PAUSE or
+      PlaybackStateCompat.ACTION_PLAY_PAUSE or
+      PlaybackStateCompat.ACTION_PLAY or
+      PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+      PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+      PlaybackStateCompat.ACTION_STOP or
+      PlaybackStateCompat.ACTION_SEEK_TO
   }
 }

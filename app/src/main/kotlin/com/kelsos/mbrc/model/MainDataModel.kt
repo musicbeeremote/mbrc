@@ -17,6 +17,8 @@ import javax.inject.Singleton
 class MainDataModel
 @Inject
 constructor() {
+  var position: Long = 0
+  var duration: Long = 0
   var trackInfo: TrackInfo = TrackInfo()
   var coverPath: String = ""
   var rating: Float = 0f

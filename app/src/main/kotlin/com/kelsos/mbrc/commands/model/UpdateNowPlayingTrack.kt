@@ -40,7 +40,7 @@ constructor(
     val path = node.path("path").textValue()
     model.trackInfo = TrackInfo(artist, title, album, year, path)
     save(model.trackInfo)
-    bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath))
+    bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath, model.duration))
     bus.post(TrackInfoChangeEvent(model.trackInfo))
     UpdateWidgets.updateTrackInfo(context, model.trackInfo)
   }

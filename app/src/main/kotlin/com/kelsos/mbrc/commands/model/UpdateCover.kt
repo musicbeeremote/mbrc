@@ -80,7 +80,7 @@ constructor(
       model.coverPath = path
       savePath(path)
       bus.post(CoverChangedEvent(path))
-      bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath))
+      bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath, model.duration))
       UpdateWidgets.updateCover(context, path)
     } catch (e: Exception) {
       removeCover(e)

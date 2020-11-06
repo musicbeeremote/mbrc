@@ -33,7 +33,7 @@ constructor(
 
     model.playState = e.dataString
     if (model.playState != PlayerState.STOPPED) {
-      bus.post(PlayStateChange(model.playState))
+      bus.post(PlayStateChange(model.playState, model.position))
     } else {
       stop()
     }
@@ -45,7 +45,7 @@ constructor(
     action?.cancel()
     action = scope.async {
       delay(800)
-      bus.post(PlayStateChange(model.playState))
+      bus.post(PlayStateChange(model.playState, model.position))
     }
   }
 }

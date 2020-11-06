@@ -12,7 +12,8 @@ import javax.inject.Singleton
 
 @Singleton
 class MediaIntentHandler
-@Inject constructor(private val bus: RxBus) {
+@Inject
+constructor(private val bus: RxBus) {
   private var previousClick: Long = 0
 
   init {
@@ -33,25 +34,23 @@ class MediaIntentHandler
         return false
       }
 
-      when (keyEvent.keyCode) {
+      result = when (keyEvent.keyCode) {
         KeyEvent.KEYCODE_HEADSETHOOK -> {
           val currentClick = System.currentTimeMillis()
           if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
             return postAction(UserAction(Protocol.PlayerNext, true))
           }
           previousClick = currentClick
-          result = postAction(UserAction(Protocol.PlayerPlayPause, true))
+           postAction(UserAction(Protocol.PlayerPlayPause, true))
         }
-        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> result =
+        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ->
           postAction(UserAction(Protocol.PlayerPlayPause, true))
-        KeyEvent.KEYCODE_MEDIA_PLAY -> result = postAction(UserAction(Protocol.PlayerPlay, true))
-        KeyEvent.KEYCODE_MEDIA_PAUSE -> result = postAction(UserAction(Protocol.PlayerPause, true))
-        KeyEvent.KEYCODE_MEDIA_STOP -> result = postAction(UserAction(Protocol.PlayerStop, true))
-        KeyEvent.KEYCODE_MEDIA_NEXT -> result = postAction(UserAction(Protocol.PlayerNext, true))
-        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> result =
-          postAction(UserAction(Protocol.PlayerPrevious, true))
-        else -> {
-        }
+        KeyEvent.KEYCODE_MEDIA_PLAY ->  postAction(UserAction(Protocol.PlayerPlay, true))
+        KeyEvent.KEYCODE_MEDIA_PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
+        KeyEvent.KEYCODE_MEDIA_STOP ->  postAction(UserAction(Protocol.PlayerStop, true))
+        KeyEvent.KEYCODE_MEDIA_NEXT ->  postAction(UserAction(Protocol.PlayerNext, true))
+        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> postAction(UserAction(Protocol.PlayerPrevious, true))
+        else -> false
       }
     }
     return result
@@ -63,7 +62,6 @@ class MediaIntentHandler
   }
 
   companion object {
-
-    private val DOUBLE_CLICK_INTERVAL = 350
+    private const val DOUBLE_CLICK_INTERVAL = 350
   }
 }

@@ -31,7 +31,7 @@ import com.kelsos.mbrc.enums.LfmStatus
 import com.kelsos.mbrc.events.ui.OnMainFragmentOptionsInflated
 import com.kelsos.mbrc.events.ui.ShuffleChange
 import com.kelsos.mbrc.events.ui.ShuffleChange.ShuffleState
-import com.kelsos.mbrc.events.ui.UpdatePosition
+import com.kelsos.mbrc.events.ui.UpdateDuration
 import com.kelsos.mbrc.extensions.getDimens
 import com.kelsos.mbrc.helper.ProgressSeekerHelper
 import com.kelsos.mbrc.helper.ProgressSeekerHelper.ProgressUpdate
@@ -269,33 +269,31 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
   override fun updatePlayState(@State state: String) {
     val accentColor = ContextCompat.getColor(this, R.color.accent)
-    @DrawableRes val resId: Int
-    val tag: String
+    val tag = tag(state)
 
-    when (state) {
+    if (playPauseButton.tag == tag) {
+      return
+    }
+    @DrawableRes val resId: Int = when (state) {
       PlayerState.PLAYING -> {
-        resId = R.drawable.ic_pause_circle_filled_black_24dp
-        tag = "Playing"
         /* Start the animation if the track is playing*/
         presenter.requestNowPlayingPosition()
         trackProgressAnimation(progressBar.progress, progressBar.max)
+        R.drawable.ic_pause_circle_filled_black_24dp
       }
       PlayerState.PAUSED -> {
-        resId = R.drawable.ic_play_circle_filled_black_24dp
-        tag = PAUSED
         /* Stop the animation if the track is paused*/
         progressHelper.stop()
+        R.drawable.ic_play_circle_filled_black_24dp
       }
       PlayerState.STOPPED -> {
-        resId = R.drawable.ic_play_circle_filled_black_24dp
-        tag = STOPPED
         /* Stop the animation if the track is paused*/
         progressHelper.stop()
         activateStoppedState()
+        R.drawable.ic_play_circle_filled_black_24dp
       }
       else -> {
-        resId = R.drawable.ic_play_circle_filled_black_24dp
-        tag = STOPPED
+        R.drawable.ic_play_circle_filled_black_24dp
       }
     }
 
@@ -348,10 +346,14 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
    * current progress of playback
    */
 
-  override fun updateProgress(position: UpdatePosition) {
-    val total = position.total
-    val current = position.current
+  override fun updateProgress(duration: UpdateDuration) {
+    updateProgress(duration.position, duration.duration)
+  }
 
+  private fun updateProgress(
+    current: Int,
+    total: Int,
+  ) {
     var currentSeconds = current / 1000
     var totalSeconds = total / 1000
 
@@ -373,7 +375,11 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     progressBar.max = total
     progressBar.progress = current
 
-    trackProgressAnimation(position.current, position.total)
+    trackProgressAnimation(current, total)
+  }
+
+  override fun updateDuration(position: Int, duration: Int) {
+    updateProgress(position, duration)
   }
 
   override fun updateScrobbleStatus(active: Boolean) {
@@ -434,6 +440,13 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   companion object {
     private const val PAUSED = "Paused"
     private const val STOPPED = "Stopped"
+    private const val PLAYING = "Playing"
+
+    fun tag(@PlayerState.State state: String): String = when(state) {
+      PlayerState.PLAYING -> PLAYING
+      PlayerState.PAUSED -> PAUSED
+      else -> STOPPED
+    }
   }
 
   @javax.inject.Scope
