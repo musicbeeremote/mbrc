@@ -16,22 +16,54 @@
       android:contentDescription="@string/description_computer_icon"
       android:padding="@dimen/normal_margin"
       android:scaleType="center"
-      app:tint="@color/secondary_text"
+      android:src="@drawable/ic_desktop_windows_black_24dp"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      android:src="@drawable/ic_desktop_windows_black_24dp" />
+      app:tint="@color/secondary_text" />
+
+  <ImageView
+      android:id="@+id/connection_settings__default_indicator"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
+      android:contentDescription="@string/connection_default_description"
+      android:enabled="false"
+      android:scaleType="centerInside"
+      android:src="@drawable/ic_check_black_24dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@+id/connection_settings__overflow"
+      app:layout_constraintTop_toTopOf="parent"
+      app:tint="@color/light_gray" />
+
+  <ImageView
+      android:id="@+id/connection_settings__overflow"
+      android:layout_width="48dp"
+      android:layout_height="0dp"
+      android:layout_gravity="center_vertical"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
+      android:contentDescription="@string/menu_overflow_description"
+      android:scaleType="centerInside"
+      android:src="@drawable/ic_more_vert_black_24dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:tint="@android:color/white" />
 
   <TextView
       android:id="@+id/connection_settings__name"
+      style="@style/TextAppearance.MaterialComponents.Body1"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
       android:lines="1"
       android:linksClickable="false"
       android:textColor="@color/primary_text"
-      android:textSize="@dimen/text_subhead_size"
       app:layout_constraintBottom_toTopOf="@+id/connection_settings__hostname_and_port"
       app:layout_constraintEnd_toStartOf="@+id/connection_settings__default_indicator"
       app:layout_constraintStart_toEndOf="@+id/connection_settings__icon"
@@ -40,14 +72,14 @@
 
   <TextView
       android:id="@+id/connection_settings__hostname_and_port"
+      style="@style/TextAppearance.MaterialComponents.Subtitle2"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="0dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
       android:textColor="@color/secondary_text"
-      android:textSize="@dimen/text_body_size"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@+id/connection_settings__default_indicator"
       app:layout_constraintHorizontal_bias="0.0"
@@ -55,37 +87,5 @@
       app:layout_constraintTop_toBottomOf="@+id/connection_settings__name"
       app:layout_constraintVertical_bias="1.0"
       tools:text="192.168.100.10:3000" />
-
-  <ImageView
-      android:id="@+id/connection_settings__default_indicator"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
-      android:layout_marginTop="8dp"
-      android:contentDescription="@string/connection_default_description"
-      android:enabled="false"
-      android:scaleType="centerInside"
-      app:tint="@color/light_gray"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/connection_settings__overflow"
-      app:layout_constraintTop_toTopOf="parent"
-      android:src="@drawable/ic_check_black_24dp" />
-
-  <ImageView
-      android:id="@+id/connection_settings__overflow"
-      android:layout_width="48dp"
-      android:layout_height="0dp"
-      android:layout_gravity="center_vertical"
-      android:layout_marginBottom="8dp"
-      android:layout_marginEnd="8dp"
-      android:layout_marginTop="8dp"
-      android:contentDescription="@string/menu_overflow_description"
-      android:scaleType="centerInside"
-      app:tint="@android:color/white"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      android:src="@drawable/ic_more_vert_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

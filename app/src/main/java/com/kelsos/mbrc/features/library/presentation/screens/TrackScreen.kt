@@ -34,6 +34,7 @@ class TrackScreen : LibraryScreen, KoinComponent, MenuItemSelectedListener<Track
     this.viewHolder = viewHolder
     viewHolder.setup(R.string.albums_list_empty, adapter)
     adapter.setMenuItemSelectedListener(this)
+    adapter.setCoverMode(true)
   }
 
   override fun observe(viewLifecycleOwner: LifecycleOwner) {

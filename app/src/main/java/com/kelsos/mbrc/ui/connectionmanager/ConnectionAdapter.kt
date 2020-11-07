@@ -11,7 +11,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.databinding.UiListConnectionSettingsBinding
+import com.kelsos.mbrc.databinding.ListitemSettingsBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter.ConnectionViewHolder
 
@@ -70,7 +70,7 @@ class ConnectionAdapter : PagingDataAdapter<ConnectionSettings, ConnectionViewHo
   }
 
   class ConnectionViewHolder(
-    binding: UiListConnectionSettingsBinding
+    binding: ListitemSettingsBinding
   ) : RecyclerView.ViewHolder(binding.root) {
     private val hostname: TextView = binding.connectionSettingsHostnameAndPort
     private val computerName: TextView = binding.connectionSettingsName
@@ -94,8 +94,7 @@ class ConnectionAdapter : PagingDataAdapter<ConnectionSettings, ConnectionViewHo
     companion object {
       fun create(parent: ViewGroup): ConnectionViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.ui_list_connection_settings, parent, false)
-        val binding = UiListConnectionSettingsBinding.bind(view)
+        val binding = ListitemSettingsBinding.inflate(inflater, parent, false)
         return ConnectionViewHolder(binding)
       }
     }

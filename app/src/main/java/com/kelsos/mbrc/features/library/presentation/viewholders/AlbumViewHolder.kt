@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.databinding.UiListDualBinding
+import com.kelsos.mbrc.databinding.ListitemDualBinding
 import com.kelsos.mbrc.features.library.data.Album
 import com.kelsos.mbrc.features.library.data.key
 import com.kelsos.mbrc.ui.BindableViewHolder
@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso
 import java.io.File
 
 class AlbumViewHolder(
-  binding: UiListDualBinding,
+  binding: ListitemDualBinding,
   private val cache: File
 ) : BindableViewHolder<Album>(binding) {
   private val artist: TextView = binding.lineTwo
@@ -61,7 +61,7 @@ class AlbumViewHolder(
   companion object {
     fun create(parent: ViewGroup): AlbumViewHolder {
       val layoutInflater = LayoutInflater.from(parent.context)
-      val binding = UiListDualBinding.inflate(layoutInflater, parent, false)
+      val binding = ListitemDualBinding.inflate(layoutInflater, parent, false)
       val cache = File(parent.context.cacheDir, "covers")
       return AlbumViewHolder(binding, cache)
     }

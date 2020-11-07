@@ -2,11 +2,13 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
   <TextView
-      android:id="@+id/sync_progress_text"
+      android:id="@+id/library_container__description"
       style="@style/TextAppearance.MaterialComponents.Caption"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -14,14 +16,22 @@
       android:paddingTop="4dp"
       android:paddingEnd="16dp"
       android:paddingBottom="4dp"
-      android:text="@string/library_sync_in_progress"
+      android:text="@string/library_container__sync_text"
       android:textAlignment="center"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/pager_tab_strip" />
+      app:layout_constraintTop_toBottomOf="@+id/library_container__progress" />
+
+  <androidx.constraintlayout.widget.Group
+      android:id="@+id/library_container__sync_progress"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:visibility="gone"
+      app:constraint_referenced_ids="library_container__progress,library_container__description"
+      tools:visibility="visible" />
 
   <androidx.fragment.app.FragmentContainerView
-      android:id="@+id/library_control"
+      android:id="@+id/mini_control"
       android:name="com.kelsos.mbrc.features.minicontrol.MiniControlFragment"
       android:layout_width="match_parent"
       android:layout_height="@dimen/mini_control_height"
@@ -34,32 +44,30 @@
       android:layout_width="0dp"
       android:layout_height="0dp"
       android:orientation="horizontal"
-      app:layout_constraintBottom_toTopOf="@id/library_control"
+      app:layout_constraintBottom_toTopOf="@id/mini_control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/library_container__progress" />
+      app:layout_constraintTop_toBottomOf="@id/library_container__description" />
 
   <com.google.android.material.progressindicator.LinearProgressIndicator
       android:id="@+id/library_container__progress"
       style="@style/Widget.MaterialComponents.LinearProgressIndicator"
-      android:layout_width="match_parent"
-      android:layout_height="2dp"
-      android:layout_gravity="start"
+      android:layout_width="0dp"
+      android:layout_height="4dp"
       android:layout_marginTop="2dp"
       android:progress="70"
-      app:layout_constraintTop_toBottomOf="@id/sync_progress_text" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/pager_tab_strip" />
 
   <com.google.android.material.tabs.TabLayout
       android:id="@+id/pager_tab_strip"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="top"
-      android:background="@color/primary"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:tabSelectedTextColor="@color/primary_text_material_light"
-      app:tabTextColor="@color/secondary_text_material_light">
+      app:layout_constraintTop_toTopOf="parent">
 
   </com.google.android.material.tabs.TabLayout>
 

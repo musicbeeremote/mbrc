@@ -112,6 +112,6 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/album_tracks__play"
-      tools:listitem="@layout/ui_list_dual" />
+      tools:listitem="@layout/listitem_dual" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

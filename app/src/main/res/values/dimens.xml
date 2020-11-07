@@ -4,7 +4,6 @@
   <dimen name="small_margin">8dp</dimen>
   <dimen name="lyrics_text_size">15sp</dimen>
   <dimen name="list_item_height">60dp</dimen>
-  <dimen name="list_item_one">16sp</dimen>
   <dimen name="mini_control_height">48dp</dimen>
   <dimen name="list_item_single_height">48dp</dimen>
   <dimen name="text_title_size">20sp</dimen>

@@ -46,7 +46,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      tools:listitem="@layout/ui_list_connection_settings" />
+      tools:listitem="@layout/listitem_settings" />
 
   <com.google.android.material.progressindicator.LinearProgressIndicator
       android:id="@+id/connection_manager__progress"

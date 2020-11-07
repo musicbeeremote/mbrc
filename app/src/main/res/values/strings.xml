@@ -145,7 +145,6 @@
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="album_tracks__play__content_description">Plays all the tracks</string>
   <string name="press_to_sync">Press here to sync</string>
-  <string name="library_sync_in_progress">Library metadata sync in progress, please wait…</string>
   <string name="application_starting">Attempting to establish connection…</string>
   <string name="nav_output">Output</string>
   <string name="output_selection__select_output">Select Output</string>
@@ -199,4 +198,5 @@
   <string name="notification__sync_artists">%1$d of %2$d artists</string>
   <string name="notification__sync_tracks">%1$d of %2$d tracks</string>
   <string name="notification__sync_playlists">%1$d of %2$d playlists</string>
+  <string name="library_container__sync_text">"Syncing "</string>
 </resources>

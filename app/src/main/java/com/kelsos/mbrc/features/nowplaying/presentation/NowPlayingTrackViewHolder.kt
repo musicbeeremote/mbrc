@@ -8,14 +8,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.databinding.UiListTrackItemBinding
+import com.kelsos.mbrc.databinding.ListitemTrackBinding
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.dragsort.TouchHelperViewHolder
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
 
 class NowPlayingTrackViewHolder(
-  binding: UiListTrackItemBinding,
+  binding: ListitemTrackBinding,
   onHolderItemPressed: OnViewItemPressed,
   private val onDrag: (start: Boolean, holder: RecyclerView.ViewHolder) -> Unit
 ) : BindableViewHolder<NowPlaying>(binding), TouchHelperViewHolder {
@@ -27,6 +27,7 @@ class NowPlayingTrackViewHolder(
   init {
     itemView.setOnClickListener { onHolderItemPressed(bindingAdapterPosition) }
     binding.dragHandle.setOnTouchListener { view, motionEvent ->
+      view.performClick()
       if (motionEvent.action == ACTION_DOWN) {
         view.performClick()
         onDrag(true, this)
@@ -71,7 +72,7 @@ class NowPlayingTrackViewHolder(
       onDrag: (start: Boolean, holder: RecyclerView.ViewHolder) -> Unit
     ): NowPlayingTrackViewHolder {
       val inflater = LayoutInflater.from(parent.context)
-      val binding = UiListTrackItemBinding.inflate(inflater, parent, false)
+      val binding = ListitemTrackBinding.inflate(inflater, parent, false)
       return NowPlayingTrackViewHolder(
         binding,
         onHolderItemPressed,

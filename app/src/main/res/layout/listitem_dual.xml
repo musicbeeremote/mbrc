@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,14 +20,15 @@
       android:layout_marginBottom="8dp"
       android:contentDescription="@string/menu_overflow_description"
       android:scaleType="centerInside"
-      android:src="@drawable/ic_more_vert_black_24dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent"
+      app:srcCompat="@drawable/ic_more_vert_black_24dp"
       app:tint="@android:color/white" />
 
   <TextView
       android:id="@+id/line_two"
+      style="@style/TextAppearance.MaterialComponents.Subtitle2"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginEnd="16dp"
@@ -34,7 +36,6 @@
       android:ellipsize="end"
       android:maxLines="1"
       android:textColor="@color/secondary_text"
-      android:textSize="@dimen/dual_list_subtitle"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@+id/overflow_menu"
       app:layout_constraintStart_toEndOf="@id/cover"
@@ -44,6 +45,7 @@
 
   <TextView
       android:id="@+id/line_one"
+      style="@style/TextAppearance.MaterialComponents.Body1"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -53,10 +55,9 @@
       android:ellipsize="end"
       android:maxLines="1"
       android:textColor="@color/primary_text"
-      android:textSize="@dimen/dual_list_title"
       app:layout_constraintBottom_toTopOf="@+id/line_two"
       app:layout_constraintEnd_toStartOf="@+id/overflow_menu"
-      app:layout_constraintStart_toEndOf="@id/cover"
+      app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       tools:text="Back in black" />
 

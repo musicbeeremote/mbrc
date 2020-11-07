@@ -9,25 +9,6 @@
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical">
 
-  <TextView
-      android:id="@+id/line_one"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      android:ellipsize="end"
-      android:focusableInTouchMode="false"
-      android:maxLines="1"
-      android:text="@string/artist_placeholder"
-      android:textColor="@color/primary_text"
-      android:textSize="@dimen/list_item_one"
-      android:textStyle="normal"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/ui_item_context_indicator"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      tools:ignore="RtlHardcoded,RtlSymmetry" />
-
   <ImageView
       android:id="@+id/ui_item_context_indicator"
       android:layout_width="48dp"
@@ -38,7 +19,25 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      android:src="@drawable/ic_more_vert_black_24dp"
+      app:srcCompat="@drawable/ic_more_vert_black_24dp"
       app:tint="@android:color/white" />
 
+  <TextView
+      android:id="@+id/line_one"
+      style="@style/TextAppearance.MaterialComponents.Body1"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:ellipsize="end"
+      android:focusableInTouchMode="false"
+      android:maxLines="1"
+      android:text="@string/artist_placeholder"
+      android:textColor="@color/primary_text"
+      android:textStyle="normal"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@+id/ui_item_context_indicator"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:ignore="RtlHardcoded,RtlSymmetry" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,29 +1,26 @@
 package com.kelsos.mbrc.features.library.presentation.adapters
 
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.ArtistViewHolder
 
-class ArtistAdapter : PagingDataAdapter<Artist, ArtistViewHolder>(DIFF_CALLBACK) {
-  private var listener: MenuItemSelectedListener<Artist>? = null
+class ArtistAdapter : LibraryAdapter<Artist, ArtistViewHolder>(DIFF_CALLBACK) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArtistViewHolder {
     val holder = ArtistViewHolder.create(parent)
     holder.onIndicatorClick { view, position ->
       view.popup(R.menu.popup_artist) { id ->
         val artist = getItem(position) ?: return@popup
-        listener?.onMenuItemSelected(id, artist)
+        requireListener().onMenuItemSelected(id, artist)
       }
     }
 
     holder.onPress { position ->
       val artist = getItem(position) ?: return@onPress
-      listener?.onItemClicked(artist)
+      requireListener().onItemClicked(artist)
     }
     return holder
   }
@@ -35,10 +32,6 @@ class ArtistAdapter : PagingDataAdapter<Artist, ArtistViewHolder>(DIFF_CALLBACK)
     } else {
       holder.clear()
     }
-  }
-
-  fun setMenuItemSelectedListener(listener: MenuItemSelectedListener<Artist>) {
-    this.listener = listener
   }
 
   companion object {

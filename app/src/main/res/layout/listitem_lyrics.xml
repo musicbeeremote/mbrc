@@ -3,14 +3,14 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/text1"
+    style="@style/TextAppearance.AppCompat.Body1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fontFamily="sans-serif-light"
     android:gravity="center_vertical"
-    android:paddingEnd="16dp"
     android:paddingStart="16dp"
     android:paddingTop="4dp"
+    android:paddingEnd="16dp"
     android:paddingBottom="4dp"
     android:textColor="@color/primary_text"
     android:textSize="@dimen/lyrics_text_size"
-    tools:text="A line of lyrics text"/>
+    tools:text="A line of lyrics text" />

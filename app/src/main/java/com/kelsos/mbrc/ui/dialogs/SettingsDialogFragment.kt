@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.databinding.UiDialogSettingsBinding
+import com.kelsos.mbrc.databinding.DialogSettingsBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 
 typealias SettingsSaveListener = (settings: ConnectionSettings) -> Unit
@@ -30,7 +30,7 @@ class SettingsDialogFragment : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val binding = UiDialogSettingsBinding.inflate(layoutInflater)
+    val binding = DialogSettingsBinding.inflate(layoutInflater)
     val resId = if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add
     val dialog = MaterialAlertDialogBuilder(requireActivity())
       .setView(binding.root)

@@ -18,7 +18,7 @@ class LibraryPagerAdapter(
   private val scope: CoroutineScope = CoroutineScope(job + Dispatchers.Main)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LibraryViewHolder {
-    return LibraryViewHolder.create(parent)
+    return LibraryViewHolder.from(parent)
   }
 
   fun submit(screens: List<LibraryScreen>) {

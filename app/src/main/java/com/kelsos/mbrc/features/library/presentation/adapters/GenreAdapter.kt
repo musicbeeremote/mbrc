@@ -1,29 +1,25 @@
 package com.kelsos.mbrc.features.library.presentation.adapters
 
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.GenreViewHolder
 
-class GenreAdapter : PagingDataAdapter<Genre, GenreViewHolder>(DIFF_CALLBACK) {
-
-  private var listener: MenuItemSelectedListener<Genre>? = null
+class GenreAdapter : LibraryAdapter<Genre, GenreViewHolder>(DIFF_CALLBACK) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
     val holder = GenreViewHolder.create(parent)
     holder.onIndicatorClick { view, position ->
       view.popup(R.menu.popup_genre) { id ->
         val genre = getItem(position) ?: return@popup
-        listener?.onMenuItemSelected(id, genre)
+        requireListener().onMenuItemSelected(id, genre)
       }
     }
     holder.onPress { position ->
       val genre = getItem(position) ?: return@onPress
-      listener?.onItemClicked(genre)
+      requireListener().onItemClicked(genre)
     }
     return holder
   }
@@ -35,10 +31,6 @@ class GenreAdapter : PagingDataAdapter<Genre, GenreViewHolder>(DIFF_CALLBACK) {
     } else {
       holder.clear()
     }
-  }
-
-  fun setMenuItemSelectedListener(listener: MenuItemSelectedListener<Genre>) {
-    this.listener = listener
   }
 
   companion object {

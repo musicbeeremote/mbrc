@@ -42,7 +42,7 @@ class LibraryViewHolder(binding: FragmentBrowseBinding) : RecyclerView.ViewHolde
   }
 
   companion object {
-    fun create(
+    fun from(
       parent: ViewGroup
     ): LibraryViewHolder {
       val inflater = LayoutInflater.from(parent.context)

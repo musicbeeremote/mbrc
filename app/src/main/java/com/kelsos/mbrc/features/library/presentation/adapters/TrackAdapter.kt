@@ -1,16 +1,13 @@
 package com.kelsos.mbrc.features.library.presentation.adapters
 
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.TrackViewHolder
 
-class TrackAdapter : PagingDataAdapter<Track, TrackViewHolder>(DIFF_CALLBACK) {
-  private var listener: MenuItemSelectedListener<Track>? = null
+class TrackAdapter : LibraryAdapter<Track, TrackViewHolder>(DIFF_CALLBACK) {
   private var coverMode: Boolean = false
 
   fun setCoverMode(coverMode: Boolean) {
@@ -18,17 +15,18 @@ class TrackAdapter : PagingDataAdapter<Track, TrackViewHolder>(DIFF_CALLBACK) {
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-    val holder = TrackViewHolder.create(parent, coverMode)
+    val holder = TrackViewHolder.create(parent)
+    holder.setCoverMode(coverMode)
     holder.onIndicatorClick { view, position ->
       view.popup(R.menu.popup_track) { id ->
         val track = getItem(position) ?: return@popup
-        listener?.onMenuItemSelected(id, track)
+        requireListener().onMenuItemSelected(id, track)
       }
     }
 
     holder.onPress { position ->
       val track = getItem(position) ?: return@onPress
-      listener?.onItemClicked(track)
+      requireListener().onItemClicked(track)
     }
     return holder
   }
@@ -40,10 +38,6 @@ class TrackAdapter : PagingDataAdapter<Track, TrackViewHolder>(DIFF_CALLBACK) {
     } else {
       holder.clear()
     }
-  }
-
-  fun setMenuItemSelectedListener(listener: MenuItemSelectedListener<Track>) {
-    this.listener = listener
   }
 
   companion object {

@@ -126,12 +126,7 @@ class SessionNotificationManager(
   override fun trackChanged(playingTrack: PlayingTrack) {
     diskScope.launch {
       notificationData = with(playingTrack.coverUrl) {
-        val cover = if (isNotEmpty()) {
-          RemoteUtils.loadBitmap(this).fold({ null }, { it })
-        } else {
-          null
-        }
-
+        val cover = if (isNotEmpty()) RemoteUtils.loadBitmap(this) else null
         notificationData.copy(track = playingTrack, cover = cover)
       }
 

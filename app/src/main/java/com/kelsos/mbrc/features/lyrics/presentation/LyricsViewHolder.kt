@@ -3,10 +3,10 @@ package com.kelsos.mbrc.features.lyrics.presentation
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import com.kelsos.mbrc.databinding.UiListLyricsItemBinding
+import com.kelsos.mbrc.databinding.ListitemLyricsBinding
 import com.kelsos.mbrc.ui.BindableViewHolder
 
-class LyricsViewHolder(binding: UiListLyricsItemBinding) : BindableViewHolder<String>(binding) {
+class LyricsViewHolder(binding: ListitemLyricsBinding) : BindableViewHolder<String>(binding) {
 
   private val title: TextView = binding.text1
 
@@ -21,7 +21,7 @@ class LyricsViewHolder(binding: UiListLyricsItemBinding) : BindableViewHolder<St
   companion object {
     fun create(parent: ViewGroup): LyricsViewHolder {
       val inflater = LayoutInflater.from(parent.context)
-      val binding = UiListLyricsItemBinding.inflate(inflater, parent, false)
+      val binding = ListitemLyricsBinding.inflate(inflater, parent, false)
       return LyricsViewHolder(binding)
     }
   }
