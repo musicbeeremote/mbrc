@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.Group
-import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.extensions.string
 import com.kelsos.mbrc.features.library.data.Album
@@ -21,7 +19,6 @@ class AlbumViewHolder(
   private val artist: TextView by bindView(R.id.line_two)
   private val album: TextView by bindView(R.id.line_one)
   private val indicator: ImageView by bindView(R.id.overflow_menu)
-  private val loading: Group by bindView(R.id.placeholder_group)
   private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
   private val emptyAlbum: String by lazy { string(R.string.non_album_tracks) }
 
@@ -31,7 +28,6 @@ class AlbumViewHolder(
   }
 
   override fun bindTo(item: Album) {
-    loading.isVisible = false
     val title = item.album
     val artist = item.artist
     this.album.text = if (title.isBlank()) emptyAlbum else title
@@ -39,7 +35,6 @@ class AlbumViewHolder(
   }
 
   override fun clear() {
-    loading.isVisible = true
     artist.text = ""
     album.text = ""
   }
@@ -51,7 +46,7 @@ class AlbumViewHolder(
       pressed: (View, Int) -> Unit
     ): AlbumViewHolder {
       val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-      val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
+      val view = inflater.inflate(R.layout.listitem_dual, parent, false)
       return AlbumViewHolder(
         view,
         indicatorPressed,

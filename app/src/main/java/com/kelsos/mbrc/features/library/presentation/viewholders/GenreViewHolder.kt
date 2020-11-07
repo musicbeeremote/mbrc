@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.Group
-import androidx.core.view.isVisible
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.extensions.string
 import com.kelsos.mbrc.features.library.data.Genre
@@ -20,7 +18,6 @@ class GenreViewHolder(
 ) : BindableViewHolder<Genre>(itemView) {
   private val title: TextView by bindView(R.id.line_one)
   private val indicator: ImageView by bindView(R.id.ui_item_context_indicator)
-  private val loading: Group by bindView(R.id.listitem_loading)
   private val empty: String by lazy { string(R.string.empty) }
 
   init {
@@ -29,12 +26,10 @@ class GenreViewHolder(
   }
 
   override fun bindTo(item: Genre) {
-    loading.isVisible = false
     title.text = if (item.genre.isBlank()) empty else item.genre
   }
 
   override fun clear() {
-    loading.isVisible = true
     title.text = ""
   }
 

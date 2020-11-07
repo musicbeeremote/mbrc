@@ -8,9 +8,8 @@ import com.kelsos.mbrc.features.library.data.Album
 import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.AlbumViewHolder
 import com.kelsos.mbrc.features.queue.Queue
-import com.kelsos.mbrc.ui.FastScrollableAdapter
 
-class AlbumAdapter : FastScrollableAdapter<Album, AlbumViewHolder>(
+class AlbumAdapter : LibraryAdapter<Album, AlbumViewHolder>(
   DIFF_CALLBACK
 ) {
 
@@ -47,11 +46,6 @@ class AlbumAdapter : FastScrollableAdapter<Album, AlbumViewHolder>(
   }
 
   override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
-    if (fastScrolling) {
-      holder.clear()
-      return
-    }
-
     val album = getItem(position)
 
     if (album != null) {

@@ -35,9 +35,6 @@ interface ArtistDao {
   @Query("select * from artist order by artist collate nocase asc")
   fun getAll(): DataSource.Factory<Int, ArtistEntity>
 
-  @Query("select substr(artist,1,1)  from artist order by artist collate nocase asc")
-  fun getAllIndexes(): LiveData<List<String>>
-
   @Query(
     "select distinct artist.id, artist.artist, artist.date_added " +
       "from artist inner join track on artist.artist = track.artist " +

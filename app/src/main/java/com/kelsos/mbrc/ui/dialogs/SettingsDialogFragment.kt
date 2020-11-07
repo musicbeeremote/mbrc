@@ -31,7 +31,7 @@ class SettingsDialogFragment : DialogFragment() {
     val context = requireContext()
     val builder = AlertDialog.Builder(context)
     with(builder) {
-      setView(R.layout.ui_dialog_settings)
+      setView(R.layout.dialog_settings)
       setTitle(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
 
       setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->

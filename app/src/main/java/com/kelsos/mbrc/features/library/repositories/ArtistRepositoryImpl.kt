@@ -8,7 +8,6 @@ import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.data.ArtistDao
 import com.kelsos.mbrc.features.library.data.ArtistEntityMapper
-import com.kelsos.mbrc.features.library.data.DataModel
 import com.kelsos.mbrc.features.library.dto.ArtistDto
 import com.kelsos.mbrc.features.library.dto.ArtistDtoMapper
 import com.kelsos.mbrc.networking.ApiBase
@@ -37,19 +36,12 @@ class ArtistRepositoryImpl(
     return dao.getAll().map { entityMapper.map(it) }
   }
 
-  override fun allArtists(): DataModel<Artist> {
-    return DataModel(dao.getAll().map {
-      entityMapper.map(
-        it
-      )
-    }, dao.getAllIndexes())
+  override fun allArtists(): DataSource.Factory<Int, Artist> {
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
-  override fun albumArtists(): DataModel<Artist> {
-    return DataModel(
-      factory = dao.getAlbumArtists().map { entityMapper.map(it) },
-      indexes = dao.getAlbumArtistIndexes()
-    )
+  override fun albumArtists(): DataSource.Factory<Int, Artist> {
+    return dao.getAlbumArtists().map { entityMapper.map(it) }
   }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {

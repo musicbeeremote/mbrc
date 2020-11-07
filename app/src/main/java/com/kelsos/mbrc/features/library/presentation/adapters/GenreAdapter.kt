@@ -8,9 +8,8 @@ import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.GenreViewHolder
 import com.kelsos.mbrc.features.queue.Queue
-import com.kelsos.mbrc.ui.FastScrollableAdapter
 
-class GenreAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(
+class GenreAdapter : LibraryAdapter<Genre, GenreViewHolder>(
   DIFF_CALLBACK
 ) {
 
@@ -47,10 +46,6 @@ class GenreAdapter : FastScrollableAdapter<Genre, GenreViewHolder>(
   }
 
   override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
-    if (fastScrolling) {
-      holder.clear()
-      return
-    }
     val genre = getItem(holder.adapterPosition)
     if (genre != null) {
       holder.bindTo(genre)

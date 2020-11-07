@@ -42,4 +42,6 @@ build
 # Maven created directories
 target/
 gen-external-apklibs/
-.gradletasknamecache
+gradle.properties
+/.gradletasknamecache
+/app/google-services.json

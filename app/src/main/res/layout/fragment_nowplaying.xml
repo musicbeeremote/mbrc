@@ -19,7 +19,7 @@
         android:id="@+id/now_playing__track_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/ui_list_track_item" />
+        tools:listitem="@layout/listitem_track" />
 
   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

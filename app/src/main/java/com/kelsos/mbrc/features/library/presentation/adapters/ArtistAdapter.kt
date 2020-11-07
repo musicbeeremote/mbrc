@@ -8,9 +8,8 @@ import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.ArtistViewHolder
 import com.kelsos.mbrc.features.queue.Queue
-import com.kelsos.mbrc.ui.FastScrollableAdapter
 
-class ArtistAdapter : FastScrollableAdapter<Artist, ArtistViewHolder>(
+class ArtistAdapter : LibraryAdapter<Artist, ArtistViewHolder>(
   DIFF_CALLBACK
 ) {
 
@@ -48,11 +47,6 @@ class ArtistAdapter : FastScrollableAdapter<Artist, ArtistViewHolder>(
   }
 
   override fun onBindViewHolder(holder: ArtistViewHolder, position: Int) {
-    if (fastScrolling) {
-      holder.clear()
-      return
-    }
-
     val artistEntity = getItem(position)
     if (artistEntity != null) {
       holder.bindTo(artistEntity)

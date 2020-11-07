@@ -26,13 +26,13 @@
 
 
   <TextView
+      style="@style/TextAppearance.MaterialComponents.Headline5"
       android:id="@+id/app_name"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
+      android:layout_marginTop="32dp"
       android:fontFamily="sans-serif-light"
       android:text="@string/application_name"
-      android:textSize="18sp"
       app:fontFamily="@font/roboto_light"
       app:layout_constraintLeft_toLeftOf="@+id/application_logo"
       app:layout_constraintRight_toRightOf="@+id/application_logo"

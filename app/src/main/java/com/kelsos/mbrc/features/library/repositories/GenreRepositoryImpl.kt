@@ -5,7 +5,6 @@ import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
-import com.kelsos.mbrc.features.library.data.DataModel
 import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.data.GenreDao
 import com.kelsos.mbrc.features.library.data.GenreEntityMapper
@@ -71,12 +70,8 @@ class GenreRepositoryImpl(
     dao.count() == 0L
   }
 
-  override fun allGenres(): DataModel<Genre> {
-    return DataModel(dao.getAll().map {
-      entityMapper.map(
-        it
-      )
-    }, dao.getAllIndexes())
+  override fun allGenres(): DataSource.Factory<Int, Genre> {
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
   override suspend fun getById(id: Long): Genre? {

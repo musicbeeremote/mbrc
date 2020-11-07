@@ -4,18 +4,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.library.OnFastScrollListener
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.popup
 import com.kelsos.mbrc.features.library.presentation.viewholders.TrackViewHolder
 import com.kelsos.mbrc.features.queue.Queue
-import com.kelsos.mbrc.ui.FastScrollableAdapter
-import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller.BubbleTextGetter
 
-class TrackAdapter : FastScrollableAdapter<Track, TrackViewHolder>(
+class TrackAdapter : LibraryAdapter<Track, TrackViewHolder>(
   DIFF_CALLBACK
-),
-  BubbleTextGetter, OnFastScrollListener {
+) {
 
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_track) {
@@ -51,11 +47,6 @@ class TrackAdapter : FastScrollableAdapter<Track, TrackViewHolder>(
   }
 
   override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-    if (fastScrolling) {
-      holder.clear()
-      return
-    }
-
     val trackEntity = getItem(holder.adapterPosition)
 
     if (trackEntity != null) {

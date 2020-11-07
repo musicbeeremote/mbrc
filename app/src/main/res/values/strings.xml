@@ -234,4 +234,5 @@
   <string name="notification__sync_artists">%1$d of %2$d artists</string>
   <string name="notification__sync_tracks">%1$d of %2$d tracks</string>
   <string name="notification__sync_playlists">%1$d of %2$d playlists</string>
+  <string name="library_container__sync_text">"Syncing "</string>
 </resources>

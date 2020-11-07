@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.features.library.data
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -30,9 +29,6 @@ interface GenreDao {
 
   @Query("delete from genre where date_added != :added")
   fun removePreviousEntries(added: Long)
-
-  @Query("select substr(genre,1,1) from genre order by genre")
-  fun getAllIndexes(): LiveData<List<String>>
 
   @Query("select * from genre where id = :id")
   fun getById(id: Long): GenreEntity?

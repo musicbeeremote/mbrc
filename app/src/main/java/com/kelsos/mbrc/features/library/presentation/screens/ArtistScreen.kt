@@ -36,9 +36,6 @@ class ArtistScreen : LibraryScreen,
       adapter.submitList(it)
       viewHolder.refreshingComplete(it.isEmpty())
     }
-    viewModel.indexes.nonNullObserver(viewLifecycleOwner) {
-      adapter.setIndexes(it)
-    }
   }
 
   override fun onMenuItemSelected(@Queue.Action action: String, item: Artist) {

@@ -23,7 +23,7 @@ class LyricsViewHolder(itemView: View) : BindableViewHolder<String>(itemView) {
   companion object {
     fun create(parent: ViewGroup): LyricsViewHolder {
       val layoutInflater = LayoutInflater.from(parent.context)
-      val view = layoutInflater.inflate(R.layout.ui_list_lyrics_item, parent, false)
+      val view = layoutInflater.inflate(R.layout.listitem_lyrics, parent, false)
       return LyricsViewHolder(view)
     }
   }

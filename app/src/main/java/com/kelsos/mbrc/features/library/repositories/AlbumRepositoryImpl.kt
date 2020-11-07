@@ -8,7 +8,6 @@ import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.library.data.Album
 import com.kelsos.mbrc.features.library.data.AlbumDao
 import com.kelsos.mbrc.features.library.data.AlbumEntityMapper
-import com.kelsos.mbrc.features.library.data.DataModel
 import com.kelsos.mbrc.features.library.dto.AlbumDto
 import com.kelsos.mbrc.features.library.dto.AlbumDtoMapper
 import com.kelsos.mbrc.networking.ApiBase
@@ -61,11 +60,8 @@ class AlbumRepositoryImpl(
 
   override suspend fun cacheIsEmpty(): Boolean = dao.count() == 0L
 
-  override fun getAlbumsSorted(): DataModel<Album> {
-    return DataModel(
-      factory = dao.getAll().map { entityMapper.map(it) },
-      indexes = dao.getIndexes()
-    )
+  override fun getAlbumsSorted(): DataSource.Factory<Int, Album> {
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
   override suspend fun getById(id: Long): Album? {

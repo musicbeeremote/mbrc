@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.features.library.data
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -18,10 +17,6 @@ interface TrackDao {
 
   @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAll(): DataSource.Factory<Int, TrackEntity>
-
-  @Query("select substr(album_artist,1,1) from track order by album_artist asc, album asc," +
-    " disc asc, trackno asc")
-  fun getAllIndexes(): LiveData<List<String>>
 
   @Query("select * from track where '%' || :term ||'%' order by album_artist asc, " +
     "album asc, disc asc, trackno asc")

@@ -12,27 +12,18 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.library.FastScrolling.STARTED
-import com.kelsos.mbrc.features.library.FastScrolling.STOPPED
-import com.kelsos.mbrc.features.library.FastScrollingListener
-import com.kelsos.mbrc.features.library.OnFastScrollListener
 import com.kelsos.mbrc.features.library.presentation.screens.LibraryScreen
-import com.kelsos.mbrc.ui.widgets.RecyclerViewFastScroller
 import kotterknife.bindView
 
 class LibraryViewHolder(
-  val itemView: View,
-  private val fastScrollingListener: FastScrollingListener
+  val itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
   private val recycler: RecyclerView by bindView(R.id.library_browser__content)
-  private val scroller: RecyclerViewFastScroller by bindView(R.id.library_browser__fast_scroller)
-
   private val emptyView: Group by bindView(R.id.library_browser__empty_group)
   private val emptyViewTitle: TextView by bindView(R.id.library_browser__text_title)
   private val progressBar: ProgressBar by bindView(R.id.library_browser__progress_bar)
 
-  fun bind(libraryScreen: LibraryScreen, visible: Boolean) {
-    scroller.isVisible = visible
+  fun bind(libraryScreen: LibraryScreen) {
     libraryScreen.bind(this)
   }
 
@@ -47,76 +38,21 @@ class LibraryViewHolder(
   ) {
     emptyViewTitle.setText(empty)
     recycler.adapter = adapter
-
-    val fastScrollListener = adapter as? OnFastScrollListener
     recycler.setHasFixedSize(true)
-    val layoutManager: LinearLayoutManager
-
-    layoutManager = object : LinearLayoutManager(recycler.context, VERTICAL, false) {
-      override fun onLayoutChildren(
-        recycler: RecyclerView.Recycler?,
-        state: RecyclerView.State
-      ) {
-        super.onLayoutChildren(recycler, state)
-
-        val firstVisibleItemPosition = findFirstVisibleItemPosition()
-        if (firstVisibleItemPosition != 0) {
-          if (firstVisibleItemPosition == -1) {
-            scroller.isVisible = false
-          }
-          return
-        }
-        val lastVisibleItemPosition = findLastVisibleItemPosition()
-        val itemsShown = lastVisibleItemPosition - firstVisibleItemPosition + 1
-
-        scroller.isVisible = adapter.itemCount > itemsShown
-      }
-    }
-    recycler.layoutManager = layoutManager
-
-    scroller.setRecyclerView(recycler)
-    scroller.setViewsToUse(
-      R.layout.recycler_view_fast_scroller_scroller,
-      R.id.fastscroller_bubble,
-      R.id.fastscroller_handle
+    recycler.layoutManager = LinearLayoutManager(
+      recycler.context,
+      LinearLayoutManager.VERTICAL,
+      false
     )
-
-    val scrollStateChangeListener = object : RecyclerViewFastScroller.ScrollStateChangeListener {
-      override fun scrollStateChanged(@RecyclerViewFastScroller.ScrollState state: Int) {
-        when (state) {
-          RecyclerViewFastScroller.SCROLL_ENDED -> scrollEnded()
-          RecyclerViewFastScroller.SCROLL_STARTED -> scrollStarted()
-        }
-      }
-
-      private fun scrollStarted() {
-        fastScrollingListener.onFastScrolling(STARTED)
-        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-        fastScrollListener?.onStart((firstVisibleItemPosition - 2).coerceAtLeast(0), (lastVisibleItemPosition + 2).coerceAtMost(layoutManager.itemCount))
-      }
-
-      private fun scrollEnded() {
-        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-        fastScrollListener?.onComplete((firstVisibleItemPosition - 2).coerceAtLeast(0), (lastVisibleItemPosition + 2).coerceAtMost(layoutManager.itemCount))
-        fastScrollingListener.onFastScrolling(STOPPED)
-      }
-    }
-    scroller.setOnScrollStateChangeListener(scrollStateChangeListener)
   }
 
   companion object {
-    fun create(
-      parent: ViewGroup,
-      fastScrollingListener: FastScrollingListener
+    fun from(
+      parent: ViewGroup
     ): LibraryViewHolder {
       val inflater: LayoutInflater = LayoutInflater.from(parent.context)
       val view = inflater.inflate(R.layout.fragment_browse, parent, false)
-      return LibraryViewHolder(
-        view,
-        fastScrollingListener
-      )
+      return LibraryViewHolder(view)
     }
   }
 }

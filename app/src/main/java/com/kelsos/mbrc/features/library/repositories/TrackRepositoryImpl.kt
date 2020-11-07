@@ -5,7 +5,6 @@ import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
-import com.kelsos.mbrc.features.library.data.DataModel
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.data.TrackDao
 import com.kelsos.mbrc.features.library.data.TrackEntityMapper
@@ -40,12 +39,8 @@ class TrackRepositoryImpl(
     return dao.getAlbumTracks(album, artist).map { entityMapper.map(it) }
   }
 
-  override fun allTracks(): DataModel<Track> {
-    return DataModel(dao.getAll().map {
-      entityMapper.map(
-        it
-      )
-    }, dao.getAllIndexes())
+  override fun allTracks(): DataSource.Factory<Int, Track> {
+    return dao.getAll().map { entityMapper.map(it) }
   }
 
   override fun getNonAlbumTracks(artist: String): DataSource.Factory<Int, Track> {

@@ -75,7 +75,7 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
   private fun onWifiChange(intent: Intent) {
     val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
-    if (networkInfo.state == NetworkInfo.State.CONNECTED) {
+    if (networkInfo?.state == NetworkInfo.State.CONNECTED) {
       // bus.post(ChangeConnectionStateEvent(START))
     }
   }

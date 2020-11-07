@@ -8,12 +8,5 @@ import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 
 class GenreViewModel(repository: GenreRepository) : ViewModel() {
-  val genres: LiveData<PagedList<Genre>>
-  val indexes: LiveData<List<String>>
-
-  init {
-    val genres = repository.allGenres()
-    this.genres = genres.factory.paged()
-    this.indexes = genres.indexes
-  }
+  val genres: LiveData<PagedList<Genre>> = repository.allGenres().paged()
 }

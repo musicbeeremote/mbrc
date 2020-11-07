@@ -16,7 +16,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      tools:listitem="@layout/ui_list_dual" />
+      tools:listitem="@layout/listitem_dual" />
 
   <androidx.constraintlayout.widget.Group
       android:id="@+id/album_tracks__empty_view"
@@ -30,12 +30,12 @@
       style="@style/empty_view_image"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:tint="@color/light_gray"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_music_note_black_80dp" />
+      app:srcCompat="@drawable/ic_music_note_black_80dp"
+      app:tint="@color/light_gray" />
 
   <TextView
       android:id="@+id/album_tracks__empty_title"

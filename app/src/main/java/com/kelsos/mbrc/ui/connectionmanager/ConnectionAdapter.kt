@@ -101,7 +101,7 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity,
     companion object {
       fun create(parent: ViewGroup): ConnectionViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.ui_list_connection_settings, parent, false)
+        val view = inflater.inflate(R.layout.listitem_settings, parent, false)
         return ConnectionViewHolder(view)
       }
     }

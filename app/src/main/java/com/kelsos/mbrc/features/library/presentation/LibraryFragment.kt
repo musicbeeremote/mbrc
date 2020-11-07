@@ -16,10 +16,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.utilities.nonNullObserver
-import com.kelsos.mbrc.features.library.FastScrolling
-import com.kelsos.mbrc.features.library.FastScrolling.STARTED
-import com.kelsos.mbrc.features.library.FastScrolling.STOPPED
-import com.kelsos.mbrc.features.library.FastScrollingListener
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
@@ -94,16 +90,8 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     val pagerAdapter = LibraryPagerAdapter(
-      viewLifecycleOwner,
-      object : FastScrollingListener {
-        override fun onFastScrolling(@FastScrolling.State state: Int) {
-          pager.isUserInputEnabled = when (state) {
-            STARTED -> false
-            STOPPED -> true
-            else -> error("unsupported option")
-          }
-        }
-      }).also {
+      viewLifecycleOwner
+    ).also {
       this.pagerAdapter = it
       pager.adapter = it
       pager.isUserInputEnabled = true

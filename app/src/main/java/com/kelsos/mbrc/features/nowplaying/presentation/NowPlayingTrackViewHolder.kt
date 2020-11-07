@@ -29,7 +29,8 @@ class NowPlayingTrackViewHolder(
 
   init {
     itemView.setOnClickListener { onHolderItemPressed(adapterPosition) }
-    dragHandle.setOnTouchListener { _, motionEvent ->
+    dragHandle.setOnTouchListener { view, motionEvent ->
+      view.performClick()
       if (motionEvent.action == MotionEvent.ACTION_DOWN) {
         onDrag(true, this)
       }
@@ -73,7 +74,7 @@ class NowPlayingTrackViewHolder(
       onDrag: (start: Boolean, holder: RecyclerView.ViewHolder) -> Unit
     ): NowPlayingTrackViewHolder {
       val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-      val view = inflater.inflate(R.layout.ui_list_track_item, parent, false)
+      val view = inflater.inflate(R.layout.listitem_track, parent, false)
       return NowPlayingTrackViewHolder(
         view,
         onHolderItemPressed,

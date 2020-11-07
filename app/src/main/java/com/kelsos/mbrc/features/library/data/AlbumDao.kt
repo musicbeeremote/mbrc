@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.features.library.data
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -34,9 +33,6 @@ interface AlbumDao {
         """
   )
   fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, AlbumEntity>
-
-  @Query("select substr(album, 1, 1) from album order by album collate nocase asc")
-  fun getIndexes(): LiveData<List<String>>
 
   @Query("select * from album where id = :id")
   fun getById(id: Long): AlbumEntity?
