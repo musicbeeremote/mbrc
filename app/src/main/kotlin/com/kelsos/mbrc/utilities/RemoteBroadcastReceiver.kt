@@ -37,12 +37,12 @@ constructor(
     return IntentFilter().apply {
       if (hasPermission && handleCallAction) {
         addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
-        addAction(RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED)
-        addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED)
-        addAction(RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED)
-        addAction(RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED)
-        addAction(RemoteViewIntentBuilder.CANCELLED_NOTIFICATION)
       }
+      addAction(RemoteViewIntentBuilder.REMOTE_PLAY_PRESSED)
+      addAction(RemoteViewIntentBuilder.REMOTE_NEXT_PRESSED)
+      addAction(RemoteViewIntentBuilder.REMOTE_CLOSE_PRESSED)
+      addAction(RemoteViewIntentBuilder.REMOTE_PREVIOUS_PRESSED)
+      addAction(RemoteViewIntentBuilder.CANCELLED_NOTIFICATION)
     }
   }
 
