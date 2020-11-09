@@ -7,28 +7,28 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.utilities.nonNullObserver
+import com.kelsos.mbrc.databinding.FragmentLibraryBinding
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
 import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
 import com.kelsos.mbrc.features.library.sync.SyncResult
-import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 class LibraryFragment : Fragment(), OnQueryTextListener {
 
-  private val pager: ViewPager2 by bindView(R.id.search_pager)
-  private val tabs: TabLayout by bindView(R.id.pager_tab_strip)
-  private val syncProgress: ProgressBar by bindView(R.id.library_container__progress)
+  private lateinit var pager: ViewPager2
+  private lateinit var tabs: TabLayout
+  private lateinit var dataBinding: FragmentLibraryBinding
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -76,6 +76,7 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     viewModel.emitter.nonNullObserver(viewLifecycleOwner) { event ->
       event.contentIfNotHandled?.let { onSyncResult(it) }
     }
+    dataBinding.sync = viewModel.syncProgress
   }
 
   override fun onCreateView(
@@ -84,7 +85,11 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     savedInstanceState: Bundle?
   ): View? {
     setHasOptionsMenu(true)
-    return inflater.inflate(R.layout.fragment_library, container, false)
+    dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_library, container, false)
+    dataBinding.lifecycleOwner = viewLifecycleOwner
+    pager = dataBinding.searchPager
+    tabs = dataBinding.pagerTabStrip
+    return dataBinding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -144,6 +149,7 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
 
   override fun onDestroy() {
     pagerAdapter = null
+    dataBinding.unbind()
     super.onDestroy()
   }
 

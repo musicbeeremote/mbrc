@@ -11,6 +11,8 @@ class LibraryViewModel(
   private val syncWorkHandler: SyncWorkHandler
 ) : BaseViewModel<SyncResult>(dispatchers) {
 
+  val syncProgress = syncWorkHandler.syncProgress()
+
   fun refresh() {
     scope.launch {
       syncWorkHandler.sync()

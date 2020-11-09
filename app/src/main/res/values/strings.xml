@@ -207,10 +207,6 @@
   <string name="notification__session_channel_name">MBRC Session</string>
   <string name="notification__session_channel_description">Displays the playing information of the track and allows control.</string>
 
-  <string name="library_sync__genres_progress">%1$d of %2$d Genres</string>
-  <string name="library_sync__artists_progress">%1$d of %2$dArtists</string>
-  <string name="library_sync__albums_progress">%1$d of %2$d Albums</string>
-  <string name="library_sync__tracks_progress">%1$d of %2$d Tracks</string>
   <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
   <string name="title_home">Home</string>
   <string name="title_dashboard">Dashboard</string>
@@ -234,5 +230,6 @@
   <string name="notification__sync_artists">%1$d of %2$d artists</string>
   <string name="notification__sync_tracks">%1$d of %2$d tracks</string>
   <string name="notification__sync_playlists">%1$d of %2$d playlists</string>
-  <string name="library_container__sync_text">"Syncing "</string>
+
+  <string name="library_container__sync_text">"Syncing %1$d of %2$d"</string>
 </resources>

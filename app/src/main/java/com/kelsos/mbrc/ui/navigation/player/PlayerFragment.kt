@@ -67,6 +67,11 @@ class PlayerFragment : Fragment(), VolumeDialogProvider {
     }
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    dataBinding.unbind()
+  }
+
   fun showChangeLog() {
     showChangeLogDialog()
     // todo manage dialogs somehow
