@@ -112,7 +112,6 @@
   <string name="label_albums">Albums</string>
   <string name="label_tracks">Tracks</string>
   <string name="no_results_found">Sorry could not find any results for your search!</string>
-  <string name="library__sync_failed">The library metadata sync was incomplete or failed completely. This might result in queueing not working properly..</string>
   <string name="connect_button_description">Connect Button</string>
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
@@ -198,5 +197,10 @@
   <string name="notification__sync_artists">%1$d of %2$d artists</string>
   <string name="notification__sync_tracks">%1$d of %2$d tracks</string>
   <string name="notification__sync_playlists">%1$d of %2$d playlists</string>
-  <string name="library_container__sync_text">"Syncing "</string>
+  <string name="library_container__sync_text">"Syncing %1$d of %2$d %3$s"</string>
+  <string name="library__category_genres">Genres</string>
+  <string name="library__category_artists">Artists</string>
+  <string name="library__category_albums">Albums</string>
+  <string name="library__category_tracks">Tracks</string>
+  <string name="library__category_playlists">Playlists</string>
 </resources>

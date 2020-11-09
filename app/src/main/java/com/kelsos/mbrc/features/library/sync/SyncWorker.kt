@@ -119,6 +119,8 @@ class SyncWorker(
     const val TOTAL = "total"
     const val CATEGORY = "category"
 
+    const val SYNC_WORK_TAG = "sync_work"
+
     fun createWorkRequest(
       auto: Boolean = false
     ): OneTimeWorkRequest {

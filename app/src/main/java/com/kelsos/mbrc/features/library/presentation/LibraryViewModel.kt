@@ -12,6 +12,8 @@ class LibraryViewModel(
   private val syncWorkHandler: SyncWorkHandler
 ) : BaseViewModel<SyncResult>() {
 
+  val syncProgress = syncWorkHandler.syncProgress()
+
   fun refresh() {
     viewModelScope.launch(dispatchers.network) {
       syncWorkHandler.sync()

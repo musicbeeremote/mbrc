@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
@@ -18,12 +18,10 @@ import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
 import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
-import com.kelsos.mbrc.features.library.sync.SyncResult
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import com.kelsos.mbrc.features.library.sync.SyncCategory
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LibraryFragment : Fragment(), OnQueryTextListener {
+class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
 
   private var searchView: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -46,14 +44,6 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
     return true
   }
 
-  private fun onSyncResult(result: SyncResult) {
-    when (result) {
-      SyncResult.NOOP -> Unit
-      SyncResult.FAILED -> Unit
-      SyncResult.SUCCESS -> Unit
-    }
-  }
-
   private fun closeSearch(): Boolean {
     searchView?.let {
       if (it.isShown) {
@@ -65,6 +55,17 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
       }
     }
     return false
+  }
+
+  override fun getCategory(category: Int): String {
+    return when (category) {
+      SyncCategory.GENRES -> getString(R.string.library__category_genres)
+      SyncCategory.ARTISTS -> getString(R.string.library__category_artists)
+      SyncCategory.ALBUMS -> getString(R.string.library__category_albums)
+      SyncCategory.TRACKS -> getString(R.string.library__category_tracks)
+      SyncCategory.PLAYLISTS -> getString(R.string.library__category_playlists)
+      else -> ""
+    }
   }
 
   override fun onQueryTextChange(newText: String): Boolean = false
@@ -91,9 +92,12 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
         )
       )
     }
-    binding.searchPager.adapter = pagerAdapter
+    binding.libraryContainerPager.adapter = pagerAdapter
 
-    TabLayoutMediator(binding.pagerTabStrip, binding.searchPager) { tab, position ->
+    TabLayoutMediator(
+      binding.libraryContainerTabs,
+      binding.libraryContainerPager
+    ) { tab, position ->
       val resId = when (position) {
         0 -> R.string.label_genres
         1 -> R.string.label_artists
@@ -105,10 +109,17 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
       tab.setText(resId)
     }.attach()
 
-    lifecycleScope.launch {
-      viewModel.emitter.collect { result ->
-        onSyncResult(result)
-      }
+    viewModel.syncProgress.observe(viewLifecycleOwner) {
+      binding.libraryContainerSyncProgress.isGone = !it.running
+      binding.libraryContainerProgress.progress = it.current
+      binding.libraryContainerProgress.max = it.total
+      val category = getCategory(it.category)
+      binding.libraryContainerDescription.text = getString(
+        R.string.library_container__sync_text,
+        it.current,
+        it.total,
+        category
+      )
     }
   }
 
@@ -120,7 +131,7 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
     inflater.inflate(R.menu.library_search, menu)
-    searchMenuItem = menu.findItem(R.id.library_screen__action_search)?.apply {
+    searchMenuItem = menu.findItem(R.id.library_screen__action_search).apply {
       searchView = actionView as SearchView
     }
 
@@ -165,12 +176,12 @@ class LibraryFragment : Fragment(), OnQueryTextListener {
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    outState.putInt(PAGER_POSITION, binding.searchPager.currentItem)
+    outState.putInt(PAGER_POSITION, binding.libraryContainerPager.currentItem)
   }
 
   override fun onViewStateRestored(savedInstanceState: Bundle?) {
     super.onViewStateRestored(savedInstanceState)
-    binding.searchPager.currentItem = savedInstanceState?.getInt(PAGER_POSITION, 0) ?: 0
+    binding.libraryContainerPager.currentItem = savedInstanceState?.getInt(PAGER_POSITION, 0) ?: 0
   }
 
   companion object {
