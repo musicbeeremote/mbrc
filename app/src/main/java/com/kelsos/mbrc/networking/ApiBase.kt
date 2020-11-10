@@ -7,10 +7,10 @@ import com.kelsos.mbrc.networking.protocol.Page
 import com.kelsos.mbrc.networking.protocol.PageRange
 import com.kelsos.mbrc.networking.protocol.Protocol.Context
 import com.squareup.moshi.Types
-import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
+import kotlin.reflect.KClass
 
 class ApiBase(
   private val deserializationAdapter: DeserializationAdapter,

@@ -19,7 +19,6 @@ import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
-import java.net.SocketTimeoutException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -33,6 +32,7 @@ import org.koin.dsl.module
 import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
 import org.koin.test.inject
+import java.net.SocketTimeoutException
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -55,11 +55,16 @@ class PlaylistRepositoryTest : KoinTest {
     apiBase = mockk()
 
     startKoin {
-      modules(listOf(module {
-        single { dao }
-        singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
-        single { apiBase }
-      }, testDispatcherModule))
+      modules(
+        listOf(
+          module {
+            single { dao }
+            singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
+            single { apiBase }
+          },
+          testDispatcherModule
+        )
+      )
     }
   }
 
@@ -77,7 +82,7 @@ class PlaylistRepositoryTest : KoinTest {
         PlaylistDto::class
       )
     } throws SocketTimeoutException()
-    assertThat(repository.getRemote().isFailure()).isTrue()
+    assertThat(repository.getRemote().isLeft()).isTrue()
   }
 
   @Test
@@ -96,7 +101,7 @@ class PlaylistRepositoryTest : KoinTest {
         TestDataFactories.playlist(it)
       }
     }
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
     repository.getAll().paged().observeOnce { result ->
       assertThat(result).hasSize(20)
@@ -112,7 +117,7 @@ class PlaylistRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     repository.search("Metal").paged().observeOnce {
       assertThat(it).hasSize(1)
       assertThat(it).containsExactly(

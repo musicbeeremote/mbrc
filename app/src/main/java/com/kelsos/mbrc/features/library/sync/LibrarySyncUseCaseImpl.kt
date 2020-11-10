@@ -2,7 +2,6 @@ package com.kelsos.mbrc.features.library.sync
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import arrow.fx.fix
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository

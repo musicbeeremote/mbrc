@@ -16,7 +16,11 @@ class SyncWorkHandlerImpl(private val workManager: WorkManager) : SyncWorkHandle
   }
 
   override fun syncProgress(): LiveData<LibrarySyncProgress> {
-    return Transformations.map(workManager.getWorkInfosForUniqueWorkLiveData(SyncWorker.SYNC_WORK_TAG)) {
+    return Transformations.map(
+      workManager.getWorkInfosForUniqueWorkLiveData(
+        SyncWorker.SYNC_WORK_TAG
+      )
+    ) {
       val workInfo = it.first()
       val progress = workInfo.progress
       return@map LibrarySyncProgress(

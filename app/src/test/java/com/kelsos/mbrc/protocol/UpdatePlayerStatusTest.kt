@@ -60,7 +60,7 @@ class UpdatePlayerStatusTest {
     val message = MessageEvent(socketMessage.context, socketMessage.data)
     update.execute(message)
     val model = state.requireValue()
-    assertThat(original).isNotSameAs(model)
+    assertThat(original).isNotEqualTo(model)
     assertThat(model.scrobbling).isTrue()
     assertThat(model.mute).isTrue()
     assertThat(model.volume).isEqualTo(60)

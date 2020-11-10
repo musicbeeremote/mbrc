@@ -20,10 +20,13 @@ class ConnectionRepositoryImpl(
 
   override suspend fun discover(): DiscoveryStop {
     val discover = remoteServiceDiscovery.discover()
-    return discover.fold({ it }, {
-      save(it)
-      DiscoveryStop.Complete
-    })
+    return discover.fold(
+      { it },
+      {
+        save(it)
+        DiscoveryStop.Complete
+      }
+    )
   }
 
   override suspend fun save(settings: ConnectionSettingsEntity) {

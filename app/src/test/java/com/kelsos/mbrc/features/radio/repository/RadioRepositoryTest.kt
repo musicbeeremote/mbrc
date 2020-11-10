@@ -18,7 +18,6 @@ import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
-import java.net.SocketTimeoutException
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -31,6 +30,7 @@ import org.koin.dsl.module
 import org.koin.experimental.builder.singleBy
 import org.koin.test.KoinTest
 import org.koin.test.inject
+import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
 class RadioRepositoryTest : KoinTest {
@@ -52,11 +52,16 @@ class RadioRepositoryTest : KoinTest {
     apiBase = mockk()
 
     startKoin {
-      modules(listOf(module {
-        single { dao }
-        singleBy<RadioRepository, RadioRepositoryImpl>()
-        single { apiBase }
-      }, testDispatcherModule))
+      modules(
+        listOf(
+          module {
+            single { dao }
+            singleBy<RadioRepository, RadioRepositoryImpl>()
+            single { apiBase }
+          },
+          testDispatcherModule
+        )
+      )
     }
   }
 
@@ -75,7 +80,7 @@ class RadioRepositoryTest : KoinTest {
       )
     } throws SocketTimeoutException()
     runBlocking {
-      assertThat(repository.getRemote().isFailure()).isTrue()
+      assertThat(repository.getRemote().isLeft()).isTrue()
     }
   }
 
@@ -89,7 +94,7 @@ class RadioRepositoryTest : KoinTest {
     }
 
     runBlocking {
-      assertThat(repository.getRemote().isSuccess()).isTrue()
+      assertThat(repository.getRemote().isRight()).isTrue()
       assertThat(repository.count()).isEqualTo(2)
       repository.getAll().paged().observeOnce { result ->
         assertThat(result).hasSize(2)
@@ -98,25 +103,23 @@ class RadioRepositoryTest : KoinTest {
   }
 
   @Test
-  fun `it should filter the stations when searching`() {
+  fun `it should filter the stations when searching`() = runBlocking {
     every { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class) } answers {
       mockApi(5, listOf(RadioStationDto(name = "Heavy Metal", url = "http://heavy.metal.ru"))) {
         RadioStationDto(name = "Radio $it", url = "http://radio.statio/$it")
       }
     }
 
-    runBlocking {
-      assertThat(repository.getRemote().isSuccess()).isTrue()
-      repository.search("Metal").paged().observeOnce {
-        assertThat(it).hasSize(1)
-        assertThat(it).containsExactly(
-          RadioStation(
-            name = "Heavy Metal",
-            url = "http://heavy.metal.ru",
-            id = 6
-          )
+    assertThat(repository.getRemote().isRight()).isTrue()
+    repository.search("Metal").paged().observeOnce {
+      assertThat(it).hasSize(1)
+      assertThat(it).containsExactly(
+        RadioStation(
+          name = "Heavy Metal",
+          url = "http://heavy.metal.ru",
+          id = 6
         )
-      }
+      )
     }
   }
 }

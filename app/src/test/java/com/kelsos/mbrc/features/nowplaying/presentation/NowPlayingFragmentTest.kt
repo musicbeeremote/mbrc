@@ -69,11 +69,15 @@ class NowPlayingFragmentTest {
     every { viewModel.trackState } answers { state }
     every { state.observe(any(), any()) } just Runs
     startKoin {
-      modules(listOf(module {
-        single<NowPlayingAdapter>()
-        single { viewModel }
-        single { miniControlFactory }
-      }))
+      modules(
+        listOf(
+          module {
+            single<NowPlayingAdapter>()
+            single { viewModel }
+            single { miniControlFactory }
+          }
+        )
+      )
     }
   }
 

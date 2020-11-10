@@ -8,5 +8,5 @@ interface ArtistRepository : Repository<Artist> {
   fun getArtistByGenre(genre: String): DataSource.Factory<Int, Artist>
   fun getAlbumArtistsOnly(): DataSource.Factory<Int, Artist>
   fun allArtists(): DataSource.Factory<Int, Artist>
-  fun albumArtists(): DataSource.Factory<Int,Artist>
+  fun albumArtists(): DataSource.Factory<Int, Artist>
 }

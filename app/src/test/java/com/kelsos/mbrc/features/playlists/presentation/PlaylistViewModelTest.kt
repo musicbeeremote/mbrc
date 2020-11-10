@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.features.playlists.presentation
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Try
-import com.google.common.truth.Truth
+import arrow.core.Either
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.events.UserAction
@@ -20,11 +19,11 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import java.net.SocketTimeoutException
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
 class PlaylistViewModelTest {
@@ -56,20 +55,20 @@ class PlaylistViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() {
-    coEvery { repository.getRemote() } coAnswers { Try.raiseError(SocketTimeoutException()) }
+    coEvery { repository.getRemote() } coAnswers { Either.left(SocketTimeoutException()) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
     verify(exactly = 1) { observer(any()) }
-    Truth.assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshFailed)
+    assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshFailed)
   }
 
   @Test
   fun `should notify the observer that refresh succeeded`() {
-    coEvery { repository.getRemote() } coAnswers { Try.invoke { } }
+    coEvery { repository.getRemote() } coAnswers { Either.right(Unit) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
     verify(exactly = 1) { observer(any()) }
-    Truth.assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
+    assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
   }
 
   @Test

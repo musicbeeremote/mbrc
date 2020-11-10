@@ -22,11 +22,14 @@ class RadioViewModel(
   fun reload() {
     scope.launch(dispatchers.network) {
       val result = radioRepository.getRemote()
-        .fold<RadioUiMessages>({
-          RadioUiMessages.RefreshFailed
-        }, {
-          RadioUiMessages.RefreshSuccess
-        })
+        .fold<RadioUiMessages>(
+          {
+            RadioUiMessages.RefreshFailed
+          },
+          {
+            RadioUiMessages.RefreshSuccess
+          }
+        )
       emit(result)
     }
   }
@@ -34,15 +37,18 @@ class RadioViewModel(
   fun play(path: String) {
     scope.launch(dispatchers.network) {
       val response = queueApi.queue(Queue.NOW, listOf(path))
-        .fold<RadioUiMessages>({
-          RadioUiMessages.NetworkError
-        }, { response ->
-          if (response.code == 200) {
-            RadioUiMessages.QueueSuccess
-          } else {
-            RadioUiMessages.QueueFailed
+        .fold<RadioUiMessages>(
+          {
+            RadioUiMessages.NetworkError
+          },
+          { response ->
+            if (response.code == 200) {
+              RadioUiMessages.QueueSuccess
+            } else {
+              RadioUiMessages.QueueFailed
+            }
           }
-        })
+        )
 
       emit(response)
     }

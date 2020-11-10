@@ -10,10 +10,10 @@ import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
+import timber.log.Timber
 import java.io.IOException
 import java.net.Socket
 import java.nio.charset.Charset
-import timber.log.Timber
 
 class RequestManagerImpl(
   private val serializationAdapter: SerializationAdapter,
@@ -87,7 +87,7 @@ class RequestManagerImpl(
         }
       }
     } catch (e: IOException) {
-      Timber.v(e,"failed to create socket")
+      Timber.v(e, "failed to create socket")
       throw e
     }
   }

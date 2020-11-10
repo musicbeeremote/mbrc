@@ -7,7 +7,6 @@ import com.kelsos.mbrc.metrics.SyncMetricsImpl
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-
 open class FlavorApp : App() {
 
   override fun appModules(): List<Module> {
@@ -22,6 +21,5 @@ open class FlavorApp : App() {
     anrError?.run {
       FirebaseCrashlytics.getInstance().recordException(this)
     }
-
   }
 }

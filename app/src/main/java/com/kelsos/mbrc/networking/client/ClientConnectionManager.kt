@@ -8,6 +8,14 @@ import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.IOException
@@ -18,14 +26,6 @@ import java.net.Socket
 import java.net.SocketAddress
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class ClientConnectionManager(
   private val activityChecker: SocketActivityChecker,
@@ -194,7 +194,8 @@ class ClientConnectionManager(
             BufferedWriter(
               out,
               SOCKET_BUFFER
-            ), true
+            ),
+            true
           )
 
           val inputStreamReader = InputStreamReader(inputStream, "UTF-8")

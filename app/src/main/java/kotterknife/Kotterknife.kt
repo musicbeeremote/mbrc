@@ -5,8 +5,6 @@ package kotterknife
 import android.app.Activity
 import android.app.Dialog
 import android.view.View
-import androidx.fragment.app.DialogFragment as SupportDialogFragment
-import androidx.fragment.app.Fragment as SupportFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -14,6 +12,8 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import androidx.fragment.app.DialogFragment as SupportDialogFragment
+import androidx.fragment.app.Fragment as SupportFragment
 
 // pulled from
 // https://gist.github.com/chrisbanes/fc4392dcbdc0aa5d99147dc551616676
@@ -105,7 +105,7 @@ private val ViewHolder.viewFinder: ViewHolder.(Int) -> View?
 
 private fun viewNotFound(id: Int, desc: KProperty<*>):
   Nothing =
-  throw IllegalStateException("View ID $id for '${desc.name}' not found.")
+    throw IllegalStateException("View ID $id for '${desc.name}' not found.")
 
 @Suppress("UNCHECKED_CAST")
 private fun <T, V : View> required(id: Int, finder: T.(Int) -> View?) =
@@ -137,13 +137,13 @@ private class Lazy<in T, out V>(private val initializer: (T, KProperty<*>) -> V)
 
   override fun getValue(thisRef: T, property: KProperty<*>):
     V {
-    checkAddToLifecycleOwner(thisRef)
-    if (value == EMPTY) {
-      value = initializer(thisRef, property)
+      checkAddToLifecycleOwner(thisRef)
+      if (value == EMPTY) {
+        value = initializer(thisRef, property)
+      }
+      @Suppress("UNCHECKED_CAST")
+      return value as V
     }
-    @Suppress("UNCHECKED_CAST")
-    return value as V
-  }
 
   private fun checkAddToLifecycleOwner(thisRef: T) {
     if (!attachedToLifecycleOwner && thisRef is LifecycleOwner) {

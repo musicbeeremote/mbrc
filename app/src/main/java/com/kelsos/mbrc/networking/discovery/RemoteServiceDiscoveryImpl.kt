@@ -7,12 +7,12 @@ import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.squareup.moshi.Moshi
+import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
-import java.util.Locale
-import timber.log.Timber
+import java.util.*
 
 class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
@@ -96,9 +96,11 @@ class RemoteServiceDiscoveryImpl(
     try {
       return MulticastSocket(MULTICAST_PORT).apply {
         soTimeout = SO_TIMEOUT
-        joinGroup(InetAddress.getByName(DISCOVERY_ADDRESS).also {
-          group = it
-        })
+        joinGroup(
+          InetAddress.getByName(DISCOVERY_ADDRESS).also {
+            group = it
+          }
+        )
 
         val message = with(DiscoveryMessage()) {
           context = Protocol.DISCOVERY

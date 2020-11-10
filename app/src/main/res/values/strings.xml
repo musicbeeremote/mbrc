@@ -231,5 +231,10 @@
   <string name="notification__sync_tracks">%1$d of %2$d tracks</string>
   <string name="notification__sync_playlists">%1$d of %2$d playlists</string>
 
-  <string name="library_container__sync_text">"Syncing %1$d of %2$d"</string>
+  <string name="library_container__sync_text">"Syncing %1$d of %2$d %3$s"</string>
+  <string name="library__category_genres">Genres</string>
+  <string name="library__category_artists">Artists</string>
+  <string name="library__category_albums">Albums</string>
+  <string name="library__category_tracks">Tracks</string>
+  <string name="library__category_playlists">Playlists</string>
 </resources>

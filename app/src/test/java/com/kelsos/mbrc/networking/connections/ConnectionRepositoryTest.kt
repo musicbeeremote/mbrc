@@ -16,7 +16,6 @@ import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import java.util.ArrayList
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -126,7 +125,7 @@ class ConnectionRepositoryTest : KoinTest {
     assertThat(count).isEqualTo(3)
 
     repository.getAll().observeOnce {
-      assertThat(it).containsAllIn(settingsList)
+      assertThat(it).containsExactlyElementsIn(settingsList)
     }
   }
 

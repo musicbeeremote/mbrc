@@ -3,7 +3,6 @@ package com.kelsos.mbrc.common.state
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 
 abstract class BaseState<T> : State<T> where T : Any {
 
@@ -24,11 +23,14 @@ abstract class BaseState<T> : State<T> where T : Any {
   }
 
   override fun observe(owner: LifecycleOwner, observer: (T) -> Unit) {
-    return liveData.observe(owner, Observer {
-      if (it != null) {
-        observer(it)
+    return liveData.observe(
+      owner,
+      {
+        if (it != null) {
+          observer(it)
+        }
       }
-    })
+    )
   }
 
   override fun removeObservers(owner: LifecycleOwner) {

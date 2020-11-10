@@ -20,7 +20,8 @@ import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter.OnPlaylis
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class PlaylistFragment : Fragment(),
+class PlaylistFragment :
+  Fragment(),
   OnPlaylistPressedListener {
 
   private val swipeLayout: SwipeRefreshLayout by bindView(R.id.playlists__refresh_layout)

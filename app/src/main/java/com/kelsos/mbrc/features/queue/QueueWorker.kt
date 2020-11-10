@@ -37,13 +37,16 @@ class QueueWorker(
 
     setForeground(createForegroundInfo())
 
-    queueUseCase.queue(id, meta, action).fold({ Result.failure() }, { status ->
-      if (status == 200) {
-        Result.success()
-      } else {
-        Result.failure()
+    queueUseCase.queue(id, meta, action).fold(
+      { Result.failure() },
+      { status ->
+        if (status == 200) {
+          Result.success()
+        } else {
+          Result.failure()
+        }
       }
-    })
+    )
   }
 
   private fun createForegroundInfo(): ForegroundInfo {

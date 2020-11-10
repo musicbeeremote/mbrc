@@ -8,9 +8,11 @@ import com.kelsos.mbrc.ui.preferences.SettingsFragment
 
 fun SettingsFragment.webDialog(@StringRes titleResId: Int, url: String): Dialog {
   return AlertDialog.Builder(requireContext()).apply {
-    setView(WebView(context).apply {
-      loadUrl(url)
-    })
+    setView(
+      WebView(context).apply {
+        loadUrl(url)
+      }
+    )
     setTitle(titleResId)
     setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
   }.create()

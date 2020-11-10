@@ -52,11 +52,16 @@ class NowPlayingRepositoryTest : KoinTest {
     apiBase = mockk()
 
     startKoin {
-      modules(listOf(module {
-        single { dao }
-        singleBy<NowPlayingRepository, NowPlayingRepositoryImpl>()
-        single { apiBase }
-      }, testDispatcherModule))
+      modules(
+        listOf(
+          module {
+            single { dao }
+            singleBy<NowPlayingRepository, NowPlayingRepositoryImpl>()
+            single { apiBase }
+          },
+          testDispatcherModule
+        )
+      )
     }
   }
 
@@ -82,7 +87,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(1, 5)
@@ -104,7 +109,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(6, 1)
@@ -127,7 +132,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     repository.remove(2)
@@ -148,7 +153,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(20)
 
     repository.search("Song 6").paged().observeOnce { list ->
@@ -173,9 +178,9 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(5)
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
 
     repository.getAll().paged().observeOnce { list ->
       assertThat(list).hasSize(5)
@@ -195,7 +200,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.findPosition("Song 15")).isEqualTo(-1)
   }
 
@@ -207,7 +212,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.findPosition("Song 5")).isEqualTo(5)
   }
 }

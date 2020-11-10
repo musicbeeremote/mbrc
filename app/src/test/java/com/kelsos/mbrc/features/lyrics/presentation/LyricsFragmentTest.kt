@@ -50,11 +50,15 @@ class LyricsFragmentTest : KoinTest {
     every { viewModel.lyrics } answers { lyricsState }
 
     startKoin {
-      modules(listOf(module {
-        single { viewModel }
-        single { miniControlFactory }
-        single { adapter }
-      }))
+      modules(
+        listOf(
+          module {
+            single { viewModel }
+            single { miniControlFactory }
+            single { adapter }
+          }
+        )
+      )
     }
   }
 

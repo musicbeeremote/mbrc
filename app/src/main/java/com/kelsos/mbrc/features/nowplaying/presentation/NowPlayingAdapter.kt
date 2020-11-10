@@ -42,7 +42,8 @@ class NowPlayingAdapter(
         nowPlayingListener.onPress(position)
         playingTrackIndex = position
         currentTrack = getItem(position)?.path ?: ""
-      }) { start, holder -> dragStartListener.onStartDrag(start, holder) }
+      }
+    ) { start, holder -> dragStartListener.onStartDrag(start, holder) }
   }
 
   override fun onBindViewHolder(

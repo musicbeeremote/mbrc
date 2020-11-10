@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -19,7 +18,8 @@ import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class ConnectionManagerFragment : Fragment(),
+class ConnectionManagerFragment :
+  Fragment(),
   SettingsDialogFragment.SettingsSaveListener,
   ConnectionAdapter.ConnectionChangeListener {
 
@@ -68,9 +68,12 @@ class ConnectionManagerFragment : Fragment(),
     connectionManagerViewModel.settings.nonNullObserver(viewLifecycleOwner) {
       adapter.submitList(it)
     }
-    connectionManagerViewModel.default.observe(viewLifecycleOwner, Observer {
-      adapter.setDefault(it)
-    })
+    connectionManagerViewModel.default.observe(
+      viewLifecycleOwner,
+      {
+        adapter.setDefault(it)
+      }
+    )
     connectionManagerViewModel.discoveryStatus.nonNullObserver(viewLifecycleOwner) {
       it.contentIfNotHandled?.let { status ->
         onDiscoveryStopped(status)

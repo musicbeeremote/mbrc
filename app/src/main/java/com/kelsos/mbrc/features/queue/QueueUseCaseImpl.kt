@@ -80,10 +80,13 @@ class QueueUseCaseImpl(
     val track = trackRepository.getById(id)
     if (track != null) {
       when (action) {
-        Queue.ADD_ALBUM -> Pair(trackRepository.getAlbumTrackPaths(
-          track.album,
-          track.albumArtist
-        ), track.src)
+        Queue.ADD_ALBUM -> Pair(
+          trackRepository.getAlbumTrackPaths(
+            track.album,
+            track.albumArtist
+          ),
+          track.src
+        )
         Queue.ADD_ALL -> Pair(trackRepository.getAllTrackPaths(), track.src)
         else -> Pair(listOf(track.src), null)
       }

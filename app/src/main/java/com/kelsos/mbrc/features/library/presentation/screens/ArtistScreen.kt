@@ -15,7 +15,8 @@ import com.kelsos.mbrc.features.work.WorkHandler
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class ArtistScreen : LibraryScreen,
+class ArtistScreen :
+  LibraryScreen,
   KoinComponent,
   MenuItemSelectedListener<Artist> {
 

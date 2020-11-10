@@ -1,9 +1,9 @@
 package com.kelsos.mbrc
 
 import android.app.Application
-import java.lang.reflect.Method
 import org.robolectric.TestLifecycleApplication
 import timber.log.Timber
+import java.lang.reflect.Method
 
 class TestApplication : Application(), TestLifecycleApplication {
 
@@ -19,10 +19,10 @@ class TestApplication : Application(), TestLifecycleApplication {
       }
 
       override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        System.out.println("$tag: $message")
+        println("$tag: $message")
       }
     })
-    setTheme(R.style.AppTheme)
+    setTheme(R.style.Theme_App)
   }
 
   override fun prepareTest(test: Any?) {

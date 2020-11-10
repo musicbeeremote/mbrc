@@ -41,11 +41,14 @@ class NowPlayingViewModel(
   fun reload() {
     scope.launch {
       val result = repository.getRemote()
-        .fold({
-          NowPlayingUiMessages.RefreshFailed
-        }, {
-          NowPlayingUiMessages.RefreshSuccess
-        })
+        .fold(
+          {
+            NowPlayingUiMessages.RefreshFailed
+          },
+          {
+            NowPlayingUiMessages.RefreshSuccess
+          }
+        )
       emit(result)
     }
   }

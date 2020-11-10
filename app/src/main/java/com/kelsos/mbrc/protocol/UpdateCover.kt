@@ -14,13 +14,13 @@ import com.kelsos.mbrc.features.player.cover.CoverModel
 import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.squareup.moshi.Moshi
-import java.io.File
-import java.io.FileOutputStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
+import java.io.FileOutputStream
 
 class UpdateCover(
   private val app: Application,
@@ -61,19 +61,22 @@ class UpdateCover(
 
   private suspend fun retrieveCover() {
     withContext(dispatchers.network) {
-      coverApi.getCover().fold({
-        removeCover(it)
-      }, {
-        val bitmap = getBitmap(it)
-        val file = storeCover(bitmap)
+      coverApi.getCover().fold(
+        {
+          removeCover(it)
+        },
+        {
+          val bitmap = getBitmap(it)
+          val file = storeCover(bitmap)
 
-        playingTrackLiveDataProvider.set {
-          val coverUri = file.toUri().toString()
-          coverModel.coverPath = coverUri
-          copy(coverUrl = coverUri)
+          playingTrackLiveDataProvider.set {
+            val coverUri = file.toUri().toString()
+            coverModel.coverPath = coverUri
+            copy(coverUrl = coverUri)
+          }
+          updater.updateCover(file.absolutePath)
         }
-        updater.updateCover(file.absolutePath)
-      })
+      )
     }
 
     Timber.v("Message received for available cover")

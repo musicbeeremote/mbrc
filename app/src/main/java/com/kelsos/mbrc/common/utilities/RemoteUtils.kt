@@ -38,9 +38,12 @@ object RemoteUtils {
 
   fun loadBitmap(path: String): Option<Bitmap> {
     return Try {
-      BitmapFactory.decodeFile(path, BitmapFactory.Options().apply {
-        inPreferredConfig = Bitmap.Config.RGB_565
-      })
+      BitmapFactory.decodeFile(
+        path,
+        BitmapFactory.Options().apply {
+          inPreferredConfig = Bitmap.Config.RGB_565
+        }
+      )
     }.toOption()
   }
 

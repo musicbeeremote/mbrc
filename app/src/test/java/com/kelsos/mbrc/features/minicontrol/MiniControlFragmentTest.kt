@@ -61,9 +61,13 @@ class MiniControlFragmentTest {
     every { viewModel.playerStatus } answers { playerStatus }
 
     startKoin {
-      modules(listOf(module {
-        single { viewModel }
-      }))
+      modules(
+        listOf(
+          module {
+            single { viewModel }
+          }
+        )
+      )
     }
   }
 

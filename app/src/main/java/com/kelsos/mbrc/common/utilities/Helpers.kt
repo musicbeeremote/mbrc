@@ -19,13 +19,16 @@ fun <T> DataSource.Factory<Int, T>.paged(): LiveData<PagedList<T>> {
 }
 
 fun <T> LiveData<T>.nonNullObserver(lifecycleOwner: LifecycleOwner, observer: (T) -> Unit) {
-  observe(lifecycleOwner, Observer {
-    if (it == null) {
-      return@Observer
-    }
+  observe(
+    lifecycleOwner,
+    Observer {
+      if (it == null) {
+        return@Observer
+      }
 
-    observer(it)
-  })
+      observer(it)
+    }
+  )
 }
 
 /**

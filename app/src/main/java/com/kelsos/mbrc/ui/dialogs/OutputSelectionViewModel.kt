@@ -6,9 +6,9 @@ import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.ui.BaseViewModel
+import kotlinx.coroutines.launch
 import java.net.SocketException
 import java.net.SocketTimeoutException
-import kotlinx.coroutines.launch
 
 class OutputSelectionViewModel(
   private val outputApi: OutputApi,
@@ -19,8 +19,8 @@ class OutputSelectionViewModel(
   private val _selection: MutableLiveData<String> = MutableLiveData()
 
   init {
-      _outputs.postValue(emptyList())
-      _selection.postValue("")
+    _outputs.postValue(emptyList())
+    _selection.postValue("")
   }
 
   val outputs: LiveData<List<String>>
@@ -46,11 +46,15 @@ class OutputSelectionViewModel(
   fun reload() {
     scope.launch {
       val result = outputApi.getOutputs()
-        .fold({
-          code(it) }, {
-          updateState(it)
-          OutputSelectionResult.Success
-        })
+        .fold(
+          {
+            code(it)
+          },
+          {
+            updateState(it)
+            OutputSelectionResult.Success
+          }
+        )
       emit(result)
     }
   }
@@ -58,12 +62,15 @@ class OutputSelectionViewModel(
   fun setOutput(output: String) {
     scope.launch {
       val result = outputApi.setOutput(output)
-        .fold({
-          code(it)
-        }, {
-          updateState(it)
-          OutputSelectionResult.Success
-        })
+        .fold(
+          {
+            code(it)
+          },
+          {
+            updateState(it)
+            OutputSelectionResult.Success
+          }
+        )
       emit(result)
     }
   }

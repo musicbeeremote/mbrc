@@ -8,12 +8,14 @@ import androidx.paging.DataSource
 import androidx.paging.PositionalDataSource
 import androidx.room.Room
 import arrow.core.Either
-import arrow.core.Try
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.playlists.PlaylistDto
-import io.reactivex.Observable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
@@ -27,12 +29,8 @@ object TestData {
     count: Int,
     inject: List<T> = emptyList(),
     make: (position: Int) -> T
-  ): Observable<List<T>> {
-    return Observable.range(0, count)
-      .map { make(it) }
-      .mergeWith(Observable.fromIterable(inject))
-      .toList()
-      .toObservable()
+  ): Flow<List<T>> = flow {
+    emit((0..count).map { make(it) } + inject)
   }
 }
 
@@ -66,27 +64,29 @@ class MockFactory<T>(private val data: List<T>) : DataSource.Factory<Int, T>() {
 object ImageCreator {
   private val redPaint: Paint = Paint().apply { setARGB(255, 255, 0, 0) }
 
-  fun create(): Either<Throwable, String> = Try {
-    val width = 100
-    val height = 100
+  suspend fun create(): Either<Throwable, String> = Either.catch {
+    withContext(Dispatchers.IO) {
+      val width = 100
+      val height = 100
 
-    val path = File.createTempFile("cover-", ".png")
-    val bmp = Bitmap.createBitmap(
-      width,
-      height,
-      Bitmap.Config.ARGB_8888
-    )
+      val path = File.createTempFile("cover-", ".png")
+      val bmp = Bitmap.createBitmap(
+        width,
+        height,
+        Bitmap.Config.ARGB_8888
+      )
 
-    val canvas = Canvas(bmp)
-    val radius: Float = Math.min(width, height).toFloat() / 2f
-    canvas.drawCircle((width / 2).toFloat(), (height / 2).toFloat(), radius, redPaint)
+      val canvas = Canvas(bmp)
+      val radius: Float = Math.min(width, height).toFloat() / 2f
+      canvas.drawCircle((width / 2).toFloat(), (height / 2).toFloat(), radius, redPaint)
 
-    FileOutputStream(path).use { out ->
-      bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+      FileOutputStream(path).use { out ->
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+      }
+      bmp.recycle()
+      path.absolutePath
     }
-    bmp.recycle()
-    path.absolutePath
-  }.toEither()
+  }
 }
 
 object TestDataFactories {

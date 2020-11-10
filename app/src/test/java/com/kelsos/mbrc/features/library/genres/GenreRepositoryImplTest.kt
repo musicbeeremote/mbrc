@@ -18,7 +18,7 @@ import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -66,23 +66,22 @@ class GenreRepositoryImplTest : KoinTest {
     runBlocking {
       assertThat(repository.cacheIsEmpty()).isTrue()
       repository.getRemote()
-      repository.allGenres().factory.paged().observeOnce { list ->
+      repository.allGenres().paged().observeOnce { list ->
         assertThat(list).hasSize(1200)
         assertThat(list.first().genre).isEqualTo("Metal0")
       }
     }
   }
 
-  val testModule = module {
+  private val testModule = module {
     singleBy<GenreRepository, GenreRepositoryImpl>()
 
     val mockApi = mockk<ApiBase>()
 
     every { mockApi.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class) } answers {
-      Observable.range(0, 1200)
-        .map { GenreDto("Metal$it") }
-        .toList()
-        .toObservable()
+      flow {
+        emit((0..1200).map { GenreDto("Metal$it") })
+      }
     }
     single { mockApi }
     single { genreDao }

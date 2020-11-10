@@ -144,7 +144,9 @@ class NavigationActivity : AppCompatActivity() {
     )
     drawerLayout.addDrawerListener(drawerToggle)
 
-    val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_navigation_fragment) as NavHostFragment
+    val navHostFragment = supportFragmentManager.findFragmentById(
+      R.id.main_navigation_fragment
+    ) as NavHostFragment
     val navController = navHostFragment.navController
     setupWithNavController(findViewById<NavigationView>(R.id.nav_view), navController)
     navController.addOnDestinationChangedListener(onDestinationChangedListener)

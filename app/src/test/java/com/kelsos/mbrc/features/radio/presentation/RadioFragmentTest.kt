@@ -57,11 +57,15 @@ class RadioFragmentTest {
     val miniControlFactory: MiniControlFactory = mockk()
     every { miniControlFactory.attach(any()) } just Runs
     startKoin {
-      modules(listOf(module {
-        single<RadioAdapter>()
-        single { viewModel }
-        single { miniControlFactory }
-      }))
+      modules(
+        listOf(
+          module {
+            single<RadioAdapter>()
+            single { viewModel }
+            single { miniControlFactory }
+          }
+        )
+      )
     }
   }
 

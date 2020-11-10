@@ -61,11 +61,13 @@ class PlaylistFragmentTest {
     every { miniControlFactory.attach(any()) } just Runs
     startKoin {
       modules(
-        listOf(module {
-          single<PlaylistAdapter>()
-          single { viewModel }
-          single { miniControlFactory }
-        })
+        listOf(
+          module {
+            single<PlaylistAdapter>()
+            single { viewModel }
+            single { miniControlFactory }
+          }
+        )
       )
     }
   }

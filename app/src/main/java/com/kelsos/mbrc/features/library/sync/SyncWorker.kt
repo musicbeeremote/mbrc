@@ -68,14 +68,17 @@ class SyncWorker(
   private fun updateProgress(current: Int, total: Int, category: Int) {
     val id = applicationContext.getString(R.string.notification__actions_id)
     val title = applicationContext.getString(R.string.notification__sync_title)
-    val contextText = applicationContext.getString(when (category) {
-      SyncCategory.GENRES -> R.string.notification__sync_genres
-      SyncCategory.ALBUMS -> R.string.notification__sync_albums
-      SyncCategory.ARTISTS -> R.string.notification__sync_artists
-      SyncCategory.TRACKS -> R.string.notification__sync_tracks
-      SyncCategory.PLAYLISTS -> R.string.notification__sync_playlists
-      else -> error("not supported")
-    }, current, total)
+    val contextText = applicationContext.getString(
+      when (category) {
+        SyncCategory.GENRES -> R.string.notification__sync_genres
+        SyncCategory.ALBUMS -> R.string.notification__sync_albums
+        SyncCategory.ARTISTS -> R.string.notification__sync_artists
+        SyncCategory.TRACKS -> R.string.notification__sync_tracks
+        SyncCategory.PLAYLISTS -> R.string.notification__sync_playlists
+        else -> error("not supported")
+      },
+      current, total
+    )
     val builder = NotificationCompat.Builder(applicationContext, id)
       .setContentTitle(title)
       .setSmallIcon(R.drawable.ic_mbrc_status)
@@ -91,14 +94,18 @@ class SyncWorker(
 
     setForeground(createForegroundInfo())
 
-    return when (librarySyncUseCase.sync(auto) { current: Int, total: Int, category: Int ->
-      updateProgress(current, total, category)
-      setProgress(workDataOf(
-        CURRENT to current,
-        TOTAL to total,
-        CATEGORY to category
-      ))
-    }) {
+    return when (
+      librarySyncUseCase.sync(auto) { current: Int, total: Int, category: Int ->
+        updateProgress(current, total, category)
+        setProgress(
+          workDataOf(
+            CURRENT to current,
+            TOTAL to total,
+            CATEGORY to category
+          )
+        )
+      }
+    ) {
       SyncResult.SUCCESS,
       SyncResult.NOOP -> Result.success()
       SyncResult.FAILED -> Result.failure()
