@@ -3,6 +3,7 @@ package com.kelsos.mbrc.features.nowplaying.dragsort
 import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.abs
 
 class SimpleItemTouchHelper(
   private val adapter: ItemTouchHelperAdapter
@@ -45,7 +46,7 @@ class SimpleItemTouchHelper(
   ) {
     if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
       // Fade out the view as it is swiped out of the parent's bounds
-      val alpha = ALPHA_FULL - Math.abs(dX) / viewHolder.itemView.width.toFloat()
+      val alpha = ALPHA_FULL - abs(dX) / viewHolder.itemView.width.toFloat()
       viewHolder.itemView.alpha = alpha
       viewHolder.itemView.translationX = dX
     } else {

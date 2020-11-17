@@ -52,14 +52,13 @@ class MessageHandlerImpl(
       sendProtocolPayload()
       return
     } else if (context == Protocol.ProtocolTag) {
-
       val protocolVersion: Int = try {
         dataPayload.toString().toInt()
       } catch (ignore: Exception) {
         2
       }
 
-      // model.pluginProtocol = protocolVersion
+      commandExecutor.processEvent(MessageEvent(Protocol.ProtocolTag, protocolVersion))
       connectionStatusLiveDataProvider.active()
       messageQueue.queue(SocketMessage.create(Protocol.INIT))
       return

@@ -13,6 +13,7 @@ import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
+import com.kelsos.mbrc.utils.idle
 import com.kelsos.mbrc.utils.observeOnce
 import io.mockk.CapturingSlot
 import io.mockk.Runs
@@ -56,24 +57,24 @@ class NowPlayingViewModelTest {
       moveManager = MoveManagerImpl(),
       trackState = state
     )
-
-    coEvery { repository.getRemote(any()) } answers { Either.right(Unit) }
   }
 
   @Test
   fun `should notify the observer that refresh failed`() {
-    coEvery { repository.getRemote() } coAnswers { Either.left(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.left(SocketTimeoutException()) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(NowPlayingUiMessages.RefreshFailed)
   }
 
   @Test
   fun `should notify the observer that refresh succeeded`() {
-    coEvery { repository.getRemote() } coAnswers { Either.right(Unit) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.right(Unit) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(NowPlayingUiMessages.RefreshSuccess)
   }

@@ -18,8 +18,6 @@
     <item name="android:textColor">@color/secondary_text_material_light</item>
   </style>>
 
-  <style name="Theme.App.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
-
   <style name="empty_view_image">
     <item name="android:tint">@color/empty_view_icon_tint</item>
     <item name="android:layout_marginTop">@dimen/empty_view_icon_margin_top</item>

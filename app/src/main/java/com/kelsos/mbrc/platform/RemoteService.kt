@@ -21,7 +21,7 @@ class RemoteService : Service(), ForegroundHooks {
 
   override fun onCreate() {
     super.onCreate()
-    this.registerReceiver(receiver, receiver.filter())
+    this.registerReceiver(receiver, receiver.filter(this))
     notifications.setForegroundHooks(this)
   }
 

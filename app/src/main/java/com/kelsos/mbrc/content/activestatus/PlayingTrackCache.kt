@@ -1,82 +1,66 @@
 package com.kelsos.mbrc.content.activestatus
 
 import android.app.Application
+import androidx.datastore.DataStore
+import androidx.datastore.createDataStore
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.PlayingTrack
-import com.squareup.moshi.Moshi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import okio.buffer
-import okio.sink
-import okio.source
-import java.io.File
-import java.nio.charset.Charset
+import timber.log.Timber
+import java.io.IOException
 
 class PlayingTrackCacheImpl(
-  private val mapper: Moshi,
-  private val appContext: Application,
+  context: Application,
   private val dispatchers: AppCoroutineDispatchers
 ) : PlayingTrackCache {
+  private val dataStore: DataStore<Settings> =
+    context.createDataStore("settings.db", SettingsSerializer)
 
-  private val adapter by lazy { mapper.adapter(PlayingTrack::class.java) }
-
-  override suspend fun persistInfo(track: PlayingTrack) {
-    withContext(dispatchers.disk) {
-      val infoFile = File(appContext.filesDir, TRACK_INFO)
-      if (infoFile.exists()) {
-        infoFile.delete()
-      }
-      adapter.toJson(infoFile.sink().buffer(), track)
-    }
-  }
-
-  override suspend fun restoreInfo(): PlayingTrack? {
-    return withContext(dispatchers.disk) {
-      val infoFile = File(appContext.filesDir, TRACK_INFO)
-      return@withContext if (infoFile.exists()) {
-        adapter.fromJson(infoFile.source().buffer())
+  private val settings: Flow<Settings> = dataStore.data
+    .catch { exception ->
+      // dataStore.data throws an IOException when an error is encountered when reading data
+      if (exception is IOException) {
+        Timber.e(exception, "Error reading sort order preferences.")
+        emit(Settings.getDefaultInstance())
       } else {
-        null
+        throw exception
       }
     }
-  }
 
-  override suspend fun persistCover(cover: String) {
-    withContext(dispatchers.disk) {
-      val coverFile = File(appContext.filesDir, COVER_INFO)
-      if (coverFile.exists()) {
-        coverFile.delete()
-      }
+  override suspend fun persistInfo(track: PlayingTrack) = withContext(dispatchers.io) {
+    dataStore.updateData { settings ->
+      val cache = settings.cache.toBuilder()
+        .setAlbum(track.album)
+        .setArtist(track.artist)
+        .setPath(track.path)
+        .setTitle(track.title)
+        .setYear(track.year)
+        .setCover(track.coverUrl)
+        .build()
 
-      coverFile.sink().buffer().use {
-        it.write(coverFile.readBytes())
-        it.emit()
-        it.close()
-      }
+      settings.toBuilder().setCache(cache).build()
     }
+    return@withContext
   }
 
-  override suspend fun restoreCover(): String? {
-    return withContext(dispatchers.disk) {
-      val coverFile = File(appContext.filesDir, COVER_INFO)
-      return@withContext if (!coverFile.exists()) {
-        null
-      } else {
-        coverFile.source().buffer().use {
-          return@use it.readString(Charset.forName("UTF-8"))
-        }
-      }
-    }
-  }
+  override suspend fun restoreInfo(): PlayingTrack? = withContext(dispatchers.io) {
+    val cache = settings.first().cache
 
-  companion object {
-    const val TRACK_INFO = "track.json"
-    const val COVER_INFO = "cover.txt"
+    return@withContext PlayingTrack(
+      cache.artist,
+      cache.title,
+      cache.album,
+      cache.year,
+      cache.path,
+      cache.cover
+    )
   }
 }
 
 interface PlayingTrackCache {
   suspend fun persistInfo(track: PlayingTrack)
   suspend fun restoreInfo(): PlayingTrack?
-  suspend fun persistCover(cover: String)
-  suspend fun restoreCover(): String?
 }

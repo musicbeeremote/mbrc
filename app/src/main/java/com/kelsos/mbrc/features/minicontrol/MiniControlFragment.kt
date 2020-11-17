@@ -19,15 +19,15 @@ class MiniControlFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
     binding.viewModel = viewModel
 
-    viewModel.playerStatus.observe(this) {
+    viewModel.playerStatus.observe(viewLifecycleOwner) {
       binding.status = it
     }
 
-    viewModel.playingTrack.observe(this) {
+    viewModel.playingTrack.observe(viewLifecycleOwner) {
       binding.track = it
     }
 
-    viewModel.trackPosition.observe(this) {
+    viewModel.trackPosition.observe(viewLifecycleOwner) {
       binding.position = it
     }
   }
@@ -39,5 +39,10 @@ class MiniControlFragment : Fragment() {
   ): View? {
     binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mini_control, container, false)
     return binding.root
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    binding.unbind()
   }
 }

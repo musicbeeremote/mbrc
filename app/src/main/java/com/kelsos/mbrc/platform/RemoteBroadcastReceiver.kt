@@ -1,11 +1,11 @@
 package com.kelsos.mbrc.platform
 
+import android.Manifest.permission.READ_PHONE_STATE
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.NetworkInfo
-import android.net.wifi.WifiManager
+import android.content.pm.PackageManager
 import android.telephony.TelephonyManager
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
@@ -27,10 +27,15 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
    * intent fired by the ReplyHandler or the PHONE_STATE intent fired by the
    * Android operating system.
    */
-  fun filter(): IntentFilter {
+  fun filter(context: Context): IntentFilter {
+    val hasPermission =
+      context.checkSelfPermission(READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+    val handleCallAction = settingsManager.getCallAction() != SettingsManager.NONE
+
     return IntentFilter().apply {
-      addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
-      addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
+      if (hasPermission && handleCallAction) {
+        addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
+      }
       addAction(RemoteViewIntentBuilder.PLAY_PRESSED)
       addAction(RemoteViewIntentBuilder.NEXT_PRESSED)
       addAction(RemoteViewIntentBuilder.CLOSE_PRESSED)
@@ -40,62 +45,33 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   }
 
   override fun onReceive(context: Context, intent: Intent) {
-    when {
-      TelephonyManager.ACTION_PHONE_STATE_CHANGED == intent.action -> onPhoneStateChange(intent)
-      WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.action -> onWifiChange(intent)
-      RemoteViewIntentBuilder.PLAY_PRESSED == intent.action -> postAction(
-        UserAction(
-          Protocol.PlayerPlayPause,
-          true
-        )
-      )
-      RemoteViewIntentBuilder.NEXT_PRESSED == intent.action -> postAction(
-        UserAction(
-          Protocol.PlayerNext,
-          true
-        )
-      )
-      RemoteViewIntentBuilder.CLOSE_PRESSED == intent.action -> {
-        // bus.post(SessionNotificationManager.CancelNotificationEvent())
-      }
-      RemoteViewIntentBuilder.PREVIOUS_PRESSED == intent.action -> postAction(
-        UserAction(
-          Protocol.PlayerPrevious,
-          true
-        )
-      )
-      RemoteViewIntentBuilder.CANCELLED_NOTIFICATION == intent.action -> context.stopService(
-        Intent(
-          context,
-          RemoteService::class.java
-        )
-      )
+    when (intent.action) {
+      TelephonyManager.ACTION_PHONE_STATE_CHANGED -> onPhoneStateChange(intent)
+      RemoteViewIntentBuilder.PLAY_PRESSED -> performAction(Protocol.PlayerPlayPause, true)
+      RemoteViewIntentBuilder.NEXT_PRESSED -> performAction(Protocol.PlayerNext, true)
+      RemoteViewIntentBuilder.CLOSE_PRESSED -> context.stopService()
+      RemoteViewIntentBuilder.PREVIOUS_PRESSED -> performAction(Protocol.PlayerPrevious, true)
+      RemoteViewIntentBuilder.CANCELLED_NOTIFICATION -> context.stopService()
     }
   }
 
-  private fun onWifiChange(intent: Intent) {
-    val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
-    if (networkInfo?.state == NetworkInfo.State.CONNECTED) {
-      // bus.post(ChangeConnectionStateEvent(START))
-    }
+  private fun Context.stopService() {
+    stopService(Intent(this, RemoteService::class.java))
   }
 
   private fun onPhoneStateChange(intent: Intent) {
     val bundle = intent.extras ?: return
-    val state = bundle.getString(TelephonyManager.EXTRA_STATE)
-    if (TelephonyManager.EXTRA_STATE_RINGING.equals(state!!, ignoreCase = true)) {
+    val state = bundle.getString(TelephonyManager.EXTRA_STATE) ?: return
+    if (!TelephonyManager.EXTRA_STATE_RINGING.equals(state, ignoreCase = true)) return
 
-      when (settingsManager.getCallAction()) {
-        SettingsManager.PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
-        SettingsManager.STOP -> postAction(UserAction(Protocol.PlayerStop, true))
-        SettingsManager.NONE -> Unit
-        SettingsManager.REDUCE -> volumeModifyUseCase.reduceVolume()
-        else -> Unit
-      }
+    when (settingsManager.getCallAction()) {
+      SettingsManager.PAUSE -> performAction(Protocol.PlayerPause, true)
+      SettingsManager.STOP -> performAction(Protocol.PlayerStop, true)
+      SettingsManager.REDUCE -> volumeModifyUseCase.reduceVolume()
     }
   }
 
-  private fun postAction(data: UserAction) {
-    userActionUseCase.perform(data)
+  private fun performAction(@Protocol.Context context: String, data: Any) {
+    userActionUseCase.perform(UserAction.create(context, data))
   }
 }

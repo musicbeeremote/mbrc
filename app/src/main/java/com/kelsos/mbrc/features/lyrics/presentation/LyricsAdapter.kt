@@ -28,7 +28,7 @@ class LyricsAdapter(executor: Executor) : ListAdapter<String, LyricsViewHolder>(
     }
 
     fun config(executor: Executor): AsyncDifferConfig<String> {
-      return AsyncDifferConfig.Builder<String>(DIFF)
+      return AsyncDifferConfig.Builder(DIFF)
         .setBackgroundThreadExecutor(executor)
         .build()
     }

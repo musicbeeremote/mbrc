@@ -41,7 +41,7 @@ class AlbumRepositoryImpl(
     val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseAlbums, AlbumDto::class, progress)
 
     data.collect { albums ->
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
         val list = albums.map { dtoMapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insert(list)

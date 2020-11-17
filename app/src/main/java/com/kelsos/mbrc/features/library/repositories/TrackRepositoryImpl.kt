@@ -56,7 +56,7 @@ class TrackRepositoryImpl(
     )
 
     pages.collect { tracks ->
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
         val trackData = tracks.map { dtoMapper.map(it).apply { dateAdded = added } }
         val sources = trackData.map { it.src }
 

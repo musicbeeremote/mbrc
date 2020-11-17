@@ -102,23 +102,23 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   }
 
   private fun mockSuccessfulRepositoryResponse() {
-    coEvery { genreRepository.getRemote() } coAnswers {
+    coEvery { genreRepository.getRemote(any()) } coAnswers {
       delay(1)
       Either.right(Unit)
     }
-    coEvery { artistRepository.getRemote() } coAnswers {
+    coEvery { artistRepository.getRemote(any()) } coAnswers {
       delay(1)
       Either.right(Unit)
     }
-    coEvery { albumRepository.getRemote() } coAnswers {
+    coEvery { albumRepository.getRemote(any()) } coAnswers {
       delay(1)
       Either.right(Unit)
     }
-    coEvery { trackRepository.getRemote() } coAnswers {
+    coEvery { trackRepository.getRemote(any()) } coAnswers {
       delay(1)
       Either.right(Unit)
     }
-    coEvery { playlistRepository.getRemote() } coAnswers {
+    coEvery { playlistRepository.getRemote(any()) } coAnswers {
       delay(1)
       Either.right(Unit)
     }

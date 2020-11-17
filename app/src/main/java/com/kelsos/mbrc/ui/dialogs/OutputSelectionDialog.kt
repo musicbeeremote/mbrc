@@ -88,7 +88,7 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
   private fun update(data: List<String>) {
     availableOutputs.onItemSelectedListener = null
     availableOutputs.setOnTouchListener(null)
-    val outputAdapter = ArrayAdapter<String>(
+    val outputAdapter = ArrayAdapter(
       requireContext(),
       R.layout.item__output_device,
       R.id.output_selection__output_device,

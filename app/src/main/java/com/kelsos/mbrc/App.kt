@@ -11,8 +11,6 @@ import androidx.annotation.CallSuper
 import androidx.core.content.getSystemService
 import androidx.multidex.MultiDexApplication
 import com.chibatching.kotpref.Kotpref
-import com.github.anrwatchdog.ANRError
-import com.github.anrwatchdog.ANRWatchDog
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
@@ -60,16 +58,7 @@ open class App : MultiDexApplication() {
 
     initializeTimber()
 
-    ANRWatchDog()
-      .setANRListener { onAnr(it) }
-      .setIgnoreDebugger(true)
-      .start()
-
     Kotpref.init(this)
-  }
-
-  protected open fun onAnr(anrError: ANRError?) {
-    Timber.v(anrError, "ANR error")
   }
 
   private fun initializeTimber() {

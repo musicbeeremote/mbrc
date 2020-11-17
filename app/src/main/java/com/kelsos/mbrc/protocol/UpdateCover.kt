@@ -34,11 +34,11 @@ class UpdateCover(
   private val coverDir: File
 
   private val job = Job()
-  private val scope = CoroutineScope(dispatchers.disk + job)
+  private val scope = CoroutineScope(dispatchers.io + job)
 
   init {
     coverDir = File(app.filesDir, COVER_DIR)
-    scope.launch(dispatchers.disk) {
+    scope.launch(dispatchers.io) {
       playingTrackLiveDataProvider.set {
         copy(coverUrl = coverModel.coverPath)
       }
@@ -53,7 +53,7 @@ class UpdateCover(
       playingTrackLiveDataProvider.set { copy(coverUrl = "") }
       updater.updateCover("")
     } else if (payload.status == CoverPayload.READY) {
-      scope.launch(dispatchers.disk) {
+      scope.launch(dispatchers.io) {
         retrieveCover()
       }
     }

@@ -13,6 +13,7 @@ import androidx.appcompat.widget.ShareActionProvider
 import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.changelog.ChangelogDialog
 import com.kelsos.mbrc.content.activestatus.TrackRating
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
 import com.kelsos.mbrc.features.library.PlayingTrack
@@ -48,33 +49,38 @@ class PlayerFragment : Fragment(), VolumeDialogProvider {
     super.onViewCreated(view, savedInstanceState)
     dataBinding.viewModel = viewModel
 
-    viewModel.playerStatus.observe(this) {
+    viewModel.playerStatus.observe(viewLifecycleOwner) {
       dataBinding.status = it
       menu?.findItem(R.id.player_screen__action_scrobbling)?.isChecked = it.scrobbling
     }
 
-    viewModel.playingTrack.observe(this) {
+    viewModel.playingTrack.observe(viewLifecycleOwner) {
       dataBinding.track = it
       shareActionProvider?.setShareIntent(getShareIntent())
     }
 
-    viewModel.trackPosition.observe(this) {
+    viewModel.trackPosition.observe(viewLifecycleOwner) {
       dataBinding.position = it
     }
 
-    viewModel.trackRating.observe(this) {
+    viewModel.trackRating.observe(viewLifecycleOwner) {
       updateRating(it)
+    }
+
+    viewModel.emitter.observe(viewLifecycleOwner) { message ->
+      if (message.hasBeenHandled) {
+        return@observe
+      }
+      when (message.contentIfNotHandled) {
+        is PlayerUiMessage.ShowChangelog -> ChangelogDialog.show(requireActivity(), R.raw.changelog)
+        is PlayerUiMessage.ShowPluginUpdate -> Unit
+      }
     }
   }
 
   override fun onDestroy() {
     super.onDestroy()
     dataBinding.unbind()
-  }
-
-  fun showChangeLog() {
-    showChangeLogDialog()
-    // todo manage dialogs somehow
   }
 
   fun notifyPluginOutOfDate() {

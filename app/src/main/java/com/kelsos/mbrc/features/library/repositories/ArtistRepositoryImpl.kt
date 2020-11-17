@@ -53,7 +53,7 @@ class ArtistRepositoryImpl(
     )
 
     data.collect { artists ->
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
         val items = artists.map { dtoMapper.map(it).apply { dateAdded = added } }
         withContext(dispatchers.database) {
           dao.insertAll(items)

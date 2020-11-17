@@ -1,50 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
   <string name="application_name">MusicBee Remote</string>
   <string name="main_button_mute_description">When pressed it toggles the volume mute.</string>
-  <string name="main_button_repeat_description">When pressed it changes the repeat (all/none).
-    </string>
-  <string name="main_button_shuffle_description">When pressed it changes the shuffle mode (on/off).
-    </string>
+  <string name="main_button_repeat_description">When pressed it changes the repeat (all/none).</string>
+  <string name="main_button_shuffle_description">When pressed it changes the shuffle mode (on/off).</string>
   <string name="main_button_previous_description">When pressed it plays the previous track</string>
-  <string name="main_button_play_pause_description">When pressed either it starts playing a track or
-        pauses it if it
-        is already playing.
-    </string>
+  <string name="main_button_play_pause_description">When pressed either it starts playing a track or pauses it if it is already playing.</string>
   <string name="main_button_next_description">When pressed it plays the next track.</string>
-  <string name="description_album_cover">It displays the album cover for the current track.
-    </string>
+  <string name="description_album_cover">It displays the album cover for the current track.</string>
   <string name="nav_settings">Settings</string>
   <string name="settings_connection">Connection Settings</string>
   <string name="settings_miscellaneous">Miscellaneous</string>
   <string name="settings_legacy_key_reduce_volume">reduce_volume_on_ring</string>
   <string name="settings_key_incoming_call_action">incoming_call_action</string>
   <string name="settings_miscellaneous_incoming_call_action">Incoming call action</string>
-  <string name="settings_miscellaneous_incoming_call_description">Default action on incoming call \n\nRequires
-        permission to read the Phone State.
-    </string>
-
-
-  <string name="info_service_description">This client is responsible for the communication
-        of the application
-        with the plugin.
-    </string>
+  <string name="settings_miscellaneous_incoming_call_description">Default action on incoming call \n\nRequires permission to read the Phone State.</string>
+  <string name="info_service_description">This client is responsible for the communication of the application with the plugin.</string>
   <string name="application_description">Remote Control Application for MusicBee</string>
   <string name="main_menu_title_share">Share</string>
   <string name="preferences_category_about">About MusicBee Remote</string>
   <string name="preferences_about_version">MusicBee Remote Version</string>
   <string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
   <string name="alert_invalid_range">"Invalid Range"</string>
-  <string name="notification_connection_timeout">Connection timed out</string>
-  <string name="notification_not_allowed">Client is not allowed</string>
   <string name="now_playing_search">Search</string>
-  <string name="dialog_application_setup">The connection settings appear empty. Would you like to setup up
-        the application now?
-    </string>
-  <string name="dialog_application_setup_title">Setup</string>
-  <string name="dialog_application_setup_positive">Setup Now</string>
-  <string name="dialog_application_setup_negative">Cancel</string>
   <string name="preferences_open_source">open_source</string>
   <string name="drawer_connection_status_off">Offline</string>
   <string name="drawer_connection_status_on">Authenticating</string>
@@ -58,9 +36,7 @@
   <string name="connection_manager_scan">SCAN</string>
   <string name="connection_manager_add">ADD</string>
   <string name="settings_dialog_add">Add</string>
-  <string name="connection_manager_title">Connection Manager</string>
-  <string name="connection_default_description">Represents if this connection is the default selected connection
-    </string>
+  <string name="connection_default_description">Represents if this connection is the default selected connection</string>
   <string name="connectivity_manager_default">Set default</string>
   <string name="connectivity_manager_edit">Edit</string>
   <string name="connectivity_manager_delete">Delete</string>
@@ -73,21 +49,16 @@
   <string name="con_man_no_wifi">This service is available only on a wifi connection</string>
   <string name="con_man_not_found">A remote service could not be found</string>
   <string name="con_man_success">Service successfully found</string>
-  <string name="settings_key_default_index">mbrc_default_settings</string>
   <string name="preferences_library_track_default_action_key">mbrc.library_track_default</string>
   <string name="settings_manage_connections">Manage Connections</string>
   <string name="preferences_library_track_default_action_title">Library Track Action</string>
   <string name="preferences_library_track_default_action_summary">What should happen when you press on a track entry in the library.</string>
   <string name="preferences_library_track_default_action_default_value">now</string>
-  <string name="settings_key_notification_control">set_show_notification</string>
-  <string name="settings_sum_notification_control">Show a notification control widget.</string>
-  <string name="settings_title_notification_control">Notification Control</string>
   <string name="settings_key_last_update_check">last_update_check</string>
   <string name="settings_title_license">License</string>
   <string name="settings_key_license">mbrc_license</string>
   <string name="nav_help">Help &amp; Feedback</string>
   <string name="settings_key_last_version_run">last_version_run</string>
-  <string name="dialog_upgrade_negative">OK</string>
   <string name="dialog_upgrade_title">Welcome</string>
   <string name="nav_exit">Exit</string>
   <string name="pref_key_build_time">build_time_key</string>
@@ -108,7 +79,6 @@
   <string name="lastfm_scrobble">Last.fm Scrobbling</string>
   <string name="lastfm_love">Love</string>
   <string name="rate_the_playing_track">Rate the playing track</string>
-  <string name="unknown_reason">Unknown reason!</string>
   <string name="feedback_title">How you feel about the application?</string>
   <string name="feedback_hint">Feedback</string>
   <string name="feedback_button_text">Send Feedback</string>
@@ -117,11 +87,9 @@
   <string name="feedback_subject">MusicBeeRemote InApp Feedback</string>
   <string name="feedback_chooser_title">Send feedback using…</string>
   <string name="setting_miscellaneous_plugin_updates">Plugin Update Check</string>
-  <string name="setting_miscellaneous_plugin_updates_summary">Periodically check for updated versions of the plugin
-    </string>
+  <string name="setting_miscellaneous_plugin_updates_summary">Periodically check for updated versions of the plugin</string>
   <string name="settings_key_plugin_check">plugin_update_check</string>
   <string name="dash">-</string>
-  <string name="search_for_results_to_appear">Use the search function to get results</string>
   <string name="menu_overflow_description">More options</string>
   <string name="nav_option_title">Options</string>
   <string name="incoming_action_default_value">none</string>
@@ -129,48 +97,36 @@
   <string name="nav_library">Library</string>
   <string name="empty">[Empty]</string>
   <string name="unknown_artist">Unknown artist</string>
-  <string name="title_activity_help_feedback">Help &amp; Feedback</string>
   <string name="library_search_hint">Search your library</string>
   <string name="label_genres">Genres</string>
   <string name="label_artists">Artists</string>
   <string name="label_albums">Albums</string>
   <string name="label_tracks">Tracks</string>
   <string name="no_results_found">Sorry could not find any results for your search!</string>
-  <string name="refresh_failed">Refresh failed</string>
   <string name="connect_button_description">Connect Button</string>
-
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
   <string name="notification_action_next">Next</string>dw
   <string name="description_computer_icon">Computer icon</string>
   <string name="settings_dialog_edit">Edit</string>
   <string name="settings_dialog_save">Save</string>
-  <string name="semicolon" translatable="false">:</string>
   <string name="non_album_tracks">Non album tracks</string>
   <string name="no_lyrics">No lyrics found</string>
   <string name="settings_key_debug_logging">settings_debug_log</string>
-  <string name="setting_miscellaneous_debug_logging_summary">Enables debug logging for the application. May cause
-        performance degradation since it logs everything.
-    </string>
+  <string name="setting_miscellaneous_debug_logging_summary">Enables debug logging for the application. May cause performance degradation since it logs everything.</string>
   <string name="setting_miscellaneous_debug_logging">Debug Logging</string>
   <string name="now_playing_list_empty">No tracks found</string>
   <string name="playlists_list_empty">No playlists found</string>
-  <string name="genres_list_empty">No genres found</string>
   <string name="artists_list_empty">No artists found</string>
   <string name="albums_list_empty">No albums found</string>
-  <string name="tracks_list_empty">No tracks found</string>
   <string name="swipe_to_refresh">Swipe to refresh the list.</string>
   <string name="playlists__refresh_failed">There was an error while trying to load the playlists.</string>
-  <string name="service_connection_error">Failed to connect to remote host.</string>
   <string name="now_playing_search_hint">Search and play a track</string>
   <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
   <string name="library_actionbar_refresh">Refresh</string>
-  <string name="refreshing_library_data">Refreshing library data…</string>
   <string name="feedback_logs">Include Logs</string>
-  <string name="main__dialog_change_log">Change Log</string>
   <string name="main__dialog_plugin_outdated_message">It seems that you are using an older version of the MusicBee Remote Plugin. Some features require an newer version of the plugin to work. Please Update.</string>
-  <string name="library_album_artists_only">Only Album Artists</string>
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
@@ -178,39 +134,15 @@
   <string name="radio__refresh_failed">There was an error while refreshing the radio stations</string>
   <string name="radio__queue_success">The radio station has been queued successfully.</string>
   <string name="radio__queue_failed">The radio station could not be queued.</string>
-  <string name="title_activity_radios">Radios</string>
   <string name="radio__no_radio_stations">No radio stations found</string>
-  <string name="party_mode__command_unavailable">You are not allowed to perform this action in party mode.</string>
   <string name="nav_output">Output</string>
-  <string name="output_selection__active_device">Active Device:</string>
-  <string name="output_selection__available_outputs">Available Outputs</string>
   <string name="output_selection__select_output">Select Output</string>
   <string name="output_selection__close_dialog">Close</string>
   <string name="output_selection__connection_error">Connection failed while attempting to retrieve the output devices.</string>
   <string name="output_selection__generic_error">Something when wrong.</string>
-
-  <string name="browse_album__sort">Sort</string>
-
-  <string name="album_sorting__album">Album</string>
-  <string name="album_sorting__album_artist__album">Album Artist, Album</string>
-  <string name="album_sorting__album_artist__year__album">Album Artist, Year, Album</string>
-  <string name="album_sorting__artist__album">Artist, Album</string>
-  <string name="album_sorting__genre__album_artist__album">Genre, Album Artist, Album</string>
-  <string name="album_sorting__year__album">Year, Album</string>
-  <string name="album_sorting__year__album_artist__album">Year, Album Artist, Album</string>
-  <string name="album_sorting__dialog_title">Album Sorting</string>
-  <string name="album_sorting__positive_button">Sort</string>
-
-  <string name="sorting_dialog__order">Order</string>
-  <string name="sorting_dialog__ascending">Ascending</string>
-  <string name="sorting_dialog__descending">Descending</string>
   <string name="notification__session_channel_name">MBRC Session</string>
   <string name="notification__session_channel_description">Displays the playing information of the track and allows control.</string>
-
   <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
-  <string name="title_home">Home</string>
-  <string name="title_dashboard">Dashboard</string>
-  <string name="title_notifications">Notifications</string>
   <string name="radio__queue_network_error">Could not queue the radio due to a network error</string>
   <string name="radio__refresh_success">Radio station list was refreshed successfully</string>
   <string name="radio__empty_icon_content_description">Empty list icon</string>
@@ -230,11 +162,13 @@
   <string name="notification__sync_artists">%1$d of %2$d artists</string>
   <string name="notification__sync_tracks">%1$d of %2$d tracks</string>
   <string name="notification__sync_playlists">%1$d of %2$d playlists</string>
-
   <string name="library_container__sync_text">"Syncing %1$d of %2$d %3$s"</string>
   <string name="library__category_genres">Genres</string>
   <string name="library__category_artists">Artists</string>
   <string name="library__category_albums">Albums</string>
   <string name="library__category_tracks">Tracks</string>
   <string name="library__category_playlists">Playlists</string>
+  <string name="connection_manager__host">mbrc://%1$s:%2$d</string>
+  <string name="output_selection__icon_content_description">Speaker Icon</string>
+  <string name="genre_artists__empty_icon_content_description">Empty list placeholder</string>
 </resources>

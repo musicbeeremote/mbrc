@@ -2,10 +2,10 @@ package com.kelsos.mbrc.common.utilities
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import arrow.core.Option
-import arrow.core.Try
+import arrow.core.Either
 import com.kelsos.mbrc.BuildConfig
-import io.reactivex.Observable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 object RemoteUtils {
@@ -18,43 +18,25 @@ object RemoteUtils {
     return BuildConfig.VERSION_CODE
   }
 
-  private fun bitmapFromFile(path: String): Observable<Bitmap> {
-    return Observable.create<Bitmap> {
-      try {
-        val options = BitmapFactory.Options()
-        options.inPreferredConfig = Bitmap.Config.RGB_565
-        val bitmap = BitmapFactory.decodeFile(path, options)
-        if (bitmap != null) {
-          it.onNext(bitmap)
-          it.onComplete()
-        } else {
-          it.onError(RuntimeException("Unable to decode the image"))
-        }
-      } catch (e: Exception) {
-        it.onError(e)
+  private suspend fun bitmapFromFile(path: String): Bitmap = withContext(Dispatchers.IO) {
+    val options = BitmapFactory.Options()
+    options.inPreferredConfig = Bitmap.Config.RGB_565
+    return@withContext BitmapFactory.decodeFile(path, options)
+      ?: throw RuntimeException("Unable to decode the image")
+  }
+
+  suspend fun loadBitmap(path: String): Either<Throwable, Bitmap> = Either.catch {
+    BitmapFactory.decodeFile(
+      path,
+      BitmapFactory.Options().apply {
+        inPreferredConfig = Bitmap.Config.RGB_565
       }
-    }
+    )
   }
 
-  fun loadBitmap(path: String): Option<Bitmap> {
-    return Try {
-      BitmapFactory.decodeFile(
-        path,
-        BitmapFactory.Options().apply {
-          inPreferredConfig = Bitmap.Config.RGB_565
-        }
-      )
-    }.toOption()
-  }
-
-  private fun coverBitmap(coverPath: String): Observable<Bitmap> {
-    val cover = File(coverPath)
-    return bitmapFromFile(cover.absolutePath)
-  }
-
-  fun coverBitmapSync(coverPath: String): Bitmap? {
+  suspend fun coverBitmap(coverPath: String): Bitmap? {
     return try {
-      RemoteUtils.coverBitmap(coverPath).blockingLast()
+      bitmapFromFile(File(coverPath).absolutePath)
     } catch (e: Exception) {
       null
     }

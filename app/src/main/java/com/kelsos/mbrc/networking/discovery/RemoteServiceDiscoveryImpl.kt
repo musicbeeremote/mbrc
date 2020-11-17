@@ -1,25 +1,29 @@
 package com.kelsos.mbrc.networking.discovery
 
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import arrow.core.Either
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
-import java.util.*
+import java.util.Locale
 
 class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
-  private val moshi: Moshi
+  private val moshi: Moshi,
+  private val dispatchers: AppCoroutineDispatchers
 ) : RemoteServiceDiscovery {
-  private var mLock: WifiManager.MulticastLock? = null
+  private var multicastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
 
   private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
@@ -29,10 +33,9 @@ class RemoteServiceDiscoveryImpl(
       return Either.left(DiscoveryStop.NoWifi)
     }
 
-    mLock = manager.createMulticastLock("locked")
-    mLock?.let {
-      it.setReferenceCounted(true)
-      it.acquire()
+    multicastLock = manager.createMulticastLock("locked").apply {
+      setReferenceCounted(true)
+      acquire()
     }
 
     Timber.v("Starting remote service discovery")
@@ -40,17 +43,19 @@ class RemoteServiceDiscoveryImpl(
     val mapper = ConnectionMapper()
     val socket = create()
     val entity = retryIO(times = 4) {
-      val buffer = ByteArray(512)
-      val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
-        socket.receive(this)
-        val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
-        Timber.v(message)
-        adapter.fromJson(message)
+      withContext(dispatchers.io) {
+        val buffer = ByteArray(512)
+        val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
+          socket.receive(this)
+          val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
+          Timber.v(message)
+          adapter.fromJson(message)
+        }
+        if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
+          throw IOException("unexpected message")
+        }
+        mapper.map(discoveryMessage)
       }
-      if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
-        throw IOException("unexpected message")
-      }
-      mapper.map(discoveryMessage)
     }
 
     try {
@@ -70,8 +75,8 @@ class RemoteServiceDiscoveryImpl(
   }
 
   private fun stopDiscovery() {
-    mLock?.release()
-    mLock = null
+    multicastLock?.release()
+    multicastLock = null
   }
 
   private fun getWifiAddress(): String {
@@ -88,8 +93,9 @@ class RemoteServiceDiscoveryImpl(
   }
 
   private fun isWifiConnected(): Boolean {
-    val current = connectivityManager.activeNetworkInfo
-    return current != null && current.type == ConnectivityManager.TYPE_WIFI
+    val network = connectivityManager.activeNetwork ?: return false
+    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
   }
 
   private fun create(): MulticastSocket {

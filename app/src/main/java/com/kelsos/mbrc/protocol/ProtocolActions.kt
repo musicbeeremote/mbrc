@@ -298,6 +298,12 @@ class UpdatePlaybackPositionCommand(
   }
 }
 
+class ProtocolVersionUpdate() : ProtocolAction {
+  override fun execute(message: ProtocolMessage) {
+    Timber.v(message.data.toString())
+  }
+}
+
 private fun ProtocolMessage.asBoolean(): Boolean {
   return data as? Boolean ?: false
 }

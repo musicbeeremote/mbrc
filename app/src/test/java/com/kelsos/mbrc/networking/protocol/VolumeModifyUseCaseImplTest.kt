@@ -32,7 +32,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `increment volume from 10 by a step`() {
-    every { provider.getValue() } answers { PlayerStatusModel(10) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(10) }
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -41,7 +41,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `increment volume from 12 by a step`() {
-    every { provider.getValue() } answers { PlayerStatusModel(12) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(12) }
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -50,7 +50,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `increment volume from 17 by a step`() {
-    every { provider.getValue() } answers { PlayerStatusModel(17) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(17) }
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -59,7 +59,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `increment volume from 92 by a step`() {
-    every { provider.getValue() } answers { PlayerStatusModel(92) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(92) }
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -68,7 +68,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `decrement volume from 7 by a step`() {
-    every { provider.getValue() } answers { PlayerStatusModel(7) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(7) }
     volumeModifyUseCase.decrement()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -77,7 +77,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `decrement volume from 10 by a step`() {
-    every { provider.getValue() } answers { PlayerStatusModel(10) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(10) }
     volumeModifyUseCase.decrement()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -86,7 +86,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `decrement volume from 17 by a step`() {
-    every { provider.getValue() } answers { PlayerStatusModel(17) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(17) }
     volumeModifyUseCase.decrement()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -95,7 +95,7 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `reduce volume from 100`() {
-    every { provider.getValue() } answers { PlayerStatusModel(100) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(100) }
     volumeModifyUseCase.reduceVolume()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
@@ -104,14 +104,16 @@ class VolumeModifyUseCaseImplTest {
 
   @Test
   fun `reduce volume when muted`() {
-    every { provider.getValue() } answers { PlayerStatusModel(100, mute = true) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers {
+      PlayerStatusModel(100, mute = true)
+    }
     volumeModifyUseCase.reduceVolume()
     assertThat(slot.isCaptured).isFalse()
   }
 
   @Test
   fun `reduce volume when volume is zero`() {
-    every { provider.getValue() } answers { PlayerStatusModel(0) }
+    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(0) }
     volumeModifyUseCase.reduceVolume()
     assertThat(slot.isCaptured).isFalse()
   }

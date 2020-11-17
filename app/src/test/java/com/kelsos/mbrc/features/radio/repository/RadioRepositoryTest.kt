@@ -15,6 +15,7 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.TestData.mockApi
 import com.kelsos.mbrc.utils.observeOnce
+import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
@@ -72,45 +73,42 @@ class RadioRepositoryTest : KoinTest {
   }
 
   @Test
-  fun `sync is failure if there is an exception`() {
+  fun `sync is failure if there is an exception`() = runBlocking {
     every {
       apiBase.getAllPages(
         Protocol.RadioStations,
         RadioStationDto::class
       )
     } throws SocketTimeoutException()
-    runBlocking {
-      assertThat(repository.getRemote().isLeft()).isTrue()
-    }
+
+    assertThat(repository.getRemote().isLeft()).isTrue()
   }
 
   @Test
-  fun `sync remote data and update the database`() {
-    runBlocking { assertThat(repository.cacheIsEmpty()) }
-    every { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class) } answers {
+  fun `sync remote data and update the database`() = runBlocking {
+    assertThat(repository.cacheIsEmpty())
+    every { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
       mockApi(2) {
         RadioStationDto(name = "Radio $it", url = "http://radio.statio/$it")
       }
     }
 
-    runBlocking {
-      assertThat(repository.getRemote().isRight()).isTrue()
-      assertThat(repository.count()).isEqualTo(2)
-      repository.getAll().paged().observeOnce { result ->
-        assertThat(result).hasSize(2)
-      }
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
+    assertThat(repository.count()).isEqualTo(2)
+    repository.getAll().paged().observeOnce { result ->
+      assertThat(result).hasSize(2)
     }
   }
 
   @Test
   fun `it should filter the stations when searching`() = runBlocking {
-    every { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
       mockApi(5, listOf(RadioStationDto(name = "Heavy Metal", url = "http://heavy.metal.ru"))) {
         RadioStationDto(name = "Radio $it", url = "http://radio.statio/$it")
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     repository.search("Metal").paged().observeOnce {
       assertThat(it).hasSize(1)
       assertThat(it).containsExactly(

@@ -17,15 +17,10 @@ class PlayingTrackStateImpl(
   init {
     set(PlayingTrack())
 
-    runBlocking(appCoroutineDispatchers.disk) {
+    runBlocking(appCoroutineDispatchers.io) {
       with(playingTrackCache) {
         try {
-          val coverUrl = restoreCover()
-          val trackInfo = restoreInfo()
-
-          if (trackInfo != null && coverUrl != null) {
-            set(trackInfo.copy(coverUrl = coverUrl))
-          }
+          restoreInfo()
         } catch (ex: Exception) {
         }
       }

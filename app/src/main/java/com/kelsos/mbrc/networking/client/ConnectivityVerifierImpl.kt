@@ -20,7 +20,7 @@ class ConnectivityVerifierImpl(
         SocketMessage.create(Protocol.VerifyConnection)
       )
       connection.close()
-      val (context, data) = deserializationAdapter.objectify(response, SocketMessage::class)
+      val (context, _) = deserializationAdapter.objectify(response, SocketMessage::class)
 
       if (context != Protocol.VerifyConnection) {
         throw NoValidPluginConnection()

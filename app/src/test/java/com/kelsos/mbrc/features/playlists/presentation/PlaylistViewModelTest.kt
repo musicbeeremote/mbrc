@@ -10,6 +10,7 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
+import com.kelsos.mbrc.utils.idle
 import com.kelsos.mbrc.utils.observeOnce
 import io.mockk.CapturingSlot
 import io.mockk.Runs
@@ -55,18 +56,20 @@ class PlaylistViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() {
-    coEvery { repository.getRemote() } coAnswers { Either.left(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.left(SocketTimeoutException()) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshFailed)
   }
 
   @Test
   fun `should notify the observer that refresh succeeded`() {
-    coEvery { repository.getRemote() } coAnswers { Either.right(Unit) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.right(Unit) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
   }

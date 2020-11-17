@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="changelog_dialog__title">Changelog</string>
+  <string name="entry__bug">Bug</string>
+  <string name="entry__feature">Feature</string>
+  <string name="entry__removed">Removed</string>
+</resources>

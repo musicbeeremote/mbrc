@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
-import arrow.core.Option
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 
 interface ConnectionRepository {
@@ -13,7 +12,7 @@ interface ConnectionRepository {
 
   suspend fun count(): Long
 
-  fun getDefault(): Option<ConnectionSettingsEntity>
+  fun getDefault(): ConnectionSettingsEntity?
 
   fun setDefault(settings: ConnectionSettingsEntity)
 

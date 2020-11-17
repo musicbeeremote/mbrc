@@ -15,6 +15,7 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.observeOnce
+import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
@@ -81,13 +82,13 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user moves track from position 1 to position 5`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(1, 5)
@@ -103,13 +104,13 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user moves track from position 6 to position 1`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(6, 1)
@@ -126,7 +127,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user removes a track`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
@@ -147,13 +148,13 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user search should return filtered results`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
 
     repository.search("Song 6").paged().observeOnce { list ->
@@ -172,15 +173,15 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `updated items should keep the same ids`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(5) {
         TestDataFactories.nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(5)
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
 
     repository.getAll().paged().observeOnce { list ->
       assertThat(list).hasSize(5)
@@ -194,25 +195,25 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `search should return -1 if item is not found`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(5) {
         TestDataFactories.nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.findPosition("Song 15")).isEqualTo(-1)
   }
 
   @Test
   fun `search should return the position if item is found`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(5) {
         TestDataFactories.nowPlayingList(it)
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.findPosition("Song 5")).isEqualTo(5)
   }
 }

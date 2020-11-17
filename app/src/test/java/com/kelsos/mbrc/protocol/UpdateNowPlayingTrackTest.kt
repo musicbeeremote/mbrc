@@ -15,7 +15,6 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
@@ -28,7 +27,6 @@ class UpdateNowPlayingTrackTest {
   @get:Rule
   val rule = InstantTaskExecutorRule()
 
-  private val slot = slot<PlayingTrack>()
   private val widgetUpdater: WidgetUpdater = mockk()
   private lateinit var update: UpdateNowPlayingTrack
   private lateinit var state: PlayingTrackState
@@ -74,7 +72,7 @@ class UpdateNowPlayingTrackTest {
       }
     }
     every { widgetUpdater.updatePlayingTrack(any()) } just Runs
-    every { state.getValue() } answers { updatedTrack }
+    every { state.hint(PlayingTrack::class).getValue() } answers { updatedTrack }
 
     val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
     val message = MessageEvent(socketMessage.context, socketMessage.data)
@@ -92,7 +90,7 @@ class UpdateNowPlayingTrackTest {
       )
     }
     every { widgetUpdater.updatePlayingTrack(any()) } just Runs
-    every { state.getValue() } answers { null }
+    every { state.hint(PlayingTrack::class).getValue() } answers { null }
 
     val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
     val message = MessageEvent(socketMessage.context, socketMessage.data)

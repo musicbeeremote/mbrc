@@ -2,6 +2,7 @@
 import java.text.SimpleDateFormat
 
 plugins {
+  id 'com.google.protobuf' version "0.8.12"
   id 'com.android.application'
   id 'androidx.navigation.safeargs'
   id 'kotlin-android'
@@ -10,7 +11,6 @@ plugins {
   id 'idea'
   id 'jacoco'
 }
-
 
 static buildTime() {
   def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
@@ -210,7 +210,7 @@ dependencies {
   //The android library only will fail the robolectric tests
   testImplementation 'org.threeten:threetenbp:1.5.0'
 
-  implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
+  implementation project(':changelog')
 
   implementation 'com.chibatching.kotpref:kotpref:2.12.0'
 
@@ -265,10 +265,13 @@ dependencies {
 
   implementation 'com.jakewharton.threetenabp:threetenabp:1.3.0'
 
+  implementation  "androidx.datastore:datastore-core:1.0.0-alpha02"
+  implementation  "com.google.protobuf:protobuf-javalite:3.10.0"
+
   def arrow_version = '0.11.0'
   implementation("io.arrow-kt:arrow-fx:$arrow_version",)
   implementation "io.arrow-kt:arrow-syntax:$arrow_version"
-  kapt    "io.arrow-kt:arrow-meta:$arrow_version"
+  kapt "io.arrow-kt:arrow-meta:$arrow_version"
 
   kapt "io.arrow-kt:arrow-meta:$arrow_version"
 
@@ -310,6 +313,26 @@ allprojects {
     }
   }
 }
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:3.10.0"
+  }
+
+  // Generates the java Protobuf-lite code for the Protobufs in this project. See
+  // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+  // for more information.
+  generateProtoTasks {
+    all().each { task ->
+      task.builtins {
+        java {
+          option 'lite'
+        }
+      }
+    }
+  }
+}
+
 
 repositories {
   mavenCentral()
@@ -383,4 +406,5 @@ android.applicationVariants.all { variant ->
 configurations.all {
   resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
   resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+  resolutionStrategy.force "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }

@@ -46,16 +46,17 @@
         app:constraint_referenced_ids="genre_artists__empty_icon, genre_artists__empty_title" />
 
     <ImageView
+        android:contentDescription="@string/genre_artists__empty_icon_content_description"
         android:id="@+id/genre_artists__empty_icon"
         style="@style/empty_view_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tint="@color/light_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_music_note_black_80dp" />
+        app:srcCompat="@drawable/ic_music_note_black_80dp"
+        app:tint="@color/light_gray" />
 
     <TextView
         android:id="@+id/genre_artists__empty_title"

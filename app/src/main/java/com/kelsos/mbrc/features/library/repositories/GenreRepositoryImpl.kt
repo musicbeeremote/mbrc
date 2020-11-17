@@ -38,7 +38,7 @@ class GenreRepositoryImpl(
     val data = remoteDataSource.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class, progress)
 
     data.collect { genres ->
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
 
         val items = genres.map {
           dtoMapper.map(it).apply {

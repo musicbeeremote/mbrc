@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.player
 
-import androidx.lifecycle.ViewModel
 import com.jakewharton.rxrelay2.PublishRelay
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.AppRxSchedulers
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
@@ -11,17 +11,19 @@ import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.ui.BaseViewModel
 import java.util.concurrent.TimeUnit
 
 class PlayerViewModel(
-  private val settingsManager: SettingsManager,
+  settingsManager: SettingsManager,
+  appRxSchedulers: AppRxSchedulers,
+  dispatchers: AppCoroutineDispatchers,
   private val userActionUseCase: UserActionUseCase,
-  private val appRxSchedulers: AppRxSchedulers,
   val playingTrack: PlayingTrackState,
   val playerStatus: PlayerStatusState,
   val trackRating: TrackRatingState,
   val trackPosition: TrackPositionState
-) : ViewModel() {
+) : BaseViewModel<PlayerUiMessage>(dispatchers) {
 
   private val progressRelay: PublishRelay<Int> = PublishRelay.create()
   private val disposable = progressRelay.throttleLast(
@@ -33,6 +35,12 @@ class PlayerViewModel(
     .subscribe { position ->
       userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
     }
+
+  init {
+    if (settingsManager.shouldShowChangeLog()) {
+      emit(PlayerUiMessage.ShowChangelog)
+    }
+  }
 
   override fun onCleared() {
     disposable.dispose()

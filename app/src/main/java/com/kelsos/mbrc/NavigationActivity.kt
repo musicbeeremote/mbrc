@@ -29,14 +29,11 @@ import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
-import com.kelsos.mbrc.platform.ServiceChecker
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class NavigationActivity : AppCompatActivity() {
-
-  private val serviceChecker: ServiceChecker by inject()
   private val volumeModifyUseCase: VolumeModifyUseCase by inject()
   private val connectionStatusLiveDataProvider: ConnectionStatusState by inject()
   private val clientConnectionUseCase: ClientConnectionUseCase by inject()
@@ -49,13 +46,11 @@ class NavigationActivity : AppCompatActivity() {
   private lateinit var drawerToggle: ActionBarDrawerToggle
 
   private fun onConnectLongClick(): Boolean {
-    serviceChecker.startServiceIfNotRunning()
     clientConnectionUseCase.connect()
     return true
   }
 
   private fun onConnectClick() {
-    serviceChecker.startServiceIfNotRunning()
     clientConnectionUseCase.connect()
   }
 

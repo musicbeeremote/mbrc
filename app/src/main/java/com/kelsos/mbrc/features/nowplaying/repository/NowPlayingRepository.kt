@@ -58,7 +58,7 @@ class NowPlayingRepositoryImpl(
     )
     val cached = dao.cached().associateBy { it.key() }
     pages.collect { nowPlaying ->
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
         val list = nowPlaying.map { NowPlayingDtoMapper.map(it).apply { dateAdded = added } }
 
         val existing = list.filter { cached.containsKey(it.key()) }

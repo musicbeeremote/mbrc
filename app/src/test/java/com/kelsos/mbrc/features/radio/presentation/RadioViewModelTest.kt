@@ -10,6 +10,7 @@ import com.kelsos.mbrc.features.queue.QueueResponse
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
+import com.kelsos.mbrc.utils.idle
 import com.kelsos.mbrc.utils.observeOnce
 import io.mockk.CapturingSlot
 import io.mockk.Runs
@@ -46,18 +47,20 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() {
-    coEvery { repository.getRemote() } coAnswers { Either.left(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.left(SocketTimeoutException()) }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.RefreshFailed)
   }
 
   @Test
   fun `should notify the observer that refresh succeeded`() {
-    coEvery { repository.getRemote() } coAnswers { Either.right(Unit) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.right(Unit) }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.RefreshSuccess)
   }
@@ -71,6 +74,7 @@ class RadioViewModelTest {
 
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
+    idle()
     assertThat(playArguments.captured).hasSize(1)
     assertThat(playArguments.captured).containsExactly("http://radio.station")
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.QueueSuccess)
@@ -78,9 +82,10 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify on network error`() {
-    coEvery { queueApi.queue(Queue.NOW, any()) } throws SocketTimeoutException()
+    coEvery { queueApi.queue(Queue.NOW, any()) } coAnswers { Either.left(SocketTimeoutException()) }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
+    idle()
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.NetworkError)
   }
 
@@ -91,6 +96,7 @@ class RadioViewModelTest {
     }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
+    idle()
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.QueueFailed)
   }
 }

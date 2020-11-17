@@ -2,7 +2,6 @@ package com.kelsos.mbrc.features.library.genres
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
@@ -14,11 +13,13 @@ import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepositoryImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utils.TestData
+import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.observeOnce
+import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -46,9 +47,7 @@ class GenreRepositoryImplTest : KoinTest {
   @Before
   fun setUp() {
     val context = ApplicationProvider.getApplicationContext<Context>()
-    db = Room.inMemoryDatabaseBuilder(context, Database::class.java)
-      .allowMainThreadQueries()
-      .build()
+    db = TestData.createDB(context)
     genreDao = db.genreDao()
     startKoin {
       modules(listOf(testModule, testDispatcherModule))
@@ -62,14 +61,12 @@ class GenreRepositoryImplTest : KoinTest {
   }
 
   @Test
-  fun getAndSaveRemote() {
-    runBlocking {
-      assertThat(repository.cacheIsEmpty()).isTrue()
-      repository.getRemote()
-      repository.allGenres().paged().observeOnce { list ->
-        assertThat(list).hasSize(1200)
-        assertThat(list.first().genre).isEqualTo("Metal0")
-      }
+  fun getAndSaveRemote() = runBlocking {
+    assertThat(repository.cacheIsEmpty()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
+    repository.allGenres().paged().observeOnce { list ->
+      assertThat(list).hasSize(1200)
+      assertThat(list.first().genre).isEqualTo("Metal 0")
     }
   }
 
@@ -78,9 +75,9 @@ class GenreRepositoryImplTest : KoinTest {
 
     val mockApi = mockk<ApiBase>()
 
-    every { mockApi.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class) } answers {
-      flow {
-        emit((0..1200).map { GenreDto("Metal$it") })
+    every { mockApi.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class, any()) } answers {
+      TestData.mockApi(1200) {
+        TestDataFactories.genre(it)
       }
     }
     single { mockApi }

@@ -72,7 +72,7 @@ class RequestManagerImpl(
 
   private fun connect(firstMessage: SocketMessage?): Socket {
     val mapper = InetAddressMapper()
-    val connectionSettings = checkNotNull(repository.getDefault().orNull())
+    val connectionSettings = checkNotNull(repository.getDefault())
 
     try {
       Timber.v("Preparing connection to $connectionSettings")

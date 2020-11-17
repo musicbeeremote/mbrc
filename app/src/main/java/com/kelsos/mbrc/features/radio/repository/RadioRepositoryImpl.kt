@@ -37,7 +37,7 @@ class RadioRepositoryImpl(
       progress
     )
     pages.collect { page ->
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
         val items = page.map { RadioDtoMapper.map(it).apply { dateAdded = added } }
 
         withContext(dispatchers.database) {

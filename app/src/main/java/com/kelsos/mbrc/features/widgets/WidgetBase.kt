@@ -11,8 +11,6 @@ import android.widget.RemoteViews
 import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import arrow.core.Option
-import arrow.core.extensions.fx
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
@@ -54,15 +52,13 @@ abstract class WidgetBase : AppWidgetProvider() {
   override fun onReceive(context: Context?, intent: Intent?) {
     super.onReceive(context, intent)
 
-    val intentOption = Option.fromNullable(intent)
-      .filter { it.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE }
-      .flatMap { Option.fromNullable(it.extras) }
-
-    Option.fx {
-      val extras = intentOption.bind()
-      val ctx = Option.fromNullable(context).bind()
-      updateWidget(ctx, extras)
+    val incomingIntent = intent ?: return
+    if (incomingIntent.action != AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
+      return
     }
+    val extras = incomingIntent.extras ?: return
+    val ctx = context ?: return
+    updateWidget(ctx, extras)
   }
 
   private fun updateWidget(context: Context, extras: Bundle) {

@@ -11,7 +11,6 @@ import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.preferences.SettingsManager.CallAction
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
 import com.kelsos.mbrc.preferences.SettingsManager.Companion.REDUCE
-import io.reactivex.Single
 import timber.log.Timber
 import java.util.Date
 
@@ -55,10 +54,6 @@ class SettingsManagerImpl(
     }
   }
 
-  override fun isNotificationControlEnabled(): Boolean {
-    return preferences.getBoolean(getKey(R.string.settings_key_notification_control), true)
-  }
-
   @CallAction
   override fun getCallAction(): String = preferences.getString(
     getKey(R.string.settings_key_incoming_call_action),
@@ -90,22 +85,19 @@ class SettingsManagerImpl(
     displayAlbumArtist.postValue(onlyAlbumArtist)
   }
 
-  override fun shouldShowChangeLog(): Single<Boolean> {
-    return Single.fromCallable {
+  override fun shouldShowChangeLog(): Boolean {
+    val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
+    val currentVersion = RemoteUtils.getVersionCode()
 
-      val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
-      val currentVersion = RemoteUtils.getVersionCode()
+    if (lastVersionCode < currentVersion) {
+      preferences.edit()
+        .putLong(getKey(R.string.settings_key_last_version_run), currentVersion.toLong())
+        .apply()
+      Timber.d("Update or fresh install")
 
-      if (lastVersionCode < currentVersion) {
-        preferences.edit()
-          .putLong(getKey(R.string.settings_key_last_version_run), currentVersion.toLong())
-          .apply()
-        Timber.d("Update or fresh install")
-
-        return@fromCallable true
-      }
-      return@fromCallable false
+      return true
     }
+    return false
   }
 
   private fun getKey(settingsKey: Int) = context.getString(settingsKey)

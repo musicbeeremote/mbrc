@@ -3,6 +3,7 @@ package com.kelsos.mbrc.networking.protocol
 import com.kelsos.mbrc.protocol.ProtocolAction
 import com.kelsos.mbrc.protocol.ProtocolPingHandle
 import com.kelsos.mbrc.protocol.ProtocolPongHandle
+import com.kelsos.mbrc.protocol.ProtocolVersionUpdate
 import com.kelsos.mbrc.protocol.UpdateCover
 import com.kelsos.mbrc.protocol.UpdateLastFm
 import com.kelsos.mbrc.protocol.UpdateLfmRating
@@ -44,6 +45,7 @@ class CommandFactoryImpl : CommandFactory, KoinComponent {
       Protocol.PluginVersion -> get<UpdatePluginVersionCommand>()
       Protocol.PING -> get<ProtocolPingHandle>()
       Protocol.PONG -> get<ProtocolPongHandle>()
+      Protocol.ProtocolTag -> get<ProtocolVersionUpdate>()
       else -> error("Not supported message context $context")
     }
   }

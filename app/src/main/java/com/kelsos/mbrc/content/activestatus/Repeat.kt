@@ -6,11 +6,11 @@ object Repeat {
   const val NONE = "none"
   const val ONE = "one"
 
-  @androidx.annotation.StringDef(
-    Repeat.ALL,
-    Repeat.NONE,
-    Repeat.ONE
-  )
   @Retention(AnnotationRetention.SOURCE)
+  @androidx.annotation.StringDef(
+    ALL,
+    NONE,
+    ONE
+  )
   annotation class Mode
 }

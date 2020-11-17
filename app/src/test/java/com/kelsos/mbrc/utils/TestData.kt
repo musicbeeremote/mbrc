@@ -9,6 +9,7 @@ import androidx.paging.PositionalDataSource
 import androidx.room.Room
 import arrow.core.Either
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.features.library.dto.GenreDto
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.playlists.PlaylistDto
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.min
 
 object TestData {
   fun createDB(context: Context): Database =
@@ -30,7 +32,7 @@ object TestData {
     inject: List<T> = emptyList(),
     make: (position: Int) -> T
   ): Flow<List<T>> = flow {
-    emit((0..count).map { make(it) } + inject)
+    emit((0 until count).map { make(it) } + inject)
   }
 }
 
@@ -77,7 +79,7 @@ object ImageCreator {
       )
 
       val canvas = Canvas(bmp)
-      val radius: Float = Math.min(width, height).toFloat() / 2f
+      val radius: Float = min(width, height).toFloat() / 2f
       canvas.drawCircle((width / 2).toFloat(), (height / 2).toFloat(), radius, redPaint)
 
       FileOutputStream(path).use { out ->
@@ -113,4 +115,6 @@ object TestDataFactories {
       )
     }
   }
+
+  fun genre(it: Int): GenreDto = GenreDto("Metal $it")
 }

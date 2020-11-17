@@ -36,7 +36,7 @@ class PlaylistRepositoryImpl(
     val added = epoch()
     val pages = remoteDataSource.getAllPages(Protocol.PlaylistList, PlaylistDto::class, progress)
     pages.collect { page ->
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
         val playlists = page.map {
           PlaylistDtoMapper.map(it).apply {
             this.dateAdded = added

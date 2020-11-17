@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 class VolumeDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
-  private val appRxSchedulers: AppRxSchedulers,
+  appRxSchedulers: AppRxSchedulers,
   val playerStatus: PlayerStatusState
 ) : ViewModel() {
 

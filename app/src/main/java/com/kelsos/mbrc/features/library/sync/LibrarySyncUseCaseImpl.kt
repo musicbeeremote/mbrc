@@ -93,7 +93,7 @@ class LibrarySyncUseCaseImpl(
       SyncResult.NOOP
     }
 
-    withContext(dispatchers.disk) {
+    withContext(dispatchers.io) {
       val syncedData = SyncedData(
         genres = genreRepository.count(),
         artists = artistRepository.count(),

@@ -11,11 +11,11 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
 
 class RemoteServiceCore(
+  connectionStatusLiveDataProvider: ConnectionStatusState,
+  playingTrackLiveDataProvider: PlayingTrackState,
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,
-  private val playingTrackLiveDataProvider: PlayingTrackState,
   private val playerStatusLiveDataProvider: PlayerStatusState,
-  private val connectionStatusLiveDataProvider: ConnectionStatusState,
   private val positionLiveDataProvider: TrackPositionState
 ) : IRemoteServiceCore, LifeCycleAwareService() {
 
