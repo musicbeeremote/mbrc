@@ -1,17 +1,17 @@
 syntax = "proto3";
 
-option java_package = "com.kelsos.mbrc.store";
+option java_package = "com.kelsos.mbrc.content.activestatus";
 option java_multiple_files = true;
 
-message Store {
-  string cover = 1;
-  Track track = 2;
+message Settings {
+  Cache cache = 1;
 }
 
-message Track {
+message Cache {
   string artist = 1;
   string title = 2;
   string album = 3;
   string year = 4;
   string path = 5;
+  string cover = 6;
 }

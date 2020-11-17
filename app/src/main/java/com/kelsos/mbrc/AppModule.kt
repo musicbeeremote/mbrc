@@ -78,6 +78,7 @@ import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.features.work.WorkHandler
 import com.kelsos.mbrc.features.work.WorkHandlerImpl
+import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.ClientConnectionUseCaseImpl
@@ -107,8 +108,6 @@ import com.kelsos.mbrc.networking.protocol.CommandFactoryImpl
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCaseImpl
 import com.kelsos.mbrc.platform.RemoteBroadcastReceiver
-import com.kelsos.mbrc.platform.ServiceChecker
-import com.kelsos.mbrc.platform.ServiceCheckerImpl
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
@@ -122,6 +121,7 @@ import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.protocol.ProtocolPingHandle
 import com.kelsos.mbrc.protocol.ProtocolPongHandle
+import com.kelsos.mbrc.protocol.ProtocolVersionUpdate
 import com.kelsos.mbrc.protocol.UpdateCover
 import com.kelsos.mbrc.protocol.UpdateLastFm
 import com.kelsos.mbrc.protocol.UpdateLfmRating
@@ -140,6 +140,7 @@ import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
+import com.kelsos.mbrc.ui.helpfeedback.FeedbackViewModel
 import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
 import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
@@ -181,7 +182,6 @@ val appModule = module {
 
   singleBy<SettingsManager, SettingsManagerImpl>()
   singleBy<PlayingTrackCache, PlayingTrackCacheImpl>()
-  singleBy<ServiceChecker, ServiceCheckerImpl>()
 
   singleBy<LibrarySyncUseCase, LibrarySyncUseCaseImpl>()
   singleBy<SyncWorkHandler, SyncWorkHandlerImpl>()
@@ -266,6 +266,7 @@ val appModule = module {
   single<UpdatePluginVersionCommand>()
   single<ProtocolPingHandle>()
   single<ProtocolPongHandle>()
+  single<ProtocolVersionUpdate>()
 
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
 
@@ -278,6 +279,7 @@ val appModule = module {
   factory<SessionNotificationManager>()
   factory<RemoteSessionManager>()
   factory<RemoteVolumeProvider>()
+  factory<LogHelper>()
 }
 
 val uiModule = module {
@@ -293,6 +295,7 @@ val uiModule = module {
   viewModel<NowPlayingViewModel>()
   viewModel<LibraryViewModel>()
   viewModel<PlaylistViewModel>()
+  viewModel<FeedbackViewModel>()
   viewModel<OutputSelectionViewModel>()
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()

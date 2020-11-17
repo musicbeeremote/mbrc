@@ -11,18 +11,15 @@ interface PlayingTrackState : State<PlayingTrack>
 
 class PlayingTrackStateImpl(
   private val playingTrackCache: PlayingTrackCache,
-  appCoroutineDispatchers: AppCoroutineDispatchers
+  dispatchers: AppCoroutineDispatchers
 ) : BaseState<PlayingTrack>(), PlayingTrackState {
   init {
     set(PlayingTrack())
 
-    scope.launch(appCoroutineDispatchers.disk) {
+    scope.launch(dispatchers.io) {
       with(playingTrackCache) {
         try {
-          val coverUrl = restoreCover()
-          val trackInfo = restoreInfo()
-
-          set(trackInfo.copy(coverUrl = coverUrl))
+          restoreInfo()
         } catch (ex: Exception) {
         }
       }

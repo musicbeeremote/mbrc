@@ -18,6 +18,7 @@ import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.TestData.mockApi
 import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.noopListUpdateCallback
+import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
@@ -83,10 +84,11 @@ class PlaylistRepositoryTest : KoinTest {
     coEvery {
       apiBase.getAllPages(
         Protocol.PlaylistList,
-        PlaylistDto::class
+        PlaylistDto::class,
+        any()
       )
     } throws SocketTimeoutException()
-    assertThat(repository.getRemote().isLeft()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(SocketTimeoutException::class.java)
   }
 
   @Test
@@ -130,7 +132,7 @@ class PlaylistRepositoryTest : KoinTest {
         TestDataFactories.playlist(it)
       }
     }
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
     val differ = AsyncPagingDataDiffer(
       diffCallback = PlaylistAdapter.PLAYLIST_COMPARATOR,

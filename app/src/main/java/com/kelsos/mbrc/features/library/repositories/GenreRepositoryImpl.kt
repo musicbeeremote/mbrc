@@ -46,22 +46,21 @@ class GenreRepositoryImpl(
         withContext(dispatchers.database) {
           dao.removePreviousEntries(added)
         }
-      }
-        .collect { genres ->
-          val items = genres.map {
-            it.toEntity().apply {
-              dateAdded = added
+      }.collect { genres ->
+        val items = genres.map {
+          it.toEntity().apply {
+            dateAdded = added
 
-              val id = stored[it.genre]
-              if (id != null) {
-                this.id = id
-              }
+            val id = stored[it.genre]
+            if (id != null) {
+              this.id = id
             }
           }
-          withContext(dispatchers.database) {
-            dao.insertAll(items)
-          }
         }
+        withContext(dispatchers.database) {
+          dao.insertAll(items)
+        }
+      }
     }
   }
 

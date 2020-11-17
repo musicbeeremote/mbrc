@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 
 data class AppCoroutineDispatchers(
   val main: CoroutineDispatcher,
-  val disk: CoroutineDispatcher,
+  val io: CoroutineDispatcher,
   val database: CoroutineDispatcher,
   val network: CoroutineDispatcher
 )

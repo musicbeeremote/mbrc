@@ -79,7 +79,11 @@ class ConnectionAdapter : PagingDataAdapter<ConnectionSettings, ConnectionViewHo
 
     fun bind(settings: ConnectionSettings) {
       computerName.text = settings.name
-      hostname.text = "${settings.address} : ${settings.port}"
+      hostname.text = itemView.context.getString(
+        R.string.connection_manager__host,
+        settings.address,
+        settings.port
+      )
       defaultSettings.isGone = !settings.isDefault
     }
 

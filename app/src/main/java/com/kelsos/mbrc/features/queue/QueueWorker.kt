@@ -15,9 +15,11 @@ import androidx.work.WorkerParameters
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.Meta
 import kotlinx.coroutines.coroutineScope
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@OptIn(KoinApiExtension::class)
 class QueueWorker(
   context: Context,
   params: WorkerParameters

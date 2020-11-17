@@ -60,7 +60,7 @@ class LibrarySyncUseCaseImpl(
     if (result == SyncResult.FAILED) {
       metrics.librarySyncFailed()
     } else {
-      withContext(dispatchers.disk) {
+      withContext(dispatchers.io) {
         metrics.librarySyncComplete(syncStats())
       }
     }

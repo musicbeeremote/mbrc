@@ -14,37 +14,28 @@ import timber.log.Timber
 
 class HelpFragment : Fragment() {
 
-  private lateinit var helpView: WebView
-
-  override fun onStart() {
-    super.onStart()
-
-    val url: String = try {
-      "http://kelsos.net/musicbeeremote/help?version=${getVersion()}"
-    } catch (e: PackageManager.NameNotFoundException) {
-      Timber.v(e, "Failed to get version")
-      "https://mbrc.kelsos.net/help"
-    }
-
-    helpView.loadUrl(url)
-  }
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    val binding = FragmentHelpBinding.inflate(layoutInflater)
-    helpView = binding.helpWebview
-    helpView.webViewClient = RemoteWebViewClient()
+    val binding = FragmentHelpBinding.inflate(
+      layoutInflater,
+      container,
+      false
+    )
+
+    val url = try {
+      "https://mbrc.kelsos.net/help?version=${getVersion()}"
+    } catch (e: PackageManager.NameNotFoundException) {
+      Timber.v(e, "Failed to get version")
+      "https://mbrc.kelsos.net/help"
+    }
+
+    binding.helpWebview.webViewClient = RemoteWebViewClient()
+    binding.helpWebview.loadUrl(url)
     return binding.root
   }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    helpView.webViewClient = RemoteWebViewClient()
-  }
-
   private class RemoteWebViewClient : WebViewClient() {
     @Suppress("OverridingDeprecatedMember")
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {

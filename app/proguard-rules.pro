@@ -55,12 +55,6 @@
 }
 -keepnames @com.squareup.moshi.JsonClass class *
 
-#Toothpick
-# Do not obfuscate annotation scoped classes
--keepnames @javax.inject.Singleton class *
-# Add any custom defined @Scope (e.g. ) annotations here
-# because proguard does not allow annotation inheritance rules
-
 # OkHttp
 -keepattributes Signature
 -keepattributes *Annotation*

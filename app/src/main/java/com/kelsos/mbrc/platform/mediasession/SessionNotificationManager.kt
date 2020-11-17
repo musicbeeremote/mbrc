@@ -33,7 +33,7 @@ class SessionNotificationManager(
 
   private val sessionJob: Job = Job()
   private val uiScope: CoroutineScope = CoroutineScope(dispatchers.main + sessionJob)
-  private val diskScope: CoroutineScope = CoroutineScope(dispatchers.disk + sessionJob)
+  private val diskScope: CoroutineScope = CoroutineScope(dispatchers.io + sessionJob)
 
   private val previous: String by lazy { context.getString(R.string.notification_action_previous) }
   private val play: String by lazy { context.getString(R.string.notification_action_play) }
@@ -126,7 +126,12 @@ class SessionNotificationManager(
   override fun trackChanged(playingTrack: PlayingTrack) {
     diskScope.launch {
       notificationData = with(playingTrack.coverUrl) {
-        val cover = if (isNotEmpty()) RemoteUtils.loadBitmap(this) else null
+        val cover = if (isNotEmpty()) {
+          RemoteUtils.loadBitmap(this).fold({ null }) { bitmap -> bitmap }
+        } else {
+          null
+        }
+
         notificationData.copy(track = playingTrack, cover = cover)
       }
 

@@ -39,21 +39,20 @@ class PlaylistRepositoryImpl(
         PlaylistDto::class,
         progress
       )
-      allPages
-        .onCompletion {
-          withContext(dispatchers.database) {
-            dao.removePreviousEntries(added)
-          }
-        }.collect { items ->
-          val playlists = items.map {
-            PlaylistDtoMapper.map(it).apply {
-              this.dateAdded = added
-            }
-          }
-          withContext(dispatchers.database) {
-            dao.insertAll(playlists)
+      allPages.onCompletion {
+        withContext(dispatchers.database) {
+          dao.removePreviousEntries(added)
+        }
+      }.collect { items ->
+        val playlists = items.map {
+          PlaylistDtoMapper.map(it).apply {
+            this.dateAdded = added
           }
         }
+        withContext(dispatchers.database) {
+          dao.insertAll(playlists)
+        }
+      }
     }
   }
 

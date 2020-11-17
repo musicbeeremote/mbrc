@@ -19,7 +19,7 @@ class SplashActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_splash)
 
-    lifecycleScope.launch(dispatchers.disk) {
+    lifecycleScope.launch(dispatchers.io) {
       delay(800)
 
       withContext(dispatchers.main) {

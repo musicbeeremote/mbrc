@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.LoadState
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
@@ -16,6 +15,7 @@ import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepositoryImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.noopListUpdateCallback
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
@@ -55,9 +55,7 @@ class GenreRepositoryImplTest : KoinTest {
   fun setUp() {
     Dispatchers.setMain(testDispatcher)
     val context = ApplicationProvider.getApplicationContext<Context>()
-    db = Room.inMemoryDatabaseBuilder(context, Database::class.java)
-      .allowMainThreadQueries()
-      .build()
+    db = TestData.createDB(context)
     genreDao = db.genreDao()
     startKoin {
       modules(listOf(testModule, testDispatcherModule))

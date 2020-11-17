@@ -6,12 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.kelsos.mbrc.ui.helpfeedback.HelpFeedbackFragment">
 
   <Button
-      android:id="@+id/feedback_button"
+      android:id="@+id/feedback__send"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
@@ -23,20 +24,20 @@
       app:layout_constraintStart_toStartOf="parent" />
 
   <CheckBox
-      android:id="@+id/include_device_info"
+      android:id="@+id/feedback__include_device"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
       android:layout_marginEnd="8dp"
       android:layout_marginBottom="8dp"
       android:text="@string/feedback_device_information"
-      app:layout_constraintBottom_toTopOf="@+id/include_log_info"
+      app:layout_constraintBottom_toTopOf="@+id/feedback__include_logs"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.0"
       app:layout_constraintStart_toStartOf="parent" />
 
   <CheckBox
-      android:id="@+id/include_log_info"
+      android:id="@+id/feedback__include_logs"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
@@ -44,30 +45,13 @@
       android:layout_marginBottom="12dp"
       android:enabled="false"
       android:text="@string/feedback_logs"
-      app:layout_constraintBottom_toTopOf="@+id/feedback_button"
+      app:layout_constraintBottom_toTopOf="@+id/feedback__send"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.0"
       app:layout_constraintStart_toStartOf="parent" />
 
-  <EditText
-      android:id="@+id/feedback_content"
-      android:layout_width="0dp"
-      android:layout_height="0dp"
-      android:layout_marginStart="8dp"
-      android:layout_marginTop="8dp"
-      android:layout_marginEnd="8dp"
-      android:layout_marginBottom="8dp"
-      android:gravity="top|start"
-      android:hint="@string/feedback_hint"
-      android:inputType="textMultiLine"
-      android:minHeight="50dp"
-      app:layout_constraintBottom_toTopOf="@+id/include_device_info"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/feedback_header" />
-
   <TextView
-      android:id="@+id/feedback_header"
+      android:id="@+id/feedback__header"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
@@ -78,5 +62,30 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
+
+  <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/feedback__container"
+      style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="8dp"
+      android:minHeight="50dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
+      app:layout_constraintBottom_toTopOf="@+id/feedback__include_device"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/feedback__header">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/feedback__content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:autofillHints="false"
+        android:gravity="top|start"
+        android:hint="@string/feedback_hint"
+        android:inputType="textMultiLine" />
+  </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.store
+package com.kelsos.mbrc.content.activestatus
 
 import android.content.Context
 import androidx.datastore.core.CorruptionException
@@ -9,19 +9,19 @@ import com.google.protobuf.InvalidProtocolBufferException
 import java.io.InputStream
 import java.io.OutputStream
 
-object StoreSerializer : Serializer<Store> {
-  override val defaultValue: Store
-    get() = Store.getDefaultInstance()
+object SettingsSerializer : Serializer<Settings> {
+  override val defaultValue: Settings
+    get() = Settings.getDefaultInstance()
 
-  override suspend fun readFrom(input: InputStream): Store {
+  override suspend fun readFrom(input: InputStream): Settings {
     try {
-      return Store.parseFrom(input)
+      return Settings.parseFrom(input)
     } catch (exception: InvalidProtocolBufferException) {
       throw CorruptionException("Cannot read proto.", exception)
     }
   }
 
-  override suspend fun writeTo(t: Store, output: OutputStream) = t.writeTo(output)
+  override suspend fun writeTo(t: Settings, output: OutputStream) = t.writeTo(output)
 }
 
-val Context.dataStore: DataStore<Store> by dataStore("cache_store.db", StoreSerializer)
+val Context.dataStore: DataStore<Settings> by dataStore("settings.db", SettingsSerializer)

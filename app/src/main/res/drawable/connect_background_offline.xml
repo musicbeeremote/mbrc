@@ -3,23 +3,27 @@
   <item>
 
     <shape android:shape="oval">
-      <padding android:top="0dp" android:right="1dp" android:bottom="1dp" android:left="0dp" />
+      <corners android:radius="1dp" />
+      <padding
+          android:bottom="1dp"
+          android:left="0dp"
+          android:right="1dp"
+          android:top="0dp" />
       <size
           android:width="32dp"
-          android:height="32dp"/>
-      <solid android:color="#3E000000"/>
-      <corners android:radius="1dp"/>
+          android:height="32dp" />
+      <solid android:color="#3E000000" />
 
     </shape>
   </item>
   <item>
     <shape android:shape="oval">
 
+      <corners android:radius="1dp" />
       <size
           android:width="32dp"
-          android:height="32dp"/>
-      <solid android:color="@color/light_gray"/>
-      <corners android:radius="1dp"/>
+          android:height="32dp" />
+      <solid android:color="@color/light_gray" />
 
     </shape>
   </item>

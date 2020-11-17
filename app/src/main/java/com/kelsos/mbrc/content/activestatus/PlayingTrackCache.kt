@@ -4,9 +4,6 @@ import android.app.Application
 import androidx.datastore.core.DataStore
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.PlayingTrack
-import com.kelsos.mbrc.store.Store
-import com.kelsos.mbrc.store.Track
-import com.kelsos.mbrc.store.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -19,62 +16,49 @@ class PlayingTrackCacheImpl(
   private val dispatchers: AppCoroutineDispatchers
 ) : PlayingTrackCache {
 
-  private val dataStore: DataStore<Store> = context.dataStore
-  private val storeFlow: Flow<Store> = dataStore.data
+  private val dataStore: DataStore<Settings> = context.dataStore
+  private val settingsFlow: Flow<Settings> = dataStore.data
     .catch { exception ->
       // dataStore.data throws an IOException when an error is encountered when reading data
       if (exception is IOException) {
         Timber.e(exception, "Error reading sort order preferences.")
-        emit(Store.getDefaultInstance())
+        emit(Settings.getDefaultInstance())
       } else {
         throw exception
       }
     }
 
-  override suspend fun persistInfo(trackInfo: PlayingTrack) =
-    withContext(dispatchers.network) {
-      dataStore.updateData { store ->
-        val track = Track.newBuilder()
-          .setAlbum(trackInfo.album)
-          .setArtist(trackInfo.artist)
-          .setPath(trackInfo.path)
-          .setTitle(trackInfo.title)
-          .setYear(trackInfo.year)
-          .build()
+  override suspend fun persistInfo(track: PlayingTrack) = withContext(dispatchers.io) {
+    dataStore.updateData { settings ->
+      val cache = settings.cache.toBuilder()
+        .setAlbum(track.album)
+        .setArtist(track.artist)
+        .setPath(track.path)
+        .setTitle(track.title)
+        .setYear(track.year)
+        .setCover(track.coverUrl)
+        .build()
 
-        store.toBuilder()
-          .setTrack(track)
-          .build()
-      }
-      return@withContext
+      settings.toBuilder().setCache(cache).build()
     }
+    return@withContext
+  }
 
-  override suspend fun restoreInfo(): PlayingTrack = withContext(dispatchers.network) {
-    val track = storeFlow.first().track
+  override suspend fun restoreInfo(): PlayingTrack? = withContext(dispatchers.io) {
+    val cache = settingsFlow.first().cache
 
     return@withContext PlayingTrack(
-      track.artist,
-      track.title,
-      track.album,
-      track.year,
-      track.path
+      cache.artist,
+      cache.title,
+      cache.album,
+      cache.year,
+      cache.path,
+      cache.cover
     )
-  }
-
-  override suspend fun persistCover(cover: String) {
-    dataStore.updateData { store ->
-      store.toBuilder().setCover(cover).build()
-    }
-  }
-
-  override suspend fun restoreCover(): String {
-    return storeFlow.first().cover
   }
 }
 
 interface PlayingTrackCache {
-  suspend fun persistInfo(trackInfo: PlayingTrack)
-  suspend fun restoreInfo(): PlayingTrack
-  suspend fun persistCover(cover: String)
-  suspend fun restoreCover(): String
+  suspend fun persistInfo(track: PlayingTrack)
+  suspend fun restoreInfo(): PlayingTrack?
 }

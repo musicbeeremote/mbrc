@@ -5,10 +5,12 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import arrow.core.Either
 import arrow.core.left
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.toConnection
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
 import java.net.DatagramPacket
@@ -19,7 +21,8 @@ import java.util.Locale
 class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
-  private val moshi: Moshi
+  private val moshi: Moshi,
+  private val dispatchers: AppCoroutineDispatchers
 ) : RemoteServiceDiscovery {
   private var multicastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
@@ -40,17 +43,19 @@ class RemoteServiceDiscoveryImpl(
 
     val socket = create()
     val entity = retryIO(times = 4) {
-      val buffer = ByteArray(512)
-      val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
-        socket.receive(this)
-        val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
-        Timber.v(message)
-        adapter.fromJson(message)
+      withContext(dispatchers.io) {
+        val buffer = ByteArray(512)
+        val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
+          socket.receive(this)
+          val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
+          Timber.v(message)
+          adapter.fromJson(message)
+        }
+        if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
+          throw IOException("unexpected message")
+        }
+        discoveryMessage.toConnection()
       }
-      if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
-        throw IOException("unexpected message")
-      }
-      discoveryMessage.toConnection()
     }
 
     try {

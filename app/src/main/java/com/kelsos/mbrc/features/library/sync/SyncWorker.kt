@@ -14,10 +14,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.kelsos.mbrc.R
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
+@OptIn(KoinApiExtension::class)
 class SyncWorker(
   context: Context,
   params: WorkerParameters

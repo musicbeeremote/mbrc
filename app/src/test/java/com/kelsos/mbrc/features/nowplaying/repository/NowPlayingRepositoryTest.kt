@@ -18,6 +18,7 @@ import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.TestData.mockApi
 import com.kelsos.mbrc.utils.TestDataFactories.nowPlayingList
 import com.kelsos.mbrc.utils.noopListUpdateCallback
+import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
@@ -115,7 +116,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(1, 5)
@@ -167,7 +168,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(6, 1)
@@ -270,7 +271,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
 
     val differ = AsyncPagingDataDiffer(
@@ -320,9 +321,9 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(5)
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
 
     val differ = AsyncPagingDataDiffer(
       diffCallback = NowPlayingAdapter.NOW_PLAYING_COMPARATOR,
@@ -371,7 +372,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.findPosition("Song 15")).isEqualTo(-1)
   }
 
@@ -383,7 +384,7 @@ class NowPlayingRepositoryTest : KoinTest {
       }
     }
 
-    assertThat(repository.getRemote().isRight()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.findPosition("Song 5")).isEqualTo(5)
   }
 }

@@ -36,7 +36,6 @@ class ClientConnectionManager(
 ) : IClientConnectionManager, PingTimeoutListener {
 
   private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }
-
   private var executor = getExecutor()
 
   private fun getExecutor() = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
@@ -72,13 +71,8 @@ class ClientConnectionManager(
     scope.launch {
       delay(2000)
 
-      val settings = connectionRepository.getDefault()
-      if (settings == null) {
-        Timber.v("no connection settings aborting")
-        return@launch
-      }
-
-      Timber.v("Attempting connection on $settings")
+      val default = connectionRepository.getDefault() ?: return@launch
+      Timber.v("Attempting connection on $default")
       val onConnection: (Boolean) -> Unit = { connected ->
         if (!connected) {
           activityChecker.stop()
@@ -90,7 +84,7 @@ class ClientConnectionManager(
       }
 
       connection = SocketConnection(
-        settings,
+        default,
         messageHandler,
         onConnection
       ) {

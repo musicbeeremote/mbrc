@@ -58,9 +58,6 @@ object Protocol {
   const val LibraryCover = "libraryalbumcover"
   const val CommandUnavailable = "commandunavailable"
 
-  // Protocol Constants
-  const val CLIENT_PLATFORM = "Android"
-
   // Repeat Constants
   const val ONE = "one"
   const val ALL = "All"
@@ -73,6 +70,7 @@ object Protocol {
 
   const val ProtocolVersionNumber = 4
 
+  @Retention(AnnotationRetention.SOURCE)
   @StringDef(
     Player,
     ProtocolTag,
@@ -119,6 +117,5 @@ object Protocol {
     PlayerOutput,
     PlayerOutputSwitch
   )
-  @Retention(AnnotationRetention.SOURCE)
   annotation class Context
 }

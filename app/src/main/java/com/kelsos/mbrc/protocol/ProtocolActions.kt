@@ -254,7 +254,7 @@ class UpdateCover(
   private val scope = CoroutineScope(job + dispatchers.network)
 
   init {
-    scope.launch(dispatchers.disk) {
+    scope.launch(dispatchers.io) {
       playingTrackLiveDataProvider.set {
         copy(coverUrl = coverModel.coverPath)
       }
@@ -269,7 +269,7 @@ class UpdateCover(
       playingTrackLiveDataProvider.set { copy(coverUrl = "") }
       updater.updateCover("")
     } else if (payload.status == CoverPayload.READY) {
-      scope.launch(dispatchers.disk) {
+      scope.launch(dispatchers.io) {
         retrieveCover()
       }
     }
@@ -445,6 +445,12 @@ class UpdatePlaybackPositionCommand(
         response.total
       )
     )
+  }
+}
+
+class ProtocolVersionUpdate() : ProtocolAction {
+  override fun execute(message: ProtocolMessage) {
+    Timber.v(message.data.toString())
   }
 }
 

@@ -9,12 +9,16 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.changelog.ChangelogDialog
 import com.kelsos.mbrc.common.ui.extensions.setIcon
 import com.kelsos.mbrc.common.ui.extensions.setStatusColor
 import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerFragment : Fragment() {
@@ -83,6 +87,18 @@ class PlayerFragment : Fragment() {
       binding.playerScreenAlbumCover.loadImage(track.coverUrl)
       binding.playerScreenTrackArtist.text = track.artistInfo()
       binding.playerScreenTrackTitle.text = track.title
+    }
+
+    lifecycleScope.launch {
+      viewModel.emitter.collect { message ->
+        when (message) {
+          is PlayerUiMessage.ShowChangelog -> ChangelogDialog.show(
+            requireActivity(),
+            R.raw.changelog
+          )
+          is PlayerUiMessage.ShowPluginUpdate -> Unit
+        }
+      }
     }
   }
 

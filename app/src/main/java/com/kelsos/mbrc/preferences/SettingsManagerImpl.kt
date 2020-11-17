@@ -34,7 +34,6 @@ class SettingsManagerImpl(
   }
 
   @SettingsManager.CallAction
-
   override fun getCallAction(): String = preferences.getString(
     getKey(R.string.settings_key_incoming_call_action),
     NONE
@@ -76,7 +75,7 @@ class SettingsManagerImpl(
 
     if (lastVersionCode < currentVersion) {
       preferences.edit()
-        .putLong(key, currentVersion)
+        .putLong(getKey(R.string.settings_key_last_version_run), currentVersion)
         .apply()
       Timber.d("Update or fresh install")
 

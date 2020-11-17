@@ -8,11 +8,12 @@ import android.media.AudioManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerState.State
-import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.client.UserActionUseCase
+import com.kelsos.mbrc.networking.client.performUserAction
 import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.protocol.Protocol
 import timber.log.Timber
@@ -44,27 +45,27 @@ class RemoteSessionManager(
       }
 
       override fun onPlay() {
-        postAction(UserAction(Protocol.PlayerPlay, true))
+        userActionUseCase.performUserAction(Protocol.PlayerPlay, true)
       }
 
       override fun onPause() {
-        postAction(UserAction(Protocol.PlayerPause, true))
+        userActionUseCase.performUserAction(Protocol.PlayerPause, true)
       }
 
       override fun onSkipToNext() {
-        postAction(UserAction(Protocol.PlayerNext, true))
+        userActionUseCase.performUserAction(Protocol.PlayerNext, true)
       }
 
       override fun onSkipToPrevious() {
-        postAction(UserAction(Protocol.PlayerPrevious, true))
+        userActionUseCase.performUserAction(Protocol.PlayerPrevious, true)
       }
 
       override fun onStop() {
-        postAction(UserAction(Protocol.PlayerStop, true))
+        userActionUseCase.performUserAction(Protocol.PlayerStop, true)
       }
 
       override fun onSeekTo(pos: Long) {
-        postAction(UserAction.create(Protocol.NowPlayingPosition, pos))
+        userActionUseCase.performUserAction(Protocol.NowPlayingPosition, pos)
       }
     })
   }
@@ -79,15 +80,11 @@ class RemoteSessionManager(
     }
   }
 
-  private fun postAction(action: UserAction) {
-    userActionUseCase.perform(action)
-  }
-
   val mediaSessionToken: MediaSessionCompat.Token
     get() = mediaSession.sessionToken
 
-  private fun metadataUpdate(track: PlayingTrack) {
-    val bitmap = null // RemoteUtils.coverBitmap(track.coverUrl) n
+  private suspend fun metadataUpdate(track: PlayingTrack) {
+    val bitmap = RemoteUtils.coverBitmap(track.coverUrl)
 
     val builder = MediaMetadataCompat.Builder()
       .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.album)

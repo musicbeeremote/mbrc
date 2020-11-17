@@ -12,5 +12,4 @@
     android:paddingEnd="16dp"
     android:paddingBottom="4dp"
     android:textColor="@color/primary_text"
-    android:textSize="@dimen/lyrics_text_size"
     tools:text="A line of lyrics text" />
