@@ -9,7 +9,7 @@ Changelog
 [#113]: https://github.com/musicbeeremote/android-app/issues/113
 [#103]: https://github.com/musicbeeremote/android-app/issues/103
 
-## [1.2.0] - 2020-11-07
+## [1.2.0] - 2020-11-19
 ### Changed
 - Fixed a crash on the service when running on the background
 
