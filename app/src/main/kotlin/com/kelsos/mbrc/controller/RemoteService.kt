@@ -36,7 +36,7 @@ class RemoteService : Service(), ForegroundHooks {
   @Inject
   lateinit var notificationService: NotificationService
 
-  private lateinit var threadPoolExecutor: ExecutorService
+  private var threadPoolExecutor: ExecutorService? = null
   private lateinit var scope: Scope
 
   override fun onBind(intent: Intent?): IBinder {
@@ -56,8 +56,9 @@ class RemoteService : Service(), ForegroundHooks {
     CommandRegistration.register(remoteController, scope)
     threadPoolExecutor = Executors.newSingleThreadExecutor {
       Thread(it, "message-thread")
+    }.apply {
+      execute(remoteController)
     }
-    threadPoolExecutor.execute(remoteController)
 
     remoteController.executeCommand(MessageEvent(UserInputEventType.StartConnection))
     discovery.startDiscovery()
@@ -71,7 +72,7 @@ class RemoteService : Service(), ForegroundHooks {
     remoteController.executeCommand(MessageEvent(UserInputEventType.CancelNotification))
     remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
     CommandRegistration.unregister(remoteController)
-    threadPoolExecutor.shutdownNow()
+    threadPoolExecutor?.shutdownNow()
     Timber.d("Background Service::Destroyed")
     Toothpick.closeScope(this)
   }
