@@ -38,12 +38,19 @@ internal constructor(
   private val connectionMapper = ConnectionMapper()
   private var multiCastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
+  private var isRunning: Boolean = false
+
 
   fun startDiscovery() {
+    if (isRunning) {
+      return
+    }
+
     if (!isWifiConnected()) {
       bus.post(DiscoveryStopped(DiscoveryStop.NO_WIFI))
       return
     }
+    isRunning = true
     multiCastLock = manager.createMulticastLock("locked").apply {
       setReferenceCounted(true)
       acquire()
@@ -58,6 +65,7 @@ internal constructor(
         bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
       }  finally {
         stopDiscovery()
+        isRunning = false
       }
     }
   }
@@ -67,10 +75,10 @@ internal constructor(
     val socket = createSocket()
 
     var discoveryMessage = getDiscoveryMessage(socket)
-    while (discoveryMessage?.context != NOTIFY && tries < 5) {
-      delay(4000)
-      Timber.v("Discovery try: %s", tries)
+    while (discoveryMessage?.context != NOTIFY && tries < 3) {
+      delay(3000)
       tries++
+      Timber.v("Discovery try: %s", tries)
 
       discoveryMessage = getDiscoveryMessage(socket)
     }
@@ -78,6 +86,8 @@ internal constructor(
     if (discoveryMessage?.context == NOTIFY) {
       connectionRepository.save(connectionMapper.map(discoveryMessage))
       bus.post(DiscoveryStopped(DiscoveryStop.COMPLETE))
+    } else {
+      bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
     }
     cleanup(socket)
   }
