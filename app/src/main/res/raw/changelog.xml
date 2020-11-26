@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    release="Nov 26,2020"
+    version="1.2.1">
+    <bug>Fixes a background crash with the application service.</bug>
+    <bug>Fixes a crash on cover retrieval.</bug>
+    <bug>Fixes an issue with the service discovery</bug>
+  </version>
+  <version
     release="Nov 19,2020"
     version="1.2.0">
     <bug>Fixes a background crash with the application service.</bug>
