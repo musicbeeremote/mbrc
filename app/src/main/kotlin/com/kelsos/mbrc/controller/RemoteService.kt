@@ -47,12 +47,13 @@ class RemoteService : Service(), ForegroundHooks {
     super.onCreate()
     scope = Toothpick.openScope(application)
     Toothpick.inject(this, scope)
+    notificationService.setForegroundHooks(this)
     this.registerReceiver(receiver, receiver.filter(this))
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    Timber.d("Background Service::Started")
     notificationService.setForegroundHooks(this)
+    Timber.d("Background Service::Started")
     CommandRegistration.register(remoteController, scope)
     threadPoolExecutor = Executors.newSingleThreadExecutor {
       Thread(it, "message-thread")
@@ -66,8 +67,10 @@ class RemoteService : Service(), ForegroundHooks {
     return super.onStartCommand(intent, flags, startId)
   }
 
+
   override fun onDestroy() {
     super.onDestroy()
+    this.stopForeground(true)
     this.unregisterReceiver(receiver)
     remoteController.executeCommand(MessageEvent(UserInputEventType.CancelNotification))
     remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))

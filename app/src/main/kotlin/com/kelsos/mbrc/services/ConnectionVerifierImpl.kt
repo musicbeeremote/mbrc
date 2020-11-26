@@ -18,8 +18,8 @@ class ConnectionVerifierImpl
   private fun getMessage(response: String) =
     mapper.readValue(response, SocketMessage::class.java)
 
-  override suspend fun verify(): Boolean {
-    return withContext(dispatchers.io) {
+  override suspend fun verify(): Boolean = withContext(dispatchers.io) {
+    try {
       val connection = requestManager.openConnection(false)
       val response =
         requestManager.request(connection, SocketMessage.create(Protocol.VerifyConnection))
@@ -31,8 +31,9 @@ class ConnectionVerifierImpl
       } else {
         throw NoValidPluginConnection()
       }
+    } catch (e: Exception) {
+      return@withContext false
     }
-
   }
 
 

@@ -5,8 +5,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
+import androidx.core.os.HandlerCompat
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -141,11 +144,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
       requireActivity().run {
         Timber.v("Restarting service")
         stopService(Intent(this, RemoteService::class.java))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-          startForegroundService(Intent(this, RemoteService::class.java))
-        } else {
-          startService(Intent(this, RemoteService::class.java))
-        }
+        val handler = Handler(Looper.getMainLooper())
+        HandlerCompat.postDelayed(handler, {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(Intent(this, RemoteService::class.java))
+          } else {
+            startService(Intent(this, RemoteService::class.java))
+          }
+        }, null, 400)
       }
     } else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults)

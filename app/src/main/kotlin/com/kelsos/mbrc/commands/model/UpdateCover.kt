@@ -66,7 +66,12 @@ constructor(
   }
 
   private suspend fun retrieveCover() {
-    val (status, cover) = coverService.getItem(Protocol.NowPlayingCover, CoverPayload::class)
+    val (status, cover) = try {
+      coverService.getItem(Protocol.NowPlayingCover, CoverPayload::class)
+    } catch (e: Exception) {
+      return
+    }
+
     if (status != CoverPayload.SUCCESS) {
       removeCover()
       return

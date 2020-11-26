@@ -39,17 +39,21 @@ constructor(
   override fun save(settings: ConnectionSettings) {
     checkIfAttached()
     scope.launch {
-      if (settings.id > 0) {
-        repository.update(settings)
-      } else {
-        repository.save(settings)
-      }
+      try {
+        if (settings.id > 0) {
+          repository.update(settings)
+        } else {
+          repository.save(settings)
+        }
 
-      if (settings.id == repository.defaultId) {
-        view?.defaultChanged()
-      }
+        if (settings.id == repository.defaultId) {
+          view?.defaultChanged()
+        }
 
-      view?.dataUpdated()
+        view?.dataUpdated()
+      } catch (e: Exception) {
+        Timber.v(e)
+      }
     }
   }
 
