@@ -9,6 +9,12 @@ Changelog
 [#113]: https://github.com/musicbeeremote/android-app/issues/113
 [#103]: https://github.com/musicbeeremote/android-app/issues/103
 
+## [1.2.1] - 2020-11-26
+### Changed
+- Fixes a background crash with the application service.
+- Fixes a crash on cover retrieval.
+- Fixes an issue with the service discovery.
+
 ## [1.2.0] - 2020-11-19
 ### Changed
 - Fixed a crash on the service when running on the background
@@ -111,7 +117,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/musicbeeremote/android-app/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.0-beta1...v1.2.0
 [1.2.0-beta1]: https://github.com/musicbeeremote/android-app/compare/v1.1.0...v1.2.0-beta1
 [1.1.0]: https://github.com/musicbeeremote/android-app/compare/v1.0.1...v1.1.0
