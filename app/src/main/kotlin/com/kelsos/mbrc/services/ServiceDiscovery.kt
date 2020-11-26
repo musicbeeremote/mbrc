@@ -51,20 +51,8 @@ internal constructor(
 
     Timber.v("Starting remote service discovery")
     scope.launch {
-      var tries = 0
       try {
-        val socket = createSocket()
-        var discoveryMessage = socket.discoveryMessage()
-        while (discoveryMessage?.context != NOTIFY && tries < 10) {
-          delay(4000)
-          tries++
-          discoveryMessage = socket.discoveryMessage()
-        }
-        if (discoveryMessage?.context == NOTIFY) {
-          connectionRepository.save(connectionMapper.map(discoveryMessage))
-          bus.post(DiscoveryStopped(DiscoveryStop.COMPLETE))
-        }
-        cleanup(socket)
+        discover()
       } catch (e: Exception) {
         Timber.v(e, "Discovery failed")
         bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
@@ -72,6 +60,32 @@ internal constructor(
         stopDiscovery()
       }
     }
+  }
+
+  private suspend fun discover() {
+    var tries = 1
+    val socket = createSocket()
+
+    var discoveryMessage = getDiscoveryMessage(socket)
+    while (discoveryMessage?.context != NOTIFY && tries < 5) {
+      delay(4000)
+      Timber.v("Discovery try: %s", tries)
+      tries++
+
+      discoveryMessage = getDiscoveryMessage(socket)
+    }
+
+    if (discoveryMessage?.context == NOTIFY) {
+      connectionRepository.save(connectionMapper.map(discoveryMessage))
+      bus.post(DiscoveryStopped(DiscoveryStop.COMPLETE))
+    }
+    cleanup(socket)
+  }
+
+  private fun getDiscoveryMessage(socket: MulticastSocket): DiscoveryMessage? = try {
+    socket.discoveryMessage()
+  } catch (e: Exception) {
+    null
   }
 
   private fun stopDiscovery() {
