@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.content.activestatus
 
 import android.app.Application
-import androidx.datastore.DataStore
-import androidx.datastore.createDataStore
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.PlayingTrack
 import kotlinx.coroutines.flow.Flow
@@ -10,14 +10,19 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
 import java.io.IOException
 
 class PlayingTrackCacheImpl(
   context: Application,
   private val dispatchers: AppCoroutineDispatchers
 ) : PlayingTrackCache {
-  private val dataStore: DataStore<Settings> =
-    context.createDataStore("settings.db", SettingsSerializer)
+  private val dataStore: DataStore<Settings> = DataStoreFactory.create(
+    serializer = SettingsSerializer,
+    produceFile = {
+      File(context.filesDir, "settings.db")
+    }
+  )
 
   private val settings: Flow<Settings> = dataStore.data
     .catch { exception ->

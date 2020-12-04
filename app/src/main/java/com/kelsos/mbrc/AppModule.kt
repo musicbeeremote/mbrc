@@ -29,11 +29,16 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.library.presentation.adapters.AlbumAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.GenreAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.TrackAdapter
+import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
+import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
+import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
+import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
 import com.kelsos.mbrc.features.library.presentation.viewmodels.AlbumViewModel
 import com.kelsos.mbrc.features.library.presentation.viewmodels.ArtistViewModel
 import com.kelsos.mbrc.features.library.presentation.viewmodels.GenreViewModel
@@ -247,8 +252,8 @@ val appModule = module {
     AppCoroutineDispatchers(
       Dispatchers.Main,
       appRxSchedulers.disk.asCoroutineDispatcher(),
+      appRxSchedulers.database.asCoroutineDispatcher(),
       appRxSchedulers.network.asCoroutineDispatcher(),
-      appRxSchedulers.database.asCoroutineDispatcher()
     )
   }
 
@@ -304,10 +309,6 @@ val appModule = module {
 val uiModule = module {
   viewModel<ConnectionManagerViewModel>()
   viewModel<PlayerViewModel>()
-  viewModel<AlbumViewModel>()
-  viewModel<GenreViewModel>()
-  viewModel<ArtistViewModel>()
-  viewModel<TrackViewModel>()
   viewModel<MiniControlViewModel>()
   viewModel<LyricsViewModel>()
   viewModel<RadioViewModel>()
@@ -323,4 +324,15 @@ val uiModule = module {
   factory<ArtistAdapter>()
   factory<AlbumAdapter>()
   factory<TrackAdapter>()
+
+  viewModel<AlbumViewModel>()
+  viewModel<GenreViewModel>()
+  viewModel<ArtistViewModel>()
+  viewModel<TrackViewModel>()
+
+  single<LibrarySearchModel>()
+  factory<GenreScreen>()
+  factory<AlbumScreen>()
+  factory<ArtistScreen>()
+  factory<TrackScreen>()
 }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 
 class LibraryViewModel(
   dispatchers: AppCoroutineDispatchers,
+  private val searchModel: LibrarySearchModel,
   private val syncWorkHandler: SyncWorkHandler
 ) : BaseViewModel<SyncResult>(dispatchers) {
 
@@ -17,5 +18,9 @@ class LibraryViewModel(
     scope.launch {
       syncWorkHandler.sync()
     }
+  }
+
+  fun search(search: String = "") {
+    searchModel.search(search)
   }
 }

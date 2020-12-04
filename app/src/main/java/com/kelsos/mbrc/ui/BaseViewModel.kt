@@ -11,7 +11,7 @@ import kotlinx.coroutines.Job
 open class BaseViewModel<T : UiMessageBase>(dispatchers: AppCoroutineDispatchers) : ViewModel() {
   private val mutableEmitter: MutableLiveData<Event<T>> = MutableLiveData()
   private val job: Job = Job()
-  protected val scope = CoroutineScope(dispatchers.network + job)
+  protected val scope = CoroutineScope(dispatchers.main + job)
 
   val emitter: LiveData<Event<T>>
     get() = mutableEmitter

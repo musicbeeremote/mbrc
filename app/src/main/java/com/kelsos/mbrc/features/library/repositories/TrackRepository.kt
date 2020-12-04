@@ -11,6 +11,4 @@ interface TrackRepository : Repository<Track> {
   fun getGenreTrackPaths(genre: String): List<String>
   fun getArtistTrackPaths(artist: String): List<String>
   fun getAllTrackPaths(): List<String>
-
-  fun allTracks(): DataSource.Factory<Int, Track>
 }

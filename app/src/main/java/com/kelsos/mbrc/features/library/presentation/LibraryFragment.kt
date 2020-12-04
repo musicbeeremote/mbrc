@@ -31,15 +31,28 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
   private lateinit var pagerAdapter: LibraryPagerAdapter
   private lateinit var searchView: SearchView
   private lateinit var searchMenuItem: MenuItem
+  private lateinit var clearMenuItem: MenuItem
 
   private val viewModel: LibraryViewModel by inject()
+  private val genreScreen: GenreScreen by inject()
+  private val artistScreen: ArtistScreen by inject()
+  private val albumScreen: AlbumScreen by inject()
+  private val trackScreen: TrackScreen by inject()
 
   override fun onQueryTextSubmit(query: String): Boolean {
-    if (query.isNotEmpty() && query.trim { it <= ' ' }.isNotEmpty()) {
+    val search = query.trim()
+    if (search.isNotEmpty()) {
       closeSearch()
+      viewModel.search(search)
+      requireActivity().actionBar?.apply {
+        title = search
+      }
+      searchMenuItem.isVisible = false
+      clearMenuItem.isVisible = true
+      return true
     }
 
-    return true
+    return false
   }
 
   private fun closeSearch(): Boolean {
@@ -48,23 +61,20 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
         isIconified = true
         isFocusable = false
         clearFocus()
-        setQuery("", false)
         searchMenuItem.collapseActionView()
-        return true
+        return@closeSearch true
       }
     }
     return false
   }
 
-  override fun getCategory(category: Int): String {
-    return when (category) {
-      SyncCategory.GENRES -> getString(R.string.library__category_genres)
-      SyncCategory.ARTISTS -> getString(R.string.library__category_artists)
-      SyncCategory.ALBUMS -> getString(R.string.library__category_albums)
-      SyncCategory.TRACKS -> getString(R.string.library__category_tracks)
-      SyncCategory.PLAYLISTS -> getString(R.string.library__category_playlists)
-      else -> ""
-    }
+  override fun getCategory(category: Int): String = when (category) {
+    SyncCategory.GENRES -> getString(R.string.library__category_genres)
+    SyncCategory.ARTISTS -> getString(R.string.library__category_artists)
+    SyncCategory.ALBUMS -> getString(R.string.library__category_albums)
+    SyncCategory.TRACKS -> getString(R.string.library__category_tracks)
+    SyncCategory.PLAYLISTS -> getString(R.string.library__category_playlists)
+    else -> ""
   }
 
   override fun onQueryTextChange(newText: String): Boolean {
@@ -81,7 +91,7 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
+  ): View {
     setHasOptionsMenu(true)
     dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_library, container, false)
     dataBinding.lifecycleOwner = viewLifecycleOwner
@@ -100,10 +110,10 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
       pager.isUserInputEnabled = true
       it.submit(
         listOf(
-          GenreScreen(),
-          ArtistScreen(),
-          AlbumScreen(),
-          TrackScreen()
+          genreScreen,
+          artistScreen,
+          albumScreen,
+          trackScreen
         )
       )
     }
@@ -126,7 +136,8 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
     inflater.inflate(R.menu.library_search, menu)
-    searchMenuItem = menu.findItem(R.id.library_screen__action_search).apply {
+    clearMenuItem = menu.findItem(R.id.library__action_clear)
+    searchMenuItem = menu.findItem(R.id.library__action_search).apply {
       searchView = actionView as SearchView
     }
 
@@ -138,9 +149,20 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == R.id.library_screen__action_refresh) {
-      viewModel.refresh()
-      return true
+    when (item.itemId) {
+      R.id.library__action_refresh -> {
+        viewModel.refresh()
+        return true
+      }
+      R.id.library__action_clear -> {
+        viewModel.search()
+        searchMenuItem.isVisible = true
+        clearMenuItem.isVisible = false
+        requireActivity().actionBar?.apply {
+          setTitle(R.string.nav_library)
+        }
+        return true
+      }
     }
     return super.onOptionsItemSelected(item)
   }

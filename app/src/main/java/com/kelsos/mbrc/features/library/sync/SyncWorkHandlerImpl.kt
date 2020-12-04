@@ -21,6 +21,9 @@ class SyncWorkHandlerImpl(private val workManager: WorkManager) : SyncWorkHandle
         SyncWorker.SYNC_WORK_TAG
       )
     ) {
+      if (it.isEmpty()) {
+        return@map LibrarySyncProgress(0, 0, 0, false)
+      }
       val workInfo = it.first()
       val progress = workInfo.progress
       return@map LibrarySyncProgress(

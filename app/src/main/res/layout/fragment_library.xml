@@ -63,9 +63,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/library_container__progress" />
 
-    <com.google.android.material.progressindicator.ProgressIndicator
+    <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/library_container__progress"
-        style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Determinate"
+        style="@style/Widget.MaterialComponents.LinearProgressIndicator"
         android:layout_width="0dp"
         android:layout_height="4dp"
         android:progress="@{sync.current}"

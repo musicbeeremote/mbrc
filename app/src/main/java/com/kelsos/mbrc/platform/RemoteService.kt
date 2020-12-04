@@ -21,12 +21,13 @@ class RemoteService : Service(), ForegroundHooks {
 
   override fun onCreate() {
     super.onCreate()
-    this.registerReceiver(receiver, receiver.filter(this))
     notifications.setForegroundHooks(this)
+    this.registerReceiver(receiver, receiver.filter(this))
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
+    notifications.setForegroundHooks(this)
     core.start()
     core.setSyncStartAction { syncWorkHandler.sync(true) }
     return super.onStartCommand(intent, flags, startId)

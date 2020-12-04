@@ -124,7 +124,7 @@
   <string name="now_playing_search_hint">Search and play a track</string>
   <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
-  <string name="library_actionbar_refresh">Refresh</string>
+  <string name="library__action_refresh">Refresh</string>
   <string name="feedback_logs">Include Logs</string>
   <string name="main__dialog_plugin_outdated_message">It seems that you are using an older version of the MusicBee Remote Plugin. Some features require an newer version of the plugin to work. Please Update.</string>
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
@@ -171,4 +171,5 @@
   <string name="connection_manager__host">mbrc://%1$s:%2$d</string>
   <string name="output_selection__icon_content_description">Speaker Icon</string>
   <string name="genre_artists__empty_icon_content_description">Empty list placeholder</string>
+  <string name="library__action_clear">Clear</string>
 </resources>

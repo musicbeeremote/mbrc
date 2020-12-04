@@ -39,10 +39,6 @@ class TrackRepositoryImpl(
     return dao.getAlbumTracks(album, artist).map { entityMapper.map(it) }
   }
 
-  override fun allTracks(): DataSource.Factory<Int, Track> {
-    return dao.getAll().map { entityMapper.map(it) }
-  }
-
   override fun getNonAlbumTracks(artist: String): DataSource.Factory<Int, Track> {
     return dao.getNonAlbumTracks(artist).map { entityMapper.map(it) }
   }
