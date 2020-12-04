@@ -20,7 +20,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 13
+          java-version: 11
       - name: Download Dependencies
         run: ./gradlew androidDependencies
       - name: Cache dependencies

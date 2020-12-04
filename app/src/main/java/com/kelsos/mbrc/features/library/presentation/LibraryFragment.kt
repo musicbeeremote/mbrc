@@ -19,16 +19,22 @@ import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
 import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
 import com.kelsos.mbrc.features.library.sync.SyncCategory
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
 
-  private var searchView: SearchView? = null
-  private var searchMenuItem: MenuItem? = null
-  private var albumArtistOnly: MenuItem? = null
-  private var searchClear: MenuItem? = null
   private var pagerAdapter: LibraryPagerAdapter? = null
+  private lateinit var searchView: SearchView
+  private lateinit var searchMenuItem: MenuItem
+  private lateinit var clearMenuItem: MenuItem
+  private lateinit var albumArtistOnly: MenuItem
+
   private val viewModel: LibraryViewModel by viewModel()
+  private val genreScreen: GenreScreen by inject()
+  private val artistScreen: ArtistScreen by inject()
+  private val albumScreen: AlbumScreen by inject()
+  private val trackScreen: TrackScreen by inject()
 
   private var _binding: FragmentLibraryBinding? = null
   private val binding get() = _binding!!
@@ -37,35 +43,38 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
     val search = query.trim()
     if (search.isNotEmpty()) {
       closeSearch()
-      searchMenuItem?.isVisible = false
-      searchClear?.isVisible = true
+      viewModel.search(search)
+      requireActivity().actionBar?.apply {
+        title = search
+      }
+      searchMenuItem.isVisible = false
+      clearMenuItem.isVisible = true
+      return true
     }
 
-    return true
+    return false
   }
 
   private fun closeSearch(): Boolean {
-    searchView?.let {
-      if (it.isShown) {
-        it.isIconified = true
-        it.isFocusable = false
-        it.clearFocus()
-        searchMenuItem?.collapseActionView()
-        return true
+    searchView.apply {
+      if (isShown) {
+        isIconified = true
+        isFocusable = false
+        clearFocus()
+        searchMenuItem.collapseActionView()
+        return@closeSearch true
       }
     }
     return false
   }
 
-  override fun getCategory(category: Int): String {
-    return when (category) {
-      SyncCategory.GENRES -> getString(R.string.library__category_genres)
-      SyncCategory.ARTISTS -> getString(R.string.library__category_artists)
-      SyncCategory.ALBUMS -> getString(R.string.library__category_albums)
-      SyncCategory.TRACKS -> getString(R.string.library__category_tracks)
-      SyncCategory.PLAYLISTS -> getString(R.string.library__category_playlists)
-      else -> ""
-    }
+  override fun getCategory(category: Int): String = when (category) {
+    SyncCategory.GENRES -> getString(R.string.library__category_genres)
+    SyncCategory.ARTISTS -> getString(R.string.library__category_artists)
+    SyncCategory.ALBUMS -> getString(R.string.library__category_albums)
+    SyncCategory.TRACKS -> getString(R.string.library__category_tracks)
+    SyncCategory.PLAYLISTS -> getString(R.string.library__category_playlists)
+    else -> ""
   }
 
   override fun onQueryTextChange(newText: String): Boolean = false
@@ -85,10 +94,10 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
     pagerAdapter = LibraryPagerAdapter(viewLifecycleOwner).also {
       it.submit(
         listOf(
-          GenreScreen(),
-          ArtistScreen(),
-          AlbumScreen(),
-          TrackScreen()
+          genreScreen,
+          artistScreen,
+          albumScreen,
+          trackScreen
         )
       )
     }
@@ -131,13 +140,14 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
     inflater.inflate(R.menu.library_search, menu)
-    searchMenuItem = menu.findItem(R.id.library_screen__action_search).apply {
+    clearMenuItem = menu.findItem(R.id.library__action_clear)
+    searchMenuItem = menu.findItem(R.id.library__action_search).apply {
       searchView = actionView as SearchView
     }
 
-    albumArtistOnly = menu.findItem(R.id.library_album_artist)
+    albumArtistOnly = menu.findItem(R.id.library__album_artist)
 
-    searchView?.apply {
+    searchView.apply {
       queryHint = getString(R.string.library_search_hint)
       setIconifiedByDefault(true)
       setOnQueryTextListener(this@LibraryFragment)
@@ -146,23 +156,27 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
-      R.id.library_screen__action_refresh -> {
+      R.id.library__action_refresh -> {
         viewModel.refresh()
         return true
       }
-      R.id.library_album_artist -> {
-        albumArtistOnly?.let {
-          it.isChecked = !it.isChecked
+      R.id.library__album_artist -> {
+        albumArtistOnly.run {
+          isChecked = !isChecked
         }
 
         return true
       }
-      R.id.library_search_clear -> {
-        searchMenuItem?.isVisible = true
-        searchClear?.isVisible = false
+      R.id.library__action_clear -> {
+        viewModel.search()
+        searchMenuItem.isVisible = true
+        clearMenuItem.isVisible = false
+        requireActivity().actionBar?.apply {
+          setTitle(R.string.nav_library)
+        }
         return true
       }
-      R.id.library_sync_state -> {
+      R.id.library__sync_state -> {
         return true
       }
     }

@@ -14,7 +14,7 @@
   <string name="settings_key_incoming_call_action">incoming_call_action</string>
   <string name="settings_miscellaneous_incoming_call_action">Incoming call action</string>
   <string name="settings_miscellaneous_incoming_call_description">Default action on incoming call \n\nRequires permission to read the Phone State.</string>
-<string name="info_service_description">This service is responsible for the communication of the application with the plugin.</string>
+  <string name="info_service_description">This service is responsible for the communication of the application with the plugin.</string>
   <string name="application_description">Remote Control Application for MusicBee</string>
   <string name="main_menu_title_share">Share</string>
   <string name="preferences_category_about">About MusicBee Remote</string>
@@ -119,7 +119,7 @@
   <string name="now_playing_search_hint">Search and play a track</string>
   <string name="feedback_device_information">Include Device &amp; Application Information</string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
-  <string name="library_actionbar_refresh">Refresh</string>
+  <string name="library__action_refresh">Refresh</string>
   <string name="feedback_logs">Include Logs</string>
   <string name="library_album_artists_only">Only Album Artists</string>
   <string name="main__dialog_plugin_outdated_message">A newer version of the plugin is available.\nPlease consider updating.</string>
@@ -190,4 +190,5 @@
   <string name="connection_manager__host">mbrc://%1$s:%2$d</string>
   <string name="output_selection__icon_content_description">Speaker Icon</string>
   <string name="genre_artists__empty_icon_content_description">Empty list placeholder</string>
+  <string name="library__action_clear">Clear</string>
 </resources>
