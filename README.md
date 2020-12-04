@@ -1,5 +1,5 @@
 <!-- Shields -->
-[![CircleCI](https://circleci.com/gh/musicbeeremote/android-app/tree/master.svg?style=svg)](https://circleci.com/gh/musicbeeremote/android-app/tree/master)
+![CI](https://github.com/musicbeeremote/android-app/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/musicbeeremote/android-app/branch/master/graph/badge.svg)](https://codecov.io/gh/musicbeeremote/android-app)
 ![GitHub](https://img.shields.io/github/license/musicbeeremote/android-app.svg)
 ![GitHub release](https://img.shields.io/github/release/musicbeeremote/android-app.svg)
