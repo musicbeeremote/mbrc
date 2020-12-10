@@ -14,6 +14,9 @@ constructor(
 ) : ServiceChecker {
 
   override fun startServiceIfNotRunning() {
+    if (RemoteService.SERVICE_RUNNING) {
+      return
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       Timber.v("Starting foreground service")
       application.startForegroundService(Intent(application, RemoteService::class.java))

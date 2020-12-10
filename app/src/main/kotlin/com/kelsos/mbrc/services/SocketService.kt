@@ -228,7 +228,7 @@ constructor(
         socket = null
 
         bus.post(MessageEvent(ApplicationEvents.SocketStatusChanged, false))
-        if (numOfRetries < MAX_RETRIES) {
+        if (numOfRetries < MAX_RETRIES && !shouldStop) {
           Timber.d("Trying to reconnect. Try %d of %d", numOfRetries, MAX_RETRIES)
           socketManager(RETRY)
         }

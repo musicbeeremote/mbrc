@@ -8,7 +8,7 @@ import com.kelsos.mbrc.interfaces.IEvent
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
-import java.util.*
+import java.util.HashMap
 import java.util.concurrent.LinkedBlockingQueue
 import javax.inject.Inject
 
@@ -43,7 +43,6 @@ constructor(bus: RxBus, app: Application) : Runnable {
 
   /**
    * Takes a MessageEvent and passes it to the command execution function.
-
    * @param event The message received.
    */
 
@@ -71,8 +70,7 @@ constructor(bus: RxBus, app: Application) : Runnable {
         executeCommand(eventQueue.take())
       }
     } catch (e: InterruptedException) {
-      Timber.d(e, "Failed to execute command")
+      Timber.d("Command execution was interrupted")
     }
-
   }
 }

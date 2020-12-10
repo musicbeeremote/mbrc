@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    release="Dec 12,2020">
+    <bug>Fixes a crash while starting or stopping the background service</bug>
+  </version>
+  <version
     release="Nov 26,2020"
     version="1.2.1">
     <bug>Fixes a background crash with the application service.</bug>

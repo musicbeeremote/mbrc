@@ -151,7 +151,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
           } else {
             startService(Intent(this, RemoteService::class.java))
           }
-        }, null, 400)
+        }, null, 600)
       }
     } else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults)

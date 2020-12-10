@@ -190,7 +190,10 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   }
 
   internal fun exitApplication() {
-    stopService(Intent(this, RemoteService::class.java))
+    if (!RemoteService.SERVICE_STOPPING) {
+      stopService(Intent(this, RemoteService::class.java))
+    }
+
 
     if (this is MainActivity) {
       finish()

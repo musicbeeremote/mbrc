@@ -12,7 +12,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
-import com.kelsos.mbrc.controller.ForegroundHooks
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.CoverChangedEvent
@@ -45,8 +44,6 @@ constructor(
   private val previous: String
   private val play: String
   private val next: String
-  private var hooks: ForegroundHooks? = null
-  private val CHANNEL_ID = "mbrc_session"
 
   init {
     bus.register(this, TrackInfoChangeEvent::class.java) { this.handleTrackInfo(it) }
@@ -107,7 +104,7 @@ constructor(
     update()
   }
 
-  private fun update() {
+  fun update() {
     notification = createBuilder().build().also { notification ->
       notificationManager.notify(NOW_PLAYING_PLACEHOLDER, notification)
     }
@@ -118,10 +115,7 @@ constructor(
     if (event.status == Connection.OFF) {
       cancelNotification(NOW_PLAYING_PLACEHOLDER)
     } else {
-      notification = createBuilder().build()
-      if (hooks != null) {
-        hooks!!.start(NOW_PLAYING_PLACEHOLDER, notification!!)
-      }
+      update()
     }
   }
 
@@ -181,18 +175,10 @@ constructor(
 
   fun cancelNotification(notificationId: Int) {
     notificationManager.cancel(notificationId)
-    if (hooks != null) {
-      hooks!!.stop()
-    }
-  }
-
-  fun setForegroundHooks(hooks: ForegroundHooks) {
-    this.hooks = hooks
-    update()
-    hooks.start(NOW_PLAYING_PLACEHOLDER, notification!!)
   }
 
   companion object {
     const val NOW_PLAYING_PLACEHOLDER = 15613
+    const val CHANNEL_ID = "mbrc_session"
   }
 }

@@ -70,7 +70,9 @@ constructor(
         postAction(UserAction(Protocol.PlayerPrevious, true))
       }
       RemoteViewIntentBuilder.CANCELLED_NOTIFICATION -> {
-        context.stopService(Intent(context, RemoteService::class.java))
+        if (!RemoteService.SERVICE_STOPPING) {
+          context.stopService(Intent(context, RemoteService::class.java))
+        }
       }
     }
   }
