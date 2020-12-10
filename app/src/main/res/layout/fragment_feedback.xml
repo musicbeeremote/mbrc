@@ -39,13 +39,14 @@
     android:text="@string/feedback_logs"
     app:layout_constraintBottom_toTopOf="@+id/include_device_info"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.173"
-    app:layout_constraintStart_toStartOf="parent" />
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="@id/include_device_info" />
 
   <EditText
     android:id="@+id/feedback_content"
     android:layout_width="0dp"
     android:layout_height="0dp"
+    android:minHeight="50dp"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
     android:gravity="top|start"

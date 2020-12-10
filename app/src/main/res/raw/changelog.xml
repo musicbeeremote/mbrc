@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    version="1.3.0"
     release="Dec 12,2020">
+    <bug>Fixes a bug with the feedback input being collapsed on smaller screen sizes.</bug>
     <bug>Fixes a crash while starting or stopping the background service</bug>
   </version>
   <version

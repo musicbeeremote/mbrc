@@ -92,6 +92,7 @@
     <activity
       android:name=".ui.help_feedback.HelpFeedbackActivity"
       android:label="@string/title_activity_help_feedback"
+      android:windowSoftInputMode="adjustNothing"
       android:parentActivityName=".ui.navigation.main.MainActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
