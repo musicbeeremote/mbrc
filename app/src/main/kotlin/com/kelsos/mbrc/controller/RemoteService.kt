@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.configuration.CommandRegistration
 import com.kelsos.mbrc.constants.UserInputEventType
@@ -15,8 +16,11 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.messaging.NotificationService
 import com.kelsos.mbrc.messaging.NotificationService.Companion.CHANNEL_ID
 import com.kelsos.mbrc.messaging.NotificationService.Companion.NOW_PLAYING_PLACEHOLDER
+import com.kelsos.mbrc.messaging.NotificationService.Companion.channel
 import com.kelsos.mbrc.services.ServiceDiscovery
 import com.kelsos.mbrc.utilities.RemoteBroadcastReceiver
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder
+import com.kelsos.mbrc.utilities.RemoteViewIntentBuilder.getPendingIntent
 import timber.log.Timber
 import toothpick.Scope
 import toothpick.Toothpick
@@ -47,10 +51,23 @@ class RemoteService : Service() {
   private lateinit var handler: Handler
 
   private fun placeholderNotification(): Notification {
+    val channel = channel()
+    channel?.let { notificationChannel ->
+      val manager = NotificationManagerCompat.from(this)
+      manager.createNotificationChannel(notificationChannel)
+    }
+    val cancelIntent = getPendingIntent(RemoteViewIntentBuilder.CANCEL,this)
+    val action = NotificationCompat.Action.Builder(
+      R.drawable.ic_close_black_24dp,
+      getString(android.R.string.cancel),
+      cancelIntent
+    ).build()
+
     return NotificationCompat.Builder(this, CHANNEL_ID)
       .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
       .setSmallIcon(R.drawable.ic_mbrc_status)
       .setContentTitle(getString(R.string.application_name))
+      .addAction(action)
       .setContentText(getString(R.string.application_starting))
       .build()
   }
@@ -62,7 +79,7 @@ class RemoteService : Service() {
   override fun onCreate() {
     super.onCreate()
     Timber.d("Background Service::Created")
-    startForeground( NOW_PLAYING_PLACEHOLDER, placeholderNotification())
+    startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
     handler = Handler(Looper.myLooper()!!)
     SERVICE_RUNNING = true
     scope = Toothpick.openScope(application)

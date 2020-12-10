@@ -57,23 +57,10 @@ constructor(
   }
 
   private fun createNotificationChannels() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+    val channel = channel()
+    if (channel === null) {
       return
     }
-
-    val channel = NotificationChannel(
-      CHANNEL_ID,
-      "MusicBee Remote",
-      NotificationManager.IMPORTANCE_DEFAULT
-    )
-
-    channel.apply {
-      this.description = "MusicBee Remote: Service"
-      enableLights(false)
-      enableVibration(false)
-      setSound(null, null)
-    }
-
     notificationManager.createNotificationChannel(channel)
   }
 
@@ -180,5 +167,24 @@ constructor(
   companion object {
     const val NOW_PLAYING_PLACEHOLDER = 15613
     const val CHANNEL_ID = "mbrc_session"
+
+    fun channel(): NotificationChannel? {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        return null
+      }
+
+      val channel = NotificationChannel(
+        CHANNEL_ID,
+        "MusicBee Remote",
+        NotificationManager.IMPORTANCE_DEFAULT
+      )
+
+      return channel.apply {
+        this.description = "MusicBee Remote: Service"
+        enableLights(false)
+        enableVibration(false)
+        setSound(null, null)
+      }
+    }
   }
 }
