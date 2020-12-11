@@ -9,6 +9,17 @@ Changelog
 [#113]: https://github.com/musicbeeremote/android-app/issues/113
 [#103]: https://github.com/musicbeeremote/android-app/issues/103
 
+## [1.3.0] - 2020-12-12
+### Added
+- [#172] Introduces the ability to change audio outputs.
+
+### Changed
+- [#211] Fixes a bug with the feedback input being collapsed on smaller screen sizes.
+- Fixes a crash while starting or stopping the background service.
+
+[#211]: https://github.com/musicbeeremote/android-app/issues/211
+[#172]: https://github.com/musicbeeremote/android-app/issues/172
+
 ## [1.2.1] - 2020-11-26
 ### Changed
 - Fixes a background crash with the application service.
@@ -117,7 +128,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.3.0...HEAD
+[1.3.-]: https://github.com/musicbeeremote/android-app/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/musicbeeremote/android-app/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.0-beta1...v1.2.0
 [1.2.0-beta1]: https://github.com/musicbeeremote/android-app/compare/v1.1.0...v1.2.0-beta1
