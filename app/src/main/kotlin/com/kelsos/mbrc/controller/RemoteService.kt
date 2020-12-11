@@ -102,20 +102,21 @@ class RemoteService : Service() {
     return super.onStartCommand(intent, flags, startId)
   }
 
-
   override fun onDestroy() {
     super.onDestroy()
     SERVICE_STOPPING = true;
     stopForeground(true)
     this.unregisterReceiver(receiver)
-    remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
-    CommandRegistration.unregister(remoteController)
-    threadPoolExecutor?.shutdownNow()
-    Toothpick.closeScope(this)
+    handler.postDelayed({
+      remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
+      CommandRegistration.unregister(remoteController)
+      threadPoolExecutor?.shutdownNow()
+      Toothpick.closeScope(this)
 
-    SERVICE_STOPPING = false
-    SERVICE_RUNNING = false
-    Timber.d("Background Service::Destroyed")
+      SERVICE_STOPPING = false
+      SERVICE_RUNNING = false
+      Timber.d("Background Service::Destroyed")
+    }, 150)
   }
 
   private inner class ControllerBinder : Binder() {

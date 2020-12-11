@@ -93,6 +93,7 @@ constructor(
     Timber.v("Received action ${SocketAction.name(action)}")
     when (action) {
       RESET -> {
+        shouldStop = false;
         resetState()
         startSocket()
         cleanupSocket()
@@ -127,7 +128,6 @@ constructor(
 
   private fun resetState() {
     connecting = false
-    shouldStop = false
     numOfRetries = 0
   }
 
