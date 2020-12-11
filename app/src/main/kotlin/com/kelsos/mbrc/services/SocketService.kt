@@ -2,6 +2,7 @@ package com.kelsos.mbrc.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.annotations.SocketAction
 import com.kelsos.mbrc.annotations.SocketAction.Action
 import com.kelsos.mbrc.annotations.SocketAction.RESET
 import com.kelsos.mbrc.annotations.SocketAction.RETRY
@@ -33,6 +34,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
+import java.net.NoRouteToHostException
 import java.net.Socket
 import java.net.SocketAddress
 import java.net.SocketException
@@ -52,6 +54,7 @@ constructor(
 ) : PingTimeoutListener {
   private var numOfRetries: Int = 0
   private var shouldStop: Boolean = false
+  private var connecting: Boolean = false
   private var socket: Socket? = null
   private var output: PrintWriter? = null
   private val executor = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
@@ -60,46 +63,45 @@ constructor(
   private val scope = CoroutineScope(context)
 
   init {
-    startSocket()
-    numOfRetries = 0
-    shouldStop = false
-    socketManager(START)
+    resetState()
     bus.register(this, DefaultSettingsChangedEvent::class.java) { socketManager(RESET) }
   }
 
   private fun startSocket() {
     context.cancelChildren()
     scope.launch {
+      Timber.d("Trying to connect. Try %d of %d", (numOfRetries + 1), MAX_RETRIES)
       try {
         delay(3000)
         val settings = connectionRepository.getDefault()
         if (settings == null) {
           socketManager(STOP)
+          bus.post(MessageEvent(ApplicationEvents.TerminateService))
           return@launch
         }
 
-        Timber.v("Starting connection to mbrc://${settings.address}:${settings.port}", )
+        Timber.v("Connecting to mbrc://${settings.address}:${settings.port}")
         executor.execute(SocketConnection(settings))
         numOfRetries++
       } catch (e: Exception) {
-        Timber.v(e, "Connection was unsuccessful")
+        Timber.v(e, "Connection failed")
       }
     }
   }
 
   fun socketManager(@Action action: Int) {
-    Timber.v("received action $action")
+    Timber.v("Received action ${SocketAction.name(action)}")
     when (action) {
       RESET -> {
+        resetState()
         startSocket()
         cleanupSocket()
-        shouldStop = false
-        numOfRetries = 0
       }
       START -> {
-        if (isConnected()) {
+        if (isConnected() || connecting) {
           return
         }
+        connecting = true
         startSocket()
       }
       RETRY -> {
@@ -107,8 +109,7 @@ constructor(
         cleanupSocket()
 
         if (shouldStop) {
-          shouldStop = false
-          numOfRetries = 0
+          resetState()
           return
         }
       }
@@ -117,10 +118,17 @@ constructor(
         context.cancelChildren()
         shouldStop = true
         cleanupSocket()
+        resetState()
       }
       else -> {
       }
     }
+  }
+
+  private fun resetState() {
+    connecting = false
+    shouldStop = false
+    numOfRetries = 0
   }
 
   /**
@@ -133,7 +141,7 @@ constructor(
   }
 
   private fun cleanupSocket() {
-    Timber.v("Socket cleanup")
+    Timber.v("Cleaning up socket")
     if (!isConnected()) {
       return
     }
@@ -159,13 +167,13 @@ constructor(
         }
       }
     } catch (ignored: Exception) {
-      Timber.d(ignored, "Trying to send a message")
+      Timber.d(ignored, "Send failed")
     }
 
   }
 
   override fun onTimeout() {
-    Timber.v("Timeout received resetting socket")
+    Timber.v("Timeout received. Resetting socket")
     socketManager(RESET)
   }
 
@@ -212,14 +220,15 @@ constructor(
         }
       } catch (e: SocketTimeoutException) {
         bus.post(NotifyUser(R.string.notification_connection_timeout))
-        Timber.v(e)
+      } catch (e: NoRouteToHostException) {
+        bus.post(NotifyUser(R.string.notification_no_route))
       } catch (e: SocketException) {
         bus.post(NotifyUser(e.toString().substring(26)))
         Timber.v(e)
       } catch (ignored: IOException) {
         Timber.v(ignored, "IO")
       } catch (npe: NullPointerException) {
-        Timber.d(npe, "NPE")
+        Timber.e(npe, "NPE")
       } finally {
         output?.close()
         activityChecker.stop()
@@ -227,12 +236,13 @@ constructor(
 
         socket = null
 
+        Timber.d("Socket closed")
         bus.post(MessageEvent(ApplicationEvents.SocketStatusChanged, false))
         if (numOfRetries < MAX_RETRIES && !shouldStop) {
-          Timber.d("Trying to reconnect. Try %d of %d", numOfRetries, MAX_RETRIES)
           socketManager(RETRY)
+        } else {
+          bus.post(MessageEvent(ApplicationEvents.TerminateService))
         }
-        Timber.d("Socket closed")
       }
     }
   }

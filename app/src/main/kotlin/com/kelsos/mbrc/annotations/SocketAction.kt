@@ -12,4 +12,15 @@ object SocketAction {
   @Retention(AnnotationRetention.SOURCE)
   @IntDef(RESET, START, RETRY, TERMINATE, STOP)
   annotation class Action
+
+  fun name(@Action action: Int): String {
+    return when(action) {
+      RESET -> "Reset"
+      START -> "Start"
+      RETRY -> "Retry"
+      TERMINATE -> "Terminate"
+      STOP -> "Stop"
+      else -> throw IllegalArgumentException("action $action is not recognised")
+    }
+  }
 }

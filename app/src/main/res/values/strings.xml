@@ -180,5 +180,6 @@
   <string name="press_to_sync">Press here to sync</string>
   <string name="library_sync_in_progress">Library metadata sync in progress, please wait…</string>
   <string name="library_search_subtitle">Displaying results for search</string>
-  <string name="application_starting">No connection established…</string>
+  <string name="application_starting">Attempting to establish connection…</string>
+  <string name="notification_no_route">"Could not reach the host"</string>
 </resources>

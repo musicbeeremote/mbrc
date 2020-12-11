@@ -1,7 +1,8 @@
 package com.kelsos.mbrc.constants
 
 object ApplicationEvents {
-  val SocketDataAvailable = "SocketDataAvailable"
-  val SocketStatusChanged = "SocketStatusChanged"
-  val SocketHandshakeUpdate = "SocketHandshakeUpdate"
+  const val SocketDataAvailable = "SocketDataAvailable"
+  const val SocketStatusChanged = "SocketStatusChanged"
+  const val SocketHandshakeUpdate = "SocketHandshakeUpdate"
+  const val TerminateService = "TerminateService"
 }

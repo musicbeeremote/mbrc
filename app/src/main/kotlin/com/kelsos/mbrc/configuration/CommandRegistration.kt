@@ -15,6 +15,7 @@ import com.kelsos.mbrc.commands.RestartConnectionCommand
 import com.kelsos.mbrc.commands.SocketDataAvailableCommand
 import com.kelsos.mbrc.commands.StartDiscoveryCommand
 import com.kelsos.mbrc.commands.TerminateConnectionCommand
+import com.kelsos.mbrc.commands.TerminateServiceCommand
 import com.kelsos.mbrc.commands.VersionCheckCommand
 import com.kelsos.mbrc.commands.model.UpdateCover
 import com.kelsos.mbrc.commands.model.UpdateLastFm
@@ -148,6 +149,10 @@ object CommandRegistration {
     controller.register(
       ApplicationEvents.SocketHandshakeUpdate,
       scope.getInstance(HandleHandshake::class.java)
+    )
+    controller.register(
+      ApplicationEvents.TerminateService,
+      scope.getInstance(TerminateServiceCommand::class.java)
     )
   }
 
