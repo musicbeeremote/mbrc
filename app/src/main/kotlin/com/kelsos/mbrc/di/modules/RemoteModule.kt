@@ -6,6 +6,8 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.kelsos.mbrc.di.providers.NotificationManagerCompatProvider
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.bus.RxBusImpl
+import com.kelsos.mbrc.features.output.OutputApi
+import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.helper.QueueHandler
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.RequestManager
@@ -74,6 +76,7 @@ class RemoteModule : Module() {
       .singletonInScope()
     bind(ApiBase::class.java).singletonInScope()
     bind(RequestManager::class.java).to(RequestManagerImpl::class.java).singletonInScope()
+    bind(OutputApi::class.java).to(OutputApiImpl::class.java).singletonInScope()
     bind(AppDispatchers::class.java).toInstance(
       AppDispatchers(
         Dispatchers.Main,

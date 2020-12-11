@@ -29,6 +29,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.ConnectionStatusChangeEvent
 import com.kelsos.mbrc.events.ui.NotifyUser
 import com.kelsos.mbrc.events.ui.RequestConnectionStateEvent
+import com.kelsos.mbrc.features.output.OutputSelectionDialog
 import com.kelsos.mbrc.services.ServiceChecker
 import com.kelsos.mbrc.ui.help_feedback.HelpFeedbackActivity
 import com.kelsos.mbrc.ui.navigation.library.LibraryActivity
@@ -184,6 +185,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
       createBackStack(Intent(this, SettingsActivity::class.java))
     } else if (itemId == R.id.nav_help) {
       createBackStack(Intent(this, HelpFeedbackActivity::class.java))
+    } else if (itemId == R.id.nav_output) {
+      OutputSelectionDialog.create(supportFragmentManager).show()
     } else if (itemId == R.id.nav_exit) {
       exitApplication()
     }
