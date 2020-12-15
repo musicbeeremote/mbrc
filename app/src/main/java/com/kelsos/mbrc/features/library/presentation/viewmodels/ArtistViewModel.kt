@@ -10,6 +10,7 @@ import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.ui.UiMessageBase
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class ArtistViewModel(
@@ -31,6 +32,6 @@ class ArtistViewModel(
       val factory = if (it.isEmpty()) repository.getAll() else repository.search(it)
       lastSource = factory.paged()
       _artists.addSource(lastSource) { data -> _artists.value = data }
-    }
+    }.launchIn(scope)
   }
 }

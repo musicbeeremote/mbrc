@@ -10,6 +10,7 @@ import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.ui.UiMessageBase
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class AlbumViewModel(
@@ -31,6 +32,6 @@ class AlbumViewModel(
       val factory = if (it.isEmpty()) repository.getAll() else repository.search(it)
       lastSource = factory.paged()
       _albums.addSource(lastSource) { data -> _albums.value = data }
-    }
+    }.launchIn(scope)
   }
 }

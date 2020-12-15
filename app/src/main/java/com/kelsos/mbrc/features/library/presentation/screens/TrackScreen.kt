@@ -11,17 +11,14 @@ import com.kelsos.mbrc.features.library.presentation.adapters.TrackAdapter
 import com.kelsos.mbrc.features.library.presentation.viewmodels.TrackViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.work.WorkHandler
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 
-class TrackScreen :
-  LibraryScreen,
-  KoinComponent,
+class TrackScreen(
+  private val adapter: TrackAdapter,
+  private val workHandler: WorkHandler,
+  private val viewModel: TrackViewModel,
+) : LibraryScreen,
   MenuItemSelectedListener<Track> {
 
-  private val adapter: TrackAdapter by inject()
-  private val workHandler: WorkHandler by inject()
-  private val viewModel: TrackViewModel by inject()
 
   private lateinit var viewHolder: LibraryViewHolder
 

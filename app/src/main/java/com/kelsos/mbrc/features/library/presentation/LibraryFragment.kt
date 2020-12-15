@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
@@ -39,14 +40,19 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
   private val albumScreen: AlbumScreen by inject()
   private val trackScreen: TrackScreen by inject()
 
+  private fun updateToolbar(search: String? = null) {
+    val activity = (requireActivity() as NavigationActivity);
+    val supportActionBar = checkNotNull(activity.supportActionBar)
+    val title = if (search.isNullOrBlank()) getString(R.string.nav_library) else search
+    supportActionBar.title = title
+  }
+
   override fun onQueryTextSubmit(query: String): Boolean {
     val search = query.trim()
     if (search.isNotEmpty()) {
       closeSearch()
       viewModel.search(search)
-      requireActivity().actionBar?.apply {
-        title = search
-      }
+      updateToolbar(search)
       searchMenuItem.isVisible = false
       clearMenuItem.isVisible = true
       return true
@@ -158,9 +164,7 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
         viewModel.search()
         searchMenuItem.isVisible = true
         clearMenuItem.isVisible = false
-        requireActivity().actionBar?.apply {
-          setTitle(R.string.nav_library)
-        }
+        updateToolbar();
         return true
       }
     }

@@ -12,17 +12,13 @@ import com.kelsos.mbrc.features.library.presentation.viewmodels.GenreViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.Queue.DEFAULT
 import com.kelsos.mbrc.features.work.WorkHandler
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 
-class GenreScreen :
-  LibraryScreen,
-  KoinComponent,
+class GenreScreen(
+  private val adapter: GenreAdapter,
+  private val workHandler: WorkHandler,
+  private val viewModel: GenreViewModel,
+) : LibraryScreen,
   MenuItemSelectedListener<Genre> {
-
-  private val adapter: GenreAdapter by inject()
-  private val workHandler: WorkHandler by inject()
-  private val viewModel: GenreViewModel by inject()
 
   private lateinit var viewHolder: LibraryViewHolder
 

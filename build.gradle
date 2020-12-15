@@ -1,14 +1,14 @@
 apply plugin: 'com.github.ben-manes.versions'
 
 buildscript {
-  ext.kotlin_version = '1.4.20'
+  ext.kotlin_version = '1.4.21'
   repositories {
     jcenter()
     google()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:7.0.0-alpha02'
+    classpath 'com.android.tools.build:gradle:7.0.0-alpha03'
     classpath 'org.jacoco:org.jacoco.core:0.8.6'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.36.0'
     classpath 'android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0'

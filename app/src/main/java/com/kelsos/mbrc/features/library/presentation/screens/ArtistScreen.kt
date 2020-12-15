@@ -12,17 +12,14 @@ import com.kelsos.mbrc.features.library.presentation.viewmodels.ArtistViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.Queue.DEFAULT
 import com.kelsos.mbrc.features.work.WorkHandler
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 
-class ArtistScreen :
-  LibraryScreen,
-  KoinComponent,
+class ArtistScreen(
+  private val adapter: ArtistAdapter,
+  private val workHandler: WorkHandler,
+  private val viewModel: ArtistViewModel
+) : LibraryScreen,
   MenuItemSelectedListener<Artist> {
 
-  private val adapter: ArtistAdapter by inject()
-  private val workHandler: WorkHandler by inject()
-  private val viewModel: ArtistViewModel by inject()
 
   private lateinit var viewHolder: LibraryViewHolder
 
