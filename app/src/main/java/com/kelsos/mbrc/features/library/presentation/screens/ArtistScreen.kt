@@ -16,17 +16,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-@OptIn(KoinApiExtension::class)
-class ArtistScreen : LibraryScreen, KoinComponent, MenuItemSelectedListener<Artist> {
-
-  private val adapter: ArtistAdapter by inject()
-  private val actionHandler: PopupActionHandler by inject()
-  private val workHandler: WorkHandler by inject()
-  private val viewModel: ArtistViewModel by inject()
+class ArtistScreen(
+  private val adapter: ArtistAdapter,
+  private val workHandler: WorkHandler,
+  private val viewModel: ArtistViewModel,
+  private val actionHandler: PopupActionHandler
+) : LibraryScreen,
+  MenuItemSelectedListener<Artist> {
 
   private lateinit var viewHolder: LibraryViewHolder
 
