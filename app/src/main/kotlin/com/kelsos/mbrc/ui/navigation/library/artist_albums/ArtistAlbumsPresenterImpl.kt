@@ -29,7 +29,7 @@ constructor(
     scope.launch {
       val artist = album.artist ?: throw IllegalArgumentException("artist is null")
       val albumName = album.album ?: throw java.lang.IllegalArgumentException("album is null")
-      queue.queueAlbum(action, artist, albumName)
+      queue.queueAlbum(action, albumName, artist)
     }
   }
 }

@@ -103,8 +103,10 @@ class LocalTrackDataSource
   suspend fun getAlbumTrackPaths(album: String, artist: String): List<String> =
     withContext(dispatchers.db) {
       return@withContext (select from Track::class
-          where Track_Table.album_artist.`is`(artist)
-          and Track_Table.album.`is`(album))
+          where Track_Table.album.`is`(album)
+          and Track_Table.album_artist.`is`(artist))
+        .orderBy(Track_Table.album_artist, true)
+        .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
         .orderBy(Track_Table.trackno, true)
         .queryList().filter { !it.src.isNullOrEmpty() }.map { it.src!! }
