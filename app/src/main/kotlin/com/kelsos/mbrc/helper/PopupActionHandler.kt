@@ -72,6 +72,8 @@ constructor() {
       R.id.popup_track_queue_last -> Queue.LAST
       R.id.popup_track_play -> Queue.NOW
       R.id.popup_track_play_queue_all -> Queue.ADD_ALL
+      R.id.popup_track_play_artist -> Queue.PLAY_ARTIST
+      R.id.popup_track_play_album -> Queue.PLAY_ALBUM
       else -> Queue.NOW
     }
 

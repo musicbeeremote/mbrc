@@ -101,20 +101,34 @@ constructor(
     val path: String?
     val success: Boolean
     val tracks: Int
-    trackSource = if (type == Queue.ADD_ALL) {
-      path = track.src
-      if (queueAlbum) {
-        trackRepository.getAlbumTrackPaths(track.album!!, track.albumArtist!!)
-      } else {
-        trackRepository.getAllTrackPaths()
+    var action = type
+    trackSource = when (type) {
+      Queue.ADD_ALL -> {
+        path = track.src
+        if (queueAlbum) {
+          trackRepository.getAlbumTrackPaths(track.album!!, track.albumArtist!!)
+        } else {
+          trackRepository.getAllTrackPaths()
+        }
       }
-    } else {
-      path = null
-      listOf(track.src!!)
+      Queue.PLAY_ALBUM -> {
+        action = Queue.ADD_ALL
+        path = track.src
+        trackRepository.getAlbumTrackPaths(track.album!!, track.albumArtist!!)
+      }
+      Queue.PLAY_ARTIST -> {
+        action = Queue.ADD_ALL
+        path = track.src
+        trackRepository.getArtistTrackPaths(track.artist!!)
+      }
+      else -> {
+        path = null
+        listOf(track.src!!)
+      }
     }
 
     tracks = trackSource.size
-    success = queue(type, trackSource, path)
+    success = queue(action, trackSource, path)
     return QueueResult(success, tracks)
   }
 
