@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
+import com.kelsos.mbrc.annotations.Queue
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.helper.QueueHandler
@@ -37,11 +38,19 @@ constructor(
 
   override fun queue(entry: Track, action: String?) {
     scope.launch {
-      if (action == null) {
+      val (success, tracks) = if (action == null) {
         queue.queueTrack(entry, true)
       } else {
         queue.queueTrack(entry, action, true)
       }
+      view?.queue(success, tracks)
+    }
+  }
+
+  override fun queueAlbum(artist: String, album: String) {
+    scope.launch {
+      val (success, tracks) = queue.queueAlbum(Queue.NOW, album, artist)
+      view?.queue(success, tracks)
     }
   }
 }

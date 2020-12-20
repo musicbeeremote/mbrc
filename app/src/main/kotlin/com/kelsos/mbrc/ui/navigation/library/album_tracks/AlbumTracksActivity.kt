@@ -2,9 +2,10 @@ package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import butterknife.ButterKnife
-import butterknife.OnClick
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.TrackEntryAdapter
 import com.kelsos.mbrc.data.library.Track
@@ -33,6 +34,7 @@ class AlbumTracksActivity : FontActivity(),
 
   private var album: AlbumInfo? = null
   private var scope: Scope? = null
+  private lateinit var recyclerView: EmptyRecyclerView
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, this)
@@ -43,7 +45,6 @@ class AlbumTracksActivity : FontActivity(),
     super.onCreate(savedInstanceState)
     Toothpick.inject(this, scope)
     setContentView(R.layout.activity_album_tracks)
-    ButterKnife.bind(this)
     val extras = intent.extras
 
     if (extras != null) {
@@ -71,10 +72,15 @@ class AlbumTracksActivity : FontActivity(),
     presenter.attach(this)
     presenter.load(selectedAlbum)
     adapter.setMenuItemSelectedListener(this)
-    val listTracks: EmptyRecyclerView = findViewById(R.id.list_tracks)
-    listTracks.layoutManager = LinearLayoutManager(baseContext)
-    listTracks.adapter = adapter
-    listTracks.emptyView = findViewById(R.id.empty_view)
+    recyclerView = findViewById(R.id.list_tracks)
+    recyclerView.layoutManager = LinearLayoutManager(baseContext)
+    recyclerView.adapter = adapter
+    recyclerView.emptyView = findViewById(R.id.empty_view)
+    val fab = findViewById<FloatingActionButton>(R.id.play_album)
+    fab.isVisible = true
+    fab.setOnClickListener {
+      presenter.queueAlbum(selectedAlbum.artist, selectedAlbum.album)
+    }
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -88,11 +94,6 @@ class AlbumTracksActivity : FontActivity(),
     return super.onOptionsItemSelected(item)
   }
 
-  @OnClick(R.id.play_album)
-  fun onPlayClicked() {
-
-  }
-
   override fun onMenuItemSelected(menuItem: MenuItem, track: Track) {
     presenter.queue(track, actionHandler.trackSelected(menuItem))
   }
@@ -103,6 +104,17 @@ class AlbumTracksActivity : FontActivity(),
 
   override fun update(cursor: FlowCursorList<Track>) {
     adapter.update(cursor)
+  }
+
+  override fun queue(success: Boolean, tracks: Int) {
+    val message = if (success) {
+      getString(R.string.queue_result__success, tracks)
+    } else {
+      getString(R.string.queue_result__failure)
+    }
+    Snackbar.make(recyclerView, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+      .setText(message)
+      .show()
   }
 
   override fun onStart() {

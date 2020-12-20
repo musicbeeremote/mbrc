@@ -189,4 +189,6 @@
   <string name="output_selection__close_dialog">Close</string>
   <string name="output_selection__connection_error">Connection failed while attempting to retrieve the output devices.</string>
   <string name="output_selection__generic_error">There was a problem while retrieving the output devices.</string>
+  <string name="queue_result__success">%1$d track(s) successfully added to the queue</string>
+  <string name="queue_result__failure">Queueing was unsuccessful</string>
 </resources>

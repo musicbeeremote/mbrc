@@ -179,3 +179,5 @@
     *** get*();
     *** get*(int);
 }
+
+-keep class androidx.datastore.*.** {*;}

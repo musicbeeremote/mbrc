@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter
 import com.kelsos.mbrc.adapters.ArtistEntryAdapter.MenuItemSelectedListener
@@ -103,6 +104,17 @@ class GenreArtistsActivity : FontActivity(),
 
   override fun update(data: FlowCursorList<Artist>) {
     adapter.update(data)
+  }
+
+  override fun queue(success: Boolean, tracks: Int) {
+    val message = if (success) {
+      getString(R.string.queue_result__success, tracks)
+    } else {
+      getString(R.string.queue_result__failure)
+    }
+    Snackbar.make(recyclerView, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+      .setText(message)
+      .show()
   }
 
   override fun onStart() {

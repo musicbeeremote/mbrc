@@ -79,7 +79,8 @@ constructor(
   override fun queue(action: String, entry: Artist) {
     scope.launch {
       val artist = entry.artist ?: throw IllegalArgumentException("artist should not be null")
-      queue.queueArtist(action, artist)
+      val (success, tracks) = queue.queueArtist(action, artist)
+      view?.queue(success, tracks)
     }
   }
 

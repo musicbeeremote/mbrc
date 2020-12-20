@@ -8,6 +8,7 @@ import com.raizlabs.android.dbflow.list.FlowCursorList
 
 interface GenreArtistsView : BaseView {
   fun update(data: FlowCursorList<Artist>)
+  fun queue(success: Boolean, tracks: Int)
 }
 
 interface GenreArtistsPresenter : Presenter<GenreArtistsView> {

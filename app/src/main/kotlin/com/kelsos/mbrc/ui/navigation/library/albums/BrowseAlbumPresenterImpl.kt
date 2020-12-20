@@ -63,11 +63,8 @@ constructor(
 
   override fun queue(action: String, entry: Album) {
     scope.launch {
-      try {
-        queueHandler.queueAlbum(action, entry.album!!, entry.artist!!)
-      } catch (e: Exception) {
-        Timber.e(e)
-      }
+      val (success, tracks) = queueHandler.queueAlbum(action, entry.album!!, entry.artist!!)
+      view?.queue(success, tracks)
     }
   }
 }

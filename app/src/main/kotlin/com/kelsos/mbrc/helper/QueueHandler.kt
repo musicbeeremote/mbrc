@@ -27,6 +27,7 @@ constructor(
     play: String? = null
   ): Boolean {
     return withContext(dispatchers.io) {
+      Timber.v("Queueing ${tracks.size} $type")
       try {
         val response = service.getItem(
           Protocol.NowPlayingQueue,
@@ -46,42 +47,60 @@ constructor(
     @Queue.Action type: String,
     album: String,
     artist: String
-  ) {
+  ): QueueResult {
+    var tracks = 0
+    var success = false
     try {
       val paths = trackRepository.getAlbumTrackPaths(album, artist)
-      queue(type, paths)
+      tracks = paths.size;
+      success = queue(type, paths)
     } catch (e: Exception) {
       Timber.e(e)
     }
+    return QueueResult(success, tracks)
   }
 
   suspend fun queueArtist(
     @Queue.Action type: String,
     artist: String
-  ) {
+  ): QueueResult {
+    var tracks = 0
+    var success = false
     try {
       val paths = trackRepository.getArtistTrackPaths(artist)
-      queue(type, paths)
+      tracks = paths.size;
+      success = queue(type, paths)
     } catch (e: Exception) {
       Timber.e(e)
     }
+    return QueueResult(success, tracks)
   }
 
   suspend fun queueGenre(
     @Queue.Action type: String,
     genre: String
-  ) {
+  ): QueueResult {
+    var tracks = 0
+    var success = false
     try {
       val paths = trackRepository.getGenreTrackPaths(genre)
-      queue(type, paths)
+      tracks = paths.size;
+      success = queue(type, paths)
     } catch (e: Exception) {
       Timber.e(e)
     }
+    return QueueResult(success, tracks)
   }
 
-  suspend fun queueTrack(track: Track, @Queue.Action type: String, queueAlbum: Boolean = false) {
+  suspend fun queueTrack(
+    track: Track,
+    @Queue.Action type: String,
+    queueAlbum: Boolean = false
+  ): QueueResult {
     val trackSource: List<String>
     val path: String?
+    val success: Boolean
+    val tracks: Int
     trackSource = if (type == Queue.ADD_ALL) {
       path = track.src
       if (queueAlbum) {
@@ -94,10 +113,12 @@ constructor(
       listOf(track.src!!)
     }
 
-    queue(type, trackSource, path)
+    tracks = trackSource.size
+    success = queue(type, trackSource, path)
+    return QueueResult(success, tracks)
   }
 
-  suspend fun queueTrack(track: Track, queueAlbum: Boolean = false) {
-    queueTrack(track, settings.defaultAction, queueAlbum)
+  suspend fun queueTrack(track: Track, queueAlbum: Boolean = false): QueueResult {
+    return queueTrack(track, settings.defaultAction, queueAlbum)
   }
 }

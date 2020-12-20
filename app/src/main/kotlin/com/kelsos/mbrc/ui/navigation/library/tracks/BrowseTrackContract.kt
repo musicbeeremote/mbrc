@@ -10,6 +10,7 @@ interface BrowseTrackView : BaseView {
   fun update(it: FlowCursorList<Track>)
   fun failure(it: Throwable)
   fun search(term: String)
+  fun queue(success: Boolean, tracks: Int)
 }
 
 interface BrowseTrackPresenter : Presenter<BrowseTrackView> {

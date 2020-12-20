@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.AlbumEntryAdapter
 import com.kelsos.mbrc.annotations.Queue
@@ -108,6 +109,17 @@ class ArtistAlbumsActivity : FontActivity(),
 
   override fun update(albums: FlowCursorList<Album>) {
     adapter.update(albums)
+  }
+
+  override fun queue(success: Boolean, tracks: Int) {
+    val message = if (success) {
+      getString(R.string.queue_result__success, tracks)
+    } else {
+      getString(R.string.queue_result__failure)
+    }
+    Snackbar.make(recyclerView, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+      .setText(message)
+      .show()
   }
 
   override fun onDestroy() {

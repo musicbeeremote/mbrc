@@ -71,7 +71,8 @@ constructor(
   override fun queue(action: String, genre: Genre) {
     scope.launch {
       val genreName = genre.genre ?: throw IllegalArgumentException("null genre")
-      queue.queueGenre(action, genreName)
+      val (success, tracks) = queue.queueGenre(action, genreName)
+      view?.queue(success, tracks)
     }
   }
 

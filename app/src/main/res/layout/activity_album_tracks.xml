@@ -15,7 +15,7 @@
       android:id="@+id/list_tracks"
       android:layout_width="0dp"
       android:layout_height="0dp"
-      android:layout_marginTop="8dp"
+      android:layout_marginTop="20dp"
       android:layout_marginBottom="8dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
@@ -49,14 +49,13 @@
   </com.google.android.material.appbar.AppBarLayout>
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
-    style="@style/Widget.MaterialComponents.FloatingActionButton"
     android:id="@+id/play_album"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/fab_margin"
     android:contentDescription="@string/album_tracks__play__content_description"
     android:src="@drawable/ic_action_play"
-    app:layout_anchor="@+id/app_bar_layout"
+    app:layout_anchor="@+id/toolbar"
     app:layout_anchorGravity="bottom|right|end" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

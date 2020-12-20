@@ -124,6 +124,17 @@ class BrowseAlbumFragment : Fragment(),
     Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
   }
 
+  override fun queue(success: Boolean, tracks: Int) {
+    val message = if (success) {
+      getString(R.string.queue_result__success, tracks)
+    } else {
+      getString(R.string.queue_result__failure)
+    }
+    Snackbar.make(recycler, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+      .setText(message)
+      .show()
+  }
+
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()

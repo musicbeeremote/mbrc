@@ -68,6 +68,17 @@ class BrowseGenreFragment : Fragment(),
     syncButton.isGone = term.isNotEmpty()
   }
 
+  override fun queue(success: Boolean, tracks: Int) {
+    val message = if (success) {
+      getString(R.string.queue_result__success, tracks)
+    } else {
+      getString(R.string.queue_result__failure)
+    }
+    Snackbar.make(recycler, R.string.queue_result__success, Snackbar.LENGTH_SHORT)
+      .setText(message)
+      .show()
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)

@@ -70,11 +70,12 @@ constructor(
 
   override fun queue(track: Track, action: String?) {
     scope.launch {
-      if (action == null) {
+      val (success, tracks) = if (action == null) {
         queue.queueTrack(track)
       } else {
         queue.queueTrack(track, action)
       }
+      view?.queue(success, tracks)
     }
   }
 }
