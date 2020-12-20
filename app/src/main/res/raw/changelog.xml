@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    version="1.4.0"
+    release="Dec x,2020">
+    <feature>Adds a feedback message when queueing tracks/albums/genres/artists.</feature>
+    <feature>Adds the ability to queue the album or artist when browsing the track list.</feature>
+    <bug>Fixes a bug that would prevent users from queueing albums when browsing an artist's albums.</bug>
+  </version>
+  <version
     version="1.3.0"
     release="Dec 12,2020">
     <feature>Introduces the ability to change audio outputs.</feature>
