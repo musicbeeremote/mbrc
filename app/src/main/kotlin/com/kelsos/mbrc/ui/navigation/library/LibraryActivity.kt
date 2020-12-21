@@ -197,16 +197,16 @@ class LibraryActivity : BaseActivity(),
     pager.currentItem = savedInstanceState.getInt(PAGER_POSITION, 0)
   }
 
-  override fun refreshFailed() {
-    Snackbar.make(pager, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
+  override fun syncFailure() {
+    Snackbar.make(pager, R.string.library__sync_failed, Snackbar.LENGTH_LONG).show()
   }
 
-  override fun showRefreshing() {
+  override fun showSyncProgress() {
     findViewById<ProgressIndicator>(R.id.sync_progress).isGone = false
     findViewById<TextView>(R.id.sync_progress_text).isGone = false
   }
 
-  override fun hideRefreshing() {
+  override fun hideSyncProgress() {
     findViewById<ProgressIndicator>(R.id.sync_progress).isGone = true
     findViewById<TextView>(R.id.sync_progress_text).isGone = true
   }

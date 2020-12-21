@@ -4,9 +4,9 @@ import com.kelsos.mbrc.mvp.BaseView
 import com.kelsos.mbrc.mvp.Presenter
 
 interface LibraryView : BaseView {
-  fun refreshFailed()
-  fun showRefreshing()
-  fun hideRefreshing()
+  fun syncFailure()
+  fun showSyncProgress()
+  fun hideSyncProgress()
   fun updateArtistOnlyPreference(albumArtistOnly: Boolean?)
   fun syncComplete(stats: LibraryStats)
 }

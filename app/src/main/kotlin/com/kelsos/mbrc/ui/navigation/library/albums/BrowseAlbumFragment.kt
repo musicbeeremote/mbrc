@@ -120,10 +120,6 @@ class BrowseAlbumFragment : Fragment(),
     adapter.update(cursor)
   }
 
-  override fun failure(throwable: Throwable) {
-    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
   override fun queue(success: Boolean, tracks: Int) {
     val message = if (success) {
       getString(R.string.queue_result__success, tracks)

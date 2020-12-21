@@ -118,8 +118,4 @@ class BrowseTrackFragment : Fragment(),
   override fun onItemClicked(track: Track) {
     presenter.queue(track)
   }
-
-  override fun failure(it: Throwable) {
-    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
 }

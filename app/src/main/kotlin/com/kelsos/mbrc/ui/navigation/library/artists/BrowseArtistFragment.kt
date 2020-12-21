@@ -120,8 +120,4 @@ class BrowseArtistFragment : Fragment(),
   override fun update(data: FlowCursorList<Artist>) {
     adapter.update(data)
   }
-
-  override fun failure(throwable: Throwable) {
-    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
 }

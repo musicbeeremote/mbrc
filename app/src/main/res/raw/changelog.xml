@@ -3,6 +3,7 @@
   <version
     version="1.4.0"
     release="Dec x,2020">
+    <feature>Improves visual feedback when performing a library metadata sync.</feature>
     <feature>Adds a feedback message when queueing tracks/albums/genres/artists.</feature>
     <feature>Adds the ability to queue the album or artist when browsing the track list.</feature>
     <bug>Fixes a bug that would prevent users from queueing albums when browsing an artist's albums.</bug>

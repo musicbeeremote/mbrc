@@ -136,7 +136,7 @@
   <string name="label_albums">Albums</string>
   <string name="label_tracks">Tracks</string>
   <string name="no_results_found">Sorry could not find any results for your search!</string>
-  <string name="refresh_failed">Refresh failed</string>
+  <string name="library__sync_failed">The library metadata sync was incomplete or failed completely. This might result in queueing not working properly..</string>
   <string name="connect_button_description">Connect Button</string>
   <string name="playback_progress">%1$02d:%2$02d</string>
   <string name="notification_action_previous">Previous</string>
@@ -194,4 +194,5 @@
   <string name="menu_play_artist">Play Now (Artist)</string>
   <string name="menu_play_album">Play Now (Album)</string>
   <string name="library__sync_complete">"Sync completed successfully. %1$d genres(s), %2$d artist(s) %3$d album(s), %4$d tracks and %5$d playlist(s) are available."</string>
+  <string name="refresh_failed">Refresh was unsuccessful.</string>
 </resources>

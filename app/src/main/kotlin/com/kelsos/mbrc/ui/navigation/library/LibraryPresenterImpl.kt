@@ -20,7 +20,7 @@ constructor(
   LibrarySyncInteractor.OnStartListener {
 
   override fun refresh() {
-    view?.showRefreshing()
+    view?.showSyncProgress()
     scope.launch {
       librarySyncInteractor.sync()
     }
@@ -31,7 +31,7 @@ constructor(
     librarySyncInteractor.setOnCompleteListener(this)
     librarySyncInteractor.setOnStartListener(this)
     if (!librarySyncInteractor.isRunning()) {
-      view.hideRefreshing()
+      view.hideSyncProgress()
     }
   }
 
@@ -43,13 +43,13 @@ constructor(
 
   override fun onTermination() {
     scope.launch {
-      view?.hideRefreshing()
+      view?.hideSyncProgress()
     }
   }
 
   override fun onFailure(throwable: Throwable) {
     scope.launch {
-      view?.refreshFailed()
+      view?.syncFailure()
     }
   }
 
@@ -75,7 +75,7 @@ constructor(
 
   override fun onStart() {
     scope.launch {
-      view?.showRefreshing()
+      view?.showSyncProgress()
     }
   }
 }

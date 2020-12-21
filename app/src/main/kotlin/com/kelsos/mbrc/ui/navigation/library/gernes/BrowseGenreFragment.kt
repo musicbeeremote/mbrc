@@ -124,10 +124,6 @@ class BrowseGenreFragment : Fragment(),
     actionHandler.genreSelected(genre, requireActivity())
   }
 
-  override fun failure(it: Throwable) {
-    Snackbar.make(recycler, R.string.refresh_failed, Snackbar.LENGTH_SHORT).show()
-  }
-
   override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()

@@ -49,7 +49,6 @@ constructor(
         view?.update(getData(term))
       } catch (e: Exception) {
         Timber.v(e, "Error while loading the data from the database")
-        view?.failure(e)
       }
     }
   }
