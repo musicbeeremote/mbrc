@@ -58,7 +58,15 @@ class LibrarySyncInteractorImpl
         trackRepository.getRemote()
         playlistRepository.getRemote()
         bus.post(LibraryRefreshCompleteEvent())
-        onCompleteListener?.onSuccess()
+        onCompleteListener?.onSuccess(
+          LibraryStats(
+            genres = genreRepository.count(),
+            artists = artistRepository.count(),
+            albums = albumRepository.count(),
+            tracks = trackRepository.count(),
+            playlists = playlistRepository.count()
+          )
+        )
         running = false
         Timber.v("Library refresh was complete")
       } catch (e: Exception) {

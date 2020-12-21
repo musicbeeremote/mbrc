@@ -27,7 +27,7 @@ interface LibrarySyncInteractor {
   interface OnCompleteListener {
     fun onTermination()
     fun onFailure(throwable: Throwable)
-    fun onSuccess()
+    fun onSuccess(stats: LibraryStats)
   }
 
   interface OnStartListener {

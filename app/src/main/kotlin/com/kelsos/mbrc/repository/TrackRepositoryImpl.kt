@@ -55,4 +55,6 @@ class TrackRepositoryImpl
   override suspend fun getAllTrackPaths(): List<String> = localDataSource.getAllTrackPaths()
 
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+
+  override suspend fun count(): Long = localDataSource.count()
 }

@@ -35,4 +35,6 @@ class NowPlayingRepositoryImpl
     localDataSource.search(term)
 
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+
+  override suspend fun count(): Long = localDataSource.count()
 }

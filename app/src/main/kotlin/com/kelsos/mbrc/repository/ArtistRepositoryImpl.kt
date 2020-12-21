@@ -47,4 +47,6 @@ constructor(
   }
 
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+
+  override suspend fun count(): Long = localDataSource.count()
 }

@@ -124,4 +124,8 @@ class LocalTrackDataSource
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Track::class.java).count() == 0L
   }
+
+  override suspend fun count(): Long  = withContext(dispatchers.db) {
+    return@withContext SQLite.selectCountOf().from(Track::class.java).count()
+  }
 }

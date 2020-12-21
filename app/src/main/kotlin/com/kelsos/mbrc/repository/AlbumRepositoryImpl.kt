@@ -38,4 +38,6 @@ constructor(
   override suspend fun search(term: String): FlowCursorList<Album> = localDataSource.search(term)
 
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+
+  override suspend fun count(): Long = localDataSource.count()
 }

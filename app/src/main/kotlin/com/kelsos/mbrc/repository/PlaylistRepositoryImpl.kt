@@ -34,4 +34,6 @@ class PlaylistRepositoryImpl
   override suspend fun search(term: String): FlowCursorList<Playlist> = localDataSource.search(term)
 
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
+
+  override suspend fun count(): Long = localDataSource.count()
 }

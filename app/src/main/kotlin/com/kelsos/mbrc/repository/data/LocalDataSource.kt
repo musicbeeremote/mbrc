@@ -9,4 +9,5 @@ interface LocalDataSource<T : Model> {
   suspend fun loadAllCursor(): FlowCursorList<T>
   suspend fun search(term: String): FlowCursorList<T>
   suspend fun isEmpty(): Boolean
+  suspend fun count(): Long
 }

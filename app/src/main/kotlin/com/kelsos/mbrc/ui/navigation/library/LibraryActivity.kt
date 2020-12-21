@@ -139,6 +139,20 @@ class LibraryActivity : BaseActivity(),
     return super.onOptionsItemSelected(item)
   }
 
+  override fun syncComplete(stats: LibraryStats) {
+    val message = getString(
+      R.string.library__sync_complete,
+      stats.genres,
+      stats.artists,
+      stats.albums,
+      stats.tracks,
+      stats.playlists
+    )
+    Snackbar.make(pager, R.string.library__sync_complete, Snackbar.LENGTH_LONG)
+      .setText(message)
+      .show()
+  }
+
   public override fun onDestroy() {
     Toothpick.closeScope(this)
     super.onDestroy()

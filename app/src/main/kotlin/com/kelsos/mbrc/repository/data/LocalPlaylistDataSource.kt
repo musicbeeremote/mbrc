@@ -46,4 +46,8 @@ class LocalPlaylistDataSource
   override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Playlist::class.java).count() == 0L
   }
+
+  override suspend fun count(): Long  = withContext(dispatchers.db) {
+    return@withContext SQLite.selectCountOf().from(Playlist::class.java).count()
+  }
 }

@@ -8,6 +8,7 @@ interface LibraryView : BaseView {
   fun showRefreshing()
   fun hideRefreshing()
   fun updateArtistOnlyPreference(albumArtistOnly: Boolean?)
+  fun syncComplete(stats: LibraryStats)
 }
 
 interface LibraryPresenter : Presenter<LibraryView> {

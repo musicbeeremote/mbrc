@@ -69,8 +69,8 @@ constructor(
     searchModel.search(keyword)
   }
 
-  override fun onSuccess() {
-    //todo show success message
+  override fun onSuccess(stats: LibraryStats) {
+    view?.syncComplete(stats)
   }
 
   override fun onStart() {
