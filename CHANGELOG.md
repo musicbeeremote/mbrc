@@ -9,6 +9,20 @@ Changelog
 [#113]: https://github.com/musicbeeremote/android-app/issues/113
 [#103]: https://github.com/musicbeeremote/android-app/issues/103
 
+## [1.4.0] - 2020-12-22
+### Added
+- [#209] Adds statistics dialog when you can check how many tracks, etc are currently synced.
+- [#209] Improves visual feedback when performing a library metadata sync.
+- [#214] Adds a feedback message when queueing tracks/albums/genres/artists.
+- [#214] Adds the ability to queue the album or artist when browsing the track list.
+
+### Changed
+- [#213] Fixes a bug that would prevent users from queueing albums when browsing an artist's albums.
+
+[#214]: https://github.com/musicbeeremote/android-app/issues/214
+[#213]: https://github.com/musicbeeremote/android-app/issues/213
+[#209]: https://github.com/musicbeeremote/android-app/issues/209
+
 ## [1.3.0] - 2020-12-12
 ### Added
 - [#172] Introduces the ability to change audio outputs.
@@ -128,7 +142,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/musicbeeremote/android-app/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/musicbeeremote/android-app/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.0-beta1...v1.2.0
