@@ -29,4 +29,9 @@
     android:title="@string/library_album_artists_only"
     app:showAsAction="never"/>
 
+  <item
+    android:id="@+id/library_sync_state"
+    android:title="@string/library_menu__sync_state"
+    app:showAsAction="never"/>
+
 </menu>

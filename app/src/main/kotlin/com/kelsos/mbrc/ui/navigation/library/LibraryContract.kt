@@ -9,6 +9,7 @@ interface LibraryView : BaseView {
   fun hideSyncProgress()
   fun updateArtistOnlyPreference(albumArtistOnly: Boolean?)
   fun syncComplete(stats: LibraryStats)
+  fun showStats(stats: LibraryStats)
 }
 
 interface LibraryPresenter : Presenter<LibraryView> {
@@ -16,4 +17,5 @@ interface LibraryPresenter : Presenter<LibraryView> {
   fun loadArtistPreference()
   fun setArtistPreference(albumArtistOnly: Boolean)
   fun search(keyword: String)
+  fun showStats()
 }

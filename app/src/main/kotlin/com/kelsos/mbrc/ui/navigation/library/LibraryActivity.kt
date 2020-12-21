@@ -10,6 +10,7 @@ import androidx.core.view.isGone
 import androidx.viewpager2.widget.ViewPager2
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.ProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -135,8 +136,26 @@ class LibraryActivity : BaseActivity(),
         searchClear?.isVisible = false
         return true
       }
+      R.id.library_sync_state -> {
+        presenter.showStats()
+        return true
+      }
     }
     return super.onOptionsItemSelected(item)
+  }
+
+  override fun showStats(stats: LibraryStats) {
+    val dialog = MaterialAlertDialogBuilder(this)
+      .setTitle(R.string.library_stats__title)
+      .setView(R.layout.library_stats__layout)
+      .setPositiveButton(android.R.string.ok) { md, _ -> md.dismiss() }
+      .show()
+
+    dialog.findViewById<TextView>(R.id.library_stats__genre_value)?.text = "${stats.genres}"
+    dialog.findViewById<TextView>(R.id.library_stats__artist_value)?.text = "${stats.artists}"
+    dialog.findViewById<TextView>(R.id.library_stats__album_value)?.text = "${stats.albums}"
+    dialog.findViewById<TextView>(R.id.library_stats__track_value)?.text = "${stats.tracks}"
+    dialog.findViewById<TextView>(R.id.library_stats__playlist_value)?.text = "${stats.playlists}"
   }
 
   override fun syncComplete(stats: LibraryStats) {

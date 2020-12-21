@@ -53,6 +53,12 @@ constructor(
     }
   }
 
+  override fun showStats() {
+    scope.launch {
+      view?.showStats(librarySyncInteractor.syncStats())
+    }
+  }
+
   override fun loadArtistPreference() {
     scope.launch {
       val shouldDisplay = settingsManager.shouldDisplayOnlyAlbumArtists()

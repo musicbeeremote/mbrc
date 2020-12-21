@@ -78,6 +78,16 @@ class LibrarySyncInteractorImpl
     }
   }
 
+  override suspend fun syncStats(): LibraryStats {
+    return LibraryStats(
+      genres = genreRepository.count(),
+      artists = artistRepository.count(),
+      albums = albumRepository.count(),
+      tracks = trackRepository.count(),
+      playlists = playlistRepository.count()
+    )
+  }
+
   private suspend fun checkIfShouldSync(auto: Boolean): Boolean {
     return if (auto) isEmpty() else true
   }

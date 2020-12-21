@@ -195,4 +195,12 @@
   <string name="menu_play_album">Play Now (Album)</string>
   <string name="library__sync_complete">"Sync completed successfully. %1$d genres(s), %2$d artist(s) %3$d album(s), %4$d tracks and %5$d playlist(s) are available."</string>
   <string name="refresh_failed">Refresh was unsuccessful.</string>
+  <string name="library_menu__sync_state">Library Sync State</string>
+  <string name="library_stats__title">Library Sync Information</string>
+  <string name="media__albums">Albums</string>
+  <string name="media__genres">Genres</string>
+  <string name="media__artists">Artists</string>
+  <string name="media__tracks">Tracks</string>
+  <string name="media__playlists">Playlists</string>
+  <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote:</string>
 </resources>
