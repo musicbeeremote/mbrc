@@ -26,10 +26,11 @@ import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.databinding.ActivityNavigationBinding
 import com.kelsos.mbrc.databinding.NavHeaderMainBinding
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
-import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import org.koin.android.ext.android.inject
+import org.koin.androidx.fragment.android.setupKoinFragmentFactory
+import org.koin.core.KoinExperimentalAPI
 import timber.log.Timber
 
 class NavigationActivity : AppCompatActivity() {
@@ -83,26 +84,22 @@ class NavigationActivity : AppCompatActivity() {
     }
 
   private fun onConnection(connectionStatus: ConnectionStatus) {
-    Timber.v("Handling new connection status ${Connection.string(connectionStatus.status)}")
+    Timber.v("Handling new connection status $connectionStatus")
 
     @StringRes val resId: Int
     @ColorRes val colorId: Int
-    when (connectionStatus.status) {
-      Connection.OFF -> {
+    when (connectionStatus) {
+      ConnectionStatus.Off -> {
         resId = R.string.drawer_connection_status_off
         colorId = R.color.black
       }
-      Connection.ON -> {
+      ConnectionStatus.On -> {
         resId = R.string.drawer_connection_status_on
         colorId = R.color.accent
       }
-      Connection.ACTIVE -> {
+      ConnectionStatus.Active -> {
         resId = R.string.drawer_connection_status_active
         colorId = R.color.power_on
-      }
-      else -> {
-        resId = R.string.drawer_connection_status_off
-        colorId = R.color.black
       }
     }
 
@@ -151,7 +148,7 @@ class NavigationActivity : AppCompatActivity() {
       onConnection(it)
     }
 
-    if (connectionStatusLiveDataProvider.getValue()?.status != Connection.ACTIVE) {
+    if (connectionStatusLiveDataProvider.getValue() != ConnectionStatus.Active) {
       onConnectClick()
     }
   }
@@ -164,7 +161,9 @@ class NavigationActivity : AppCompatActivity() {
     }
   }
 
+  @OptIn(KoinExperimentalAPI::class)
   override fun onCreate(savedInstanceState: Bundle?) {
+    setupKoinFragmentFactory()
     super.onCreate(savedInstanceState)
     binding = ActivityNavigationBinding.inflate(layoutInflater)
     setContentView(binding.root)

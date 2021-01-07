@@ -22,7 +22,7 @@ class UpdateLfmRatingTest {
   private lateinit var trackRatingState: TrackRatingState
 
   private fun createMessage(rating: String) = object : ProtocolMessage {
-    override val type: String
+    override val type: Protocol
       get() = Protocol.NowPlayingLfmRating
     override val data: Any
       get() = rating
@@ -37,19 +37,19 @@ class UpdateLfmRatingTest {
   @Test
   fun `should change lfm rating to loved`() {
     updateLastRating.execute(createMessage("Love"))
-    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.LOVED)
+    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.Loved)
   }
 
   @Test
   fun `should change lfm rating to banned`() {
     updateLastRating.execute(createMessage("Ban"))
-    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.BANNED)
+    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.Banned)
   }
 
   @Test
   fun `should change lfm rating to normal`() {
-    trackRatingState.set { copy(lfmRating = LfmRating.LOVED) }
+    trackRatingState.set { copy(lfmRating = LfmRating.Loved) }
     updateLastRating.execute(createMessage(""))
-    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.NORMAL)
+    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.Normal)
   }
 }

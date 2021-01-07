@@ -1,21 +1,14 @@
 package com.kelsos.mbrc.events
 
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.networking.protocol.Protocol.Context
 
-class UserAction(@Context val context: String, val data: Any) {
+class UserAction(val protocol: Protocol, val data: Any) {
   companion object {
 
-    fun create(@Context context: String): UserAction {
-      return UserAction(context, true)
-    }
+    fun create(protocol: Protocol): UserAction = UserAction(protocol, true)
 
-    fun create(@Context context: String, data: Any): UserAction {
-      return UserAction(context, data)
-    }
+    fun create(protocol: Protocol, data: Any): UserAction = UserAction(protocol, data)
 
-    fun toggle(@Context context: String): UserAction {
-      return UserAction(context, Protocol.TOGGLE)
-    }
+    fun toggle(protocol: Protocol): UserAction = UserAction(protocol, Protocol.TOGGLE)
   }
 }

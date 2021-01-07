@@ -9,6 +9,8 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.fragment.app.Fragment
+import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
 
 fun Context.getDimens(): Int {
@@ -42,4 +44,10 @@ fun ImageButton.setIcon(
 ) {
   val iconResId = if (enabled) onRes else offRes
   setImageResource(iconResId)
+}
+
+fun Fragment.setAppBarTitle(title: String? = null) {
+  val activity = (requireActivity() as NavigationActivity)
+  val supportActionBar = checkNotNull(activity.supportActionBar)
+  supportActionBar.title = title
 }

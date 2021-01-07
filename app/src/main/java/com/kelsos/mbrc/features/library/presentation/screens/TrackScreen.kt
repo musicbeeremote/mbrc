@@ -3,7 +3,7 @@ package com.kelsos.mbrc.features.library.presentation.screens
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.common.Meta.TRACK
+import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.data.Track
@@ -24,7 +24,7 @@ class TrackScreen(
   private val actionHandler: PopupActionHandler
 ) : LibraryScreen, MenuItemSelectedListener<Track> {
 
-  private lateinit var viewHolder: LibraryViewHolder
+  private var viewHolder: LibraryViewHolder? = null
 
   override fun bind(viewHolder: LibraryViewHolder) {
     this.viewHolder = viewHolder
@@ -37,7 +37,7 @@ class TrackScreen(
     val lifecycleScope = viewLifecycleOwner.lifecycleScope
     lifecycleScope.launch {
       adapter.loadStateFlow.drop(1).distinctUntilChangedBy { it.refresh }.collect {
-        viewHolder.refreshingComplete(adapter.itemCount == 0)
+        viewHolder?.refreshingComplete(adapter.itemCount == 0)
       }
     }
     lifecycleScope.launch {
@@ -49,14 +49,14 @@ class TrackScreen(
 
   override fun onMenuItemSelected(itemId: Int, item: Track) {
     val action = actionHandler.genreSelected(itemId)
-    if (action === Queue.DEFAULT) {
+    if (action === Queue.Default) {
       onItemClicked(item)
     } else {
-      workHandler.queue(item.id, TRACK, action = action)
+      workHandler.queue(item.id, Meta.Track, action = action)
     }
   }
 
   override fun onItemClicked(item: Track) {
-    workHandler.queue(item.id, TRACK)
+    workHandler.queue(item.id, Meta.Track)
   }
 }

@@ -6,7 +6,9 @@ import androidx.core.content.edit
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.utilities.RemoteUtils.getVersionCode
 import com.kelsos.mbrc.logging.FileLoggingTree
-import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
+import com.kelsos.mbrc.preferences.CallAction.Companion.NONE
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.threeten.bp.Instant
 import timber.log.Timber
 
@@ -15,8 +17,16 @@ class SettingsManagerImpl(
   private val preferences: SharedPreferences
 ) : SettingsManager {
 
+  private val displayAlbumArtist: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
   init {
     setupManager()
+    displayAlbumArtist.tryEmit(
+      preferences.getBoolean(
+        getKey(R.string.settings_key_album_artists_only),
+        false
+      )
+    )
   }
 
   private fun setupManager() {
@@ -33,11 +43,12 @@ class SettingsManagerImpl(
     return preferences.getBoolean(getKey(R.string.settings_key_debug_logging), false)
   }
 
-  @SettingsManager.CallAction
-  override fun getCallAction(): String = preferences.getString(
-    getKey(R.string.settings_key_incoming_call_action),
-    NONE
-  ) ?: NONE
+  override fun getCallAction(): CallAction = CallAction.fromString(
+    preferences.getString(
+      getKey(R.string.settings_key_incoming_call_action),
+      NONE
+    ) ?: NONE
+  )
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
@@ -55,17 +66,15 @@ class SettingsManagerImpl(
       .apply()
   }
 
-  override suspend fun shouldDisplayOnlyAlbumArtists(): Boolean {
-    return preferences.getBoolean(
-      getKey(R.string.settings_key_album_artists_only),
-      false
-    )
+  override fun onlyAlbumArtists(): StateFlow<Boolean> {
+    return displayAlbumArtist
   }
 
   override fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean) {
     preferences.edit {
       putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
     }
+    displayAlbumArtist.tryEmit(onlyAlbumArtist)
   }
 
   override fun shouldShowChangeLog(): Boolean {

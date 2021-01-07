@@ -121,12 +121,10 @@
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
   <string name="library__action_refresh">Refresh</string>
   <string name="feedback_logs">Include Logs</string>
-  <string name="library_album_artists_only">Only Album Artists</string>
   <string name="main__dialog_plugin_outdated_message">A newer version of the plugin is available.\nPlease consider updating.</string>
   <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
-  <string name="album_tracks__play__content_description">Plays all the tracks</string>
   <string name="press_to_sync">Press here to sync</string>
   <string name="application_starting">Attempting to establish connection…</string>
   <string name="nav_output">Output</string>
@@ -150,8 +148,6 @@
   <string name="radio__queue_success">The radio station has been queued successfully.</string>
   <string name="radio__queue_failed">The radio station could not be queued.</string>
   <string name="radio__no_radio_stations">No radio stations found</string>
-  <string name="album_tracks__cover_content">The cover of the album</string>
-  <string name="album_tracks__play">Play</string>
   <string name="plugin_update__description">It seems that you have connected to an older version of the plugin.\n\nSome features will not function properly unless you update the plugin to %1$s.</string>
   <string name="plugin_update__title">Plugin Update Required</string>
   <string name="update_required__content_description">Update icon</string>
@@ -189,6 +185,9 @@
   <string name="library__category_playlists">Playlists</string>
   <string name="connection_manager__host">mbrc://%1$s:%2$d</string>
   <string name="output_selection__icon_content_description">Speaker Icon</string>
-  <string name="genre_artists__empty_icon_content_description">Empty list placeholder</string>
   <string name="library__action_clear">Clear</string>
+  <string name="navigation__radio">Radio</string>
+  <string name="library_album_tracks__title">%1$s by %2$s</string>
+  <string name="library__action_only_album_artists">Display only album artists</string>
+  <string name="library_details__empty_content">Placeholder image for an empty list</string>
 </resources>

@@ -4,7 +4,7 @@ import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.networking.client.UiMessageQueue.Companion.NOT_ALLOWED
 import com.kelsos.mbrc.networking.client.UiMessageQueue.Companion.PARTY_MODE_COMMAND_UNAVAILABLE
-import com.kelsos.mbrc.networking.connections.Connection.ACTIVE
+import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
@@ -32,40 +32,47 @@ class MessageHandlerImpl(
 
   private fun process(message: String) {
     val node = checkNotNull(adapter.fromJson(message)) { "socket message should not be null" }
-    val context = node.context
+    val context = Protocol.fromString(node.context)
 
     Timber.v("received message with context -> $context")
 
-    if (context == Protocol.ClientNotAllowed) {
-      clientNotAllowed()
-      return
-    } else if (context == Protocol.CommandUnavailable) {
-      uiMessageQueue.dispatch(PARTY_MODE_COMMAND_UNAVAILABLE)
-      return
-    }
-
-    val connectionStatus = connectionStatusLiveDataProvider.requireValue()
-
-    val dataPayload = node.data
-
-    if (context == Protocol.Player) {
-      sendProtocolPayload()
-      return
-    } else if (context == Protocol.ProtocolTag) {
-      val protocolVersion: Int = try {
-        dataPayload.toString().toInt()
-      } catch (ignore: Exception) {
-        2
+    when (context) {
+      Protocol.ClientNotAllowed -> {
+        clientNotAllowed()
+        return
       }
+      Protocol.CommandUnavailable -> {
+        uiMessageQueue.dispatch(PARTY_MODE_COMMAND_UNAVAILABLE)
+        return
+      }
+      Protocol.UnknownCommand -> {
+        return
+      }
+      else -> {
+        val connectionStatus = connectionStatusLiveDataProvider.requireValue()
 
-      commandExecutor.processEvent(MessageEvent(Protocol.ProtocolTag, protocolVersion))
-      connectionStatusLiveDataProvider.active()
-      messageQueue.queue(SocketMessage.create(Protocol.INIT))
-      return
-    }
+        val dataPayload = node.data
 
-    if (connectionStatus.status == ACTIVE) {
-      commandExecutor.processEvent(MessageEvent(context, dataPayload))
+        if (context == Protocol.Player) {
+          sendProtocolPayload()
+          return
+        } else if (context == Protocol.ProtocolTag) {
+          val protocolVersion: Int = try {
+            dataPayload.toString().toInt()
+          } catch (ignore: Exception) {
+            2
+          }
+
+          commandExecutor.processEvent(MessageEvent(Protocol.ProtocolTag, protocolVersion))
+          connectionStatusLiveDataProvider.active()
+          messageQueue.queue(SocketMessage.create(Protocol.Init))
+          return
+        }
+
+        if (connectionStatus == ConnectionStatus.Active) {
+          commandExecutor.processEvent(MessageEvent(context, dataPayload))
+        }
+      }
     }
   }
 

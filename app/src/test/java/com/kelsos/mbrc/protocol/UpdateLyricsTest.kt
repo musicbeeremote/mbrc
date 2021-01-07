@@ -51,7 +51,7 @@ class UpdateLyricsTest {
   @Test
   fun `not found lyrics should empty the cache`() {
     val socketMessage = checkNotNull(adapter.fromJson(createMessage(LyricsPayload.NOT_FOUND)))
-    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     lyricsState.set(listOf("a", "b"))
     updateLyrics.execute(message)
     assertThat(lyricsState.requireValue()).hasSize(0)
@@ -67,7 +67,7 @@ class UpdateLyricsTest {
       that
       """.trimIndent()
     val socketMessage = checkNotNull(adapter.fromJson(createMessage(LyricsPayload.SUCCESS, lyrics)))
-    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     updateLyrics.execute(message)
     assertThat(lyricsState.requireValue()).hasSize(6)
     assertThat(lyricsState.requireValue()).containsExactly(

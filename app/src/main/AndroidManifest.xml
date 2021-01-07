@@ -28,7 +28,33 @@
         android:name=".NavigationActivity"
         android:label="@string/title_activity_bottom_navigation" />
 
-    <receiver android:name="com.kelsos.mbrc.features.widgets.WidgetSmall"
+    <provider
+        android:name="androidx.work.impl.WorkManagerInitializer"
+        android:authorities="${applicationId}.workmanager-init"
+        tools:node="remove" />
+
+    <receiver
+        android:name="com.kelsos.mbrc.features.widgets.WidgetNormal"
+        android:exported="true">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/remote_widget_normal" />
+    </receiver>
+
+    <receiver
+        android:name=".platform.mediasession.MediaButtonReceiver"
+        android:exported="false">
+      <intent-filter>
+        <action android:name="android.intent.action.MEDIA_BUTTON" />
+      </intent-filter>
+    </receiver>
+
+    <receiver
+        android:name="com.kelsos.mbrc.features.widgets.WidgetSmall"
         android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -39,29 +65,11 @@
           android:resource="@xml/remote_widget_small" />
     </receiver>
 
-    <receiver
-        android:exported="true" android:name="com.kelsos.mbrc.features.widgets.WidgetNormal">
-      <intent-filter>
-        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-      </intent-filter>
-
-      <meta-data
-          android:name="android.appwidget.provider"
-          android:resource="@xml/remote_widget_normal" />
-    </receiver>
-
-    <receiver android:name=".platform.mediasession.MediaButtonReceiver">
-      <intent-filter>
-        <action android:name="android.intent.action.MEDIA_BUTTON" />
-      </intent-filter>
-    </receiver>
-
     <service
         android:name=".platform.RemoteService"
         android:description="@string/info_service_description"
         android:exported="false">
       <intent-filter>
-        <action android:name="android.net.wifi.STATE_CHANGE" />
         <action android:name="com.kelsos.mbrc.notification.play" />
         <action android:name="com.kelsos.mbrc.notification.next" />
         <action android:name="com.kelsos.mbrc.notification.close" />

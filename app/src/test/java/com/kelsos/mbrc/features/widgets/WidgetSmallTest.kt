@@ -83,7 +83,7 @@ class WidgetSmallTest {
   fun `widget should update play state on broadcast`() {
     val updater = WidgetUpdaterImpl(targetContext)
     val before = widgetView.findViewById<ImageView>(R.id.widget_small_play)
-    updater.updatePlayState(PlayerState.PLAYING)
+    updater.updatePlayState(PlayerState.Playing)
     shadowOf(getMainLooper()).idle()
     widgetView = shadowAppWidgetManager.getViewFor(widgetId)
     val after = widgetView.findViewById<ImageView>(R.id.widget_small_play)

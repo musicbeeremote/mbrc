@@ -44,7 +44,7 @@ class PlayingTrackCacheImpl(
     return@withContext
   }
 
-  override suspend fun restoreInfo(): PlayingTrack? = withContext(dispatchers.io) {
+  override suspend fun restoreInfo(): PlayingTrack = withContext(dispatchers.io) {
     val cache = settingsFlow.first().cache
 
     return@withContext PlayingTrack(

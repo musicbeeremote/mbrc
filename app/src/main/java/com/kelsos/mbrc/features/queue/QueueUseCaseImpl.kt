@@ -1,18 +1,16 @@
 package com.kelsos.mbrc.features.queue
 
-import com.kelsos.mbrc.common.Meta.ALBUM
-import com.kelsos.mbrc.common.Meta.ARTIST
-import com.kelsos.mbrc.common.Meta.GENRE
-import com.kelsos.mbrc.common.Meta.TRACK
-import com.kelsos.mbrc.common.Meta.Type
+import com.kelsos.mbrc.common.Meta
+import com.kelsos.mbrc.common.Meta.Album
+import com.kelsos.mbrc.common.Meta.Artist
+import com.kelsos.mbrc.common.Meta.Genre
+import com.kelsos.mbrc.common.Meta.Track
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.player.cover.CoverPayload
-import com.kelsos.mbrc.features.queue.Queue.Action
-import com.kelsos.mbrc.features.queue.Queue.DEFAULT
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
@@ -28,18 +26,23 @@ class QueueUseCaseImpl(
   private val dispatchers: AppCoroutineDispatchers,
   private val api: ApiBase
 ) : QueueUseCase {
+
   override suspend fun queue(
     id: Long,
-    @Type meta: Int,
-    @Action action: String
+    meta: Meta,
+    action: Queue
   ) = withContext(dispatchers.network) {
-    val selectedAction = if (action == DEFAULT) settings.defaultAction else action
+    val selectedAction = if (action == Queue.Default) {
+      Queue.fromString(settings.defaultAction)
+    } else {
+      action
+    }
+
     val (sendAction, paths, path) = when (meta) {
-      GENRE -> QueueData(selectedAction, tracksForGenre(id))
-      ARTIST -> QueueData(selectedAction, tracksForArtist(id))
-      ALBUM -> QueueData(selectedAction, tracksForAlbum(id))
-      TRACK -> tracks(id, action)
-      else -> throw IllegalArgumentException("Invalid value $meta")
+      Genre -> QueueData(selectedAction, tracksForGenre(id))
+      Artist -> QueueData(selectedAction, tracksForArtist(id))
+      Album -> QueueData(selectedAction, tracksForAlbum(id))
+      Track -> tracks(id, action)
     }
 
     val success = queueRequest(sendAction, paths, path)
@@ -49,7 +52,7 @@ class QueueUseCaseImpl(
   override suspend fun queuePath(path: String): QueueResult {
     var success = false
     try {
-      success = queueRequest(Queue.NOW, listOf(path), path)
+      success = queueRequest(Queue.Now, listOf(path), path)
     } catch (e: Exception) {
       Timber.e(e)
     }
@@ -86,20 +89,20 @@ class QueueUseCaseImpl(
 
   private suspend fun tracks(
     id: Long,
-    @Action action: String
+    action: Queue
   ): QueueData = withContext(dispatchers.database) {
     val track = trackRepository.getById(id)
       ?: throw IllegalArgumentException("$action is not supported")
 
     when (action) {
-      Queue.ADD_ALL -> QueueData(action, trackRepository.getAllTrackPaths(), track.src)
-      Queue.PLAY_ALBUM -> QueueData(
-        Queue.ADD_ALL,
+      Queue.AddAll -> QueueData(action, trackRepository.getAllTrackPaths(), track.src)
+      Queue.PlayAlbum -> QueueData(
+        Queue.AddAll,
         trackRepository.getAlbumTrackPaths(track.album, track.albumArtist),
         track.src
       )
-      Queue.PLAY_ARTIST -> QueueData(
-        action = Queue.ADD_ALL,
+      Queue.PlayAlbum -> QueueData(
+        action = Queue.AddAll,
         trackRepository.getArtistTrackPaths(track.artist),
         track.src
 
@@ -109,7 +112,7 @@ class QueueUseCaseImpl(
   }
 
   private suspend fun queueRequest(
-    @Queue.Action type: String,
+    type: Queue,
     tracks: List<String>,
     play: String? = null
   ): Boolean {
@@ -119,7 +122,7 @@ class QueueUseCaseImpl(
         val response = api.getItem(
           Protocol.NowPlayingQueue,
           QueueResponse::class,
-          QueuePayload(type, tracks, play)
+          QueuePayload(type.action, tracks, play)
         )
 
         return@withContext response.code == CoverPayload.SUCCESS

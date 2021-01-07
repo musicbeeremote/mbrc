@@ -37,7 +37,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(10) }
     volumeModifyUseCase.increment()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(20)
   }
 
@@ -46,7 +46,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(12) }
     volumeModifyUseCase.increment()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(20)
   }
 
@@ -55,7 +55,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(17) }
     volumeModifyUseCase.increment()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(30)
   }
 
@@ -64,7 +64,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(92) }
     volumeModifyUseCase.increment()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(100)
   }
 
@@ -73,7 +73,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(7) }
     volumeModifyUseCase.decrement()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(0)
   }
 
@@ -82,7 +82,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(10) }
     volumeModifyUseCase.decrement()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(0)
   }
 
@@ -91,7 +91,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(17) }
     volumeModifyUseCase.decrement()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(10)
   }
 
@@ -100,7 +100,7 @@ class VolumeModifyUseCaseImplTest {
     every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(100) }
     volumeModifyUseCase.reduceVolume()
     val message = slot.captured
-    assertThat(message.context).isEqualTo(Protocol.PlayerVolume)
+    assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
     assertThat(message.data).isEqualTo(20)
   }
 

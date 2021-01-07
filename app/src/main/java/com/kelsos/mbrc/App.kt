@@ -13,12 +13,17 @@ import androidx.multidex.MultiDexApplication
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.fragment.koin.fragmentFactory
+import org.koin.androidx.workmanager.koin.workManagerFactory
+import org.koin.core.KoinExperimentalAPI
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import timber.log.Timber
 
 @SuppressLint("Registered")
+@OptIn(KoinApiExtension::class, KoinExperimentalAPI::class)
 open class App : MultiDexApplication() {
 
   @CallSuper
@@ -52,6 +57,8 @@ open class App : MultiDexApplication() {
 
     startKoin {
       androidContext(this@App)
+      fragmentFactory()
+      workManagerFactory()
       modules(appModules())
     }
 

@@ -24,7 +24,9 @@ class ConnectivityVerifierImpl(
         SocketMessage::class
       )
 
-      if (Protocol.VerifyConnection != context) {
+      val type = Protocol.fromString(context)
+
+      if (type != Protocol.VerifyConnection) {
         throw NoValidPluginConnection()
       }
       return@withContext true

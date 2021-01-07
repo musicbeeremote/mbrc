@@ -16,7 +16,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
 class MiniControlFragment : Fragment() {
-
   private val viewModel: MiniControlViewModel by viewModel()
   private var _binding: FragmentMiniControlBinding? = null
   private val binding get() = _binding!!
@@ -31,7 +30,7 @@ class MiniControlFragment : Fragment() {
     val playPause = binding.miniControlPlayPause
     viewModel.playerStatus.observe(viewLifecycleOwner) { status ->
       when (status.state) {
-        PlayerState.PLAYING -> playPause.setImageResource(R.drawable.ic_action_pause)
+        PlayerState.Playing -> playPause.setImageResource(R.drawable.ic_action_pause)
         else -> playPause.setImageResource(R.drawable.ic_action_play)
       }
     }

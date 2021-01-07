@@ -43,8 +43,9 @@ abstract class WidgetBase : AppWidgetProvider() {
 
   private fun Bundle.cover() = getString(WidgetUpdater.COVER_PATH, "")
 
-  @PlayerState.State
-  private fun Bundle.state() = getString(WidgetUpdater.PLAYER_STATE, PlayerState.UNDEFINED)
+  private fun Bundle.state(): PlayerState {
+    return PlayerState.fromString(getString(WidgetUpdater.PLAYER_STATE, PlayerState.UNDEFINED))
+  }
 
   private fun Bundle.playingTrack(): PlayingTrack =
     getParcelable(WidgetUpdater.TRACK_INFO) ?: PlayingTrack()
@@ -154,13 +155,13 @@ abstract class WidgetBase : AppWidgetProvider() {
     context: Context,
     manager: AppWidgetManager,
     widgetsIds: IntArray,
-    @PlayerState.State state: String
+    state: PlayerState
   ) {
     val widget = RemoteViews(context.packageName, layout())
 
     widget.setImageViewResource(
       playButtonId(),
-      if (PlayerState.PLAYING == state) {
+      if (PlayerState.Playing == state) {
         R.drawable.ic_action_pause
       } else {
         R.drawable.ic_action_play

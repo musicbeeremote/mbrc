@@ -3,19 +3,21 @@ package com.kelsos.mbrc.features.library.presentation.screens
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.common.Meta.GENRE
+import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
 import com.kelsos.mbrc.features.library.presentation.adapters.GenreAdapter
 import com.kelsos.mbrc.features.library.presentation.viewmodels.GenreViewModel
-import com.kelsos.mbrc.features.queue.Queue.DEFAULT
+import com.kelsos.mbrc.features.queue.Queue.Default
 import com.kelsos.mbrc.features.work.WorkHandler
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+
+typealias OnGenrePressed = (genre: Genre) -> Unit
 
 class GenreScreen(
   private val adapter: GenreAdapter,
@@ -23,8 +25,12 @@ class GenreScreen(
   private val viewModel: GenreViewModel,
   private val actionHandler: PopupActionHandler
 ) : LibraryScreen, MenuItemSelectedListener<Genre> {
+  private var viewHolder: LibraryViewHolder? = null
+  private var onGenrePressedListener: OnGenrePressed? = null
 
-  private lateinit var viewHolder: LibraryViewHolder
+  fun setOnGenrePressedListener(onGenrePressedListener: OnGenrePressed? = null) {
+    this.onGenrePressedListener = onGenrePressedListener
+  }
 
   override fun bind(viewHolder: LibraryViewHolder) {
     this.viewHolder = viewHolder
@@ -36,7 +42,7 @@ class GenreScreen(
     val lifecycleScope = viewLifecycleOwner.lifecycleScope
     lifecycleScope.launch {
       adapter.loadStateFlow.drop(1).distinctUntilChangedBy { it.refresh }.collect {
-        viewHolder.refreshingComplete(adapter.itemCount == 0)
+        viewHolder?.refreshingComplete(adapter.itemCount == 0)
       }
     }
     lifecycleScope.launch {
@@ -48,14 +54,14 @@ class GenreScreen(
 
   override fun onMenuItemSelected(itemId: Int, item: Genre) {
     val action = actionHandler.genreSelected(itemId)
-    if (action == DEFAULT) {
+    if (action == Default) {
       onItemClicked(item)
     } else {
-      workHandler.queue(item.id, GENRE, action)
+      workHandler.queue(item.id, Meta.Genre, action)
     }
   }
 
   override fun onItemClicked(item: Genre) {
-    workHandler.queue(item.id, GENRE)
+    onGenrePressedListener?.invoke(item)
   }
 }

@@ -26,10 +26,9 @@
       app:showAsAction="ifRoom" />
 
   <item
-      android:id="@+id/library__album_artist"
+      android:id="@+id/library__action_only_album_artists"
       android:checkable="true"
-      android:checked="false"
-      android:title="@string/library_album_artists_only"
+      android:title="@string/library__action_only_album_artists"
       app:showAsAction="never" />
 
   <item

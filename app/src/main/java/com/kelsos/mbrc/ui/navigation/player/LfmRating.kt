@@ -1,13 +1,18 @@
 package com.kelsos.mbrc.ui.navigation.player
 
-import androidx.annotation.IntDef
+sealed class LfmRating {
+  object Loved : LfmRating()
+  object Banned : LfmRating()
+  object Normal : LfmRating()
 
-object LfmRating {
-  const val LOVED = 1
-  const val BANNED = -1
-  const val NORMAL = 0
+  companion object {
+    private const val LOVE = "Love"
+    private const val BAN = "Ban"
 
-  @IntDef(LOVED, BANNED, NORMAL)
-  @Retention(AnnotationRetention.SOURCE)
-  annotation class Rating
+    fun fromString(value: String?): LfmRating = when (value) {
+      LOVE -> Loved
+      BAN -> Banned
+      else -> Normal
+    }
+  }
 }

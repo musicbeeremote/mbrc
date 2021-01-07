@@ -6,63 +6,59 @@ import com.kelsos.mbrc.features.queue.Queue
 
 class PopupActionHandler {
 
-  @Queue.Action
   fun albumSelected(
     @IdRes itemId: Int
-  ): String {
+  ): Queue {
     if (itemId == R.id.popup_album_tracks) {
-      return Queue.DEFAULT
+      return Queue.Default
     }
 
     return when (itemId) {
-      R.id.popup_album_queue_next -> Queue.NEXT
-      R.id.popup_album_queue_last -> Queue.LAST
-      R.id.popup_album_play -> Queue.NOW
-      else -> Queue.NOW
+      R.id.popup_album_queue_next -> Queue.Next
+      R.id.popup_album_queue_last -> Queue.Last
+      R.id.popup_album_play -> Queue.Now
+      else -> Queue.Now
     }
   }
 
-  @Queue.Action
   fun artistSelected(
     @IdRes itemId: Int
-  ): String {
+  ): Queue {
     if (itemId == R.id.popup_artist_album) {
-      return Queue.DEFAULT
+      return Queue.Default
     }
 
     return when (itemId) {
-      R.id.popup_artist_queue_next -> Queue.NEXT
-      R.id.popup_artist_queue_last -> Queue.LAST
-      R.id.popup_artist_play -> Queue.NOW
-      else -> Queue.NOW
+      R.id.popup_artist_queue_next -> Queue.Next
+      R.id.popup_artist_queue_last -> Queue.Last
+      R.id.popup_artist_play -> Queue.Now
+      else -> Queue.Now
     }
   }
 
-  @Queue.Action
   fun genreSelected(
     @IdRes itemId: Int
-  ): String {
+  ): Queue {
     if (R.id.popup_genre_artists == itemId) {
-      return Queue.DEFAULT
+      return Queue.Default
     }
 
     return when (itemId) {
-      R.id.popup_genre_queue_next -> Queue.NEXT
-      R.id.popup_genre_queue_last -> Queue.LAST
-      R.id.popup_genre_play -> Queue.NOW
-      else -> Queue.NOW
+      R.id.popup_genre_queue_next -> Queue.Next
+      R.id.popup_genre_queue_last -> Queue.Last
+      R.id.popup_genre_play -> Queue.Now
+      else -> Queue.Now
     }
   }
 
-  @Queue.Action
-  fun trackSelected(@IdRes itemId: Int): String =
+  fun trackSelected(@IdRes itemId: Int): Queue =
     when (itemId) {
-      R.id.popup_track_queue_next -> Queue.NEXT
-      R.id.popup_track_queue_last -> Queue.LAST
-      R.id.popup_track_play -> Queue.NOW
-      R.id.popup_track_play_queue_all -> Queue.ADD_ALL
-      R.id.popup_track_play_artist -> Queue.PLAY_ARTIST
-      R.id.popup_track_play_album -> Queue.PLAY_ALBUM
-      else -> Queue.NOW
+      R.id.popup_track_queue_next -> Queue.Next
+      R.id.popup_track_queue_last -> Queue.Last
+      R.id.popup_track_play -> Queue.Now
+      R.id.popup_track_play_queue_all -> Queue.AddAll
+      R.id.popup_track_play_artist -> Queue.PlayArtist
+      R.id.popup_track_play_album -> Queue.PlayAlbum
+      else -> Queue.Now
     }
 }

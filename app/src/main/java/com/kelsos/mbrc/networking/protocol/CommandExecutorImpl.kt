@@ -14,8 +14,7 @@ class CommandExecutorImpl(
 ) : CommandExecutor {
 
   private var executor = getExecutor()
-
-  private var commandMap: MutableMap<String, ProtocolAction> = HashMap()
+  private var commandMap: MutableMap<Protocol, ProtocolAction> = HashMap()
   private val eventQueue: LinkedBlockingQueue<ProtocolMessage> = LinkedBlockingQueue()
   private var running: Boolean = false
 
@@ -25,7 +24,6 @@ class CommandExecutorImpl(
     }
   }
 
-  @Suppress("UNCHECKED_CAST")
   @Synchronized
   private fun executeCommand(event: ProtocolMessage) {
     val context = event.type

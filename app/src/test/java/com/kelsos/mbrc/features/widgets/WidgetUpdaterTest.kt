@@ -83,7 +83,7 @@ class WidgetUpdaterTest {
     }
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
-    widgetUpdater.updatePlayState(PlayerState.STOPPED)
+    widgetUpdater.updatePlayState(PlayerState.Stopped)
     shadowOf(getMainLooper()).idle()
 
     assertThat(flags).containsExactly(true, true)

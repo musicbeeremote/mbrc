@@ -4,16 +4,19 @@ import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.sync.SyncResult
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
+import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.launch
 
 class LibraryViewModel(
   private val dispatchers: AppCoroutineDispatchers,
   private val searchModel: LibrarySearchModel,
+  private val settingsManager: SettingsManager,
   private val syncWorkHandler: SyncWorkHandler
 ) : BaseViewModel<SyncResult>() {
 
   val syncProgress = syncWorkHandler.syncProgress()
+  val albumArtistOnly get() = settingsManager.onlyAlbumArtists().value
 
   fun refresh() {
     viewModelScope.launch(dispatchers.network) {
@@ -23,5 +26,9 @@ class LibraryViewModel(
 
   fun search(search: String = "") {
     searchModel.search(search)
+  }
+
+  fun setAlbumArtistOnly(checked: Boolean) {
+    settingsManager.setShouldDisplayOnlyAlbumArtist(checked)
   }
 }

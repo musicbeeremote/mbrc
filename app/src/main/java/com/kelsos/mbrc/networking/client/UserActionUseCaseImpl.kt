@@ -6,6 +6,6 @@ class UserActionUseCaseImpl(
   private val messageQueue: MessageQueue
 ) : UserActionUseCase {
   override fun perform(action: UserAction) {
-    messageQueue.queue(SocketMessage.create(action.context, action.data))
+    messageQueue.queue(SocketMessage.create(action.protocol, action.data))
   }
 }

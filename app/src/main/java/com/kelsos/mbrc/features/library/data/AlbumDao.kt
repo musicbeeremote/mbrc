@@ -32,9 +32,10 @@ interface AlbumDao {
 
   @Query(
     """
-      select distinct album.album, album.artist, album.id, album.date_added, album.cover from album
-      inner join track on album.album = track.album and album.artist = track.album_artist
-      where album.artist = :artist order by album.album asc
+        select distinct album.artist as artist, album.album as album,
+        album.date_added as date_added, album.id as id, album.cover as cover from album
+        inner join track where album.album = track.album and track.album_artist = album.artist
+        and (track.artist = :artist or track.album_artist = :artist) order by artist asc, album asc
     """
   )
   fun getAlbumsByArtist(artist: String): PagingSource<Int, AlbumEntity>

@@ -1,13 +1,19 @@
 package com.kelsos.mbrc.events
 
-import androidx.annotation.StringDef
+sealed class ShuffleMode(val mode: String) {
+  object Off : ShuffleMode(OFF)
+  object AutoDJ : ShuffleMode(AUTO_DJ)
+  object Shuffle : ShuffleMode(SHUFFLE)
 
-object ShuffleMode {
-  const val OFF = "off"
-  const val AUTODJ = "autodj"
-  const val SHUFFLE = "shuffle"
+  companion object {
+    const val OFF = "off"
+    const val AUTO_DJ = "autodj"
+    const val SHUFFLE = "shuffle"
 
-  @StringDef(OFF, AUTODJ, SHUFFLE)
-  @Retention(AnnotationRetention.SOURCE)
-  annotation class Shuffle
+    fun fromString(string: String): ShuffleMode = when (string) {
+      AUTO_DJ -> AutoDJ
+      SHUFFLE -> Shuffle
+      else -> Off
+    }
+  }
 }

@@ -75,7 +75,7 @@ class UpdateNowPlayingTrackTest {
     every { state.hint(PlayingTrack::class).getValue() } answers { updatedTrack }
 
     val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
-    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     update.execute(message)
 
     assertThat(updatedTrack.artist).isEqualTo("Gamma Ray")
@@ -93,7 +93,7 @@ class UpdateNowPlayingTrackTest {
     every { state.hint(PlayingTrack::class).getValue() } answers { null }
 
     val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
-    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     update.execute(message)
 
     verify(exactly = 0) { widgetUpdater.updatePlayingTrack(any()) }

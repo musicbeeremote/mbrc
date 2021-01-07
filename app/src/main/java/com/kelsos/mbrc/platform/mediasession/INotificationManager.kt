@@ -9,7 +9,7 @@ interface INotificationManager {
 
   fun trackChanged(playingTrack: PlayingTrack)
 
-  fun playerStateChanged(@PlayerState.State state: String)
+  fun playerStateChanged(state: PlayerState)
 
   fun connectionStateChanged(connected: Boolean)
 

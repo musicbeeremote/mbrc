@@ -11,9 +11,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
-import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.ui.extensions.setAppBarTitle
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
@@ -23,36 +24,23 @@ import com.kelsos.mbrc.features.library.sync.SyncCategory
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
-
-  private var pagerAdapter: LibraryPagerAdapter? = null
+class LibraryFragment(
+  private val viewModel: LibraryViewModel
+) : Fragment(), OnQueryTextListener, CategoryRetriever {
+  private lateinit var pagerAdapter: LibraryPagerAdapter
   private lateinit var searchView: SearchView
   private lateinit var searchMenuItem: MenuItem
   private lateinit var clearMenuItem: MenuItem
-  private lateinit var albumArtistOnly: MenuItem
-
-  private val viewModel: LibraryViewModel by viewModel()
-  private val genreScreen: GenreScreen by inject()
-  private val artistScreen: ArtistScreen by inject()
-  private val albumScreen: AlbumScreen by inject()
-  private val trackScreen: TrackScreen by inject()
 
   private var _binding: FragmentLibraryBinding? = null
   private val binding get() = _binding!!
-
-  private fun updateToolbar(search: String? = null) {
-    val activity = (requireActivity() as NavigationActivity)
-    val supportActionBar = checkNotNull(activity.supportActionBar)
-    val title = if (search.isNullOrBlank()) getString(R.string.nav_library) else search
-    supportActionBar.title = title
-  }
 
   override fun onQueryTextSubmit(query: String): Boolean {
     val search = query.trim()
     if (search.isNotEmpty()) {
       closeSearch()
       viewModel.search(search)
-      updateToolbar(search)
+      setAppBarTitle(if (search.isBlank()) getString(R.string.nav_library) else search)
       searchMenuItem.isVisible = false
       clearMenuItem.isVisible = true
       return true
@@ -97,15 +85,20 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
+    val genreScreen: GenreScreen by inject()
+    val artistScreen: ArtistScreen by inject()
+    val albumScreen: AlbumScreen by inject()
+    val trackScreen: TrackScreen by inject()
+
     pagerAdapter = LibraryPagerAdapter(viewLifecycleOwner).also {
-      it.submit(
-        listOf(
-          genreScreen,
-          artistScreen,
-          albumScreen,
-          trackScreen
-        )
+      val screens = listOf(
+        genreScreen,
+        artistScreen,
+        albumScreen,
+        trackScreen
       )
+      it.submit(screens)
     }
     binding.libraryContainerPager.adapter = pagerAdapter
 
@@ -123,6 +116,19 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
 
       tab.setText(resId)
     }.attach()
+
+    genreScreen.setOnGenrePressedListener {
+      val action = LibraryFragmentDirections.actionShowGenreArtists(it.genre)
+      view.findNavController().navigate(action)
+    }
+    artistScreen.setOnArtistPressedListener {
+      val action = LibraryFragmentDirections.actionShowArtistAlbums(it.artist)
+      view.findNavController().navigate(action)
+    }
+    albumScreen.setOnAlbumPressedListener {
+      val action = LibraryFragmentDirections.actionShowAlbumTracks(it.album, it.artist)
+      view.findNavController().navigate(action)
+    }
 
     viewModel.syncProgress.observe(viewLifecycleOwner) {
       binding.libraryContainerSyncProgress.isGone = !it.running
@@ -151,13 +157,13 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
       searchView = actionView as SearchView
     }
 
-    albumArtistOnly = menu.findItem(R.id.library__album_artist)
-
     searchView.apply {
       queryHint = getString(R.string.library_search_hint)
       setIconifiedByDefault(true)
       setOnQueryTextListener(this@LibraryFragment)
     }
+
+    menu.findItem(R.id.library__action_only_album_artists).isChecked = viewModel.albumArtistOnly
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -166,30 +172,19 @@ class LibraryFragment : Fragment(), OnQueryTextListener, CategoryRetriever {
         viewModel.refresh()
         return true
       }
-      R.id.library__album_artist -> {
-        albumArtistOnly.run {
-          isChecked = !isChecked
-        }
-
-        return true
-      }
       R.id.library__action_clear -> {
         viewModel.search()
         searchMenuItem.isVisible = true
         clearMenuItem.isVisible = false
-        updateToolbar()
+        setAppBarTitle(getString(R.string.nav_library))
         return true
       }
-      R.id.library__sync_state -> {
-        return true
+      R.id.library__action_only_album_artists -> {
+        item.isChecked = !item.isChecked
+        viewModel.setAlbumArtistOnly(item.isChecked)
       }
     }
     return super.onOptionsItemSelected(item)
-  }
-
-  override fun onDestroy() {
-    pagerAdapter = null
-    super.onDestroy()
   }
 
   override fun onSaveInstanceState(outState: Bundle) {

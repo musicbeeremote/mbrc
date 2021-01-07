@@ -92,7 +92,7 @@ class NowPlayingViewModelTest {
     viewModel.moveTrack(2, 3)
     viewModel.move()
 
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListMove)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListMove)
     assertThat(actionSlot.captured.data).isEqualTo(NowPlayingMoveRequest(0, 3))
   }
 
@@ -103,7 +103,7 @@ class NowPlayingViewModelTest {
     coEvery { repository.findPosition(any()) } answers { 5 }
     viewModel.search("search")
 
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListPlay)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListPlay)
     assertThat(actionSlot.captured.data).isEqualTo(6)
   }
 
@@ -113,7 +113,7 @@ class NowPlayingViewModelTest {
     every { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.removeTrack(1)
     advanceUntilIdle()
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListRemove)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListRemove)
     assertThat(actionSlot.captured.data).isEqualTo(1)
   }
 
@@ -123,7 +123,7 @@ class NowPlayingViewModelTest {
     every { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.play(2)
 
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListPlay)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListPlay)
     assertThat(actionSlot.captured.data).isEqualTo(3)
   }
 }

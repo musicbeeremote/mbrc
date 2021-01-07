@@ -11,7 +11,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.core.IRemoteServiceCore
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
+import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.CHANNEL_ID
@@ -34,7 +34,7 @@ class RemoteService : Service() {
       val manager = NotificationManagerCompat.from(this)
       manager.createNotificationChannel(notificationChannel)
     }
-    val cancelIntent = getPendingIntent(RemoteViewIntentBuilder.CANCEL, this)
+    val cancelIntent = getPendingIntent(RemoteIntentCode.Cancel, this)
     val action = NotificationCompat.Action.Builder(
       R.drawable.ic_close_black_24dp,
       getString(android.R.string.cancel),

@@ -22,7 +22,6 @@
   <dimen name="widget_normal_min_width">250dp</dimen>
   <dimen name="widget_normal_height">128dp</dimen>
   <dimen name="widget_normal_text">16sp</dimen>
-  <dimen name="fab_margin">8dp</dimen>
   <dimen name="dual_list_title">14sp</dimen>
   <dimen name="dual_list_subtitle">14sp</dimen>
   <dimen name="mini_control_title_text_size">16sp</dimen>
@@ -34,5 +33,4 @@
   <dimen name="empty_view_icon_margin_bottom">40dp</dimen>
   <dimen name="empty_view_icon_size">80dp</dimen>
   <dimen name="list_album_size">48dp</dimen>
-  <dimen name="cover_size">86dp</dimen>
-</resources>
+  </resources>

@@ -227,6 +227,8 @@ dependencies {
   implementation 'io.insert-koin:koin-androidx-viewmodel:2.2.2'
   implementation 'io.insert-koin:koin-androidx-ext:2.2.2'
   implementation 'io.insert-koin:koin-androidx-scope:2.2.2'
+  implementation "io.insert-koin:koin-androidx-fragment:2.2.2"
+  implementation "io.insert-koin:koin-androidx-workmanager:2.2.2"
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
