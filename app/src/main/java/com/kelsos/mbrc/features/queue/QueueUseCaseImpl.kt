@@ -1,18 +1,17 @@
 package com.kelsos.mbrc.features.queue
 
 import arrow.core.Either
-import com.kelsos.mbrc.common.Meta.ALBUM
-import com.kelsos.mbrc.common.Meta.ARTIST
-import com.kelsos.mbrc.common.Meta.GENRE
-import com.kelsos.mbrc.common.Meta.TRACK
-import com.kelsos.mbrc.common.Meta.Type
+import com.kelsos.mbrc.common.Meta
+import com.kelsos.mbrc.common.Meta.Album
+import com.kelsos.mbrc.common.Meta.Artist
+import com.kelsos.mbrc.common.Meta.Genre
+import com.kelsos.mbrc.common.Meta.Track
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
-import com.kelsos.mbrc.features.queue.Queue.Action
-import com.kelsos.mbrc.features.queue.Queue.DEFAULT
+import com.kelsos.mbrc.features.queue.Queue.Default
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import kotlinx.coroutines.withContext
 
@@ -25,20 +24,20 @@ class QueueUseCaseImpl(
   private val dispatchers: AppCoroutineDispatchers,
   private val queueApi: QueueApi
 ) : QueueUseCase {
+
   override suspend fun queue(
     id: Long,
-    @Type meta: Int,
-    @Action action: String
+    meta: Meta,
+    action: Queue
   ): Either<Throwable, Int> {
 
-    val selectedAction = if (action == DEFAULT) settings.defaultAction else action
+    val selectedAction = if (action == Default) Queue.fromString(settings.defaultAction) else action
     return withContext(dispatchers.network) {
       val (paths, path) = when (meta) {
-        GENRE -> Pair(tracksForGenre(id), null)
-        ARTIST -> Pair(tracksForArtist(id), null)
-        ALBUM -> Pair(tracksForAlbum(id), null)
-        TRACK -> tracks(id, action)
-        else -> error("Invalid value $meta")
+        Genre -> Pair(tracksForGenre(id), null)
+        Artist -> Pair(tracksForArtist(id), null)
+        Album -> Pair(tracksForAlbum(id), null)
+        Track -> tracks(id, action)
       }
 
       queueApi.queue(selectedAction, paths, path).map { it.code }
@@ -75,19 +74,19 @@ class QueueUseCaseImpl(
 
   private suspend fun tracks(
     id: Long,
-    @Action action: String
+    action: Queue
   ): Pair<List<String>, String?> = withContext(dispatchers.database) {
     val track = trackRepository.getById(id)
     if (track != null) {
       when (action) {
-        Queue.ADD_ALBUM -> Pair(
+        Queue.AddAlbum -> Pair(
           trackRepository.getAlbumTrackPaths(
             track.album,
             track.albumArtist
           ),
           track.src
         )
-        Queue.ADD_ALL -> Pair(trackRepository.getAllTrackPaths(), track.src)
+        Queue.AddAll -> Pair(trackRepository.getAllTrackPaths(), track.src)
         else -> Pair(listOf(track.src), null)
       }
     } else {

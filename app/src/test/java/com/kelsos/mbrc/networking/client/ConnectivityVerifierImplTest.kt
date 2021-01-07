@@ -64,7 +64,7 @@ class ConnectivityVerifierImplTest : KoinTest {
 
   private fun startMockServer(
     prematureDisconnect: Boolean = false,
-    responseContext: String = Protocol.VerifyConnection,
+    responseContext: Protocol = Protocol.VerifyConnection,
     json: Boolean = true
   ): ServerSocket {
     val random = Random()
@@ -84,7 +84,7 @@ class ConnectivityVerifierImplTest : KoinTest {
 
         val value = messageAdapter.fromJson(line)
 
-        if (value?.context != Protocol.VerifyConnection) {
+        if (Protocol.fromString(value?.context ?: "") != Protocol.VerifyConnection) {
           connection.close()
           server.close()
           return@Runnable
@@ -100,10 +100,10 @@ class ConnectivityVerifierImplTest : KoinTest {
         val output = PrintWriter(BufferedWriter(out), true)
         val newLine = "\r\n"
         if (json) {
-          val response = SocketMessage(context = responseContext)
+          val response = SocketMessage(context = responseContext.context)
           output.write(messageAdapter.toJson(response) + newLine + newLine)
         } else {
-          output.write(responseContext + newLine + newLine)
+          output.write(responseContext.context + newLine + newLine)
         }
         output.flush()
         input.close()
@@ -186,7 +186,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   @Test
   fun testVerificationNoJsonPayload() {
     val verifier = this.verifier
-    startMockServer(false, "payload", false)
+    startMockServer(false, Protocol.fromString("a"), false)
 
     every { connectionRepository.getDefault() } answers {
       return@answers null

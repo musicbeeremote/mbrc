@@ -16,10 +16,10 @@ class GenreAdapter : LibraryAdapter<Genre, GenreViewHolder>(
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_genre) {
       val action = when (it) {
-        R.id.popup_genre_play -> Queue.NOW
-        R.id.popup_genre_artists -> Queue.DEFAULT
-        R.id.popup_genre_queue_next -> Queue.NEXT
-        R.id.popup_genre_queue_last -> Queue.LAST
+        R.id.popup_genre_play -> Queue.Now
+        R.id.popup_genre_artists -> Queue.Default
+        R.id.popup_genre_queue_next -> Queue.Next
+        R.id.popup_genre_queue_last -> Queue.Last
         else -> throw IllegalArgumentException("invalid menuItem id $it")
       }
       val listener = requireListener()

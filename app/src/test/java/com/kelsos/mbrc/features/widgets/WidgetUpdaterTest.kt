@@ -77,7 +77,7 @@ class WidgetUpdaterTest {
     }
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
-    widgetUpdater.updatePlayState(PlayerState.STOPPED)
+    widgetUpdater.updatePlayState(PlayerState.Stopped)
     idle()
 
     assertThat(flags).containsExactly(true, true)

@@ -15,15 +15,12 @@ import androidx.work.WorkerParameters
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.Meta
 import kotlinx.coroutines.coroutineScope
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 
 class QueueWorker(
   context: Context,
-  params: WorkerParameters
-) : CoroutineWorker(context, params), KoinComponent {
-
-  private val queueUseCase: QueueUseCase by inject()
+  params: WorkerParameters,
+  private val queueUseCase: QueueUseCase
+) : CoroutineWorker(context, params) {
 
   private val notificationManager =
     context.getSystemService(Context.NOTIFICATION_SERVICE) as
@@ -32,8 +29,8 @@ class QueueWorker(
   override suspend fun doWork(): Result = coroutineScope {
 
     val id = inputData.getLong(ID, -1)
-    val meta = inputData.getInt(META, -1)
-    val action = inputData.getString(ACTION) ?: Queue.DEFAULT
+    val meta = Meta.fromId(inputData.getInt(META, -1))
+    val action = Queue.fromString(inputData.getString(ACTION) ?: Queue.DEFAULT)
 
     setForeground(createForegroundInfo())
 
@@ -94,14 +91,14 @@ class QueueWorker(
 
     fun createWorkRequest(
       id: Long,
-      @Meta.Type meta: Int,
-      @Queue.Action action: String = Queue.DEFAULT
+      meta: Meta,
+      action: Queue = Queue.Default
     ): OneTimeWorkRequest {
 
       val input = Data.Builder()
         .putLong(ID, id)
-        .putInt(META, meta)
-        .putString(ACTION, action)
+        .putInt(META, meta.id)
+        .putString(ACTION, action.action)
         .build()
 
       return OneTimeWorkRequestBuilder<QueueWorker>()

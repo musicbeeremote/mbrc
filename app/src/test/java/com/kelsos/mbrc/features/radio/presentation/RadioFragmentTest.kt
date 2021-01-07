@@ -3,7 +3,6 @@ package com.kelsos.mbrc.features.radio.presentation
 import androidx.annotation.StringRes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.FragmentScenario.launchInContainer
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
@@ -79,15 +78,13 @@ class RadioFragmentTest {
     val liveData = MockFactory<RadioStation>(emptyList()).paged()
     every { viewModel.radios } answers { liveData }
     every { viewModel.emitter } answers { MutableLiveData() }
-    val scenario = launchInContainer(RadioFragment::class.java)
+    launchInContainer(RadioFragment::class.java)
 
     RadioRobot()
       .done()
       .emptyGroupVisible()
       .loadingGone()
       .emptyText(R.string.radio__no_radio_stations)
-
-    scenario.moveToState(Lifecycle.State.DESTROYED)
   }
 
   @Test

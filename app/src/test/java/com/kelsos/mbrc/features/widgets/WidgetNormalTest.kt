@@ -93,7 +93,7 @@ class WidgetNormalTest {
     val updater = WidgetUpdaterImpl(contextWrapper)
     val before = widgetView.findViewById<ImageView>(R.id.widget_normal_play)
 
-    updater.updatePlayState(PlayerState.PLAYING)
+    updater.updatePlayState(PlayerState.Playing)
     idle()
 
     widgetView = shadowAppWidgetManager.getViewFor(widgetId)

@@ -6,7 +6,6 @@ import com.kelsos.mbrc.features.library.PlayingTrack
 
 data class NotificationData(
   val track: PlayingTrack = PlayingTrack(),
-  @PlayerState.State
-  val playerState: String = PlayerState.STOPPED,
+  val playerState: PlayerState = PlayerState.Stopped,
   val cover: Bitmap? = null
 )

@@ -68,7 +68,7 @@ class RadioViewModelTest {
   @Test
   fun `should call queue and notify success`() {
     val playArguments = slot<List<String>>()
-    coEvery { queueApi.queue(Queue.NOW, capture(playArguments)) } coAnswers {
+    coEvery { queueApi.queue(Queue.Now, capture(playArguments)) } coAnswers {
       Either.right(QueueResponse(200))
     }
 
@@ -82,7 +82,7 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify on network error`() {
-    coEvery { queueApi.queue(Queue.NOW, any()) } coAnswers { Either.left(SocketTimeoutException()) }
+    coEvery { queueApi.queue(Queue.Now, any()) } coAnswers { Either.left(SocketTimeoutException()) }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
     idle()
@@ -91,7 +91,7 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify on queue failure`() {
-    coEvery { queueApi.queue(Queue.NOW, any()) } coAnswers {
+    coEvery { queueApi.queue(Queue.Now, any()) } coAnswers {
       Either.right(QueueResponse(500))
     }
     radioViewModel.emitter.observeOnce(observer)

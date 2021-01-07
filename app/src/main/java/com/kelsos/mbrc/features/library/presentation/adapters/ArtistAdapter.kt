@@ -17,10 +17,10 @@ class ArtistAdapter : LibraryAdapter<Artist, ArtistViewHolder>(
     view.popup(R.menu.popup_artist) {
 
       val action = when (it) {
-        R.id.popup_artist_album -> Queue.DEFAULT
-        R.id.popup_artist_queue_next -> Queue.NEXT
-        R.id.popup_artist_queue_last -> Queue.LAST
-        R.id.popup_artist_play -> Queue.NOW
+        R.id.popup_artist_album -> Queue.Default
+        R.id.popup_artist_queue_next -> Queue.Next
+        R.id.popup_artist_queue_last -> Queue.Last
+        R.id.popup_artist_play -> Queue.Now
         else -> throw IllegalArgumentException("invalid menuItem id $it")
       }
 

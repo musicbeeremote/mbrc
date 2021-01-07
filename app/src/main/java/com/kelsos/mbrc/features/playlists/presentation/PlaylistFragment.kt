@@ -19,6 +19,7 @@ import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter.OnPlaylistPressedListener
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment :
   Fragment(),
@@ -31,7 +32,7 @@ class PlaylistFragment :
   private val emptyViewProgress: ProgressBar by bindView(R.id.playlists__loading_bar)
 
   private val adapter: PlaylistAdapter by lazy { PlaylistAdapter() }
-  private val viewModel: PlaylistViewModel by inject()
+  private val viewModel: PlaylistViewModel by viewModel()
   private val miniControlFactory: MiniControlFactory by inject()
 
   override fun onCreateView(

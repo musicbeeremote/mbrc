@@ -1,16 +1,13 @@
 package com.kelsos.mbrc.features.library.presentation
 
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class LibrarySearchModel {
-  private val _search: MutableSharedFlow<String> = MutableSharedFlow(
-    1,
-    1,
-    BufferOverflow.DROP_OLDEST
+  private val _search: MutableStateFlow<String> = MutableStateFlow(
+    ""
   )
-  val search: SharedFlow<String>
+  val search: StateFlow<String>
     get() = _search
 
   fun search(search: String) {

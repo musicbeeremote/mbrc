@@ -9,9 +9,6 @@ class AlbumEntityMapper :
       id = from.id,
       artist = from.artist,
       album = from.album,
-      albumArtist = "",
-      genre = "",
-      sortableYear = "",
       dateAdded = from.dateAdded
     )
   }

@@ -79,7 +79,7 @@ class PlaylistViewModelTest {
     val userAction = slot<UserAction>()
     every { userActionUseCase.perform(capture(userAction)) } just Runs
     viewModel.play("""C:\playlists\metal.m3u""")
-    assertThat(userAction.captured.context).isEqualTo(Protocol.PlaylistPlay)
+    assertThat(userAction.captured.protocol).isEqualTo(Protocol.PlaylistPlay)
     assertThat(userAction.captured.data).isEqualTo("""C:\playlists\metal.m3u""")
   }
 }

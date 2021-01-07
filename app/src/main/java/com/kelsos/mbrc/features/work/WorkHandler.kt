@@ -6,7 +6,7 @@ import com.kelsos.mbrc.features.queue.Queue
 interface WorkHandler {
   fun queue(
     id: Long,
-    @Meta.Type meta: Int,
-    @Queue.Action action: String = Queue.DEFAULT
+    meta: Meta,
+    action: Queue = Queue.Default
   )
 }

@@ -172,4 +172,8 @@
   <string name="output_selection__icon_content_description">Speaker Icon</string>
   <string name="genre_artists__empty_icon_content_description">Empty list placeholder</string>
   <string name="library__action_clear">Clear</string>
+  <string name="navigation__radio">Radio</string>
+  <string name="library_album_tracks__title">%1$s by %2$s</string>
+  <string name="library__action_only_album_artists">Display only album artists</string>
+  <string name="library_details__empty_content">Placeholder image for an empty list</string>
 </resources>

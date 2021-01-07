@@ -7,6 +7,8 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.fragment.app.Fragment
+import com.kelsos.mbrc.NavigationActivity
 
 fun Context.getDimens(): Int {
   val displayMetrics = resources.displayMetrics
@@ -25,4 +27,10 @@ fun Context.coloredSpan(@StringRes resId: Int, @ColorRes colorResId: Int): Spann
       append(getString(resId))
     }
   }
+}
+
+fun Fragment.setAppBarTitle(title: String? = null) {
+  val activity = (requireActivity() as NavigationActivity)
+  val supportActionBar = checkNotNull(activity.supportActionBar)
+  supportActionBar.title = title
 }

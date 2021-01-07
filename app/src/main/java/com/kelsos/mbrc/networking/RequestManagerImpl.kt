@@ -37,7 +37,7 @@ class RequestManagerImpl(
 
       val message = deserializationAdapter.objectify(line, SocketMessage::class)
 
-      val context = message.context
+      val context = Protocol.fromString(message.context)
       Timber.v("incoming context => $context")
       if (Protocol.Player == context) {
         val payload = getProtocolPayload()

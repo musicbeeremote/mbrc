@@ -14,17 +14,14 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.kelsos.mbrc.R
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 import timber.log.Timber
 
 class SyncWorker(
   context: Context,
-  params: WorkerParameters
-) : CoroutineWorker(context, params), KoinComponent {
-
-  private val librarySyncUseCase: LibrarySyncUseCase by inject()
-  private val notificationManager: NotificationManager by inject()
+  params: WorkerParameters,
+  private val librarySyncUseCase: LibrarySyncUseCase,
+  private val notificationManager: NotificationManager
+) : CoroutineWorker(context, params) {
 
   @RequiresApi(Build.VERSION_CODES.O)
   private fun createChannel(id: String) {

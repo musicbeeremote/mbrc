@@ -30,6 +30,7 @@ import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper
 import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingAdapter.NowPlayingListener
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NowPlayingFragment : BaseFragment() {
 
@@ -38,7 +39,7 @@ class NowPlayingFragment : BaseFragment() {
   private val empty: Group by bindView(R.id.now_playing__empty_group)
   private val loading: ProgressBar by bindView(R.id.now_playing__loading_bar)
 
-  private val viewModel: NowPlayingViewModel by inject()
+  private val viewModel: NowPlayingViewModel by viewModel()
   private val miniControlFactory: MiniControlFactory by inject()
 
   private var search: SearchView? = null

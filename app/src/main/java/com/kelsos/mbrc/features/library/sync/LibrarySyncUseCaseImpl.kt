@@ -15,6 +15,7 @@ import com.kelsos.mbrc.features.library.sync.SyncCategory.TRACKS
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.metrics.SyncedData
+import com.kelsos.mbrc.networking.client.ConnectivityVerifier
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -24,6 +25,7 @@ class LibrarySyncUseCaseImpl(
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
+  private val connectivityVerifier: ConnectivityVerifier,
   private val metrics: SyncMetrics,
   private val dispatchers: AppCoroutineDispatchers
 ) : LibrarySyncUseCase {
@@ -38,6 +40,11 @@ class LibrarySyncUseCaseImpl(
     running = true
 
     Timber.v("Starting library metadata network")
+
+    val canEstablishConnection = connectivityVerifier.verify().fold({ false }, { true })
+    if (!canEstablishConnection) {
+      return SyncResult.FAILED
+    }
 
     metrics.librarySyncStarted()
 

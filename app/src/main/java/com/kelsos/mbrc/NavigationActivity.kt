@@ -26,11 +26,12 @@ import com.google.android.material.navigation.NavigationView
 import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
-import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
+import org.koin.androidx.fragment.android.setupKoinFragmentFactory
+import org.koin.core.KoinExperimentalAPI
 import timber.log.Timber
 
 class NavigationActivity : AppCompatActivity() {
@@ -85,26 +86,22 @@ class NavigationActivity : AppCompatActivity() {
     }
 
   private fun onConnection(connectionStatus: ConnectionStatus) {
-    Timber.v("Handling new connection status ${Connection.string(connectionStatus.status)}")
+    Timber.v("Handling new connection status $connectionStatus")
 
     @StringRes val resId: Int
     @ColorRes val colorId: Int
-    when (connectionStatus.status) {
-      Connection.OFF -> {
+    when (connectionStatus) {
+      ConnectionStatus.Off -> {
         resId = R.string.drawer_connection_status_off
         colorId = R.color.black
       }
-      Connection.ON -> {
+      ConnectionStatus.On -> {
         resId = R.string.drawer_connection_status_on
         colorId = R.color.accent
       }
-      Connection.ACTIVE -> {
+      ConnectionStatus.Active -> {
         resId = R.string.drawer_connection_status_active
         colorId = R.color.power_on
-      }
-      else -> {
-        resId = R.string.drawer_connection_status_off
-        colorId = R.color.black
       }
     }
 
@@ -163,7 +160,9 @@ class NavigationActivity : AppCompatActivity() {
     }
   }
 
+  @KoinExperimentalAPI
   override fun onCreate(savedInstanceState: Bundle?) {
+    setupKoinFragmentFactory()
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_navigation)
     setupToolbar()

@@ -20,6 +20,7 @@ import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter.OnRadioPressedListener
 import kotterknife.bindView
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RadioFragment : Fragment(), OnRadioPressedListener {
 
@@ -30,7 +31,7 @@ class RadioFragment : Fragment(), OnRadioPressedListener {
   private val emptyViewIcon: ImageView by bindView(R.id.radio_stations__empty_icon)
   private val emptyViewProgress: ProgressBar by bindView(R.id.radio_stations__loading_bar)
 
-  private val viewModel: RadioViewModel by inject()
+  private val viewModel: RadioViewModel by viewModel()
   private val adapter: RadioAdapter by inject()
   private val miniControlFactory: MiniControlFactory by inject()
 

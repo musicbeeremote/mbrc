@@ -9,6 +9,7 @@ import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
+import com.kelsos.mbrc.networking.client.ConnectivityVerifier
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
 import io.mockk.every
@@ -35,6 +36,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   private val trackRepository: TrackRepository by inject()
   private val playlistRepository: PlaylistRepository by inject()
   private val librarySyncUseCase: LibrarySyncUseCase by inject()
+  private val connectivityVerifier: ConnectivityVerifier by inject()
   private val syncMetrics: SyncMetrics by inject()
 
   private val testModule = module {
@@ -45,6 +47,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     single { mockk<TrackRepository>() }
     single { mockk<PlaylistRepository>() }
     single { mockk<SyncMetrics>() }
+    single { mockk<ConnectivityVerifier>() }
   }
 
   @Before
@@ -55,6 +58,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     every { syncMetrics.librarySyncComplete(any()) } answers { }
     every { syncMetrics.librarySyncStarted() } answers { }
     every { syncMetrics.librarySyncFailed() } answers { }
+    coEvery { connectivityVerifier.verify() } coAnswers { Either.right(true) }
   }
 
   @After

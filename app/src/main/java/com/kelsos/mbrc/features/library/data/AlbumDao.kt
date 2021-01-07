@@ -28,8 +28,10 @@ interface AlbumDao {
 
   @Query(
     """
-        select * from album
-        where artist = :artist order by artist asc, album asc
+        select distinct album.artist as artist, album.album as album,
+        album.date_added as date_added, album.id as id from album
+        inner join track where album.album = track.album and track.album_artist = album.artist
+        and (track.artist = :artist or track.album_artist = :artist) order by artist asc, album asc
         """
   )
   fun getAlbumsByArtist(artist: String): DataSource.Factory<Int, AlbumEntity>

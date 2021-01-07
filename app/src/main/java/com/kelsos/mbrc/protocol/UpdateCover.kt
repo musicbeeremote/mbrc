@@ -45,9 +45,9 @@ class UpdateCover(
     }
   }
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     val adapter = mapper.adapter(CoverPayload::class.java)
-    val payload = adapter.fromJsonValue(message.data) ?: return
+    val payload = adapter.fromJsonValue(protocolMessage.data) ?: return
 
     if (payload.status == CoverPayload.NOT_FOUND) {
       playingTrackLiveDataProvider.set { copy(coverUrl = "") }

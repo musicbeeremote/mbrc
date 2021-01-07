@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
 
+@KoinApiExtension
 class MediaButtonReceiver : BroadcastReceiver(), KoinComponent {
 
   override fun onReceive(context: Context, intent: Intent) {

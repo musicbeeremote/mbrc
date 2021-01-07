@@ -4,7 +4,6 @@ import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.FragmentScenario.launchInContainer
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -91,15 +90,13 @@ class NowPlayingFragmentTest {
     val liveData = MockFactory<NowPlaying>(emptyList()).paged()
     every { viewModel.list } answers { liveData }
     every { viewModel.emitter } answers { MutableLiveData() }
-    val scenario = launchInContainer(NowPlayingFragment::class.java)
+    launchInContainer(NowPlayingFragment::class.java)
 
     NowPlayingRobot()
       .done()
       .emptyGroupVisible()
       .loadingGone()
       .emptyText(R.string.now_playing_list_empty)
-
-    scenario.moveToState(Lifecycle.State.DESTROYED)
   }
 
   @Test

@@ -87,7 +87,7 @@ class WidgetSmallTest {
     val updater = WidgetUpdaterImpl(contextWrapper)
     val before = widgetView.findViewById<ImageView>(R.id.widget_small_play)
 
-    updater.updatePlayState(PlayerState.PLAYING)
+    updater.updatePlayState(PlayerState.Playing)
     idle()
     widgetView = shadowAppWidgetManager.getViewFor(widgetId)
     val after = widgetView.findViewById<ImageView>(R.id.widget_small_play)

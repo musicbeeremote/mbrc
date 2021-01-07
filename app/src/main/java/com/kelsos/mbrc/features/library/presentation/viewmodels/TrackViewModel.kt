@@ -10,6 +10,7 @@ import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.ui.UiMessageBase
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -26,7 +27,7 @@ class TrackViewModel(
     var lastSource = repository.getAll().paged()
     _tracks.addSource(lastSource) { data -> _tracks.value = data }
 
-    searchModel.search.onEach {
+    searchModel.search.drop(1).onEach {
       _tracks.removeSource(lastSource)
 
       val factory = if (it.isEmpty()) repository.getAll() else repository.search(it)

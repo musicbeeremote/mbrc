@@ -29,12 +29,19 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.library.presentation.LibraryFragment
 import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.library.presentation.adapters.AlbumAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.GenreAdapter
 import com.kelsos.mbrc.features.library.presentation.adapters.TrackAdapter
+import com.kelsos.mbrc.features.library.presentation.details.LibraryAlbumTracksFragment
+import com.kelsos.mbrc.features.library.presentation.details.LibraryArtistAlbumsFragment
+import com.kelsos.mbrc.features.library.presentation.details.LibraryGenreArtistsFragment
+import com.kelsos.mbrc.features.library.presentation.details.viemodels.AlbumTrackViewModel
+import com.kelsos.mbrc.features.library.presentation.details.viemodels.ArtistAlbumViewModel
+import com.kelsos.mbrc.features.library.presentation.details.viemodels.GenreArtistViewModel
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
@@ -55,6 +62,7 @@ import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCaseImpl
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandlerImpl
+import com.kelsos.mbrc.features.library.sync.SyncWorker
 import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
@@ -78,6 +86,7 @@ import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.features.queue.QueueApiImpl
 import com.kelsos.mbrc.features.queue.QueueUseCase
 import com.kelsos.mbrc.features.queue.QueueUseCaseImpl
+import com.kelsos.mbrc.features.queue.QueueWorker
 import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
 import com.kelsos.mbrc.features.radio.presentation.RadioViewModel
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
@@ -94,6 +103,8 @@ import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.SocketActivityChecker
 import com.kelsos.mbrc.networking.client.ClientConnectionManager
+import com.kelsos.mbrc.networking.client.ConnectivityVerifier
+import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
 import com.kelsos.mbrc.networking.client.MessageHandler
 import com.kelsos.mbrc.networking.client.MessageHandlerImpl
@@ -156,6 +167,9 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.koin.androidx.experimental.dsl.viewModel
+import org.koin.androidx.fragment.dsl.fragment
+import org.koin.androidx.workmanager.dsl.worker
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.experimental.builder.factory
@@ -165,6 +179,7 @@ import org.koin.experimental.builder.singleBy
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
+@OptIn(KoinApiExtension::class)
 val appModule = module {
   single { Moshi.Builder().build() }
   singleBy<CoverApi, CoverApiImpl>()
@@ -257,7 +272,9 @@ val appModule = module {
     )
   }
 
-  single { WorkManager.getInstance(get()) }
+  single {
+    WorkManager.getInstance(get())
+  }
   singleBy<WorkHandler, WorkHandlerImpl>()
 
   single<ApiBase>()
@@ -293,6 +310,7 @@ val appModule = module {
   single<ProtocolVersionUpdate>()
 
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+  singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
 
   factory<DefaultSettingsModel> { DefaultSettingsModelImpl }
   factory<ClientInformationModel> { ClientInformationModelImpl }
@@ -304,6 +322,13 @@ val appModule = module {
   factory<RemoteSessionManager>()
   factory<RemoteVolumeProvider>()
   factory<LogHelper>()
+
+  worker { QueueWorker(get(), get(), get()) }
+  worker { SyncWorker(get(), get(), get(), get()) }
+  fragment { LibraryFragment(get()) }
+  fragment { LibraryAlbumTracksFragment(get(), get()) }
+  fragment { LibraryArtistAlbumsFragment(get(), get()) }
+  fragment { LibraryGenreArtistsFragment(get(), get()) }
 }
 
 val uiModule = module {
@@ -335,4 +360,8 @@ val uiModule = module {
   factory<AlbumScreen>()
   factory<ArtistScreen>()
   factory<TrackScreen>()
+
+  viewModel<GenreArtistViewModel>()
+  viewModel<ArtistAlbumViewModel>()
+  viewModel<AlbumTrackViewModel>()
 }

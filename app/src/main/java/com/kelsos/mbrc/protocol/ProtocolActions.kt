@@ -32,9 +32,9 @@ class UpdateLastFm(
   private val state: PlayerStatusState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     state.set {
-      copy(scrobbling = message.asBoolean())
+      copy(scrobbling = protocolMessage.asBoolean())
     }
   }
 }
@@ -43,15 +43,9 @@ class UpdateLfmRating(
   private val state: TrackRatingState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    val lfmRating = when (message.data as? String) {
-      "Love" -> LfmRating.LOVED
-      "Ban" -> LfmRating.BANNED
-      else -> LfmRating.NORMAL
-    }
-
+  override fun execute(protocolMessage: ProtocolMessage) {
     state.set {
-      copy(lfmRating = lfmRating)
+      copy(lfmRating = LfmRating.fromString(protocolMessage.data as? String))
     }
   }
 }
@@ -61,9 +55,9 @@ class UpdateLyrics(
   private val state: LyricsState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     val adapter = mapper.adapter(LyricsPayload::class.java)
-    val payload = adapter.fromJsonValue(message.data) ?: return
+    val payload = adapter.fromJsonValue(protocolMessage.data) ?: return
 
     val lyrics = if (payload.status == LyricsPayload.SUCCESS) {
       payload.lyrics.replace("<p>", "\r\n")
@@ -91,8 +85,8 @@ class UpdateMute(
   private val state: PlayerStatusState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    state.set { copy(mute = message.asBoolean()) }
+  override fun execute(protocolMessage: ProtocolMessage) {
+    state.set { copy(mute = protocolMessage.asBoolean()) }
   }
 }
 
@@ -102,9 +96,9 @@ class UpdateNowPlayingTrack(
   private val mapper: Moshi
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     val adapter = mapper.adapter(NowPlayingTrack::class.java)
-    val track = adapter.fromJsonValue(message.data) ?: return
+    val track = adapter.fromJsonValue(protocolMessage.data) ?: return
 
     state.set {
       copy(
@@ -127,16 +121,16 @@ class UpdatePlayerStatus(
   private val moshi: Moshi
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     val adapter = moshi.adapter(PlayerStatus::class.java)
-    val status = adapter.fromJsonValue(message.data) ?: return
+    val status = adapter.fromJsonValue(protocolMessage.data) ?: return
 
     state.set {
       copy(
         mute = status.mute,
-        state = status.playState,
-        repeat = status.repeat,
-        shuffle = status.shuffle,
+        state = PlayerState.fromString(status.playState),
+        repeat = Repeat.fromString(status.repeat),
+        shuffle = ShuffleMode.fromString(status.shuffle),
         scrobbling = status.scrobbling,
         volume = status.volume
       )
@@ -149,8 +143,8 @@ class UpdatePlayState(
   private val updater: WidgetUpdater
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    val playState = message.data as? String ?: PlayerState.UNDEFINED
+  override fun execute(protocolMessage: ProtocolMessage) {
+    val playState = PlayerState.fromString(protocolMessage.data as? String ?: PlayerState.UNDEFINED)
 
     state.set {
       copy(state = playState)
@@ -161,8 +155,8 @@ class UpdatePlayState(
 
 class UpdatePluginVersionCommand : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    val pluginVersion = message.data as? String
+  override fun execute(protocolMessage: ProtocolMessage) {
+    val pluginVersion = protocolMessage.data as? String
     Timber.v("plugin reports $pluginVersion")
   }
 }
@@ -171,8 +165,8 @@ class UpdateRating(
   private val state: TrackRatingState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    val rating = message.data.toString().toFloatOrNull()
+  override fun execute(protocolMessage: ProtocolMessage) {
+    val rating = protocolMessage.data.toString().toFloatOrNull()
 
     state.set {
       copy(rating = rating ?: 0.0f)
@@ -184,8 +178,8 @@ class UpdateRepeat(
   private val state: PlayerStatusState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    val repeat = (message.data as? String)?.toRepeat() ?: Repeat.NONE
+  override fun execute(protocolMessage: ProtocolMessage) {
+    val repeat = Repeat.fromString((protocolMessage.data as? String) ?: Repeat.NONE)
 
     state.set {
       copy(repeat = repeat)
@@ -197,8 +191,8 @@ class UpdateShuffle(
   private val state: PlayerStatusState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    val data = message.data as? String ?: ShuffleMode.OFF
+  override fun execute(protocolMessage: ProtocolMessage) {
+    val data = ShuffleMode.fromString(protocolMessage.data as? String ?: ShuffleMode.OFF)
 
     state.set {
       copy(shuffle = data)
@@ -210,20 +204,11 @@ class UpdateVolume(
   private val state: PlayerStatusState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
-    val volume = message.data as Number
+  override fun execute(protocolMessage: ProtocolMessage) {
+    val volume = protocolMessage.data as Number
     state.set {
       copy(volume = volume.toInt())
     }
-  }
-}
-
-@Repeat.Mode
-private fun String.toRepeat(): String {
-  return when {
-    Protocol.ALL.equals(this, ignoreCase = true) -> Repeat.ALL
-    Protocol.ONE.equals(this, ignoreCase = true) -> Repeat.ONE
-    else -> Repeat.NONE
   }
 }
 
@@ -232,15 +217,15 @@ class ProtocolPingHandle(
   private var activityChecker: SocketActivityChecker
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     activityChecker.ping()
-    messageQueue.queue(SocketMessage.create(Protocol.PONG))
+    messageQueue.queue(SocketMessage.create(Protocol.Pong))
   }
 }
 
 class ProtocolPongHandle : ProtocolAction {
-  override fun execute(message: ProtocolMessage) {
-    Timber.d(message.data.toString())
+  override fun execute(protocolMessage: ProtocolMessage) {
+    Timber.d(protocolMessage.data.toString())
   }
 }
 
@@ -252,9 +237,9 @@ class UpdateNowPlayingTrackMoved(
   private val scope = CoroutineScope(dispatchers.network)
   private val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     scope.launch {
-      val response = adapter.fromJsonValue(message.data)
+      val response = adapter.fromJsonValue(protocolMessage.data)
       if (response != null && response.success) {
         nowPlayingRepository.move(from = response.from + 1, to = response.to + 1)
       }
@@ -270,9 +255,9 @@ class UpdateNowPlayingTrackRemoval(
   private val scope = CoroutineScope(dispatchers.network)
   private val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     scope.launch {
-      val response = adapter.fromJsonValue(message.data)
+      val response = adapter.fromJsonValue(protocolMessage.data)
       if (response != null && response.success) {
         nowPlayingRepository.remove(response.index + 1)
       }
@@ -285,9 +270,9 @@ class UpdatePlaybackPositionCommand(
   private val state: TrackPositionState
 ) : ProtocolAction {
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     val adapter = moshi.adapter(Position::class.java)
-    val response = adapter.fromJsonValue(message.data) ?: return
+    val response = adapter.fromJsonValue(protocolMessage.data) ?: return
 
     state.set(
       PlayingPosition(
@@ -299,8 +284,8 @@ class UpdatePlaybackPositionCommand(
 }
 
 class ProtocolVersionUpdate() : ProtocolAction {
-  override fun execute(message: ProtocolMessage) {
-    Timber.v(message.data.toString())
+  override fun execute(protocolMessage: ProtocolMessage) {
+    Timber.v(protocolMessage.data.toString())
   }
 }
 

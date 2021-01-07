@@ -10,6 +10,7 @@ import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.ui.UiMessageBase
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -26,7 +27,7 @@ class GenreViewModel(
     var lastSource: LiveData<PagedList<Genre>> = repository.getAll().paged()
     _genres.addSource(lastSource) { data -> _genres.value = data }
 
-    searchModel.search.onEach {
+    searchModel.search.drop(1).onEach {
       _genres.removeSource(lastSource)
 
       val factory = if (it.isEmpty()) repository.getAll() else repository.search(it)

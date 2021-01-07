@@ -1,3 +1,7 @@
 package com.kelsos.mbrc.networking.connections
 
-class ConnectionStatus(@Connection.Status val status: Int = Connection.OFF)
+sealed class ConnectionStatus {
+  object Off : ConnectionStatus()
+  object On : ConnectionStatus()
+  object Active : ConnectionStatus()
+}

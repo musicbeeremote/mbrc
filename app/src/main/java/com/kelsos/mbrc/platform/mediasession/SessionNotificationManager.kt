@@ -16,10 +16,6 @@ import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.platform.ForegroundHooks
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.OPEN
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.CoroutineScope
@@ -91,7 +87,7 @@ class SessionNotificationManager(
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-    val resId = if (notificationData.playerState == PlayerState.PLAYING) {
+    val resId = if (notificationData.playerState == PlayerState.Playing) {
       R.drawable.ic_action_pause
     } else {
       R.drawable.ic_action_play
@@ -120,24 +116,24 @@ class SessionNotificationManager(
         .setSubText(album)
     }
 
-    builder.setContentIntent(getPendingIntent(OPEN, context))
+    builder.setContentIntent(getPendingIntent(RemoteIntentCode.Open, context))
 
     return builder
   }
 
   private fun getPreviousAction(): Action {
-    val previousIntent = getPendingIntent(PREVIOUS, context)
+    val previousIntent = getPendingIntent(RemoteIntentCode.Previous, context)
     return Action.Builder(R.drawable.ic_action_previous, previous, previousIntent).build()
   }
 
   private fun getPlayAction(playStateIcon: Int): Action {
-    val playIntent = getPendingIntent(PLAY, context)
+    val playIntent = getPendingIntent(RemoteIntentCode.Play, context)
 
     return Action.Builder(playStateIcon, play, playIntent).build()
   }
 
   private fun getNextAction(): Action {
-    val nextIntent = getPendingIntent(NEXT, context)
+    val nextIntent = getPendingIntent(RemoteIntentCode.Next, context)
     return Action.Builder(R.drawable.ic_action_next, next, nextIntent).build()
   }
 
@@ -176,7 +172,7 @@ class SessionNotificationManager(
     }
   }
 
-  override fun playerStateChanged(state: String) {
+  override fun playerStateChanged(state: PlayerState) {
     if (notificationData.playerState == state) {
       return
     }

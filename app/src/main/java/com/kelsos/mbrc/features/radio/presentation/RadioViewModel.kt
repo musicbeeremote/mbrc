@@ -36,7 +36,7 @@ class RadioViewModel(
 
   fun play(path: String) {
     scope.launch(dispatchers.network) {
-      val response = queueApi.queue(Queue.NOW, listOf(path))
+      val response = queueApi.queue(Queue.Now, listOf(path))
         .fold(
           {
             RadioUiMessages.NetworkError

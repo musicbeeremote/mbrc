@@ -8,15 +8,22 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentMiniControlBinding
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MiniControlFragment : Fragment() {
+  private val viewModel: MiniControlViewModel by viewModel()
 
-  private val viewModel: MiniControlViewModel by inject()
-  private lateinit var binding: FragmentMiniControlBinding
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
+    val binding: FragmentMiniControlBinding = DataBindingUtil.inflate(
+      inflater,
+      R.layout.fragment_mini_control,
+      container,
+      false
+    )
     binding.viewModel = viewModel
 
     viewModel.playerStatus.observe(viewLifecycleOwner) {
@@ -30,19 +37,6 @@ class MiniControlFragment : Fragment() {
     viewModel.trackPosition.observe(viewLifecycleOwner) {
       binding.position = it
     }
-  }
-
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mini_control, container, false)
     return binding.root
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    binding.unbind()
   }
 }

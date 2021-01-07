@@ -22,7 +22,9 @@ class ConnectivityVerifierImpl(
       connection.close()
       val (context, _) = deserializationAdapter.objectify(response, SocketMessage::class)
 
-      if (context != Protocol.VerifyConnection) {
+      val type = Protocol.fromString(context)
+
+      if (type != Protocol.VerifyConnection) {
         throw NoValidPluginConnection()
       }
       true

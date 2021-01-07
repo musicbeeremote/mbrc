@@ -25,4 +25,10 @@
       android:title="@string/library__action_refresh"
       app:showAsAction="ifRoom" />
 
+  <item
+      android:id="@+id/library__action_only_album_artists"
+      android:checkable="true"
+      android:title="@string/library__action_only_album_artists"
+      app:showAsAction="never" />
+
 </menu>

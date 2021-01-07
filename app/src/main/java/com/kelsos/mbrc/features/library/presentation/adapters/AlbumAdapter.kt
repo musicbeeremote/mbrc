@@ -16,10 +16,10 @@ class AlbumAdapter : LibraryAdapter<Album, AlbumViewHolder>(
   private val indicatorPressed: (View, Int) -> Unit = { view, position ->
     view.popup(R.menu.popup_album) {
       val action = when (it) {
-        R.id.popup_album_tracks -> Queue.DEFAULT
-        R.id.popup_album_queue_next -> Queue.NEXT
-        R.id.popup_album_queue_last -> Queue.LAST
-        R.id.popup_album_play -> Queue.NOW
+        R.id.popup_album_tracks -> Queue.Default
+        R.id.popup_album_queue_next -> Queue.Next
+        R.id.popup_album_queue_last -> Queue.Last
+        R.id.popup_album_play -> Queue.Now
         else -> throw IllegalArgumentException("invalid menuItem id $it")
       }
 

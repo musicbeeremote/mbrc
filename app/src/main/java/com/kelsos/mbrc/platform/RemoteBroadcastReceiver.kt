@@ -12,9 +12,10 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
+import com.kelsos.mbrc.preferences.CallAction
 import com.kelsos.mbrc.preferences.SettingsManager
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
@@ -30,7 +31,7 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   fun filter(context: Context): IntentFilter {
     val hasPermission =
       context.checkSelfPermission(READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-    val handleCallAction = settingsManager.getCallAction() != SettingsManager.NONE
+    val handleCallAction = settingsManager.getCallAction() != CallAction.None
 
     return IntentFilter().apply {
       if (hasPermission && handleCallAction) {
@@ -47,10 +48,10 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   override fun onReceive(context: Context, intent: Intent) {
     when (intent.action) {
       TelephonyManager.ACTION_PHONE_STATE_CHANGED -> onPhoneStateChange(intent)
-      RemoteViewIntentBuilder.PLAY_PRESSED -> performAction(Protocol.PlayerPlayPause, true)
-      RemoteViewIntentBuilder.NEXT_PRESSED -> performAction(Protocol.PlayerNext, true)
+      RemoteViewIntentBuilder.PLAY_PRESSED -> performAction(Protocol.PlayerPlayPause)
+      RemoteViewIntentBuilder.NEXT_PRESSED -> performAction(Protocol.PlayerNext)
       RemoteViewIntentBuilder.CLOSE_PRESSED -> context.stopService()
-      RemoteViewIntentBuilder.PREVIOUS_PRESSED -> performAction(Protocol.PlayerPrevious, true)
+      RemoteViewIntentBuilder.PREVIOUS_PRESSED -> performAction(Protocol.PlayerPrevious)
       RemoteViewIntentBuilder.CANCELLED_NOTIFICATION -> context.stopService()
     }
   }
@@ -65,13 +66,14 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     if (!TelephonyManager.EXTRA_STATE_RINGING.equals(state, ignoreCase = true)) return
 
     when (settingsManager.getCallAction()) {
-      SettingsManager.PAUSE -> performAction(Protocol.PlayerPause, true)
-      SettingsManager.STOP -> performAction(Protocol.PlayerStop, true)
-      SettingsManager.REDUCE -> volumeModifyUseCase.reduceVolume()
+      CallAction.Pause -> performAction(Protocol.PlayerPause)
+      CallAction.Stop -> performAction(Protocol.PlayerStop)
+      CallAction.Reduce -> volumeModifyUseCase.reduceVolume()
+      else -> {}
     }
   }
 
-  private fun performAction(@Protocol.Context context: String, data: Any) {
-    userActionUseCase.perform(UserAction.create(context, data))
+  private fun performAction(protocol: Protocol) {
+    userActionUseCase.perform(UserAction.create(protocol, true))
   }
 }

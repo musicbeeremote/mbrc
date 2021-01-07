@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ShareActionProvider
 import androidx.core.view.MenuItemCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.changelog.ChangelogDialog
@@ -20,11 +21,7 @@ import com.kelsos.mbrc.features.library.PlayingTrack
 import org.koin.android.ext.android.inject
 
 class PlayerFragment : Fragment(), VolumeDialogProvider {
-
   private val viewModel: PlayerViewModel by inject()
-
-  private lateinit var dataBinding: FragmentPlayerBinding
-
   private var menu: Menu? = null
   private var shareActionProvider: ShareActionProvider? = null
 
@@ -37,36 +34,29 @@ class PlayerFragment : Fragment(), VolumeDialogProvider {
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    dataBinding = FragmentPlayerBinding.inflate(inflater, container, false).apply {
-      volumeProvider = this@PlayerFragment
-      track = PlayingTrack()
-    }
-    return dataBinding.root
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    dataBinding.viewModel = viewModel
+  ): View {
+    val binding: FragmentPlayerBinding = DataBindingUtil.inflate(
+      inflater,
+      R.layout.fragment_player,
+      container,
+      false
+    )
+    binding.viewModel = viewModel
+    binding.volumeProvider = this@PlayerFragment
+    binding.track = PlayingTrack()
 
     viewModel.playerStatus.observe(viewLifecycleOwner) {
-      dataBinding.status = it
+      binding.status = it
       menu?.findItem(R.id.player_screen__action_scrobbling)?.isChecked = it.scrobbling
     }
 
     viewModel.playingTrack.observe(viewLifecycleOwner) {
-      dataBinding.track = it
-      shareActionProvider?.setShareIntent(getShareIntent())
+      binding.track = it
+      shareActionProvider?.setShareIntent(getShareIntent(it))
     }
 
-    viewModel.trackPosition.observe(viewLifecycleOwner) {
-      dataBinding.position = it
-    }
-
-    viewModel.trackRating.observe(viewLifecycleOwner) {
-      updateRating(it)
-    }
-
+    viewModel.trackPosition.observe(viewLifecycleOwner) { binding.position = it }
+    viewModel.trackRating.observe(viewLifecycleOwner) { updateRating(it) }
     viewModel.emitter.observe(viewLifecycleOwner) { message ->
       if (message.hasBeenHandled) {
         return@observe
@@ -76,11 +66,7 @@ class PlayerFragment : Fragment(), VolumeDialogProvider {
         is PlayerUiMessage.ShowPluginUpdate -> Unit
       }
     }
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    dataBinding.unbind()
+    return binding.root
   }
 
   fun notifyPluginOutOfDate() {
@@ -118,10 +104,9 @@ class PlayerFragment : Fragment(), VolumeDialogProvider {
     }
   }
 
-  private fun getShareIntent(): Intent {
+  private fun getShareIntent(track: PlayingTrack): Intent {
     return Intent(Intent.ACTION_SEND).apply {
-      val track = dataBinding.track
-      val payload = "Now Playing: ${track?.artist} - ${track?.title}"
+      val payload = "Now Playing: ${track.artist} - ${track.title}"
       type = "text/plain"
       putExtra(Intent.EXTRA_TEXT, payload)
     }

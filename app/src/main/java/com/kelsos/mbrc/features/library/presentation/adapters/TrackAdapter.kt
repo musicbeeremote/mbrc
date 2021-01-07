@@ -17,10 +17,10 @@ class TrackAdapter : LibraryAdapter<Track, TrackViewHolder>(
     view.popup(R.menu.popup_track) {
 
       val action = when (it) {
-        R.id.popup_track_queue_next -> Queue.NEXT
-        R.id.popup_track_queue_last -> Queue.LAST
-        R.id.popup_track_play -> Queue.NOW
-        R.id.popup_track_play_queue_all -> Queue.ADD_ALL
+        R.id.popup_track_queue_next -> Queue.Next
+        R.id.popup_track_queue_last -> Queue.Last
+        R.id.popup_track_play -> Queue.Now
+        R.id.popup_track_play_queue_all -> Queue.AddAll
         else -> throw IllegalArgumentException("invalid menuItem id $it")
       }
 

@@ -1,16 +1,19 @@
 package com.kelsos.mbrc.content.activestatus
 
-object Repeat {
+sealed class Repeat(val mode: String) {
+  object All : Repeat(ALL)
+  object None : Repeat(NONE)
+  object One : Repeat(ONE)
 
-  const val ALL = "all"
-  const val NONE = "none"
-  const val ONE = "one"
+  companion object {
+    const val ALL = "all"
+    const val NONE = "none"
+    const val ONE = "one"
 
-  @Retention(AnnotationRetention.SOURCE)
-  @androidx.annotation.StringDef(
-    ALL,
-    NONE,
-    ONE
-  )
-  annotation class Mode
+    fun fromString(mode: String): Repeat = when (mode) {
+      ALL -> All
+      ONE -> One
+      else -> None
+    }
+  }
 }

@@ -51,7 +51,7 @@ class FeedbackFragment : Fragment() {
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
+  ): View {
     binding = DataBindingUtil.inflate(inflater, R.layout.fragment_feedback, container, false)
     binding.feedbackSend.setOnClickListener { onFeedbackButtonClicked() }
     feedbackInput = binding.feedbackContent
