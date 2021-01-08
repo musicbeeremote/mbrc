@@ -129,6 +129,8 @@
   <string name="main__dialog_plugin_outdated_message">It seems that you are using an older version of the MusicBee Remote Plugin. Some features require an newer version of the plugin to work. Please Update.</string>
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
+  <string name="menu_play_artist">Play Now (Queue Artist)</string>
+  <string name="menu_play_album">Play Now (Queue Album)</string>
   <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
   <string name="nav_radio">Radio</string>
   <string name="radio__refresh_failed">There was an error while refreshing the radio stations</string>

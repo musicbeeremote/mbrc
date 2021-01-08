@@ -52,8 +52,10 @@ interface TrackDao {
   fun getArtistTrackPaths(artist: String): List<String>
 
   @Query(
-    "select src from track where album_artist = :artist or album = :album " +
-      "order by album_artist asc, album asc, disc asc, trackno asc"
+    """
+        select src from track where (album_artist = :artist or artist = :artist) and album = :album 
+        order by album_artist asc, album asc, disc asc, trackno asc
+        """
   )
   fun getAlbumTrackPaths(album: String, artist: String): List<String>
 

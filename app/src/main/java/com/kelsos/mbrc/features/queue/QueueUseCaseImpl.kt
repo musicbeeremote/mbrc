@@ -12,6 +12,9 @@ import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.queue.Queue.Default
+import com.kelsos.mbrc.features.queue.Queue.PlayAlbum
+import com.kelsos.mbrc.features.queue.Queue.PlayAll
+import com.kelsos.mbrc.features.queue.Queue.PlayArtist
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import kotlinx.coroutines.withContext
 
@@ -31,7 +34,13 @@ class QueueUseCaseImpl(
     action: Queue
   ): Either<Throwable, Int> {
 
-    val selectedAction = if (action == Default) Queue.fromString(settings.defaultAction) else action
+    val selectedAction = when (action) {
+      Default -> Queue.fromString(settings.defaultAction)
+      PlayAlbum,
+      PlayArtist -> PlayAll
+      else -> action
+    }
+
     return withContext(dispatchers.network) {
       val (paths, path) = when (meta) {
         Genre -> Pair(tracksForGenre(id), null)
@@ -79,14 +88,18 @@ class QueueUseCaseImpl(
     val track = trackRepository.getById(id)
     if (track != null) {
       when (action) {
-        Queue.AddAlbum -> Pair(
+        PlayAlbum -> Pair(
           trackRepository.getAlbumTrackPaths(
             track.album,
             track.albumArtist
           ),
           track.src
         )
-        Queue.AddAll -> Pair(trackRepository.getAllTrackPaths(), track.src)
+        PlayArtist -> Pair(
+          trackRepository.getArtistTrackPaths(track.artist),
+          track.src
+        )
+        PlayAll -> Pair(trackRepository.getAllTrackPaths(), track.src)
         else -> Pair(listOf(track.src), null)
       }
     } else {
