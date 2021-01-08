@@ -4,7 +4,7 @@ sealed class Queue(val action: String) {
   object Next : Queue(NEXT)
   object Last : Queue(LAST)
   object Now : Queue(NOW)
-  object AddAll : Queue(ADD_ALL)
+  object PlayAll : Queue(PLAY_ALL)
   object PlayAlbum : Queue(PLAY_ALBUM)
   object PlayArtist : Queue(PLAY_ARTIST)
   object Default : Queue(DEFAULT)
@@ -13,7 +13,7 @@ sealed class Queue(val action: String) {
     const val NEXT = "next"
     const val LAST = "last"
     const val NOW = "now"
-    const val ADD_ALL = "add-all"
+    const val PLAY_ALL = "add-all"
     const val PLAY_ALBUM = "play-album"
     const val PLAY_ARTIST = "play-artist"
     const val DEFAULT = "default"
@@ -22,7 +22,7 @@ sealed class Queue(val action: String) {
       NEXT -> Next
       LAST -> Last
       NOW -> Now
-      ADD_ALL -> AddAll
+      PLAY_ALL -> PlayAll
       PLAY_ALBUM -> PlayAlbum
       PLAY_ARTIST -> PlayArtist
       DEFAULT -> Default

@@ -11,6 +11,10 @@ import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.player.cover.CoverPayload
+import com.kelsos.mbrc.features.queue.Queue.Default
+import com.kelsos.mbrc.features.queue.Queue.PlayAlbum
+import com.kelsos.mbrc.features.queue.Queue.PlayAll
+import com.kelsos.mbrc.features.queue.Queue.PlayArtist
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
@@ -32,20 +36,21 @@ class QueueUseCaseImpl(
     meta: Meta,
     action: Queue
   ) = withContext(dispatchers.network) {
-    val selectedAction = if (action == Queue.Default) {
-      Queue.fromString(settings.defaultAction)
-    } else {
-      action
+    val selectedAction = when (action) {
+      Default -> Queue.fromString(settings.defaultAction)
+      PlayAlbum,
+      PlayArtist -> PlayAll
+      else -> action
     }
 
-    val (sendAction, paths, path) = when (meta) {
-      Genre -> QueueData(selectedAction, tracksForGenre(id))
-      Artist -> QueueData(selectedAction, tracksForArtist(id))
-      Album -> QueueData(selectedAction, tracksForAlbum(id))
+    val (paths, path) = when (meta) {
+      Genre -> QueueData(tracksForGenre(id))
+      Artist -> QueueData(tracksForArtist(id))
+      Album -> QueueData(tracksForAlbum(id))
       Track -> tracks(id, action)
     }
 
-    val success = queueRequest(sendAction, paths, path)
+    val success = queueRequest(selectedAction, paths, path)
     return@withContext QueueResult(success, paths.size)
   }
 
@@ -95,19 +100,17 @@ class QueueUseCaseImpl(
       ?: throw IllegalArgumentException("$action is not supported")
 
     when (action) {
-      Queue.AddAll -> QueueData(action, trackRepository.getAllTrackPaths(), track.src)
-      Queue.PlayAlbum -> QueueData(
-        Queue.AddAll,
+      PlayAll -> QueueData(trackRepository.getAllTrackPaths(), track.src)
+      PlayAlbum -> QueueData(
         trackRepository.getAlbumTrackPaths(track.album, track.albumArtist),
         track.src
       )
-      Queue.PlayAlbum -> QueueData(
-        action = Queue.AddAll,
+      PlayAlbum -> QueueData(
         trackRepository.getArtistTrackPaths(track.artist),
         track.src
 
       )
-      else -> QueueData(action, listOf(track.src))
+      else -> QueueData(listOf(track.src))
     }
   }
 

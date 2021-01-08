@@ -125,6 +125,8 @@
   <string name="main__dialog_plugin_outdated_title">Plugin Update Required</string>
   <string name="settings_key_album_artists_only">mbrc.settings.album_artist_only</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
+  <string name="menu_play_artist">Play Now (Queue Artist)</string>
+  <string name="menu_play_album">Play Now (Queue Album)</string>
   <string name="press_to_sync">Press here to sync</string>
   <string name="application_starting">Attempting to establish connection…</string>
   <string name="nav_output">Output</string>
@@ -132,8 +134,6 @@
   <string name="output_selection__close_dialog">Close</string>
   <string name="output_selection__connection_error">Connection failed while attempting to retrieve the output devices.</string>
   <string name="output_selection__generic_error">There was a problem while retrieving the output devices.</string>
-  <string name="menu_play_artist">Play Now (Artist)</string>
-  <string name="menu_play_album">Play Now (Album)</string>
   <string name="library__sync_complete">"Sync completed successfully. %1$d genres(s), %2$d artist(s) %3$d album(s), %4$d tracks and %5$d playlist(s) are available."</string>
   <string name="library_menu__sync_state">Library Sync State</string>
   <string name="library_stats__title">Library Sync Information</string>
