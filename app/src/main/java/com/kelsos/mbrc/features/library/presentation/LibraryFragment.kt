@@ -11,18 +11,23 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.extensions.setAppBarTitle
+import com.kelsos.mbrc.databinding.DialogLibraryStatsBinding
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
 import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
 import com.kelsos.mbrc.features.library.sync.SyncCategory
+import com.kelsos.mbrc.metrics.SyncedData
+import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LibraryFragment(
   private val viewModel: LibraryViewModel
@@ -130,6 +135,7 @@ class LibraryFragment(
       view.findNavController().navigate(action)
     }
 
+    var syncing = false
     viewModel.syncProgress.observe(viewLifecycleOwner) {
       binding.libraryContainerSyncProgress.isGone = !it.running
       binding.libraryContainerProgress.progress = it.current
@@ -141,6 +147,10 @@ class LibraryFragment(
         it.total,
         category
       )
+      if (syncing && !it.running) {
+        syncComplete(viewModel.syncState.value)
+      }
+      syncing = it.running
     }
   }
 
@@ -166,6 +176,35 @@ class LibraryFragment(
     menu.findItem(R.id.library__action_only_album_artists).isChecked = viewModel.albumArtistOnly
   }
 
+  private fun showStats() {
+    viewModel.updateStats()
+
+    val binding = DialogLibraryStatsBinding.inflate(
+      layoutInflater,
+      null,
+      false
+    )
+
+    val updateStatusJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+      viewModel.syncState.collect {
+        binding.libraryStatsGenreValue.text = it.genres.toString()
+        binding.libraryStatsArtistLabel.text = it.artists.toString()
+        binding.libraryStatsAlbumValue.text = it.albums.toString()
+        binding.libraryStatsTrackValue.text = it.tracks.toString()
+        binding.libraryStatsPlaylistValue.text = it.playlists.toString()
+      }
+    }
+
+    MaterialAlertDialogBuilder(requireActivity())
+      .setTitle(R.string.library_stats__title)
+      .setView(binding.root)
+      .setPositiveButton(android.R.string.ok) { md, _ ->
+        updateStatusJob.cancel()
+        md.dismiss()
+      }
+      .show()
+  }
+
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.library__action_refresh -> {
@@ -183,8 +222,26 @@ class LibraryFragment(
         item.isChecked = !item.isChecked
         viewModel.setAlbumArtistOnly(item.isChecked)
       }
+      R.id.library__action_show_sync_state -> {
+        showStats()
+        return true
+      }
     }
     return super.onOptionsItemSelected(item)
+  }
+
+  private fun syncComplete(stats: SyncedData) {
+    val message = getString(
+      R.string.library__sync_complete,
+      stats.genres,
+      stats.artists,
+      stats.albums,
+      stats.tracks,
+      stats.playlists
+    )
+    Snackbar.make(requireView(), R.string.library__sync_complete, Snackbar.LENGTH_LONG)
+      .setText(message)
+      .show()
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
