@@ -12,9 +12,11 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.extensions.setAppBarTitle
+import com.kelsos.mbrc.databinding.DialogLibraryStatsBinding
 import com.kelsos.mbrc.databinding.FragmentLibraryBinding
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
@@ -155,6 +157,29 @@ class LibraryFragment(
     }
 
     menu.findItem(R.id.library__action_only_album_artists).isChecked = viewModel.albumArtistOnly
+    menu.findItem(R.id.library__action_show_sync_state).setOnMenuItemClickListener {
+      showStats()
+      return@setOnMenuItemClickListener true
+    }
+  }
+
+  private fun showStats() {
+    viewModel.updateStats()
+
+    val binding: DialogLibraryStatsBinding = DataBindingUtil.inflate(
+      layoutInflater,
+      R.layout.dialog__library_stats,
+      null,
+      false
+    )
+
+    binding.viewModel = viewModel
+
+    MaterialAlertDialogBuilder(requireActivity())
+      .setTitle(R.string.library_stats__title)
+      .setView(binding.root)
+      .setPositiveButton(android.R.string.ok) { md, _ -> md.dismiss() }
+      .show()
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {

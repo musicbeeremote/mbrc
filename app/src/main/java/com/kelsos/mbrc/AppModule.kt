@@ -60,6 +60,7 @@ import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepositoryImpl
 import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCase
 import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCaseImpl
+import com.kelsos.mbrc.features.library.sync.SyncStatProvider
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandlerImpl
 import com.kelsos.mbrc.features.library.sync.SyncWorker
@@ -195,6 +196,7 @@ val appModule = module {
 
   singleBy<NowPlayingRepository, NowPlayingRepositoryImpl>()
   singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
+  single<SyncStatProvider>()
 
   singleBy<SerializationAdapter, SerializationAdapterImpl>()
   singleBy<DeserializationAdapter, DeserializationAdapterImpl>()

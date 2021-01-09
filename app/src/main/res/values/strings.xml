@@ -178,4 +178,12 @@
   <string name="library_album_tracks__title">%1$s by %2$s</string>
   <string name="library__action_only_album_artists">Display only album artists</string>
   <string name="library_details__empty_content">Placeholder image for an empty list</string>
+  <string name="media__albums">Albums</string>
+  <string name="media__artists">Artists</string>
+  <string name="media__genres">Genres</string>
+  <string name="media__tracks">Tracks</string>
+  <string name="media__playlists">Playlists</string>
+  <string name="library_stats__description">The gollowing metadata entries are currently available to MusicBee Remote</string>
+  <string name="library_menu__sync_state">Library Sync State</string>
+  <string name="library_stats__title">Library Information</string>
 </resources>

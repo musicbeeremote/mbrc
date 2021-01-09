@@ -4,10 +4,10 @@ import timber.log.Timber
 
 class DummySyncMetrics : SyncMetrics {
 
-  var start = 0L;
+  var start = 0L
 
   override fun librarySyncComplete(metrics: SyncedData) {
-    val total = System.currentTimeMillis() - start;
+    val total = System.currentTimeMillis() - start
     Timber.v("Total sync time $total ms for the following $metrics")
   }
 
