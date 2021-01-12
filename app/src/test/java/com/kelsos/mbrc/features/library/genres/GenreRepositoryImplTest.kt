@@ -10,7 +10,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.library.data.GenreDao
 import com.kelsos.mbrc.features.library.dto.GenreDto
-import com.kelsos.mbrc.features.library.presentation.adapters.GenreAdapter
+import com.kelsos.mbrc.features.library.presentation.GenreAdapter
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepositoryImpl
 import com.kelsos.mbrc.networking.ApiBase

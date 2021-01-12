@@ -1,11 +1,10 @@
-package com.kelsos.mbrc.features.library.presentation.adapters
+package com.kelsos.mbrc.features.library.presentation
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.popup
-import com.kelsos.mbrc.features.library.presentation.viewholders.ArtistViewHolder
 
 class ArtistAdapter : LibraryAdapter<Artist, ArtistViewHolder>(DIFF_CALLBACK) {
 

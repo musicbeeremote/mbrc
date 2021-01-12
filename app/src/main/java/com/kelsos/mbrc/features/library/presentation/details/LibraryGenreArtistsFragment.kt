@@ -14,7 +14,7 @@ import com.kelsos.mbrc.databinding.FragmentLibraryDetailsBinding
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.data.Artist
-import com.kelsos.mbrc.features.library.presentation.adapters.ArtistAdapter
+import com.kelsos.mbrc.features.library.presentation.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.GenreArtistViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.collect

@@ -1,10 +1,9 @@
-package com.kelsos.mbrc.features.library.presentation.viewmodels
+package com.kelsos.mbrc.features.library.presentation
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kelsos.mbrc.features.library.data.Artist
-import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.BaseViewModel

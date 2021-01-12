@@ -7,9 +7,9 @@ import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.data.Album
+import com.kelsos.mbrc.features.library.presentation.AlbumAdapter
+import com.kelsos.mbrc.features.library.presentation.AlbumViewModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
-import com.kelsos.mbrc.features.library.presentation.adapters.AlbumAdapter
-import com.kelsos.mbrc.features.library.presentation.viewmodels.AlbumViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.work.WorkHandler
 import kotlinx.coroutines.flow.collect

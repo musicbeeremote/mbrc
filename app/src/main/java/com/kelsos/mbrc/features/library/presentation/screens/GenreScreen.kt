@@ -7,9 +7,9 @@ import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.data.Genre
+import com.kelsos.mbrc.features.library.presentation.GenreAdapter
+import com.kelsos.mbrc.features.library.presentation.GenreViewModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
-import com.kelsos.mbrc.features.library.presentation.adapters.GenreAdapter
-import com.kelsos.mbrc.features.library.presentation.viewmodels.GenreViewModel
 import com.kelsos.mbrc.features.queue.Queue.Default
 import com.kelsos.mbrc.features.work.WorkHandler
 import kotlinx.coroutines.flow.collect

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.library.presentation.adapters
+package com.kelsos.mbrc.features.library.presentation
 
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil

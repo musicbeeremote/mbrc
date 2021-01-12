@@ -14,7 +14,7 @@ import com.kelsos.mbrc.databinding.FragmentLibraryDetailsBinding
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.PopupActionHandler
 import com.kelsos.mbrc.features.library.data.Track
-import com.kelsos.mbrc.features.library.presentation.adapters.TrackAdapter
+import com.kelsos.mbrc.features.library.presentation.TrackAdapter
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.AlbumTrackViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.collect
