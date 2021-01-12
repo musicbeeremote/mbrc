@@ -1,38 +1,37 @@
-package com.kelsos.mbrc.features.library.presentation.viewmodels
+package com.kelsos.mbrc.features.library.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.paging.PagedList
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.paged
-import com.kelsos.mbrc.features.library.data.Track
-import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
-import com.kelsos.mbrc.features.library.repositories.TrackRepository
+import com.kelsos.mbrc.features.library.data.Album
+import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.ui.UiMessageBase
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class TrackViewModel(
-  private val repository: TrackRepository,
+class AlbumViewModel(
+  private val repository: AlbumRepository,
   searchModel: LibrarySearchModel,
   dispatchers: AppCoroutineDispatchers
 ) : BaseViewModel<UiMessageBase>(dispatchers) {
-  private val _tracks: MediatorLiveData<PagedList<Track>> = MediatorLiveData()
-  val tracks: LiveData<PagedList<Track>>
-    get() = _tracks
+  private val _albums: MediatorLiveData<PagedList<Album>> = MediatorLiveData()
+  val albums: LiveData<PagedList<Album>>
+    get() = _albums
 
   init {
-    var lastSource = repository.getAll().paged()
-    _tracks.addSource(lastSource) { data -> _tracks.value = data }
+    var lastSource = repository.getAlbumsSorted().paged()
+    _albums.addSource(lastSource) { data -> _albums.value = data }
 
     searchModel.search.drop(1).onEach {
-      _tracks.removeSource(lastSource)
+      _albums.removeSource(lastSource)
 
       val factory = if (it.isEmpty()) repository.getAll() else repository.search(it)
       lastSource = factory.paged()
-      _tracks.addSource(lastSource) { data -> _tracks.value = data }
+      _albums.addSource(lastSource) { data -> _albums.value = data }
     }.launchIn(scope)
   }
 }

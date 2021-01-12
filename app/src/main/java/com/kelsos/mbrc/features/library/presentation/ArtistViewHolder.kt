@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.library.presentation.viewholders
+package com.kelsos.mbrc.features.library.presentation
 
 import android.view.LayoutInflater
 import android.view.View

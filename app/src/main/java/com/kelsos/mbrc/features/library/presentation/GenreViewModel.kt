@@ -1,38 +1,38 @@
-package com.kelsos.mbrc.features.library.presentation.viewmodels
+package com.kelsos.mbrc.features.library.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.paging.PagedList
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.paged
-import com.kelsos.mbrc.features.library.data.Album
-import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
-import com.kelsos.mbrc.features.library.repositories.AlbumRepository
+import com.kelsos.mbrc.features.library.data.Genre
+import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.ui.UiMessageBase
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class AlbumViewModel(
-  private val repository: AlbumRepository,
+class GenreViewModel(
+  private val repository: GenreRepository,
   searchModel: LibrarySearchModel,
   dispatchers: AppCoroutineDispatchers
 ) : BaseViewModel<UiMessageBase>(dispatchers) {
-  private val _albums: MediatorLiveData<PagedList<Album>> = MediatorLiveData()
-  val albums: LiveData<PagedList<Album>>
-    get() = _albums
+  private val _genres: MediatorLiveData<PagedList<Genre>> = MediatorLiveData()
+  val genres: LiveData<PagedList<Genre>>
+    get() = _genres
 
   init {
-    var lastSource = repository.getAlbumsSorted().paged()
-    _albums.addSource(lastSource) { data -> _albums.value = data }
+    var lastSource: LiveData<PagedList<Genre>> = repository.getAll().paged()
+    _genres.addSource(lastSource) { data -> _genres.value = data }
 
     searchModel.search.drop(1).onEach {
-      _albums.removeSource(lastSource)
+      _genres.removeSource(lastSource)
 
       val factory = if (it.isEmpty()) repository.getAll() else repository.search(it)
       lastSource = factory.paged()
-      _albums.addSource(lastSource) { data -> _albums.value = data }
+
+      _genres.addSource(lastSource) { data -> _genres.value = data }
     }.launchIn(scope)
   }
 }

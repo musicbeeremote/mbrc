@@ -7,8 +7,8 @@ import com.kelsos.mbrc.common.utilities.nonNullObserver
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
-import com.kelsos.mbrc.features.library.presentation.adapters.TrackAdapter
-import com.kelsos.mbrc.features.library.presentation.viewmodels.TrackViewModel
+import com.kelsos.mbrc.features.library.presentation.TrackAdapter
+import com.kelsos.mbrc.features.library.presentation.TrackViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.work.WorkHandler
 

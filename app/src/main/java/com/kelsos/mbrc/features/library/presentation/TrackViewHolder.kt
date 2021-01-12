@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.library.presentation.viewholders
+package com.kelsos.mbrc.features.library.presentation
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,47 +7,44 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.extensions.string
-import com.kelsos.mbrc.features.library.data.Album
+import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.ui.BindableViewHolder
 import kotterknife.bindView
 
-class AlbumViewHolder(
+class TrackViewHolder(
   itemView: View,
-  indicatorPressed: (View, Int) -> Unit,
-  pressed: (View, Int) -> Unit
-) : BindableViewHolder<Album>(itemView) {
+  indicatorPressed: (view: View, position: Int) -> Unit,
+  pressed: (view: View, position: Int) -> Unit
+) : BindableViewHolder<Track>(itemView) {
   private val artist: TextView by bindView(R.id.line_two)
-  private val album: TextView by bindView(R.id.line_one)
+  private val title: TextView by bindView(R.id.line_one)
   private val indicator: ImageView by bindView(R.id.overflow_menu)
   private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
-  private val emptyAlbum: String by lazy { string(R.string.non_album_tracks) }
 
   init {
     indicator.setOnClickListener { indicatorPressed(it, adapterPosition) }
     itemView.setOnClickListener { pressed(it, adapterPosition) }
   }
 
-  override fun bindTo(item: Album) {
-    val title = item.album
-    val artist = item.artist
-    this.album.text = if (title.isBlank()) emptyAlbum else title
-    this.artist.text = if (artist.isBlank()) unknownArtist else artist
-  }
-
   override fun clear() {
     artist.text = ""
-    album.text = ""
+    title.text = ""
+  }
+
+  override fun bindTo(item: Track) {
+    title.text = item.title
+    artist.text = if (item.artist.isBlank()) unknownArtist else item.artist
   }
 
   companion object {
     fun create(
       parent: ViewGroup,
-      indicatorPressed: (View, Int) -> Unit,
-      pressed: (View, Int) -> Unit
-    ): AlbumViewHolder {
+      indicatorPressed: (view: View, position: Int) -> Unit,
+      pressed: (view: View, position: Int) -> Unit
+    ): TrackViewHolder {
       val inflater: LayoutInflater = LayoutInflater.from(parent.context)
       val view = inflater.inflate(R.layout.listitem_dual, parent, false)
-      return AlbumViewHolder(
+      return TrackViewHolder(
         view,
         indicatorPressed,
         pressed
