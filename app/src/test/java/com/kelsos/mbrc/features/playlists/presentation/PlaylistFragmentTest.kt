@@ -14,12 +14,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.events.Event
-import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.utils.Matchers
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.isGone
 import com.kelsos.mbrc.utils.isVisible
+import com.kelsos.mbrc.utils.mockMiniControlViewModel
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -30,6 +30,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -45,7 +46,7 @@ class PlaylistFragmentTest {
   @get:Rule
   val rule = InstantTaskExecutorRule()
 
-  private lateinit var viewModel: PlaylistViewModel
+  private lateinit var playlistViewModel: PlaylistViewModel
 
   private val playlist = Playlist(
     name = "Test",
@@ -55,16 +56,14 @@ class PlaylistFragmentTest {
 
   @Before
   fun setUp() {
-    viewModel = mockk()
-    val miniControlFactory: MiniControlFactory = mockk()
-    every { miniControlFactory.attach(any()) } just Runs
+    playlistViewModel = mockk()
     startKoin {
       modules(
         listOf(
           module {
             single<PlaylistAdapter>()
-            single { viewModel }
-            single { miniControlFactory }
+            viewModel { playlistViewModel }
+            viewModel { mockMiniControlViewModel() }
           }
         )
       )
@@ -79,8 +78,8 @@ class PlaylistFragmentTest {
   @Test
   fun `when no data shows empty view with message`() {
     val liveData = MockFactory<Playlist>(emptyList()).paged()
-    every { viewModel.playlists } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { playlistViewModel.playlists } answers { liveData }
+    every { playlistViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(PlaylistFragment::class.java)
 
     PlaylistRobot()
@@ -92,8 +91,8 @@ class PlaylistFragmentTest {
 
   @Test
   fun `initially shows loading`() {
-    every { viewModel.playlists } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { playlistViewModel.playlists } answers { MutableLiveData() }
+    every { playlistViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(PlaylistFragment::class.java)
 
     PlaylistRobot()
@@ -105,8 +104,8 @@ class PlaylistFragmentTest {
   @Test
   fun `after loading displays playlists`() {
     val liveData = MockFactory(listOf(playlist)).paged()
-    every { viewModel.playlists } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { playlistViewModel.playlists } answers { liveData }
+    every { playlistViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(PlaylistFragment::class.java)
 
     PlaylistRobot()
@@ -118,9 +117,9 @@ class PlaylistFragmentTest {
   @Test
   fun `click on playlist should play the playlist`() {
     val liveData = MockFactory(listOf(playlist)).paged()
-    every { viewModel.playlists } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
-    every { viewModel.play(any()) } just Runs
+    every { playlistViewModel.playlists } answers { liveData }
+    every { playlistViewModel.emitter } answers { MutableLiveData() }
+    every { playlistViewModel.play(any()) } just Runs
     launchInContainer(PlaylistFragment::class.java)
 
     PlaylistRobot()
@@ -129,15 +128,15 @@ class PlaylistFragmentTest {
       .listVisible()
       .textVisible("Test")
 
-    verify(exactly = 1) { viewModel.play("""c:\playlists\playlist.m3u""") }
+    verify(exactly = 1) { playlistViewModel.play("""c:\playlists\playlist.m3u""") }
   }
 
   @Test
   fun `on swipe down enter refreshing mode`() {
     val liveData = MockFactory(listOf(playlist)).paged()
-    every { viewModel.playlists } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
-    every { viewModel.play(any()) } just Runs
+    every { playlistViewModel.playlists } answers { liveData }
+    every { playlistViewModel.emitter } answers { MutableLiveData() }
+    every { playlistViewModel.play(any()) } just Runs
     launchInContainer(PlaylistFragment::class.java)
 
     PlaylistRobot()
@@ -151,8 +150,8 @@ class PlaylistFragmentTest {
   @Test
   fun `show a refresh failed message when refresh fails`() {
     val events = MutableLiveData<Event<PlaylistUiMessages>>()
-    every { viewModel.playlists } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { playlistViewModel.playlists } answers { MutableLiveData() }
+    every { playlistViewModel.emitter } answers { events }
     events.postValue(Event(PlaylistUiMessages.RefreshFailed))
     launchInContainer(PlaylistFragment::class.java)
     PlaylistRobot()
@@ -163,8 +162,8 @@ class PlaylistFragmentTest {
   @Test
   fun `show a refresh success message when refresh success`() {
     val events = MutableLiveData<Event<PlaylistUiMessages>>()
-    every { viewModel.playlists } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { playlistViewModel.playlists } answers { MutableLiveData() }
+    every { playlistViewModel.emitter } answers { events }
     events.postValue(Event(PlaylistUiMessages.RefreshSuccess))
     launchInContainer(PlaylistFragment::class.java)
     PlaylistRobot()

@@ -75,8 +75,6 @@ import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
 import com.kelsos.mbrc.features.lyrics.presentation.LyricsViewModel
-import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
-import com.kelsos.mbrc.features.minicontrol.MiniControlFactoryImpl
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManagerImpl
@@ -257,7 +255,6 @@ val appModule = module {
   single<DefaultActionPreferenceStore>()
 
   singleBy<WidgetUpdater, WidgetUpdaterImpl>()
-  single<MiniControlFactory> { MiniControlFactoryImpl }
 
   single {
     AppRxSchedulers(

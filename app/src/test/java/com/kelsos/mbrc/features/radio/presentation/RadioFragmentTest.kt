@@ -17,10 +17,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.events.Event
-import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.utils.Matchers
 import com.kelsos.mbrc.utils.MockFactory
+import com.kelsos.mbrc.utils.mockMiniControlViewModel
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -31,6 +31,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -47,21 +48,18 @@ class RadioFragmentTest {
 
   @get:Rule
   val rule = InstantTaskExecutorRule()
-
-  private lateinit var viewModel: RadioViewModel
+  private lateinit var radioViewModel: RadioViewModel
 
   @Before
   fun setUp() {
-    viewModel = mockk()
-    val miniControlFactory: MiniControlFactory = mockk()
-    every { miniControlFactory.attach(any()) } just Runs
+    radioViewModel = mockk()
     startKoin {
       modules(
         listOf(
           module {
             single<RadioAdapter>()
-            single { viewModel }
-            single { miniControlFactory }
+            viewModel { radioViewModel }
+            viewModel { mockMiniControlViewModel() }
           }
         )
       )
@@ -76,8 +74,8 @@ class RadioFragmentTest {
   @Test
   fun `when no data shows empty view with message`() {
     val liveData = MockFactory<RadioStation>(emptyList()).paged()
-    every { viewModel.radios } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { radioViewModel.radios } answers { liveData }
+    every { radioViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(RadioFragment::class.java)
 
     RadioRobot()
@@ -89,8 +87,8 @@ class RadioFragmentTest {
 
   @Test
   fun `initially shows loading`() {
-    every { viewModel.radios } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { radioViewModel.radios } answers { MutableLiveData() }
+    every { radioViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(RadioFragment::class.java)
 
     RadioRobot()
@@ -111,8 +109,8 @@ class RadioFragmentTest {
         station
       )
     ).paged()
-    every { viewModel.radios } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { radioViewModel.radios } answers { liveData }
+    every { radioViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(RadioFragment::class.java)
 
     RadioRobot()
@@ -133,9 +131,9 @@ class RadioFragmentTest {
         station
       )
     ).paged()
-    every { viewModel.radios } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
-    every { viewModel.play(any()) } just Runs
+    every { radioViewModel.radios } answers { liveData }
+    every { radioViewModel.emitter } answers { MutableLiveData() }
+    every { radioViewModel.play(any()) } just Runs
     launchInContainer(RadioFragment::class.java)
 
     RadioRobot()
@@ -144,7 +142,7 @@ class RadioFragmentTest {
       .listVisible()
       .textVisible("Test")
 
-    verify(exactly = 1) { viewModel.play("http://test.radio") }
+    verify(exactly = 1) { radioViewModel.play("http://test.radio") }
   }
 
   @Test
@@ -159,9 +157,9 @@ class RadioFragmentTest {
         station
       )
     ).paged()
-    every { viewModel.radios } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
-    every { viewModel.play(any()) } just Runs
+    every { radioViewModel.radios } answers { liveData }
+    every { radioViewModel.emitter } answers { MutableLiveData() }
+    every { radioViewModel.play(any()) } just Runs
     launchInContainer(RadioFragment::class.java)
 
     RadioRobot()
@@ -175,8 +173,8 @@ class RadioFragmentTest {
   @Test
   fun `show a network error message when queue fails`() {
     val events = MutableLiveData<Event<RadioUiMessages>>()
-    every { viewModel.radios } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { radioViewModel.radios } answers { MutableLiveData() }
+    every { radioViewModel.emitter } answers { events }
     events.postValue(Event(RadioUiMessages.NetworkError))
     launchInContainer(RadioFragment::class.java)
     RadioRobot()
@@ -187,8 +185,8 @@ class RadioFragmentTest {
   @Test
   fun `show a queue error message when queue fails`() {
     val events = MutableLiveData<Event<RadioUiMessages>>()
-    every { viewModel.radios } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { radioViewModel.radios } answers { MutableLiveData() }
+    every { radioViewModel.emitter } answers { events }
     events.postValue(Event(RadioUiMessages.QueueFailed))
     launchInContainer(RadioFragment::class.java)
     RadioRobot()
@@ -199,8 +197,8 @@ class RadioFragmentTest {
   @Test
   fun `show a queue success message when queue succeeds`() {
     val events = MutableLiveData<Event<RadioUiMessages>>()
-    every { viewModel.radios } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { radioViewModel.radios } answers { MutableLiveData() }
+    every { radioViewModel.emitter } answers { events }
     events.postValue(Event(RadioUiMessages.QueueSuccess))
     launchInContainer(RadioFragment::class.java)
     RadioRobot()
@@ -211,8 +209,8 @@ class RadioFragmentTest {
   @Test
   fun `show a refresh failed message when refresh fails`() {
     val events = MutableLiveData<Event<RadioUiMessages>>()
-    every { viewModel.radios } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { radioViewModel.radios } answers { MutableLiveData() }
+    every { radioViewModel.emitter } answers { events }
     events.postValue(Event(RadioUiMessages.RefreshFailed))
     launchInContainer(RadioFragment::class.java)
     RadioRobot()
@@ -223,8 +221,8 @@ class RadioFragmentTest {
   @Test
   fun `show a refresh success message when refresh success`() {
     val events = MutableLiveData<Event<RadioUiMessages>>()
-    every { viewModel.radios } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { radioViewModel.radios } answers { MutableLiveData() }
+    every { radioViewModel.emitter } answers { events }
     events.postValue(Event(RadioUiMessages.RefreshSuccess))
     launchInContainer(RadioFragment::class.java)
     RadioRobot()

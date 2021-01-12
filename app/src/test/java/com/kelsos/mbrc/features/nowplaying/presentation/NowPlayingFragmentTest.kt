@@ -22,7 +22,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.events.Event
-import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.utils.DragAndDropAction
 import com.kelsos.mbrc.utils.MockFactory
@@ -30,6 +29,7 @@ import com.kelsos.mbrc.utils.SingleFragmentActivity
 import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.isGone
 import com.kelsos.mbrc.utils.isVisible
+import com.kelsos.mbrc.utils.mockMiniControlViewModel
 import com.kelsos.mbrc.utils.swipeToRemove
 import io.mockk.Runs
 import io.mockk.every
@@ -41,6 +41,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -56,24 +57,23 @@ class NowPlayingFragmentTest {
   @get:Rule
   val rule = InstantTaskExecutorRule()
 
-  private lateinit var viewModel: NowPlayingViewModel
+  private lateinit var nowPlayingViewModel: NowPlayingViewModel
   private lateinit var state: PlayingTrackState
 
   @Before
   fun setUp() {
-    viewModel = mockk()
+    nowPlayingViewModel = mockk()
     state = mockk()
-    val miniControlFactory: MiniControlFactory = mockk()
-    every { miniControlFactory.attach(any()) } just Runs
-    every { viewModel.trackState } answers { state }
+
+    every { nowPlayingViewModel.trackState } answers { state }
     every { state.observe(any(), any()) } just Runs
     startKoin {
       modules(
         listOf(
           module {
             single<NowPlayingAdapter>()
-            single { viewModel }
-            single { miniControlFactory }
+            viewModel { nowPlayingViewModel }
+            viewModel { mockMiniControlViewModel() }
           }
         )
       )
@@ -88,8 +88,8 @@ class NowPlayingFragmentTest {
   @Test
   fun `when no data shows empty view with message`() {
     val liveData = MockFactory<NowPlaying>(emptyList()).paged()
-    every { viewModel.list } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.list } answers { liveData }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(NowPlayingFragment::class.java)
 
     NowPlayingRobot()
@@ -101,8 +101,8 @@ class NowPlayingFragmentTest {
 
   @Test
   fun `initially shows loading`() {
-    every { viewModel.list } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.list } answers { MutableLiveData() }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
     launchInContainer(NowPlayingFragment::class.java)
 
     NowPlayingRobot()
@@ -116,8 +116,8 @@ class NowPlayingFragmentTest {
     val liveData = MockFactory(
       TestDataFactories.nowPlayingListEntities(10)
     ).paged()
-    every { viewModel.list } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.list } answers { liveData }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
 
     launchInContainer(NowPlayingFragment::class.java)
 
@@ -132,9 +132,9 @@ class NowPlayingFragmentTest {
     val liveData = MockFactory(
       TestDataFactories.nowPlayingListEntities(10)
     ).paged()
-    every { viewModel.list } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
-    every { viewModel.play(any()) } just Runs
+    every { nowPlayingViewModel.list } answers { liveData }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.play(any()) } just Runs
 
     launchInContainer(NowPlayingFragment::class.java)
 
@@ -143,7 +143,7 @@ class NowPlayingFragmentTest {
       .done()
       .listVisible()
 
-    verify(exactly = 1) { viewModel.play(5) }
+    verify(exactly = 1) { nowPlayingViewModel.play(5) }
   }
 
   @Test
@@ -151,9 +151,9 @@ class NowPlayingFragmentTest {
     val liveData = MockFactory(
       TestDataFactories.nowPlayingListEntities(10)
     ).paged()
-    every { viewModel.list } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
-    every { viewModel.removeTrack(any()) } just Runs
+    every { nowPlayingViewModel.list } answers { liveData }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.removeTrack(any()) } just Runs
 
     launchInContainer(NowPlayingFragment::class.java)
 
@@ -162,7 +162,7 @@ class NowPlayingFragmentTest {
       .done()
       .listVisible()
 
-    verify(exactly = 1) { viewModel.removeTrack(5) }
+    verify(exactly = 1) { nowPlayingViewModel.removeTrack(5) }
   }
 
   @Test
@@ -170,10 +170,10 @@ class NowPlayingFragmentTest {
     val liveData = MockFactory(
       TestDataFactories.nowPlayingListEntities(10)
     ).paged()
-    every { viewModel.list } answers { liveData }
-    every { viewModel.emitter } answers { MutableLiveData() }
-    every { viewModel.moveTrack(any(), any()) } just Runs
-    every { viewModel.move() } just Runs
+    every { nowPlayingViewModel.list } answers { liveData }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.moveTrack(any(), any()) } just Runs
+    every { nowPlayingViewModel.move() } just Runs
 
     launchInContainer(NowPlayingFragment::class.java)
 
@@ -182,20 +182,20 @@ class NowPlayingFragmentTest {
       .done()
       .listVisible()
 
-    verify(exactly = 1) { viewModel.moveTrack(0, 1) }
-    verify(exactly = 1) { viewModel.moveTrack(1, 2) }
-    verify(exactly = 1) { viewModel.moveTrack(2, 3) }
-    verify(exactly = 1) { viewModel.moveTrack(3, 4) }
-    verify(exactly = 1) { viewModel.moveTrack(4, 5) }
-    verify(exactly = 1) { viewModel.move() }
+    verify(exactly = 1) { nowPlayingViewModel.moveTrack(0, 1) }
+    verify(exactly = 1) { nowPlayingViewModel.moveTrack(1, 2) }
+    verify(exactly = 1) { nowPlayingViewModel.moveTrack(2, 3) }
+    verify(exactly = 1) { nowPlayingViewModel.moveTrack(3, 4) }
+    verify(exactly = 1) { nowPlayingViewModel.moveTrack(4, 5) }
+    verify(exactly = 1) { nowPlayingViewModel.move() }
   }
 
   @Test
   fun `show a queue success message when queue succeeds`() {
     val events = MutableLiveData<Event<NowPlayingUiMessages>>()
 
-    every { viewModel.list } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { nowPlayingViewModel.list } answers { MutableLiveData() }
+    every { nowPlayingViewModel.emitter } answers { events }
 
     events.postValue(Event(NowPlayingUiMessages.RefreshSuccess))
     launchInContainer(NowPlayingFragment::class.java)
@@ -209,8 +209,8 @@ class NowPlayingFragmentTest {
   fun `show a fail message when refresh fails`() {
     val events = MutableLiveData<Event<NowPlayingUiMessages>>()
 
-    every { viewModel.list } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { events }
+    every { nowPlayingViewModel.list } answers { MutableLiveData() }
+    every { nowPlayingViewModel.emitter } answers { events }
 
     events.postValue(Event(NowPlayingUiMessages.RefreshFailed))
     launchInContainer(NowPlayingFragment::class.java)
@@ -223,9 +223,9 @@ class NowPlayingFragmentTest {
   @Test
   fun `searching on the toolbar should pass to the viewmodel`() {
     val scenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
-    every { viewModel.search(any()) } just Runs
-    every { viewModel.list } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.search(any()) } just Runs
+    every { nowPlayingViewModel.list } answers { MutableLiveData() }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
 
     scenario.onActivity {
       it.setFragment(NowPlayingFragment())
@@ -235,15 +235,15 @@ class NowPlayingFragmentTest {
     onView(isAssignableFrom(EditText::class.java))
       .perform(typeText("track"), pressImeActionButton())
 
-    verify(exactly = 1) { viewModel.search("track") }
+    verify(exactly = 1) { nowPlayingViewModel.search("track") }
   }
 
   @Test
   fun `back button should close the search menu`() {
     val scenario = ActivityScenario.launch(SingleFragmentActivity::class.java)
-    every { viewModel.search(any()) } just Runs
-    every { viewModel.list } answers { MutableLiveData() }
-    every { viewModel.emitter } answers { MutableLiveData() }
+    every { nowPlayingViewModel.search(any()) } just Runs
+    every { nowPlayingViewModel.list } answers { MutableLiveData() }
+    every { nowPlayingViewModel.emitter } answers { MutableLiveData() }
 
     scenario.onActivity {
       it.setFragment(NowPlayingFragment())

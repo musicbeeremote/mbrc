@@ -183,7 +183,9 @@
   <string name="media__genres">Genres</string>
   <string name="media__tracks">Tracks</string>
   <string name="media__playlists">Playlists</string>
-  <string name="library_stats__description">The gollowing metadata entries are currently available to MusicBee Remote</string>
+  <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote</string>
   <string name="library_menu__sync_state">Library Sync State</string>
   <string name="library_stats__title">Library Information</string>
+  <string name="now_playing_empty_icon_description">A placeholder icon indicating an empty list</string>
+  <string name="playlists__empty_icon_description">A placeholder icon indicating an empty list</string>
 </resources>
