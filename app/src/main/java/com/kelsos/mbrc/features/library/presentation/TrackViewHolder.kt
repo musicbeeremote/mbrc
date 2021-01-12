@@ -5,20 +5,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.extensions.string
+import com.kelsos.mbrc.databinding.ListitemDualBinding
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.ui.BindableViewHolder
-import kotterknife.bindView
 
 class TrackViewHolder(
-  itemView: View,
+  binding: ListitemDualBinding,
   indicatorPressed: (view: View, position: Int) -> Unit,
   pressed: (view: View, position: Int) -> Unit
-) : BindableViewHolder<Track>(itemView) {
-  private val artist: TextView by bindView(R.id.line_two)
-  private val title: TextView by bindView(R.id.line_one)
-  private val indicator: ImageView by bindView(R.id.overflow_menu)
+) : BindableViewHolder<Track>(binding.root) {
+  private val artist: TextView = binding.lineTwo
+  private val title: TextView = binding.lineOne
+  private val indicator: ImageView = binding.overflowMenu
   private val unknownArtist: String by lazy { string(R.string.unknown_artist) }
 
   init {
@@ -43,9 +44,14 @@ class TrackViewHolder(
       pressed: (view: View, position: Int) -> Unit
     ): TrackViewHolder {
       val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-      val view = inflater.inflate(R.layout.listitem_dual, parent, false)
+      val binding: ListitemDualBinding = DataBindingUtil.inflate(
+        inflater,
+        R.layout.listitem_dual,
+        parent,
+        false
+      )
       return TrackViewHolder(
-        view,
+        binding,
         indicatorPressed,
         pressed
       )
