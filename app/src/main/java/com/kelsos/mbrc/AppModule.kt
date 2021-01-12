@@ -29,27 +29,34 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.library.presentation.AlbumAdapter
+import com.kelsos.mbrc.features.library.presentation.AlbumViewModel
+import com.kelsos.mbrc.features.library.presentation.AlbumViewModelImpl
+import com.kelsos.mbrc.features.library.presentation.ArtistAdapter
+import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
+import com.kelsos.mbrc.features.library.presentation.ArtistViewModelImpl
+import com.kelsos.mbrc.features.library.presentation.GenreAdapter
+import com.kelsos.mbrc.features.library.presentation.GenreViewModel
+import com.kelsos.mbrc.features.library.presentation.GenreViewModelImpl
 import com.kelsos.mbrc.features.library.presentation.LibraryFragment
 import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
-import com.kelsos.mbrc.features.library.presentation.AlbumAdapter
-import com.kelsos.mbrc.features.library.presentation.ArtistAdapter
-import com.kelsos.mbrc.features.library.presentation.GenreAdapter
 import com.kelsos.mbrc.features.library.presentation.TrackAdapter
+import com.kelsos.mbrc.features.library.presentation.TrackViewModel
+import com.kelsos.mbrc.features.library.presentation.TrackViewModelImpl
 import com.kelsos.mbrc.features.library.presentation.details.LibraryAlbumTracksFragment
 import com.kelsos.mbrc.features.library.presentation.details.LibraryArtistAlbumsFragment
 import com.kelsos.mbrc.features.library.presentation.details.LibraryGenreArtistsFragment
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.AlbumTrackViewModel
+import com.kelsos.mbrc.features.library.presentation.details.viemodels.AlbumTrackViewModelImpl
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.ArtistAlbumViewModel
+import com.kelsos.mbrc.features.library.presentation.details.viemodels.ArtistAlbumViewModelImpl
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.GenreArtistViewModel
+import com.kelsos.mbrc.features.library.presentation.details.viemodels.GenreArtistViewModelImpl
 import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
 import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
 import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
 import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
-import com.kelsos.mbrc.features.library.presentation.AlbumViewModel
-import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
-import com.kelsos.mbrc.features.library.presentation.GenreViewModel
-import com.kelsos.mbrc.features.library.presentation.TrackViewModel
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.AlbumRepositoryImpl
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
@@ -169,6 +176,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.koin.androidx.experimental.dsl.viewModel
 import org.koin.androidx.fragment.dsl.fragment
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.qualifier.named
@@ -352,10 +360,10 @@ val uiModule = module {
   factory<AlbumAdapter>()
   factory<TrackAdapter>()
 
-  viewModel<AlbumViewModel>()
-  viewModel<GenreViewModel>()
-  viewModel<ArtistViewModel>()
-  viewModel<TrackViewModel>()
+  viewModel<AlbumViewModel> { AlbumViewModelImpl(get(), get(), get()) }
+  viewModel<GenreViewModel> { GenreViewModelImpl(get(), get(), get()) }
+  viewModel<ArtistViewModel> { ArtistViewModelImpl(get(), get(), get(), get()) }
+  viewModel<TrackViewModel> { TrackViewModelImpl(get(), get(), get())}
 
   single<LibrarySearchModel>()
   factory<GenreScreen>()
@@ -363,7 +371,7 @@ val uiModule = module {
   factory<ArtistScreen>()
   factory<TrackScreen>()
 
-  viewModel<GenreArtistViewModel>()
-  viewModel<ArtistAlbumViewModel>()
-  viewModel<AlbumTrackViewModel>()
+  viewModel<GenreArtistViewModel> { GenreArtistViewModelImpl(get(), get(), get()) }
+  viewModel<ArtistAlbumViewModel> { ArtistAlbumViewModelImpl(get(), get(), get()) }
+  viewModel<AlbumTrackViewModel> { AlbumTrackViewModelImpl(get(), get(), get()) }
 }
