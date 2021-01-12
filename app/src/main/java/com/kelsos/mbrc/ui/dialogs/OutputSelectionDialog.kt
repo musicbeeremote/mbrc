@@ -16,9 +16,9 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.utilities.nonNullObserver
-import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
 class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
@@ -27,9 +27,9 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
   private lateinit var fm: FragmentManager
   private lateinit var dialog: AlertDialog
 
-  private val availableOutputs: Spinner by bindView(R.id.output_selection__available_outputs)
-  private val loadingProgress: ProgressBar by bindView(R.id.output_selection__loading_outputs)
-  private val errorMessage: TextView by bindView(R.id.output_selection__error_message)
+  private lateinit var availableOutputs: Spinner
+  private lateinit var loadingProgress: ProgressBar
+  private lateinit var errorMessage: TextView
 
   private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -68,8 +68,11 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
 
     val inflater = LayoutInflater.from(context)
     val view = inflater.inflate(R.layout.dialog__output_selection, null, false)
+    availableOutputs = view.findViewById(R.id.output_selection__available_outputs)
+    loadingProgress = view.findViewById(R.id.output_selection__loading_outputs)
+    errorMessage = view.findViewById(R.id.output_selection__error_message)
 
-    dialog = AlertDialog.Builder(context)
+    dialog = MaterialAlertDialogBuilder(context)
       .setTitle(R.string.output_selection__select_output)
       .setView(view)
       .setNeutralButton(R.string.output_selection__close_dialog) { dialogInterface, _ ->

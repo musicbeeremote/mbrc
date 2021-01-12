@@ -12,7 +12,6 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
-import kotterknife.bindView
 
 class PlaylistAdapter : ListAdapter<Playlist, PlaylistAdapter.ViewHolder>(
   DIFF_CALLBACK
@@ -40,8 +39,8 @@ class PlaylistAdapter : ListAdapter<Playlist, PlaylistAdapter.ViewHolder>(
 
   class ViewHolder(itemView: View) : BindableViewHolder<Playlist>(itemView) {
 
-    private val name: TextView by bindView(R.id.line_one)
-    private val context: ImageView by bindView(R.id.ui_item_context_indicator)
+    private val name: TextView = itemView.findViewById(R.id.line_one)
+    private val context: ImageView = itemView.findViewById(R.id.ui_item_context_indicator)
 
     override fun bindTo(item: Playlist) {
       context.isVisible = false

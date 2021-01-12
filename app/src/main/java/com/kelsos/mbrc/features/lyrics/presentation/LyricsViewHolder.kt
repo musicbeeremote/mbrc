@@ -6,11 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.ui.BindableViewHolder
-import kotterknife.bindView
 
 class LyricsViewHolder(itemView: View) : BindableViewHolder<String>(itemView) {
 
-  private val title: TextView by bindView(android.R.id.text1)
+  private val title: TextView = itemView.findViewById(android.R.id.text1)
 
   override fun bindTo(item: String) {
     title.text = item

@@ -16,7 +16,7 @@ class ArtistViewHolder(
   indicatorPressed: (View, Int) -> Unit,
   pressed: (View, Int) -> Unit
 ) : BindableViewHolder<Artist>(binding.root) {
-  private val title: TextView  = binding.lineOne
+  private val title: TextView = binding.lineOne
   private val indicator: ImageView = binding.uiItemContextIndicator
   private val empty: String = itemView.context.getString(R.string.empty)
 

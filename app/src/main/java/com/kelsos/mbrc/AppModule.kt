@@ -363,7 +363,7 @@ val uiModule = module {
   viewModel<AlbumViewModel> { AlbumViewModelImpl(get(), get(), get()) }
   viewModel<GenreViewModel> { GenreViewModelImpl(get(), get(), get()) }
   viewModel<ArtistViewModel> { ArtistViewModelImpl(get(), get(), get(), get()) }
-  viewModel<TrackViewModel> { TrackViewModelImpl(get(), get(), get())}
+  viewModel<TrackViewModel> { TrackViewModelImpl(get(), get(), get()) }
 
   single<LibrarySearchModel>()
   factory<GenreScreen>()

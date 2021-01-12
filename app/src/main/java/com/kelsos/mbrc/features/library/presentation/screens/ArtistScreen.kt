@@ -6,9 +6,9 @@ import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.common.utilities.nonNullObserver
 import com.kelsos.mbrc.features.library.MenuItemSelectedListener
 import com.kelsos.mbrc.features.library.data.Artist
-import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
 import com.kelsos.mbrc.features.library.presentation.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
+import com.kelsos.mbrc.features.library.presentation.LibraryViewHolder
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.Queue.Default
 import com.kelsos.mbrc.features.work.WorkHandler

@@ -1,21 +1,22 @@
 package com.kelsos.mbrc.ui.dialogs
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
-import kotterknife.bindView
 
 class SettingsDialogFragment : DialogFragment() {
-
-  private val hostEdit: EditText by bindView(R.id.settings_dialog__hostname_edit)
-  private val nameEdit: EditText by bindView(R.id.settings_dialog__name_edit)
-  private val portEdit: EditText by bindView(R.id.settings_dialog__port_edit)
+  private lateinit var hostEdit: EditText
+  private lateinit var nameEdit: EditText
+  private lateinit var portEdit: EditText
 
   private var saveListener: SettingsSaveListener? = null
   private lateinit var settings: ConnectionSettingsEntity
@@ -27,44 +28,50 @@ class SettingsDialogFragment : DialogFragment() {
     this.settings = settings
   }
 
+  @SuppressLint("InflateParams")
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val context = requireContext()
-    val builder = AlertDialog.Builder(context)
-    with(builder) {
-      setView(R.layout.dialog_settings)
-      setTitle(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
+    val title = if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add
+    val positive = if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add
+    val view = LayoutInflater.from(context).inflate(R.layout.dialog__settings, null, false)
+    hostEdit = view.findViewById(R.id.settings_dialog__hostname_edit)
+    portEdit = view.findViewById(R.id.settings_dialog__port_edit)
+    nameEdit = view.findViewById(R.id.settings_dialog__name_edit)
 
-      setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+    val builder = MaterialAlertDialogBuilder(context)
+      .setView(view)
+      .setTitle(title)
+      .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
         dialogInterface.dismiss()
       }
-
-      val resId = if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add
-
-      setPositiveButton(resId) { dialog, _ ->
-        var shouldIClose = true
-        val hostname = hostEdit.text.toString()
-        val computerName = nameEdit.text.toString()
-
-        if (hostname.isEmpty() || computerName.isEmpty()) {
-          shouldIClose = false
-        }
-
-        val portText = portEdit.text.toString()
-
-        val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
-        if (isValid(portNum) && shouldIClose) {
-          settings.apply {
-            name = computerName
-            address = hostname
-            port = portNum
-          }
-
-          saveListener?.onSave(settings)
-          dialog.dismiss()
-        }
+      .setPositiveButton(positive) { dialog, _ ->
+        onPositiveAction(dialog)
       }
-    }
     return builder.create()
+  }
+
+  private fun onPositiveAction(dialog: DialogInterface) {
+    var shouldIClose = true
+    val hostname = hostEdit.text.toString()
+    val computerName = nameEdit.text.toString()
+
+    if (hostname.isEmpty() || computerName.isEmpty()) {
+      shouldIClose = false
+    }
+
+    val portText = portEdit.text.toString()
+
+    val portNum = if (TextUtils.isEmpty(portText)) 0 else Integer.parseInt(portText)
+    if (isValid(portNum) && shouldIClose) {
+      settings.apply {
+        name = computerName
+        address = hostname
+        port = portNum
+      }
+
+      saveListener?.onSave(settings)
+      dialog.dismiss()
+    }
   }
 
   override fun onStart() {
@@ -79,7 +86,7 @@ class SettingsDialogFragment : DialogFragment() {
 
   private fun isValid(port: Int): Boolean = if (port < MIN_PORT || port > MAX_PORT) {
     val context = context ?: error("null context")
-    AlertDialog.Builder(context)
+    MaterialAlertDialogBuilder(context)
       .setTitle(R.string.alert_invalid_range)
       .setMessage(R.string.alert_invalid_port_number)
       .setPositiveButton(android.R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
