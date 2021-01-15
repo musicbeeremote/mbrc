@@ -8,8 +8,8 @@ import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.events.UserAction
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import io.mockk.Runs
@@ -60,7 +60,7 @@ class MiniControlViewModelTest {
     miniControlViewModel.next()
     val capturingSlot = slot<UserAction>()
     verify(exactly = 1) { userActionUseCase.perform(capture(capturingSlot)) }
-    assertThat(capturingSlot.captured.context).isEqualTo(Protocol.PlayerNext)
+    assertThat(capturingSlot.captured.protocol).isEqualTo(Protocol.PlayerNext)
   }
 
   @Test
@@ -68,7 +68,7 @@ class MiniControlViewModelTest {
     miniControlViewModel.previous()
     val capturingSlot = slot<UserAction>()
     verify(exactly = 1) { userActionUseCase.perform(capture(capturingSlot)) }
-    assertThat(capturingSlot.captured.context).isEqualTo(Protocol.PlayerPrevious)
+    assertThat(capturingSlot.captured.protocol).isEqualTo(Protocol.PlayerPrevious)
   }
 
   @Test
@@ -76,6 +76,6 @@ class MiniControlViewModelTest {
     miniControlViewModel.playPause()
     val capturingSlot = slot<UserAction>()
     verify(exactly = 1) { userActionUseCase.perform(capture(capturingSlot)) }
-    assertThat(capturingSlot.captured.context).isEqualTo(Protocol.PlayerPlayPause)
+    assertThat(capturingSlot.captured.protocol).isEqualTo(Protocol.PlayerPlayPause)
   }
 }

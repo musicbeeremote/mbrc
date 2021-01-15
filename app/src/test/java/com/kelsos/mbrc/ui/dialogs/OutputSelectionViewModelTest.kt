@@ -2,14 +2,14 @@ package com.kelsos.mbrc.ui.dialogs
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import arrow.core.Either
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.utils.TestDispatchers
 import com.kelsos.mbrc.utils.observeOnce
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
-import io.reactivex.Single
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,14 +24,14 @@ class OutputSelectionViewModelTest {
   @get:Rule
   val rule = InstantTaskExecutorRule()
 
-  private lateinit var viewmodel: OutputSelectionViewModel
+  private lateinit var viewModel: OutputSelectionViewModel
   private lateinit var outputApi: OutputApi
 
   @Before
   fun setUp() {
     outputApi = mockk()
 
-    viewmodel = OutputSelectionViewModel(
+    viewModel = OutputSelectionViewModel(
       outputApi = outputApi,
       dispatchers = TestDispatchers.dispatchers
     )
@@ -39,18 +39,18 @@ class OutputSelectionViewModelTest {
 
   @Test
   fun `originally view model should have empty values`() {
-    viewmodel.outputs.observeOnce {
+    viewModel.outputs.observeOnce {
       assertThat(it).isEmpty()
     }
-    viewmodel.selection.observeOnce {
+    viewModel.selection.observeOnce {
       assertThat(it).isEmpty()
     }
   }
 
   @Test
   fun `after reload it should return the output information`() {
-    every { outputApi.getOutputs() } answers {
-      Single.just(
+    coEvery { outputApi.getOutputs() } coAnswers {
+      Either.right(
         OutputResponse(
           devices = listOf("Output 1", "Output 2"),
           active = "Output 2"
@@ -58,61 +58,61 @@ class OutputSelectionViewModelTest {
       )
     }
 
-    viewmodel.reload()
-    viewmodel.outputs.observeOnce {
-      assertThat(it).containsAllIn(listOf("Output 1", "Output 2"))
+    viewModel.reload()
+    viewModel.outputs.observeOnce {
+      assertThat(it).containsExactlyElementsIn(listOf("Output 1", "Output 2"))
     }
-    viewmodel.selection.observeOnce {
+    viewModel.selection.observeOnce {
       assertThat(it).isEqualTo("Output 2")
     }
-    viewmodel.emitter.observeOnce {
+    viewModel.emitter.observeOnce {
       assertThat(it.peekContent()).isEqualTo(OutputSelectionResult.Success)
     }
   }
 
   @Test
   fun `if there is a socket timeout the emitter should have the proper result`() {
-    every { outputApi.getOutputs() } answers {
-      Single.error(SocketTimeoutException())
+    coEvery { outputApi.getOutputs() } coAnswers {
+      Either.left(SocketTimeoutException())
     }
 
-    viewmodel.reload()
+    viewModel.reload()
 
-    viewmodel.emitter.observeOnce {
+    viewModel.emitter.observeOnce {
       assertThat(it.peekContent()).isEqualTo(OutputSelectionResult.ConnectionError)
     }
   }
 
   @Test
   fun `if there is a socket exception the emitter should have the proper result`() {
-    every { outputApi.getOutputs() } answers {
-      Single.error(SocketException())
+    coEvery { outputApi.getOutputs() } coAnswers {
+      Either.left(SocketException())
     }
 
-    viewmodel.reload()
+    viewModel.reload()
 
-    viewmodel.emitter.observeOnce {
+    viewModel.emitter.observeOnce {
       assertThat(it.peekContent()).isEqualTo(OutputSelectionResult.ConnectionError)
     }
   }
 
   @Test
   fun `if there is an exception the emitter should have the proper result`() {
-    every { outputApi.getOutputs() } answers {
-      Single.error(IOException())
+    coEvery { outputApi.getOutputs() } coAnswers {
+      Either.left(IOException())
     }
 
-    viewmodel.reload()
+    viewModel.reload()
 
-    viewmodel.emitter.observeOnce {
+    viewModel.emitter.observeOnce {
       assertThat(it.peekContent()).isEqualTo(OutputSelectionResult.UnknownError)
     }
   }
 
   @Test
   fun `if the user changes the output the result should update the live data`() {
-    every { outputApi.setOutput(any()) } answers {
-      Single.just(
+    coEvery { outputApi.setOutput(any()) } coAnswers {
+      Either.right(
         OutputResponse(
           devices = listOf("Output 1", "Output 2"),
           active = "Output 2"
@@ -120,15 +120,15 @@ class OutputSelectionViewModelTest {
       )
     }
 
-    viewmodel.setOutput("Output 2")
+    viewModel.setOutput("Output 2")
 
-    viewmodel.outputs.observeOnce {
-      assertThat(it).containsAllIn(listOf("Output 1", "Output 2"))
+    viewModel.outputs.observeOnce {
+      assertThat(it).containsExactlyElementsIn(listOf("Output 1", "Output 2"))
     }
-    viewmodel.selection.observeOnce {
+    viewModel.selection.observeOnce {
       assertThat(it).isEqualTo("Output 2")
     }
-    viewmodel.emitter.observeOnce {
+    viewModel.emitter.observeOnce {
       assertThat(it.peekContent()).isEqualTo(OutputSelectionResult.Success)
     }
   }

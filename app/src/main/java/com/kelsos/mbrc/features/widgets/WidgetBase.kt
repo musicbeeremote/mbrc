@@ -11,11 +11,9 @@ import android.widget.RemoteViews
 import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import arrow.core.Option
-import arrow.core.extensions.option.monad.binding
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.ui.navigation.player.PlayerFragment
 import com.squareup.picasso.Picasso
 import java.io.File
@@ -45,8 +43,9 @@ abstract class WidgetBase : AppWidgetProvider() {
 
   private fun Bundle.cover() = getString(WidgetUpdater.COVER_PATH, "")
 
-  @PlayerState.State
-  private fun Bundle.state() = getString(WidgetUpdater.PLAYER_STATE, PlayerState.UNDEFINED)
+  private fun Bundle.state(): PlayerState {
+    return PlayerState.fromString(getString(WidgetUpdater.PLAYER_STATE, PlayerState.UNDEFINED))
+  }
 
   private fun Bundle.playingTrack(): PlayingTrack =
     getParcelable(WidgetUpdater.TRACK_INFO) ?: PlayingTrack()
@@ -54,15 +53,13 @@ abstract class WidgetBase : AppWidgetProvider() {
   override fun onReceive(context: Context?, intent: Intent?) {
     super.onReceive(context, intent)
 
-    val intentOption = Option.fromNullable(intent)
-      .filter { it.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE }
-      .flatMap { Option.fromNullable(it.extras) }
-
-    binding {
-      val (extras) = intentOption
-      val (ctx) = Option.fromNullable(context)
-      updateWidget(ctx, extras)
+    val incomingIntent = intent ?: return
+    if (incomingIntent.action != AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
+      return
     }
+    val extras = incomingIntent.extras ?: return
+    val ctx = context ?: return
+    updateWidget(ctx, extras)
   }
 
   private fun updateWidget(context: Context, extras: Bundle) {
@@ -156,13 +153,13 @@ abstract class WidgetBase : AppWidgetProvider() {
     context: Context,
     manager: AppWidgetManager,
     widgetsIds: IntArray,
-    @PlayerState.State state: String
+    state: PlayerState
   ) {
     val widget = RemoteViews(context.packageName, layout())
 
     widget.setImageViewResource(
       playButtonId(),
-      if (PlayerState.PLAYING == state) {
+      if (PlayerState.Playing == state) {
         R.drawable.ic_action_pause
       } else {
         R.drawable.ic_action_play

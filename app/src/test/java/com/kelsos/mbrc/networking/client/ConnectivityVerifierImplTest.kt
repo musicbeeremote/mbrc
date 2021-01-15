@@ -1,13 +1,14 @@
 package com.kelsos.mbrc.networking.client
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Option
+import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
+import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl.NoValidPluginConnection
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -18,6 +19,7 @@ import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -38,7 +40,6 @@ import java.net.ServerSocket
 import java.util.Random
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class ConnectivityVerifierImplTest : KoinTest {
@@ -63,7 +64,7 @@ class ConnectivityVerifierImplTest : KoinTest {
 
   private fun startMockServer(
     prematureDisconnect: Boolean = false,
-    responseContext: String = Protocol.VerifyConnection,
+    responseContext: Protocol = Protocol.VerifyConnection,
     json: Boolean = true
   ): ServerSocket {
     val random = Random()
@@ -71,7 +72,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     val server = ServerSocket(port + random.nextInt(1000))
     val mockSocket = Runnable {
       server.soTimeout = 3000
-      val messageAdapter = moshi.adapter<SocketMessage>(SocketMessage::class.java)
+      val messageAdapter = moshi.adapter(SocketMessage::class.java)
 
       while (true) {
         Timber.v("Listening on ${server.inetAddress.hostAddress}:${server.localPort}")
@@ -83,7 +84,7 @@ class ConnectivityVerifierImplTest : KoinTest {
 
         val value = messageAdapter.fromJson(line)
 
-        if (value?.context != Protocol.VerifyConnection) {
+        if (Protocol.fromString(value?.context ?: "") != Protocol.VerifyConnection) {
           connection.close()
           server.close()
           return@Runnable
@@ -99,10 +100,10 @@ class ConnectivityVerifierImplTest : KoinTest {
         val output = PrintWriter(BufferedWriter(out), true)
         val newLine = "\r\n"
         if (json) {
-          val response = SocketMessage(context = responseContext)
+          val response = SocketMessage(context = responseContext.context)
           output.write(messageAdapter.toJson(response) + newLine + newLine)
         } else {
-          output.write(responseContext + newLine + newLine)
+          output.write(responseContext.context + newLine + newLine)
         }
         output.flush()
         input.close()
@@ -125,18 +126,15 @@ class ConnectivityVerifierImplTest : KoinTest {
     val server = startMockServer()
 
     every { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettingsEntity()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
-      return@answers Option.fromNullable(settings)
+      return@answers ConnectionSettingsEntity().apply {
+        address = server.inetAddress.hostAddress
+        port = server.localPort
+      }
     }
 
-    val subscriber = verifier.verify().test()
-    subscriber.awaitTerminalEvent(1, TimeUnit.SECONDS)
-    subscriber.assertComplete()
-    subscriber.assertNoErrors()
-    subscriber.assertValueCount(1)
-    subscriber.assertValue(true)
+    val result = runBlocking { verifier.verify() }
+    assertThat(result.isRight()).isTrue()
+    assertThat(result.orNull()).isTrue()
   }
 
   @Test
@@ -144,15 +142,15 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     val server = startMockServer(true)
     every { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettingsEntity()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
-      return@answers Option.fromNullable(settings)
+      return@answers ConnectionSettingsEntity().apply {
+        address = server.inetAddress.hostAddress
+        port = server.localPort
+      }
     }
 
-    val subscriber = verifier.verify().test()
-    subscriber.awaitTerminalEvent(1, TimeUnit.SECONDS)
-    subscriber.assertError(RuntimeException::class.java)
+    val result = runBlocking { verifier.verify() }
+    assertThat(result.isLeft()).isTrue()
+    assertThat(result.swap().orNull()).isInstanceOf(RuntimeException::class.java)
   }
 
   @Test
@@ -160,15 +158,15 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     val server = startMockServer(false, Protocol.ClientNotAllowed)
     every { connectionRepository.getDefault() } answers {
-      val settings = ConnectionSettingsEntity()
-      settings.address = server.inetAddress.hostAddress
-      settings.port = server.localPort
-      return@answers Option.fromNullable(settings)
+      return@answers ConnectionSettingsEntity().apply {
+        address = server.inetAddress.hostAddress
+        port = server.localPort
+      }
     }
 
-    val subscriber = verifier.verify().test()
-    subscriber.awaitTerminalEvent(1, TimeUnit.SECONDS)
-    subscriber.assertError(ConnectivityVerifierImpl.NoValidPluginConnection::class.java)
+    val result = runBlocking { verifier.verify() }
+    assertThat(result.isLeft()).isTrue()
+    assertThat(result.swap().orNull()).isInstanceOf(NoValidPluginConnection::class.java)
   }
 
   @Test
@@ -177,26 +175,26 @@ class ConnectivityVerifierImplTest : KoinTest {
     startMockServer(true)
 
     every { connectionRepository.getDefault() } answers {
-      return@answers Option.empty<ConnectionSettingsEntity>()
+      return@answers null
     }
 
-    val subscriber = verifier.verify().test()
-    subscriber.awaitTerminalEvent(1, TimeUnit.SECONDS)
-    subscriber.assertError(RuntimeException::class.java)
+    val result = runBlocking { verifier.verify() }
+    assertThat(result.isLeft()).isTrue()
+    assertThat(result.swap().orNull()).isInstanceOf(RuntimeException::class.java)
   }
 
   @Test
   fun testVerificationNoJsonPayload() {
     val verifier = this.verifier
-    startMockServer(false, "payload", false)
+    startMockServer(false, Protocol.fromString("a"), false)
 
     every { connectionRepository.getDefault() } answers {
-      return@answers Option.empty<ConnectionSettingsEntity>()
+      return@answers null
     }
 
-    val subscriber = verifier.verify().test()
-    subscriber.awaitTerminalEvent(1, TimeUnit.SECONDS)
-    subscriber.assertError(RuntimeException::class.java)
+    val result = runBlocking { verifier.verify() }
+    assertThat(result.isLeft()).isTrue()
+    assertThat(result.swap().orNull()).isInstanceOf(RuntimeException::class.java)
   }
 
   private val testModule = module {

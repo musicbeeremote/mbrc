@@ -4,8 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -15,7 +15,6 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
@@ -28,7 +27,6 @@ class UpdateNowPlayingTrackTest {
   @get:Rule
   val rule = InstantTaskExecutorRule()
 
-  private val slot = slot<PlayingTrack>()
   private val widgetUpdater: WidgetUpdater = mockk()
   private lateinit var update: UpdateNowPlayingTrack
   private lateinit var state: PlayingTrackState
@@ -74,10 +72,10 @@ class UpdateNowPlayingTrackTest {
       }
     }
     every { widgetUpdater.updatePlayingTrack(any()) } just Runs
-    every { state.getValue() } answers { updatedTrack }
+    every { state.hint(PlayingTrack::class).getValue() } answers { updatedTrack }
 
     val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
-    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     update.execute(message)
 
     assertThat(updatedTrack.artist).isEqualTo("Gamma Ray")
@@ -87,13 +85,15 @@ class UpdateNowPlayingTrackTest {
   @Test
   fun `it should not try to update the widget if no data exist`() {
     every { state.set(any<PlayingTrack.() -> PlayingTrack>()) } answers {
-      firstArg<PlayingTrack.() -> PlayingTrack>().invoke(PlayingTrack())
+      firstArg<PlayingTrack.() -> PlayingTrack>().invoke(
+        PlayingTrack()
+      )
     }
     every { widgetUpdater.updatePlayingTrack(any()) } just Runs
-    every { state.getValue() } answers { null }
+    every { state.hint(PlayingTrack::class).getValue() } answers { null }
 
     val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
-    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     update.execute(message)
 
     verify(exactly = 0) { widgetUpdater.updatePlayingTrack(any()) }

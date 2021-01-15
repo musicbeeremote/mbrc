@@ -10,11 +10,9 @@ import com.kelsos.mbrc.networking.connections.InetAddressMapper
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
-import io.reactivex.Single
 import timber.log.Timber
 import java.io.IOException
 import java.net.Socket
-import java.net.SocketException
 import java.nio.charset.Charset
 
 class RequestManagerImpl(
@@ -39,7 +37,7 @@ class RequestManagerImpl(
 
       val message = deserializationAdapter.objectify(line, SocketMessage::class)
 
-      val context = message.context
+      val context = Protocol.fromString(message.context)
       Timber.v("incoming context => $context")
       if (Protocol.Player == context) {
         val payload = getProtocolPayload()
@@ -60,31 +58,24 @@ class RequestManagerImpl(
     }
   }
 
-  override fun request(connection: ActiveConnection, message: SocketMessage): Single<String> {
-    return Single.create {
-      try {
-        connection.send(message.getBytes())
+  override fun request(connection: ActiveConnection, message: SocketMessage): String {
+    connection.send(message.getBytes())
 
-        val readLine = connection.readLine()
+    val readLine = connection.readLine()
 
-        val line = if (readLine.isEmpty()) {
-          connection.readLine()
-        } else {
-          readLine
-        }
-
-        it.onSuccess(line)
-      } catch (ex: SocketException) {
-        it.tryOnError(ex)
-      }
+    return if (readLine.isEmpty()) {
+      connection.readLine()
+    } else {
+      readLine
     }
   }
 
   private fun connect(firstMessage: SocketMessage?): Socket {
     val mapper = InetAddressMapper()
-    val connectionSettings = checkNotNull(repository.getDefault().orNull())
+    val connectionSettings = checkNotNull(repository.getDefault())
 
     try {
+      Timber.v("Preparing connection to $connectionSettings")
       val socketAddress = mapper.map(connectionSettings)
       Timber.v("Creating new socket")
 
@@ -96,7 +87,7 @@ class RequestManagerImpl(
         }
       }
     } catch (e: IOException) {
-      Timber.v("failed to create socket")
+      Timber.v(e, "failed to create socket")
       throw e
     }
   }

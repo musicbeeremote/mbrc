@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking.client
 
-import io.reactivex.Single
+import arrow.core.Either
 
 interface ConnectivityVerifier {
-  fun verify(): Single<Boolean>
+  suspend fun verify(): Either<Throwable, Boolean>
 }

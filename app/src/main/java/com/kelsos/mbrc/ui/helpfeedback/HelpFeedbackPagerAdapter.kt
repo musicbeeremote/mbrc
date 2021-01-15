@@ -10,7 +10,7 @@ import com.kelsos.mbrc.R
 class HelpFeedbackPagerAdapter(
   fm: FragmentManager,
   context: Activity
-) : FragmentStatePagerAdapter(fm) {
+) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
   private val context: Context
   private val titles = intArrayOf(R.string.tab_help, R.string.tab_feedback)
 

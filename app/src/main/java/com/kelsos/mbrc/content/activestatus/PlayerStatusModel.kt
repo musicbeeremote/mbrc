@@ -4,24 +4,21 @@ import androidx.annotation.IntRange
 import com.kelsos.mbrc.events.ShuffleMode
 
 data class PlayerStatusModel(
-  @IntRange(from = 0, to = 100)
+  @get:IntRange(from = 0, to = 100)
   val volume: Int = 0,
   val mute: Boolean = false,
-  @ShuffleMode.Shuffle
-  val shuffle: String = ShuffleMode.OFF,
+  val shuffle: ShuffleMode = ShuffleMode.Off,
   val scrobbling: Boolean = false,
-  @Repeat.Mode
-  val repeat: String = Repeat.NONE,
-  @PlayerState.State
-  var state: String = PlayerState.UNDEFINED
+  val repeat: Repeat = Repeat.None,
+  var state: PlayerState = PlayerState.Undefined
 ) {
-  fun isShuffleAutoDj(): Boolean = shuffle == ShuffleMode.AUTODJ
+  fun isShuffleAutoDj(): Boolean = shuffle == ShuffleMode.AutoDJ
 
-  fun isShuffleOff(): Boolean = shuffle == ShuffleMode.OFF
+  fun isShuffleOff(): Boolean = shuffle == ShuffleMode.Off
 
-  fun isRepeatOff(): Boolean = repeat == Repeat.NONE
+  fun isRepeatOff(): Boolean = repeat == Repeat.None
 
-  fun isRepeatOne(): Boolean = repeat == Repeat.ONE
+  fun isRepeatOne(): Boolean = repeat == Repeat.One
 
-  fun isPlaying(): Boolean = state == PlayerState.PLAYING
+  fun isPlaying(): Boolean = state == PlayerState.Playing
 }

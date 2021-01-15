@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.ui.widgets
 
 import android.content.Context
-import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatImageView
 
 class SquareImageView : AppCompatImageView {
   constructor(context: Context) : super(context)

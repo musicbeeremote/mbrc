@@ -18,12 +18,6 @@
       android:title="@string/settings_miscellaneous_incoming_call_action"/>
 
     <androidx.preference.CheckBoxPreference
-      android:defaultValue="true"
-      android:key="@string/settings_key_notification_control"
-      android:summary="@string/settings_sum_notification_control"
-      android:title="@string/settings_title_notification_control"/>
-
-    <androidx.preference.CheckBoxPreference
       android:defaultValue="false"
       android:key="@string/settings_key_plugin_check"
       android:summary="@string/setting_miscellaneous_plugin_updates_summary"

@@ -3,15 +3,13 @@ package com.kelsos.mbrc.preferences
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.logging.FileLoggingTree
-import com.kelsos.mbrc.preferences.SettingsManager.CallAction
-import com.kelsos.mbrc.preferences.SettingsManager.Companion.NONE
-import com.kelsos.mbrc.preferences.SettingsManager.Companion.REDUCE
-import com.kelsos.mbrc.utilities.RemoteUtils
-import io.reactivex.Single
+import com.kelsos.mbrc.preferences.CallAction.Companion.NONE
+import com.kelsos.mbrc.preferences.CallAction.Companion.REDUCE
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 import java.util.Date
 
@@ -20,11 +18,11 @@ class SettingsManagerImpl(
   private val preferences: SharedPreferences
 ) : SettingsManager {
 
-  private val displayAlbumArtist: MutableLiveData<Boolean> = MutableLiveData()
+  private val displayAlbumArtist: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
   init {
     setupManager()
-    displayAlbumArtist.postValue(
+    displayAlbumArtist.tryEmit(
       preferences.getBoolean(
         getKey(R.string.settings_key_album_artists_only),
         false
@@ -55,15 +53,12 @@ class SettingsManagerImpl(
     }
   }
 
-  override fun isNotificationControlEnabled(): Boolean {
-    return preferences.getBoolean(getKey(R.string.settings_key_notification_control), true)
-  }
-
-  @CallAction
-  override fun getCallAction(): String = preferences.getString(
-    getKey(R.string.settings_key_incoming_call_action),
-    NONE
-  ) ?: NONE
+  override fun getCallAction(): CallAction = CallAction.fromString(
+    preferences.getString(
+      getKey(R.string.settings_key_incoming_call_action),
+      NONE
+    ) ?: NONE
+  )
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
@@ -79,7 +74,7 @@ class SettingsManagerImpl(
       .apply()
   }
 
-  override fun shouldDisplayOnlyAlbumArtists(): LiveData<Boolean> {
+  override fun onlyAlbumArtists(): StateFlow<Boolean> {
     return displayAlbumArtist
   }
 
@@ -87,25 +82,22 @@ class SettingsManagerImpl(
     preferences.edit {
       putBoolean(getKey(R.string.settings_key_album_artists_only), onlyAlbumArtist)
     }
-    displayAlbumArtist.postValue(onlyAlbumArtist)
+    displayAlbumArtist.tryEmit(onlyAlbumArtist)
   }
 
-  override fun shouldShowChangeLog(): Single<Boolean> {
-    return Single.fromCallable {
+  override fun shouldShowChangeLog(): Boolean {
+    val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
+    val currentVersion = RemoteUtils.getVersionCode()
 
-      val lastVersionCode = preferences.getLong(getKey(R.string.settings_key_last_version_run), 0)
-      val currentVersion = RemoteUtils.getVersionCode()
+    if (lastVersionCode < currentVersion) {
+      preferences.edit()
+        .putLong(getKey(R.string.settings_key_last_version_run), currentVersion.toLong())
+        .apply()
+      Timber.d("Update or fresh install")
 
-      if (lastVersionCode < currentVersion) {
-        preferences.edit()
-          .putLong(getKey(R.string.settings_key_last_version_run), currentVersion.toLong())
-          .apply()
-        Timber.d("Update or fresh install")
-
-        return@fromCallable true
-      }
-      return@fromCallable false
+      return true
     }
+    return false
   }
 
   private fun getKey(settingsKey: Int) = context.getString(settingsKey)

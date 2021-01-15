@@ -4,104 +4,114 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.EditText
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.logging.LogHelper
-import com.kelsos.mbrc.utilities.RemoteUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotterknife.bindView
+import com.kelsos.mbrc.common.utilities.RemoteUtils
+import com.kelsos.mbrc.databinding.FragmentFeedbackBinding
+import org.koin.android.ext.android.inject
 import java.io.File
 
 class FeedbackFragment : Fragment() {
+  private lateinit var binding: FragmentFeedbackBinding
+  private lateinit var includeDevice: CheckBox
+  private lateinit var includeLogs: CheckBox
+  private lateinit var feedbackInput: TextInputEditText
+  private lateinit var sendButton: Button
 
-  private val feedbackEditText: EditText by bindView(R.id.feedback_content)
-  private val deviceInfo: CheckBox by bindView(R.id.include_device_info)
-  private val logInfo: CheckBox by bindView(R.id.include_log_info)
-  private val feedbackButton: Button by bindView(R.id.feedback_button)
+  private val viewModel: FeedbackViewModel by inject()
+
+  private val feedbackText: String
+    get() {
+      var feedbackText = feedbackInput.text.toString().trim { it <= ' ' }
+      if (includeDevice.isChecked) {
+        val device = Build.DEVICE
+        val manufacturer = Build.MANUFACTURER
+        val appVersion = RemoteUtils.getVersion()
+        val androidVersion = Build.VERSION.RELEASE
+
+        feedbackText += getString(
+          R.string.feedback_version_info,
+          manufacturer,
+          device,
+          androidVersion,
+          appVersion
+        )
+      }
+      return feedbackText
+    }
 
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_feedback, container, false)
+  ): View {
+    binding = DataBindingUtil.inflate(inflater, R.layout.fragment_feedback, container, false)
+    binding.feedbackSend.setOnClickListener { onFeedbackButtonClicked() }
+    feedbackInput = binding.feedbackContent
+    includeDevice = binding.feedbackIncludeDevice
+    includeLogs = binding.feedbackIncludeLogs
+    sendButton = binding.feedbackSend
+    return binding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    val context = context ?: error("null context")
-
-    LogHelper.logsExist(context)
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({
-        logInfo.isEnabled = true
-      }) {
+    viewModel.emitter.observe(viewLifecycleOwner) {
+      if (it.hasBeenHandled) {
+        return@observe
       }
-    feedbackButton.setOnClickListener { onFeedbackButtonClicked() }
+
+      val message = it.contentIfNotHandled ?: return@observe
+      when (message) {
+        is FeedbackUiMessage.ZipFileCreated -> openChooser(feedbackText, message.zip)
+        is FeedbackUiMessage.SendFeedback -> openChooser(feedbackText)
+        is FeedbackUiMessage.EnableLogs -> includeLogs.isEnabled = true
+      }
+    }
+    viewModel.checkForLogs(requireContext().filesDir)
   }
 
   private fun onFeedbackButtonClicked() {
-    val context = context ?: error("null context")
-    var feedbackText = feedbackEditText.text.toString().trim { it <= ' ' }
-    if (TextUtils.isEmpty(feedbackText)) {
+    if (feedbackText.isEmpty()) {
       return
     }
 
-    feedbackButton.isEnabled = false
-
-    if (deviceInfo.isChecked) {
-      val device = Build.DEVICE
-      val manufacturer = Build.MANUFACTURER
-      val appVersion = RemoteUtils.getVersion()
-      val androidVersion = Build.VERSION.RELEASE
-
-      feedbackText += getString(
-        R.string.feedback_version_info,
-        manufacturer,
-        device,
-        androidVersion,
-        appVersion
-      )
-    }
-
-    if (!logInfo.isChecked) {
+    sendButton.isEnabled = false
+    if (!includeLogs.isChecked) {
       openChooser(feedbackText)
       return
     }
 
-    LogHelper.zipLogs(context)
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({
-        openChooser(feedbackText, it)
-      }) {
-        openChooser(feedbackText)
-      }
+    viewModel.zipLogs(requireContext().filesDir, requireContext().externalCacheDir)
   }
 
   private fun openChooser(feedbackText: String, logs: File? = null) {
-    val emailIntent = Intent(Intent.ACTION_SEND)
-    emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("kelsos@kelsos.net"))
-    emailIntent.type = "message/rfc822"
-    emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
-    emailIntent.putExtra(Intent.EXTRA_TEXT, feedbackText)
-    if (logs != null) {
-      val logsUri = Uri.fromFile(logs)
-      emailIntent.putExtra(Intent.EXTRA_STREAM, logsUri)
+    val emailIntent = Intent(Intent.ACTION_SEND).apply {
+      putExtra(Intent.EXTRA_EMAIL, arrayOf("kelsos@kelsos.net"))
+      type = "message/rfc822"
+      putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
+      putExtra(Intent.EXTRA_TEXT, feedbackText)
+      logs?.let { logs ->
+        val logsUri = Uri.fromFile(logs)
+        putExtra(Intent.EXTRA_STREAM, logsUri)
+      }
     }
 
-    feedbackButton.isEnabled = true
+    sendButton.isEnabled = true
 
     startActivity(Intent.createChooser(emailIntent, getString(R.string.feedback_chooser_title)))
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    binding.unbind()
   }
 
   companion object {

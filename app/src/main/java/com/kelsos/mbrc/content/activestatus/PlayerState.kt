@@ -1,14 +1,22 @@
 package com.kelsos.mbrc.content.activestatus
 
-import androidx.annotation.StringDef
+sealed class PlayerState(val state: String) {
+  object Playing : PlayerState(PLAYING)
+  object Paused : PlayerState(PAUSED)
+  object Stopped : PlayerState(STOPPED)
+  object Undefined : PlayerState(UNDEFINED)
 
-object PlayerState {
-  const val PLAYING = "playing"
-  const val PAUSED = "paused"
-  const val STOPPED = "stopped"
-  const val UNDEFINED = "undefined"
+  companion object {
+    const val PLAYING = "playing"
+    const val PAUSED = "paused"
+    const val STOPPED = "stopped"
+    const val UNDEFINED = "undefined"
 
-  @Retention(AnnotationRetention.SOURCE)
-  @StringDef(PAUSED, PLAYING, STOPPED, UNDEFINED)
-  annotation class State
+    fun fromString(state: String): PlayerState = when (state) {
+      PLAYING -> Playing
+      PAUSED -> Paused
+      STOPPED -> Stopped
+      else -> Undefined
+    }
+  }
 }

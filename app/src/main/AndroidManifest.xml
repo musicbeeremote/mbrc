@@ -17,7 +17,8 @@
       android:icon="@mipmap/ic_launcher"
       android:label="@string/application_name"
       android:logo="@mipmap/ic_launcher"
-      android:theme="@style/AppTheme"
+      android:theme="@style/Theme.App"
+      android:supportsRtl="false"
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
     <activity
         android:name=".ui.activities.SplashActivity"
@@ -30,23 +31,20 @@
     </activity>
 
     <service
+        android:exported="false"
         android:name=".platform.RemoteService"
-        android:description="@string/info_service_description"
-        android:permission="android.permission.READ_PHONE_STATE">
+        android:description="@string/info_service_description">
       <intent-filter>
-        <action android:name="android.intent.action.PHONE_STATE" />
-        <action android:name="android.net.wifi.STATE_CHANGE" />
         <action android:name="com.kelsos.mbrc.notification.play" />
         <action android:name="com.kelsos.mbrc.notification.next" />
         <action android:name="com.kelsos.mbrc.notification.close" />
         <action android:name="com.kelsos.mbrc.notification.previous" />
       </intent-filter>
     </service>
-    <service
-        android:name=".platform.LibrarySyncService"
-        android:exported="false" />
 
-    <receiver android:name=".platform.mediasession.MediaButtonReceiver">
+    <receiver
+        android:name=".platform.mediasession.MediaButtonReceiver"
+        android:exported="false">
       <intent-filter>
         <action android:name="android.media.AUDIO_BECOMING_NOISY" />
       </intent-filter>
@@ -54,7 +52,9 @@
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
     </receiver>
-    <receiver android:name="com.kelsos.mbrc.features.widgets.WidgetSmall">
+    <receiver
+        android:name="com.kelsos.mbrc.features.widgets.WidgetSmall"
+        android:exported="false">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
@@ -63,7 +63,9 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/remote_widget_small" />
     </receiver>
-    <receiver android:name="com.kelsos.mbrc.features.widgets.WidgetNormal">
+    <receiver
+        android:name="com.kelsos.mbrc.features.widgets.WidgetNormal"
+        android:exported="false">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
@@ -76,6 +78,12 @@
     <activity
         android:name=".NavigationActivity"
         android:label="@string/title_activity_bottom_navigation" />
+
+    <provider
+        android:name="androidx.work.impl.WorkManagerInitializer"
+        android:authorities="${applicationId}.workmanager-init"
+        tools:node="remove"/>
+
   </application>
 
 </manifest>

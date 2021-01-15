@@ -13,7 +13,7 @@ import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.utils.Click
 import com.kelsos.mbrc.utils.isVisible
 import io.mockk.Runs
@@ -61,9 +61,13 @@ class MiniControlFragmentTest {
     every { viewModel.playerStatus } answers { playerStatus }
 
     startKoin {
-      modules(listOf(module {
-        single { viewModel }
-      }))
+      modules(
+        listOf(
+          module {
+            single { viewModel }
+          }
+        )
+      )
     }
   }
 

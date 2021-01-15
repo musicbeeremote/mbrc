@@ -2,10 +2,9 @@ package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import arrow.core.Option
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
 
 class ConnectionRepositoryImpl(
@@ -20,10 +19,13 @@ class ConnectionRepositoryImpl(
 
   override suspend fun discover(): DiscoveryStop {
     val discover = remoteServiceDiscovery.discover()
-    return discover.fold({ it }, {
-      save(it)
-      DiscoveryStop.Complete
-    })
+    return discover.fold(
+      { it },
+      {
+        save(it)
+        DiscoveryStop.Complete
+      }
+    )
   }
 
   override suspend fun save(settings: ConnectionSettingsEntity) {
@@ -73,13 +75,13 @@ class ConnectionRepositoryImpl(
   private val last: ConnectionSettingsEntity?
     get() = connectionDao.last()
 
-  override fun getDefault(): Option<ConnectionSettingsEntity> {
+  override fun getDefault(): ConnectionSettingsEntity? {
     val defaultId = defaultId
     if (defaultId < 0) {
-      return Option.empty()
+      return null
     }
 
-    return Option.fromNullable(connectionDao.findById(defaultId))
+    return connectionDao.findById(defaultId)
   }
 
   override fun setDefault(settings: ConnectionSettingsEntity) {

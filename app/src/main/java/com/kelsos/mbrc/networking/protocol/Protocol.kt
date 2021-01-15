@@ -1,124 +1,179 @@
 package com.kelsos.mbrc.networking.protocol
 
-import androidx.annotation.StringDef
+sealed class Protocol(val context: String) {
+  object Player : Protocol(PLAYER)
+  object ProtocolTag : Protocol(PROTOCOL_TAG)
+  object PluginVersion : Protocol(PLUGIN_VERSION)
+  object ClientNotAllowed : Protocol(CLIENT_NOT_ALLOWED)
 
-object Protocol {
-  const val Player = "player"
-  const val ProtocolTag = "protocol"
-  const val PluginVersion = "pluginversion"
-  const val ClientNotAllowed = "notallowed"
+  object PlayerStatus : Protocol(PLAYER_STATUS)
+  object PlayerRepeat : Protocol(PLAYER_REPEAT)
+  object PlayerScrobble : Protocol(PLAYER_SCROBBLE)
+  object PlayerShuffle : Protocol(PLAYER_SHUFFLE)
+  object PlayerMute : Protocol(PLAYER_MUTE)
+  object PlayerPlayPause : Protocol(PLAYER_PLAYPAUSE)
+  object PlayerPrevious : Protocol(PLAYER_PREVIOUS)
+  object PlayerNext : Protocol(PLAYER_NEXT)
+  object PlayerStop : Protocol(PLAYER_STOP)
+  object PlayerState : Protocol(PLAYER_STATE)
+  object PlayerVolume : Protocol(PLAYER_VOLUME)
 
-  const val PlayerStatus = "playerstatus"
-  const val PlayerRepeat = "playerrepeat"
-  const val PlayerScrobble = "scrobbler"
-  const val PlayerShuffle = "playershuffle"
-  const val PlayerMute = "playermute"
-  const val PlayerPlayPause = "playerplaypause"
-  const val PlayerPrevious = "playerprevious"
-  const val PlayerNext = "playernext"
-  const val PlayerStop = "playerstop"
-  const val PlayerState = "playerstate"
-  const val PlayerVolume = "playervolume"
+  object NowPlayingTrack : Protocol(NOWPLAYING_TRACK)
+  object NowPlayingCover : Protocol(NOWPLAYING_COVER)
+  object NowPlayingPosition : Protocol(NOWPLAYING_POSITION)
+  object NowPlayingLyrics : Protocol(NOWPLAYING_LYRICS)
+  object NowPlayingRating : Protocol(NOWPLAYING_RATING)
+  object NowPlayingLfmRating : Protocol(NOWPLAYING_LFMRATING)
+  object NowPlayingList : Protocol(NOWPLAYING_LIST)
+  object NowPlayingListPlay : Protocol(NOWPLAYING_LISTPLAY)
+  object NowPlayingListRemove : Protocol(NOWPLAYING_LISTREMOVE)
+  object NowPlayingListMove : Protocol(NOWPLAYING_LISTMOVE)
+  object NowPlayingQueue : Protocol(NOWPLAYING_QUEUE)
 
-  const val NowPlayingTrack = "nowplayingtrack"
-  const val NowPlayingCover = "nowplayingcover"
-  const val NowPlayingPosition = "nowplayingposition"
-  const val NowPlayingLyrics = "nowplayinglyrics"
-  const val NowPlayingRating = "nowplayingrating"
-  const val NowPlayingLfmRating = "nowplayinglfmrating"
-  const val NowPlayingList = "nowplayinglist"
-  const val NowPlayingListPlay = "nowplayinglistplay"
-  const val NowPlayingListRemove = "nowplayinglistremove"
-  const val NowPlayingListMove = "nowplayinglistmove"
-  const val NowPlayingQueue = "nowplayingqueue"
+  object Ping : Protocol(PING)
+  object Pong : Protocol(PONG)
+  object Init : Protocol(INIT)
 
-  const val PING = "ping"
-  const val PONG = "pong"
-  const val INIT = "init"
+  object PlayerPlay : Protocol(PLAYER_PLAY)
+  object PlayerPause : Protocol(PLAYER_PAUSE)
 
-  const val PlayerPlay = "playerplay"
-  const val PlayerPause = "playerpause"
+  object PlaylistList : Protocol(PLAYLIST_LIST)
+  object PlaylistPlay : Protocol(PLAYLIST_PLAY)
 
-  const val PlaylistList = "playlistlist"
-  const val PlaylistPlay = "playlistplay"
-  const val NoBroadcast = "nobroadcast"
+  object LibraryBrowseGenres : Protocol(LIBRARY_BROWSE_GENRES)
+  object LibraryBrowseArtists : Protocol(LIBRARY_BROWSE_ARTISTS)
+  object LibraryBrowseAlbums : Protocol(LIBRARY_BROWSE_ALBUMS)
+  object LibraryBrowseTracks : Protocol(LIBRARY_BROWSE_TRACKS)
 
-  const val LibraryBrowseGenres = "browsegenres"
-  const val LibraryBrowseArtists = "browseartists"
-  const val LibraryBrowseAlbums = "browsealbums"
-  const val LibraryBrowseTracks = "browsetracks"
+  object VerifyConnection : Protocol(VERIFY_CONNECTION)
+  object RadioStations : Protocol(RADIO_STATIONS)
 
-  const val DISCOVERY = "discovery"
+  object CommandUnavailable : Protocol(COMMAND_UNAVAILABLE)
 
-  const val VerifyConnection = "verifyconnection"
-  const val RadioStations = "radiostations"
+  object PlayerOutput : Protocol(PLAYER_OUTPUT)
+  object PlayerOutputSwitch : Protocol(PLAYER_OUTPUT_SWITCH)
+  object UnknownCommand : Protocol(UNKNOWN_COMMAND)
 
-  const val CommandUnavailable = "commandunavailable"
+  companion object {
+    const val PLAYER = "player"
+    const val PROTOCOL_TAG = "protocol"
+    const val PLUGIN_VERSION = "pluginversion"
+    const val CLIENT_NOT_ALLOWED = "notallowed"
 
-  // Protocol Constants
-  const val CLIENT_PLATFORM = "Android"
+    const val PLAYER_STATUS = "playerstatus"
+    const val PLAYER_REPEAT = "playerrepeat"
+    const val PLAYER_SCROBBLE = "scrobbler"
+    const val PLAYER_SHUFFLE = "playershuffle"
+    const val PLAYER_MUTE = "playermute"
+    const val PLAYER_PLAYPAUSE = "playerplaypause"
+    const val PLAYER_PREVIOUS = "playerprevious"
+    const val PLAYER_NEXT = "playernext"
+    const val PLAYER_STOP = "playerstop"
+    const val PLAYER_STATE = "playerstate"
+    const val PLAYER_VOLUME = "playervolume"
 
-  // Repeat Constants
-  const val ONE = "one"
-  const val ALL = "All"
+    const val NOWPLAYING_TRACK = "nowplayingtrack"
+    const val NOWPLAYING_COVER = "nowplayingcover"
+    const val NOWPLAYING_POSITION = "nowplayingposition"
+    const val NOWPLAYING_LYRICS = "nowplayinglyrics"
+    const val NOWPLAYING_RATING = "nowplayingrating"
+    const val NOWPLAYING_LFMRATING = "nowplayinglfmrating"
+    const val NOWPLAYING_LIST = "nowplayinglist"
+    const val NOWPLAYING_LISTPLAY = "nowplayinglistplay"
+    const val NOWPLAYING_LISTREMOVE = "nowplayinglistremove"
+    const val NOWPLAYING_LISTMOVE = "nowplayinglistmove"
+    const val NOWPLAYING_QUEUE = "nowplayingqueue"
 
-  const val PlayerOutput = "playeroutput"
-  const val PlayerOutputSwitch = "playeroutputswitch"
+    const val PING = "ping"
 
-  /**
-   * Toggle action in protocol. This should be send to the functions with multiple states
-   * in order to change to the next in order state.
-   */
-  const val TOGGLE = "toggle"
+    const val PONG = "pong"
+    const val INIT = "init"
 
-  const val ProtocolVersionNumber = 5
+    const val PLAYER_PLAY = "playerplay"
+    const val PLAYER_PAUSE = "playerpause"
 
-  @StringDef(
-    Player,
-    ProtocolTag,
-    PluginVersion,
-    ClientNotAllowed,
-    PlayerStatus,
-    PlayerRepeat,
-    PlayerScrobble,
-    PlayerShuffle,
-    PlayerMute,
-    PlayerPlayPause,
-    PlayerPrevious,
-    PlayerNext,
-    PlayerStop,
-    PlayerState,
-    PlayerVolume,
-    NowPlayingTrack,
-    NowPlayingCover,
-    NowPlayingPosition,
-    NowPlayingLyrics,
-    NowPlayingRating,
-    NowPlayingLfmRating,
-    NowPlayingList,
-    NowPlayingListPlay,
-    NowPlayingListRemove,
-    NowPlayingListMove,
-    NowPlayingQueue,
-    PING,
-    PONG,
-    INIT,
-    PlayerPlay,
-    PlayerPause,
-    PlaylistList,
-    PlaylistPlay,
-    NoBroadcast,
-    LibraryBrowseGenres,
-    LibraryBrowseArtists,
-    LibraryBrowseAlbums,
-    LibraryBrowseTracks,
-    DISCOVERY,
-    VerifyConnection,
-    RadioStations,
-    CommandUnavailable,
-    PlayerOutput,
-    PlayerOutputSwitch
-  )
-  @Retention(AnnotationRetention.SOURCE)
-  annotation class Context
+    const val PLAYLIST_LIST = "playlistlist"
+    const val PLAYLIST_PLAY = "playlistplay"
+    const val NO_BROADCAST = "nobroadcast"
+
+    const val LIBRARY_BROWSE_GENRES = "browsegenres"
+    const val LIBRARY_BROWSE_ARTISTS = "browseartists"
+    const val LIBRARY_BROWSE_ALBUMS = "browsealbums"
+    const val LIBRARY_BROWSE_TRACKS = "browsetracks"
+
+    const val DISCOVERY = "discovery"
+
+    const val VERIFY_CONNECTION = "verifyconnection"
+    const val RADIO_STATIONS = "radiostations"
+
+    const val COMMAND_UNAVAILABLE = "commandunavailable"
+
+    const val PLAYER_OUTPUT = "playeroutput"
+    const val PLAYER_OUTPUT_SWITCH = "playeroutputswitch"
+
+    /**
+     * Toggle action in protocol. This should be send to the functions with multiple states
+     * in order to change to the next in order state.
+     */
+    const val TOGGLE = "toggle"
+
+    const val ProtocolVersionNumber = 5
+
+    const val UNKNOWN_COMMAND = "unknowncommand"
+
+    fun fromString(context: String): Protocol = when (context) {
+      PLAYER -> Player
+      PROTOCOL_TAG -> ProtocolTag
+      PLUGIN_VERSION -> PluginVersion
+      CLIENT_NOT_ALLOWED -> ClientNotAllowed
+
+      PLAYER_STATUS -> PlayerStatus
+      PLAYER_REPEAT -> PlayerRepeat
+      PLAYER_SCROBBLE -> PlayerScrobble
+      PLAYER_SHUFFLE -> PlayerShuffle
+      PLAYER_MUTE -> PlayerMute
+      PLAYER_PLAYPAUSE -> PlayerPlayPause
+      PLAYER_PREVIOUS -> PlayerPrevious
+      PLAYER_NEXT -> PlayerNext
+      PLAYER_STOP -> PlayerStop
+      PLAYER_STATE -> PlayerState
+      PLAYER_VOLUME -> PlayerVolume
+
+      NOWPLAYING_TRACK -> NowPlayingTrack
+      NOWPLAYING_COVER -> NowPlayingCover
+      NOWPLAYING_POSITION -> NowPlayingPosition
+      NOWPLAYING_LYRICS -> NowPlayingLyrics
+      NOWPLAYING_RATING -> NowPlayingRating
+      NOWPLAYING_LFMRATING -> NowPlayingLfmRating
+      NOWPLAYING_LIST -> NowPlayingList
+      NOWPLAYING_LISTPLAY -> NowPlayingListPlay
+      NOWPLAYING_LISTREMOVE -> NowPlayingListRemove
+      NOWPLAYING_LISTMOVE -> NowPlayingListMove
+      NOWPLAYING_QUEUE -> NowPlayingQueue
+
+      PING -> Ping
+      PONG -> Pong
+      INIT -> Init
+
+      PLAYER_PLAY -> PlayerPlay
+      PLAYER_PAUSE -> PlayerPause
+
+      PLAYLIST_LIST -> PlaylistList
+      PLAYLIST_PLAY -> PlaylistPlay
+
+      LIBRARY_BROWSE_GENRES -> LibraryBrowseGenres
+      LIBRARY_BROWSE_ARTISTS -> LibraryBrowseArtists
+      LIBRARY_BROWSE_ALBUMS -> LibraryBrowseAlbums
+      LIBRARY_BROWSE_TRACKS -> LibraryBrowseTracks
+
+      VERIFY_CONNECTION -> VerifyConnection
+      RADIO_STATIONS -> RadioStations
+
+      COMMAND_UNAVAILABLE -> CommandUnavailable
+
+      PLAYER_OUTPUT -> PlayerOutput
+      PLAYER_OUTPUT_SWITCH -> PlayerOutputSwitch
+      else -> UnknownCommand
+    }
+  }
 }

@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import arrow.core.firstOrNone
@@ -25,36 +26,30 @@ import com.google.android.material.navigation.NavigationView
 import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
-import com.kelsos.mbrc.networking.connections.Connection
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
-import com.kelsos.mbrc.platform.ServiceChecker
-import kotterknife.bindView
 import org.koin.android.ext.android.inject
+import org.koin.androidx.fragment.android.setupKoinFragmentFactory
+import org.koin.core.KoinExperimentalAPI
 import timber.log.Timber
 
 class NavigationActivity : AppCompatActivity() {
-
-  private val serviceChecker: ServiceChecker by inject()
   private val volumeModifyUseCase: VolumeModifyUseCase by inject()
   private val connectionStatusLiveDataProvider: ConnectionStatusState by inject()
   private val clientConnectionUseCase: ClientConnectionUseCase by inject()
 
-  private val navigationView: NavigationView by bindView(R.id.nav_view)
-
+  private lateinit var navigationView: NavigationView
   private lateinit var connectText: TextView
   private lateinit var connect: ImageView
   private lateinit var drawerLayout: DrawerLayout
   private lateinit var drawerToggle: ActionBarDrawerToggle
 
   private fun onConnectLongClick(): Boolean {
-    serviceChecker.startServiceIfNotRunning()
     clientConnectionUseCase.connect()
     return true
   }
 
   private fun onConnectClick() {
-    serviceChecker.startServiceIfNotRunning()
     clientConnectionUseCase.connect()
   }
 
@@ -89,26 +84,22 @@ class NavigationActivity : AppCompatActivity() {
     }
 
   private fun onConnection(connectionStatus: ConnectionStatus) {
-    Timber.v("Handling new connection status ${Connection.string(connectionStatus.status)}")
+    Timber.v("Handling new connection status $connectionStatus")
 
     @StringRes val resId: Int
     @ColorRes val colorId: Int
-    when (connectionStatus.status) {
-      Connection.OFF -> {
+    when (connectionStatus) {
+      ConnectionStatus.Off -> {
         resId = R.string.drawer_connection_status_off
         colorId = R.color.black
       }
-      Connection.ON -> {
+      ConnectionStatus.On -> {
         resId = R.string.drawer_connection_status_on
         colorId = R.color.accent
       }
-      Connection.ACTIVE -> {
+      ConnectionStatus.Active -> {
         resId = R.string.drawer_connection_status_active
         colorId = R.color.power_on
-      }
-      else -> {
-        resId = R.string.drawer_connection_status_off
-        colorId = R.color.black
       }
     }
 
@@ -143,7 +134,10 @@ class NavigationActivity : AppCompatActivity() {
     )
     drawerLayout.addDrawerListener(drawerToggle)
 
-    val navController = findNavController(R.id.main_navigation_fragment)
+    val navHostFragment = supportFragmentManager.findFragmentById(
+      R.id.main_navigation_fragment
+    ) as NavHostFragment
+    val navController = navHostFragment.navController
     setupWithNavController(findViewById<NavigationView>(R.id.nav_view), navController)
     navController.addOnDestinationChangedListener(onDestinationChangedListener)
   }
@@ -164,9 +158,12 @@ class NavigationActivity : AppCompatActivity() {
     }
   }
 
+  @KoinExperimentalAPI
   override fun onCreate(savedInstanceState: Bundle?) {
+    setupKoinFragmentFactory()
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_navigation)
+    navigationView = findViewById(R.id.nav_view)
     setupToolbar()
     setupNavigationDrawer()
     setupConnectionIndicator()

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.platform.mediasession
 
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.platform.ForegroundHooks
 
 interface INotificationManager {
@@ -12,7 +12,7 @@ interface INotificationManager {
 
   fun trackChanged(playingTrack: PlayingTrack)
 
-  fun playerStateChanged(@PlayerState.State state: String)
+  fun playerStateChanged(state: PlayerState)
 
   fun connectionStateChanged(connected: Boolean)
 

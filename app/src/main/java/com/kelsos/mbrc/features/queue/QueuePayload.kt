@@ -5,7 +5,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class QueuePayload(
-  @LibraryPopup.Action
   @Json(name = "queue")
   val type: String,
   @Json(name = "data")

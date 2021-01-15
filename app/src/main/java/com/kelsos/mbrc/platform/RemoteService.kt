@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.kelsos.mbrc.core.IRemoteServiceCore
+import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -14,19 +15,21 @@ class RemoteService : Service(), ForegroundHooks {
   private val receiver: RemoteBroadcastReceiver by inject()
   private val core: IRemoteServiceCore by inject()
   private val notifications: SessionNotificationManager by inject()
+  private val syncWorkHandler: SyncWorkHandler by inject()
 
   override fun onBind(intent: Intent?): IBinder? = null
 
   override fun onCreate() {
     super.onCreate()
-    this.registerReceiver(receiver, receiver.filter())
     notifications.setForegroundHooks(this)
+    this.registerReceiver(receiver, receiver.filter(this))
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
+    notifications.setForegroundHooks(this)
     core.start()
-    core.setSyncStartAction { LibrarySyncService.startActionSync(this, true) }
+    core.setSyncStartAction { syncWorkHandler.sync(true) }
     return super.onStartCommand(intent, flags, startId)
   }
 

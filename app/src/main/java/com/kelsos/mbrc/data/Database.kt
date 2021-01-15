@@ -2,21 +2,21 @@ package com.kelsos.mbrc.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.kelsos.mbrc.content.library.albums.AlbumDao
-import com.kelsos.mbrc.content.library.albums.AlbumEntity
-import com.kelsos.mbrc.content.library.artists.ArtistDao
-import com.kelsos.mbrc.content.library.artists.ArtistEntity
-import com.kelsos.mbrc.content.library.genres.GenreDao
-import com.kelsos.mbrc.content.library.genres.GenreEntity
-import com.kelsos.mbrc.content.library.tracks.TrackDao
-import com.kelsos.mbrc.content.library.tracks.TrackEntity
+import com.kelsos.mbrc.data.Database.Companion.VERSION
+import com.kelsos.mbrc.features.library.data.AlbumDao
+import com.kelsos.mbrc.features.library.data.AlbumEntity
+import com.kelsos.mbrc.features.library.data.ArtistDao
+import com.kelsos.mbrc.features.library.data.ArtistEntity
+import com.kelsos.mbrc.features.library.data.GenreDao
+import com.kelsos.mbrc.features.library.data.GenreEntity
+import com.kelsos.mbrc.features.library.data.TrackDao
+import com.kelsos.mbrc.features.library.data.TrackEntity
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
 import com.kelsos.mbrc.features.playlists.data.PlaylistDao
 import com.kelsos.mbrc.features.playlists.data.PlaylistEntity
 import com.kelsos.mbrc.features.radio.data.RadioStationDao
 import com.kelsos.mbrc.features.radio.data.RadioStationEntity
-import com.kelsos.mbrc.data.Database.Companion.VERSION
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 

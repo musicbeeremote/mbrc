@@ -26,4 +26,7 @@ interface RadioStationDao {
 
   @Query("delete from radio_station where date_added != :added")
   fun removePreviousEntries(added: Long)
+
+  @Query("select * from radio_station where id = :id")
+  fun getById(id: Long): RadioStationEntity?
 }

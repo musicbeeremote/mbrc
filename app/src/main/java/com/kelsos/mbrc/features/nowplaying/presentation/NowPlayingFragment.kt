@@ -8,11 +8,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,23 +22,18 @@ import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.common.ui.extensions.snackbar
 import com.kelsos.mbrc.common.ui.helpers.VisibleRange
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
-import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
+import com.kelsos.mbrc.common.utilities.nonNullObserver
+import com.kelsos.mbrc.databinding.FragmentNowplayingBinding
 import com.kelsos.mbrc.features.nowplaying.dragsort.OnStartDragListener
 import com.kelsos.mbrc.features.nowplaying.dragsort.SimpleItemTouchHelper
 import com.kelsos.mbrc.features.nowplaying.presentation.NowPlayingAdapter.NowPlayingListener
-import com.kelsos.mbrc.utilities.nonNullObserver
-import kotterknife.bindView
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NowPlayingFragment : BaseFragment() {
+  private lateinit var recycler: RecyclerView
+  private lateinit var refreshLayout: SwipeRefreshLayout
 
-  private val recycler: RecyclerView by bindView(R.id.now_playing__track_list)
-  private val refreshLayout: SwipeRefreshLayout by bindView(R.id.now_playing__refresh_layout)
-  private val empty: Group by bindView(R.id.now_playing__empty_group)
-  private val loading: ProgressBar by bindView(R.id.now_playing__loading_bar)
-
-  private val viewModel: NowPlayingViewModel by inject()
-  private val miniControlFactory: MiniControlFactory by inject()
+  private val viewModel: NowPlayingViewModel by viewModel()
 
   private var search: SearchView? = null
   private var searchMenuItem: MenuItem? = null
@@ -142,23 +136,26 @@ class NowPlayingFragment : BaseFragment() {
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_nowplaying, container, false)
-  }
+  ): View {
+    val binding: FragmentNowplayingBinding = DataBindingUtil.inflate(
+      inflater,
+      R.layout.fragment_nowplaying,
+      container,
+      false
+    )
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
+    refreshLayout = binding.nowPlayingRefreshLayout
+    recycler = binding.nowPlayingTrackList
 
-    viewModel.trackState.observe(this) {
+    viewModel.trackState.observe(viewLifecycleOwner) {
       npAdapter.setPlayingTrack(it.path)
       recycler.scrollToPosition(npAdapter.getPlayingTrackIndex())
     }
 
-    viewModel.list.nonNullObserver(this) {
+    viewModel.list.nonNullObserver(viewLifecycleOwner) {
       refreshLayout.isRefreshing = false
-      loading.isVisible = false
-
-      empty.isVisible = it.isEmpty()
+      binding.nowPlayingLoadingBar.isVisible = false
+      binding.nowPlayingEmptyGroup.isVisible = it.isEmpty()
       if (npAdapter.itemCount == 0) {
         val resId = R.anim.layout_animation_from_bottom
         val animation = AnimationUtils.loadLayoutAnimation(requireContext(), resId)
@@ -167,7 +164,7 @@ class NowPlayingFragment : BaseFragment() {
       npAdapter.submitList(it)
     }
 
-    viewModel.emitter.nonNullObserver(this) { event ->
+    viewModel.emitter.nonNullObserver(viewLifecycleOwner) { event ->
       if (event.hasBeenHandled) {
         return@nonNullObserver
       }
@@ -179,10 +176,7 @@ class NowPlayingFragment : BaseFragment() {
       snackbar(resId)
       refreshLayout.isRefreshing = false
     }
-  }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
     val manager = LinearLayoutManager(requireContext())
     val callback = SimpleItemTouchHelper(npAdapter)
     refreshLayout.setOnRefreshListener { viewModel.reload() }
@@ -201,7 +195,7 @@ class NowPlayingFragment : BaseFragment() {
     itemTouchHelper = ItemTouchHelper(callback).apply {
       attachToRecyclerView(recycler)
     }
-    miniControlFactory.attach(requireFragmentManager())
+    return binding.root
   }
 
   override fun onBackPressed(): Boolean {

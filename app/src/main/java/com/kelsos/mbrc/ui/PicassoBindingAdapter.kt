@@ -17,12 +17,12 @@ import kotlinx.coroutines.launch
 private var coroutineContext = Job() + Dispatchers.Main
 
 @BindingAdapter("imageUrl")
-fun ImageView.imageLoader(url: String) {
+fun ImageView.imageLoader(url: String?) {
   val dimens = context.getDimens()
 
   coroutineContext.cancelChildren()
 
-  if (url.isEmpty()) {
+  if (url.isNullOrBlank()) {
     CoroutineScope(coroutineContext).launch {
       delay(800)
     }
@@ -43,7 +43,7 @@ fun ImageView.imageLoader(url: String) {
 
 @BindingAdapter("imageUrl", "error")
 fun ImageView.imageLoader(
-  url: String,
+  url: String?,
   error: Drawable
 ) {
   val dimens = context.getDimens()

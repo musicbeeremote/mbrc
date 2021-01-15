@@ -9,20 +9,19 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
-import com.kelsos.mbrc.features.minicontrol.MiniControlFactory
 import com.kelsos.mbrc.utils.MainThreadExecutor
 import com.kelsos.mbrc.utils.doesNotExist
 import com.kelsos.mbrc.utils.isGone
 import com.kelsos.mbrc.utils.isVisible
-import io.mockk.Runs
+import com.kelsos.mbrc.utils.mockMiniControlViewModel
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -34,27 +33,29 @@ class LyricsFragmentTest : KoinTest {
   @get:Rule
   val rule = InstantTaskExecutorRule()
 
-  private lateinit var viewModel: LyricsViewModel
+  private lateinit var lyricsViewModel: LyricsViewModel
   private lateinit var lyricsState: LyricsState
   private lateinit var adapter: LyricsAdapter
 
   @Before
   fun setUp() {
-    val miniControlFactory: MiniControlFactory = mockk()
+    lyricsViewModel = mockk()
 
-    viewModel = mockk()
     lyricsState = LyricsStateImpl()
     adapter = LyricsAdapter(MainThreadExecutor())
 
-    every { miniControlFactory.attach(any()) } just Runs
-    every { viewModel.lyrics } answers { lyricsState }
+    every { lyricsViewModel.lyrics } answers { lyricsState }
 
     startKoin {
-      modules(listOf(module {
-        single { viewModel }
-        single { miniControlFactory }
-        single { adapter }
-      }))
+      modules(
+        listOf(
+          module {
+            viewModel { lyricsViewModel }
+            viewModel { mockMiniControlViewModel() }
+            single { adapter }
+          }
+        )
+      )
     }
   }
 

@@ -47,9 +47,11 @@ class MessageQueueImpl : MessageQueue {
     //noinspection InfiniteLoopStatement
     while (true) {
       try {
-        onMessageAvailable(messageQueue.take().also {
-          Timber.v("message -> ${it.context}")
-        })
+        onMessageAvailable(
+          messageQueue.take().also {
+            Timber.v("message -> ${it.context}")
+          }
+        )
       } catch (e: InterruptedException) {
         Timber.d(e, "Failed to execute command")
       }

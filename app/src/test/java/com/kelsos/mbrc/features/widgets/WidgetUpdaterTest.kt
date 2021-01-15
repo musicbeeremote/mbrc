@@ -11,7 +11,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
+import com.kelsos.mbrc.utils.idle
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,6 +61,7 @@ class WidgetUpdaterTest {
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
     widgetUpdater.updateCover("/tmp/image.png")
+    idle()
 
     assertThat(flags).containsExactly(true, true)
     assertThat(values).containsExactly("/tmp/image.png", "/tmp/image.png")
@@ -75,7 +77,8 @@ class WidgetUpdaterTest {
     }
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
-    widgetUpdater.updatePlayState(PlayerState.STOPPED)
+    widgetUpdater.updatePlayState(PlayerState.Stopped)
+    idle()
 
     assertThat(flags).containsExactly(true, true)
     assertThat(values).containsExactly(PlayerState.STOPPED, PlayerState.STOPPED)
@@ -97,6 +100,7 @@ class WidgetUpdaterTest {
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
     widgetUpdater.updatePlayingTrack(track)
+    idle()
 
     assertThat(flags).containsExactly(true, true)
     assertThat(values).containsExactly(track, track)

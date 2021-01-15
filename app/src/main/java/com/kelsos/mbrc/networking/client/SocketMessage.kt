@@ -1,14 +1,12 @@
 package com.kelsos.mbrc.networking.client
 
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.networking.protocol.Protocol.Context
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class SocketMessage(
-  @Context
   @Json(name = "context")
   val context: String,
   @Json(name = "data")
@@ -16,8 +14,8 @@ data class SocketMessage(
 ) {
 
   companion object {
-    fun create(@Context context: String, data: Any = ""): SocketMessage {
-      return SocketMessage(context, data)
+    fun create(protocol: Protocol, data: Any = ""): SocketMessage {
+      return SocketMessage(protocol.context, data)
     }
   }
 }

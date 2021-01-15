@@ -11,19 +11,19 @@ import androidx.annotation.CallSuper
 import androidx.core.content.getSystemService
 import androidx.multidex.MultiDexApplication
 import com.chibatching.kotpref.Kotpref
-import com.github.anrwatchdog.ANRError
-import com.github.anrwatchdog.ANRWatchDog
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.kelsos.mbrc.di.modules.appModule
-import com.kelsos.mbrc.di.modules.uiModule
-import com.kelsos.mbrc.utilities.CustomLoggingTree
+import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.fragment.koin.fragmentFactory
+import org.koin.androidx.workmanager.koin.workManagerFactory
+import org.koin.core.KoinExperimentalAPI
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import timber.log.Timber
 
 @SuppressLint("Registered")
+@KoinExperimentalAPI
 open class App : MultiDexApplication() {
 
   @CallSuper
@@ -32,7 +32,7 @@ open class App : MultiDexApplication() {
     initialize()
   }
 
-  protected open fun modules(): List<Module> {
+  protected open fun appModules(): List<Module> {
     val androidModule = module {
       val app = this@App as Application
 
@@ -43,7 +43,11 @@ open class App : MultiDexApplication() {
       single { checkNotNull(app.getSystemService<WifiManager>()) }
       single { checkNotNull(app.getSystemService<ConnectivityManager>()) }
     }
-    return listOf(appModule, uiModule, androidModule)
+    return listOf(
+      appModule,
+      uiModule,
+      androidModule
+    )
   }
 
   protected open fun initialize() {
@@ -53,21 +57,14 @@ open class App : MultiDexApplication() {
 
     startKoin {
       androidContext(this@App)
-      modules(modules())
+      fragmentFactory()
+      workManagerFactory()
+      modules(appModules())
     }
 
     initializeTimber()
 
-    ANRWatchDog()
-      .setANRListener { onAnr(it) }
-      .setIgnoreDebugger(true)
-      .start()
-
     Kotpref.init(this)
-  }
-
-  protected open fun onAnr(anrError: ANRError?) {
-    Timber.v(anrError, "ANR error")
   }
 
   private fun initializeTimber() {

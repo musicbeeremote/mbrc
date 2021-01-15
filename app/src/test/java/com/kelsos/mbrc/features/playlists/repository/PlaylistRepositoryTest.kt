@@ -5,17 +5,18 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.playlists.PlaylistDto
 import com.kelsos.mbrc.features.playlists.data.PlaylistDao
 import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.paged
 import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.TestData.mockApi
 import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.observeOnce
+import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.every
 import io.mockk.mockk
@@ -55,11 +56,16 @@ class PlaylistRepositoryTest : KoinTest {
     apiBase = mockk()
 
     startKoin {
-      modules(listOf(module {
-        single { dao }
-        singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
-        single { apiBase }
-      }, testDispatcherModule))
+      modules(
+        listOf(
+          module {
+            single { dao }
+            singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
+            single { apiBase }
+          },
+          testDispatcherModule
+        )
+      )
     }
   }
 
@@ -74,10 +80,11 @@ class PlaylistRepositoryTest : KoinTest {
     every {
       apiBase.getAllPages(
         Protocol.PlaylistList,
-        PlaylistDto::class
+        PlaylistDto::class,
+        any()
       )
     } throws SocketTimeoutException()
-    assertThat(repository.getRemote().isFailure()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(SocketTimeoutException::class.java)
   }
 
   @Test
@@ -91,12 +98,12 @@ class PlaylistRepositoryTest : KoinTest {
 
   @Test
   fun `sync remote playlists and update database`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(20) {
         TestDataFactories.playlist(it)
       }
     }
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
     repository.getAll().paged().observeOnce { result ->
       assertThat(result).hasSize(20)
@@ -106,13 +113,13 @@ class PlaylistRepositoryTest : KoinTest {
   @Test
   fun `it should filter the playlists when searching`() = runBlockingTest {
     val extra = listOf(PlaylistDto(name = "Heavy Metal", url = """C:\library\metal.m3u"""))
-    every { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class) } answers {
+    every { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(5, extra) {
         TestDataFactories.playlist(it)
       }
     }
 
-    assertThat(repository.getRemote().isSuccess()).isTrue()
+    assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     repository.search("Metal").paged().observeOnce {
       assertThat(it).hasSize(1)
       assertThat(it).containsExactly(

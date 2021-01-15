@@ -60,54 +60,10 @@
 -keepnames @com.squareup.moshi.JsonClass class *
 
 
-# rxjava
--keep class rx.schedulers.Schedulers {
-    public static <methods>;
-}
--keep class rx.schedulers.ImmediateScheduler {
-    public <methods>;
-}
--keep class rx.schedulers.TestScheduler {
-    public <methods>;
-}
--keep class rx.schedulers.Schedulers {
-    public static ** test();
-}
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
     long producerIndex;
     long consumerIndex;
 }
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
-    long producerNode;
-    long consumerNode;
-}
-
-
-#Toothpick
-# Do not obfuscate annotation scoped classes
--keepnames @javax.inject.Singleton class *
-# Add any custom defined @Scope (e.g. ) annotations here
-# because proguard does not allow annotation inheritance rules
-
-# Do not obfuscate classes with Injected Constructors
--keepclasseswithmembernames class * {
-    @javax.inject.Inject <init>(...);
-}
-
-# Do not obfuscate classes with Injected Fields
--keepclasseswithmembernames class * {
-    @javax.inject.Inject <fields>;
-}
-
-# Do not obfuscate classes with Injected Methods
--keepclasseswithmembernames class * {
-    @javax.inject.Inject <methods>;
-}
-
-# DBFlow
--keep class * extends com.raizlabs.android.dbflow.config.DatabaseHolder { *; }
--keep class com.raizlabs.android.dbflow.config.GeneratedDatabaseHolder
--keep class * extends com.raizlabs.android.dbflow.config.BaseDatabaseDefinition { *; }
 
 # OkHttp
 -keepattributes Signature
@@ -121,10 +77,6 @@
 -keep public class android.support.v7.widget.** { *; }
 -keep public class android.support.v7.internal.widget.** { *; }
 -keep public class android.support.v7.internal.view.menu.** { *; }
-
--keep public class * extends android.support.v4.view.ActionProvider {
-    public <init>(android.content.Context);
-}
 
 # Support Design
 -dontwarn android.support.design.**
@@ -148,14 +100,7 @@
 -keepnames class com.fasterxml.jackson.** { *; }
 -dontwarn com.fasterxml.jackson.databind.**
 
-# Keep anything annotated with @JsonCreator
--keepclassmembers public class * {
-    @com.fasterxml.jackson.annotation.JsonCreator *;
-    @com.fasterxml.jackson.annotation.JsonProperty *;
-}
-
 -keep class kotlin.** { *; }
--keep class com.raizlabs.android.dbflow.structure.Model { *; }
 
 -keep class com.kelsos.mbrc.** {
     void set*(***);

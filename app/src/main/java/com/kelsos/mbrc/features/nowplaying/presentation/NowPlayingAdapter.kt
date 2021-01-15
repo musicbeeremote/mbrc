@@ -3,8 +3,6 @@ package com.kelsos.mbrc.features.nowplaying.presentation
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import arrow.core.Option
-import arrow.core.extensions.option.monad.binding
 import com.kelsos.mbrc.common.ui.helpers.VisibleRangeGetter
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.dragsort.ItemTouchHelperAdapter
@@ -42,7 +40,8 @@ class NowPlayingAdapter(
         nowPlayingListener.onPress(position)
         playingTrackIndex = position
         currentTrack = getItem(position)?.path ?: ""
-      }) { start, holder -> dragStartListener.onStartDrag(start, holder) }
+      }
+    ) { start, holder -> dragStartListener.onStartDrag(start, holder) }
   }
 
   override fun onBindViewHolder(
@@ -51,14 +50,11 @@ class NowPlayingAdapter(
     payloads: MutableList<Any>
   ) {
     if (payloads.contains(PLAYING_CHANGED)) {
-      val track = Option.fromNullable(getItem(holder.adapterPosition))
-      binding {
-        val (nowPlayingTrack) = track
-        val isPlayingTrack = nowPlayingTrack.path == currentTrack
-        holder.setPlayingTrack(isPlayingTrack)
-        if (isPlayingTrack) {
-          playingTrackIndex = holder.adapterPosition
-        }
+      val track = getItem(holder.adapterPosition) ?: return
+      val isPlayingTrack = track.path == currentTrack
+      holder.setPlayingTrack(isPlayingTrack)
+      if (isPlayingTrack) {
+        playingTrackIndex = holder.adapterPosition
       }
     } else {
       onBindViewHolder(holder, position)
@@ -66,16 +62,13 @@ class NowPlayingAdapter(
   }
 
   override fun onBindViewHolder(holder: NowPlayingTrackViewHolder, position: Int) {
-    val track = Option.fromNullable(getItem(holder.adapterPosition))
-    binding {
-      val (nowPlayingTrack) = track
-      val isPlayingTrack = nowPlayingTrack.path == currentTrack
-      holder.bindTo(nowPlayingTrack)
-      holder.setPlayingTrack(isPlayingTrack)
+    val track = getItem(holder.adapterPosition) ?: return
+    val isPlayingTrack = track.path == currentTrack
+    holder.bindTo(track)
+    holder.setPlayingTrack(isPlayingTrack)
 
-      if (isPlayingTrack) {
-        playingTrackIndex = holder.adapterPosition
-      }
+    if (isPlayingTrack) {
+      playingTrackIndex = holder.adapterPosition
     }
   }
 

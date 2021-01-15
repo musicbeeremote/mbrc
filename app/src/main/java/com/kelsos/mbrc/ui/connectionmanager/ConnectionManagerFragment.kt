@@ -4,37 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.nonNullObserver
+import com.kelsos.mbrc.databinding.FragmentConnectionManagerBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
-import com.kelsos.mbrc.utilities.nonNullObserver
-import kotterknife.bindView
 import org.koin.android.ext.android.inject
 
-class ConnectionManagerFragment : Fragment(),
+class ConnectionManagerFragment :
+  Fragment(),
   SettingsDialogFragment.SettingsSaveListener,
   ConnectionAdapter.ConnectionChangeListener {
 
   private val connectionManagerViewModel: ConnectionManagerViewModel by inject()
-
-  private val recyclerView: RecyclerView by bindView(R.id.connection_manager__connections)
-
-  private var progress: AlertDialog? = null
   private lateinit var adapter: ConnectionAdapter
-
-  private val addButton: Button by bindView(R.id.connection_manager__add)
-  private val scanButton: Button by bindView(R.id.connection_manager__scan)
+  private var progress: AlertDialog? = null
 
   private fun onAddButtonClick() {
-    val settingsDialog = SettingsDialogFragment.create(requireFragmentManager())
+    val settingsDialog = SettingsDialogFragment.create(parentFragmentManager)
     settingsDialog.show(this)
   }
 
@@ -51,31 +44,41 @@ class ConnectionManagerFragment : Fragment(),
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_connection_manager, container, false)
-  }
+  ): View {
+    val binding: FragmentConnectionManagerBinding = DataBindingUtil.inflate(
+      inflater,
+      R.layout.fragment_connection_manager,
+      container,
+      false
+    )
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    addButton.setOnClickListener { onAddButtonClick() }
-    scanButton.setOnClickListener { onScanButtonClick() }
+    val recyclerView = binding.connectionManagerConnections
+    binding.connectionManagerAdd.setOnClickListener { onAddButtonClick() }
+    binding.connectionManagerScan.setOnClickListener { onScanButtonClick() }
 
     recyclerView.setHasFixedSize(true)
     recyclerView.layoutManager = LinearLayoutManager(requireContext())
     adapter = ConnectionAdapter()
     adapter.setChangeListener(this)
     recyclerView.adapter = adapter
-    connectionManagerViewModel.settings.nonNullObserver(this) {
+    connectionManagerViewModel.settings.nonNullObserver(viewLifecycleOwner) {
       adapter.submitList(it)
     }
-    connectionManagerViewModel.default.observe(this, Observer {
-      adapter.setDefault(it)
-    })
-    connectionManagerViewModel.discoveryStatus.nonNullObserver(this) {
+    connectionManagerViewModel.default.observe(
+      viewLifecycleOwner,
+      {
+        adapter.setDefault(it)
+        if (it !== null) {
+          adapter.setSelectionId(it.id)
+        }
+      }
+    )
+    connectionManagerViewModel.discoveryStatus.nonNullObserver(viewLifecycleOwner) {
       it.contentIfNotHandled?.let { status ->
         onDiscoveryStopped(status)
       }
     }
+    return binding.root
   }
 
   override fun onSave(settings: ConnectionSettingsEntity) {
@@ -93,7 +96,7 @@ class ConnectionManagerFragment : Fragment(),
       }
     }
 
-    Snackbar.make(recyclerView, message, Snackbar.LENGTH_SHORT).show()
+    Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
   }
 
   override fun onDelete(settings: ConnectionSettingsEntity) {
@@ -101,15 +104,11 @@ class ConnectionManagerFragment : Fragment(),
   }
 
   override fun onEdit(settings: ConnectionSettingsEntity) {
-    val settingsDialog = SettingsDialogFragment.newInstance(settings, requireFragmentManager())
+    val settingsDialog = SettingsDialogFragment.newInstance(settings, parentFragmentManager)
     settingsDialog.show(this)
   }
 
   override fun onDefault(settings: ConnectionSettingsEntity) {
     connectionManagerViewModel.setDefault(settings)
-  }
-
-  fun updateDefault(defaultId: Long) {
-    adapter.setSelectionId(defaultId)
   }
 }

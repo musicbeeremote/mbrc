@@ -1,7 +1,11 @@
 package com.kelsos.mbrc.features.nowplaying.repository
 
 import androidx.paging.DataSource
-import arrow.core.Try
+import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
+import com.kelsos.mbrc.common.data.Repository
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDtoMapper
 import com.kelsos.mbrc.features.nowplaying.NowPlayingEntityMapper
@@ -9,16 +13,14 @@ import com.kelsos.mbrc.features.nowplaying.data.CachedNowPlaying
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
-import com.kelsos.mbrc.interfaces.data.Repository
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.utilities.epoch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-interface NowPlayingRepository : Repository<NowPlaying> {
+interface NowPlayingRepository :
+  Repository<NowPlaying> {
 
   suspend fun move(from: Int, to: Int)
   suspend fun remove(position: Int)
@@ -47,15 +49,16 @@ class NowPlayingRepositoryImpl(
     return dao.getAll().map { NowPlayingEntityMapper.map(it) }
   }
 
-  override suspend fun getRemote(): Try<Unit> = Try {
+  override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     val added = epoch()
     val pages = remoteDataSource.getAllPages(
       Protocol.NowPlayingList,
-      NowPlayingDto::class
+      NowPlayingDto::class,
+      progress
     )
     val cached = dao.cached().associateBy { it.key() }
-    pages.blockingForEach { nowPlaying ->
-      runBlocking(dispatchers.disk) {
+    pages.collect { nowPlaying ->
+      withContext(dispatchers.io) {
         val list = nowPlaying.map { NowPlayingDtoMapper.map(it).apply { dateAdded = added } }
 
         val existing = list.filter { cached.containsKey(it.key()) }
@@ -95,5 +98,12 @@ class NowPlayingRepositoryImpl(
 
   override suspend fun findPosition(query: String): Int = withContext(dispatchers.database) {
     return@withContext dao.findPositionByQuery(query) ?: -1
+  }
+
+  override suspend fun getById(id: Long): NowPlaying? {
+    return withContext(dispatchers.database) {
+      val entity = dao.getById(id) ?: return@withContext null
+      return@withContext NowPlayingEntityMapper.map(entity)
+    }
   }
 }

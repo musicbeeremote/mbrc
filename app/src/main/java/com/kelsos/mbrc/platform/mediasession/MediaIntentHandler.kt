@@ -43,14 +43,16 @@ class MediaIntentHandler(
           previousClick = currentClick
           result = postAction(UserAction(Protocol.PlayerPlayPause, true))
         }
-        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> result =
-          postAction(UserAction(Protocol.PlayerPlayPause, true))
+        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ->
+          result =
+            postAction(UserAction(Protocol.PlayerPlayPause, true))
         KeyEvent.KEYCODE_MEDIA_PLAY -> result = postAction(UserAction(Protocol.PlayerPlay, true))
         KeyEvent.KEYCODE_MEDIA_PAUSE -> result = postAction(UserAction(Protocol.PlayerPause, true))
         KeyEvent.KEYCODE_MEDIA_STOP -> result = postAction(UserAction(Protocol.PlayerStop, true))
         KeyEvent.KEYCODE_MEDIA_NEXT -> result = postAction(UserAction(Protocol.PlayerNext, true))
-        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> result =
-          postAction(UserAction(Protocol.PlayerPrevious, true))
+        KeyEvent.KEYCODE_MEDIA_PREVIOUS ->
+          result =
+            postAction(UserAction(Protocol.PlayerPrevious, true))
         else -> {
         }
       }

@@ -11,6 +11,10 @@ interface UserActionUseCase {
   fun perform(action: UserAction)
 }
 
+fun UserActionUseCase.performUserAction(protocol: Protocol, data: Any) {
+  perform(UserAction.create(protocol, data))
+}
+
 fun UserActionUseCase.moveTrack(request: NowPlayingMoveRequest) {
   perform(UserAction(Protocol.NowPlayingListMove, request))
 }

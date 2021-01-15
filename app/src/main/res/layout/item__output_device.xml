@@ -10,19 +10,21 @@
     android:orientation="vertical">
 
   <ImageView
+      android:contentDescription="@string/output_selection__icon_content_description"
       android:id="@+id/imageView"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"
-      android:tint="@color/accent"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:srcCompat="@drawable/ic_volume_up_black_24dp"/>
+      app:srcCompat="@drawable/ic_volume_up_black_24dp"
+      app:tint="@color/accent" />
 
   <TextView
+      style="@style/TextAppearance.MaterialComponents.Body1"
       android:id="@+id/output_selection__output_device"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -33,7 +35,6 @@
       android:ellipsize="end"
       android:fontFamily="sans-serif-condensed"
       android:lines="1"
-      android:textStyle="bold"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toEndOf="@+id/imageView"

@@ -15,8 +15,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
+import com.kelsos.mbrc.utils.idle
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,7 +72,7 @@ class WidgetSmallTest {
         title = "Title"
       )
     )
-
+    idle()
     widgetView = shadowAppWidgetManager.getViewFor(widgetId)
 
     val lineOne = widgetView.findViewById<TextView>(R.id.widget_small_line_one)
@@ -86,8 +87,8 @@ class WidgetSmallTest {
     val updater = WidgetUpdaterImpl(contextWrapper)
     val before = widgetView.findViewById<ImageView>(R.id.widget_small_play)
 
-    updater.updatePlayState(PlayerState.PLAYING)
-
+    updater.updatePlayState(PlayerState.Playing)
+    idle()
     widgetView = shadowAppWidgetManager.getViewFor(widgetId)
     val after = widgetView.findViewById<ImageView>(R.id.widget_small_play)
 
@@ -102,6 +103,7 @@ class WidgetSmallTest {
     val receiver = broadcastReceiver { action = it }
     contextWrapper.registerReceiver(receiver, intentFilter)
     button.performClick()
+    idle()
     assertThat(action).isEqualTo(RemoteViewIntentBuilder.PLAY_PRESSED)
   }
 
@@ -113,6 +115,7 @@ class WidgetSmallTest {
     val receiver = broadcastReceiver { action = it }
     contextWrapper.registerReceiver(receiver, intentFilter)
     button.performClick()
+    idle()
     assertThat(action).isEqualTo(RemoteViewIntentBuilder.NEXT_PRESSED)
   }
 
@@ -124,6 +127,7 @@ class WidgetSmallTest {
     val receiver = broadcastReceiver { action = it }
     contextWrapper.registerReceiver(receiver, intentFilter)
     button.performClick()
+    idle()
     assertThat(action).isEqualTo(RemoteViewIntentBuilder.PREVIOUS_PRESSED)
   }
 }

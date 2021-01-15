@@ -3,15 +3,15 @@ package com.kelsos.mbrc.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.events.Event
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 
 open class BaseViewModel<T : UiMessageBase>(dispatchers: AppCoroutineDispatchers) : ViewModel() {
   private val mutableEmitter: MutableLiveData<Event<T>> = MutableLiveData()
   private val job: Job = Job()
-  protected val scope = CoroutineScope(dispatchers.network + job)
+  protected val scope = CoroutineScope(dispatchers.main + job)
 
   val emitter: LiveData<Event<T>>
     get() = mutableEmitter

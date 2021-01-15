@@ -4,11 +4,11 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 
 interface WidgetUpdater {
   fun updatePlayingTrack(track: PlayingTrack)
-  fun updatePlayState(state: String)
+  fun updatePlayState(state: PlayerState)
   fun updateCover(path: String = "")
 
   companion object {
@@ -39,8 +39,8 @@ class WidgetUpdaterImpl(
     return putExtra(WidgetUpdater.COVER, true).putExtra(WidgetUpdater.COVER_PATH, path)
   }
 
-  private fun Intent.statePayload(@PlayerState.State state: String): Intent {
-    return putExtra(WidgetUpdater.STATE, true).putExtra(WidgetUpdater.PLAYER_STATE, state)
+  private fun Intent.statePayload(state: PlayerState): Intent {
+    return putExtra(WidgetUpdater.STATE, true).putExtra(WidgetUpdater.PLAYER_STATE, state.state)
   }
 
   override fun updatePlayingTrack(track: PlayingTrack) {
@@ -49,7 +49,7 @@ class WidgetUpdaterImpl(
     broadcast(smallIntent, normalIntent)
   }
 
-  override fun updatePlayState(state: String) {
+  override fun updatePlayState(state: PlayerState) {
     val normalIntent = createIntent(WidgetNormal::class.java).statePayload(state)
     val smallIntent = createIntent(WidgetSmall::class.java).statePayload(state)
     broadcast(smallIntent, normalIntent)

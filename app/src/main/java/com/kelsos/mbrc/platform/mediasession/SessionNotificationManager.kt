@@ -8,26 +8,20 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
-import arrow.core.Option
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.library.tracks.PlayingTrack
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.platform.ForegroundHooks
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.mediasession.INotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.NEXT
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.OPEN
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PLAY
-import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.PREVIOUS
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import com.kelsos.mbrc.preferences.SettingsManager
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.utilities.RemoteUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class SessionNotificationManager(
   private val context: Application,
@@ -39,7 +33,7 @@ class SessionNotificationManager(
 
   private val sessionJob: Job = Job()
   private val uiScope: CoroutineScope = CoroutineScope(dispatchers.main + sessionJob)
-  private val diskScope: CoroutineScope = CoroutineScope(dispatchers.disk + sessionJob)
+  private val diskScope: CoroutineScope = CoroutineScope(dispatchers.io + sessionJob)
 
   private val previous: String by lazy { context.getString(R.string.notification_action_previous) }
   private val play: String by lazy { context.getString(R.string.notification_action_play) }
@@ -93,7 +87,7 @@ class SessionNotificationManager(
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-    val resId = if (notificationData.playerState == PlayerState.PLAYING) {
+    val resId = if (notificationData.playerState == PlayerState.Playing) {
       R.drawable.ic_action_pause
     } else {
       R.drawable.ic_action_play
@@ -122,24 +116,24 @@ class SessionNotificationManager(
         .setSubText(album)
     }
 
-    builder.setContentIntent(getPendingIntent(OPEN, context))
+    builder.setContentIntent(getPendingIntent(RemoteIntentCode.Open, context))
 
     return builder
   }
 
   private fun getPreviousAction(): Action {
-    val previousIntent = getPendingIntent(PREVIOUS, context)
+    val previousIntent = getPendingIntent(RemoteIntentCode.Previous, context)
     return Action.Builder(R.drawable.ic_action_previous, previous, previousIntent).build()
   }
 
   private fun getPlayAction(playStateIcon: Int): Action {
-    val playIntent = getPendingIntent(PLAY, context)
+    val playIntent = getPendingIntent(RemoteIntentCode.Play, context)
 
     return Action.Builder(playStateIcon, play, playIntent).build()
   }
 
   private fun getNextAction(): Action {
-    val nextIntent = getPendingIntent(NEXT, context)
+    val nextIntent = getPendingIntent(RemoteIntentCode.Next, context)
     return Action.Builder(R.drawable.ic_action_next, next, nextIntent).build()
   }
 
@@ -156,12 +150,12 @@ class SessionNotificationManager(
     diskScope.launch {
       notificationData = with(playingTrack.coverUrl) {
         val cover = if (isNotEmpty()) {
-          RemoteUtils.loadBitmap(this)
+          RemoteUtils.loadBitmap(this).fold({ null }) { bitmap -> bitmap }
         } else {
-          Option.empty()
+          null
         }
 
-        notificationData.copy(track = playingTrack, cover = cover.orNull())
+        notificationData.copy(track = playingTrack, cover = cover)
       }
 
       update(notificationData)
@@ -169,12 +163,6 @@ class SessionNotificationManager(
   }
 
   override fun connectionStateChanged(connected: Boolean) {
-    if (!settings.isNotificationControlEnabled()) {
-      Timber.v("Notification is off doing nothing")
-      cancel(NOW_PLAYING_PLACEHOLDER)
-      return
-    }
-
     if (!connected) {
       cancel(NOW_PLAYING_PLACEHOLDER)
     } else {
@@ -184,7 +172,7 @@ class SessionNotificationManager(
     }
   }
 
-  override fun playerStateChanged(state: String) {
+  override fun playerStateChanged(state: PlayerState) {
     if (notificationData.playerState == state) {
       return
     }

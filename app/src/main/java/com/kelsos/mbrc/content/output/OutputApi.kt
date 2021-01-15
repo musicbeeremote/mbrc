@@ -1,9 +1,9 @@
 package com.kelsos.mbrc.content.output
 
-import io.reactivex.Single
+import arrow.core.Either
 
 interface OutputApi {
-  fun getOutputs(): Single<OutputResponse>
+  suspend fun getOutputs(): Either<Throwable, OutputResponse>
 
-  fun setOutput(active: String): Single<OutputResponse>
+  suspend fun setOutput(active: String): Either<Throwable, OutputResponse>
 }

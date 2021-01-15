@@ -2,26 +2,28 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
   <item>
 
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="oval">
-      <padding android:top="0dp" android:right="1dp" android:bottom="1dp" android:left="0dp" />
+    <shape android:shape="oval">
+      <corners android:radius="1dp" />
+      <padding
+          android:bottom="1dp"
+          android:left="0dp"
+          android:right="1dp"
+          android:top="0dp" />
       <size
           android:width="32dp"
-          android:height="32dp"/>
-      <solid android:color="#3E000000"/>
-      <corners android:radius="1dp"/>
+          android:height="32dp" />
+      <solid android:color="#3E000000" />
 
     </shape>
   </item>
   <item>
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="oval">
+    <shape android:shape="oval">
 
+      <corners android:radius="1dp" />
       <size
           android:width="32dp"
-          android:height="32dp"/>
-      <solid android:color="@color/light_gray"/>
-      <corners android:radius="1dp"/>
+          android:height="32dp" />
+      <solid android:color="@color/light_gray" />
 
     </shape>
   </item>

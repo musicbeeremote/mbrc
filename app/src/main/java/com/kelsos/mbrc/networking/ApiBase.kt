@@ -5,14 +5,11 @@ import com.kelsos.mbrc.networking.client.GenericSocketMessage
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Page
 import com.kelsos.mbrc.networking.protocol.PageRange
-import com.kelsos.mbrc.networking.protocol.Protocol.Context
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.squareup.moshi.Types
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import timber.log.Timber
-import java.net.NoRouteToHostException
-import java.net.SocketTimeoutException
-
 import kotlin.reflect.KClass
 
 class ApiBase(
@@ -21,63 +18,53 @@ class ApiBase(
 ) {
 
   fun <T> getItem(
-    @Context request: String,
+    request: Protocol,
     kClazz: KClass<T>,
     payload: Any = ""
-  ): Single<T> where T : Any {
+  ): T where T : Any {
     val type = Types.newParameterizedType(GenericSocketMessage::class.java, kClazz.java)
-    return openConnection().flatMap {
-      apiRequestManager.request(it, SocketMessage.create(request, payload)).map {
-        val socketMessage = deserializationAdapter.objectify<GenericSocketMessage<T>>(it, type)
-        socketMessage.data
-      }.doFinally { it.close() }
-    }
+    val connection = apiRequestManager.openConnection()
+    val response = apiRequestManager.request(connection, SocketMessage.create(request, payload))
+    connection.close()
+    val socketMessage = deserializationAdapter.objectify<GenericSocketMessage<T>>(response, type)
+    return socketMessage.data
   }
 
-  fun <T : Any> getAllPages(
-    @Context request: String,
-    clazz: KClass<T>,
-    progress: (current: Int, total: Int) -> Unit = { _, _ -> }
-  ): Observable<List<T>> {
-    val start = now()
-
-    val inner = Types.newParameterizedType(Page::class.java, clazz.java)
+  fun <T> getAllPages(
+    request: Protocol,
+    kClazz: KClass<T>,
+    progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> }
+  ): Flow<List<T>> where T : Any {
+    val inner = Types.newParameterizedType(Page::class.java, kClazz.java)
     val type = Types.newParameterizedType(GenericSocketMessage::class.java, inner)
 
-    return openConnection().flatMapObservable { connection ->
-      Observable.range(0, Integer.MAX_VALUE).flatMapSingle {
+    return flow {
+      val start = now()
+      val connection = apiRequestManager.openConnection()
+
+      for (currentPage in 0..Int.MAX_VALUE) {
         val pageStart = now()
-
-        val limit = 800
-        val offset = it * limit
-        val range = getPageRange(offset, limit)
-
-        Timber.v("fetching $request offset $offset [$limit]")
-
+        val offset = currentPage * LIMIT
+        val range = getPageRange(offset, LIMIT)
+        Timber.v("fetching $request offset $offset [$LIMIT]")
         val message = SocketMessage.create(request, range ?: "")
+        val response = apiRequestManager.request(connection, message)
+        val socketMessage = deserializationAdapter.objectify<GenericSocketMessage<Page<T>>>(
+          response,
+          type
+        )
 
-        apiRequestManager.request(connection, message).map {
-          deserializationAdapter.objectify<GenericSocketMessage<Page<T>>>(it, type).data
-        }.doOnSuccess {
-          progress(it.limit + it.offset, it.total)
-          Timber.v("duration ${now() - pageStart} ms")
-        }
-      }.takeWhile { it.offset < it.total }
-        .map { it.data }
-        .doFinally {
-          connection.close()
-        }
-        .doOnComplete { Timber.v("duration ${System.currentTimeMillis() - start} ms") }
-    }
-  }
+        Timber.v("duration ${now() - pageStart} ms")
+        val page = socketMessage.data
 
-  private fun openConnection(): Single<ActiveConnection> = Single.create<ActiveConnection> {
-    try {
-      it.onSuccess(apiRequestManager.openConnection())
-    } catch (ex: SocketTimeoutException) {
-      it.tryOnError(ex)
-    } catch (ex: NoRouteToHostException) {
-      it.tryOnError(ex)
+        progress(page.offset + page.data.size, page.total)
+        emit(page.data)
+        if (page.offset + page.limit > page.total) {
+          break
+        }
+      }
+      connection.close()
+      Timber.v("total duration ${System.currentTimeMillis() - start} ms")
     }
   }
 
@@ -92,5 +79,9 @@ class ApiBase(
 
   private fun now(): Long {
     return System.currentTimeMillis()
+  }
+
+  companion object {
+    const val LIMIT = 800
   }
 }

@@ -12,9 +12,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.ui.dialogs.webDialog
-import com.kelsos.mbrc.utilities.RemoteUtils
 import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -58,7 +58,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     manager.setOnPreferenceClickListener {
-      val navController = checkNotNull(view).findNavController()
+      val navController = requireView().findNavController()
       navController.navigate(R.id.action_settingsFragment_to_connectionManagerFragment)
       false
     }
@@ -68,17 +68,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
       version.summary = resources.getString(R.string.settings_version_number, appVersion)
     } catch (e: PackageManager.NameNotFoundException) {
       Timber.d(e, "failed")
-    }
-
-    val showNotification: CheckBoxPreference =
-      preference(R.string.settings_key_notification_control)
-
-    showNotification.setOnPreferenceChangeListener { _, newValue ->
-      val value = newValue as Boolean
-      if (!value) {
-        // todo remove notification
-      }
-      true
     }
 
     val license: Preference = preference(R.string.settings_key_license)

@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.networking.client
 
 import com.jakewharton.rxrelay2.PublishRelay
-import com.kelsos.mbrc.utilities.AppRxSchedulers
+import com.kelsos.mbrc.common.utilities.AppRxSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.WeakHashMap
 

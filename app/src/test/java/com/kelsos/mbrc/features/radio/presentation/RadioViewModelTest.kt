@@ -1,15 +1,16 @@
 package com.kelsos.mbrc.features.radio.presentation
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Try
+import arrow.core.Either
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
-import com.kelsos.mbrc.features.queue.LibraryPopup
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.QueueApi
 import com.kelsos.mbrc.features.queue.QueueResponse
 import com.kelsos.mbrc.features.radio.repository.RadioRepository
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
+import com.kelsos.mbrc.utils.idle
 import com.kelsos.mbrc.utils.observeOnce
 import io.mockk.CapturingSlot
 import io.mockk.Runs
@@ -19,7 +20,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,18 +47,20 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() {
-    coEvery { repository.getRemote() } coAnswers { Try.raiseError(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.left(SocketTimeoutException()) }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.RefreshFailed)
   }
 
   @Test
   fun `should notify the observer that refresh succeeded`() {
-    coEvery { repository.getRemote() } coAnswers { Try.invoke { } }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.right(Unit) }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.RefreshSuccess)
   }
@@ -66,12 +68,13 @@ class RadioViewModelTest {
   @Test
   fun `should call queue and notify success`() {
     val playArguments = slot<List<String>>()
-    every { queueApi.queue(LibraryPopup.NOW, capture(playArguments)) } answers {
-      Single.just(QueueResponse(200))
+    coEvery { queueApi.queue(Queue.Now, capture(playArguments)) } coAnswers {
+      Either.right(QueueResponse(200))
     }
 
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
+    idle()
     assertThat(playArguments.captured).hasSize(1)
     assertThat(playArguments.captured).containsExactly("http://radio.station")
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.QueueSuccess)
@@ -79,19 +82,21 @@ class RadioViewModelTest {
 
   @Test
   fun `should notify on network error`() {
-    every { queueApi.queue(LibraryPopup.NOW, any()) } throws SocketTimeoutException()
+    coEvery { queueApi.queue(Queue.Now, any()) } coAnswers { Either.left(SocketTimeoutException()) }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
+    idle()
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.NetworkError)
   }
 
   @Test
   fun `should notify on queue failure`() {
-    every { queueApi.queue(LibraryPopup.NOW, any()) } answers {
-      Single.just(QueueResponse(500))
+    coEvery { queueApi.queue(Queue.Now, any()) } coAnswers {
+      Either.right(QueueResponse(500))
     }
     radioViewModel.emitter.observeOnce(observer)
     radioViewModel.play("http://radio.station")
+    idle()
     assertThat(slot.captured.peekContent()).isEqualTo(RadioUiMessages.QueueFailed)
   }
 }

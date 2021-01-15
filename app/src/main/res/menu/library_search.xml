@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
   <item
-    android:id="@+id/library_screen__action_search"
-    android:icon="@drawable/ic_search_black_24dp"
-    android:title="@string/now_playing_search"
-    app:actionViewClass="androidx.appcompat.widget.SearchView"
-    app:showAsAction="always|collapseActionView"/>
+      android:id="@+id/library__action_search"
+      android:icon="@drawable/ic_search_black_24dp"
+      android:title="@string/now_playing_search"
+      app:actionViewClass="androidx.appcompat.widget.SearchView"
+      app:showAsAction="always|collapseActionView" />
 
   <item
-    android:id="@+id/library_screen__action_refresh"
-    android:icon="@drawable/ic_refresh_black_24dp"
-    android:title="@string/library_actionbar_refresh"
-    app:showAsAction="ifRoom"/>
+      android:id="@+id/library__action_clear"
+      android:icon="@drawable/ic_baseline_clear_24"
+      android:title="@string/library__action_clear"
+      android:visible="false"
+      app:showAsAction="always"
+      tools:visible="true" />
+
+  <item
+      android:id="@+id/library__action_refresh"
+      android:icon="@drawable/ic_refresh_black_24dp"
+      android:title="@string/library__action_refresh"
+      app:showAsAction="ifRoom" />
+
+  <item
+      android:id="@+id/library__action_only_album_artists"
+      android:checkable="true"
+      android:title="@string/library__action_only_album_artists"
+      app:showAsAction="never" />
+
+  <item
+      android:id="@+id/library__action_show_sync_state"
+      android:title="@string/library_menu__sync_state"
+      app:showAsAction="never"/>
 
 </menu>

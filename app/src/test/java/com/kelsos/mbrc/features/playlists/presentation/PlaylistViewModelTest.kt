@@ -1,8 +1,7 @@
 package com.kelsos.mbrc.features.playlists.presentation
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Try
-import com.google.common.truth.Truth
+import arrow.core.Either
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.events.UserAction
@@ -11,6 +10,7 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
+import com.kelsos.mbrc.utils.idle
 import com.kelsos.mbrc.utils.observeOnce
 import io.mockk.CapturingSlot
 import io.mockk.Runs
@@ -56,20 +56,22 @@ class PlaylistViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() {
-    coEvery { repository.getRemote() } coAnswers { Try.raiseError(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.left(SocketTimeoutException()) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
-    Truth.assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshFailed)
+    assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshFailed)
   }
 
   @Test
   fun `should notify the observer that refresh succeeded`() {
-    coEvery { repository.getRemote() } coAnswers { Try.invoke { } }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.right(Unit) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
-    Truth.assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
+    assertThat(slot.captured.peekContent()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
   }
 
   @Test
@@ -77,7 +79,7 @@ class PlaylistViewModelTest {
     val userAction = slot<UserAction>()
     every { userActionUseCase.perform(capture(userAction)) } just Runs
     viewModel.play("""C:\playlists\metal.m3u""")
-    assertThat(userAction.captured.context).isEqualTo(Protocol.PlaylistPlay)
+    assertThat(userAction.captured.protocol).isEqualTo(Protocol.PlaylistPlay)
     assertThat(userAction.captured.data).isEqualTo("""C:\playlists\metal.m3u""")
   }
 }

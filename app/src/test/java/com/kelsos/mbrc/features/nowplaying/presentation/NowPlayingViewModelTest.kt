@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.nowplaying.presentation
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import arrow.core.Try
+import arrow.core.Either
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.events.Event
@@ -13,6 +13,7 @@ import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
+import com.kelsos.mbrc.utils.idle
 import com.kelsos.mbrc.utils.observeOnce
 import io.mockk.CapturingSlot
 import io.mockk.Runs
@@ -60,18 +61,20 @@ class NowPlayingViewModelTest {
 
   @Test
   fun `should notify the observer that refresh failed`() {
-    coEvery { repository.getRemote() } coAnswers { Try.raiseError(SocketTimeoutException()) }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.left(SocketTimeoutException()) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(NowPlayingUiMessages.RefreshFailed)
   }
 
   @Test
   fun `should notify the observer that refresh succeeded`() {
-    coEvery { repository.getRemote() } coAnswers { Try.invoke { } }
+    coEvery { repository.getRemote(any()) } coAnswers { Either.right(Unit) }
     viewModel.emitter.observeOnce(observer)
     viewModel.reload()
+    idle()
     verify(exactly = 1) { observer(any()) }
     assertThat(slot.captured.peekContent()).isEqualTo(NowPlayingUiMessages.RefreshSuccess)
   }
@@ -85,7 +88,7 @@ class NowPlayingViewModelTest {
     viewModel.moveTrack(2, 3)
     viewModel.move()
 
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListMove)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListMove)
     assertThat(actionSlot.captured.data).isEqualTo(NowPlayingMoveRequest(0, 3))
   }
 
@@ -96,7 +99,7 @@ class NowPlayingViewModelTest {
     coEvery { repository.findPosition(any()) } answers { 5 }
     viewModel.search("search")
 
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListPlay)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListPlay)
     assertThat(actionSlot.captured.data).isEqualTo(6)
   }
 
@@ -105,7 +108,7 @@ class NowPlayingViewModelTest {
     val actionSlot = slot<UserAction>()
     every { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.removeTrack(1)
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListRemove)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListRemove)
     assertThat(actionSlot.captured.data).isEqualTo(1)
   }
 
@@ -115,7 +118,7 @@ class NowPlayingViewModelTest {
     every { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.play(2)
 
-    assertThat(actionSlot.captured.context).isEqualTo(Protocol.NowPlayingListPlay)
+    assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListPlay)
     assertThat(actionSlot.captured.data).isEqualTo(3)
   }
 }

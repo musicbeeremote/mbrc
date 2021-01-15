@@ -2,8 +2,8 @@ package com.kelsos.mbrc.content.activestatus.livedata
 
 import com.kelsos.mbrc.common.state.BaseState
 import com.kelsos.mbrc.common.state.State
+import com.kelsos.mbrc.common.utilities.AppRxSchedulers
 import com.kelsos.mbrc.content.activestatus.PlayingPosition
-import com.kelsos.mbrc.utilities.AppRxSchedulers
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit

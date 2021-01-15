@@ -7,12 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.databinding.ListitemSettingsBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
-import kotterknife.bindView
 
 class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity,
   ConnectionAdapter.ConnectionViewHolder>(DIFF_CALLBACK) {
@@ -77,15 +78,21 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity,
     this.default = default
   }
 
-  class ConnectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val hostname: TextView by bindView(R.id.connection_settings__hostname_and_port)
-    private val computerName: TextView by bindView(R.id.connection_settings__name)
-    private val defaultSettings: ImageView by bindView(R.id.connection_settings__default_indicator)
-    private val overflow: View by bindView(R.id.connection_settings__overflow)
+  class ConnectionViewHolder(binding: ListitemSettingsBinding) : RecyclerView.ViewHolder(
+    binding.root
+  ) {
+    private val hostname: TextView = binding.connectionSettingsHostnameAndPort
+    private val computerName: TextView = binding.connectionSettingsName
+    private val defaultSettings: ImageView = binding.connectionSettingsDefaultIndicator
+    private val overflow: ImageView = binding.connectionSettingsOverflow
 
     fun bind(entity: ConnectionSettingsEntity, selectionId: Long) {
       computerName.text = entity.name
-      hostname.text = "${entity.address} : ${entity.port}"
+      hostname.text = itemView.context.getString(
+        R.string.connection_manager__host,
+        entity.address,
+        entity.port
+      )
 
       defaultSettings.isVisible = entity.id == selectionId
     }
@@ -101,8 +108,13 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity,
     companion object {
       fun create(parent: ViewGroup): ConnectionViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.ui_list_connection_settings, parent, false)
-        return ConnectionViewHolder(view)
+        val binding: ListitemSettingsBinding = DataBindingUtil.inflate(
+          inflater,
+          R.layout.listitem_settings,
+          parent,
+          false
+        )
+        return ConnectionViewHolder(binding)
       }
     }
   }

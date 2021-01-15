@@ -6,18 +6,17 @@ import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.core.net.toUri
+import com.kelsos.mbrc.common.ui.extensions.md5
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.player.cover.CoverApi
 import com.kelsos.mbrc.features.player.cover.CoverModel
 import com.kelsos.mbrc.features.player.cover.CoverPayload
-import com.kelsos.mbrc.common.ui.extensions.md5
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
-import com.kelsos.mbrc.utilities.AppCoroutineDispatchers
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -35,26 +34,26 @@ class UpdateCover(
   private val coverDir: File
 
   private val job = Job()
-  private val scope = CoroutineScope(dispatchers.disk + job)
+  private val scope = CoroutineScope(dispatchers.io + job)
 
   init {
     coverDir = File(app.filesDir, COVER_DIR)
-    scope.launch(dispatchers.disk) {
+    scope.launch(dispatchers.io) {
       playingTrackLiveDataProvider.set {
         copy(coverUrl = coverModel.coverPath)
       }
     }
   }
 
-  override fun execute(message: ProtocolMessage) {
+  override fun execute(protocolMessage: ProtocolMessage) {
     val adapter = mapper.adapter(CoverPayload::class.java)
-    val payload = adapter.fromJsonValue(message.data) ?: return
+    val payload = adapter.fromJsonValue(protocolMessage.data) ?: return
 
     if (payload.status == CoverPayload.NOT_FOUND) {
       playingTrackLiveDataProvider.set { copy(coverUrl = "") }
       updater.updateCover("")
     } else if (payload.status == CoverPayload.READY) {
-      scope.launch(dispatchers.disk) {
+      scope.launch(dispatchers.io) {
         retrieveCover()
       }
     }
@@ -62,20 +61,22 @@ class UpdateCover(
 
   private suspend fun retrieveCover() {
     withContext(dispatchers.network) {
-      try {
-        val response = coverApi.getCover().await()
-        val bitmap = getBitmap(response)
-        val file = storeCover(bitmap)
+      coverApi.getCover().fold(
+        {
+          removeCover(it)
+        },
+        {
+          val bitmap = getBitmap(it)
+          val file = storeCover(bitmap)
 
-        playingTrackLiveDataProvider.set {
-          val coverUri = file.toUri().toString()
-          coverModel.coverPath = coverUri
-          copy(coverUrl = coverUri)
+          playingTrackLiveDataProvider.set {
+            val coverUri = file.toUri().toString()
+            coverModel.coverPath = coverUri
+            copy(coverUrl = coverUri)
+          }
+          updater.updateCover(file.absolutePath)
         }
-        updater.updateCover(file.absolutePath)
-      } catch (e: Exception) {
-        removeCover(e)
-      }
+      )
     }
 
     Timber.v("Message received for available cover")
@@ -140,7 +141,7 @@ class UpdateCover(
     if (!coverDir.exists()) {
       return
     }
-    val storedCovers = coverDir.listFiles()
+    val storedCovers = coverDir.listFiles() ?: return
     storedCovers.sortByDescending(File::lastModified)
     val elementsToKeep = if (storedCovers.size - keep < 0) 0 else storedCovers.size - keep
     storedCovers.takeLast(elementsToKeep).forEach {

@@ -1,29 +1,28 @@
 package com.kelsos.mbrc.features.queue
 
+import arrow.core.Either
 import com.kelsos.mbrc.features.player.cover.CoverPayload
-import com.kelsos.mbrc.features.queue.LibraryPopup.Action
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import io.reactivex.Single
 
 class QueueApiImpl(
   private val apiBase: ApiBase
 ) : QueueApi {
-  override fun queue(
-    @Action type: String,
+  override suspend fun queue(
+    type: Queue,
     tracks: List<String>,
     play: String?
-  ): Single<QueueResponse> {
-    return apiBase.getItem(
+  ): Either<Throwable, QueueResponse> = Either.catch {
+    val response = apiBase.getItem(
       Protocol.NowPlayingQueue,
       QueueResponse::class,
-      QueuePayload(type, tracks, play)
-    ).map { payload ->
-      if (payload.code == CoverPayload.SUCCESS) {
-        return@map payload
-      } else {
-        throw RuntimeException("Queueing of tracks failed")
-      }
+      QueuePayload(type.action, tracks, play)
+    )
+
+    if (response.code == CoverPayload.SUCCESS) {
+      response
+    } else {
+      throw RuntimeException("Queueing of tracks failed")
     }
   }
 }

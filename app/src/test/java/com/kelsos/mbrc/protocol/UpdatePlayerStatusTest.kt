@@ -57,15 +57,15 @@ class UpdatePlayerStatusTest {
   fun `should update the player status when the message is processed`() {
     val original = state.requireValue()
     val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
-    val message = MessageEvent(socketMessage.context, socketMessage.data)
+    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     update.execute(message)
     val model = state.requireValue()
-    assertThat(original).isNotSameAs(model)
+    assertThat(original).isNotEqualTo(model)
     assertThat(model.scrobbling).isTrue()
     assertThat(model.mute).isTrue()
     assertThat(model.volume).isEqualTo(60)
-    assertThat(model.shuffle).isEqualTo(ShuffleMode.AUTODJ)
-    assertThat(model.state).isEqualTo(PlayerState.PLAYING)
-    assertThat(model.repeat).isEqualTo(Repeat.ONE)
+    assertThat(model.shuffle).isEqualTo(ShuffleMode.AutoDJ)
+    assertThat(model.state).isEqualTo(PlayerState.Playing)
+    assertThat(model.repeat).isEqualTo(Repeat.One)
   }
 }

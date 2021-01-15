@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="mbrc_selected_item">#11ffffff</color>
-  <color name="mbrc_transparent_dark">#99000000</color>
-  <color name="dark_transparent_overlay">#37000000</color>
   <color name="primary">#ff9800</color>
   <color name="primary_dark">#e65100</color>
   <color name="primary_light">#FFECB3</color>
@@ -18,5 +15,4 @@
   <color name="secondary_text_material_light">#8a000000</color>
   <color name="empty_view_icon_tint">#bdbdbd</color>
   <color name="light_gray">#bdbdbd</color>
-  <color name="item__placeholder_color">#424242</color>
 </resources>

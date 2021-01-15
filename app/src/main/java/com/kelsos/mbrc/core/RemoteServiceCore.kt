@@ -6,16 +6,16 @@ import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
 import com.kelsos.mbrc.networking.client.IClientConnectionManager
-import com.kelsos.mbrc.networking.connections.Connection
+import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import timber.log.Timber
 
 class RemoteServiceCore(
+  connectionStatusLiveDataProvider: ConnectionStatusState,
+  playingTrackLiveDataProvider: PlayingTrackState,
   private val clientConnectionManager: IClientConnectionManager,
   private val notificationManager: INotificationManager,
-  private val playingTrackLiveDataProvider: PlayingTrackState,
   private val playerStatusLiveDataProvider: PlayerStatusState,
-  private val connectionStatusLiveDataProvider: ConnectionStatusState,
   private val positionLiveDataProvider: TrackPositionState
 ) : IRemoteServiceCore, LifeCycleAwareService() {
 
@@ -31,14 +31,14 @@ class RemoteServiceCore(
     }
 
     connectionStatusLiveDataProvider.observe(this) {
-      notificationManager.connectionStateChanged(it.status == Connection.ACTIVE)
+      notificationManager.connectionStateChanged(it == ConnectionStatus.Active)
 
-      if (it.status != Connection.OFF) {
+      if (it != ConnectionStatus.Off) {
         return@observe
       }
 
       playerStatusLiveDataProvider.set {
-        copy(state = PlayerState.UNDEFINED)
+        copy(state = PlayerState.Undefined)
       }
       positionLiveDataProvider.set {
         copy(current = 0)

@@ -10,14 +10,13 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.features.radio.domain.RadioStation
 import com.kelsos.mbrc.ui.BindableViewHolder
 import com.kelsos.mbrc.ui.OnViewItemPressed
-import kotterknife.bindView
 
 class RadioViewHolder(
   itemView: View,
   onViewItemPressed: OnViewItemPressed
 ) : BindableViewHolder<RadioStation>(itemView) {
-  private val name: TextView by bindView(R.id.line_one)
-  private val context: ImageView by bindView(R.id.ui_item_context_indicator)
+  private val name: TextView = itemView.findViewById(R.id.line_one)
+  private val context: ImageView = itemView.findViewById(R.id.ui_item_context_indicator)
 
   init {
     context.isVisible = false
