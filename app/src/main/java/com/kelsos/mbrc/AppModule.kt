@@ -5,7 +5,6 @@ import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.work.WorkManager
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.common.utilities.AppRxSchedulers
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
@@ -168,10 +167,7 @@ import com.kelsos.mbrc.ui.helpfeedback.FeedbackViewModel
 import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
 import com.squareup.moshi.Moshi
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.koin.androidx.experimental.dsl.viewModel
 import org.koin.androidx.fragment.dsl.fragment
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -257,25 +253,11 @@ val appModule = module {
   singleBy<WidgetUpdater, WidgetUpdaterImpl>()
 
   single {
-    AppRxSchedulers(
-      AndroidSchedulers.mainThread(),
-      Schedulers.io(),
-      Schedulers.from(
-        Executors.newSingleThreadExecutor { runnable ->
-          Thread(runnable, "database")
-        }
-      ),
-      Schedulers.io()
-    )
-  }
-
-  single {
-    val appRxSchedulers = get<AppRxSchedulers>()
     AppCoroutineDispatchers(
       Dispatchers.Main,
-      appRxSchedulers.disk.asCoroutineDispatcher(),
-      appRxSchedulers.database.asCoroutineDispatcher(),
-      appRxSchedulers.network.asCoroutineDispatcher(),
+      Dispatchers.IO,
+      Dispatchers.IO,
+      Dispatchers.IO,
     )
   }
 

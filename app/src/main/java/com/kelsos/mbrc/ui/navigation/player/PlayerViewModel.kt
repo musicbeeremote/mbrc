@@ -1,8 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.player
 
-import com.jakewharton.rxrelay2.PublishRelay
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.common.utilities.AppRxSchedulers
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
@@ -12,11 +10,15 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.BaseViewModel
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
+@FlowPreview
 class PlayerViewModel(
   settingsManager: SettingsManager,
-  appRxSchedulers: AppRxSchedulers,
   dispatchers: AppCoroutineDispatchers,
   private val userActionUseCase: UserActionUseCase,
   val playingTrack: PlayingTrackState,
@@ -25,26 +27,15 @@ class PlayerViewModel(
   val trackPosition: TrackPositionState
 ) : BaseViewModel<PlayerUiMessage>(dispatchers) {
 
-  private val progressRelay: PublishRelay<Int> = PublishRelay.create()
-  private val disposable = progressRelay.throttleLast(
-    800,
-    TimeUnit.MILLISECONDS,
-    appRxSchedulers.network
-  )
-    .subscribeOn(appRxSchedulers.network)
-    .subscribe { position ->
-      userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
-    }
+  private val stateFlow: MutableStateFlow<Int> = MutableStateFlow(0)
 
   init {
+    stateFlow.debounce(800).onEach { position ->
+      userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
+    }.launchIn(scope)
     if (settingsManager.shouldShowChangeLog()) {
       emit(PlayerUiMessage.ShowChangelog)
     }
-  }
-
-  override fun onCleared() {
-    disposable.dispose()
-    super.onCleared()
   }
 
   fun stop(): Boolean {
@@ -61,7 +52,7 @@ class PlayerViewModel(
   }
 
   fun seek(position: Int) {
-    progressRelay.accept(position)
+    stateFlow.tryEmit(position)
   }
 
   fun toggleScrobbling() {

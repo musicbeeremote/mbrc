@@ -1,14 +1,8 @@
 package com.kelsos.mbrc.networking.client
 
+import kotlinx.coroutines.flow.SharedFlow
+
 interface UiMessageQueue {
-
-  fun dispatch(code: Int, payload: Any? = null)
-
-  companion object {
-    const val NOT_ALLOWED = 1
-    const val PARTY_MODE_COMMAND_UNAVAILABLE = 5
-  }
-
-  fun observe(owner: Any, observer: (UiMessage) -> Unit)
-  fun stop(owner: Any)
+  val messages: SharedFlow<UiMessage>
+  fun emit(message: UiMessage)
 }

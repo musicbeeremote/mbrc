@@ -1,24 +1,29 @@
 package com.kelsos.mbrc.networking
 
-import io.reactivex.Completable
-import io.reactivex.disposables.Disposable
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
-class SocketActivityChecker {
-  private var disposable: Disposable? = null
+class SocketActivityChecker(
+  dispatchers: AppCoroutineDispatchers
+) {
+  private var supervisor = SupervisorJob()
+  private var scope = CoroutineScope(supervisor + dispatchers.io)
   private var pingTimeoutListener: PingTimeoutListener? = null
+  private var timer: Deferred<Unit>? = null
 
   fun start() {
-    Timber.v("Starting activity checker")
-    disposable = subscribe
-  }
-
-  private val subscribe: Disposable
-    get() = Completable.timer(DELAY.toLong(), TimeUnit.SECONDS).subscribe({
+    Timber.v("Setting next timeout check")
+    timer = scope.async {
+      delay(DELAY)
       Timber.v("Ping was more than %d seconds ago", DELAY)
       pingTimeoutListener?.onTimeout()
-    }) { Timber.v("Subscription failed") }
+    }
+  }
 
   fun stop() {
     Timber.v("Stopping activity checker")
@@ -28,14 +33,12 @@ class SocketActivityChecker {
   fun ping() {
     Timber.v("Received ping")
     dispose()
-    disposable = subscribe
+    start()
   }
 
   private fun dispose() {
-    disposable?.let {
-      if (!it.isDisposed) {
-        it.dispose()
-      }
+    if (timer?.isActive == true) {
+      timer?.cancel()
     }
   }
 
@@ -48,6 +51,6 @@ class SocketActivityChecker {
   }
 
   companion object {
-    private const val DELAY = 40
+    private const val DELAY = 40L
   }
 }

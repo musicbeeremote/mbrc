@@ -1,30 +1,20 @@
 package com.kelsos.mbrc.networking.client
 
-import com.jakewharton.rxrelay2.PublishRelay
-import com.kelsos.mbrc.common.utilities.AppRxSchedulers
-import io.reactivex.disposables.Disposable
-import java.util.WeakHashMap
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
-class UiMessageQueueImpl(
-  private val appRxSchedulers: AppRxSchedulers
-) : UiMessageQueue {
-
-  private val publishRelay: PublishRelay<UiMessage> = PublishRelay.create()
-  private val weakHashMap: WeakHashMap<Any, Disposable> = WeakHashMap()
-
-  override fun dispatch(code: Int, payload: Any?) {
-    publishRelay.accept(UiMessage(code, payload))
-  }
-
-  override fun observe(owner: Any, observer: (UiMessage) -> Unit) {
-    weakHashMap[owner] = publishRelay.subscribeOn(appRxSchedulers.disk)
-      .observeOn(appRxSchedulers.main)
-      .subscribe { observer(it) }
-  }
-
-  override fun stop(owner: Any) {
-    weakHashMap.remove(owner)?.dispose()
+class UiMessageQueueImpl : UiMessageQueue {
+  override val messages: MutableSharedFlow<UiMessage> = MutableSharedFlow(
+    0,
+    10,
+    BufferOverflow.SUSPEND
+  )
+  override fun emit(message: UiMessage) {
+    messages.tryEmit(message)
   }
 }
 
-data class UiMessage(val code: Int, val payload: Any?)
+sealed class UiMessage(val payload: Any? = null) {
+  object NotAllowed : UiMessage()
+  object PartyModeCommandNotAvailable : UiMessage()
+}

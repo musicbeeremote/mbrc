@@ -2,8 +2,6 @@ package com.kelsos.mbrc.networking.client
 
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.events.MessageEvent
-import com.kelsos.mbrc.networking.client.UiMessageQueue.Companion.NOT_ALLOWED
-import com.kelsos.mbrc.networking.client.UiMessageQueue.Companion.PARTY_MODE_COMMAND_UNAVAILABLE
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -42,7 +40,7 @@ class MessageHandlerImpl(
         return
       }
       Protocol.CommandUnavailable -> {
-        uiMessageQueue.dispatch(PARTY_MODE_COMMAND_UNAVAILABLE)
+        uiMessageQueue.emit(UiMessage.PartyModeCommandNotAvailable)
         return
       }
       Protocol.UnknownCommand -> {
@@ -85,7 +83,7 @@ class MessageHandlerImpl(
   }
 
   private fun clientNotAllowed() {
-    uiMessageQueue.dispatch(NOT_ALLOWED)
+    uiMessageQueue.emit(UiMessage.NotAllowed)
     connectionStatusLiveDataProvider.disconnected()
   }
 

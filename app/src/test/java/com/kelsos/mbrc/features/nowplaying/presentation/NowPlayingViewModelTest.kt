@@ -15,6 +15,7 @@ import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.TestDispatchers
 import com.kelsos.mbrc.utils.idle
 import com.kelsos.mbrc.utils.observeOnce
+import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.CapturingSlot
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -104,10 +105,11 @@ class NowPlayingViewModelTest {
   }
 
   @Test
-  fun `remove should perform user action`() = runBlockingTest {
+  fun `remove should perform user action`() = testDispatcher.runBlockingTest {
     val actionSlot = slot<UserAction>()
     every { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.removeTrack(1)
+    advanceTimeBy(400)
     assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListRemove)
     assertThat(actionSlot.captured.data).isEqualTo(1)
   }
