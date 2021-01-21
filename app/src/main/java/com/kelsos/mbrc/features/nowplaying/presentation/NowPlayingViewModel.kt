@@ -2,7 +2,7 @@ package com.kelsos.mbrc.features.nowplaying.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NowPlayingViewModel(
-  dispatchers: AppCoroutineDispatchers,
+  dispatchers: AppDispatchers,
   val trackState: PlayingTrackState,
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,

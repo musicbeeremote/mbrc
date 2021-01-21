@@ -2,7 +2,7 @@ package com.kelsos.mbrc.features.playlists.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.features.playlists.domain.Playlist
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class PlaylistViewModel(
-  dispatchers: AppCoroutineDispatchers,
+  dispatchers: AppDispatchers,
   private val repository: PlaylistRepository,
   private val userActionUseCase: UserActionUseCase
 ) : BaseViewModel<PlaylistUiMessages>(dispatchers), CoroutineScope {

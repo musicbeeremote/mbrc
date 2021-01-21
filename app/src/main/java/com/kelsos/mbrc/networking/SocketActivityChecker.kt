@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.networking
 
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -9,7 +9,7 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 
 class SocketActivityChecker(
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppDispatchers
 ) {
   private var supervisor = SupervisorJob()
   private var scope = CoroutineScope(supervisor + dispatchers.io)
@@ -51,6 +51,6 @@ class SocketActivityChecker(
   }
 
   companion object {
-    private const val DELAY = 40L
+    private const val DELAY = 40 * 1000L
   }
 }

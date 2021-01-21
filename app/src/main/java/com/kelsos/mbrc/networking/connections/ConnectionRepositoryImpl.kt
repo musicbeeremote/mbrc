@@ -2,16 +2,19 @@ package com.kelsos.mbrc.networking.connections
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
+import com.kelsos.mbrc.preferences.AppDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 class ConnectionRepositoryImpl(
   private val connectionDao: ConnectionDao,
-  private val dispatchers: AppCoroutineDispatchers,
-  private val defaultSettingsModel: DefaultSettingsModel,
-  private val remoteServiceDiscovery: RemoteServiceDiscovery
+  private val dispatchers: AppDispatchers,
+  private val remoteServiceDiscovery: RemoteServiceDiscovery,
+  private val appDataStore: AppDataStore
 ) : ConnectionRepository {
 
   private val default: MediatorLiveData<ConnectionSettingsEntity> = MediatorLiveData()
@@ -30,7 +33,6 @@ class ConnectionRepositoryImpl(
 
   override suspend fun save(settings: ConnectionSettingsEntity) {
     withContext(dispatchers.database) {
-
       val id = connectionDao.findId(settings.address, settings.port)
       id?.let {
         settings.id = it
@@ -43,7 +45,7 @@ class ConnectionRepositoryImpl(
       }
 
       if (count() == 1L) {
-        defaultSettingsModel.defaultId = checkNotNull(last).id
+        appDataStore.setDefaultConnectionId(checkNotNull(last).id)
       }
     }
   }
@@ -51,15 +53,15 @@ class ConnectionRepositoryImpl(
   override suspend fun delete(settings: ConnectionSettingsEntity) {
     withContext(dispatchers.database) {
       val oldId = settings.id
-
       connectionDao.delete(settings)
+      val defaultConnectionId = appDataStore.getDefaultConnectionId().first()
 
-      if (oldId == defaultId) {
+      if (oldId == defaultConnectionId) {
         val count = count()
         if (count == 0L) {
-          defaultId = -1
+          appDataStore.setDefaultConnectionId(-1)
         } else {
-          defaultSettingsModel.defaultId = checkNotNull(getItemBefore(oldId) ?: first).id
+          appDataStore.setDefaultConnectionId(checkNotNull(getItemBefore(oldId) ?: first).id)
         }
       }
     }
@@ -75,8 +77,8 @@ class ConnectionRepositoryImpl(
   private val last: ConnectionSettingsEntity?
     get() = connectionDao.last()
 
-  override fun getDefault(): ConnectionSettingsEntity? {
-    val defaultId = defaultId
+  override suspend fun getDefault(): ConnectionSettingsEntity? {
+    val defaultId = appDataStore.getDefaultConnectionId().first()
     if (defaultId < 0) {
       return null
     }
@@ -84,19 +86,17 @@ class ConnectionRepositoryImpl(
     return connectionDao.findById(defaultId)
   }
 
-  override fun setDefault(settings: ConnectionSettingsEntity) {
-    defaultId = settings.id
+  override suspend fun setDefaultConnectionId(id: Long) {
+    appDataStore.setDefaultConnectionId(id)
+    observeDefault()
   }
 
-  override fun defaultSettings(): LiveData<ConnectionSettingsEntity?> {
-    if (defaultData == null) {
-      observeDefault()
+  private suspend fun observeDefault() {
+    defaultData?.let {
+      default.removeSource(it)
     }
-    return default
-  }
-
-  private fun observeDefault() {
-    val data = connectionDao.getById(defaultId).also {
+    val defaultConnectionId = appDataStore.getDefaultConnectionId().first()
+    val data = connectionDao.getById(defaultConnectionId).also {
       this.defaultData = it
     }
     default.addSource(data) { value ->
@@ -104,15 +104,9 @@ class ConnectionRepositoryImpl(
     }
   }
 
-  private var defaultId: Long
-    get() = defaultSettingsModel.defaultId
-    set(id) {
-      defaultSettingsModel.defaultId = id
-      defaultData?.let {
-        default.removeSource(it)
-      }
-      observeDefault()
-    }
+  override fun getDefaultConnectionId(): Flow<Long> {
+    return appDataStore.getDefaultConnectionId()
+  }
 
   override fun getAll(): LiveData<List<ConnectionSettingsEntity>> = connectionDao.getAll()
 

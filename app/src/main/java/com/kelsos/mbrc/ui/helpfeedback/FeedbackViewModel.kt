@@ -1,13 +1,13 @@
 package com.kelsos.mbrc.ui.helpfeedback
 
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import java.io.File
 
 class FeedbackViewModel(
-  dispatchers: AppCoroutineDispatchers,
+  dispatchers: AppDispatchers,
   private val logHelper: LogHelper
 ) : BaseViewModel<FeedbackUiMessage>(dispatchers) {
 

@@ -2,7 +2,7 @@ package com.kelsos.mbrc.content.activestatus.livedata
 
 import com.kelsos.mbrc.common.state.BaseState
 import com.kelsos.mbrc.common.state.State
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.content.activestatus.PlayingPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -17,7 +17,7 @@ interface TrackPositionState : State<PlayingPosition> {
 }
 
 class TrackPositionStateImpl(
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppDispatchers
 ) : TrackPositionState, BaseState<PlayingPosition>() {
   private val job = SupervisorJob()
   private val scope = CoroutineScope(job + dispatchers.io)

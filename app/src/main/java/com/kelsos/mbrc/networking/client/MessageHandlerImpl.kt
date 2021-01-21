@@ -8,6 +8,7 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 class MessageHandlerImpl(
@@ -75,7 +76,8 @@ class MessageHandlerImpl(
   }
 
   private fun sendProtocolPayload() {
-    val payload = ProtocolPayload(clientInformationStore.getClientId()).apply {
+    val clientId = runBlocking { clientInformationStore.getClientId() }
+    val payload = ProtocolPayload(clientId).apply {
       noBroadcast = false
       protocolVersion = Protocol.ProtocolVersionNumber
     }

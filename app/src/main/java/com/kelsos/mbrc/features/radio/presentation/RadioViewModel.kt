@@ -2,7 +2,7 @@ package com.kelsos.mbrc.features.radio.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.QueueApi
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class RadioViewModel(
   private val radioRepository: RadioRepository,
   private val queueApi: QueueApi,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppDispatchers
 ) : BaseViewModel<RadioUiMessages>(dispatchers) {
 
   val radios: LiveData<PagedList<RadioStation>> = radioRepository.getAll().paged()

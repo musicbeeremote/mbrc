@@ -4,9 +4,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.work.WorkManager
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
-import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusStateImpl
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
@@ -82,8 +80,6 @@ import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
 import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.features.player.cover.CoverApi
 import com.kelsos.mbrc.features.player.cover.CoverApiImpl
-import com.kelsos.mbrc.features.player.cover.CoverModel
-import com.kelsos.mbrc.features.player.cover.StoredCoverModel
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
@@ -121,8 +117,6 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.client.UserActionUseCaseImpl
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
@@ -136,8 +130,8 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import com.kelsos.mbrc.preferences.ClientInformationModel
-import com.kelsos.mbrc.preferences.ClientInformationModelImpl
+import com.kelsos.mbrc.preferences.AppDataStore
+import com.kelsos.mbrc.preferences.AppDataStoreImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
@@ -210,7 +204,6 @@ val appModule = module {
   singleBy<ClientConnectionUseCase, ClientConnectionUseCaseImpl>()
 
   singleBy<SettingsManager, SettingsManagerImpl>()
-  singleBy<PlayingTrackCache, PlayingTrackCacheImpl>()
 
   singleBy<LibrarySyncUseCase, LibrarySyncUseCaseImpl>()
   singleBy<SyncWorkHandler, SyncWorkHandlerImpl>()
@@ -246,14 +239,12 @@ val appModule = module {
   singleBy<INotificationManager, SessionNotificationManager>()
   singleBy<IRemoteServiceCore, RemoteServiceCore>()
 
-  single<CoverModel> { StoredCoverModel }
-
   single<DefaultActionPreferenceStore>()
 
   singleBy<WidgetUpdater, WidgetUpdaterImpl>()
 
   single {
-    AppCoroutineDispatchers(
+    AppDispatchers(
       Dispatchers.Main,
       Dispatchers.IO,
       Dispatchers.IO,
@@ -298,11 +289,10 @@ val appModule = module {
   single<ProtocolPongHandle>()
   single<ProtocolVersionUpdate>()
 
+  singleBy<AppDataStore, AppDataStoreImpl>()
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
   singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
 
-  factory<DefaultSettingsModel> { DefaultSettingsModelImpl }
-  factory<ClientInformationModel> { ClientInformationModelImpl }
   factoryBy<MoveManager, MoveManagerImpl>()
 
   factory<SocketActivityChecker>()

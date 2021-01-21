@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.protocol
 
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.content.activestatus.PlayerStatus
 import com.kelsos.mbrc.content.activestatus.PlayingPosition
@@ -231,7 +231,7 @@ class ProtocolPongHandle : ProtocolAction {
 
 class UpdateNowPlayingTrackMoved(
   moshi: Moshi,
-  dispatchers: AppCoroutineDispatchers,
+  dispatchers: AppDispatchers,
   private val nowPlayingRepository: NowPlayingRepository
 ) : ProtocolAction {
   private val scope = CoroutineScope(dispatchers.network)
@@ -249,7 +249,7 @@ class UpdateNowPlayingTrackMoved(
 
 class UpdateNowPlayingTrackRemoval(
   moshi: Moshi,
-  dispatchers: AppCoroutineDispatchers,
+  dispatchers: AppDispatchers,
   private val nowPlayingRepository: NowPlayingRepository
 ) : ProtocolAction {
   private val scope = CoroutineScope(dispatchers.network)

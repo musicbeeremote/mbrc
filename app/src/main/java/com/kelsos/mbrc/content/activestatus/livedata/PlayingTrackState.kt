@@ -2,28 +2,24 @@ package com.kelsos.mbrc.content.activestatus.livedata
 
 import com.kelsos.mbrc.common.state.BaseState
 import com.kelsos.mbrc.common.state.State
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.features.library.PlayingTrack
+import com.kelsos.mbrc.preferences.AppDataStore
 import kotlinx.coroutines.runBlocking
 
 interface PlayingTrackState : State<PlayingTrack>
 
 class PlayingTrackStateImpl(
-  private val playingTrackCache: PlayingTrackCache,
-  appCoroutineDispatchers: AppCoroutineDispatchers
+  private val appDataStore: AppDataStore,
+  appDispatchers: AppDispatchers
 ) : BaseState<PlayingTrack>(),
   PlayingTrackState {
   init {
     set(PlayingTrack())
 
-    runBlocking(appCoroutineDispatchers.io) {
-      with(playingTrackCache) {
-        try {
-          restoreInfo()
-        } catch (ex: Exception) {
-        }
-      }
+    runBlocking(appDispatchers.io) {
+      val fromCache = appDataStore.restoreFromCache()
+      set(fromCache)
     }
   }
 }

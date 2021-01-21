@@ -49,7 +49,7 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity,
 
   override fun onBindViewHolder(holder: ConnectionViewHolder, position: Int) {
     val entity = getItem(holder.adapterPosition)
-    holder.bind(entity, default?.id ?: -1)
+    holder.bind(entity, selectionId)
   }
 
   private fun showPopup(settings: ConnectionSettingsEntity, v: View) {
@@ -70,12 +70,6 @@ class ConnectionAdapter : ListAdapter<ConnectionSettingsEntity,
       true
     }
     popupMenu.show()
-  }
-
-  private var default: ConnectionSettingsEntity? = null
-
-  fun setDefault(default: ConnectionSettingsEntity?) {
-    this.default = default
   }
 
   class ConnectionViewHolder(binding: ListitemSettingsBinding) : RecyclerView.ViewHolder(

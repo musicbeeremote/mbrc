@@ -3,7 +3,7 @@ package com.kelsos.mbrc.features.radio.repository
 import androidx.paging.DataSource
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.radio.RadioDaoMapper
 import com.kelsos.mbrc.features.radio.RadioDtoMapper
@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 class RadioRepositoryImpl(
   private val dao: RadioStationDao,
   private val remoteDataSource: ApiBase,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppDispatchers
 ) : RadioRepository {
 
   override suspend fun count(): Long {

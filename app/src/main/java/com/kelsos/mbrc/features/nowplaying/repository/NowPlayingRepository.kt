@@ -4,7 +4,7 @@ import androidx.paging.DataSource
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.data.Repository
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDtoMapper
@@ -30,7 +30,7 @@ interface NowPlayingRepository :
 class NowPlayingRepositoryImpl(
   private val remoteDataSource: ApiBase,
   private val dao: NowPlayingDao,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppDispatchers
 ) : NowPlayingRepository {
 
   private fun NowPlayingEntity.key(): String {

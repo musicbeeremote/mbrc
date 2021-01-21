@@ -2,7 +2,7 @@ package com.kelsos.mbrc.features.library.sync
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
@@ -27,7 +27,7 @@ class LibrarySyncUseCaseImpl(
   private val playlistRepository: PlaylistRepository,
   private val connectivityVerifier: ConnectivityVerifier,
   private val metrics: SyncMetrics,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppDispatchers
 ) : LibrarySyncUseCase {
 
   private var running: Boolean = false

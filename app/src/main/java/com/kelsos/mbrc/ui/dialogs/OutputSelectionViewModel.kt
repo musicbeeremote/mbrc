@@ -2,7 +2,7 @@ package com.kelsos.mbrc.ui.dialogs
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.content.output.OutputApi
 import com.kelsos.mbrc.content.output.OutputResponse
 import com.kelsos.mbrc.ui.BaseViewModel
@@ -12,7 +12,7 @@ import java.net.SocketTimeoutException
 
 class OutputSelectionViewModel(
   private val outputApi: OutputApi,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppDispatchers
 ) : BaseViewModel<OutputSelectionResult>(dispatchers) {
 
   private val _outputs: MutableLiveData<List<String>> = MutableLiveData()

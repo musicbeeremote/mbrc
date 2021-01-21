@@ -10,7 +10,6 @@ import android.net.wifi.WifiManager
 import androidx.annotation.CallSuper
 import androidx.core.content.getSystemService
 import androidx.multidex.MultiDexApplication
-import com.chibatching.kotpref.Kotpref
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
@@ -63,8 +62,6 @@ open class App : MultiDexApplication() {
     }
 
     initializeTimber()
-
-    Kotpref.init(this)
   }
 
   private fun initializeTimber() {

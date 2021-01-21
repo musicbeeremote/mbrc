@@ -6,7 +6,7 @@ import com.kelsos.mbrc.common.Meta.Album
 import com.kelsos.mbrc.common.Meta.Artist
 import com.kelsos.mbrc.common.Meta.Genre
 import com.kelsos.mbrc.common.Meta.Track
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
@@ -24,7 +24,7 @@ class QueueUseCaseImpl(
   private val artistRepository: ArtistRepository,
   private val albumRepository: AlbumRepository,
   private val settings: DefaultActionPreferenceStore,
-  private val dispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppDispatchers,
   private val queueApi: QueueApi
 ) : QueueUseCase {
 

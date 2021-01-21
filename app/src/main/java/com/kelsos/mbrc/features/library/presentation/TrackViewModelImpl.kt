@@ -2,7 +2,7 @@ package com.kelsos.mbrc.features.library.presentation
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.paging.PagedList
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.features.library.data.Track
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 class TrackViewModelImpl(
   private val repository: TrackRepository,
   searchModel: LibrarySearchModel,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppDispatchers
 ) : TrackViewModel(dispatchers) {
   override val tracks = MediatorLiveData<PagedList<Track>>()
 

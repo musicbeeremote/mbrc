@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.activestatus
+package com.kelsos.mbrc.preferences.data
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer

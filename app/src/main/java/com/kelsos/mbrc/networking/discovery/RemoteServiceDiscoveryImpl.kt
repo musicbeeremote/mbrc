@@ -4,7 +4,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import arrow.core.Either
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.networking.connections.ConnectionMapper
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
@@ -21,7 +21,7 @@ class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
   private val moshi: Moshi,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppDispatchers
 ) : RemoteServiceDiscovery {
   private var multicastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null

@@ -18,7 +18,7 @@ import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -77,7 +77,7 @@ class PlaylistRepositoryTest : KoinTest {
 
   @Test
   fun `sync is failure if there is an exception`() = runBlockingTest {
-    every {
+    coEvery {
       apiBase.getAllPages(
         Protocol.PlaylistList,
         PlaylistDto::class,
@@ -98,7 +98,7 @@ class PlaylistRepositoryTest : KoinTest {
 
   @Test
   fun `sync remote playlists and update database`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(20) {
         TestDataFactories.playlist(it)
       }
@@ -113,7 +113,7 @@ class PlaylistRepositoryTest : KoinTest {
   @Test
   fun `it should filter the playlists when searching`() = runBlockingTest {
     val extra = listOf(PlaylistDto(name = "Heavy Metal", url = """C:\library\metal.m3u"""))
-    every { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(5, extra) {
         TestDataFactories.playlist(it)
       }

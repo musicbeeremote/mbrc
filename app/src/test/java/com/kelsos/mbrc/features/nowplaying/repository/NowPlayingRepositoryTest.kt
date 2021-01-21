@@ -17,7 +17,7 @@ import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -82,7 +82,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user moves track from position 1 to position 5`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
@@ -104,7 +104,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user moves track from position 6 to position 1`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
@@ -127,7 +127,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user removes a track`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
@@ -148,7 +148,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `user search should return filtered results`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(20) {
         TestDataFactories.nowPlayingList(it)
       }
@@ -173,7 +173,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `updated items should keep the same ids`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(5) {
         TestDataFactories.nowPlayingList(it)
       }
@@ -195,7 +195,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `search should return -1 if item is not found`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(5) {
         TestDataFactories.nowPlayingList(it)
       }
@@ -207,7 +207,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
   @Test
   fun `search should return the position if item is found`() = runBlockingTest {
-    every { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.NowPlayingList, NowPlayingDto::class, any()) } answers {
       TestData.mockApi(5) {
         TestDataFactories.nowPlayingList(it)
       }

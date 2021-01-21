@@ -3,7 +3,7 @@ package com.kelsos.mbrc.features.library.repositories
 import androidx.paging.DataSource
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.data.ArtistDao
@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 class ArtistRepositoryImpl(
   private val dao: ArtistDao,
   private val remoteDataSource: ApiBase,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppDispatchers
 ) : ArtistRepository {
 
   private val dtoMapper = ArtistDtoMapper()

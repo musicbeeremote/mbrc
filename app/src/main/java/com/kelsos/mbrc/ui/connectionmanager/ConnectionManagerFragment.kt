@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
@@ -15,6 +16,8 @@ import com.kelsos.mbrc.databinding.FragmentConnectionManagerBinding
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.ui.dialogs.SettingsDialogFragment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class ConnectionManagerFragment :
@@ -64,15 +67,13 @@ class ConnectionManagerFragment :
     connectionManagerViewModel.settings.nonNullObserver(viewLifecycleOwner) {
       adapter.submitList(it)
     }
-    connectionManagerViewModel.default.observe(
-      viewLifecycleOwner,
-      {
-        adapter.setDefault(it)
-        if (it !== null) {
-          adapter.setSelectionId(it.id)
-        }
+
+    viewLifecycleOwner.lifecycleScope.launch {
+      connectionManagerViewModel.defaultConnectionId.collect {
+        adapter.setSelectionId(it)
       }
-    )
+    }
+
     connectionManagerViewModel.discoveryStatus.nonNullObserver(viewLifecycleOwner) {
       it.contentIfNotHandled?.let { status ->
         onDiscoveryStopped(status)

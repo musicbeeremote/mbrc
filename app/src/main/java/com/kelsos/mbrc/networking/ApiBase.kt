@@ -17,7 +17,7 @@ class ApiBase(
   private val apiRequestManager: RequestManager
 ) {
 
-  fun <T> getItem(
+  suspend fun <T> getItem(
     request: Protocol,
     kClazz: KClass<T>,
     payload: Any = ""
@@ -30,7 +30,7 @@ class ApiBase(
     return socketMessage.data
   }
 
-  fun <T> getAllPages(
+  suspend fun <T> getAllPages(
     request: Protocol,
     kClazz: KClass<T>,
     progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> }

@@ -9,7 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.RemoteUtils
 import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
@@ -27,7 +27,7 @@ class SessionNotificationManager(
   private val context: Application,
   private val sessionManager: RemoteSessionManager,
   private val settings: SettingsManager,
-  private val dispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppDispatchers,
   private val notificationManager: NotificationManager
 ) : INotificationManager {
 

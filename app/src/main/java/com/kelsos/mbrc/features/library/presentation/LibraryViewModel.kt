@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.features.library.presentation
 
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.features.library.sync.SyncResult
 import com.kelsos.mbrc.features.library.sync.SyncStatProvider
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
@@ -9,7 +9,7 @@ import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.launch
 
 class LibraryViewModel(
-  dispatchers: AppCoroutineDispatchers,
+  dispatchers: AppDispatchers,
   private val searchModel: LibrarySearchModel,
   private val settingsManager: SettingsManager,
   private val syncWorkHandler: SyncWorkHandler,

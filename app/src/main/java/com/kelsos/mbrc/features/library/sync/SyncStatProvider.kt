@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.features.library.sync
 
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SyncStatProvider(
-  val dispatchers: AppCoroutineDispatchers,
+  val dispatchers: AppDispatchers,
   private val genreRepository: GenreRepository,
   private val artistRepository: ArtistRepository,
   private val albumRepository: AlbumRepository,

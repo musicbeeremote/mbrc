@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.ui.navigation.player
 
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.onEach
 @FlowPreview
 class PlayerViewModel(
   settingsManager: SettingsManager,
-  dispatchers: AppCoroutineDispatchers,
+  dispatchers: AppDispatchers,
   private val userActionUseCase: UserActionUseCase,
   val playingTrack: PlayingTrackState,
   val playerStatus: PlayerStatusState,

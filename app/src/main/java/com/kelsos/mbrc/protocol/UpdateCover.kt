@@ -7,12 +7,12 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.core.net.toUri
 import com.kelsos.mbrc.common.ui.extensions.md5
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.player.cover.CoverApi
-import com.kelsos.mbrc.features.player.cover.CoverModel
 import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
+import com.kelsos.mbrc.preferences.AppDataStore
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -26,9 +26,9 @@ class UpdateCover(
   private val app: Application,
   private val updater: WidgetUpdater,
   private val mapper: Moshi,
-  private val dispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppDispatchers,
   private val coverApi: CoverApi,
-  private val coverModel: CoverModel,
+  private val appDataStore: AppDataStore,
   private val playingTrackLiveDataProvider: PlayingTrackState
 ) : ProtocolAction {
   private val coverDir: File
@@ -38,11 +38,6 @@ class UpdateCover(
 
   init {
     coverDir = File(app.filesDir, COVER_DIR)
-    scope.launch(dispatchers.io) {
-      playingTrackLiveDataProvider.set {
-        copy(coverUrl = coverModel.coverPath)
-      }
-    }
   }
 
   override fun execute(protocolMessage: ProtocolMessage) {
@@ -71,9 +66,9 @@ class UpdateCover(
 
           playingTrackLiveDataProvider.set {
             val coverUri = file.toUri().toString()
-            coverModel.coverPath = coverUri
             copy(coverUrl = coverUri)
           }
+          appDataStore.updateCache(playingTrackLiveDataProvider.requireValue())
           updater.updateCover(file.absolutePath)
         }
       )

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.paging.DataSource
 import androidx.paging.PagedList
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
@@ -19,7 +19,7 @@ class ArtistViewModelImpl(
   private val repository: ArtistRepository,
   private val settingsManager: SettingsManager,
   searchModel: LibrarySearchModel,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppDispatchers
 ) : ArtistViewModel(dispatchers) {
   override val artists = MediatorLiveData<PagedList<Artist>>()
 

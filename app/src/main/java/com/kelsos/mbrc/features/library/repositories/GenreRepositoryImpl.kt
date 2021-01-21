@@ -3,7 +3,7 @@ package com.kelsos.mbrc.features.library.repositories
 import androidx.paging.DataSource
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.data.GenreDao
@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 class GenreRepositoryImpl(
   private val remoteDataSource: ApiBase,
   private val dao: GenreDao,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppDispatchers
 ) : GenreRepository {
 
   private val dtoMapper = GenreDtoMapper()

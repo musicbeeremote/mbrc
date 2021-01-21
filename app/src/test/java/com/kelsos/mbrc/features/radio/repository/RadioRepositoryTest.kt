@@ -17,7 +17,7 @@ import com.kelsos.mbrc.utils.TestData.mockApi
 import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -74,7 +74,7 @@ class RadioRepositoryTest : KoinTest {
 
   @Test
   fun `sync is failure if there is an exception`() = runBlocking {
-    every {
+    coEvery {
       apiBase.getAllPages(
         Protocol.RadioStations,
         RadioStationDto::class
@@ -87,7 +87,7 @@ class RadioRepositoryTest : KoinTest {
   @Test
   fun `sync remote data and update the database`() = runBlocking {
     assertThat(repository.cacheIsEmpty())
-    every { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
       mockApi(2) {
         RadioStationDto(name = "Radio $it", url = "http://radio.statio/$it")
       }
@@ -102,7 +102,7 @@ class RadioRepositoryTest : KoinTest {
 
   @Test
   fun `it should filter the stations when searching`() = runBlocking {
-    every { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
+    coEvery { apiBase.getAllPages(Protocol.RadioStations, RadioStationDto::class, any()) } answers {
       mockApi(5, listOf(RadioStationDto(name = "Heavy Metal", url = "http://heavy.metal.ru"))) {
         RadioStationDto(name = "Radio $it", url = "http://radio.statio/$it")
       }

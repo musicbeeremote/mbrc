@@ -18,7 +18,7 @@ import com.kelsos.mbrc.utils.TestDataFactories
 import com.kelsos.mbrc.utils.observeOnce
 import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -75,7 +75,7 @@ class GenreRepositoryImplTest : KoinTest {
 
     val mockApi = mockk<ApiBase>()
 
-    every { mockApi.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class, any()) } answers {
+    coEvery { mockApi.getAllPages(Protocol.LibraryBrowseGenres, GenreDto::class, any()) } answers {
       TestData.mockApi(1200) {
         TestDataFactories.genre(it)
       }

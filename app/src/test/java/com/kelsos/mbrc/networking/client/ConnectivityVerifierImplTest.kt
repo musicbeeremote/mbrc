@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.networking.client
 
+import android.app.Application
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.DeserializationAdapter
@@ -12,12 +14,13 @@ import com.kelsos.mbrc.networking.client.ConnectivityVerifierImpl.NoValidPluginC
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.preferences.ClientInformationModel
-import com.kelsos.mbrc.preferences.ClientInformationModelImpl
+import com.kelsos.mbrc.preferences.AppDataStore
+import com.kelsos.mbrc.preferences.AppDataStoreImpl
 import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
+import com.kelsos.mbrc.utils.TestDispatchers
 import com.squareup.moshi.Moshi
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -125,7 +128,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     val server = startMockServer()
 
-    every { connectionRepository.getDefault() } answers {
+    coEvery { connectionRepository.getDefault() } answers {
       return@answers ConnectionSettingsEntity().apply {
         address = server.inetAddress.hostAddress
         port = server.localPort
@@ -141,7 +144,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   fun testPrematureDisconnectDuringVerification() {
     val verifier = this.verifier
     val server = startMockServer(true)
-    every { connectionRepository.getDefault() } answers {
+    coEvery { connectionRepository.getDefault() } answers {
       return@answers ConnectionSettingsEntity().apply {
         address = server.inetAddress.hostAddress
         port = server.localPort
@@ -157,7 +160,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   fun testInvalidPluginResponseVerification() {
     val verifier = this.verifier
     val server = startMockServer(false, Protocol.ClientNotAllowed)
-    every { connectionRepository.getDefault() } answers {
+    coEvery { connectionRepository.getDefault() } answers {
       return@answers ConnectionSettingsEntity().apply {
         address = server.inetAddress.hostAddress
         port = server.localPort
@@ -174,7 +177,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     startMockServer(true)
 
-    every { connectionRepository.getDefault() } answers {
+    coEvery { connectionRepository.getDefault() } answers {
       return@answers null
     }
 
@@ -188,7 +191,7 @@ class ConnectivityVerifierImplTest : KoinTest {
     val verifier = this.verifier
     startMockServer(false, Protocol.fromString("a"), false)
 
-    every { connectionRepository.getDefault() } answers {
+    coEvery { connectionRepository.getDefault() } answers {
       return@answers null
     }
 
@@ -200,11 +203,13 @@ class ConnectivityVerifierImplTest : KoinTest {
   private val testModule = module {
     single { Moshi.Builder().build() }
     single { mockk<ConnectionRepository>() }
+    single<Application> { ApplicationProvider.getApplicationContext() }
     singleBy<ClientInformationStore, ClientInformationStoreImpl>()
-    single<ClientInformationModel> { ClientInformationModelImpl }
     singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
     singleBy<SerializationAdapter, SerializationAdapterImpl>()
     singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
     singleBy<RequestManager, RequestManagerImpl>()
+    singleBy<AppDataStore, AppDataStoreImpl>()
+    single { TestDispatchers.dispatchers }
   }
 }

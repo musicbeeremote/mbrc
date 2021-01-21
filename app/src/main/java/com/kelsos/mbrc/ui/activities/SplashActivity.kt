@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.common.utilities.AppDispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,7 +13,7 @@ import org.koin.android.ext.android.inject
 
 class SplashActivity : AppCompatActivity() {
 
-  private val dispatchers: AppCoroutineDispatchers by inject()
+  private val dispatchers: AppDispatchers by inject()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
