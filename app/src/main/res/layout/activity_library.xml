@@ -51,16 +51,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-      <com.google.android.material.progressindicator.ProgressIndicator
+      <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/sync_progress"
         android:layout_marginTop="2dp"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_gravity="start"
         android:progress="70"
-        style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate" />
-
-
+        style="@style/Widget.MaterialComponents.LinearProgressIndicator" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

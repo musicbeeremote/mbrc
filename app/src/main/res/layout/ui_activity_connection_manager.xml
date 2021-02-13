@@ -6,8 +6,8 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <com.google.android.material.progressindicator.ProgressIndicator
-    style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+  <com.google.android.material.progressindicator.LinearProgressIndicator
+    style="@style/Widget.MaterialComponents.LinearProgressIndicator"
     android:id="@+id/connection_manager__progress"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

@@ -9,7 +9,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.progressindicator.ProgressIndicator
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.constants.UserInputEventType
@@ -54,7 +54,7 @@ class ConnectionManagerActivity : FontActivity(),
 
   @OnClick(R.id.connection_scan)
   internal fun onScanButtonClick() {
-    findViewById<ProgressIndicator>(R.id.connection_manager__progress).isGone = false
+    findViewById<LinearProgressIndicator>(R.id.connection_manager__progress).isGone = false
     bus.post(MessageEvent(UserInputEventType.StartDiscovery))
   }
 
@@ -124,7 +124,7 @@ class ConnectionManagerActivity : FontActivity(),
   }
 
   private fun onDiscoveryStopped(event: DiscoveryStopped) {
-    findViewById<ProgressIndicator>(R.id.connection_manager__progress).isGone = true
+    findViewById<LinearProgressIndicator>(R.id.connection_manager__progress).isGone = true
 
     val message: String = when (event.reason) {
       DiscoveryStop.NO_WIFI -> getString(R.string.con_man_no_wifi)

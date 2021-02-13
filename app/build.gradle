@@ -1,13 +1,12 @@
 import java.text.SimpleDateFormat
 
 plugins {
-  id "com.google.protobuf" version "0.8.12"
+  id "com.google.protobuf" version "0.8.15"
   id 'com.android.application'
   id 'kotlin-android'
   id 'kotlin-kapt'
   id 'idea'
   id 'jacoco'
-  id 'com.github.kt3k.coveralls'
 }
 
 repositories {
@@ -24,12 +23,12 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.4.0"
-def version_code = 120
+def version = "1.5.0-alpha.1"
+def version_code = 121
 
 android {
   compileSdkVersion 30
-  buildToolsVersion "29.0.3"
+  buildToolsVersion "30.0.3"
 
   defaultConfig {
     applicationId "com.kelsos.mbrc"
@@ -48,10 +47,15 @@ android {
   }
 
   testOptions {
-    unitTests.returnDefaultValues = true
-    unitTests.all {
-      jacoco {
-        includeNoLocationClasses = true
+    execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    animationsDisabled true
+
+    unitTests {
+      includeAndroidResources = true
+      returnDefaultValues = true
+
+      all {
+        maxHeapSize = "1024m"
       }
     }
   }
@@ -65,11 +69,12 @@ android {
   }
 
   kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    jvmTarget = "1.8"
+    freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
   }
 
   dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
   }
 
   signingConfigs {
@@ -93,7 +98,6 @@ android {
 
       buildConfigField "String", "GIT_SHA", "\"${gitHash()}\""
       buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
-      buildConfigField "boolean", "USE_CRASHLYTICS", "true"
     }
 
     debug {
@@ -103,20 +107,16 @@ android {
 
       buildConfigField "String", "GIT_SHA", "\"debug_build\""
       buildConfigField "String", "BUILD_TIME", "\"debug_build\""
-      buildConfigField "boolean", "USE_CRASHLYTICS", "true"
     }
   }
 
   productFlavors {
     play {
-      ext.enableCrashlytics = true
       apply plugin: 'com.google.gms.google-services'
       apply plugin: 'com.google.firebase.crashlytics'
     }
 
-    github {
-      ext.enableCrashlytics = false
-    }
+    github {}
   }
 
 
@@ -163,105 +163,92 @@ idea {
   }
 }
 
-ext {
-  dbflow_version = "4.0.0-beta5"
-  toothpick_version = "1.0.5"
-  jackson_version = "2.11.3"
-  butterknife_version = "10.2.3"
-  material_dialogs_version = "0.9.2.3"
-  runner_version = "0.5"
-  espresso_version = "2.2.2"
-  junit_version = "4.12"
-  mockito_version = "2.7.1"
-  robolectric_version = "3.2.2"
-  truth_version = "0.31"
-  leakcanary_version = "2.5"
-}
-
 dependencies {
   implementation project(path: ':changelog')
   implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
-    //Instrumentation Test dependencies
-  androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
-  androidTestImplementation 'androidx.test.espresso:espresso-intents:3.3.0'
-  androidTestImplementation "junit:junit:${junit_version}"
-  // 2017-01-04 (I spend a couple of days until I figured out that if I specify the mockitoA
-  // version to an different than the one dexmaker supports the tests would crash...)
-  androidTestImplementation "org.mockito:mockito-core:${mockito_version}"
-  androidTestImplementation "org.mockito:mockito-android:${mockito_version}"
-
-  androidTestImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
-  androidTestImplementation 'androidx.annotation:annotation:1.1.0'
-  androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-  androidTestImplementation 'androidx.test:rules:1.3.0'
-  androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.1.0'
-
   // Test dependencies
-  testImplementation "junit:junit:${junit_version}"
-  testImplementation "org.mockito:mockito-core:${mockito_version}"
-  testImplementation "org.robolectric:robolectric:${robolectric_version}"
-  testImplementation "org.robolectric:shadows-multidex:${robolectric_version}"
-  testImplementation "com.google.truth:truth:${truth_version}"
-  testImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:${toothpick_version}"
+  testImplementation "com.github.stephanenicolas.toothpick:toothpick-testing:1.1.3"
+
+  testImplementation "androidx.test:runner:1.3.0"
+  testImplementation "androidx.test.ext:junit:1.1.2"
+  testImplementation "androidx.test.espresso:espresso-intents:3.3.0"
+  testImplementation "androidx.test.espresso:espresso-core:3.3.0"
+  testImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
+
+  testImplementation "androidx.test.ext:truth:1.3.0"
+  testImplementation "androidx.arch.core:core-testing:2.1.0"
+  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
+
+  testImplementation "io.mockk:mockk:1.11.0"
+  testImplementation "com.google.truth:truth:1.1.2"
+
+  testImplementation "org.robolectric:robolectric:4.5.1"
+  testImplementation "org.robolectric:shadows-multidex:4.5.1"
+
   //The android library only will fail the robolectric tests
-  testImplementation 'org.threeten:threetenbp:1.4.4'
+  testImplementation 'org.threeten:threetenbp:1.5.0'
+
+  implementation 'com.google.android.material:material:1.3.0'
 
   implementation 'androidx.appcompat:appcompat:1.2.0'
+  implementation 'androidx.media:media:1.3.0'
   implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-  implementation 'androidx.annotation:annotation:1.1.0'
-  implementation 'androidx.recyclerview:recyclerview:1.1.0'
-  implementation 'com.google.android.material:material:1.3.0-alpha03'
+
+  implementation 'androidx.annotation:annotation:1.2.0'
+  implementation 'androidx.recyclerview:recyclerview:1.2.0'
   implementation 'androidx.preference:preference-ktx:1.1.1'
-  implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
-  kapt "androidx.lifecycle:lifecycle-compiler:2.2.0"
+
+  implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
+  kapt "androidx.lifecycle:lifecycle-compiler:2.3.1"
 
   //Some of the dependencies pull the wrong version support v13
   implementation 'androidx.legacy:legacy-support-v13:1.0.0'
 
-  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+  kapt "com.github.Raizlabs.DBFlow:dbflow-processor:4.0.0-beta5"
 
-  implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-  implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-  implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}@aar"
+  implementation "com.github.Raizlabs.DBFlow:dbflow-core:4.0.0-beta5"
+  implementation "com.github.Raizlabs.DBFlow:dbflow:4.0.0-beta5"
+  implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:4.0.0-beta5@aar"
 
-  implementation "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
-  implementation "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
-  implementation "com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}"
-  implementation "com.jakewharton:butterknife:${butterknife_version}"
+  implementation "com.fasterxml.jackson.core:jackson-core:2.12.2"
+  implementation "com.fasterxml.jackson.core:jackson-databind:2.12.2"
+  implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.12.2"
+  implementation "com.jakewharton:butterknife:10.2.3"
 
-  implementation "com.github.stephanenicolas.toothpick:toothpick-runtime:${toothpick_version}"
-  implementation "com.github.stephanenicolas.toothpick:smoothie:${toothpick_version}"
-  kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:${toothpick_version}"
+  implementation "com.github.stephanenicolas.toothpick:toothpick-runtime:1.1.3"
+  implementation "com.github.stephanenicolas.toothpick:smoothie:1.1.3"
+  kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:1.1.3"
 
-  kapt "com.jakewharton:butterknife-compiler:${butterknife_version}"
+  kapt "com.jakewharton:butterknife-compiler:10.2.3"
+
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 
+  implementation 'com.squareup.picasso:picasso:2.8'
   implementation 'androidx.multidex:multidex:2.0.1'
-  implementation 'com.squareup.picasso:picasso:2.71828'
 
   implementation 'io.reactivex:rxandroid:1.2.1'
   implementation 'io.reactivex:rxjava:1.2.5'
-  implementation 'io.reactivex:rxkotlin:0.60.0'
+  implementation 'io.reactivex:rxkotlin:1.0.0'
+
   implementation 'com.jakewharton.timber:timber:4.7.1'
   implementation 'com.jakewharton.rxrelay:rxrelay:1.2.0'
   implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-  implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
+  implementation 'com.jakewharton.threetenabp:threetenabp:1.3.0'
 
   implementation  "androidx.datastore:datastore-core:1.0.0-alpha02"
-  implementation  "com.google.protobuf:protobuf-javalite:3.10.0"
+  implementation  "com.google.protobuf:protobuf-javalite:3.15.8"
 
+  implementation("com.squareup.okio:okio:2.10.0")
 
-  debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakcanary_version}"
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:2.7"
 
   // Import the BoM for the Firebase platform
-  playImplementation platform('com.google.firebase:firebase-bom:25.12.0')
+  playImplementation platform('com.google.firebase:firebase-bom:26.8.0')
 
   // Declare the dependencies for the Crashlytics and Analytics libraries
   // When using the BoM, you don't specify versions in Firebase library dependencies
@@ -271,7 +258,7 @@ dependencies {
 
 protobuf {
   protoc {
-    artifact = "com.google.protobuf:protoc:3.10.0"
+    artifact = "com.google.protobuf:protoc:3.15.5"
   }
 
   // Generates the java Protobuf-lite code for the Protobufs in this project. See
@@ -312,56 +299,74 @@ allprojects {
   }
 }
 
-coveralls {
-  jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-}
-
-tasks.coveralls {
-  dependsOn 'jacocoTestReport'
-  onlyIf { System.env.'CI' }
-}
-
 repositories {
   mavenCentral()
 }
 
 kapt {
-  generateStubs = true
   arguments {
     arg('toothpick_registry_package_name', 'com.kelsos.mbrc')
   }
 }
 
-//task jacocoTestReport(type: JacocoReport,
-//    dependsOn: ['testGithubDebugUnitTest', 'createGithubDebugCoverageReport']) {
-//  group = "Reporting"
-//  description "Generate jacoco coverage reports"
-//
-//  reports {
-//    xml.enabled = true
-//    html.enabled = true
-//  }
-//
-//  def fileFilter = ['**/R.class',
-//                    '**/R$*.class',
-//                    '**/BuildConfig.*',
-//                    '**/Manifest*.*',
-//                    '**/*Test*.*',
-//                    '**/FactoryRegistry.*',
-//                    '**/*_ViewBinding*',
-//                    '**/*MemberInjector*',
-//                    '**/*$$Factory*.*',
-//                    '**/MemberInjectorRegistry.*',
-//                    '**/**_Table.*',
-//                    '**/GeneratedDatabaseHolder.*',
-//                    '**/*_Database.*',
-//                    'android/**/*.*']
-//  def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/github/debug",
-//      excludes: fileFilter)
-//  def mainSrc = "${project.projectDir}/src/main/kotlin"
-//
-//  sourceDirectories = files([mainSrc])
-//  classDirectories = files([debugTree])
-//  executionData = fileTree(dir: "$buildDir", includes: ["**/*.exec",
-//                                                        "**/*.ec"])
-//}
+jacoco {
+  toolVersion = "0.8.6"
+}
+
+task jacocoTestReport(type: JacocoReport,
+        dependsOn: ['testGithubDebugUnitTest']) {
+  group = "Reporting"
+  description "Generate jacoco coverage reports"
+
+  def fileFilter = [
+          '**/R.class',
+          '**/R$*.class',
+          '**/BuildConfig.*',
+          '**/Manifest*.*',
+          '**/*Test*.*',
+          '**/**_Impl**',
+          '**/*$*$*.*', // Anonymous classes generated by kotlin
+          'android/**/*.*',
+          'androidx/**/*.*',
+          '**/databinding/**/*.class',
+          '**/**/*JsonAdapter.class',
+          '**/DataBinderMapperImpl**',
+          '**/DataBindingInfo**',
+          '**/BR.*',
+          '**/*$inlined$*.*', // Kotlin specific, Jacoco can not handle several "$" in class name.
+  ]
+
+  def debugTree = fileTree(
+          dir: "${buildDir}/intermediates/javac/githubDebug/compileGithubDebugJavaWithJavac",
+          excludes: fileFilter
+  )
+  def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/githubDebug")
+
+  reports {
+    xml.enabled true
+    html.enabled true
+    csv.enabled false
+    classDirectories.setFrom(
+            files([debugTree, kotlinTree])
+    )
+  }
+
+  def mainSrc = "${project.projectDir}/src/main/java"
+
+  sourceDirectories.setFrom(files([mainSrc]))
+  executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+          "**/*.exec",
+          "**/*.ec"
+  ]))
+}
+
+tasks.withType(Test) {
+  jacoco.includeNoLocationClasses = true
+  jacoco.excludes = ['jdk.internal.*']
+}
+
+configurations.all {
+  resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
+  resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+  resolutionStrategy.force "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+}

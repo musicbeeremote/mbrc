@@ -11,7 +11,7 @@ import androidx.viewpager2.widget.ViewPager2
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.ProgressIndicator
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -221,12 +221,12 @@ class LibraryActivity : BaseActivity(),
   }
 
   override fun showSyncProgress() {
-    findViewById<ProgressIndicator>(R.id.sync_progress).isGone = false
+    findViewById<LinearProgressIndicator>(R.id.sync_progress).isGone = false
     findViewById<TextView>(R.id.sync_progress_text).isGone = false
   }
 
   override fun hideSyncProgress() {
-    findViewById<ProgressIndicator>(R.id.sync_progress).isGone = true
+    findViewById<LinearProgressIndicator>(R.id.sync_progress).isGone = true
     findViewById<TextView>(R.id.sync_progress_text).isGone = true
   }
 
