@@ -67,12 +67,12 @@ class LibrarySyncInteractorImpl
             playlists = playlistRepository.count()
           )
         )
-        running = false
         Timber.v("Library refresh was complete")
       } catch (e: Exception) {
         Timber.e(e, "Refresh couldn't complete")
         onCompleteListener?.onFailure(e)
       } finally {
+        running = false
         onCompleteListener?.onTermination()
       }
     }

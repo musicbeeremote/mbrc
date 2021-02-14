@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Build
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.ConnectionSettings
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.rules.DBFlowTestRule
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -22,19 +25,21 @@ import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
-import java.util.*
+import java.util.ArrayList
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class,
-    application = TestApplication::class,
-    sdk = intArrayOf(Build.VERSION_CODES.N_MR1))
+@Config(
+  application = TestApplication::class,
+  sdk = [Build.VERSION_CODES.N_MR1]
+)
 class ConnectionRepositoryTest {
   private val toothPickRule = ToothPickRule(this)
+  private val testDispatcher = TestCoroutineDispatcher()
+
   @Rule
   fun chain(): TestRule = RuleChain.outerRule(toothPickRule).around(DBFlowTestRule.create())
 
@@ -45,17 +50,17 @@ class ConnectionRepositoryTest {
   }
 
   @Test
-  fun addNewSettings() {
+  fun addNewSettings() = runBlockingTest {
     val repository = repository
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
 
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
     assertThat(settings.id).isEqualTo(1)
   }
 
   @Test
-  fun addMultipleNewSettings() {
+  fun addMultipleNewSettings() = runBlockingTest {
     val repository = repository
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -66,20 +71,30 @@ class ConnectionRepositoryTest {
     repository.save(settings2)
     repository.save(settings3)
 
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
     assertThat(settings.id).isEqualTo(1)
     assertThat(repository.count()).isEqualTo(3)
   }
 
   private val repository: ConnectionRepository
     get() {
-      val scope = Toothpick.openScope(RuntimeEnvironment.application)
-      scope.installModules(TestModule())
+      val scope = Toothpick.openScope(InstrumentationRegistry.getInstrumentation().targetContext)
+      scope.installModules(TestModule(), object : Module() {
+        init {
+          bind(AppDispatchers::class.java).toInstance(
+            AppDispatchers(
+              testDispatcher,
+              testDispatcher,
+              testDispatcher
+            )
+          )
+        }
+      })
       return scope.getInstance(ConnectionRepository::class.java)
     }
 
   @Test
-  fun addMultipleNewSettingsRemoveOne() {
+  fun addMultipleNewSettingsRemoveOne() = runBlockingTest {
     val repository = repository
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
@@ -91,7 +106,7 @@ class ConnectionRepositoryTest {
     repository.save(settings2)
     repository.save(settings3)
 
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
     assertThat(settings.id).isEqualTo(1)
     assertThat(repository.count()).isEqualTo(4)
 
@@ -103,11 +118,11 @@ class ConnectionRepositoryTest {
     settingsList.add(settings3)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.all).containsAllIn(settingsList)
+    assertThat(repository.getAll()).containsExactlyElementsIn(settingsList)
   }
 
   @Test
-  fun changeDefault() {
+  fun changeDefault() = runBlockingTest {
     val repository = repository
 
     val settings = createSettings("192.167.90.10")
@@ -116,32 +131,32 @@ class ConnectionRepositoryTest {
     repository.save(settings)
     repository.save(settings1)
 
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
 
-    repository.default = settings1
+    repository.setDefault(settings1)
 
-    assertThat(repository.default).isEqualTo(settings1)
+    assertThat(repository.getDefault()).isEqualTo(settings1)
   }
 
   @Test
-  fun deleteSingleDefault() {
+  fun deleteSingleDefault() = runBlockingTest {
     val repository = repository
 
     val settings = createSettings("192.167.90.10")
     repository.save(settings)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
 
     repository.delete(settings)
 
     assertThat(repository.count()).isEqualTo(0)
-    assertThat(repository.default).isNull()
+    assertThat(repository.getDefault()).isNull()
     assertThat(repository.defaultId).isEqualTo(-1)
   }
 
   @Test
-  fun deleteFromMultipleDefaultFirst() {
+  fun deleteFromMultipleDefaultFirst() = runBlockingTest {
     val repository = repository
 
     val settings = createSettings("192.167.90.10")
@@ -157,17 +172,17 @@ class ConnectionRepositoryTest {
     assertThat(repository.count()).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
 
     repository.delete(settings)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings1)
+    assertThat(repository.getDefault()).isEqualTo(settings1)
     assertThat(repository.defaultId).isEqualTo(2)
   }
 
   @Test
-  fun deleteFromMultipleDefaultSecond() {
+  fun deleteFromMultipleDefaultSecond() = runBlockingTest {
     val repository = repository
 
     val settings = createSettings("192.167.90.10")
@@ -183,20 +198,20 @@ class ConnectionRepositoryTest {
     assertThat(repository.count()).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
 
-    repository.default = settings1
-    assertThat(repository.default).isEqualTo(settings1)
+    repository.setDefault(settings1)
+    assertThat(repository.getDefault()).isEqualTo(settings1)
 
     repository.delete(settings1)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
     assertThat(repository.defaultId).isEqualTo(1)
   }
 
   @Test
-  fun deleteFromMultipleDefaultLast() {
+  fun deleteFromMultipleDefaultLast() = runBlockingTest {
     val repository = repository
 
     val settings = createSettings("192.167.90.10")
@@ -212,20 +227,20 @@ class ConnectionRepositoryTest {
     assertThat(repository.count()).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
 
-    repository.default = settings3
-    assertThat(repository.default).isEqualTo(settings3)
+    repository.setDefault(settings3)
+    assertThat(repository.getDefault()).isEqualTo(settings3)
 
     repository.delete(settings3)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings2)
+    assertThat(repository.getDefault()).isEqualTo(settings2)
     assertThat(repository.defaultId).isEqualTo(3)
   }
 
   @Test
-  fun deleteFromMultipleNonDefault() {
+  fun deleteFromMultipleNonDefault() = runBlockingTest {
     val repository = repository
 
     val settings = createSettings("192.167.90.10")
@@ -241,20 +256,20 @@ class ConnectionRepositoryTest {
     assertThat(repository.count()).isEqualTo(4)
 
     assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
+    assertThat(repository.getDefault()).isEqualTo(settings)
 
-    repository.default = settings3
-    assertThat(repository.default).isEqualTo(settings3)
+    repository.setDefault(settings3)
+    assertThat(repository.getDefault()).isEqualTo(settings3)
 
     repository.delete(settings1)
 
     assertThat(repository.count()).isEqualTo(3)
-    assertThat(repository.default).isEqualTo(settings3)
+    assertThat(repository.getDefault()).isEqualTo(settings3)
     assertThat(repository.defaultId).isEqualTo(4)
   }
 
   @Test
-  fun updateSettings() {
+  fun updateSettings() = runBlockingTest {
     val newPort = 6060
     val address = "192.167.90.10"
     val newAddress = "192.167.90.11"
@@ -265,7 +280,7 @@ class ConnectionRepositoryTest {
     repository.save(settings)
 
     assertThat(settings.id).isEqualTo(1)
-    val defaultSettings = repository.default
+    val defaultSettings = repository.getDefault()
 
     assertThat(defaultSettings).isEqualTo(settings)
     assertThat(defaultSettings!!.port).isEqualTo(3000)
@@ -275,29 +290,12 @@ class ConnectionRepositoryTest {
 
     repository.update(settings)
 
-    assertThat(repository.default!!.port).isEqualTo(newPort)
+    assertThat(repository.getDefault()!!.port).isEqualTo(newPort)
 
     settings.address = newAddress
     repository.update(settings)
 
-    assertThat(repository.default!!.address).isEqualTo(newAddress)
-  }
-
-  @Test
-  fun setDefaultNull() {
-    val repository = repository
-
-    val settings = createSettings("192.167.90.10")
-    repository.save(settings)
-
-    assertThat(settings.id).isEqualTo(1)
-    assertThat(repository.default).isEqualTo(settings)
-
-    repository.default = null
-
-    assertThat(repository.count()).isEqualTo(1)
-    assertThat(repository.default!!).isEqualTo(settings)
-    assertThat(repository.defaultId).isEqualTo(1)
+    assertThat(repository.getDefault()!!.address).isEqualTo(newAddress)
   }
 
   private fun createSettings(address: String): ConnectionSettings {
@@ -308,8 +306,7 @@ class ConnectionRepositoryTest {
     return settings
   }
 
-  private inner class TestModule @SuppressLint("CommitPrefEdits")
-  internal constructor() : Module() {
+  private inner class TestModule @SuppressLint("CommitPrefEdits") constructor() : Module() {
     init {
       bind(SharedPreferences::class.java).toProviderInstance {
         val defaultId = longArrayOf(-1)

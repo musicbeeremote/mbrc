@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.ui.navigation.library
 
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.any
+import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.repository.AlbumRepository
@@ -9,58 +9,75 @@ import com.kelsos.mbrc.repository.ArtistRepository
 import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.repository.PlaylistRepository
 import com.kelsos.mbrc.repository.TrackRepository
+import io.mockk.Runs
+import io.mockk.clearMocks
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.reset
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.MockitoAnnotations
-import rx.Completable
-import rx.Scheduler
-import rx.Single
-import rx.schedulers.TestScheduler
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import toothpick.testing.ToothPickTestModule
-import java.util.concurrent.TimeUnit
+import java.net.SocketTimeoutException
 
 class LibrarySyncInteractorImplTest {
-  @Rule fun toothPickRule() = ToothPickRule(this)
+  @Rule
+  fun toothPickRule() = ToothPickRule(this)
 
   val TEST_CASE_SCOPE: Class<*> = TestCase::class.java
 
-  @Mock lateinit var genreRepository: GenreRepository
-  @Mock lateinit var artistRepository: ArtistRepository
-  @Mock lateinit var albumRepository: AlbumRepository
-  @Mock lateinit var trackRepository: TrackRepository
-  @Mock lateinit var playlistRepository: PlaylistRepository
-  @Mock lateinit var bus: RxBus
+  lateinit var genreRepository: GenreRepository
+  lateinit var artistRepository: ArtistRepository
+  lateinit var albumRepository: AlbumRepository
+  lateinit var trackRepository: TrackRepository
+  lateinit var playlistRepository: PlaylistRepository
+  lateinit var bus: RxBus
 
-  private lateinit var ioScheduler: TestScheduler
-  private lateinit var mainScheduler: TestScheduler
   private lateinit var scope: Scope
+
+  private val testDispatcher = TestCoroutineDispatcher()
 
   @Before
   fun setUp() {
-    MockitoAnnotations.initMocks(this)
-    ioScheduler = TestScheduler()
-    mainScheduler = TestScheduler()
+    testDispatcher.pauseDispatcher()
+    genreRepository = mockk()
+    artistRepository = mockk()
+    albumRepository = mockk()
+    trackRepository = mockk()
+    playlistRepository = mockk()
+    bus = mockk()
     scope = Toothpick.openScope(TEST_CASE_SCOPE)
     scope.installModules(ToothPickTestModule(this), object : Module() {
       init {
-        bind(Scheduler::class.java).withName("io").toInstance(ioScheduler)
-        bind(Scheduler::class.java).withName("main").toInstance(mainScheduler)
-        bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java).singletonInScope()
+        bind(AppDispatchers::class.java).toInstance(
+          AppDispatchers(
+            testDispatcher,
+            testDispatcher,
+            testDispatcher
+          )
+        )
+        bind(GenreRepository::class.java).toInstance(genreRepository)
+        bind(ArtistRepository::class.java).toInstance(artistRepository)
+        bind(AlbumRepository::class.java).toInstance(albumRepository)
+        bind(TrackRepository::class.java).toInstance(trackRepository)
+        bind(PlaylistRepository::class.java).toInstance(playlistRepository)
+        bind(RxBus::class.java).toInstance(bus)
+        bind(LibrarySyncInteractor::class.java).to(LibrarySyncInteractorImpl::class.java)
+          .singletonInScope()
       }
     })
+
+    every { bus.post(any()) } just Runs
   }
 
   @After
@@ -70,8 +87,8 @@ class LibrarySyncInteractorImplTest {
   }
 
   @Test
-  fun emptyLibraryAutoSync() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
+  fun emptyLibraryAutoSync() = testDispatcher.runBlockingTest {
+    val onCompleteListener = setupOnCompleteListener()
     val sync = scope.getInstance(LibrarySyncInteractor::class.java)
 
     mockCacheState(true)
@@ -79,22 +96,23 @@ class LibrarySyncInteractorImplTest {
 
     sync.setOnCompleteListener(onCompleteListener)
     sync.sync(true)
-
-    assertThat(sync.isRunning())
-    ioScheduler.advanceTimeBy(400, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
     assertThat(sync.isRunning()).isTrue()
-    ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
-    mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
+    assertThat(sync.isRunning()).isTrue()
+    advanceTimeBy(5 * TASK_DELAY)
+
+    verify(exactly = 1) { onCompleteListener.onSuccess(any()) }
+    verify(exactly = 1) { onCompleteListener.onTermination() }
+    verify(exactly = 0) { onCompleteListener.onFailure(any()) }
+    verify(exactly = 1) { bus.post(ofType(LibraryRefreshCompleteEvent::class)) }
+
     assertThat(sync.isRunning()).isFalse()
-    verify(onCompleteListener, times(1)).onSuccess()
-    verify(onCompleteListener, times(1)).onTermination()
-    verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
-  fun nonEmptyLibraryAutoSync() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
+  fun nonEmptyLibraryAutoSync() = testDispatcher.runBlockingTest {
+    val onCompleteListener = setupOnCompleteListener()
     val sync = scope.getInstance(LibrarySyncInteractor::class.java)
 
     mockCacheState(false)
@@ -103,21 +121,19 @@ class LibrarySyncInteractorImplTest {
     sync.setOnCompleteListener(onCompleteListener)
     sync.sync(true)
 
-    assertThat(sync.isRunning())
-    ioScheduler.advanceTimeBy(400, TimeUnit.MILLISECONDS)
-    assertThat(sync.isRunning()).isTrue()
-    ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
-    mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
+
+    verify(exactly = 0) { onCompleteListener.onSuccess(any()) }
+    verify(exactly = 1) { onCompleteListener.onTermination() }
+    verify(exactly = 0) { onCompleteListener.onFailure(any()) }
+    verify(exactly = 0) { bus.post(ofType(LibraryRefreshCompleteEvent::class)) }
+
     assertThat(sync.isRunning()).isFalse()
-    verify(onCompleteListener, never()).onSuccess()
-    verify(onCompleteListener, times(1)).onTermination()
-    verify(onCompleteListener, times(1)).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
-  fun nonEmptyLibraryManualSyncTwiceConsecutiveCalled() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
+  fun nonEmptyLibraryManualSyncTwiceConsecutiveCalled() = testDispatcher.runBlockingTest {
+    val onCompleteListener = setupOnCompleteListener()
     val sync = scope.getInstance(LibrarySyncInteractor::class.java)
 
     mockCacheState(false)
@@ -127,21 +143,23 @@ class LibrarySyncInteractorImplTest {
     sync.sync()
     sync.sync()
 
-    assertThat(sync.isRunning())
-    ioScheduler.advanceTimeBy(400, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
     assertThat(sync.isRunning()).isTrue()
-    ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
-    mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
+    assertThat(sync.isRunning()).isTrue()
+    advanceTimeBy(5 * TASK_DELAY)
+
+    verify(exactly = 1) { onCompleteListener.onSuccess(any()) }
+    verify(exactly = 1) { onCompleteListener.onTermination() }
+    verify(exactly = 0) { onCompleteListener.onFailure(any()) }
+    verify(exactly = 1) { bus.post(ofType(LibraryRefreshCompleteEvent::class)) }
+
     assertThat(sync.isRunning()).isFalse()
-    verify(onCompleteListener, times(1)).onSuccess()
-    verify(onCompleteListener, times(1)).onTermination()
-    verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
-  fun nonEmptyLibraryManualSyncAndSecondAfterCompletion() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
+  fun nonEmptyLibraryManualSyncAndSecondAfterCompletion() = testDispatcher.runBlockingTest {
+    var onCompleteListener = setupOnCompleteListener()
     val sync = scope.getInstance(LibrarySyncInteractor::class.java)
 
     mockCacheState(false)
@@ -150,37 +168,44 @@ class LibrarySyncInteractorImplTest {
     sync.setOnCompleteListener(onCompleteListener)
     sync.sync()
 
+    advanceTimeBy(TASK_DELAY)
     assertThat(sync.isRunning())
-    ioScheduler.advanceTimeBy(400, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
     assertThat(sync.isRunning()).isTrue()
-    ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
-    mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
-    assertThat(sync.isRunning()).isFalse()
-    verify(onCompleteListener, times(1)).onSuccess()
-    verify(onCompleteListener, times(1)).onTermination()
-    verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
+    advanceTimeBy(5 * TASK_DELAY)
 
-    // Reset the mocks and run a second sync
-    reset(onCompleteListener)
-    reset(bus)
+    verify(exactly = 1) { onCompleteListener.onSuccess(any()) }
+    verify(exactly = 1) { onCompleteListener.onTermination() }
+    verify(exactly = 0) { onCompleteListener.onFailure(any()) }
+    verify(exactly = 1) { bus.post(ofType(LibraryRefreshCompleteEvent::class)) }
+
+    assertThat(sync.isRunning()).isFalse()
+
+    clearMocks(onCompleteListener, bus)
+    every { bus.post(any()) } just Runs
+
+    onCompleteListener = setupOnCompleteListener()
+    sync.setOnCompleteListener(onCompleteListener)
 
     sync.sync()
 
-    ioScheduler.advanceTimeBy(400, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
     assertThat(sync.isRunning()).isTrue()
-    ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
-    mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
+    assertThat(sync.isRunning()).isTrue()
+    advanceTimeBy(5 * TASK_DELAY)
+
+    verify(exactly = 1) { onCompleteListener.onSuccess(any()) }
+    verify(exactly = 1) { onCompleteListener.onTermination() }
+    verify(exactly = 0) { onCompleteListener.onFailure(any()) }
+    verify(exactly = 1) { bus.post(ofType(LibraryRefreshCompleteEvent::class)) }
+
     assertThat(sync.isRunning()).isFalse()
-    verify(onCompleteListener, times(1)).onSuccess()
-    verify(onCompleteListener, times(1)).onTermination()
-    verify(onCompleteListener, never()).onFailure(any())
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
   }
 
   @Test
-  fun nonEmptyLibraryManualSyncFailure() {
-    val onCompleteListener = mock(LibrarySyncInteractor.OnCompleteListener::class.java)
+  fun nonEmptyLibraryManualSyncFailure() = testDispatcher.runBlockingTest {
+    val onCompleteListener = setupOnCompleteListener()
     val sync = scope.getInstance(LibrarySyncInteractor::class.java)
 
     mockCacheState(false)
@@ -190,20 +215,28 @@ class LibrarySyncInteractorImplTest {
     sync.sync()
     sync.sync()
 
-    assertThat(sync.isRunning())
-    ioScheduler.advanceTimeBy(400, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY / 2)
     assertThat(sync.isRunning()).isTrue()
-    ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
-    mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
+    advanceTimeBy(5 * TASK_DELAY)
+
+    verify(exactly = 0) { onCompleteListener.onSuccess(any()) }
+    verify(exactly = 1) { onCompleteListener.onTermination() }
+    verify(exactly = 1) { onCompleteListener.onFailure(ofType(Exception::class)) }
+    verify(exactly = 0) { bus.post(ofType(LibraryRefreshCompleteEvent::class)) }
+
     assertThat(sync.isRunning()).isFalse()
-    verify(onCompleteListener, never()).onSuccess()
-    verify(onCompleteListener, times(1)).onTermination()
-    verify(onCompleteListener, times(1)).onFailure(any(Exception::class.java))
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
+  }
+
+  private fun setupOnCompleteListener(): LibrarySyncInteractor.OnCompleteListener {
+    val onCompleteListener = mockk<LibrarySyncInteractor.OnCompleteListener>()
+    every { onCompleteListener.onTermination() } just Runs
+    every { onCompleteListener.onSuccess(any()) } just Runs
+    every { onCompleteListener.onFailure(any()) } just Runs
+    return onCompleteListener
   }
 
   @Test
-  fun syncWithoutCompletionListener() {
+  fun syncWithoutCompletionListener() = testDispatcher.runBlockingTest {
     val sync = scope.getInstance(LibrarySyncInteractor::class.java)
 
     mockCacheState(false)
@@ -211,40 +244,59 @@ class LibrarySyncInteractorImplTest {
 
     sync.sync()
 
-    assertThat(sync.isRunning())
-    ioScheduler.advanceTimeBy(400, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
     assertThat(sync.isRunning()).isTrue()
-    ioScheduler.advanceTimeBy(1200, TimeUnit.MILLISECONDS)
-    mainScheduler.advanceTimeBy(3000, TimeUnit.MILLISECONDS)
+    advanceTimeBy(TASK_DELAY)
+    assertThat(sync.isRunning()).isTrue()
+    advanceTimeBy(5 * TASK_DELAY)
+
     assertThat(sync.isRunning()).isFalse()
-    verify(bus, times(1)).post(any(LibraryRefreshCompleteEvent::class.java))
+    verify(exactly = 1) { bus.post(ofType(LibraryRefreshCompleteEvent::class)) }
   }
 
-  private fun mockCacheState(isEmpty: Boolean) {
-    `when`(genreRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
-    `when`(artistRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
-    `when`(albumRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
-    `when`(trackRepository.cacheIsEmpty()).thenReturn(Single.just(isEmpty))
+  private suspend fun mockCacheState(isEmpty: Boolean) {
+    coEvery { genreRepository.cacheIsEmpty() } returns isEmpty
+    coEvery { artistRepository.cacheIsEmpty() } returns isEmpty
+    coEvery { albumRepository.cacheIsEmpty() } returns isEmpty
+    coEvery { trackRepository.cacheIsEmpty() } returns isEmpty
+    coEvery { playlistRepository.cacheIsEmpty() } returns isEmpty
+
+    val cached = if (isEmpty) 0L else 500L
+
+    coEvery { genreRepository.count() } returns cached
+    coEvery { artistRepository.count() } returns cached
+    coEvery { albumRepository.count() } returns cached
+    coEvery { trackRepository.count() } returns cached
+    coEvery { playlistRepository.count() } returns cached
   }
 
-  private fun mockSuccessfulRepositoryResponse() {
-    `when`(genreRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(artistRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(albumRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(trackRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(playlistRepository.getRemote()).thenReturn(Completable.complete())
+  private suspend fun wait() {
+    delay(TASK_DELAY)
+    return
   }
 
-  private fun mockFailedRepositoryResponse() {
-    `when`(genreRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(artistRepository.getRemote()).thenReturn(Completable.error(Exception()))
-    `when`(albumRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(trackRepository.getRemote()).thenReturn(Completable.complete())
-    `when`(playlistRepository.getRemote()).thenReturn(Completable.complete())
+  private suspend fun mockSuccessfulRepositoryResponse() {
+    coEvery { genreRepository.getRemote() } coAnswers { wait() }
+    coEvery { artistRepository.getRemote() } coAnswers { wait() }
+    coEvery { albumRepository.getRemote() } coAnswers { wait() }
+    coEvery { trackRepository.getRemote() } coAnswers { wait() }
+    coEvery { playlistRepository.getRemote() } coAnswers { wait() }
+  }
+
+  private suspend fun mockFailedRepositoryResponse() {
+    coEvery { genreRepository.getRemote() } coAnswers { wait() }
+    coEvery { artistRepository.getRemote() } throws SocketTimeoutException()
+    coEvery { albumRepository.getRemote() } coAnswers { wait() }
+    coEvery { trackRepository.getRemote() } coAnswers { wait() }
+    coEvery { playlistRepository.getRemote() } coAnswers { wait() }
   }
 
   @javax.inject.Scope
   @Target(AnnotationTarget.TYPE)
   @Retention(AnnotationRetention.RUNTIME)
   annotation class TestCase
+
+  companion object {
+    const val TASK_DELAY = 400L
+  }
 }
