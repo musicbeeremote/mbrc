@@ -8,6 +8,7 @@ import com.kelsos.mbrc.mvp.BasePresenter
 import com.kelsos.mbrc.repository.AlbumRepository
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,12 +21,7 @@ constructor(
   private val librarySyncInteractor: LibrarySyncInteractor,
   private val queueHandler: QueueHandler,
   private val searchModel: LibrarySearchModel
-) : BasePresenter<BrowseAlbumView>(),
-  BrowseAlbumPresenter {
-
-  init {
-    searchModel.term.observe(this) { term -> updateUi(term) }
-  }
+) : BasePresenter<BrowseAlbumView>(), BrowseAlbumPresenter {
 
   private fun updateUi(term: String) {
     scope.launch {
@@ -43,6 +39,9 @@ constructor(
 
   override fun attach(view: BrowseAlbumView) {
     super.attach(view)
+    scope.launch {
+      searchModel.term.collect { term -> updateUi(term) }
+    }
     bus.register(this, LibraryRefreshCompleteEvent::class.java) { load() }
   }
 
@@ -52,7 +51,7 @@ constructor(
   }
 
   override fun load() {
-    updateUi(searchModel.term.value ?: "")
+    updateUi(searchModel.term.value)
   }
 
   override fun sync() {

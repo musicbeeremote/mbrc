@@ -9,6 +9,7 @@ import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -21,15 +22,13 @@ constructor(
   private val librarySyncInteractor: LibrarySyncInteractor,
   private val queue: QueueHandler,
   private val searchModel: LibrarySearchModel
-) : BasePresenter<BrowseGenreView>(),
-  BrowseGenrePresenter {
-
-  init {
-    searchModel.term.observe(this) { term -> updateUi(term) }
-  }
+) : BasePresenter<BrowseGenreView>(), BrowseGenrePresenter {
 
   override fun attach(view: BrowseGenreView) {
     super.attach(view)
+    scope.launch {
+      searchModel.term.collect { term -> updateUi(term) }
+    }
     bus.register(this, LibraryRefreshCompleteEvent::class.java) { load() }
   }
 
@@ -39,7 +38,7 @@ constructor(
   }
 
   override fun load() {
-    updateUi(searchModel.term.value ?: "")
+    updateUi(searchModel.term.value)
   }
 
   private fun updateUi(term: String) {

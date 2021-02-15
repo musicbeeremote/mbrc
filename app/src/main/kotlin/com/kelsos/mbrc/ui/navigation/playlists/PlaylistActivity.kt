@@ -63,12 +63,12 @@ class PlaylistActivity : BaseActivity(),
     playlistList.adapter = adapter
     swipeLayout.setOnRefreshListener(this)
     emptyViewTitle.setText(R.string.playlists_list_empty)
-    presenter.load()
   }
 
   public override fun onStart() {
     super.onStart()
     presenter.attach(this)
+    presenter.load()
   }
 
   public override fun onStop() {

@@ -11,6 +11,7 @@ import com.kelsos.mbrc.ui.navigation.library.LibrarySearchModel
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import com.kelsos.mbrc.utilities.SettingsManager
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -24,15 +25,13 @@ constructor(
   private val librarySyncInteractor: LibrarySyncInteractor,
   private val queue: QueueHandler,
   private val searchModel: LibrarySearchModel
-) : BasePresenter<BrowseArtistView>(),
-  BrowseArtistPresenter {
-
-  init {
-    searchModel.term.observe(this) { term -> updateUi(term) }
-  }
+) : BasePresenter<BrowseArtistView>(), BrowseArtistPresenter {
 
   override fun attach(view: BrowseArtistView) {
     super.attach(view)
+    scope.launch {
+      searchModel.term.collect { term -> updateUi(term) }
+    }
     bus.register(this, LibraryRefreshCompleteEvent::class.java) { load() }
     bus.register(this, ArtistTabRefreshEvent::class.java) { load() }
   }
@@ -43,7 +42,7 @@ constructor(
   }
 
   override fun load() {
-    updateUi(searchModel.term.value ?: "")
+    updateUi(searchModel.term.value)
   }
 
   private fun updateUi(term: String) {

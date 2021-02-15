@@ -72,7 +72,7 @@ constructor(
   }
 
   override fun search(keyword: String) {
-    searchModel.search(keyword)
+    searchModel.term.tryEmit(keyword)
   }
 
   override fun onSuccess(stats: LibraryStats) {
