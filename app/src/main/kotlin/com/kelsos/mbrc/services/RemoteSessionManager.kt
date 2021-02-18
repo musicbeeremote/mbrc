@@ -8,8 +8,6 @@ import android.content.Intent
 import android.media.AudioManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
-import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
 import android.support.v4.media.session.PlaybackStateCompat
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
@@ -34,8 +32,7 @@ class RemoteSessionManager
 constructor(
   context: Application,
   volumeProvider: RemoteVolumeProvider,
-  private val bus: RxBus,
-  private val manager: AudioManager
+  private val bus: RxBus
 ) : AudioManager.OnAudioFocusChangeListener {
   private val mediaSession: MediaSessionCompat?
 
@@ -55,12 +52,11 @@ constructor(
     mediaButtonIntent.component = myEventReceiver
     val mediaPendingIntent = PendingIntent.getBroadcast(
       context.applicationContext, 0, mediaButtonIntent,
-      PendingIntent.FLAG_UPDATE_CURRENT
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
     mediaSession = MediaSessionCompat(context, "Session", myEventReceiver, mediaPendingIntent)
     mediaSession.setPlaybackToRemote(volumeProvider)
-    mediaSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS or FLAG_HANDLES_TRANSPORT_CONTROLS)
     mediaSession.setCallback(object : MediaSessionCompat.Callback() {
       override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
         val success = handler.handleMediaIntent(mediaButtonEvent)
@@ -102,7 +98,6 @@ constructor(
         mediaSession.isActive = false
         mediaSession.setPlaybackState(playbackState)
       }
-      abandonFocus()
     }
   }
 
@@ -132,11 +127,6 @@ constructor(
   }
 
   private fun updateState(change: PlayStateChange) {
-    when (change.state) {
-      PlayerState.PLAYING -> requestFocus()
-      else -> abandonFocus()
-    }
-
     if (mediaSession == null) {
       return
     }
@@ -158,17 +148,6 @@ constructor(
       }
     }
     mediaSession.setPlaybackState(builder.build())
-  }
-
-  private fun requestFocus(): Boolean {
-    return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == manager.requestAudioFocus(
-      this,
-      AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
-    )
-  }
-
-  private fun abandonFocus(): Boolean {
-    return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == manager.abandonAudioFocus(this)
   }
 
   override fun onAudioFocusChange(focusChange: Int) {
