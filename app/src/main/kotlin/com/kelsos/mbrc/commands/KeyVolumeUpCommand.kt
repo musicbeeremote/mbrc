@@ -17,17 +17,18 @@ constructor(
 ) : ICommand {
 
   override fun execute(e: IEvent) {
-    if (model.volume <= 90) {
+    val volume: Int = if (model.volume <= 90) {
       val mod = model.volume % 10
-      val volume: Int
 
-      volume = when {
+      when {
         mod == 0 -> model.volume + 10
         mod < 5 -> model.volume + (10 - mod)
         else -> model.volume + (20 - mod)
       }
-
-      bus.post(MessageEvent.action(UserAction(Protocol.PlayerVolume, volume)))
+    } else {
+      100
     }
+
+    bus.post(MessageEvent.action(UserAction(Protocol.PlayerVolume, volume)))
   }
 }
