@@ -89,6 +89,7 @@ class RemoteService : Service() {
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
+    startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
     CommandRegistration.register(remoteController, scope)
     threadPoolExecutor = Executors.newSingleThreadExecutor {
       Thread(it, "message-thread")
