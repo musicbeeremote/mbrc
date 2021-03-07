@@ -31,6 +31,9 @@ data class NowPlaying(
   @Column(name = "position")
   var position: Int = 0,
   @JsonIgnore
+  @Column(name="date_added")
+  var dateAdded: Long = 0,
+  @JsonIgnore
   @PrimaryKey(autoincrement = true)
   var id: Long = 0
 ) : Model {

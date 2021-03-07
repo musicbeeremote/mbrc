@@ -37,6 +37,8 @@ constructor(
       try {
         view?.update(repository.getAllCursor())
         view?.trackChanged(model.trackInfo, true)
+        view?.loading()
+        reload(true);
       } catch (e: Exception) {
         view?.failure(e)
       }

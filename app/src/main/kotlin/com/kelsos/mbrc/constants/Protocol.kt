@@ -59,4 +59,5 @@ object Protocol {
 
   const val PlayerOutput = "playeroutput"
   const val PlayerOutputSwitch = "playeroutputswitch"
+  const val LibraryCover = "libraryalbumcover"
 }

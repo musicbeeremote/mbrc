@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.Playlist
+import com.kelsos.mbrc.data.Playlist_Table
 import com.kelsos.mbrc.data.Playlist_Table.name
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.extensions.escapeLike
@@ -11,6 +12,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import kotlinx.coroutines.withContext
@@ -47,7 +49,19 @@ class LocalPlaylistDataSource
     return@withContext SQLite.selectCountOf().from(Playlist::class.java).count() == 0L
   }
 
-  override suspend fun count(): Long  = withContext(dispatchers.db) {
+  override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Playlist::class.java).count()
+  }
+
+  override suspend fun removePreviousEntries(epoch: Long) {
+    withContext(dispatchers.db) {
+      SQLite.delete()
+        .from(Playlist::class.java)
+        .where(
+          clause(Playlist_Table.date_added.lessThan(epoch)).or(
+            Playlist_Table.date_added.isNull
+          )
+        ).execute()
+    }
   }
 }

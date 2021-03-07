@@ -10,6 +10,17 @@
   android:baselineAligned="false"
   android:gravity="center_vertical">
 
+  <com.kelsos.mbrc.ui.widgets.SquareImageView
+    android:id="@+id/cover"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginStart="16dp"
+    android:layout_width="48dp"
+    android:visibility="gone"
+    tools:visibility="visible"
+    android:layout_height="48dp"/>
+
   <LinearLayout
     android:id="@+id/ui_item_context_indicator"
     android:layout_width="wrap_content"
@@ -33,7 +44,7 @@
   <TextView
     android:id="@+id/line_one"
     android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_height="18dp"
     android:layout_marginStart="16dp"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp"
@@ -43,7 +54,7 @@
     android:textSize="@dimen/dual_list_title"
     app:layout_constraintBottom_toTopOf="@id/line_two"
     app:layout_constraintEnd_toStartOf="@id/ui_item_context_indicator"
-    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintStart_toEndOf="@id/cover"
     app:layout_constraintTop_toTopOf="parent"
     tools:text="Back in black" />
 
@@ -60,7 +71,7 @@
     android:textSize="@dimen/dual_list_subtitle"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toStartOf="@id/ui_item_context_indicator"
-    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintStart_toEndOf="@id/cover"
     app:layout_constraintTop_toBottomOf="@id/line_one"
     tools:text="AC/DC" />
 </androidx.constraintlayout.widget.ConstraintLayout>

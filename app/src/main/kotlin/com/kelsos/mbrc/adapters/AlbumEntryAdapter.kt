@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.adapters
 
 import android.app.Activity
+import android.graphics.Bitmap
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -9,13 +10,17 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindString
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Album
+import com.kelsos.mbrc.ui.widgets.SquareImageView
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.squareup.picasso.Picasso
+import java.io.File
 import javax.inject.Inject
 
 class AlbumEntryAdapter
@@ -25,6 +30,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private var data: FlowCursorList<Album>? = null
   private var mListener: MenuItemSelectedListener? = null
+  private val cache = File(context.cacheDir, "covers")
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val view = inflater.inflate(R.layout.ui_list_dual, parent, false)
@@ -49,6 +55,21 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     val entry = data!!.getItem(position.toLong())
     holder.album.text = if (TextUtils.isEmpty(entry.album)) holder.emptyAlbum else entry.album
     holder.artist.text = if (TextUtils.isEmpty(entry.artist)) holder.unknownArtist else entry.artist
+    val cover = entry.cover
+    if (cover != null) {
+      Picasso.get()
+        .load(File(cache, cover))
+        .noFade()
+        .config(Bitmap.Config.RGB_565)
+        .error(R.drawable.ic_image_no_cover)
+        .placeholder(R.drawable.ic_image_no_cover)
+        .resizeDimen(R.dimen.list_album_size, R.dimen.list_album_size)
+        .centerCrop()
+        .into(holder.image)
+    } else {
+      holder.image.setImageResource(R.drawable.ic_image_no_cover)
+    }
+
   }
 
   fun refresh() {
@@ -75,6 +96,8 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
     lateinit var artist: TextView
     @BindView(R.id.line_one)
     lateinit var album: TextView
+    @BindView(R.id.cover)
+    lateinit var image: SquareImageView;
     @BindView(R.id.ui_item_context_indicator)
     lateinit var indicator: LinearLayout
     @BindString(R.string.unknown_artist)
@@ -84,6 +107,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
 
     init {
       ButterKnife.bind(this, itemView)
+      image.isGone = false
     }
   }
 

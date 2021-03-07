@@ -10,4 +10,5 @@ interface LocalDataSource<T : Model> {
   suspend fun search(term: String): FlowCursorList<T>
   suspend fun isEmpty(): Boolean
   suspend fun count(): Long
+  suspend fun removePreviousEntries(epoch: Long)
 }

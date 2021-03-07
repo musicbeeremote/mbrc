@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository.data
 
 
+import com.kelsos.mbrc.data.CoverInfo
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.data.library.Album_Table
 import com.kelsos.mbrc.data.library.Album_Table.album
@@ -77,5 +78,35 @@ constructor(
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Album::class.java).count()
+  }
+
+  suspend fun updateCovers(updated: List<CoverInfo>) {
+    withContext(dispatchers.db) {
+      val albums = (select from Album::class)
+        .orderBy(Album_Table.artist, true)
+        .orderBy(Album_Table.album, true)
+        .queryList()
+
+      for ((artist, album, hash) in updated) {
+        val cachedAlbum = albums.find { it.album == album && it.artist == artist }
+        cachedAlbum?.cover = hash
+      }
+      val adapter = modelAdapter<Album>()
+
+      val transaction = FastStoreModelTransaction.updateBuilder(adapter)
+        .addAll(albums)
+        .build()
+
+      database<Album>().executeTransaction(transaction)
+    }
+  }
+
+  override suspend fun removePreviousEntries(epoch: Long) {
+    withContext(dispatchers.db) {
+      SQLite.delete()
+        .from(Album::class.java)
+        .where(clause(Album_Table.date_added.lessThan(epoch)).or(Album_Table.date_added.isNull))
+        .execute()
+    }
   }
 }

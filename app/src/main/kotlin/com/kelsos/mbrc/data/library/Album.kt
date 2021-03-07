@@ -22,6 +22,12 @@ data class Album(
   var count: Int = 0,
   @JsonIgnore
   @Column
+  var cover: String? = null,
+  @JsonIgnore
+  @Column(name="date_added")
+  var dateAdded: Long = 0,
+  @JsonIgnore
+  @Column
   @PrimaryKey(autoincrement = true)
   var id: Long = 0
 ) : Model {

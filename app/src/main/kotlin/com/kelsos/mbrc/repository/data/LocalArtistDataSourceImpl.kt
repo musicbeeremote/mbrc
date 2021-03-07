@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.repository.data
 
 import com.kelsos.mbrc.data.library.Artist
+import com.kelsos.mbrc.data.library.Artist_Table
 import com.kelsos.mbrc.data.library.Artist_Table.artist
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
@@ -13,6 +14,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import kotlinx.coroutines.withContext
@@ -75,5 +77,14 @@ class LocalArtistDataSourceImpl
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Artist::class.java).count()
+  }
+
+  override suspend fun removePreviousEntries(epoch: Long) {
+    withContext(dispatchers.db) {
+      SQLite.delete()
+        .from(Artist::class.java)
+        .where(clause(Artist_Table.date_added.lessThan(epoch)).or(Artist_Table.date_added.isNull))
+        .execute()
+    }
   }
 }

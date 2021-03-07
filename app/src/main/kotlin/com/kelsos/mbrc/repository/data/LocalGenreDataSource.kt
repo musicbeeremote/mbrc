@@ -12,6 +12,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import kotlinx.coroutines.withContext
@@ -51,5 +52,14 @@ class LocalGenreDataSource
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Genre::class.java).count()
+  }
+
+  override suspend fun removePreviousEntries(epoch: Long) {
+    withContext(dispatchers.io) {
+      SQLite.delete()
+        .from(Genre::class.java)
+        .where(clause(Genre_Table.date_added.lessThan(epoch)).or(Genre_Table.date_added.isNull))
+        .execute()
+    }
   }
 }

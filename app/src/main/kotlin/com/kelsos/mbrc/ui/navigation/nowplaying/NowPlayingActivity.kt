@@ -117,14 +117,18 @@ class NowPlayingActivity : BaseActivity(),
     adapter.setListener(this)
     swipeRefreshLayout.setOnRefreshListener { this.refresh() }
     presenter.attach(this)
-    refresh(true)
+    presenter.load()
   }
 
   private fun refresh(scrollToTrack: Boolean = false) {
+    loading()
+    presenter.reload(scrollToTrack)
+  }
+
+  override fun loading() {
     if (!swipeRefreshLayout.isRefreshing) {
       swipeRefreshLayout.isRefreshing = true
     }
-    presenter.reload(scrollToTrack)
   }
 
   override fun onStart() {

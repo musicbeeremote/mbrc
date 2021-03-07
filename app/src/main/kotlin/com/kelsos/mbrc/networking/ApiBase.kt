@@ -5,6 +5,7 @@ import com.kelsos.mbrc.data.Page
 import com.kelsos.mbrc.data.PageRange
 import com.kelsos.mbrc.data.SocketMessage
 import com.kelsos.mbrc.networking.client.GenericSocketMessage
+import com.kelsos.mbrc.networking.client.ResponseWithPayload
 import com.kelsos.mbrc.repository.data.RemoteDataSource.Companion.LIMIT
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -59,9 +60,33 @@ constructor(
       connection.close()
       Timber.v("duration ${System.currentTimeMillis() - start} ms")
     }
-
-
   }
+
+  suspend fun <T : Any, P : Any> getAll(
+    request: String,
+    payload: List<P>,
+    clazz: KClass<T>
+  ): Flow<ResponseWithPayload<P, T>> {
+    val factory = mapper.typeFactory
+    val type = factory.constructParametricType(GenericSocketMessage::class.java, clazz.java)
+
+    return flow {
+      val start = now()
+      val connection = apiRequestManager.openConnection()
+      for (item in payload) {
+        val entryStart = now()
+        val message = SocketMessage.create(request, item)
+        val response = apiRequestManager.request(connection, message)
+        val socketMessage = mapper.readValue<GenericSocketMessage<T>>(response, type)
+
+        Timber.v("duration ${now() - entryStart} ms")
+        emit(ResponseWithPayload(item, socketMessage.data))
+      }
+      connection.close()
+      Timber.v("duration ${System.currentTimeMillis() - start} ms")
+    }
+  }
+
 
   private fun getPageRange(offset: Int, limit: Int): PageRange? {
     return takeIf { limit > 0 }?.run {

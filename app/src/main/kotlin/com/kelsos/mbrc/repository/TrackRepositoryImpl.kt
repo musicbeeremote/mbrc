@@ -6,7 +6,9 @@ import com.kelsos.mbrc.repository.data.LocalTrackDataSource
 import com.kelsos.mbrc.repository.data.RemoteTrackDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
+import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class TrackRepositoryImpl
@@ -30,11 +32,20 @@ class TrackRepositoryImpl
   }
 
   override suspend fun getRemote() {
-    localDataSource.deleteAll()
+    val epoch = Instant.now().epochSecond
     withContext(dispatchers.io) {
-      remoteDataSource.fetch().collect {
-        localDataSource.saveAll(it)
-      }
+      remoteDataSource.fetch()
+        .onCompletion {
+          localDataSource.removePreviousEntries(epoch)
+        }
+        .collect { tracks ->
+          val data = tracks.map {
+            it.apply {
+              dateAdded = epoch
+            }
+          }
+          localDataSource.saveAll(data)
+        }
     }
   }
 

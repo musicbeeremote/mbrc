@@ -6,7 +6,9 @@ import com.kelsos.mbrc.repository.data.LocalRadioDataSource
 import com.kelsos.mbrc.repository.data.RemoteRadioDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
+import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class RadioRepositoryImpl
@@ -24,11 +26,16 @@ class RadioRepositoryImpl
   }
 
   override suspend fun getRemote() {
-    localDataSource.deleteAll()
+    val epoch = Instant.now().epochSecond
     withContext(dispatchers.io) {
-      remoteDataSource.fetch().collect {
-        localDataSource.saveAll(it)
-      }
+      remoteDataSource.fetch()
+        .onCompletion {
+          localDataSource.removePreviousEntries(epoch)
+        }
+        .collect { radios ->
+          val data = radios.map { it.apply { dateAdded = epoch } }
+          localDataSource.saveAll(data)
+        }
     }
   }
 

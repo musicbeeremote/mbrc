@@ -25,6 +25,9 @@ data class RadioStation(
     @Column(name = "url")
     var url: String = "",
     @JsonIgnore
+    @Column(name="date_added")
+    var dateAdded: Long = 0,
+    @JsonIgnore
     @PrimaryKey(autoincrement = true)
     var id: Long = 0
 ) : Model {

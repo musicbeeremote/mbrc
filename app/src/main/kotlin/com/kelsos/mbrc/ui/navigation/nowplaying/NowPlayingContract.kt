@@ -9,6 +9,7 @@ import com.raizlabs.android.dbflow.list.FlowCursorList
 interface NowPlayingView : BaseView {
   fun update(cursor: FlowCursorList<NowPlaying>)
   fun reload()
+  fun loading()
   fun trackChanged(trackInfo: TrackInfo, scrollToTrack: Boolean = false)
   fun failure(throwable: Throwable)
 }

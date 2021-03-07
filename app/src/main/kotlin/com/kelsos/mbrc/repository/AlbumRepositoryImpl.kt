@@ -1,12 +1,16 @@
 package com.kelsos.mbrc.repository
 
+import com.kelsos.mbrc.data.CachedAlbumInfo
+import com.kelsos.mbrc.data.CoverInfo
 import com.kelsos.mbrc.data.library.Album
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.repository.data.LocalAlbumDataSource
 import com.kelsos.mbrc.repository.data.RemoteAlbumDataSource
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
+import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class AlbumRepositoryImpl
@@ -27,11 +31,31 @@ constructor(
   }
 
   override suspend fun getRemote() {
-    localDataSource.deleteAll()
+    val epoch = Instant.now().epochSecond
+    val default = CachedAlbumInfo(0, null)
+    val cached = localDataSource.loadAllCursor().associate {
+      it.album + it.artist to CachedAlbumInfo(it.id, it?.cover)
+    }
     withContext(dispatchers.io) {
-      remoteDataSource.fetch().collect {
-        localDataSource.saveAll(it)
-      }
+      remoteDataSource.fetch()
+        .onCompletion {
+          localDataSource.removePreviousEntries(epoch)
+        }
+        .collect { albums ->
+          val list = albums.map {
+            it.apply {
+              dateAdded = epoch
+              val key = it.album + it.artist
+
+              if (cached.containsKey(key)) {
+                val cachedAlbum = cached.getOrDefault(key, default)
+                id = cachedAlbum.id
+                cover = cachedAlbum.cover
+              }
+            }
+          }
+          localDataSource.saveAll(list)
+        }
     }
   }
 
@@ -40,4 +64,8 @@ constructor(
   override suspend fun cacheIsEmpty(): Boolean = localDataSource.isEmpty()
 
   override suspend fun count(): Long = localDataSource.count()
+
+  override suspend fun updateCovers(updated: List<CoverInfo>) {
+    localDataSource.updateCovers(updated)
+  }
 }

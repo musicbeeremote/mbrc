@@ -14,6 +14,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import com.raizlabs.android.dbflow.kotlinextensions.select
 import com.raizlabs.android.dbflow.kotlinextensions.where
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.raizlabs.android.dbflow.sql.language.ConditionGroup.clause
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.raizlabs.android.dbflow.structure.database.transaction.FastStoreModelTransaction
 import kotlinx.coroutines.withContext
@@ -127,5 +128,14 @@ class LocalTrackDataSource
 
   override suspend fun count(): Long  = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Track::class.java).count()
+  }
+
+  override suspend fun removePreviousEntries(epoch: Long) {
+    withContext(dispatchers.db) {
+      SQLite.delete()
+        .from(Track::class.java)
+        .where(clause(Track_Table.date_added.lessThan(epoch)).or(Track_Table.date_added.isNull))
+        .execute()
+    }
   }
 }

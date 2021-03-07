@@ -5,6 +5,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LibraryRefreshCompleteEvent
 import com.kelsos.mbrc.repository.AlbumRepository
 import com.kelsos.mbrc.repository.ArtistRepository
+import com.kelsos.mbrc.repository.CoverCache
 import com.kelsos.mbrc.repository.GenreRepository
 import com.kelsos.mbrc.repository.PlaylistRepository
 import com.kelsos.mbrc.repository.TrackRepository
@@ -21,6 +22,7 @@ class LibrarySyncInteractorImpl
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
   private val playlistRepository: PlaylistRepository,
+  private val coverCache: CoverCache,
   private val bus: RxBus,
   private val dispatchers: AppDispatchers
 ) : LibrarySyncInteractor {
@@ -57,6 +59,7 @@ class LibrarySyncInteractorImpl
         albumRepository.getRemote()
         trackRepository.getRemote()
         playlistRepository.getRemote()
+        coverCache.cache()
         bus.post(LibraryRefreshCompleteEvent())
         onCompleteListener?.onSuccess(
           LibraryStats(
