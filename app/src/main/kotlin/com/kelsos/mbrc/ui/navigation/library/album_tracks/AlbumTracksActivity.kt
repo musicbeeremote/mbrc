@@ -1,7 +1,10 @@
 package com.kelsos.mbrc.ui.navigation.library.album_tracks
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -14,9 +17,11 @@ import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
 import com.raizlabs.android.dbflow.list.FlowCursorList
+import com.squareup.picasso.Picasso
 import toothpick.Scope
 import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
+import java.io.File
 import javax.inject.Inject
 
 class AlbumTracksActivity : FontActivity(),
@@ -67,7 +72,10 @@ class AlbumTracksActivity : FontActivity(),
     } else {
       supportActionBar.title = selectedAlbum.album
     }
-    supportActionBar.subtitle = selectedAlbum.artist
+
+    findViewById<TextView>(R.id.album_tracks__album).text = selectedAlbum.album
+    findViewById<TextView>(R.id.album_tracks__artist).text = selectedAlbum.artist
+    loadCover(selectedAlbum.cover)
 
     presenter.attach(this)
     presenter.load(selectedAlbum)
@@ -80,6 +88,24 @@ class AlbumTracksActivity : FontActivity(),
     fab.isVisible = true
     fab.setOnClickListener {
       presenter.queueAlbum(selectedAlbum.artist, selectedAlbum.album)
+    }
+  }
+
+  private fun loadCover(cover: String?) {
+    val image = findViewById<ImageView>(R.id.album_tracks__cover)
+    val cache = File(cacheDir, "covers")
+    if (cover != null) {
+      Picasso.get()
+        .load(File(cache, cover))
+        .noFade()
+        .config(Bitmap.Config.RGB_565)
+        .error(R.drawable.ic_image_no_cover)
+        .placeholder(R.drawable.ic_image_no_cover)
+        .resizeDimen(R.dimen.cover_size, R.dimen.cover_size)
+        .centerCrop()
+        .into(image)
+    } else {
+      image.setImageResource(R.drawable.ic_image_no_cover)
     }
   }
 

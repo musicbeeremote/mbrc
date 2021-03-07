@@ -11,16 +11,58 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <ImageView
+      android:id="@+id/album_tracks__cover"
+      android:layout_width="@dimen/cover_size"
+      android:layout_height="@dimen/cover_size"
+      android:layout_marginStart="32dp"
+      android:layout_marginTop="32dp"
+      android:contentDescription="@string/album_tracks__cover_content"
+      android:src="@drawable/ic_image_no_cover"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+      android:id="@+id/album_tracks__album"
+      style="@style/TextAppearance.MaterialComponents.Headline6"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="80dp"
+      android:textSize="18sp"
+      android:textColor="@color/primary_text"
+      app:layout_constraintBottom_toTopOf="@id/album_tracks__artist"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/album_tracks__cover"
+      app:layout_constraintTop_toTopOf="@id/album_tracks__cover"
+      tools:text="Album" />
+
+    <TextView
+      android:id="@+id/album_tracks__artist"
+      style="@style/TextAppearance.MaterialComponents.Subtitle1"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="80dp"
+      android:layout_marginBottom="8dp"
+      android:textColor="@color/secondary_text"
+      app:layout_constraintBottom_toBottomOf="@id/album_tracks__cover"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/album_tracks__cover"
+      app:layout_constraintTop_toBottomOf="@id/album_tracks__album"
+      tools:text="Artist" />
+
     <com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
       android:id="@+id/list_tracks"
       android:layout_width="0dp"
       android:layout_height="0dp"
-      android:layout_marginTop="20dp"
+      android:layout_marginTop="32dp"
       android:layout_marginBottom="8dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/album_tracks__cover"
       tools:listitem="@layout/listitem_single" />
 
     <include
