@@ -3,11 +3,11 @@ package com.kelsos.mbrc.ui.navigation.library.album_tracks
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.adapters.TrackEntryAdapter
@@ -84,9 +84,9 @@ class AlbumTracksActivity : FontActivity(),
     recyclerView.layoutManager = LinearLayoutManager(baseContext)
     recyclerView.adapter = adapter
     recyclerView.emptyView = findViewById(R.id.empty_view)
-    val fab = findViewById<FloatingActionButton>(R.id.play_album)
-    fab.isVisible = true
-    fab.setOnClickListener {
+    val play = findViewById<Button>(R.id.play_album)
+    play.isVisible = true
+    play.setOnClickListener {
       presenter.queueAlbum(selectedAlbum.artist, selectedAlbum.album)
     }
   }
