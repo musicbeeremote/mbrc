@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.kelsos.mbrc.data.Data
 import com.kelsos.mbrc.data.db.RemoteDatabase
+import com.kelsos.mbrc.utilities.RemoteUtils
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
@@ -47,3 +48,5 @@ data class Track(
   @PrimaryKey(autoincrement = true)
   var id: Long = 0
 ) : Data
+
+fun Track.key(): String = RemoteUtils.sha1("${albumArtist}_${album}")

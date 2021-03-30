@@ -46,7 +46,7 @@ class BrowseTrackFragment : Fragment(),
   @Inject
   lateinit var presenter: BrowseTrackPresenter
 
-  private lateinit var syncButton: Button;
+  private lateinit var syncButton: Button
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -83,6 +83,7 @@ class BrowseTrackFragment : Fragment(),
     val scope = Toothpick.openScopes(requireActivity().application, LIBRARY_SCOPE, activity, this)
     scope.installModules(BrowseTrackModule())
     Toothpick.inject(this, scope)
+    adapter.setCoverMode(true)
     presenter.attach(this)
     presenter.load()
   }

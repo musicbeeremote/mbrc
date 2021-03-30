@@ -16,6 +16,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.data.library.Album
+import com.kelsos.mbrc.data.library.key
 import com.kelsos.mbrc.ui.widgets.SquareImageView
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.squareup.picasso.Picasso
@@ -59,23 +60,18 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     val data = this.data ?: return
     val item = data.getItem(position.toLong()) ?: return
-    val (artist, album, _, cover) = item
+    val (artist, album, _, _) = item
     holder.album.text = if (album.isNullOrBlank()) holder.emptyAlbum else album
     holder.artist.text = if (artist.isNullOrBlank()) holder.unknownArtist else artist
-    if (cover != null) {
-      Picasso.get()
-        .load(File(cache, cover))
-        .noFade()
-        .config(Bitmap.Config.RGB_565)
-        .error(R.drawable.ic_image_no_cover)
-        .placeholder(R.drawable.ic_image_no_cover)
-        .resizeDimen(R.dimen.list_album_size, R.dimen.list_album_size)
-        .centerCrop()
-        .into(holder.image)
-    } else {
-      holder.image.setImageResource(R.drawable.ic_image_no_cover)
-    }
-
+    Picasso.get()
+      .load(File(cache, item.key()))
+      .noFade()
+      .config(Bitmap.Config.RGB_565)
+      .error(R.drawable.ic_image_no_cover)
+      .placeholder(R.drawable.ic_image_no_cover)
+      .resizeDimen(R.dimen.list_album_size, R.dimen.list_album_size)
+      .centerCrop()
+      .into(holder.image)
   }
 
   fun refresh() {

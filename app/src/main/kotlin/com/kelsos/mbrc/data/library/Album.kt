@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.kelsos.mbrc.data.Data
 import com.kelsos.mbrc.data.db.RemoteDatabase
+import com.kelsos.mbrc.utilities.RemoteUtils.sha1
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
@@ -30,3 +31,6 @@ data class Album(
   @PrimaryKey(autoincrement = true)
   var id: Long = 0
 ) : Data
+
+
+fun Album.key(): String = sha1("${artist}_${album}")

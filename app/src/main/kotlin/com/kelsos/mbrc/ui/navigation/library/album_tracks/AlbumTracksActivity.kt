@@ -16,6 +16,7 @@ import com.kelsos.mbrc.domain.AlbumInfo
 import com.kelsos.mbrc.helper.PopupActionHandler
 import com.kelsos.mbrc.ui.activities.FontActivity
 import com.kelsos.mbrc.ui.widgets.EmptyRecyclerView
+import com.kelsos.mbrc.utilities.RemoteUtils.sha1
 import com.raizlabs.android.dbflow.list.FlowCursorList
 import com.squareup.picasso.Picasso
 import toothpick.Scope
@@ -75,7 +76,7 @@ class AlbumTracksActivity : FontActivity(),
 
     findViewById<TextView>(R.id.album_tracks__album).text = selectedAlbum.album
     findViewById<TextView>(R.id.album_tracks__artist).text = selectedAlbum.artist
-    loadCover(selectedAlbum.cover)
+    loadCover(selectedAlbum.artist, selectedAlbum.album)
 
     presenter.attach(this)
     presenter.load(selectedAlbum)
@@ -91,22 +92,18 @@ class AlbumTracksActivity : FontActivity(),
     }
   }
 
-  private fun loadCover(cover: String?) {
+  private fun loadCover(artist: String, album: String) {
     val image = findViewById<ImageView>(R.id.album_tracks__cover)
     val cache = File(cacheDir, "covers")
-    if (cover != null) {
-      Picasso.get()
-        .load(File(cache, cover))
-        .noFade()
-        .config(Bitmap.Config.RGB_565)
-        .error(R.drawable.ic_image_no_cover)
-        .placeholder(R.drawable.ic_image_no_cover)
-        .resizeDimen(R.dimen.cover_size, R.dimen.cover_size)
-        .centerCrop()
-        .into(image)
-    } else {
-      image.setImageResource(R.drawable.ic_image_no_cover)
-    }
+    Picasso.get()
+      .load(File(cache, sha1("${artist}_${album}")))
+      .noFade()
+      .config(Bitmap.Config.RGB_565)
+      .error(R.drawable.ic_image_no_cover)
+      .placeholder(R.drawable.ic_image_no_cover)
+      .resizeDimen(R.dimen.cover_size, R.dimen.cover_size)
+      .centerCrop()
+      .into(image)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {

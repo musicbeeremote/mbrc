@@ -3,6 +3,7 @@ package com.kelsos.mbrc.repository
 import android.app.Application
 import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.CoverInfo
+import com.kelsos.mbrc.data.key
 import com.kelsos.mbrc.data.library.Cover
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ApiBase
@@ -51,14 +52,14 @@ constructor(
       }.collect { (payload, response) ->
         if (response.status == 200 && !response.cover.isNullOrEmpty() && !response.hash.isNullOrEmpty()) {
           try {
-            val file = File(cache, response.hash)
+            val file = File(cache, payload.key())
             val decodeBase64 = response.cover.decodeBase64()
             if (decodeBase64 != null) {
               file.sink().buffer().use { sink -> sink.write(decodeBase64) }
             }
             updated.add(payload.copy(hash = response.hash))
           } catch (e: Exception) {
-            Timber.e(e);
+            Timber.e(e)
           }
         }
       }
