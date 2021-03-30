@@ -151,6 +151,10 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     artistLabel.isSelected = true
     titleLabel.isSelected = true
     albumLabel.isSelected = true
+
+    if (!isConnected) {
+      onConnectClick()
+    }
   }
 
   override fun onResume() {

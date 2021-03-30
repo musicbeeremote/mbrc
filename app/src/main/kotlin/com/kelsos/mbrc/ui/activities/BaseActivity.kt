@@ -64,6 +64,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
   private var connect: ImageView? = null
 
   protected abstract fun active(): Int
+  protected var isConnected: Boolean = false
 
   private fun onConnectLongClick(): Boolean {
     Timber.v("Connect long pressed")
@@ -72,8 +73,8 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
     return true
   }
 
-  private fun onConnectClick() {
-    Timber.v("Connect pressed")
+  protected fun onConnectClick() {
+    Timber.v("Attempting to connect")
     serviceChecker.startServiceIfNotRunning()
     bus.post(MessageEvent(UserInputEventType.StartConnection))
   }
@@ -129,6 +130,7 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
 
     connectText!!.setText(resId)
     connect!!.setColorFilter(ContextCompat.getColor(this, colorId))
+    isConnected = event.status == Connection.ACTIVE
   }
 
   private fun handleUserNotification(event: NotifyUser) {
