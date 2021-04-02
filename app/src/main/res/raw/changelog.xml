@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    version="1.5.0"
+    release="Apr 13,2021">
+    <feature>Adds radio station support.</feature>
+    <feature>Adds support for album covers on the library albums, and tracks tab.</feature>
+    <feature>Adds an auto-connect behavior when restoring the application to the foreground.</feature>
+    <bug>Fixes an issue where the volume up button would not work when volume was greater than 90%.</bug>
+    <bug>Fixes an issue that would cause the library search to hang after navigating view details. e.g. After going to album tracks.</bug>
+    <bug>Fixes an issue where the remote would continuously pause videos playing on the device.</bug>
+  </version>
+  <version
     version="1.4.0"
     release="Dec 22,2020">
     <feature>Adds statistics dialog when you can check how many tracks, etc are currently synced.</feature>

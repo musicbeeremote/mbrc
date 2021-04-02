@@ -2,10 +2,21 @@ Changelog
 -----------
 
 ## [Unreleased]
-### Added
-- ([#103]) Adds radio station support. 
-- ([#113]) Adds ability to switch radio stations.
 
+## [1.5.0] - 2021-04-03
+### Added
+- [#103], [#113] Adds radio station support.
+- Adds support for album covers on the library albums, and tracks tab.
+- Adds an auto-connect behavior when restoring the application to the foreground.
+
+### Changed
+- [#215] Fixes an issue where the volume up button would not work when volume was greater than 90%.
+- [#221] Fixes an issue that would cause the library search to hang after navigating view details. e.g. After going to album tracks.
+- [#218] Fixes an issue where the remote would continuously pause videos playing on the device.
+
+[#221]: https://github.com/musicbeeremote/android-app/issues/221
+[#218]: https://github.com/musicbeeremote/android-app/issues/218
+[#215]: https://github.com/musicbeeremote/android-app/issues/215
 [#113]: https://github.com/musicbeeremote/android-app/issues/113
 [#103]: https://github.com/musicbeeremote/android-app/issues/103
 
@@ -142,7 +153,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/musicbeeremote/android-app/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/musicbeeremote/android-app/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/musicbeeremote/android-app/compare/v1.2.0...v1.2.1
