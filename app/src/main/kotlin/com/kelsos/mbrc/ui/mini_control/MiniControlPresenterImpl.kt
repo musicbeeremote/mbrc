@@ -13,7 +13,6 @@ import com.kelsos.mbrc.model.MainDataModel
 import com.kelsos.mbrc.mvp.BasePresenter
 import javax.inject.Inject
 
-@MiniControlFragment.Presenter
 class MiniControlPresenterImpl
 @Inject constructor(
   private val model: MainDataModel,
