@@ -10,7 +10,7 @@ import com.kelsos.mbrc.services.SocketService
 import com.kelsos.mbrc.ui.navigation.library.LibrarySyncInteractor
 import rx.Observable
 import timber.log.Timber
-import java.util.*
+import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -33,6 +33,7 @@ class HandshakeCompletionActions
     if (model.pluginProtocol > 2) {
       Timber.v("Sending init request")
       service.sendData(SocketMessage.create(Protocol.INIT))
+      service.sendData(SocketMessage.create(Protocol.PluginVersion))
     } else {
 
       Timber.v("Preparing to send requests for state")

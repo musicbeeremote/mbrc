@@ -9,7 +9,7 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.model.MainDataModel
 import timber.log.Timber
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -65,7 +65,7 @@ constructor(
   private fun handleProtocolMessage(node: JsonNode) {
     model.pluginProtocol = getProtocolVersion(node)
     if (model.apiOutOfDate) {
-      bus.post(MessageEvent(ProtocolEventType.InformClientPluginOutOfDate))
+      bus.post(MessageEvent(ProtocolEventType.PluginUpdateAvailable))
     }
     isHandshakeComplete = true
     bus.post(MessageEvent(ProtocolEventType.HandshakeComplete, true))

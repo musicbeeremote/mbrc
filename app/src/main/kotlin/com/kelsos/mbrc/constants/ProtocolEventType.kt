@@ -5,7 +5,8 @@ object ProtocolEventType {
   const val ReduceVolume = "ReduceVolume"
   const val HandshakeComplete = "HandshakeComplete"
   const val InformClientNotAllowed = "InformClientNotAllowed"
-  const val InformClientPluginOutOfDate = "InformClientPluginOutOfDate"
+  const val PluginUpdateAvailable = "PluginUpdateAvailable"
+  const val PluginUpdateRequired = "PluginUpdateRequired"
   const val UserAction = "UserAction"
   const val PluginVersionCheck = "PluginVersionCheck"
 }

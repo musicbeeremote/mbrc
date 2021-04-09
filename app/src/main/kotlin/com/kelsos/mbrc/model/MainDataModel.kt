@@ -17,6 +17,9 @@ import javax.inject.Singleton
 class MainDataModel
 @Inject
 constructor() {
+  var pluginUpdateAvailable: Boolean = false
+  var pluginUpdateRequired: Boolean = false
+  var minimumRequired: String = ""
   var position: Long = 0
   var duration: Long = 0
   var trackInfo: TrackInfo = TrackInfo()

@@ -7,8 +7,8 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersionCode
 import com.kelsos.mbrc.utilities.SettingsManager.Companion.NONE
+import org.threeten.bp.Instant
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,13 +46,15 @@ constructor(
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
   }
 
-  override fun getLastUpdated(): Date {
-    return Date(preferences.getLong(getKey(R.string.settings_key_last_update_check), 0))
+  override fun getLastUpdated(required: Boolean):Instant {
+    val key = if(required) REQUIRED_CHECK else getKey(R.string.settings_key_last_update_check)
+    return Instant.ofEpochMilli(preferences.getLong(key, 0))
   }
 
-  override fun setLastUpdated(lastChecked: Date) {
+  override fun setLastUpdated(lastChecked: Instant, required: Boolean) {
+    val key = if (required) REQUIRED_CHECK else getKey(R.string.settings_key_last_update_check)
     preferences.edit()
-      .putLong(getKey(R.string.settings_key_last_update_check), lastChecked.time)
+      .putLong(key, lastChecked.toEpochMilli())
       .apply()
   }
 
@@ -82,6 +84,9 @@ constructor(
 
   private fun getKey(settingsKey: Int) = context.getString(settingsKey)
 
+  companion object {
+    const val REQUIRED_CHECK = "update_required_check"
+  }
 }
 
 interface SettingsManager {
@@ -104,6 +109,6 @@ interface SettingsManager {
   fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
   fun shouldShowChangeLog(): Boolean
   fun isPluginUpdateCheckEnabled(): Boolean
-  fun getLastUpdated(): Date
-  fun setLastUpdated(lastChecked: Date)
+  fun getLastUpdated(required: Boolean = false): Instant
+  fun setLastUpdated(lastChecked: Instant, required: Boolean = false)
 }

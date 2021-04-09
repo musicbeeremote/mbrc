@@ -36,6 +36,8 @@ interface MainView : BaseView {
   fun notifyPluginOutOfDate()
 
   fun updateDuration(position: Int, duration: Int)
+
+  fun showPluginUpdateRequired(minimumRequired: String)
 }
 
 

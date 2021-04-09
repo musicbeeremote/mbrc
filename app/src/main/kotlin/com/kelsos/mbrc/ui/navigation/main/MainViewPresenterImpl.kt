@@ -74,6 +74,8 @@ class MainViewPresenterImpl
         view?.updateTrackInfo(model.trackInfo)
         view?.updateConnection(connectionModel.connection)
         view?.updateDuration(model.position.toInt(), model.duration.toInt())
+        showPluginUpdateAvailable()
+        showPluginUpdateRequired()
       } catch (e: Exception) {
         Timber.e(e, "Failed to load")
       }
@@ -82,6 +84,23 @@ class MainViewPresenterImpl
     if (settingsManager.shouldShowChangeLog()) {
       view?.showChangeLog()
     }
+  }
+
+  private fun showPluginUpdateAvailable() {
+    if (!model.pluginUpdateAvailable) {
+      return
+    }
+    model.pluginUpdateAvailable = false
+    view?.notifyPluginOutOfDate()
+  }
+
+  private fun showPluginUpdateRequired() {
+    if (!model.pluginUpdateRequired) {
+      return
+    }
+
+    model.pluginUpdateRequired = false
+    view?.showPluginUpdateRequired(model.minimumRequired)
   }
 
   override fun requestNowPlayingPosition() {
@@ -146,9 +165,10 @@ class MainViewPresenterImpl
       { this.view?.updateLfmStatus(it.status) },
       true
     )
-    this.bus.register(this, MessageEvent::class.java, {
-      if (it.type == ProtocolEventType.InformClientPluginOutOfDate) {
-        this.view?.notifyPluginOutOfDate()
+    this.bus.register(this, MessageEvent::class.java, { event ->
+      when (event.type) {
+        ProtocolEventType.PluginUpdateAvailable -> showPluginUpdateAvailable()
+        ProtocolEventType.PluginUpdateRequired -> showPluginUpdateRequired()
       }
     }, true)
   }

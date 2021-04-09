@@ -1,48 +1,54 @@
 package com.kelsos.mbrc.commands
 
-import android.app.Application
-import android.content.pm.PackageManager
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kelsos.mbrc.constants.Const
 import com.kelsos.mbrc.constants.ProtocolEventType
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.interfaces.ICommand
 import com.kelsos.mbrc.interfaces.IEvent
 import com.kelsos.mbrc.model.MainDataModel
-import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
 import com.kelsos.mbrc.utilities.SettingsManager
+import org.threeten.bp.Instant
+import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
 import java.io.IOException
 import java.net.URL
-import java.util.*
 import javax.inject.Inject
 
 class VersionCheckCommand
 @Inject
-internal constructor(
+constructor(
   private val model: MainDataModel,
   private val mapper: ObjectMapper,
-  private val context: Application,
   private val manager: SettingsManager,
   private val bus: RxBus
 ) : ICommand {
 
   override fun execute(e: IEvent) {
+    val now = Instant.now()
+
+    if (check(MINIMUM_REQUIRED)) {
+      val next = getNextCheck(true);
+      if (next.isAfter(now)) {
+        Timber.d("Next update required check is @ $next")
+        return
+      }
+      bus.post(MessageEvent(ProtocolEventType.PluginUpdateRequired))
+      model.minimumRequired = MINIMUM_REQUIRED
+      model.pluginUpdateRequired = true
+      manager.setLastUpdated(now, true)
+      return
+    }
 
     if (!manager.isPluginUpdateCheckEnabled()) {
       return
     }
 
-    val calendar = Calendar.getInstance()
-    calendar.timeInMillis = manager.getLastUpdated().time
-    calendar.add(Calendar.DATE, 2)
-    val nextCheck = Date(calendar.timeInMillis)
-    val now = Date()
+    val nextCheck = getNextCheck()
 
-    if (nextCheck.after(now)) {
-      Timber.d("waiting for next check: %s", nextCheck.time.toString())
+    if (nextCheck.isAfter(now)) {
+      Timber.d("Next update check after @ $nextCheck")
       return
     }
 
@@ -54,47 +60,52 @@ internal constructor(
       return
     }
 
-    var version: String? = null
-    try {
-      version = context.getVersion()
-    } catch (e1: PackageManager.NameNotFoundException) {
-      Timber.d(e1, "While reading the current version")
+    val expected = jsonNode.path("tag_name").asText().replace("v", "")
+
+    val found = model.pluginVersion
+    if (expected != found && check(expected)) {
+      model.pluginUpdateAvailable = true
+      bus.post(MessageEvent(ProtocolEventType.PluginUpdateAvailable))
     }
 
-    val vNode = jsonNode.path(Const.VERSIONS).path(version)
+    manager.setLastUpdated(now, false)
+    Timber.d("Checked for plugin update @ $now. Found: $found expected: $expected")
+  }
 
-    val suggestedVersion = vNode.path(Const.PLUGIN).asText()
+  private fun getNextCheck(required: Boolean = false): Instant {
+    val lastUpdated = manager.getLastUpdated(required)
+    val days = if (required) 1L else 2L
+    return lastUpdated.plus(days, ChronoUnit.DAYS)
+  }
 
-    if (suggestedVersion != model.pluginVersion) {
-      var isOutOfDate = false
+  private fun check(suggestedVersion: String): Boolean {
+    val currentVersion = model.pluginVersion.toVersionArray()
+    val latestVersion = suggestedVersion.toVersionArray()
 
-      val currentVersion =
-        model.pluginVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
-      val latestVersion =
-        suggestedVersion.split("\\.".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
-
-      var i = 0
-      while (i < currentVersion.size && i < latestVersion.size && currentVersion[i] == latestVersion[i]) {
-        i++
-      }
-
-      if (i < currentVersion.size && i < latestVersion.size) {
-        val diff = Integer.valueOf(currentVersion[i]).compareTo(Integer.valueOf(latestVersion[i]))
-        isOutOfDate = diff < 0
-      }
-
-      if (isOutOfDate) {
-        bus.post(MessageEvent(ProtocolEventType.InformClientPluginOutOfDate))
-      }
+    var i = 0
+    val currentSize = currentVersion.size
+    val latestSize = latestVersion.size
+    while (i < currentSize && i < latestSize && currentVersion[i] == latestVersion[i]) {
+      i++
     }
 
-    manager.setLastUpdated(now)
-    Timber.d("last check on: %s", now.time.toString())
-    Timber.d("plugin reported version: %s", model.pluginVersion)
-    Timber.d("plugin suggested version: %s", suggestedVersion)
+    if (i < currentSize && i < latestSize) {
+      val diff = currentVersion[i].compareTo(latestVersion[i])
+      return diff < 0
+    }
+
+    return false
   }
 
   companion object {
-    private const val CHECK_URL = "http://kelsos.net/musicbeeremote/versions.json"
+    private const val CHECK_URL =
+      "https://api.github.com/repos/musicbeeremote/plugin/releases/latest"
+    private const val MINIMUM_REQUIRED = "1.4.0"
   }
 }
+
+fun String.toVersionArray(): Array<Int> = split("\\.".toRegex())
+  .dropLastWhile(String::isEmpty)
+  .take(3)
+  .map { it.toInt() }
+  .toTypedArray()

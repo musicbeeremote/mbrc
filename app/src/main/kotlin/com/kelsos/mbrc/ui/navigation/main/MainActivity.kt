@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -18,8 +19,10 @@ import androidx.appcompat.widget.ShareActionProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
 import butterknife.ButterKnife
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.UpdateRequiredActivity
 import com.kelsos.mbrc.annotations.Connection
 import com.kelsos.mbrc.annotations.PlayerState
 import com.kelsos.mbrc.annotations.PlayerState.State
@@ -85,6 +88,9 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   override fun onCreate(savedInstanceState: Bundle?) {
     scope = Toothpick.openScopes(application, PRESENTER_SCOPE, this)
     scope.installModules(SmoothieActivityModule(this), MainModule())
+    window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+    setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+    window.sharedElementsUseOverlay = false
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     Toothpick.inject(this, scope)
@@ -129,11 +135,19 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   }
 
   override fun notifyPluginOutOfDate() {
-    outOfDateDialog = MaterialAlertDialogBuilder(this)
-      .setTitle(R.string.main__dialog_plugin_outdated_title)
-      .setMessage(R.string.main__dialog_plugin_outdated_message)
-      .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
-      .show()
+    val snackBar = Snackbar.make(
+      navigationView,
+      R.string.main__dialog_plugin_outdated_message,
+      Snackbar.LENGTH_INDEFINITE
+    )
+    snackBar.setAction(android.R.string.ok) { snackBar.dismiss() }
+    snackBar.show()
+  }
+
+  override fun showPluginUpdateRequired(minimumRequired: String) {
+    val intent = Intent(this, UpdateRequiredActivity::class.java)
+    intent.putExtra(UpdateRequiredActivity.VERSION, minimumRequired)
+    startActivity(intent)
   }
 
   override fun onStart() {
@@ -446,7 +460,7 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     private const val STOPPED = "Stopped"
     private const val PLAYING = "Playing"
 
-    fun tag(@PlayerState.State state: String): String = when(state) {
+    fun tag(@PlayerState.State state: String): String = when (state) {
       PlayerState.PLAYING -> PLAYING
       PlayerState.PAUSED -> PAUSED
       else -> STOPPED
