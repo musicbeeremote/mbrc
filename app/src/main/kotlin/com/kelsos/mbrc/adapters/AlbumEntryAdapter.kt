@@ -40,7 +40,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
       popupMenu.inflate(R.menu.popup_album)
       popupMenu.setOnMenuItemClickListener { menuItem ->
         val data = this.data ?: return@setOnMenuItemClickListener false
-        val position = holder.adapterPosition.toLong()
+        val position = holder.bindingAdapterPosition.toLong()
         val album = data.getItem(position) ?: return@setOnMenuItemClickListener false
         listener?.onMenuItemSelected(menuItem, album)
         true
@@ -50,7 +50,7 @@ constructor(context: Activity) : RecyclerView.Adapter<AlbumEntryAdapter.ViewHold
 
     holder.itemView.setOnClickListener {
       val data = this.data ?: return@setOnClickListener
-      val position = holder.adapterPosition.toLong()
+      val position = holder.bindingAdapterPosition.toLong()
       val album = data.getItem(position) ?: return@setOnClickListener
       listener?.onItemClicked(album)
     }

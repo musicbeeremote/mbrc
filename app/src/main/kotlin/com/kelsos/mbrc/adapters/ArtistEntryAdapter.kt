@@ -61,7 +61,7 @@ class ArtistEntryAdapter
       val popupMenu = PopupMenu(it.context, it)
       popupMenu.inflate(R.menu.popup_artist)
       popupMenu.setOnMenuItemClickListener { menuItem ->
-        val position = holder.adapterPosition.toLong()
+        val position = holder.bindingAdapterPosition.toLong()
         val artist = data?.getItem(position) ?: return@setOnMenuItemClickListener false
         listener?.onMenuItemSelected(menuItem, artist)
         true
@@ -70,7 +70,7 @@ class ArtistEntryAdapter
     }
 
     holder.itemView.setOnClickListener {
-      val position = holder.adapterPosition.toLong()
+      val position = holder.bindingAdapterPosition.toLong()
       val artist = data?.getItem(position) ?: return@setOnClickListener
       listener?.onItemClicked(artist)
     }

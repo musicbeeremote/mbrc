@@ -77,7 +77,7 @@ class NowPlayingAdapter
 
   private fun onClick(holder: TrackHolder) {
     val listener = this.listener ?: return
-    val position = holder.adapterPosition
+    val position = holder.bindingAdapterPosition
     setPlayingTrack(position)
     listener.onPress(position)
   }

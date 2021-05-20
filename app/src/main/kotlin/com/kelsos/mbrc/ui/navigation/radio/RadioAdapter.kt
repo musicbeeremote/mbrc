@@ -26,7 +26,7 @@ class RadioAdapter
     val viewHolder = ViewHolder(view)
 
     viewHolder.itemView.setOnClickListener {
-      val path = data?.getItem(viewHolder.adapterPosition.toLong())?.url
+      val path = data?.getItem(viewHolder.bindingAdapterPosition.toLong())?.url
       path?.let {
         radioPressedListener?.onRadioPressed(it)
       }
@@ -35,7 +35,7 @@ class RadioAdapter
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val radio = data?.getItem(holder.adapterPosition.toLong())
+    val radio = data?.getItem(holder.bindingAdapterPosition.toLong())
     radio?.let {
       holder.name.text = radio.name
     }

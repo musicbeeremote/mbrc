@@ -42,14 +42,14 @@ class ConnectionAdapter : RecyclerView.Adapter<ConnectionAdapter.ConnectionViewH
     val holder = ConnectionViewHolder(view)
 
     holder.overflow.setOnClickListener {
-      val adapterPosition = holder.adapterPosition
-      val settings = data[adapterPosition]
+      val bindingAdapterPosition = holder.bindingAdapterPosition
+      val settings = data[bindingAdapterPosition]
       showPopup(settings, it)
     }
 
     holder.itemView.setOnClickListener {
-      val adapterPosition = holder.adapterPosition
-      val settings = data[adapterPosition]
+      val bindingAdapterPosition = holder.bindingAdapterPosition
+      val settings = data[bindingAdapterPosition]
       changeListener?.onDefault(settings)
     }
     return holder

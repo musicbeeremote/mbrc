@@ -71,7 +71,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     holder.indicator.setOnClickListener { createPopup(it, holder) }
 
     holder.itemView.setOnClickListener {
-      val position = holder.adapterPosition.toLong()
+      val position = holder.bindingAdapterPosition.toLong()
       val track = data?.getItem(position) ?: return@setOnClickListener
       listener?.onItemClicked(track)
     }
@@ -82,7 +82,7 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
     val popupMenu = PopupMenu(it.context, it)
     popupMenu.inflate(R.menu.popup_track)
     popupMenu.setOnMenuItemClickListener { menuItem ->
-      val position = holder.adapterPosition.toLong()
+      val position = holder.bindingAdapterPosition.toLong()
       val track = data?.getItem(position) ?: return@setOnMenuItemClickListener false
       listener?.onMenuItemSelected(menuItem, track)
       true
