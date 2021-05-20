@@ -1,13 +1,12 @@
 package com.kelsos.mbrc.repository
 
 import android.app.Application
-import androidx.datastore.DataStore
-import androidx.datastore.createDataStore
+import androidx.datastore.core.DataStore
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.domain.TrackInfo
 import com.kelsos.mbrc.store.Store
-import com.kelsos.mbrc.store.StoreSerializer
 import com.kelsos.mbrc.store.Track
+import com.kelsos.mbrc.store.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -23,8 +22,7 @@ constructor(
   private val dispatchers: AppDispatchers
 ) : ModelCache {
 
-  private val dataStore: DataStore<Store> =
-    context.createDataStore("cache_store.db", StoreSerializer)
+  private val dataStore: DataStore<Store> = context.dataStore
   private val storeFlow: Flow<Store> = dataStore.data
     .catch { exception ->
       // dataStore.data throws an IOException when an error is encountered when reading data
@@ -35,7 +33,6 @@ constructor(
         throw exception
       }
     }
-
 
   override suspend fun persistInfo(trackInfo: TrackInfo) = withContext(dispatchers.io) {
     dataStore.updateData { store ->
@@ -72,11 +69,9 @@ constructor(
     }
   }
 
-
   override suspend fun restoreCover(): String {
     return storeFlow.first().cover
   }
-
 }
 
 interface ModelCache {
