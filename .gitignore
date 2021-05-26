@@ -42,8 +42,10 @@ build
 # Maven created directories
 target/
 gen-external-apklibs/
-gradle.properties
 /.gradletasknamecache
 /app/google-services.json
 hs_err_pid*.log
 replay_pid*.log
+jacoco.exec
+resources_usage.csv
+unused_resources.csv
