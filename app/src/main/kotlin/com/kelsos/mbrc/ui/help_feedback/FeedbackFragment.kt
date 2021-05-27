@@ -48,7 +48,6 @@ class FeedbackFragment : Fragment() {
       .subscribe({
         logInfo.isEnabled = true
       }) {
-
       }
     return view
   }
@@ -99,7 +98,8 @@ class FeedbackFragment : Fragment() {
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
     emailIntent.putExtra(Intent.EXTRA_TEXT, feedbackText)
     if (logs != null) {
-      val logsUri = FileProvider.getUriForFile(requireContext(), "$APPLICATION_ID.fileprovider", logs)
+      val authority = "$APPLICATION_ID.fileprovider"
+      val logsUri = FileProvider.getUriForFile(requireContext(), authority, logs)
       emailIntent.putExtra(Intent.EXTRA_STREAM, logsUri)
     }
 

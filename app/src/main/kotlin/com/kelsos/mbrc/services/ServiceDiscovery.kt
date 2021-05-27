@@ -21,7 +21,7 @@ import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class ServiceDiscovery
@@ -39,7 +39,6 @@ internal constructor(
   private var multiCastLock: WifiManager.MulticastLock? = null
   private var group: InetAddress? = null
   private var isRunning: Boolean = false
-
 
   fun startDiscovery() {
     if (isRunning) {
@@ -63,7 +62,7 @@ internal constructor(
       } catch (e: Exception) {
         Timber.v(e, "Discovery failed")
         bus.post(DiscoveryStopped(DiscoveryStop.NOT_FOUND))
-      }  finally {
+      } finally {
         stopDiscovery()
         isRunning = false
       }
@@ -137,7 +136,7 @@ internal constructor(
     receive(packet)
     val incomingMessage = String(packet.data, Charsets.UTF_8)
     val discoveryMessage = mapper.readValue(incomingMessage, DiscoveryMessage::class.java)
-    Timber.v("Discovery: Received -> $discoveryMessage", )
+    Timber.v("Discovery: Received -> $discoveryMessage",)
     return discoveryMessage
   }
 
@@ -147,10 +146,12 @@ internal constructor(
       return MulticastSocket(MULTICASTPORT).apply {
         soTimeout = SO_TIMEOUT
         joinGroup(group)
-        val data = mapper.writeValueAsBytes(DiscoveryMessage().apply {
-          context = Protocol.DISCOVERY
-          address = getWifiAddress()
-        })
+        val data = mapper.writeValueAsBytes(
+          DiscoveryMessage().apply {
+            context = Protocol.DISCOVERY
+            address = getWifiAddress()
+          }
+        )
         send(DatagramPacket(data, data.size, group, MULTICASTPORT))
       }
     } catch (e: IOException) {
@@ -163,6 +164,6 @@ internal constructor(
     private const val NOTIFY = "notify"
     private const val SO_TIMEOUT = 15 * 1000
     private const val MULTICASTPORT = 45345
-    private const val DISCOVERY_ADDRESS = "239.1.5.10" //NOPMD
+    private const val DISCOVERY_ADDRESS = "239.1.5.10" // NOPMD
   }
 }

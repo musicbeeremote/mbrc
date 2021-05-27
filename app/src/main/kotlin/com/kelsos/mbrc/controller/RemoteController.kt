@@ -60,7 +60,6 @@ constructor(bus: RxBus, app: Application) : Runnable {
     } catch (ex: Exception) {
       Timber.d(ex, "executing command for type: \t%s", event)
     }
-
   }
 
   override fun run() {

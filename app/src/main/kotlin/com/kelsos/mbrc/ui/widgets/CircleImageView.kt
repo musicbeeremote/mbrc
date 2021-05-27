@@ -280,7 +280,6 @@ class CircleImageView : ImageView {
       e.printStackTrace()
       return null
     }
-
   }
 
   private fun initializeBitmap() {
@@ -389,5 +388,4 @@ class CircleImageView : ImageView {
     private val DEFAULT_FILL_COLOR = Color.TRANSPARENT
     private val DEFAULT_BORDER_OVERLAY = false
   }
-
 }

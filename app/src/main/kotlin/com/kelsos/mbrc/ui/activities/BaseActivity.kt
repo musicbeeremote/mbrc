@@ -42,7 +42,6 @@ import com.kelsos.mbrc.ui.preferences.SettingsActivity
 import timber.log.Timber
 import javax.inject.Inject
 
-
 abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSelectedListener {
   @Inject
   lateinit var bus: RxBus
@@ -202,7 +201,6 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
       stopService(Intent(this, RemoteService::class.java))
     }
 
-
     if (this is MainActivity) {
       finish()
     } else {
@@ -211,7 +209,6 @@ abstract class BaseActivity : FontActivity(), NavigationView.OnNavigationItemSel
       intent.flags = FLAG_ACTIVITY_CLEAR_TOP
       startActivity(intent)
     }
-
   }
 
   private fun createBackStack(intent: Intent) {

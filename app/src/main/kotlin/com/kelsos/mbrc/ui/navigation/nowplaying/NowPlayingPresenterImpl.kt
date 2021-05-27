@@ -38,7 +38,7 @@ constructor(
         view?.update(repository.getAllCursor())
         view?.trackChanged(model.trackInfo, true)
         view?.loading()
-        reload(true);
+        reload(true)
       } catch (e: Exception) {
         view?.failure(e)
       }
@@ -50,7 +50,8 @@ constructor(
       MessageEvent.action(
         UserAction(
           Protocol.NowPlayingListSearch,
-          query.trim { it <= ' ' })
+          query.trim { it <= ' ' }
+        )
       )
     )
   }

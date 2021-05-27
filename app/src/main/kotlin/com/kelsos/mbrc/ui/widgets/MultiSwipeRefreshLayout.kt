@@ -64,7 +64,7 @@ class MultiSwipeRefreshLayout :
     if (swipeableChildren.isNotEmpty()) {
       // Iterate through the scrollable children and check if any of them can not scroll up
       for (view in swipeableChildren) {
-        if (view != null && view.isShown && !view.canScrollVertically( -1)) {
+        if (view != null && view.isShown && !view.canScrollVertically(-1)) {
           // If the view is shown, and can not scroll upwards, return false and start the
           // gesture.
           return false

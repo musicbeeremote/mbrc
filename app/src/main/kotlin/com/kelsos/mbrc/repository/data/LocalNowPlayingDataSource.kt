@@ -46,10 +46,9 @@ class LocalNowPlayingDataSource
   override suspend fun search(term: String): FlowCursorList<NowPlaying> =
     withContext(dispatchers.db) {
       val searchTerm = "%${term.escapeLike()}%"
-      val query =
-        (select from NowPlaying::class where NowPlaying_Table.title.like(searchTerm) or NowPlaying_Table.artist.like(
-          searchTerm
-        ))
+      val matchesTitle = NowPlaying_Table.title.like(searchTerm)
+      val matchesArtist = NowPlaying_Table.artist.like(searchTerm)
+      val query = (select from NowPlaying::class where matchesTitle or matchesArtist)
       return@withContext FlowCursorList.Builder(NowPlaying::class.java).modelQueriable(query)
         .build()
     }
@@ -64,9 +63,10 @@ class LocalNowPlayingDataSource
 
   override suspend fun removePreviousEntries(epoch: Long) {
     withContext(dispatchers.db) {
+      val lessThan = NowPlaying_Table.date_added.lessThan(epoch)
       SQLite.delete()
         .from(NowPlaying::class.java)
-        .where(clause(NowPlaying_Table.date_added.lessThan(epoch)).or(NowPlaying_Table.date_added.isNull))
+        .where(clause(lessThan).or(NowPlaying_Table.date_added.isNull))
         .execute()
     }
   }

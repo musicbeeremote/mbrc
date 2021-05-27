@@ -57,5 +57,3 @@ class HandshakeCompletionActions
     syncInteractor.sync(true)
   }
 }
-
-

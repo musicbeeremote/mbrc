@@ -43,4 +43,3 @@ class EmptyRecyclerView : RecyclerView {
     adapter?.registerAdapterDataObserver(observer)
   }
 }
-

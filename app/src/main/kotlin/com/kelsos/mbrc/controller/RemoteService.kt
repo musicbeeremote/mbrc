@@ -56,7 +56,7 @@ class RemoteService : Service() {
       val manager = NotificationManagerCompat.from(this)
       manager.createNotificationChannel(notificationChannel)
     }
-    val cancelIntent = getPendingIntent(RemoteViewIntentBuilder.CANCEL,this)
+    val cancelIntent = getPendingIntent(RemoteViewIntentBuilder.CANCEL, this)
     val action = NotificationCompat.Action.Builder(
       R.drawable.ic_close_black_24dp,
       getString(android.R.string.cancel),
@@ -105,19 +105,22 @@ class RemoteService : Service() {
 
   override fun onDestroy() {
     super.onDestroy()
-    SERVICE_STOPPING = true;
+    SERVICE_STOPPING = true
     stopForeground(true)
     this.unregisterReceiver(receiver)
-    handler.postDelayed({
-      remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
-      CommandRegistration.unregister(remoteController)
-      threadPoolExecutor?.shutdownNow()
-      Toothpick.closeScope(this)
+    handler.postDelayed(
+      {
+        remoteController.executeCommand(MessageEvent(UserInputEventType.TerminateConnection))
+        CommandRegistration.unregister(remoteController)
+        threadPoolExecutor?.shutdownNow()
+        Toothpick.closeScope(this)
 
-      SERVICE_STOPPING = false
-      SERVICE_RUNNING = false
-      Timber.d("Background Service::Destroyed")
-    }, 150)
+        SERVICE_STOPPING = false
+        SERVICE_RUNNING = false
+        Timber.d("Background Service::Destroyed")
+      },
+      150
+    )
   }
 
   private inner class ControllerBinder : Binder() {

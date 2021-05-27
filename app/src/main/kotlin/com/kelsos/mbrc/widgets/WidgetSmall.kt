@@ -105,7 +105,8 @@ class WidgetSmall : AppWidgetProvider() {
   private fun updateCover(
     context: Context?,
     widgetManager: AppWidgetManager,
-    widgetsIds: IntArray, path: String
+    widgetsIds: IntArray,
+    path: String
   ) {
     if (context == null) {
       return

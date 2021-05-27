@@ -97,12 +97,14 @@ class LibrarySyncInteractorImpl
 
   private suspend fun isEmpty(): Boolean {
     return genreRepository.cacheIsEmpty() &&
-        artistRepository.cacheIsEmpty() &&
-        albumRepository.cacheIsEmpty() &&
-        trackRepository.cacheIsEmpty()
+      artistRepository.cacheIsEmpty() &&
+      albumRepository.cacheIsEmpty() &&
+      trackRepository.cacheIsEmpty()
   }
 
-  override fun setOnCompleteListener(onCompleteListener: LibrarySyncInteractor.OnCompleteListener?) {
+  override fun setOnCompleteListener(
+    onCompleteListener: LibrarySyncInteractor.OnCompleteListener?
+  ) {
     this.onCompleteListener = onCompleteListener
   }
 

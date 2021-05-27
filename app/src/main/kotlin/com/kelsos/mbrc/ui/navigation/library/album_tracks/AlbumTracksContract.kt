@@ -17,4 +17,3 @@ interface AlbumTracksPresenter : Presenter<AlbumTracksView> {
   fun queue(entry: Track, @Queue.Action action: String? = null)
   fun queueAlbum(artist: String, album: String)
 }
-

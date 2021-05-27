@@ -15,5 +15,4 @@ constructor(private val app: Application) :
 
   override fun <T : ViewModel> create(modelClass: Class<T>) =
     Toothpick.openScope(app).getInstance(modelClass) as T
-
 }

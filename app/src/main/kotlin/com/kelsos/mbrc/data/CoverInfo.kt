@@ -14,4 +14,4 @@ data class CoverInfo(
   val hash: String
 )
 
-fun CoverInfo.key(): String = RemoteUtils.sha1("${artist}_${album}")
+fun CoverInfo.key(): String = RemoteUtils.sha1("${artist}_$album")

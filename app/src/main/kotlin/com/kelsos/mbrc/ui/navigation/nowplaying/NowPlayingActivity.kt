@@ -27,7 +27,8 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class NowPlayingActivity : BaseActivity(),
+class NowPlayingActivity :
+  BaseActivity(),
   NowPlayingView,
   OnQueryTextListener,
   OnStartDragListener,
@@ -49,7 +50,6 @@ class NowPlayingActivity : BaseActivity(),
   private lateinit var scope: Scope
   private lateinit var touchListener: NowPlayingTouchListener
   private var itemTouchHelper: ItemTouchHelper? = null
-
 
   override fun onQueryTextSubmit(query: String): Boolean {
     closeSearch()

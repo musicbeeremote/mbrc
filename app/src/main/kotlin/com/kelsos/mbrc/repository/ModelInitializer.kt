@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.repository
 
-
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.domain.isEmpty
 import com.kelsos.mbrc.model.MainDataModel
@@ -51,5 +50,3 @@ constructor(
     }
   }
 }
-
-

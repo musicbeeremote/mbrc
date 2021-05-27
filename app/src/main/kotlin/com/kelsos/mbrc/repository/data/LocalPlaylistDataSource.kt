@@ -41,7 +41,8 @@ class LocalPlaylistDataSource
 
   override suspend fun search(term: String): FlowCursorList<Playlist> =
     withContext(dispatchers.db) {
-      val query = (select from Playlist::class where Playlist_Table.name.like("%${term.escapeLike()}%"))
+      val searchTerm = "%${term.escapeLike()}%"
+      val query = (select from Playlist::class where Playlist_Table.name.like(searchTerm))
       return@withContext FlowCursorList.Builder(Playlist::class.java).modelQueriable(query).build()
     }
 

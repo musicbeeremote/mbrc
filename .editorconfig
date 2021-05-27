@@ -8,11 +8,30 @@ insert_final_newline = true
 [*.java]
 charset = utf-8
 indent_style = space
-intent_size = 2
+indent_size = 2
 trim_trailing_whitespace = true
 
 [*.xml]
 charset = utf-8
 indent_style = space
-intent_size = 2
+indent_size = 2
+continuation_indent_size = 4
 trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+indent_style = space
+# possible values: number (e.g. 2), "unset" (makes ktlint ignore indentation completely)
+indent_size = 2
+# possible values: number (e.g. 2), "unset"
+continuation_indent_size = 2
+# true (recommended) / false
+insert_final_newline = unset
+# possible values: number (e.g. 120) (package name, imports & comments are ignored), "off"
+# it's automatically set to 100 on `ktlint --android ...` (per Android Kotlin Style Guide)
+max_line_length = 100
+trim_trailing_whitespace = true
+
+[*.gradle]
+indent_size = 2
+continuation_indent_size = 2
+indent_style = space

@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.radio;
+package com.kelsos.mbrc.ui.navigation.radio
 
 import android.os.Bundle
 import android.view.View
@@ -22,7 +22,8 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class RadioActivity : BaseActivity(),
+class RadioActivity :
+  BaseActivity(),
   RadioView,
   SwipeRefreshLayout.OnRefreshListener,
   OnRadioPressedListener {

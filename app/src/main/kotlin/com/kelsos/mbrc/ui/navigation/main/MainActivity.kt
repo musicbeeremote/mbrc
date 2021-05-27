@@ -243,7 +243,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
       .resize(dimens, dimens)
       .centerCrop()
       .into(albumCover)
-
   }
 
   override fun updateShuffleState(@ShuffleState shuffleState: String) {
@@ -252,8 +251,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
 
     val color = ContextCompat.getColor(this, if (shuffle) R.color.accent else R.color.button_dark)
     shuffleButton.setColorFilter(color)
-
-    shuffleButton.setImageResource(if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp)
+    val resId = if (autoDj) R.drawable.ic_headset_black_24dp else R.drawable.ic_shuffle_black_24dp
+    shuffleButton.setImageResource(resId)
   }
 
   override fun updateRepeat(@Mode mode: String) {
@@ -282,7 +281,12 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     volumeBar.progress = volume
     val color = ContextCompat.getColor(this, R.color.button_dark)
     muteButton.setColorFilter(color)
-    muteButton.setImageResource(if (mute) R.drawable.ic_volume_off_black_24dp else R.drawable.ic_volume_up_black_24dp)
+    val resId = if (mute) {
+      R.drawable.ic_volume_off_black_24dp
+    } else {
+      R.drawable.ic_volume_up_black_24dp
+    }
+    muteButton.setImageResource(resId)
   }
 
   override fun updatePlayState(@State state: String) {
@@ -330,7 +334,6 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
     if (STOPPED == tag || PAUSED == tag) {
       return
     }
-
 
     progressHelper.update(current, total)
   }
@@ -446,8 +449,8 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   override fun onDestroy() {
     Toothpick.closeScope(this)
     if (isFinishing) {
-      //when we leave the presenter flow,
-      //we close its scope
+      // when we leave the presenter flow,
+      // we close its scope
       Toothpick.closeScope(PRESENTER_SCOPE)
     }
     outOfDateDialog?.dismiss()
@@ -472,4 +475,3 @@ class MainActivity : BaseActivity(), MainView, ProgressUpdate {
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
 }
-

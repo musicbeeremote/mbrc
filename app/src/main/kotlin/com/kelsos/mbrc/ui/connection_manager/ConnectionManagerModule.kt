@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.ui.connection_manager
 
-
 import toothpick.config.Module
 
 class ConnectionManagerModule private constructor() : Module() {

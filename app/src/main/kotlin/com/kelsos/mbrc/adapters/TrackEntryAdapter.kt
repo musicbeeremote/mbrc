@@ -74,7 +74,6 @@ constructor(context: Activity) : RecyclerView.Adapter<TrackEntryAdapter.ViewHold
       val position = holder.adapterPosition.toLong()
       val track = data?.getItem(position) ?: return@setOnClickListener
       listener?.onItemClicked(track)
-
     }
     return holder
   }

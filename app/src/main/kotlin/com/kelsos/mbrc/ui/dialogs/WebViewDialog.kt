@@ -14,9 +14,11 @@ class WebViewDialog : DialogFragment() {
 
     return MaterialAlertDialogBuilder(requireActivity())
       .setTitle(title)
-      .setView(WebView(requireActivity()).apply {
-        loadUrl(url)
-      }).setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+      .setView(
+        WebView(requireActivity()).apply {
+          loadUrl(url)
+        }
+      ).setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
       .show()
   }
 

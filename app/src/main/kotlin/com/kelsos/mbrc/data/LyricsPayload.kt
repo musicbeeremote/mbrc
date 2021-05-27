@@ -12,4 +12,3 @@ data class LyricsPayload(
     const val NOT_FOUND = 404
   }
 }
-

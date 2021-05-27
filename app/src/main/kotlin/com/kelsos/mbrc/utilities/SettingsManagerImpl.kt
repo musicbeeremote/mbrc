@@ -40,14 +40,15 @@ constructor(
 
   @SettingsManager.CallAction
   override fun getCallAction(): String = preferences.getString(
-    getKey(R.string.settings_key_incoming_call_action), NONE) ?: NONE
+    getKey(R.string.settings_key_incoming_call_action), NONE
+  ) ?: NONE
 
   override fun isPluginUpdateCheckEnabled(): Boolean {
     return preferences.getBoolean(getKey(R.string.settings_key_plugin_check), false)
   }
 
-  override fun getLastUpdated(required: Boolean):Instant {
-    val key = if(required) REQUIRED_CHECK else getKey(R.string.settings_key_last_update_check)
+  override fun getLastUpdated(required: Boolean): Instant {
+    val key = if (required) REQUIRED_CHECK else getKey(R.string.settings_key_last_update_check)
     return Instant.ofEpochMilli(preferences.getLong(key, 0))
   }
 
@@ -92,10 +93,12 @@ constructor(
 interface SettingsManager {
   @CallAction fun getCallAction(): String
 
-  @StringDef(NONE,
+  @StringDef(
+    NONE,
     PAUSE,
     STOP,
-    REDUCE)
+    REDUCE
+  )
   @Retention(AnnotationRetention.SOURCE)
   annotation class CallAction
 

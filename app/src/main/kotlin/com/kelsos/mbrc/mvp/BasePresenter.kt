@@ -55,8 +55,9 @@ open class BasePresenter<T : BaseView>(
     }
   }
 
-  protected class ViewNotAttachedException :
-    RuntimeException("Please call Presenter.attach(BaseView) before calling a method on the presenter")
+  protected class ViewNotAttachedException : RuntimeException(
+    "Please call Presenter.attach(BaseView) before calling a method on the presenter"
+  )
 
   override fun getLifecycle(): Lifecycle {
     return this.lifecycleRegistry

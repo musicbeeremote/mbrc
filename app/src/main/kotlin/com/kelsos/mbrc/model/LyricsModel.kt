@@ -30,5 +30,4 @@ constructor(private val bus: RxBus) {
     }
 
   var status: Int = LyricsPayload.NOT_FOUND
-
 }

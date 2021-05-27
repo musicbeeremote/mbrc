@@ -23,22 +23,24 @@ object RemoteUtils {
   }
 
   fun bitmapFromFile(path: String): Observable<Bitmap> {
-    return Observable.fromEmitter<Bitmap>({
-      try {
-        val options = BitmapFactory.Options()
-        options.inPreferredConfig = Bitmap.Config.RGB_565
-        val bitmap = BitmapFactory.decodeFile(path, options)
-        if (bitmap != null) {
-          it.onNext(bitmap)
-          it.onCompleted()
-        } else {
-          it.onError(RuntimeException("Unable to decode the image"))
+    return Observable.fromEmitter<Bitmap>(
+      {
+        try {
+          val options = BitmapFactory.Options()
+          options.inPreferredConfig = Bitmap.Config.RGB_565
+          val bitmap = BitmapFactory.decodeFile(path, options)
+          if (bitmap != null) {
+            it.onNext(bitmap)
+            it.onCompleted()
+          } else {
+            it.onError(RuntimeException("Unable to decode the image"))
+          }
+        } catch (e: Exception) {
+          it.onError(e)
         }
-
-      } catch (e: Exception) {
-        it.onError(e)
-      }
-    }, Emitter.BackpressureMode.LATEST)
+      },
+      Emitter.BackpressureMode.LATEST
+    )
   }
 
   fun coverBitmap(coverPath: String): Observable<Bitmap> {

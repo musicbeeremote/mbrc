@@ -31,14 +31,14 @@ class SettingsDialogFragment : DialogFragment() {
     } catch (e: ClassCastException) {
       throw ClassCastException("$context must implement SettingsDialogListener")
     }
-
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-     val dialog = MaterialAlertDialogBuilder(requireActivity())
+    val resId = if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add
+    val dialog = MaterialAlertDialogBuilder(requireActivity())
       .setView(R.layout.ui_dialog_settings)
       .setTitle(if (edit) R.string.settings_dialog_edit else R.string.settings_dialog_add)
-      .setPositiveButton(if (edit) R.string.settings_dialog_save else R.string.settings_dialog_add) { dialog, _ ->
+      .setPositiveButton(resId) { dialog, _ ->
         var shouldIClose = true
         val hostname = hostEdit.text.toString()
         val computerName = nameEdit.text.toString()
@@ -58,12 +58,11 @@ class SettingsDialogFragment : DialogFragment() {
           dialog.dismiss()
         }
       }.setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
-       .show()
-
+      .show()
 
     hostEdit = dialog.findViewById(R.id.settings_dialog_host) ?: error("not found")
     nameEdit = dialog.findViewById(R.id.settings_dialog_name) ?: error("not found")
-    portEdit = dialog.findViewById(R.id.settings_dialog_port)  ?: error("not found")
+    portEdit = dialog.findViewById(R.id.settings_dialog_port) ?: error("not found")
     return dialog
   }
 

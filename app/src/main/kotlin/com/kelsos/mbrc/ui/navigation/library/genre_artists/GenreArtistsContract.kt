@@ -15,5 +15,3 @@ interface GenreArtistsPresenter : Presenter<GenreArtistsView> {
   fun load(genre: String)
   fun queue(@Queue.Action action: String, entry: Artist)
 }
-
-

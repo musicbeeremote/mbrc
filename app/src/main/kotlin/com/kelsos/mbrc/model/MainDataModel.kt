@@ -52,7 +52,6 @@ constructor() {
       }
     }
 
-
   @State
   var playState: String = PlayerState.UNDEFINED
     set(value) {
@@ -94,4 +93,3 @@ constructor() {
     }
   }
 }
-

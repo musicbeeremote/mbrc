@@ -12,18 +12,19 @@ class NowPlayingTouchListener(context: Context, private val onLongClick: (Boolea
   private val gestureDetector: GestureDetector
 
   init {
-    gestureDetector = GestureDetector(context,
+    gestureDetector = GestureDetector(
+      context,
       object : GestureDetector.SimpleOnGestureListener() {
         override fun onLongPress(e: MotionEvent?) {
           Timber.v("Marking start of long press event")
           onLongClick.invoke(true)
           super.onLongPress(e)
         }
-      })
+      }
+    )
   }
 
   override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-
   }
 
   override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
@@ -38,7 +39,5 @@ class NowPlayingTouchListener(context: Context, private val onLongClick: (Boolea
   }
 
   override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-
   }
-
 }

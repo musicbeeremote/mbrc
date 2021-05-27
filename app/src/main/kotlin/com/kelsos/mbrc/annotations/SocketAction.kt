@@ -14,7 +14,7 @@ object SocketAction {
   annotation class Action
 
   fun name(@Action action: Int): String {
-    return when(action) {
+    return when (action) {
       RESET -> "Reset"
       START -> "Start"
       RETRY -> "Retry"

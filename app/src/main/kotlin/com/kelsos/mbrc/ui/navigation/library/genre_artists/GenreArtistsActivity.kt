@@ -23,7 +23,8 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class GenreArtistsActivity : FontActivity(),
+class GenreArtistsActivity :
+  FontActivity(),
   GenreArtistsView,
   MenuItemSelectedListener {
 
@@ -140,4 +141,3 @@ class GenreArtistsActivity : FontActivity(),
     const val GENRE_NAME = "genre_name"
   }
 }
-

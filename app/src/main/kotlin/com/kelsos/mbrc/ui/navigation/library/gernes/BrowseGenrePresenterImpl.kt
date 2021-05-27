@@ -73,6 +73,4 @@ constructor(
       view?.queue(success, tracks)
     }
   }
-
 }
-

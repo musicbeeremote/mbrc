@@ -25,7 +25,8 @@ import com.raizlabs.android.dbflow.list.FlowCursorList
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseGenreFragment : Fragment(),
+class BrowseGenreFragment :
+  Fragment(),
   BrowseGenreView,
   MenuItemSelectedListener {
 

@@ -93,7 +93,7 @@ constructor(
     Timber.v("Received action ${SocketAction.name(action)}")
     when (action) {
       RESET -> {
-        shouldStop = false;
+        shouldStop = false
         resetState()
         startSocket()
         cleanupSocket()
@@ -152,9 +152,7 @@ constructor(
       socket?.close()
       socket = null
     } catch (ignore: IOException) {
-
     }
-
   }
 
   @Synchronized
@@ -169,7 +167,6 @@ constructor(
     } catch (ignored: Exception) {
       Timber.d(ignored, "Send failed")
     }
-
   }
 
   override fun onTimeout() {

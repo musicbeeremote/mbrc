@@ -22,7 +22,7 @@ constructor(
     val duration = data.path("total").asLong()
     val position = data.path("current").asLong()
     bus.post(UpdateDuration(position.toInt(), duration.toInt()))
-    
+
     bus.post(RemoteClientMetaData(model.trackInfo, model.coverPath, duration))
 
     if (position != model.position) {

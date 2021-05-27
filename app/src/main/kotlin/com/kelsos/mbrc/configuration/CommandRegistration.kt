@@ -160,4 +160,3 @@ object CommandRegistration {
     controller.clearCommands()
   }
 }
-

@@ -87,7 +87,6 @@ constructor(
     }
   }
 
-
   private fun getPageRange(offset: Int, limit: Int): PageRange? {
     return takeIf { limit > 0 }?.run {
       PageRange().apply {

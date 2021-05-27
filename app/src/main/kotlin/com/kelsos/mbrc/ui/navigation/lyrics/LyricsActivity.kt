@@ -51,7 +51,6 @@ class LyricsActivity : BaseActivity(), LyricsView {
     lyricsRecycler.adapter = adapter
   }
 
-
   override fun onDestroy() {
     Toothpick.closeScope(this)
     if (isFinishing) {
@@ -89,4 +88,3 @@ class LyricsActivity : BaseActivity(), LyricsView {
   @Retention(AnnotationRetention.RUNTIME)
   annotation class Presenter
 }
-

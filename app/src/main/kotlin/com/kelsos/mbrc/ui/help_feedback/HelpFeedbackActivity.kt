@@ -47,6 +47,5 @@ class HelpFeedbackActivity : FontActivity() {
         else -> throw IllegalArgumentException("invalid position")
       }
     }.attach()
-
   }
 }

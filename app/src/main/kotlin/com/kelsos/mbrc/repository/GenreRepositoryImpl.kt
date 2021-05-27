@@ -37,7 +37,7 @@ constructor(
         .collect { genres ->
           val data = genres.map { it.apply { dateAdded = epoch } }
           localDataSource.saveAll(data)
-      }
+        }
     }
   }
 

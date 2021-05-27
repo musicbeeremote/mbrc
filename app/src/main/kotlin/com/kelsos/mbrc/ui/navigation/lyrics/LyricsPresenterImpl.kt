@@ -6,7 +6,7 @@ import com.kelsos.mbrc.events.bus.RxBus
 import com.kelsos.mbrc.events.ui.LyricsUpdatedEvent
 import com.kelsos.mbrc.model.LyricsModel
 import com.kelsos.mbrc.mvp.BasePresenter
-import java.util.*
+import java.util.Arrays
 import javax.inject.Inject
 
 class LyricsPresenterImpl
@@ -34,7 +34,6 @@ class LyricsPresenterImpl
     } else {
       updateLyrics(model.lyrics)
     }
-
   }
 
   fun updateLyrics(text: String) {
@@ -51,5 +50,3 @@ class LyricsPresenterImpl
     view?.updateLyrics(lyrics)
   }
 }
-
-

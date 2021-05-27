@@ -43,17 +43,17 @@ constructor(val dispatchers: AppDispatchers) : LocalDataSource<RadioStation> {
 
   override suspend fun search(term: String): FlowCursorList<RadioStation> =
     withContext(dispatchers.db) {
-      val modelQueriable =
-        (select from RadioStation::class where RadioStation_Table.name.like("%${term.escapeLike()}%"))
+      val searchTerm = "%${term.escapeLike()}%"
+      val query = (select from RadioStation::class where RadioStation_Table.name.like(searchTerm))
       return@withContext FlowCursorList.Builder(RadioStation::class.java)
-        .modelQueriable(modelQueriable).build()
+        .modelQueriable(query).build()
     }
 
-  override suspend fun isEmpty(): Boolean = withContext(dispatchers.db){
+  override suspend fun isEmpty(): Boolean = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(RadioStation::class.java).longValue() == 0L
   }
 
-  override suspend fun count(): Long = withContext(dispatchers.db){
+  override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(RadioStation::class.java).longValue()
   }
 
@@ -63,7 +63,9 @@ constructor(val dispatchers: AppDispatchers) : LocalDataSource<RadioStation> {
         .from(RadioStation::class.java)
         .where(
           clause(RadioStation_Table.date_added.lessThan(epoch)).or(
-            RadioStation_Table.date_added.isNull))
+            RadioStation_Table.date_added.isNull
+          )
+        )
         .execute()
     }
   }

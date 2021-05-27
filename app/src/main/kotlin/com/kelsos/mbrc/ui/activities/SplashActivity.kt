@@ -17,9 +17,12 @@ class SplashActivity : AppCompatActivity() {
     Toothpick.openScope(application)
     val handler = Handler(Looper.getMainLooper())
 
-    handler.postDelayed({
-      val intent = Intent(this, MainActivity::class.java)
-      startActivity(intent)
-    }, 1500)
+    handler.postDelayed(
+      {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+      },
+      1500
+    )
   }
 }

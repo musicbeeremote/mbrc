@@ -3,7 +3,6 @@ package com.kelsos.mbrc.changelog
 import android.content.Context
 import android.util.Xml
 import androidx.annotation.RawRes
-
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -86,7 +85,6 @@ class ChangelogParser(private val context: Context) {
     return text
   }
 
-
   // For the tags title and summary, extracts their text values.
   @Throws(IOException::class, XmlPullParserException::class)
   private fun readText(parser: XmlPullParser): String {
@@ -97,7 +95,6 @@ class ChangelogParser(private val context: Context) {
     }
     return result
   }
-
 
   @Throws(XmlPullParserException::class, IOException::class)
   private fun skip(parser: XmlPullParser) {
@@ -113,7 +110,6 @@ class ChangelogParser(private val context: Context) {
     }
   }
 
-
   companion object {
     private const val TAG_CHANGELOG = "changelog"
     private const val TAG_VERSION = "version"
@@ -124,7 +120,7 @@ class ChangelogParser(private val context: Context) {
     private const val ATTRIBUTE_RELEASE = "release"
 
     fun getType(type: String): EntryType {
-      return when(type) {
+      return when (type) {
         TAG_REMOVED -> EntryType.REMOVED
         TAG_FEATURE -> EntryType.FEATURE
         TAG_BUG -> EntryType.BUG

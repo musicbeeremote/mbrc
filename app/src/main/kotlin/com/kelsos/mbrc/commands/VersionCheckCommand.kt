@@ -29,7 +29,7 @@ constructor(
     val now = Instant.now()
 
     if (check(MINIMUM_REQUIRED)) {
-      val next = getNextCheck(true);
+      val next = getNextCheck(true)
       if (next.isAfter(now)) {
         Timber.d("Next update required check is @ $next")
         return

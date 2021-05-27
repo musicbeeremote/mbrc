@@ -28,7 +28,8 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class ConnectionManagerActivity : FontActivity(),
+class ConnectionManagerActivity :
+  FontActivity(),
   ConnectionManagerView,
   SettingsDialogFragment.SettingsSaveListener,
   ConnectionAdapter.ConnectionChangeListener {

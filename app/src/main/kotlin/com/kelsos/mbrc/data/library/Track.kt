@@ -41,7 +41,7 @@ data class Track(
   @Column
   var genre: String? = null,
   @JsonIgnore
-  @Column(name="date_added")
+  @Column(name = "date_added")
   var dateAdded: Long = 0,
   @JsonIgnore
   @Column
@@ -49,4 +49,4 @@ data class Track(
   var id: Long = 0
 ) : Data
 
-fun Track.key(): String = RemoteUtils.sha1("${albumArtist}_${album}")
+fun Track.key(): String = RemoteUtils.sha1("${albumArtist}_$album")

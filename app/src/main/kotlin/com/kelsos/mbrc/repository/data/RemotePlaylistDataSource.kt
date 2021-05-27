@@ -6,7 +6,6 @@ import com.kelsos.mbrc.networking.ApiBase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-
 class RemotePlaylistDataSource
 @Inject constructor(private val service: ApiBase) : RemoteDataSource<Playlist> {
   override suspend fun fetch(): Flow<List<Playlist>> {

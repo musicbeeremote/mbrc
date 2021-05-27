@@ -27,7 +27,6 @@ import timber.log.Timber
 class SettingsFragment : PreferenceFragmentCompat() {
   private var bus: RxBus? = null
 
-
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.application_settings)
 
@@ -87,7 +86,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     mRevision?.summary = BuildConfig.GIT_SHA
   }
 
-
   private fun requestPhoneStatePermission() {
     requestPermissions(arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_CODE)
   }
@@ -145,18 +143,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Timber.v("Restarting service")
         stopService(Intent(this, RemoteService::class.java))
         val handler = Handler(Looper.getMainLooper())
-        HandlerCompat.postDelayed(handler, {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(Intent(this, RemoteService::class.java))
-          } else {
-            startService(Intent(this, RemoteService::class.java))
-          }
-        }, null, 600)
+        HandlerCompat.postDelayed(
+          handler,
+          {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+              startForegroundService(Intent(this, RemoteService::class.java))
+            } else {
+              startService(Intent(this, RemoteService::class.java))
+            }
+          },
+          null, 600
+        )
       }
     } else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
   }
 
   companion object {

@@ -3,17 +3,20 @@ package com.kelsos.mbrc.logging
 import android.content.Context
 import com.kelsos.mbrc.logging.FileLoggingTree.Companion.LOGS_DIR
 import rx.Single
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-
 
 object LogHelper {
 
   fun logsExist(context: Context): Single<Boolean> {
     return Single.fromCallable {
       val filesDir = context.filesDir
-      val logDir = File(filesDir, FileLoggingTree.LOGS_DIR)
+      val logDir = File(filesDir, LOGS_DIR)
       val logFiles = logDir.listFiles().filter { it.extension != "lck" }
       return@fromCallable logFiles.isNotEmpty()
     }
@@ -74,7 +77,6 @@ object LogHelper {
         fos.close()
 
         return@fromCallable zipFile
-
       } catch (e: IOException) {
         throw RuntimeException(e)
       }
@@ -82,5 +84,4 @@ object LogHelper {
   }
 
   const val LOG_ZIP = "mbrc_logs.zip"
-
 }

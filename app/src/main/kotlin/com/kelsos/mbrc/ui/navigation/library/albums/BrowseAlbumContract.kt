@@ -17,4 +17,3 @@ interface BrowseAlbumPresenter : Presenter<BrowseAlbumView> {
   fun sync()
   fun queue(@Queue.Action action: String, entry: Album)
 }
-

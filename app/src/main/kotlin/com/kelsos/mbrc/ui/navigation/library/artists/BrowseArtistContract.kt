@@ -16,4 +16,3 @@ interface BrowseArtistPresenter : Presenter<BrowseArtistView> {
   fun sync()
   fun queue(action: String, entry: Artist)
 }
-

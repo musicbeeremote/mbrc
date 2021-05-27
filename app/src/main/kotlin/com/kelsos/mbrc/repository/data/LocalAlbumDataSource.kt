@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.repository.data
 
-
 import com.kelsos.mbrc.data.CoverInfo
 import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.data.library.Album
@@ -65,10 +64,12 @@ constructor(
         .or(Track_Table.album_artist.withTable().`is`(artist))
       val columns = clause(Track_Table.album.withTable().eq(Album_Table.album.withTable()))
         .and(Track_Table.album_artist.withTable().eq(Album_Table.artist.withTable()))
-      val query = (selectAlbum from Album::class
+      val query = (
+        selectAlbum from Album::class
           innerJoin Track::class
           on columns
-          where artistOrAlbumArtist)
+          where artistOrAlbumArtist
+        )
         .orderBy(Album_Table.artist.withTable(), true)
         .orderBy(Album_Table.album.withTable(), true)
       return@withContext FlowCursorList.Builder(Album::class.java).modelQueriable(query).build()

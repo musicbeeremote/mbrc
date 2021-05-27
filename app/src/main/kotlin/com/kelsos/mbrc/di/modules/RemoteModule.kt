@@ -55,8 +55,9 @@ class RemoteModule : Module() {
 
     bind(RxBus::class.java).to(RxBusImpl::class.java).singletonInScope()
     bind(ObjectMapper::class.java).toInstance(mapper)
-
-    bind(NotificationManagerCompat::class.java).toProvider(NotificationManagerCompatProvider::class.java)
+    bind(NotificationManagerCompat::class.java).toProvider(
+      NotificationManagerCompatProvider::class.java
+    )
     bind(ConnectionRepository::class.java).to(ConnectionRepositoryImpl::class.java)
     bind(Scheduler::class.java).withName("main")
       .toProviderInstance { AndroidSchedulers.mainThread() }

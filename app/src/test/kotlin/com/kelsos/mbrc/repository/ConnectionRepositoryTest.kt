@@ -3,10 +3,9 @@ package com.kelsos.mbrc.repository
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.res.Resources
-import android.os.Build
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.TestApplication
 import com.kelsos.mbrc.data.ConnectionSettings
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.rules.DBFlowTestRule
@@ -24,18 +23,12 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import toothpick.Toothpick
 import toothpick.config.Module
 import toothpick.testing.ToothPickRule
 import java.util.ArrayList
 
-@RunWith(RobolectricTestRunner::class)
-@Config(
-  application = TestApplication::class,
-  sdk = [Build.VERSION_CODES.N_MR1]
-)
+@RunWith(AndroidJUnit4::class)
 class ConnectionRepositoryTest {
   private val toothPickRule = ToothPickRule(this)
   private val testDispatcher = TestCoroutineDispatcher()
@@ -46,7 +39,6 @@ class ConnectionRepositoryTest {
   @Before
   @Throws(Exception::class)
   fun setUp() {
-
   }
 
   @Test
@@ -79,17 +71,20 @@ class ConnectionRepositoryTest {
   private val repository: ConnectionRepository
     get() {
       val scope = Toothpick.openScope(InstrumentationRegistry.getInstrumentation().targetContext)
-      scope.installModules(TestModule(), object : Module() {
-        init {
-          bind(AppDispatchers::class.java).toInstance(
-            AppDispatchers(
-              testDispatcher,
-              testDispatcher,
-              testDispatcher
+      scope.installModules(
+        TestModule(),
+        object : Module() {
+          init {
+            bind(AppDispatchers::class.java).toInstance(
+              AppDispatchers(
+                testDispatcher,
+                testDispatcher,
+                testDispatcher
+              )
             )
-          )
+          }
         }
-      })
+      )
       return scope.getInstance(ConnectionRepository::class.java)
     }
 

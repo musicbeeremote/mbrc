@@ -24,5 +24,3 @@ object ChangelogDialog {
     return dialog
   }
 }
-
-

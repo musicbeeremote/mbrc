@@ -22,7 +22,8 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import java.net.ConnectException
 import javax.inject.Inject
 
-class PlaylistActivity : BaseActivity(),
+class PlaylistActivity :
+  BaseActivity(),
   PlaylistView,
   OnPlaylistPressedListener,
   OnRefreshListener {

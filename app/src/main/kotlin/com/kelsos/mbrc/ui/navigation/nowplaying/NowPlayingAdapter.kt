@@ -25,7 +25,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class NowPlayingAdapter
-@Inject constructor(context: Activity) : RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
+@Inject constructor(context: Activity) :
+  RecyclerView.Adapter<NowPlayingAdapter.TrackHolder>(),
   ItemTouchHelperAdapter,
   OnCursorRefreshListener<NowPlaying> {
 
@@ -197,6 +198,5 @@ class NowPlayingAdapter
     override fun onItemClear() {
       this.itemView.setBackgroundColor(0)
     }
-
   }
 }

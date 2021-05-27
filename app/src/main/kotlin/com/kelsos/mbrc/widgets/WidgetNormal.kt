@@ -48,7 +48,6 @@ class WidgetNormal : AppWidgetProvider() {
       info?.run {
         updateInfo(context, widgetManager, widgetsIds, this)
       }
-
     } else if (extras.getBoolean(UpdateWidgets.STATE, false)) {
       updatePlayState(
         context, widgetManager, widgetsIds,
@@ -87,7 +86,6 @@ class WidgetNormal : AppWidgetProvider() {
     }
   }
 
-
   private fun updateInfo(
     context: Context?,
     widgetManager: AppWidgetManager,
@@ -108,7 +106,8 @@ class WidgetNormal : AppWidgetProvider() {
   private fun updateCover(
     context: Context?,
     widgetManager: AppWidgetManager,
-    widgetsIds: IntArray, path: String
+    widgetsIds: IntArray,
+    path: String
   ) {
     if (context == null) {
       return
@@ -128,7 +127,6 @@ class WidgetNormal : AppWidgetProvider() {
     }
     widgetManager.updateAppWidget(widgetsIds, widget)
   }
-
 
   private fun updatePlayState(
     context: Context?,

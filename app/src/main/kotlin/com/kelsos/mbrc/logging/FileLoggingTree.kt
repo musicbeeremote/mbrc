@@ -46,7 +46,8 @@ class FileLoggingTree(context: Context) : Timber.DebugTree() {
   }
 
   override fun createStackElementTag(element: StackTraceElement): String {
-    return "${super.createStackElementTag(element)}:${element.lineNumber} [${Thread.currentThread().name}]"
+    val threadName = Thread.currentThread().name
+    return "${super.createStackElementTag(element)}:${element.lineNumber} [$threadName]"
   }
 
   companion object {

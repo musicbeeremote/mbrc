@@ -88,7 +88,6 @@ class ConnectionRepositoryImpl
       .from(ConnectionSettings::class.java)
       .where(ConnectionSettings_Table.id.`is`(defaultId))
       .querySingle()
-
   }
 
   override var defaultId: Long
@@ -101,12 +100,11 @@ class ConnectionRepositoryImpl
       this.preferences.edit().putLong(key, id).apply()
     }
 
-  override suspend fun getAll(): List<ConnectionSettings>  = withContext(dispatchers.db) {
+  override suspend fun getAll(): List<ConnectionSettings> = withContext(dispatchers.db) {
     return@withContext SQLite.select().from(ConnectionSettings::class.java).queryList()
   }
 
   override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(ConnectionSettings::class.java).longValue()
   }
-
 }

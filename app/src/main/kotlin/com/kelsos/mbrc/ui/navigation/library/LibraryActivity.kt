@@ -24,7 +24,8 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class LibraryActivity : BaseActivity(),
+class LibraryActivity :
+  BaseActivity(),
   LibraryView,
   OnQueryTextListener {
 
@@ -53,7 +54,6 @@ class LibraryActivity : BaseActivity(),
       supportActionBar?.setSubtitle(R.string.library_search_subtitle)
       searchMenuItem?.isVisible = false
       searchClear?.isVisible = true
-
     } else {
       presenter.search("")
     }

@@ -192,6 +192,4 @@ constructor(
     const val COVER_DIR = "cover"
     const val TEMP_COVER = "temp_cover.jpg"
   }
-
 }
-

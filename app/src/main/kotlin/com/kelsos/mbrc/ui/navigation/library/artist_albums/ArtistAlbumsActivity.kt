@@ -21,7 +21,8 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class ArtistAlbumsActivity : FontActivity(),
+class ArtistAlbumsActivity :
+  FontActivity(),
   ArtistAlbumsView,
   AlbumEntryAdapter.MenuItemSelectedListener {
 
@@ -145,5 +146,3 @@ class ArtistAlbumsActivity : FontActivity(),
     val ARTIST_NAME = "artist_name"
   }
 }
-
-

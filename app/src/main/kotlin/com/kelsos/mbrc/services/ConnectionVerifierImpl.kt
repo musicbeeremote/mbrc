@@ -38,6 +38,5 @@ class ConnectionVerifierImpl
     throw NoValidPluginConnection()
   }
 
-
   class NoValidPluginConnection : Exception()
 }

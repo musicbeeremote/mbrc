@@ -85,7 +85,6 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
       holder.indicator.setOnClickListener { createPopup(it, genre) }
       holder.itemView.setOnClickListener { listener?.onItemClicked(genre) }
     }
-
   }
 
   private fun createPopup(it: View, genre: Genre) {
@@ -93,7 +92,6 @@ constructor(context: Activity) : RecyclerView.Adapter<GenreEntryAdapter.ViewHold
     popupMenu.inflate(R.menu.popup_genre)
     popupMenu.setOnMenuItemClickListener { menuItem ->
       return@setOnMenuItemClickListener listener?.onMenuItemSelected(menuItem, genre) ?: false
-
     }
     popupMenu.show()
   }

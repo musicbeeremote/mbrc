@@ -165,12 +165,16 @@ class MainViewPresenterImpl
       { this.view?.updateLfmStatus(it.status) },
       true
     )
-    this.bus.register(this, MessageEvent::class.java, { event ->
-      when (event.type) {
-        ProtocolEventType.PluginUpdateAvailable -> showPluginUpdateAvailable()
-        ProtocolEventType.PluginUpdateRequired -> showPluginUpdateRequired()
-      }
-    }, true)
+    this.bus.register(
+      this, MessageEvent::class.java,
+      { event ->
+        when (event.type) {
+          ProtocolEventType.PluginUpdateAvailable -> showPluginUpdateAvailable()
+          ProtocolEventType.PluginUpdateRequired -> showPluginUpdateRequired()
+        }
+      },
+      true
+    )
   }
 
   override fun detach() {
@@ -194,7 +198,6 @@ class MainViewPresenterImpl
     bus.post(MessageEvent.action(UserAction(Protocol.NowPlayingLfmRating, Const.TOGGLE)))
     return true
   }
-
 
   /**
    * Posts a user action wrapped in a MessageEvent. The bus will

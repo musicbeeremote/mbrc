@@ -40,7 +40,6 @@ interface MainView : BaseView {
   fun showPluginUpdateRequired(minimumRequired: String)
 }
 
-
 interface MainViewPresenter : Presenter<MainView> {
   fun requestNowPlayingPosition()
   fun toggleScrobbling()

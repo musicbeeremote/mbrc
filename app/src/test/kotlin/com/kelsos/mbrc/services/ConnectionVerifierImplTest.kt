@@ -26,7 +26,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.net.ServerSocket
-import java.util.*
+import java.util.Random
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -41,7 +41,6 @@ class ConnectionVerifierImplTest {
     .setRootRegistryPackage("com.kelsos.mbrc")
   private val mapper = ObjectMapper()
   private val port: Int = 36000
-
 
   private lateinit var executor: ExecutorService
 
@@ -122,7 +121,6 @@ class ConnectionVerifierImplTest {
     val verifier = toothpickRule.getInstance(ConnectionVerifier::class.java)
     assertThat(verifier.verify()).isTrue()
   }
-
 
   @Test
   fun testPrematureDisconnectDuringVerification() = testDispatcher.runBlockingTest {

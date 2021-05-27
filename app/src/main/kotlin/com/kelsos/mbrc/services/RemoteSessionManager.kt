@@ -5,7 +5,6 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
-import android.media.AudioManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -22,7 +21,6 @@ import com.kelsos.mbrc.events.ui.RemoteClientMetaData
 import com.kelsos.mbrc.utilities.MediaButtonReceiver
 import com.kelsos.mbrc.utilities.MediaIntentHandler
 import com.kelsos.mbrc.utilities.RemoteUtils
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,7 +31,7 @@ constructor(
   context: Application,
   volumeProvider: RemoteVolumeProvider,
   private val bus: RxBus
-) : AudioManager.OnAudioFocusChangeListener {
+) {
   private val mediaSession: MediaSessionCompat?
 
   @Inject
@@ -123,7 +121,6 @@ constructor(
       .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
       .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, data.duration)
     mediaSession.setMetadata(builder.build())
-
   }
 
   private fun updateState(change: PlayStateChange) {
@@ -150,22 +147,14 @@ constructor(
     mediaSession.setPlaybackState(builder.build())
   }
 
-  override fun onAudioFocusChange(focusChange: Int) {
-    when (focusChange) {
-      AudioManager.AUDIOFOCUS_GAIN -> Timber.d("gained")
-      AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> Timber.d("transient loss")
-      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> Timber.d("Loss can duck")
-    }
-  }
-
   companion object {
     private const val PLAYBACK_ACTIONS =
       PlaybackStateCompat.ACTION_PAUSE or
-      PlaybackStateCompat.ACTION_PLAY_PAUSE or
-      PlaybackStateCompat.ACTION_PLAY or
-      PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-      PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-      PlaybackStateCompat.ACTION_STOP or
-      PlaybackStateCompat.ACTION_SEEK_TO
+        PlaybackStateCompat.ACTION_PLAY_PAUSE or
+        PlaybackStateCompat.ACTION_PLAY or
+        PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+        PlaybackStateCompat.ACTION_STOP or
+        PlaybackStateCompat.ACTION_SEEK_TO
   }
 }

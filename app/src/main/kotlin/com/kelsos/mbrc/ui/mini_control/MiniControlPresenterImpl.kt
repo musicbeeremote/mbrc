@@ -57,10 +57,8 @@ class MiniControlPresenterImpl
     bus.post(action(create(action)))
   }
 
-
   override fun detach() {
     super.detach()
     bus.unregister(this)
   }
-
 }

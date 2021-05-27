@@ -69,4 +69,3 @@ class MapWithIndex<T> : Transformer<T, MapWithIndex.Indexed<T>> {
     }
   }
 }
-

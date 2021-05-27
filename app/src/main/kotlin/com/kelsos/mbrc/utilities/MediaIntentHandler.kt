@@ -37,14 +37,14 @@ constructor(private val bus: RxBus) {
             return postAction(UserAction(Protocol.PlayerNext, true))
           }
           previousClick = currentClick
-           postAction(UserAction(Protocol.PlayerPlayPause, true))
+          postAction(UserAction(Protocol.PlayerPlayPause, true))
         }
         KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ->
           postAction(UserAction(Protocol.PlayerPlayPause, true))
-        KeyEvent.KEYCODE_MEDIA_PLAY ->  postAction(UserAction(Protocol.PlayerPlay, true))
+        KeyEvent.KEYCODE_MEDIA_PLAY -> postAction(UserAction(Protocol.PlayerPlay, true))
         KeyEvent.KEYCODE_MEDIA_PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
-        KeyEvent.KEYCODE_MEDIA_STOP ->  postAction(UserAction(Protocol.PlayerStop, true))
-        KeyEvent.KEYCODE_MEDIA_NEXT ->  postAction(UserAction(Protocol.PlayerNext, true))
+        KeyEvent.KEYCODE_MEDIA_STOP -> postAction(UserAction(Protocol.PlayerStop, true))
+        KeyEvent.KEYCODE_MEDIA_NEXT -> postAction(UserAction(Protocol.PlayerNext, true))
         KeyEvent.KEYCODE_MEDIA_PREVIOUS -> postAction(UserAction(Protocol.PlayerPrevious, true))
         else -> false
       }

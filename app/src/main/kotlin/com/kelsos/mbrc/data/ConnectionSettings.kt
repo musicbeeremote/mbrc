@@ -8,7 +8,6 @@ import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.annotation.Unique
 import com.raizlabs.android.dbflow.annotation.UniqueGroup
 
-
 @Table(
   name = "settings",
   database = RemoteDatabase::class,

@@ -74,12 +74,15 @@ constructor(
     if (coverFile.exists()) {
       RemoteUtils.bitmapFromFile(coverFile.absolutePath).doOnTerminate {
         update()
-      }.subscribe({
-        model.cover = it
-      }, {
-        Timber.v(it, "failed to decode")
-        model.cover = null
-      })
+      }.subscribe(
+        {
+          model.cover = it
+        },
+        {
+          Timber.v(it, "failed to decode")
+          model.cover = null
+        }
+      )
     } else {
       model.cover = null
       update()
@@ -111,8 +114,11 @@ constructor(
     mediaStyle.setMediaSession(sessionManager.mediaSessionToken)
 
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-    val resId =
-      if (model.playState == PlayerState.PLAYING) R.drawable.ic_action_pause else R.drawable.ic_action_play
+    val resId = if (model.playState == PlayerState.PLAYING) {
+      R.drawable.ic_action_pause
+    } else {
+      R.drawable.ic_action_play
+    }
 
     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
       .setSmallIcon(R.drawable.ic_mbrc_status)

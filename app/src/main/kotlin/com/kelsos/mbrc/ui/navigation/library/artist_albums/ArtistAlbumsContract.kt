@@ -15,4 +15,3 @@ interface ArtistAlbumsPresenter : Presenter<ArtistAlbumsView> {
   fun load(artist: String)
   fun queue(@Queue.Action action: String, album: Album)
 }
-

@@ -48,5 +48,4 @@ class ProgressSeekerHelper
   interface ProgressUpdate {
     fun progress(position: Int, duration: Int)
   }
-
 }

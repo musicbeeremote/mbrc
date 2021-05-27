@@ -25,7 +25,8 @@ import toothpick.Toothpick
 import toothpick.smoothie.module.SmoothieActivityModule
 import javax.inject.Inject
 
-class BrowseAlbumFragment : Fragment(),
+class BrowseAlbumFragment :
+  Fragment(),
   BrowseAlbumView,
   AlbumEntryAdapter.MenuItemSelectedListener {
 
@@ -47,7 +48,7 @@ class BrowseAlbumFragment : Fragment(),
   @Inject
   lateinit var presenter: BrowseAlbumPresenter
 
-  private lateinit var syncButton: Button;
+  private lateinit var syncButton: Button
 
   override fun search(term: String) {
     syncButton.isGone = term.isNotEmpty()
@@ -61,7 +62,7 @@ class BrowseAlbumFragment : Fragment(),
     val view = inflater.inflate(R.layout.fragment_library_search, container, false)
     ButterKnife.bind(this, view)
     emptyTitle.setText(R.string.albums_list_empty)
-    syncButton = view.findViewById<Button>(R.id.list_empty_sync);
+    syncButton = view.findViewById<Button>(R.id.list_empty_sync)
     syncButton.setOnClickListener {
       presenter.sync()
     }

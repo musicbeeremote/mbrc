@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.repository.data
 
-
 import com.kelsos.mbrc.data.db.RemoteDatabase
 import com.kelsos.mbrc.data.library.Track
 import com.kelsos.mbrc.data.library.Track_Table
@@ -48,9 +47,11 @@ class LocalTrackDataSource
 
   suspend fun getAlbumTracks(album: String, artist: String): FlowCursorList<Track> =
     withContext(dispatchers.db) {
-      val query = (select from Track::class
+      val query = (
+        select from Track::class
           where Track_Table.album.`is`(album)
-          and Track_Table.album_artist.`is`(artist))
+          and Track_Table.album_artist.`is`(artist)
+        )
         .orderBy(Track_Table.album_artist, true)
         .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
@@ -61,9 +62,11 @@ class LocalTrackDataSource
 
   suspend fun getNonAlbumTracks(artist: String): FlowCursorList<Track> =
     withContext(dispatchers.db) {
-      val query = (select from Track::class
+      val query = (
+        select from Track::class
           where Track_Table.album.`is`("")
-          and Track_Table.artist.`is`(artist))
+          and Track_Table.artist.`is`(artist)
+        )
         .orderBy(Track_Table.album_artist, true)
         .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
@@ -71,7 +74,6 @@ class LocalTrackDataSource
 
       return@withContext FlowCursorList.Builder(Track::class.java).modelQueriable(query)
         .build()
-
     }
 
   override suspend fun search(term: String): FlowCursorList<Track> = withContext(dispatchers.db) {
@@ -82,8 +84,10 @@ class LocalTrackDataSource
 
   suspend fun getGenreTrackPaths(genre: String): List<String> =
     withContext(dispatchers.db) {
-      return@withContext (select from Track::class
-          where Track_Table.genre.`is`(genre))
+      return@withContext (
+        select from Track::class
+          where Track_Table.genre.`is`(genre)
+        )
         .orderBy(Track_Table.album_artist, true)
         .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
@@ -103,9 +107,11 @@ class LocalTrackDataSource
 
   suspend fun getAlbumTrackPaths(album: String, artist: String): List<String> =
     withContext(dispatchers.db) {
-      return@withContext (select from Track::class
+      return@withContext (
+        select from Track::class
           where Track_Table.album.`is`(album)
-          and Track_Table.album_artist.`is`(artist))
+          and Track_Table.album_artist.`is`(artist)
+        )
         .orderBy(Track_Table.album_artist, true)
         .orderBy(Track_Table.album, true)
         .orderBy(Track_Table.disc, true)
@@ -126,7 +132,7 @@ class LocalTrackDataSource
     return@withContext SQLite.selectCountOf().from(Track::class.java).longValue() == 0L
   }
 
-  override suspend fun count(): Long  = withContext(dispatchers.db) {
+  override suspend fun count(): Long = withContext(dispatchers.db) {
     return@withContext SQLite.selectCountOf().from(Track::class.java).longValue()
   }
 

@@ -1,6 +1,5 @@
 package com.kelsos.mbrc
 
-
 import androidx.annotation.CallSuper
 import androidx.multidex.MultiDexApplication
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -31,12 +30,12 @@ open class RemoteApplication : MultiDexApplication() {
     initializeTimber()
   }
 
-
   private fun initializeTimber() {
     if (BuildConfig.DEBUG) {
       Timber.plant(object : Timber.DebugTree() {
         override fun createStackElementTag(element: StackTraceElement): String {
-          return "${super.createStackElementTag(element)}:${element.lineNumber} [${Thread.currentThread().name}]"
+          val threadName = Thread.currentThread().name
+          return "${super.createStackElementTag(element)}:${element.lineNumber} [$threadName]"
         }
       })
     }
@@ -62,7 +61,6 @@ open class RemoteApplication : MultiDexApplication() {
       applicationScope.installModules(SmoothieApplicationModule(this), RemoteModule())
     }
   }
-
 
   internal open fun testMode(): Boolean = false
 }

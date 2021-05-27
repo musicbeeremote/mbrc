@@ -25,7 +25,8 @@ import toothpick.smoothie.module.SmoothieActivityModule
 import java.io.File
 import javax.inject.Inject
 
-class AlbumTracksActivity : FontActivity(),
+class AlbumTracksActivity :
+  FontActivity(),
   AlbumTracksView,
   TrackEntryAdapter.MenuItemSelectedListener {
 
@@ -96,7 +97,7 @@ class AlbumTracksActivity : FontActivity(),
     val image = findViewById<ImageView>(R.id.album_tracks__cover)
     val cache = File(cacheDir, "covers")
     Picasso.get()
-      .load(File(cache, sha1("${artist}_${album}")))
+      .load(File(cache, sha1("${artist}_$album")))
       .noFade()
       .config(Bitmap.Config.RGB_565)
       .error(R.drawable.ic_image_no_cover)

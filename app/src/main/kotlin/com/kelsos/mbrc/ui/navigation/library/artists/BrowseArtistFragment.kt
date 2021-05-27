@@ -26,7 +26,8 @@ import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class BrowseArtistFragment : Fragment(),
+class BrowseArtistFragment :
+  Fragment(),
   BrowseArtistView,
   MenuItemSelectedListener {
 

@@ -37,7 +37,6 @@ class LocalGenreDataSource
   override suspend fun loadAllCursor(): FlowCursorList<Genre> = withContext(dispatchers.db) {
     val query = (select from Genre::class).orderBy(Genre_Table.genre, true)
     return@withContext FlowCursorList.Builder(Genre::class.java).modelQueriable(query).build()
-
   }
 
   override suspend fun search(term: String): FlowCursorList<Genre> = withContext(dispatchers.db) {
