@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.ui.preferences
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.os.HandlerCompat
 import androidx.preference.CheckBoxPreference
@@ -26,6 +28,12 @@ import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {
   private var bus: RxBus? = null
+
+  private val permissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
+    if (isGranted) {
+      restartService()
+    }
+  }
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.application_settings)
@@ -87,7 +95,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
   }
 
   private fun requestPhoneStatePermission() {
-    requestPermissions(arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_CODE)
+    permissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
   }
 
   private fun hasPhonePermission(): Boolean {
@@ -129,40 +137,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
     this.bus = bus
   }
 
-  override fun onRequestPermissionsResult(
-    requestCode: Int,
-    permissions: Array<out String>,
-    grantResults: IntArray
-  ) {
-    if (
-      requestCode == REQUEST_CODE &&
-      grantResults.isNotEmpty() &&
-      grantResults.first() == PackageManager.PERMISSION_GRANTED
-    ) {
-      requireActivity().run {
-        Timber.v("Restarting service")
-        stopService(Intent(this, RemoteService::class.java))
-        val handler = Handler(Looper.getMainLooper())
-        HandlerCompat.postDelayed(
-          handler,
-          {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-              startForegroundService(Intent(this, RemoteService::class.java))
-            } else {
-              startService(Intent(this, RemoteService::class.java))
-            }
-          },
-          null, 600
-        )
-      }
-    } else {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+  private fun restartService() {
+    requireActivity().run {
+      Timber.v("Restarting service")
+      stopService(Intent(this, RemoteService::class.java))
+      val handler = Handler(Looper.getMainLooper())
+      startService(handler)
     }
   }
 
-  companion object {
+  private fun Activity.startService(handler: Handler) = HandlerCompat.postDelayed(
+    handler,
+    {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        startForegroundService(Intent(this, RemoteService::class.java))
+      } else {
+        startService(Intent(this, RemoteService::class.java))
+      }
+    },
+    null, 600
+  )
 
-    private const val REQUEST_CODE = 15
+  companion object {
 
     fun newInstance(bus: RxBus): SettingsFragment {
       val fragment = SettingsFragment()
