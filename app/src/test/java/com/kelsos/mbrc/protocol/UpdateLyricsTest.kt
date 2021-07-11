@@ -3,14 +3,16 @@ package com.kelsos.mbrc.protocol
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.features.lyrics.LyricsPayload
-import com.kelsos.mbrc.features.lyrics.LyricsState
-import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utils.testDispatcher
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,7 +25,7 @@ class UpdateLyricsTest {
   val rule = InstantTaskExecutorRule()
 
   private lateinit var updateLyrics: UpdateLyrics
-  private lateinit var lyricsState: LyricsState
+  private lateinit var appState: AppState
   private lateinit var moshi: Moshi
   private lateinit var adapter: JsonAdapter<SocketMessage>
 
@@ -44,21 +46,22 @@ class UpdateLyricsTest {
   fun setUp() {
     moshi = Moshi.Builder().build()
     adapter = moshi.adapter(SocketMessage::class.java)
-    lyricsState = LyricsStateImpl()
-    updateLyrics = UpdateLyrics(moshi, lyricsState)
+    appState = AppState()
+    updateLyrics = UpdateLyrics(moshi, appState)
   }
 
   @Test
-  fun `not found lyrics should empty the cache`() {
-    val socketMessage = checkNotNull(adapter.fromJson(createMessage(LyricsPayload.NOT_FOUND)))
+  fun `not found lyrics should empty the cache`() = runBlockingTest(testDispatcher) {
+    val value = runCatching { adapter.fromJson(createMessage(LyricsPayload.NOT_FOUND)) }
+    val socketMessage = checkNotNull(value.getOrNull())
     val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
-    lyricsState.set(listOf("a", "b"))
+    appState.lyrics.emit(listOf("a", "b"))
     updateLyrics.execute(message)
-    assertThat(lyricsState.requireValue()).hasSize(0)
+    assertThat(appState.lyrics.first()).hasSize(0)
   }
 
   @Test
-  fun `lyrics should be translated`() {
+  fun `lyrics should be translated`() = runBlockingTest(testDispatcher) {
     val lyrics =
       """
       &lt;Lyrics&gt;
@@ -66,11 +69,13 @@ class UpdateLyricsTest {
       &quot;Must&quot; follow this format &apos;&amp;<br>
       that
       """.trimIndent()
-    val socketMessage = checkNotNull(adapter.fromJson(createMessage(LyricsPayload.SUCCESS, lyrics)))
+    val value = runCatching { adapter.fromJson(createMessage(LyricsPayload.SUCCESS, lyrics)) }
+    val socketMessage = checkNotNull(value.getOrNull())
     val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     updateLyrics.execute(message)
-    assertThat(lyricsState.requireValue()).hasSize(6)
-    assertThat(lyricsState.requireValue()).containsExactly(
+    val list = appState.lyrics.first()
+    assertThat(list).hasSize(6)
+    assertThat(list).containsExactly(
       "<Lyrics>",
       "",
       "",

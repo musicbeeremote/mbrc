@@ -3,16 +3,18 @@ package com.kelsos.mbrc.protocol
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.Repeat
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusStateImpl
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.domain.PlayerState
+import com.kelsos.mbrc.common.state.domain.Repeat
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.utils.testDispatcher
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +26,7 @@ class UpdatePlayerStatusTest {
   val rule = InstantTaskExecutorRule()
 
   private lateinit var update: UpdatePlayerStatus
-  private lateinit var state: PlayerStatusState
+  private lateinit var state: AppState
   private lateinit var moshi: Moshi
   private lateinit var adapter: JsonAdapter<SocketMessage>
 
@@ -48,18 +50,21 @@ class UpdatePlayerStatusTest {
   @Before
   fun setUp() {
     moshi = Moshi.Builder().build()
-    state = PlayerStatusStateImpl()
+    state = AppState()
     update = UpdatePlayerStatus(state, moshi)
     adapter = moshi.adapter(SocketMessage::class.java)
   }
 
   @Test
-  fun `should update the player status when the message is processed`() {
-    val original = state.requireValue()
-    val socketMessage = checkNotNull(adapter.fromJson(createMessage()))
+  fun `should update the player status when the message is processed`() = runBlockingTest(
+    testDispatcher
+  ) {
+    val original = state.playerStatus.first()
+    val fromJson = runCatching { adapter.fromJson(createMessage()) }
+    val socketMessage = checkNotNull(fromJson.getOrNull())
     val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
     update.execute(message)
-    val model = state.requireValue()
+    val model = state.playerStatus.first()
     assertThat(original).isNotEqualTo(model)
     assertThat(model.scrobbling).isTrue()
     assertThat(model.mute).isTrue()

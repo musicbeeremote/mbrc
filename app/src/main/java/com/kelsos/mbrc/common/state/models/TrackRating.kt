@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.activestatus
+package com.kelsos.mbrc.common.state.models
 
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
 

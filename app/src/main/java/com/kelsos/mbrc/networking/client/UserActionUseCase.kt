@@ -8,33 +8,38 @@ import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPlayPause
 import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPrevious
 
 interface UserActionUseCase {
-  fun perform(action: UserAction)
+  suspend fun perform(action: UserAction)
+  fun tryPerform(action: UserAction)
 }
 
-fun UserActionUseCase.performUserAction(protocol: Protocol, data: Any) {
+fun UserActionUseCase.perform(protocol: Protocol, data: Any) {
+  tryPerform(UserAction.create(protocol, data))
+}
+
+suspend fun UserActionUseCase.performUserAction(protocol: Protocol, data: Any) {
   perform(UserAction.create(protocol, data))
 }
 
-fun UserActionUseCase.moveTrack(request: NowPlayingMoveRequest) {
+suspend fun UserActionUseCase.moveTrack(request: NowPlayingMoveRequest) {
   perform(UserAction(Protocol.NowPlayingListMove, request))
 }
 
-fun UserActionUseCase.removeTrack(position: Int) {
+suspend fun UserActionUseCase.removeTrack(position: Int) {
   perform(UserAction(Protocol.NowPlayingListRemove, position))
 }
 
-fun UserActionUseCase.playTrack(position: Int) {
+suspend fun UserActionUseCase.playTrack(position: Int) {
   perform(UserAction(Protocol.NowPlayingListPlay, position))
 }
 
-fun UserActionUseCase.next() {
+suspend fun UserActionUseCase.next() {
   perform(UserAction.create(PlayerNext))
 }
 
-fun UserActionUseCase.previous() {
+suspend fun UserActionUseCase.previous() {
   perform(UserAction.create(PlayerPrevious))
 }
 
-fun UserActionUseCase.playPause() {
+suspend fun UserActionUseCase.playPause() {
   perform(UserAction.create(PlayerPlayPause))
 }

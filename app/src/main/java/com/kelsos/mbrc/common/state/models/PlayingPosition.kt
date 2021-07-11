@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.activestatus
+package com.kelsos.mbrc.common.state.models
 
 data class PlayingPosition(val current: Duration = 0, val total: Duration = 0) {
   private val totalMinutes get() = total.toMinutes()

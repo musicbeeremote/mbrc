@@ -1,16 +1,18 @@
 package com.kelsos.mbrc.ui.navigation.player
 
 import androidx.lifecycle.viewModelScope
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.models.PlayerStatusModel
+import com.kelsos.mbrc.common.state.models.PlayingPosition
+import com.kelsos.mbrc.common.state.models.TrackRating
 import com.kelsos.mbrc.events.UserAction
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -20,16 +22,18 @@ import kotlinx.coroutines.launch
 @OptIn(FlowPreview::class)
 class PlayerViewModel(
   settingsManager: SettingsManager,
-  private val userActionUseCase: UserActionUseCase,
-  val playingTrack: PlayingTrackState,
-  val playerStatus: PlayerStatusState,
-  val trackRating: TrackRatingState,
-  val trackPosition: TrackPositionState
+  appState: AppState,
+  private val userActionUseCase: UserActionUseCase
 ) : BaseViewModel<PlayerUiMessage>() {
   private val progressRelay: MutableSharedFlow<Int> = MutableStateFlow(0)
+  val playingTrack: Flow<PlayingTrack> = appState.playingTrack
+  val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
+  val playingTrackRating: Flow<TrackRating> = appState.playingTrackRating
+  val playingPosition: Flow<PlayingPosition> = appState.playingPosition
+
   init {
     viewModelScope.launch {
-      progressRelay.sample(800).collect { position ->
+      progressRelay.sample(SAMPLE_PERIOD_MS).collect { position ->
         userActionUseCase.perform(UserAction.create(Protocol.NowPlayingPosition, position))
       }
     }
@@ -42,41 +46,62 @@ class PlayerViewModel(
   }
 
   fun stop(): Boolean {
-    userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
+    }
     return true
   }
 
   fun shuffle() {
-    userActionUseCase.perform(UserAction.toggle(Protocol.PlayerShuffle))
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction.toggle(Protocol.PlayerShuffle))
+    }
   }
 
   fun repeat() {
-    userActionUseCase.perform(UserAction.toggle(Protocol.PlayerRepeat))
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction.toggle(Protocol.PlayerRepeat))
+    }
   }
 
   fun seek(position: Int) {
-    progressRelay.tryEmit(position)
+    viewModelScope.launch {
+      progressRelay.emit(position)
+    }
   }
 
   fun toggleScrobbling() {
-    userActionUseCase.perform(UserAction.toggle(Protocol.PlayerScrobble))
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction.toggle(Protocol.PlayerScrobble))
+    }
   }
 
   fun play() {
-    userActionUseCase.perform(UserAction(Protocol.PlayerPlayPause, true))
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction(Protocol.PlayerPlayPause, true))
+    }
   }
 
   fun previous() {
-    userActionUseCase.perform(UserAction(Protocol.PlayerPrevious, true))
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction(Protocol.PlayerPrevious, true))
+    }
   }
 
   fun next() {
-    val action = UserAction(Protocol.PlayerNext, true)
-    userActionUseCase.perform(action)
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction(Protocol.PlayerNext, true))
+    }
   }
 
   fun favorite(): Boolean {
-    userActionUseCase.perform(UserAction.toggle(Protocol.NowPlayingLfmRating))
+    viewModelScope.launch {
+      userActionUseCase.perform(UserAction.toggle(Protocol.NowPlayingLfmRating))
+    }
     return true
+  }
+
+  companion object {
+    private const val SAMPLE_PERIOD_MS = 800L
   }
 }

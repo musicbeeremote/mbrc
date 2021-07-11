@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.activestatus
+package com.kelsos.mbrc.common.state.domain
 
 sealed class PlayerState(val state: String) {
   object Playing : PlayerState(PLAYING)
@@ -12,10 +12,10 @@ sealed class PlayerState(val state: String) {
     const val STOPPED = "stopped"
     const val UNDEFINED = "undefined"
 
-    fun fromString(state: String): PlayerState = when (state) {
-      PLAYING -> Playing
-      PAUSED -> Paused
-      STOPPED -> Stopped
+    fun fromString(state: String): PlayerState = when {
+      PLAYING.equals(state, ignoreCase = true) -> Playing
+      PAUSED.equals(state, ignoreCase = true) -> Paused
+      STOPPED.equals(state, ignoreCase = true) -> Stopped
       else -> Undefined
     }
   }

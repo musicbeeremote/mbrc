@@ -7,15 +7,15 @@ interface VolumeModifyUseCase {
   /**
    * Increases the volume by a step up to a maximum of 100
    */
-  fun increment()
+  suspend fun increment()
 
   /**
    * Decreases the volume by a step down to a minimum of 0
    */
-  fun decrement()
+  suspend fun decrement()
 
   /**
    * Reduces volume to 20% of the original volume
    */
-  fun reduceVolume()
+  suspend fun reduceVolume()
 }

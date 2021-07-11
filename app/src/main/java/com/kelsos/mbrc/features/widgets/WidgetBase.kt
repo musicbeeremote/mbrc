@@ -12,7 +12,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.activestatus.PlayerState
+import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.ui.navigation.player.PlayerFragment
 import com.squareup.picasso.Picasso

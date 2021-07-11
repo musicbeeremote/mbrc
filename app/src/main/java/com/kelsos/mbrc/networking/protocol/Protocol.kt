@@ -94,7 +94,6 @@ sealed class Protocol(val context: String) {
 
     const val PLAYLIST_LIST = "playlistlist"
     const val PLAYLIST_PLAY = "playlistplay"
-    const val NO_BROADCAST = "nobroadcast"
 
     const val LIBRARY_BROWSE_GENRES = "browsegenres"
     const val LIBRARY_BROWSE_ARTISTS = "browseartists"

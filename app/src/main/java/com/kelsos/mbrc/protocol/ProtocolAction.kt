@@ -1,5 +1,5 @@
 package com.kelsos.mbrc.protocol
 
 interface ProtocolAction {
-  fun execute(protocolMessage: ProtocolMessage)
+  suspend fun execute(protocolMessage: ProtocolMessage)
 }

@@ -21,7 +21,9 @@ class PlaylistViewModel(
   val playlists: Flow<PagingData<Playlist>> = repository.getAll()
 
   fun play(path: String) {
-    userActionUseCase.perform(UserAction(Protocol.PlaylistPlay, path))
+    viewModelScope.launch(dispatchers.network) {
+      userActionUseCase.perform(UserAction(Protocol.PlaylistPlay, path))
+    }
   }
 
   fun reload() {

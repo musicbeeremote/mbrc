@@ -91,7 +91,7 @@ class SettingsDialogFragment : DialogFragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     if (!edit) {
-      settings = ConnectionSettings("", 3000, "", false, id = 0)
+      settings = ConnectionSettings("", DEFAULT_PORT, "", false, id = 0)
     }
   }
 
@@ -99,6 +99,7 @@ class SettingsDialogFragment : DialogFragment() {
 
     private const val MAX_PORT = 65535
     private const val MIN_PORT = 1
+    private const val DEFAULT_PORT = 3000
 
     fun newInstance(
       settings: ConnectionSettings,

@@ -12,7 +12,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.PlayerState
+import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
 import org.junit.Before
 import org.junit.Rule
@@ -33,7 +33,7 @@ class WidgetUpdaterTest {
   val flags = mutableListOf<Boolean>()
   val names = mutableListOf<String>()
 
-  val classes = listOf(
+  private val classes = listOf(
     "com.kelsos.mbrc.features.widgets.WidgetSmall",
     "com.kelsos.mbrc.features.widgets.WidgetNormal"
   )

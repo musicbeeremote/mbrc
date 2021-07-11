@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelsos.mbrc.common.ui.extensions.animateIfEmpty
 import com.kelsos.mbrc.databinding.FragmentLyricsBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -35,10 +38,12 @@ class LyricsFragment : Fragment() {
     binding.lyricsLyricsList.layoutManager = layoutManager
     binding.lyricsLyricsList.adapter = adapter
 
-    viewModel.lyrics.observe(viewLifecycleOwner) { lyrics ->
-      binding.lyricsLyricsList.animateIfEmpty(adapter.itemCount)
-      binding.lyricsEmptyGroup.isGone = lyrics.isNotEmpty()
-      adapter.submitList(lyrics)
+    lifecycleScope.launch {
+      viewModel.lyrics.collect { lyrics ->
+        binding.lyricsLyricsList.animateIfEmpty(adapter.itemCount)
+        binding.lyricsEmptyGroup.isGone = lyrics.isNotEmpty()
+        adapter.submitList(lyrics)
+      }
     }
   }
 

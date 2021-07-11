@@ -1,27 +1,23 @@
 package com.kelsos.mbrc.networking.client
 
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.networking.SocketActivityChecker
-import com.kelsos.mbrc.networking.SocketActivityChecker.PingTimeoutListener
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
+import com.kelsos.mbrc.networking.connections.ConnectionState
+import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.connections.toSocketAddress
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.IOException
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.io.PrintWriter
 import java.net.Socket
 import java.net.SocketAddress
 import java.util.concurrent.Executors
@@ -32,33 +28,31 @@ class ClientConnectionManager(
   private val messageHandler: MessageHandler,
   private val moshi: Moshi,
   private val connectionRepository: ConnectionRepository,
-  private val connectionStatusLiveDataProvider: ConnectionStatusState
-) : IClientConnectionManager, PingTimeoutListener {
+  private val connectionState: ConnectionState,
+  dispatchers: AppCoroutineDispatchers
+) : IClientConnectionManager {
 
   private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }
   private var executor = getExecutor()
 
   private fun getExecutor() = Executors.newSingleThreadExecutor { Thread(it, "socket-thread") }
   private val job = SupervisorJob()
-  private val scope = CoroutineScope(job + executor.asCoroutineDispatcher())
+  private val scope = CoroutineScope(job + dispatchers.io)
   private var connection: SocketConnection? = null
 
-  private var pendingConnection: Deferred<Unit>? = null
-
-  init {
-    messageQueue.setOnMessageAvailable { sendData(it) }
-  }
+  private var connect: Job? = null
+  private var messageJob: Job? = null
 
   override fun start() {
-    pendingConnection?.cancel()
-    pendingConnection = scope.async {
+    connect?.cancel()
+    connect = scope.launch {
       stop()
-      delay(2000)
+      delay(DELAY_MS)
       realStart()
     }
   }
 
-  private fun realStart() {
+  private suspend fun realStart() {
     if (executor.isShutdown) {
       executor = getExecutor()
     }
@@ -68,68 +62,68 @@ class ClientConnectionManager(
       return
     }
 
-    scope.launch {
-      delay(2000)
+    delay(DELAY_MS)
 
-      val default = connectionRepository.getDefault() ?: return@launch
-      Timber.v("Attempting connection on $default")
-      val onConnection: (Boolean) -> Unit = { connected ->
-        if (!connected) {
-          activityChecker.stop()
-          connectionStatusLiveDataProvider.disconnected()
-        } else {
-          connectionStatusLiveDataProvider.connected()
-          messageQueue.queue(SocketMessage.player())
-        }
+    val default = connectionRepository.getDefault() ?: return
+    Timber.v("Attempting connection on $default")
+    val onConnection: suspend (Boolean) -> Unit = { connected ->
+      if (!connected) {
+        activityChecker.stop()
+        connectionState.connection.emit(ConnectionStatus.Off)
+      } else {
+        connectionState.connection.emit(ConnectionStatus.On)
+        messageQueue.queue(SocketMessage.player())
       }
+    }
 
-      connection = SocketConnection(
-        default,
-        messageHandler,
-        onConnection
-      ) {
-      }.apply {
-        messageHandler.start()
-        messageQueue.start()
-        executor.execute(this)
-        activityChecker.start()
+    messageJob?.cancel()
+    messageJob = scope.launch {
+      messageQueue.messages.collect { message ->
+        send(message)
       }
+    }
+
+    connection = SocketConnection(
+      default,
+      messageHandler,
+      scope,
+      onConnection
+    )
+
+    messageHandler.start()
+    executor.execute(connection)
+    activityChecker.start()
+    activityChecker.setPingTimeoutListener {
+      Timber.v("Timeout received resetting socket")
+      connection?.cleanupSocket()
+      activityChecker.stop()
     }
   }
 
   override fun stop() {
     messageHandler.stop()
-    messageQueue.stop()
     activityChecker.stop()
     connection?.cleanupSocket()
+    messageJob?.cancel()
     executor.shutdownNow()
   }
 
   @Synchronized
-  private fun sendData(message: SocketMessage) {
+  private fun send(message: SocketMessage) {
+    Timber.v("Preparing to sending ${message.context}:${message.data}")
     connection?.sendMessage("${adapter.toJson(message)}\r\n")
-  }
-
-  override fun onTimeout() {
-    Timber.v("Timeout received resetting socket")
-    connection?.cleanupSocket()
-    activityChecker.stop()
   }
 
   private class SocketConnection(
     connectionSettings: ConnectionSettings,
     private val messageHandler: MessageHandler,
-    private val connected: (Boolean) -> Unit,
-    private val error: (Throwable) -> Unit
+    private val scope: CoroutineScope,
+    private val connected: suspend (Boolean) -> Unit
   ) : Runnable {
-    private val socketAddress: SocketAddress?
+    private val socketAddress: SocketAddress = connectionSettings.toSocketAddress()
 
     private var socket: Socket? = null
-    private var output: PrintWriter? = null
-
-    init {
-      socketAddress = connectionSettings.toSocketAddress()
-    }
+    private var output: BufferedWriter? = null
 
     /**
      * Returns true if the socket is not null and it is connected, false in any other case.
@@ -141,7 +135,7 @@ class ClientConnectionManager(
     }
 
     fun cleanupSocket() {
-      Timber.v("Socket cleanup")
+      Timber.v("Cleaning up socket connection")
       if (!isConnected()) {
         return
       }
@@ -158,7 +152,7 @@ class ClientConnectionManager(
     }
 
     fun sendMessage(messageString: String) {
-      Timber.v("Sending (${isConnected()})")
+      Timber.v("Sending to mbrc:/$socketAddress (connected: ${isConnected()})")
       if (isConnected()) {
         writeToSocket(messageString)
       }
@@ -166,75 +160,56 @@ class ClientConnectionManager(
 
     private fun writeToSocket(message: String) {
       val output = output ?: throw IOException("output was null")
-      output.print(message)
-
-      if (output.checkError()) {
-        throw IOException("Output stream encountered an error")
-      }
+      output.write(message)
+      output.flush()
     }
 
     override fun run() {
       Timber.v("Socket connection is running")
-      connected(false)
-
-      if (null == socketAddress) {
-        return
-      }
+      scope.launch { connected(false) }
 
       try {
-        socket = with(connect()) {
-          val out = OutputStreamWriter(outputStream, "UTF-8")
-          output = PrintWriter(
-            BufferedWriter(
-              out,
-              SOCKET_BUFFER
-            ),
-            true
-          )
+        val socket = connect().also {
+          this.socket = it
+        }
 
-          val inputStreamReader = InputStreamReader(inputStream, "UTF-8")
-          val input = BufferedReader(
-            inputStreamReader,
-            SOCKET_BUFFER
-          )
+        val charset = charset("UTF-8")
+        output = socket.getOutputStream().bufferedWriter(charset)
+        val input = socket.getInputStream().bufferedReader(charset)
 
-          connected(isConnected)
+        scope.launch { connected(socket.isConnected) }
 
-          while (isConnected) {
-            try {
-              val incoming = input.readLine() ?: throw IOException("no data")
-              if (incoming.isNotEmpty()) {
-                messageHandler.handleMessage(incoming)
-              }
-            } catch (e: IOException) {
-              input.close()
-              close()
-              throw e
+        while (socket.isConnected) {
+          try {
+            val rawMessage = input.readLine() ?: throw IOException("no data")
+            if (rawMessage.isNotEmpty()) {
+              scope.launch { messageHandler.handleMessage(rawMessage) }
             }
+          } catch (e: IOException) {
+            input.close()
+            throw e
           }
-          this
         }
       } catch (e: Exception) {
         error(e)
       } finally {
+        scope.launch { connected(false) }
         output?.close()
         socket = null
-        connected(false)
         Timber.d("Socket connection terminated")
       }
     }
 
     private fun connect(): Socket {
-      return Socket().apply {
-        soTimeout = 20000
-        connect(socketAddress)
-      }.also {
-        socket = it
-      }
+      val socket = Socket()
+      socket.soTimeout = SO_TIMEOUT
+      socket.connect(socketAddress)
+      return socket
     }
   }
 
   companion object {
-    private const val SOCKET_BUFFER = 2 * 4096
+    private const val DELAY_MS = 2000L
+    private const val SO_TIMEOUT = 20_000
   }
 }

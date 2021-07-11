@@ -16,42 +16,30 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import arrow.core.firstOrNone
 import com.kelsos.mbrc.common.ui.BaseFragment
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
 import com.kelsos.mbrc.databinding.ActivityNavigationBinding
 import com.kelsos.mbrc.databinding.NavHeaderMainBinding
-import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
-import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
-import org.koin.android.ext.android.inject
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.fragment.android.setupKoinFragmentFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinExperimentalAPI
 import timber.log.Timber
 
 class NavigationActivity : AppCompatActivity() {
-  private val volumeModifyUseCase: VolumeModifyUseCase by inject()
-  private val connectionStatusLiveDataProvider: ConnectionStatusState by inject()
-  private val clientConnectionUseCase: ClientConnectionUseCase by inject()
-
   private lateinit var binding: ActivityNavigationBinding
 
   private lateinit var connectText: TextView
   private lateinit var connect: ImageView
   private lateinit var drawerToggle: ActionBarDrawerToggle
 
-  private fun onConnectLongClick(): Boolean {
-    clientConnectionUseCase.connect()
-    return true
-  }
-
-  private fun onConnectClick() {
-    clientConnectionUseCase.connect()
-  }
+  private val viewmodel: NavigationViewModel by viewModel()
 
   private val onNavigatedListener: NavController.OnDestinationChangedListener =
     NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -112,8 +100,13 @@ class NavigationActivity : AppCompatActivity() {
     val binding = NavHeaderMainBinding.bind(header)
     connectText = binding.navConnectText
     connect = binding.connectButton.apply {
-      setOnClickListener { onConnectClick() }
-      setOnLongClickListener { onConnectLongClick() }
+      setOnClickListener {
+        viewmodel.connect()
+      }
+      setOnLongClickListener {
+        viewmodel.connect()
+        true
+      }
     }
   }
 
@@ -144,12 +137,15 @@ class NavigationActivity : AppCompatActivity() {
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     drawerToggle.syncState()
-    connectionStatusLiveDataProvider.observe(this) {
-      onConnection(it)
-    }
-
-    if (connectionStatusLiveDataProvider.getValue() != ConnectionStatus.Active) {
-      onConnectClick()
+    var auto = true
+    lifecycleScope.launchWhenStarted {
+      viewmodel.connection.collect { status ->
+        onConnection(status)
+        if (auto && status != ConnectionStatus.Active) {
+          auto = false
+          viewmodel.connect()
+        }
+      }
     }
   }
 
@@ -170,6 +166,7 @@ class NavigationActivity : AppCompatActivity() {
     setupToolbar()
     setupNavigationDrawer()
     setupConnectionIndicator()
+    viewmodel.startService()
   }
 
   override fun onResume() {
@@ -193,7 +190,6 @@ class NavigationActivity : AppCompatActivity() {
   }
 
   override fun onDestroy() {
-    connectionStatusLiveDataProvider.removeObservers(this)
     val navController = findNavController(R.id.main_navigation_fragment)
     navController.removeOnDestinationChangedListener(onNavigatedListener)
     super.onDestroy()
@@ -202,11 +198,11 @@ class NavigationActivity : AppCompatActivity() {
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
     return when (keyCode) {
       KeyEvent.KEYCODE_VOLUME_UP -> {
-        volumeModifyUseCase.increment()
+        viewmodel.incrementVolume()
         true
       }
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
-        volumeModifyUseCase.decrement()
+        viewmodel.descrementVolume()
         true
       }
       else -> super.onKeyDown(keyCode, event)

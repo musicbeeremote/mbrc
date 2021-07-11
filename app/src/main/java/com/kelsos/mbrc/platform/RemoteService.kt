@@ -9,11 +9,9 @@ import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.core.IRemoteServiceCore
-import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
+import com.kelsos.mbrc.common.state.AppStateManager
 import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
-import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.CHANNEL_ID
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.NOW_PLAYING_PLACEHOLDER
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager.Companion.channel
@@ -23,9 +21,7 @@ import timber.log.Timber
 class RemoteService : Service() {
 
   private val receiver: RemoteBroadcastReceiver by inject()
-  private val core: IRemoteServiceCore by inject()
-  private val notifications: SessionNotificationManager by inject()
-  private val syncWorkHandler: SyncWorkHandler by inject()
+  private val appStateManager: AppStateManager by inject()
   private lateinit var handler: Handler
 
   private fun placeholderNotification(): Notification {
@@ -64,34 +60,41 @@ class RemoteService : Service() {
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     Timber.d("Background Service::Started")
     startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
-    core.start()
-    core.setSyncStartAction { syncWorkHandler.sync(true) }
+    appStateManager.setStateHandler { playing ->
+      if (playing) {
+        startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
+      } else {
+        stopForeground(false)
+      }
+    }
+    appStateManager.start()
     return super.onStartCommand(intent, flags, startId)
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    appStateManager.stop()
     SERVICE_STOPPING = true
     stopForeground(true)
     this.unregisterReceiver(receiver)
     handler.postDelayed(
       {
-        core.stop()
         SERVICE_STOPPING = false
         SERVICE_RUNNING = false
         Timber.d("Background Service::Destroyed")
       },
-      150
+      DESTROY_DELAY_MS
     )
   }
 
   override fun onTaskRemoved(rootIntent: Intent?) {
     super.onTaskRemoved(rootIntent)
-    notifications.cancel()
+    appStateManager.stop()
   }
 
   companion object {
     var SERVICE_RUNNING = false
     var SERVICE_STOPPING = false
+    const val DESTROY_DELAY_MS = 150L
   }
 }

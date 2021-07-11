@@ -5,6 +5,7 @@ import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 
 class FeedbackViewModel(
@@ -18,6 +19,7 @@ class FeedbackViewModel(
         val zipFile = logHelper.zipLogs(filesDir, externalCacheDir)
         emit(FeedbackUiMessage.ZipFileCreated(zipFile))
       } catch (e: Exception) {
+        Timber.e(e, "Failed to create the zip file")
         emit(FeedbackUiMessage.SendFeedback)
       }
     }

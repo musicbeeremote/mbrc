@@ -18,7 +18,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.utils.DragAndDropAction
@@ -53,14 +52,11 @@ class NowPlayingFragmentTest {
   val rule = InstantTaskExecutorRule()
 
   private lateinit var viewModel: NowPlayingViewModel
-  private lateinit var state: PlayingTrackState
 
   @Before
   fun setUp() {
     viewModel = mockk()
-    state = mockk()
-    every { viewModel.trackState } answers { state }
-    every { state.observe(any(), any()) } just Runs
+    every { viewModel.playingTracks } answers { emptyFlow() }
     val testModule = module {
       single<NowPlayingAdapter>()
       single { viewModel }

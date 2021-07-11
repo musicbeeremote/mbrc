@@ -20,11 +20,15 @@ class SplashActivity : AppCompatActivity() {
     setContentView(R.layout.activity_splash)
 
     lifecycleScope.launch(dispatchers.io) {
-      delay(800)
+      delay(START_DELAY_MS)
 
       withContext(dispatchers.main) {
         NavigationActivity.start(this@SplashActivity)
       }
     }
+  }
+
+  companion object {
+    private const val START_DELAY_MS = 800L
   }
 }

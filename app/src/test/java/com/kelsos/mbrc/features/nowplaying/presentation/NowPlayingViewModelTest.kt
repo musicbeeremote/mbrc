@@ -6,7 +6,7 @@ import app.cash.turbine.test
 import arrow.core.left
 import arrow.core.right
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
+import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManagerImpl
@@ -40,7 +40,7 @@ class NowPlayingViewModelTest {
   private lateinit var viewModel: NowPlayingViewModel
   private lateinit var repository: NowPlayingRepository
   private lateinit var slot: CapturingSlot<Event<NowPlayingUiMessages>>
-  private lateinit var state: PlayingTrackState
+  private lateinit var appState: AppState
 
   @get:Rule
   var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -50,7 +50,7 @@ class NowPlayingViewModelTest {
     userActionUseCase = mockk()
     repository = mockk()
     observer = mockk()
-    state = mockk()
+    appState = AppState()
     slot = slot()
     every { observer(capture(slot)) } just Runs
     every { repository.getAll() } answers { MockFactory<NowPlaying>().flow() }
@@ -59,7 +59,7 @@ class NowPlayingViewModelTest {
       repository = repository,
       userActionUseCase = userActionUseCase,
       moveManager = MoveManagerImpl(),
-      trackState = state
+      appState = appState
     )
   }
 
@@ -86,7 +86,7 @@ class NowPlayingViewModelTest {
   @Test
   fun `move should commit the cached move instructions`() {
     val actionSlot = slot<UserAction>()
-    every { userActionUseCase.perform(capture(actionSlot)) } just Runs
+    coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.moveTrack(0, 1)
     viewModel.moveTrack(1, 2)
     viewModel.moveTrack(2, 3)
@@ -99,7 +99,7 @@ class NowPlayingViewModelTest {
   @Test
   fun `search should play perform user action`() {
     val actionSlot = slot<UserAction>()
-    every { userActionUseCase.perform(capture(actionSlot)) } just Runs
+    coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     coEvery { repository.findPosition(any()) } answers { 5 }
     viewModel.search("search")
 
@@ -110,7 +110,7 @@ class NowPlayingViewModelTest {
   @Test
   fun `remove should perform user action`() = runBlockingTest(testDispatcher) {
     val actionSlot = slot<UserAction>()
-    every { userActionUseCase.perform(capture(actionSlot)) } just Runs
+    coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.removeTrack(1)
     advanceUntilIdle()
     assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListRemove)
@@ -120,7 +120,7 @@ class NowPlayingViewModelTest {
   @Test
   fun `play should perform user action`() {
     val actionSlot = slot<UserAction>()
-    every { userActionUseCase.perform(capture(actionSlot)) } just Runs
+    coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.play(2)
 
     assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListPlay)

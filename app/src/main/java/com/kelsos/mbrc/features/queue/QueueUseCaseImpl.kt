@@ -105,7 +105,7 @@ class QueueUseCaseImpl(
         trackRepository.getAlbumTrackPaths(track.album, track.albumArtist),
         track.src
       )
-      PlayAlbum -> QueueData(
+      PlayArtist -> QueueData(
         trackRepository.getArtistTrackPaths(track.artist),
         track.src
 

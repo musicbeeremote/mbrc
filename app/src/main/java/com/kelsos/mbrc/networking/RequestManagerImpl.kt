@@ -40,7 +40,7 @@ class RequestManagerImpl(
         val message = deserializationAdapter.objectify(line, SocketMessage::class)
 
         val context = Protocol.fromString(message.context)
-        Timber.v("incoming context => $context")
+        Timber.v("incoming context => ${context.context}")
         if (Protocol.Player == context) {
           val payload = getProtocolPayload()
           socket.send(SocketMessage.create(Protocol.ProtocolTag, payload))
@@ -80,13 +80,13 @@ class RequestManagerImpl(
       val socketAddress = connectionSettings.toSocketAddress()
       Timber.v("Creating new socket")
 
-      return Socket().apply {
-        soTimeout = 20 * 1000
-        connect(socketAddress)
-        firstMessage?.let {
-          send(it)
-        }
+      val socket = Socket()
+      socket.soTimeout = SO_TIMEOUT_MS
+      socket.connect(socketAddress)
+      firstMessage?.let { message ->
+        socket.send(message)
       }
+      return socket
     } catch (e: IOException) {
       Timber.v(e, "failed to create socket")
       throw e
@@ -99,5 +99,9 @@ class RequestManagerImpl(
 
   private fun Socket.send(socketMessage: SocketMessage) {
     this.outputStream.write(socketMessage.getBytes())
+  }
+
+  companion object {
+    private const val SO_TIMEOUT_MS = 20_000
   }
 }

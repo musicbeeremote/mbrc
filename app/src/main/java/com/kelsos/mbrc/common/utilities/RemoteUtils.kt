@@ -4,9 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import arrow.core.Either
 import com.kelsos.mbrc.BuildConfig
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.File
 import java.security.MessageDigest
 
 object RemoteUtils {
@@ -19,13 +16,6 @@ object RemoteUtils {
     return BuildConfig.VERSION_CODE
   }
 
-  private suspend fun bitmapFromFile(path: String): Bitmap = withContext(Dispatchers.IO) {
-    val options = BitmapFactory.Options()
-    options.inPreferredConfig = Bitmap.Config.RGB_565
-    return@withContext BitmapFactory.decodeFile(path, options)
-      ?: throw RuntimeException("Unable to decode the image")
-  }
-
   fun loadBitmap(path: String): Either<Throwable, Bitmap> = Either.catch {
     BitmapFactory.decodeFile(
       path,
@@ -33,14 +23,6 @@ object RemoteUtils {
         inPreferredConfig = Bitmap.Config.RGB_565
       }
     )
-  }
-
-  suspend fun coverBitmap(coverPath: String): Bitmap? {
-    return try {
-      bitmapFromFile(File(coverPath).absolutePath)
-    } catch (e: Exception) {
-      null
-    }
   }
 
   fun sha1(input: String) = hashString("SHA-1", input)

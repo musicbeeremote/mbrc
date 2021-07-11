@@ -344,6 +344,5 @@ class ConnectionRepositoryTest : KoinTest {
       resources
     }
     single { connectionDao }
-    single<DefaultSettingsModel> { DefaultSettingsModelImpl }
   }
 }

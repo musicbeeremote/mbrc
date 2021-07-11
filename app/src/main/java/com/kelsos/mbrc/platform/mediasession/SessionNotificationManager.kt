@@ -9,10 +9,12 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
+import androidx.core.net.toUri
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.common.state.domain.PlayerState
+import com.kelsos.mbrc.common.state.models.Duration
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.RemoteUtils
-import com.kelsos.mbrc.content.activestatus.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
 import kotlinx.coroutines.CoroutineScope
@@ -119,19 +121,18 @@ class SessionNotificationManager(
     notificationManager.cancel(notificationId)
   }
 
-  override fun trackChanged(playingTrack: PlayingTrack) {
+  override fun updatePlayingTrack(playingTrack: PlayingTrack) {
     diskScope.launch {
-      notificationData = with(playingTrack.coverUrl) {
-        val cover = if (isNotEmpty()) {
-          RemoteUtils.loadBitmap(this).fold({ null }) { bitmap -> bitmap }
-        } else {
-          null
-        }
-
-        notificationData.copy(track = playingTrack, cover = cover)
+      val coverUrl = playingTrack.coverUrl
+      val cover = if (coverUrl.isEmpty()) {
+        null
+      } else {
+        val uri = coverUrl.toUri()
+        RemoteUtils.loadBitmap(checkNotNull(uri.path)).orNull()
       }
-
+      notificationData = notificationData.copy(track = playingTrack, cover = cover)
       update(notificationData)
+      sessionManager.updateTrack(playingTrack, cover)
     }
   }
 
@@ -141,16 +142,14 @@ class SessionNotificationManager(
     } else {
       notification = createBuilder(this.notificationData).build()
     }
+    sessionManager.updateConnection(connected)
   }
 
-  override fun playerStateChanged(state: PlayerState) {
-    if (notificationData.playerState == state) {
-      return
-    }
-
+  override fun updateState(state: PlayerState, current: Duration) {
     uiScope.launch {
       notificationData = notificationData.copy(playerState = state)
       update(notificationData)
+      sessionManager.updateState(state, current)
     }
   }
 

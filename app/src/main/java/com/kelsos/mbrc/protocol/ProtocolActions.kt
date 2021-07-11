@@ -5,22 +5,21 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.core.net.toUri
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.domain.PlayerState
+import com.kelsos.mbrc.common.state.domain.Repeat
+import com.kelsos.mbrc.common.state.models.PlayerStatus
+import com.kelsos.mbrc.common.state.models.PlayerStatusModel
+import com.kelsos.mbrc.common.state.models.PlayingPosition
+import com.kelsos.mbrc.common.state.models.TrackRating
 import com.kelsos.mbrc.common.ui.extensions.md5
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.content.activestatus.PlayerState
-import com.kelsos.mbrc.content.activestatus.PlayerStatus
-import com.kelsos.mbrc.content.activestatus.PlayingPosition
-import com.kelsos.mbrc.content.activestatus.Repeat
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
+import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.events.ShuffleMode
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.lyrics.LyricsPayload
-import com.kelsos.mbrc.features.lyrics.LyricsState
 import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
 import com.kelsos.mbrc.features.player.NowPlayingTrack
-import com.kelsos.mbrc.features.player.cover.CoverModel
 import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.ApiBase
@@ -34,7 +33,8 @@ import com.kelsos.mbrc.networking.protocol.responses.Position
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -42,33 +42,32 @@ import java.io.File
 import java.io.FileOutputStream
 
 class UpdateLastFm(
-  private val state: PlayerStatusState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
-    state.set {
-      copy(scrobbling = protocolMessage.asBoolean())
-    }
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
+    val previousState = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    appState.playerStatus.emit(previousState.copy(scrobbling = protocolMessage.asBoolean()))
   }
 }
 
 class UpdateLfmRating(
-  private val state: TrackRatingState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
-    state.set {
-      copy(lfmRating = LfmRating.fromString(protocolMessage.data as? String))
-    }
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
+    val previousState = appState.playingTrackRating.firstOrNull() ?: TrackRating()
+    val lfmRating = LfmRating.fromString(protocolMessage.data as? String)
+    appState.playingTrackRating.emit(previousState.copy(lfmRating = lfmRating))
   }
 }
 
 class UpdateLyrics(
   private val mapper: Moshi,
-  private val state: LyricsState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val adapter = mapper.adapter(LyricsPayload::class.java)
     val payload = adapter.fromJsonValue(protocolMessage.data) ?: return
 
@@ -86,7 +85,7 @@ class UpdateLyrics(
       emptyList()
     }
 
-    state.set(lyrics)
+    appState.lyrics.emit(lyrics)
   }
 
   companion object {
@@ -95,51 +94,50 @@ class UpdateLyrics(
 }
 
 class UpdateMute(
-  private val state: PlayerStatusState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
-    state.set { copy(mute = protocolMessage.asBoolean()) }
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
+    val previousState = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    appState.playerStatus.emit(previousState.copy(mute = protocolMessage.asBoolean()))
   }
 }
 
 class UpdateNowPlayingTrack(
-  private val state: PlayingTrackState,
+  private val appState: AppState,
   private val updater: WidgetUpdater,
-  private val mapper: Moshi
+  private val mapper: Moshi,
+  private val cache: PlayingTrackCache
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val adapter = mapper.adapter(NowPlayingTrack::class.java)
     val track = adapter.fromJsonValue(protocolMessage.data) ?: return
-
-    state.set {
-      copy(
-        artist = track.artist,
-        title = track.title,
-        album = track.album,
-        year = track.year,
-        path = track.path
-      )
-    }
-
-    state.getValue()?.run {
-      updater.updatePlayingTrack(this)
-    }
+    val previousState = appState.playingTrack.firstOrNull() ?: PlayingTrack()
+    val newState = previousState.copy(
+      artist = track.artist,
+      title = track.title,
+      album = track.album,
+      year = track.year,
+      path = track.path
+    )
+    appState.playingTrack.emit(newState)
+    updater.updatePlayingTrack(newState)
+    cache.persistInfo(newState)
   }
 }
 
 class UpdatePlayerStatus(
-  private val state: PlayerStatusState,
+  private val appState: AppState,
   private val moshi: Moshi
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val adapter = moshi.adapter(PlayerStatus::class.java)
     val status = adapter.fromJsonValue(protocolMessage.data) ?: return
-
-    state.set {
-      copy(
+    val previousState = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    appState.playerStatus.emit(
+      previousState.copy(
         mute = status.mute,
         state = PlayerState.fromString(status.playState),
         repeat = Repeat.fromString(status.repeat),
@@ -147,81 +145,72 @@ class UpdatePlayerStatus(
         scrobbling = status.scrobbling,
         volume = status.volume
       )
-    }
+    )
   }
 }
 
 class UpdatePlayState(
-  private val state: PlayerStatusState,
+  private val appState: AppState,
   private val updater: WidgetUpdater
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val playState = PlayerState.fromString(protocolMessage.data as? String ?: PlayerState.UNDEFINED)
-
-    state.set {
-      copy(state = playState)
-    }
+    val previousState = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    appState.playerStatus.emit(previousState.copy(state = playState))
     updater.updatePlayState(playState)
   }
 }
 
 class UpdatePluginVersionCommand : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val pluginVersion = protocolMessage.data as? String
     Timber.v("plugin reports $pluginVersion")
   }
 }
 
 class UpdateRating(
-  private val state: TrackRatingState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val rating = protocolMessage.data.toString().toFloatOrNull()
-
-    state.set {
-      copy(rating = rating ?: 0.0f)
-    }
+    val previousState = appState.playingTrackRating.firstOrNull() ?: TrackRating()
+    appState.playingTrackRating.emit(previousState.copy(rating = rating ?: 0.0f))
   }
 }
 
 class UpdateRepeat(
-  private val state: PlayerStatusState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val repeat = Repeat.fromString((protocolMessage.data as? String) ?: Repeat.NONE)
-
-    state.set {
-      copy(repeat = repeat)
-    }
+    val previousState = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    appState.playerStatus.emit(previousState.copy(repeat = repeat))
   }
 }
 
 class UpdateShuffle(
-  private val state: PlayerStatusState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val data = ShuffleMode.fromString(protocolMessage.data as? String ?: ShuffleMode.OFF)
-
-    state.set {
-      copy(shuffle = data)
-    }
+    val previousState = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    appState.playerStatus.emit(previousState.copy(shuffle = data))
   }
 }
 
 class UpdateVolume(
-  private val state: PlayerStatusState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val volume = protocolMessage.data as Number
-    state.set {
-      copy(volume = volume.toInt())
-    }
+    val previousState = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    appState.playerStatus.emit(previousState.copy(volume = volume.toInt()))
   }
 }
 
@@ -231,55 +220,46 @@ class UpdateCover(
   private val moshi: Moshi,
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers,
-  private val coverModel: CoverModel,
-  private val playingTrackLiveDataProvider: PlayingTrackState
+  private val appState: AppState
 ) : ProtocolAction {
   private val coverDir: File = File(app.filesDir, COVER_DIR)
-  private val job = SupervisorJob()
-  private val scope = CoroutineScope(job + dispatchers.network)
 
-  init {
-    scope.launch(dispatchers.io) {
-      playingTrackLiveDataProvider.set {
-        copy(coverUrl = coverModel.coverPath)
-      }
-    }
-  }
-
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val adapter = moshi.adapter(CoverPayload::class.java)
     val payload = adapter.fromJsonValue(protocolMessage.data) ?: return
-
+    val previousState = appState.playingTrack.firstOrNull() ?: PlayingTrack()
     if (payload.status == CoverPayload.NOT_FOUND) {
-      playingTrackLiveDataProvider.set { copy(coverUrl = "") }
-      updater.updateCover("")
+      update(previousState)
     } else if (payload.status == CoverPayload.READY) {
-      scope.launch(dispatchers.io) {
-        retrieveCover()
-      }
+      retrieveCover(previousState)
     }
   }
 
-  private suspend fun retrieveCover() {
+  private suspend fun retrieveCover(previousState: PlayingTrack) {
     withContext(dispatchers.network) {
       try {
         val response = api.getItem(Protocol.NowPlayingCover, CoverPayload::class)
         val bitmap = getBitmap(response.cover)
         val file = storeCover(bitmap)
 
-        playingTrackLiveDataProvider.set {
-          val coverUri = file.toUri().toString()
-          coverModel.coverPath = coverUri
-          copy(coverUrl = coverUri)
-        }
-        updater.updateCover(file.absolutePath)
+        val coverUri = file.toUri().toString()
+        update(previousState, coverUri)
       } catch (e: Exception) {
-        removeCover(e)
+        removeCover(e, previousState)
       }
     }
 
     Timber.v("Message received for available cover")
     return
+  }
+
+  private suspend fun update(
+    previousState: PlayingTrack,
+    coverUri: String = ""
+  ) {
+    val newState = previousState.copy(coverUrl = coverUri)
+    appState.playingTrack.emit(newState)
+    updater.updateCover(coverUri)
   }
 
   private fun getBitmap(base64: String): Bitmap {
@@ -292,16 +272,14 @@ class UpdateCover(
     }
   }
 
-  private fun removeCover(it: Throwable? = null) {
+  private suspend fun removeCover(it: Throwable? = null, previousState: PlayingTrack) {
     clearPreviousCovers(0)
 
     it?.let {
       Timber.v(it, "Failed to store path")
     }
 
-    playingTrackLiveDataProvider.set {
-      copy(coverUrl = "")
-    }
+    update(previousState)
   }
 
   private fun storeCover(bitmap: Bitmap): File {
@@ -310,7 +288,7 @@ class UpdateCover(
 
     val file = temporaryCover()
     val fileStream = FileOutputStream(file)
-    val success = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileStream)
+    val success = bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, fileStream)
     fileStream.close()
 
     val md5 = file.md5()
@@ -359,6 +337,7 @@ class UpdateCover(
   companion object {
     const val COVER_DIR = "cover"
     const val TEMP_COVER = "temp_cover.jpg"
+    const val JPEG_QUALITY = 100
   }
 }
 
@@ -367,14 +346,14 @@ class ProtocolPingHandle(
   private var activityChecker: SocketActivityChecker
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     activityChecker.ping()
     messageQueue.queue(SocketMessage.create(Protocol.Pong))
   }
 }
 
 class ProtocolPongHandle : ProtocolAction {
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     Timber.d(protocolMessage.data.toString())
   }
 }
@@ -387,7 +366,7 @@ class UpdateNowPlayingTrackMoved(
   private val scope = CoroutineScope(dispatchers.network)
   private val adapter = moshi.adapter(NowPlayingMoveResponse::class.java)
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     scope.launch {
       val response = adapter.fromJsonValue(protocolMessage.data)
       if (response != null && response.success) {
@@ -405,7 +384,7 @@ class UpdateNowPlayingTrackRemoval(
   private val scope = CoroutineScope(dispatchers.network)
   private val adapter = moshi.adapter(NowPlayingTrackRemoveResponse::class.java)
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     scope.launch {
       val response = adapter.fromJsonValue(protocolMessage.data)
       if (response != null && response.success) {
@@ -417,24 +396,28 @@ class UpdateNowPlayingTrackRemoval(
 
 class UpdatePlaybackPositionCommand(
   private val moshi: Moshi,
-  private val state: TrackPositionState
+  private val appState: AppState
 ) : ProtocolAction {
 
-  override fun execute(protocolMessage: ProtocolMessage) {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     val adapter = moshi.adapter(Position::class.java)
     val response = adapter.fromJsonValue(protocolMessage.data) ?: return
 
-    state.set(
+    appState.playingPosition.emit(
       PlayingPosition(
         response.current,
         response.total
       )
     )
+    val track = appState.playingTrack.first()
+    if (track.duration != response.total) {
+      appState.playingTrack.emit(track.copy(duration = response.total))
+    }
   }
 }
 
-class ProtocolVersionUpdate() : ProtocolAction {
-  override fun execute(protocolMessage: ProtocolMessage) {
+class ProtocolVersionUpdate : ProtocolAction {
+  override suspend fun execute(protocolMessage: ProtocolMessage) {
     Timber.v(protocolMessage.data.toString())
   }
 }

@@ -23,6 +23,7 @@ class SingleFragmentActivity : AppCompatActivity() {
       .commit()
   }
 
+  @Suppress("unused")
   fun replaceFragment(fragment: Fragment) {
     supportFragmentManager.beginTransaction()
       .replace(R.id.single_fragment_content, fragment).commit()

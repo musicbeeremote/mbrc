@@ -37,8 +37,7 @@ class OutputSelectionDialog : DialogFragment(), View.OnTouchListener {
   private val viewModel: OutputSelectionViewModel by viewModel()
 
   private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-    }
+    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
       if (!touchInitiated) {

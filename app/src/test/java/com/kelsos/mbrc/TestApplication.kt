@@ -19,14 +19,13 @@ class TestApplication : Application(), TestLifecycleApplication {
       }
 
       override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        System.out.println("$tag: $message")
+        println("$tag: $message")
       }
     })
     setTheme(R.style.Theme_App)
   }
 
-  override fun prepareTest(test: Any?) {
-  }
+  override fun prepareTest(test: Any?) = Unit
 
   override fun afterTest(method: Method?) {
     Timber.uprootAll()

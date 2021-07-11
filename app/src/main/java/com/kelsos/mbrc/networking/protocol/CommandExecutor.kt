@@ -2,10 +2,10 @@ package com.kelsos.mbrc.networking.protocol
 
 import com.kelsos.mbrc.events.MessageEvent
 
-interface CommandExecutor : Runnable {
+interface CommandExecutor {
   fun start()
 
   fun stop()
 
-  fun processEvent(event: MessageEvent)
+  suspend fun queue(event: MessageEvent)
 }

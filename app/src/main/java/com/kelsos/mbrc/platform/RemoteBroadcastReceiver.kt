@@ -14,6 +14,7 @@ import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.CallAction
 import com.kelsos.mbrc.preferences.SettingsManager
+import kotlinx.coroutines.runBlocking
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -77,12 +78,12 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     when (settingsManager.getCallAction()) {
       CallAction.Pause -> performAction(Protocol.PlayerPause)
       CallAction.Stop -> performAction(Protocol.PlayerStop)
-      CallAction.Reduce -> volumeModifyUseCase.reduceVolume()
+      CallAction.Reduce -> runBlocking { volumeModifyUseCase.reduceVolume() }
       else -> {}
     }
   }
 
   private fun performAction(protocol: Protocol) {
-    userActionUseCase.perform(UserAction.create(protocol, true))
+    runBlocking { userActionUseCase.perform(UserAction.create(protocol, true)) }
   }
 }

@@ -3,10 +3,12 @@ package com.kelsos.mbrc.protocol
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingStateImpl
+import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.ui.navigation.player.LfmRating
+import com.kelsos.mbrc.utils.testDispatcher
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,7 +21,7 @@ class UpdateLfmRatingTest {
   val rule = InstantTaskExecutorRule()
 
   private lateinit var updateLastRating: UpdateLfmRating
-  private lateinit var trackRatingState: TrackRatingState
+  private lateinit var appState: AppState
 
   private fun createMessage(rating: String) = object : ProtocolMessage {
     override val type: Protocol
@@ -30,26 +32,27 @@ class UpdateLfmRatingTest {
 
   @Before
   fun setUp() {
-    trackRatingState = TrackRatingStateImpl()
-    updateLastRating = UpdateLfmRating(trackRatingState)
+    appState = AppState()
+    updateLastRating = UpdateLfmRating(appState)
   }
 
   @Test
-  fun `should change lfm rating to loved`() {
+  fun `should change lfm rating to loved`() = runBlockingTest(testDispatcher) {
     updateLastRating.execute(createMessage("Love"))
-    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.Loved)
+    assertThat(appState.playingTrackRating.first().lfmRating).isEqualTo(LfmRating.Loved)
   }
 
   @Test
-  fun `should change lfm rating to banned`() {
+  fun `should change lfm rating to banned`() = runBlockingTest(testDispatcher) {
     updateLastRating.execute(createMessage("Ban"))
-    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.Banned)
+    assertThat(appState.playingTrackRating.first().lfmRating).isEqualTo(LfmRating.Banned)
   }
 
   @Test
-  fun `should change lfm rating to normal`() {
-    trackRatingState.set { copy(lfmRating = LfmRating.Loved) }
+  fun `should change lfm rating to normal`() = runBlockingTest(testDispatcher) {
+    val state = appState.playingTrackRating.first()
+    appState.playingTrackRating.emit(state.copy(lfmRating = LfmRating.Loved))
     updateLastRating.execute(createMessage(""))
-    assertThat(trackRatingState.requireValue().lfmRating).isEqualTo(LfmRating.Normal)
+    assertThat(appState.playingTrackRating.first().lfmRating).isEqualTo(LfmRating.Normal)
   }
 }

@@ -13,11 +13,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.changelog.ChangelogDialog
+import com.kelsos.mbrc.common.state.models.PlayerStatusModel
 import com.kelsos.mbrc.common.ui.extensions.setIcon
 import com.kelsos.mbrc.common.ui.extensions.setStatusColor
-import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
 import com.kelsos.mbrc.databinding.FragmentPlayerBinding
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -59,34 +60,43 @@ class PlayerFragment : Fragment() {
     }
     binding.playerScreenPlayNext.setOnClickListener { viewModel.next() }
     binding.playerScreenPlayPrevious.setOnClickListener { viewModel.previous() }
-    binding.playerScreenProgress.setOnSeekBarChangeListener { progress ->
+    binding.playerScreenProgress.setOnSeekBarChangeListener({}) { progress ->
       viewModel.seek(progress)
     }
     binding.playerScreenVolume.setOnClickListener {
       findNavController().navigate(R.id.volume_dialog)
     }
-    viewModel.playerStatus.observe(viewLifecycleOwner) { status ->
-      updateStatus(status)
-    }
 
-    viewModel.trackPosition.observe(viewLifecycleOwner) { position ->
-      binding.playerScreenTotalProgress.text = position.progress()
-      binding.playerScreenProgress.progress = position.current.toInt()
-      binding.playerScreenProgress.max = position.total.toInt()
-    }
-
-    viewModel.trackRating.observe(viewLifecycleOwner) {
-      if (it.isFavorite()) {
-        love?.setIcon(R.drawable.ic_favorite_black_24dp)
-      } else {
-        love?.setIcon(R.drawable.ic_favorite_border_black_24dp)
+    lifecycleScope.launch {
+      viewModel.playerStatus.collect { status ->
+        updateStatus(status)
       }
     }
 
-    viewModel.playingTrack.observe(viewLifecycleOwner) { track ->
-      binding.playerScreenAlbumCover.loadImage(track.coverUrl)
-      binding.playerScreenTrackArtist.text = track.artistInfo()
-      binding.playerScreenTrackTitle.text = track.title
+    lifecycleScope.launch {
+      viewModel.playingPosition.collect { position ->
+        binding.playerScreenTotalProgress.text = position.progress()
+        binding.playerScreenProgress.progress = position.current.toInt()
+        binding.playerScreenProgress.max = position.total.toInt()
+      }
+    }
+
+    lifecycleScope.launch {
+      viewModel.playingTrackRating.collect { rating ->
+        if (rating.isFavorite()) {
+          love?.setIcon(R.drawable.ic_favorite_black_24dp)
+        } else {
+          love?.setIcon(R.drawable.ic_favorite_border_black_24dp)
+        }
+      }
+    }
+
+    lifecycleScope.launch {
+      viewModel.playingTrack.collect { track ->
+        binding.playerScreenAlbumCover.loadImage(track.coverUrl)
+        binding.playerScreenTrackArtist.text = track.artistInfo()
+        binding.playerScreenTrackTitle.text = track.title
+      }
     }
 
     lifecycleScope.launch {
@@ -122,7 +132,9 @@ class PlayerFragment : Fragment() {
         true
       }
       R.id.player_screen__action_share -> {
-        share()
+        lifecycleScope.launch {
+          share()
+        }
         true
       }
       else -> false
@@ -136,14 +148,14 @@ class PlayerFragment : Fragment() {
     scrobble = menu.findItem(R.id.player_screen__action_scrobbling)
   }
 
-  private fun share() {
+  private suspend fun share() {
     val shareIntent = Intent.createChooser(sendIntent(), null)
     requireContext().startActivity(shareIntent)
   }
 
-  private fun sendIntent(): Intent {
+  private suspend fun sendIntent(): Intent {
     return Intent(Intent.ACTION_SEND).apply {
-      val track = viewModel.playingTrack.getValue()
+      val track = viewModel.playingTrack.firstOrNull()
       val payload = "Now Playing: ${track?.artist} - ${track?.title}"
       type = "text/plain"
       putExtra(Intent.EXTRA_TEXT, payload)

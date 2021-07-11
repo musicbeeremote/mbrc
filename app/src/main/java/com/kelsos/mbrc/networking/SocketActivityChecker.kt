@@ -10,9 +10,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+typealias Listener = () -> Unit
+
 class SocketActivityChecker(dispatchers: AppCoroutineDispatchers) {
   private var deferred: Deferred<Unit>? = null
-  private var pingTimeoutListener: PingTimeoutListener? = null
+  private var listener: Listener? = null
   private val job = SupervisorJob()
   private val scope = CoroutineScope(job + dispatchers.network)
 
@@ -24,10 +26,10 @@ class SocketActivityChecker(dispatchers: AppCoroutineDispatchers) {
   private suspend fun schedule() {
     cancel()
     deferred = scope.async {
-      delay(DELAY.times(1000).toLong())
-      Timber.v("Ping was more than %d seconds ago", DELAY)
+      delay(DELAY_MS)
+      Timber.v("Ping was more than %d seconds ago", DELAY_MS)
       try {
-        pingTimeoutListener?.onTimeout()
+        listener?.invoke()
       } catch (e: Exception) {
         Timber.v(e, "calling the onTimeout method failed")
       }
@@ -52,15 +54,11 @@ class SocketActivityChecker(dispatchers: AppCoroutineDispatchers) {
     scope.launch { schedule() }
   }
 
-  fun setPingTimeoutListener(pingTimeoutListener: PingTimeoutListener?) {
-    this.pingTimeoutListener = pingTimeoutListener
-  }
-
-  interface PingTimeoutListener {
-    fun onTimeout()
+  fun setPingTimeoutListener(listener: Listener?) {
+    this.listener = listener
   }
 
   companion object {
-    private const val DELAY = 40
+    private const val DELAY_MS = 40_000L
   }
 }

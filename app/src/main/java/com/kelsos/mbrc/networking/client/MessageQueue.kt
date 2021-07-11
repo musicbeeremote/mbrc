@@ -1,11 +1,8 @@
 package com.kelsos.mbrc.networking.client
 
-interface MessageQueue : Runnable {
-  fun start()
+import kotlinx.coroutines.flow.Flow
 
-  fun stop()
-
-  fun queue(message: SocketMessage)
-
-  fun setOnMessageAvailable(onMessageAvailable: (message: SocketMessage) -> Unit)
+interface MessageQueue {
+  suspend fun queue(message: SocketMessage)
+  val messages: Flow<SocketMessage>
 }

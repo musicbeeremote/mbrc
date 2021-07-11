@@ -3,6 +3,7 @@ package com.kelsos.mbrc.logging
 import com.kelsos.mbrc.logging.FileLoggingTree.Companion.LOGS_DIR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -18,6 +19,7 @@ class LogHelper {
       val logDir = File(filesDir, FileLoggingTree.LOGS_DIR)
       logDir.listFiles()?.any { it.extension != "lck" } ?: false
     } catch (e: Exception) {
+      Timber.e(e, "Log access failed")
       return@withContext false
     }
   }

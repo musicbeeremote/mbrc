@@ -3,9 +3,11 @@ package com.kelsos.mbrc.protocol
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusStateImpl
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.models.PlayerStatusModel
+import com.kelsos.mbrc.utils.testDispatcher
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,31 +20,37 @@ class UpdateLastFmTest {
   val rule = InstantTaskExecutorRule()
 
   private lateinit var updateLastFm: UpdateLastFm
-  private lateinit var statusState: PlayerStatusState
+  private lateinit var appState: AppState
 
   @Before
   fun setUp() {
-    statusState = PlayerStatusStateImpl()
-    updateLastFm = UpdateLastFm(statusState)
+    appState = AppState()
+    updateLastFm = UpdateLastFm(appState)
   }
 
   @Test
-  fun `It should change the scrobbling status to false on incoming message`() {
-    statusState.set(PlayerStatusModel(scrobbling = true))
+  fun `It should change the scrobbling status to false on incoming message`() = runBlockingTest(
+    testDispatcher
+  ) {
+    appState.playerStatus.emit(PlayerStatusModel(scrobbling = true))
     updateLastFm.execute(protocolMessage(status = false))
-    assertThat(statusState.requireValue().scrobbling).isFalse()
+    assertThat(appState.playerStatus.first().scrobbling).isFalse()
   }
 
   @Test
-  fun `It should change the scrobbling status to true on incoming message`() {
+  fun `It should change the scrobbling status to true on incoming message`() = runBlockingTest(
+    testDispatcher
+  ) {
     updateLastFm.execute(protocolMessage(status = true))
-    assertThat(statusState.requireValue().scrobbling).isTrue()
+    assertThat(appState.playerStatus.first().scrobbling).isTrue()
   }
 
   @Test
-  fun `It should change the scrobbling status to false if the payload is not boolean`() {
-    statusState.set(PlayerStatusModel(scrobbling = true))
+  fun `It should change the scrobbling status to false for invalid payload`() = runBlockingTest(
+    testDispatcher
+  ) {
+    appState.playerStatus.emit(PlayerStatusModel(scrobbling = true))
     updateLastFm.execute(protocolMessage(status = false, empty = true))
-    assertThat(statusState.requireValue().scrobbling).isFalse()
+    assertThat(appState.playerStatus.first().scrobbling).isFalse()
   }
 }

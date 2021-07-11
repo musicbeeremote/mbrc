@@ -5,8 +5,7 @@ package com.kelsos.mbrc.events
  */
 open class Event<out T>(private val content: T) {
 
-  var hasBeenHandled = false
-    private set
+  private var hasBeenHandled = false
 
   /**
    * Returns the content and prevents its use again.

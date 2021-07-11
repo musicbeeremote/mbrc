@@ -60,9 +60,8 @@ class DragAndDropAction(
 
       val steps = interpolate(sourceViewCenter, targetViewLocation)
 
-      for (i in 0 until steps.size) {
-        val step = steps[i]
-        if (!MotionEvents.sendMovement(uiController, downEvent, step)) {
+      for (element in steps) {
+        if (!MotionEvents.sendMovement(uiController, downEvent, element)) {
           MotionEvents.sendCancel(uiController, downEvent)
         }
       }

@@ -1,6 +1,8 @@
-package com.kelsos.mbrc.content.activestatus
+package com.kelsos.mbrc.common.state.models
 
 import androidx.annotation.IntRange
+import com.kelsos.mbrc.common.state.domain.PlayerState
+import com.kelsos.mbrc.common.state.domain.Repeat
 import com.kelsos.mbrc.events.ShuffleMode
 
 data class PlayerStatusModel(

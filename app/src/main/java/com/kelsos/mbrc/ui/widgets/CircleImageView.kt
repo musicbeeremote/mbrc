@@ -36,6 +36,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import com.kelsos.mbrc.R
+import timber.log.Timber
 
 class CircleImageView : AppCompatImageView {
 
@@ -129,7 +130,7 @@ class CircleImageView : AppCompatImageView {
 
   override fun setScaleType(scaleType: ScaleType) {
     if (scaleType != SCALE_TYPE) {
-      throw IllegalArgumentException(String.format("ScaleType %s not supported.", scaleType))
+      throw IllegalArgumentException("ScaleType $scaleType not supported.")
     }
   }
 
@@ -292,7 +293,7 @@ class CircleImageView : AppCompatImageView {
       }
       return bitmap
     } catch (e: Exception) {
-      e.printStackTrace()
+      Timber.e(e, "failed to create bitmp")
       return null
     }
   }

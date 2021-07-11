@@ -52,7 +52,7 @@ class MediaIntentHandler(
   }
 
   private fun postAction(action: UserAction): Boolean {
-    userActionUseCase.perform(action)
+    userActionUseCase.tryPerform(action)
     return true
   }
 

@@ -1,34 +1,38 @@
 package com.kelsos.mbrc.networking.protocol
 
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.protocol.ProtocolAction
 import com.kelsos.mbrc.protocol.ProtocolMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.HashMap
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.LinkedBlockingQueue
 
 class CommandExecutorImpl(
-  private val commandFactory: CommandFactory
+  private val commandFactory: CommandFactory,
+  dispatchers: AppCoroutineDispatchers
 ) : CommandExecutor {
-
-  private var executor = getExecutor()
-  private var commandMap: MutableMap<Protocol, ProtocolAction> = HashMap()
-  private val eventQueue: LinkedBlockingQueue<ProtocolMessage> = LinkedBlockingQueue()
+  private val job: Job = SupervisorJob()
+  private val scope: CoroutineScope = CoroutineScope(job + dispatchers.io)
+  private val queue = MutableSharedFlow<ProtocolMessage>(0, 10)
+  private var commands: MutableMap<Protocol, ProtocolAction> = HashMap()
+  private val commandDispatcher = Executors.newSingleThreadExecutor { runnable ->
+    Thread(runnable, "CommandQueueDispatcher")
+  }.asCoroutineDispatcher()
   private var running: Boolean = false
+  private var processing: Job? = null
 
-  private fun getExecutor(): ExecutorService {
-    return Executors.newSingleThreadExecutor {
-      Thread(it, "response-queue")
-    }
-  }
-
-  @Synchronized
-  private fun executeCommand(event: ProtocolMessage) {
+  private suspend fun executeCommand(event: ProtocolMessage) {
     val context = event.type
 
-    val command = commandMap[context]
+    val command = commands[context]
     if (command == null) {
       val commandInstance: ProtocolAction
       try {
@@ -37,14 +41,14 @@ class CommandExecutorImpl(
         Timber.e(e, "While creating command")
         return
       }
-      commandMap[context] = commandInstance
+      commands[context] = commandInstance
       callExecute(commandInstance, event)
     } else {
       callExecute(command, event)
     }
   }
 
-  private fun callExecute(command: ProtocolAction, event: ProtocolMessage) {
+  private suspend fun callExecute(command: ProtocolAction, event: ProtocolMessage) {
     try {
       command.execute(event)
     } catch (ex: Exception) {
@@ -54,35 +58,24 @@ class CommandExecutorImpl(
   }
 
   override fun start() {
-    if (executor.isShutdown) {
-      executor = getExecutor()
+    Timber.v("Start: Listening for protocol messages")
+    processing = scope.launch(commandDispatcher) {
+      running = true
+      queue.collect { message ->
+        Timber.v("executing message %s", message.type.context)
+        executeCommand(message)
+      }
     }
-
-    executor.execute(this)
   }
 
   override fun stop() {
-    executor.shutdownNow()
-    eventQueue.clear()
-    commandMap.clear()
+    Timber.v("Done: Listening for protocol messages")
+    processing?.cancel()
+    commands.clear()
+    running = false
   }
 
-  override fun processEvent(event: MessageEvent) {
-    if (!running) {
-      return
-    }
-    eventQueue.add(event)
-  }
-
-  override fun run() {
-    running = true
-    try {
-      // noinspection InfiniteLoopStatement
-      while (true) {
-        executeCommand(eventQueue.take())
-      }
-    } catch (e: InterruptedException) {
-      Timber.d(e, "Failed to execute command")
-    }
+  override suspend fun queue(event: MessageEvent) {
+    queue.emit(event)
   }
 }

@@ -14,7 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.content.activestatus.PlayerState
+import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import org.junit.Before

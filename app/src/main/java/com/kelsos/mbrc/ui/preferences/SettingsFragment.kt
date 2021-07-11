@@ -146,6 +146,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         startService(Intent(this, RemoteService::class.java))
       }
     },
-    null, 600
+    null, START_SERVICE_DELAY_MS
   )
+
+  companion object {
+    private const val START_SERVICE_DELAY_MS = 600L
+  }
 }

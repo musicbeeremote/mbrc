@@ -166,9 +166,11 @@ class NowPlayingFragment : BaseFragment() {
       attachToRecyclerView(binding.nowPlayingTrackList)
     }
 
-    viewModel.trackState.observe(viewLifecycleOwner) {
-      adapter.setPlayingTrack(it.path)
-      binding.nowPlayingTrackList.scrollToPosition(adapter.getPlayingTrackIndex())
+    lifecycleScope.launch {
+      viewModel.playingTracks.collect { track ->
+        adapter.setPlayingTrack(track.path)
+        binding.nowPlayingTrackList.scrollToPosition(adapter.getPlayingTrackIndex())
+      }
     }
 
     lifecycleScope.launch {

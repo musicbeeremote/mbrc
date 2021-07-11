@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 class ConnectionRepositoryImpl(
   private val dao: ConnectionDao,
   private val dispatchers: AppCoroutineDispatchers,
-  private val settings: DefaultSettingsModel,
   private val discovery: RemoteServiceDiscovery
 ) : ConnectionRepository {
 

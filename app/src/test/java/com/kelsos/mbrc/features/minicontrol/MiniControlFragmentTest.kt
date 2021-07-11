@@ -6,21 +6,23 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.common.state.BaseState
-import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
-import com.kelsos.mbrc.content.activestatus.PlayingPosition
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.features.library.PlayingTrack
+import com.kelsos.mbrc.networking.client.UserActionUseCase
+import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.Click
 import com.kelsos.mbrc.utils.isVisible
+import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.Runs
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.slot
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -36,35 +38,17 @@ class MiniControlFragmentTest {
   val rule = InstantTaskExecutorRule()
 
   private lateinit var viewModel: MiniControlViewModel
-
-  private val positionState: TrackPositionState =
-    object : BaseState<PlayingPosition>(), TrackPositionState {
-      override fun setPlaying(playing: Boolean) {
-        error("not implemented")
-      }
-    }
-  private val trackState: PlayingTrackState =
-    object : BaseState<PlayingTrack>(), PlayingTrackState {}
-  private val playerStatus: PlayerStatusState =
-    object : BaseState<PlayerStatusModel>(), PlayerStatusState {}
+  private lateinit var appState: AppState
+  private lateinit var userActionUseCase: UserActionUseCase
 
   @Before
   fun setUp() {
-    viewModel = mockk()
-    trackState.set(PlayingTrack())
-
-    every { viewModel.trackPosition } answers { positionState }
-    every { viewModel.playingTrack } answers { trackState }
-    every { viewModel.playerStatus } answers { playerStatus }
+    userActionUseCase = mockk()
+    appState = AppState()
+    viewModel = MiniControlViewModel(appState, userActionUseCase)
 
     startKoin {
-      modules(
-        listOf(
-          module {
-            single { viewModel }
-          }
-        )
-      )
+      modules(listOf(module { single { viewModel } }))
     }
   }
 
@@ -75,31 +59,37 @@ class MiniControlFragmentTest {
 
   @Test
   fun `pressing next should play the next track`() {
+    val capturingSlot = slot<UserAction>()
     launchFragmentInContainer<MiniControlFragment>()
     every { viewModel.next() } just Runs
     onView(withId(R.id.mini_control__play_next)).perform(Click)
-    verify(exactly = 1) { viewModel.next() }
+    coVerify(exactly = 1) { userActionUseCase.perform(capture(capturingSlot)) }
+    assertThat(capturingSlot.captured.protocol).isEqualTo(Protocol.PlayerNext)
   }
 
   @Test
   fun `pressing previous should play the previous track`() {
+    val capturingSlot = slot<UserAction>()
     launchFragmentInContainer<MiniControlFragment>()
     every { viewModel.previous() } just Runs
     onView(withId(R.id.mini_control__play_previous)).perform(Click)
-    verify(exactly = 1) { viewModel.previous() }
+    coVerify(exactly = 1) { userActionUseCase.perform(capture(capturingSlot)) }
+    assertThat(capturingSlot.captured.protocol).isEqualTo(Protocol.PlayerPrevious)
   }
 
   @Test
   fun `pressing play pause should play or pause the track playback`() {
+    val capturingSlot = slot<UserAction>()
     launchFragmentInContainer<MiniControlFragment>()
     every { viewModel.playPause() } just Runs
     onView(withId(R.id.mini_control__play_pause)).perform(Click)
-    verify(exactly = 1) { viewModel.playPause() }
+    coVerify(exactly = 1) { userActionUseCase.perform(capture(capturingSlot)) }
+    assertThat(capturingSlot.captured.protocol).isEqualTo(Protocol.PlayerPlayPause)
   }
 
   @Test
-  fun `track state changes are reflected to view`() {
-    trackState.set(
+  fun `track state changes are reflected to view`() = runBlockingTest(testDispatcher) {
+    appState.playingTrack.emit(
       PlayingTrack(
         artist = "Test Artist",
         title = "Test Title",

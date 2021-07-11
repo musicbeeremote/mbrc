@@ -4,21 +4,11 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.work.WorkManager
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.AppStateManager
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.ConnectionStatusStateImpl
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusStateImpl
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackStateImpl
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionStateImpl
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackRatingStateImpl
-import com.kelsos.mbrc.core.IRemoteServiceCore
-import com.kelsos.mbrc.core.RemoteServiceCore
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.data.DatabaseTransactionRunner
 import com.kelsos.mbrc.data.DatabaseTransactionRunnerImpl
@@ -63,8 +53,6 @@ import com.kelsos.mbrc.features.library.sync.SyncStatProvider
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandlerImpl
 import com.kelsos.mbrc.features.library.sync.SyncWorker
-import com.kelsos.mbrc.features.lyrics.LyricsState
-import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
 import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
 import com.kelsos.mbrc.features.lyrics.presentation.LyricsViewModel
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
@@ -76,8 +64,6 @@ import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.features.output.OutputApi
 import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
-import com.kelsos.mbrc.features.player.cover.CoverModel
-import com.kelsos.mbrc.features.player.cover.StoredCoverModel
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
@@ -108,14 +94,13 @@ import com.kelsos.mbrc.networking.client.MessageHandler
 import com.kelsos.mbrc.networking.client.MessageHandlerImpl
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.MessageQueueImpl
-import com.kelsos.mbrc.networking.client.UiMessageQueue
 import com.kelsos.mbrc.networking.client.UiMessageQueueImpl
+import com.kelsos.mbrc.networking.client.UiMessages
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.client.UserActionUseCaseImpl
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
+import com.kelsos.mbrc.networking.connections.ConnectionState
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
 import com.kelsos.mbrc.networking.protocol.CommandExecutor
@@ -125,6 +110,8 @@ import com.kelsos.mbrc.networking.protocol.CommandFactoryImpl
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCaseImpl
 import com.kelsos.mbrc.platform.RemoteBroadcastReceiver
+import com.kelsos.mbrc.platform.ServiceChecker
+import com.kelsos.mbrc.platform.ServiceCheckerImpl
 import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
@@ -163,6 +150,7 @@ import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
 import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import org.koin.androidx.experimental.dsl.viewModel
 import org.koin.androidx.fragment.dsl.fragment
 import org.koin.androidx.workmanager.dsl.worker
@@ -213,12 +201,9 @@ val appModule = module {
   singleBy<VolumeModifyUseCase, VolumeModifyUseCaseImpl>()
   singleBy<OutputApi, OutputApiImpl>()
 
-  singleBy<PlayingTrackState, PlayingTrackStateImpl>()
-  singleBy<PlayerStatusState, PlayerStatusStateImpl>()
-  singleBy<TrackRatingState, TrackRatingStateImpl>()
-  singleBy<ConnectionStatusState, ConnectionStatusStateImpl>()
+  single<AppState>()
+  single<ConnectionState>()
 
-  singleBy<LyricsState, LyricsStateImpl>()
   single { LyricsAdapter(get(named("diffExecutor"))) }
   single(named("diffExecutor")) {
     Executors.newSingleThreadExecutor { runnable ->
@@ -232,14 +217,12 @@ val appModule = module {
 
   singleBy<IClientConnectionManager, ClientConnectionManager>()
   singleBy<CommandFactory, CommandFactoryImpl>()
-  singleBy<UiMessageQueue, UiMessageQueueImpl>()
+  singleBy<UiMessages, UiMessageQueueImpl>()
   singleBy<RemoteServiceDiscovery, RemoteServiceDiscoveryImpl>()
-  singleBy<TrackPositionState, TrackPositionStateImpl>()
 
   singleBy<INotificationManager, SessionNotificationManager>()
-  singleBy<IRemoteServiceCore, RemoteServiceCore>()
-
-  singleBy<CoverModel, StoredCoverModel>()
+  singleBy<ServiceChecker, ServiceCheckerImpl>()
+  single<AppStateManager>()
 
   single<PopupActionHandler>()
   single<DefaultActionPreferenceStore>()
@@ -247,11 +230,18 @@ val appModule = module {
   singleBy<WidgetUpdater, WidgetUpdaterImpl>()
 
   single {
+    val database = Executors.newSingleThreadExecutor { runnable ->
+      Thread(runnable, "DatabaseDispatcher")
+    }.asCoroutineDispatcher()
+    var threadId = 1
+    val network = Executors.newFixedThreadPool(2) { runnable ->
+      Thread(runnable, "NetworkDispatcher-worker-${threadId++}")
+    }.asCoroutineDispatcher()
     AppCoroutineDispatchers(
-      Dispatchers.Main,
-      Dispatchers.IO,
-      Dispatchers.IO,
-      Dispatchers.IO
+      main = Dispatchers.Main,
+      io = Dispatchers.IO,
+      database = database,
+      network = network
     )
   }
 
@@ -295,7 +285,6 @@ val appModule = module {
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
   singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
 
-  factory<DefaultSettingsModel> { DefaultSettingsModelImpl }
   factoryBy<ClientInformationModel, ClientInformationModelImpl>()
   factoryBy<MoveManager, MoveManagerImpl>()
 
@@ -350,4 +339,6 @@ val uiModule = module {
   viewModel<GenreArtistViewModel>()
   viewModel<ArtistAlbumViewModel>()
   viewModel<AlbumTrackViewModel>()
+
+  viewModel<NavigationViewModel>()
 }

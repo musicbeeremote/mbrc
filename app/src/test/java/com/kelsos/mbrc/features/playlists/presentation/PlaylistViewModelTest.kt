@@ -90,7 +90,7 @@ class PlaylistViewModelTest {
   @Test
   fun `should send a play action`() = runBlockingTest(testDispatcher) {
     val userAction = slot<UserAction>()
-    every { userActionUseCase.perform(capture(userAction)) } just Runs
+    coEvery { userActionUseCase.perform(capture(userAction)) } just Runs
     viewModel.play("""C:\playlists\metal.m3u""")
     advanceUntilIdle()
     assertThat(userAction.captured.protocol).isEqualTo(Protocol.PlaylistPlay)

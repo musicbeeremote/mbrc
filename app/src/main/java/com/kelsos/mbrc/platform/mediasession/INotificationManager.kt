@@ -1,15 +1,16 @@
 package com.kelsos.mbrc.platform.mediasession
 
-import com.kelsos.mbrc.content.activestatus.PlayerState
+import com.kelsos.mbrc.common.state.domain.PlayerState
+import com.kelsos.mbrc.common.state.models.Duration
 import com.kelsos.mbrc.features.library.PlayingTrack
 
 interface INotificationManager {
 
   fun cancel(notificationId: Int = NOW_PLAYING_PLACEHOLDER)
 
-  fun trackChanged(playingTrack: PlayingTrack)
+  fun updatePlayingTrack(playingTrack: PlayingTrack)
 
-  fun playerStateChanged(state: PlayerState)
+  fun updateState(state: PlayerState, current: Duration)
 
   fun connectionStateChanged(connected: Boolean)
 

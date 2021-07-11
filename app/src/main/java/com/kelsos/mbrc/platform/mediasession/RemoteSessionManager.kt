@@ -4,18 +4,25 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Bitmap
 import android.media.AudioManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.kelsos.mbrc.common.utilities.RemoteUtils
-import com.kelsos.mbrc.content.activestatus.PlayerState
+import com.kelsos.mbrc.common.state.domain.PlayerState
+import com.kelsos.mbrc.common.state.models.Duration
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.client.UserActionUseCase
-import com.kelsos.mbrc.networking.client.performUserAction
-import com.kelsos.mbrc.networking.connections.ConnectionStatus
+import com.kelsos.mbrc.networking.client.perform
 import com.kelsos.mbrc.networking.protocol.Protocol
 import timber.log.Timber
+
+private data class PlayState(
+  val mediaSessionActive: Boolean,
+  val position: Duration,
+  val playbackSpeed: Float,
+  val state: Int
+)
 
 class RemoteSessionManager(
   context: Application,
@@ -23,7 +30,6 @@ class RemoteSessionManager(
   private val userActionUseCase: UserActionUseCase
 ) : AudioManager.OnAudioFocusChangeListener {
   private val mediaSession: MediaSessionCompat
-
   lateinit var handler: MediaIntentHandler
 
   init {
@@ -44,85 +50,83 @@ class RemoteSessionManager(
       }
 
       override fun onPlay() {
-        userActionUseCase.performUserAction(Protocol.PlayerPlay, true)
+        userActionUseCase.perform(Protocol.PlayerPlay, true)
       }
 
       override fun onPause() {
-        userActionUseCase.performUserAction(Protocol.PlayerPause, true)
+        userActionUseCase.perform(Protocol.PlayerPause, true)
       }
 
       override fun onSkipToNext() {
-        userActionUseCase.performUserAction(Protocol.PlayerNext, true)
+        userActionUseCase.perform(Protocol.PlayerNext, true)
       }
 
       override fun onSkipToPrevious() {
-        userActionUseCase.performUserAction(Protocol.PlayerPrevious, true)
+        userActionUseCase.perform(Protocol.PlayerPrevious, true)
       }
 
       override fun onStop() {
-        userActionUseCase.performUserAction(Protocol.PlayerStop, true)
+        userActionUseCase.perform(Protocol.PlayerStop, true)
       }
 
       override fun onSeekTo(pos: Long) {
-        userActionUseCase.performUserAction(Protocol.NowPlayingPosition, pos)
+        userActionUseCase.perform(Protocol.NowPlayingPosition, pos)
       }
     })
   }
 
-  private fun onConnectionStatusChanged(status: ConnectionStatus) {
-    if (status == ConnectionStatus.Off) {
-      val builder = PlaybackStateCompat.Builder()
-      builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
-      val playbackState = builder.build()
-      mediaSession.isActive = false
-      mediaSession.setPlaybackState(playbackState)
+  fun updateConnection(connected: Boolean) {
+    if (!connected) {
+      return
     }
+    val builder = PlaybackStateCompat.Builder()
+    builder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0f)
+    val playbackState = builder.build()
+    mediaSession.isActive = false
+    mediaSession.setPlaybackState(playbackState)
   }
 
   val mediaSessionToken: MediaSessionCompat.Token
     get() = mediaSession.sessionToken
 
-  private suspend fun metadataUpdate(track: PlayingTrack) {
-    val bitmap = RemoteUtils.coverBitmap(track.coverUrl)
-
+  fun updateTrack(track: PlayingTrack, cover: Bitmap?) {
     val builder = MediaMetadataCompat.Builder()
       .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.album)
       .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.artist)
       .putString(MediaMetadataCompat.METADATA_KEY_TITLE, track.title)
-      .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+      .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, cover)
       .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, track.duration)
     mediaSession.setMetadata(builder.build())
   }
 
-  private fun updateState(state: PlayerState) {
-    val playbackState = PlaybackStateCompat.Builder()
-      .setActions(PLAYBACK_ACTIONS)
-      .apply {
-        when (state) {
-          PlayerState.Playing -> {
-            setState(
-              PlaybackStateCompat.STATE_PLAYING, -1
-              /**change.position**/, 1f
-            )
-            mediaSession.isActive = true
-          }
-          PlayerState.Paused -> {
-            setState(
-              PlaybackStateCompat.STATE_PAUSED, -1
-              /**change.position**/, 0f
-            )
-            mediaSession.isActive = true
-          }
-          else -> {
-            setState(
-              PlaybackStateCompat.STATE_STOPPED, -1
-              /**change.position**/, 0f
-            )
-            mediaSession.isActive = false
-          }
-        }
-      }.build()
-    mediaSession.setPlaybackState(playbackState)
+  fun updateState(state: PlayerState, current: Duration) {
+    val (mediaSessionActive, position, playbackSpeed, playbackState) = when (state) {
+      PlayerState.Playing -> PlayState(
+        mediaSessionActive = true,
+        position = current,
+        playbackSpeed = 1f,
+        state = PlaybackStateCompat.STATE_PLAYING
+      )
+      PlayerState.Paused -> PlayState(
+        mediaSessionActive = false,
+        position = current,
+        playbackSpeed = 0f,
+        state = PlaybackStateCompat.STATE_PAUSED
+      )
+      else -> PlayState(
+        mediaSessionActive = false,
+        position = 0,
+        playbackSpeed = 0f,
+        state = PlaybackStateCompat.STATE_STOPPED // To allow for notification dismissing
+      )
+    }
+    mediaSession.isActive = mediaSessionActive
+    mediaSession.setPlaybackState(
+      PlaybackStateCompat.Builder()
+        .setActions(PLAYBACK_ACTIONS)
+        .setState(playbackState, position, playbackSpeed)
+        .build()
+    )
   }
 
   override fun onAudioFocusChange(focusChange: Int) {

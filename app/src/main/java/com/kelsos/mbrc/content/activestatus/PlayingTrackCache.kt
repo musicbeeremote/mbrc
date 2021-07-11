@@ -60,5 +60,5 @@ class PlayingTrackCacheImpl(
 
 interface PlayingTrackCache {
   suspend fun persistInfo(track: PlayingTrack)
-  suspend fun restoreInfo(): PlayingTrack?
+  suspend fun restoreInfo(): PlayingTrack
 }

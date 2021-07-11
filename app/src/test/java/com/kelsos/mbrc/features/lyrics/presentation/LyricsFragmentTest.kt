@@ -7,15 +7,15 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kelsos.mbrc.R
-import com.kelsos.mbrc.features.lyrics.LyricsState
-import com.kelsos.mbrc.features.lyrics.LyricsStateImpl
+import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.utils.MainThreadExecutor
 import com.kelsos.mbrc.utils.doesNotExist
 import com.kelsos.mbrc.utils.isGone
 import com.kelsos.mbrc.utils.isVisible
-import io.mockk.every
+import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.mockk
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -33,16 +33,14 @@ class LyricsFragmentTest : KoinTest {
   val rule = InstantTaskExecutorRule()
 
   private lateinit var viewModel: LyricsViewModel
-  private lateinit var lyricsState: LyricsState
+  private lateinit var appState: AppState
   private lateinit var adapter: LyricsAdapter
 
   @Before
   fun setUp() {
-    viewModel = mockk()
-    lyricsState = LyricsStateImpl()
+    appState = AppState()
+    viewModel = LyricsViewModel(appState)
     adapter = LyricsAdapter(MainThreadExecutor())
-
-    every { viewModel.lyrics } answers { lyricsState }
 
     val testModule = module {
       single { viewModel }
@@ -50,11 +48,7 @@ class LyricsFragmentTest : KoinTest {
       single<MiniControlViewModel> { mockk(relaxed = true) }
     }
     startKoin {
-      modules(
-        listOf(
-          testModule
-        )
-      )
+      modules(listOf(testModule))
     }
   }
 
@@ -64,8 +58,8 @@ class LyricsFragmentTest : KoinTest {
   }
 
   @Test
-  fun `should display empty view when no lyrics available`() {
-    lyricsState.set(emptyList())
+  fun `should display empty view when no lyrics available`() = runBlockingTest(testDispatcher) {
+    appState.lyrics.emit(emptyList())
 
     launchFragmentInContainer<LyricsFragment>()
 
@@ -73,8 +67,8 @@ class LyricsFragmentTest : KoinTest {
   }
 
   @Test
-  fun `should display the lyrics based on the lyrics state`() {
-    lyricsState.set(listOf("line one", "line two"))
+  fun `should display the lyrics based on the lyrics state`() = runBlockingTest(testDispatcher) {
+    appState.lyrics.emit(listOf("line one", "line two"))
 
     launchFragmentInContainer<LyricsFragment>()
 
@@ -84,19 +78,20 @@ class LyricsFragmentTest : KoinTest {
   }
 
   @Test
-  fun `should update the displayed lyrics when the list gets updated`() {
+  fun `should update the displayed lyrics when the list gets updated`() =
+    runBlockingTest(testDispatcher) {
 
-    lyricsState.set(listOf("line one"))
+      appState.lyrics.emit(listOf("line one"))
 
-    launchFragmentInContainer<LyricsFragment>()
+      launchFragmentInContainer<LyricsFragment>()
 
-    onView(withId(R.id.lyrics__empty_text)).isGone()
-    onView(withText("line one")).isVisible()
-    onView(withText("line two")).doesNotExist()
+      onView(withId(R.id.lyrics__empty_text)).isGone()
+      onView(withText("line one")).isVisible()
+      onView(withText("line two")).doesNotExist()
 
-    lyricsState.set(listOf("line two"))
+      appState.lyrics.emit(listOf("line two"))
 
-    onView(withText("line one")).doesNotExist()
-    onView(withText("line two")).isVisible()
-  }
+      onView(withText("line one")).doesNotExist()
+      onView(withText("line two")).isVisible()
+    }
 }

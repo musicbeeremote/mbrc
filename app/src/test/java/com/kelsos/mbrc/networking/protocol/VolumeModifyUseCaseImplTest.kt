@@ -2,15 +2,17 @@ package com.kelsos.mbrc.networking.protocol
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.kelsos.mbrc.content.activestatus.PlayerStatusModel
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.models.PlayerStatusModel
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
+import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.Runs
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,22 +21,22 @@ import org.junit.runner.RunWith
 class VolumeModifyUseCaseImplTest {
 
   private lateinit var volumeModifyUseCase: VolumeModifyUseCase
-  private lateinit var provider: PlayerStatusState
+  private lateinit var appState: AppState
   private lateinit var messageQueue: MessageQueue
 
   private val slot = slot<SocketMessage>()
 
   @Before
   fun setUp() {
-    provider = mockk()
+    appState = AppState()
     messageQueue = mockk()
-    volumeModifyUseCase = VolumeModifyUseCaseImpl(provider, messageQueue)
-    every { messageQueue.queue(message = capture(slot)) } just Runs
+    volumeModifyUseCase = VolumeModifyUseCaseImpl(appState, messageQueue)
+    coEvery { messageQueue.queue(message = capture(slot)) } just Runs
   }
 
   @Test
-  fun `increment volume from 10 by a step`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(10) }
+  fun `increment volume from 10 by a step`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(10))
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -42,8 +44,8 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `increment volume from 12 by a step`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(12) }
+  fun `increment volume from 12 by a step`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(12))
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -51,8 +53,8 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `increment volume from 17 by a step`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(17) }
+  fun `increment volume from 17 by a step`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(17))
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -60,8 +62,8 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `increment volume from 92 by a step`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(92) }
+  fun `increment volume from 92 by a step`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(92))
     volumeModifyUseCase.increment()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -69,8 +71,8 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `decrement volume from 7 by a step`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(7) }
+  fun `decrement volume from 7 by a step`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(7))
     volumeModifyUseCase.decrement()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -78,8 +80,8 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `decrement volume from 10 by a step`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(10) }
+  fun `decrement volume from 10 by a step`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(10))
     volumeModifyUseCase.decrement()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -87,8 +89,8 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `decrement volume from 17 by a step`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(17) }
+  fun `decrement volume from 17 by a step`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(17))
     volumeModifyUseCase.decrement()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -96,8 +98,8 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `reduce volume from 100`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(100) }
+  fun `reduce volume from 100`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(100))
     volumeModifyUseCase.reduceVolume()
     val message = slot.captured
     assertThat(message.context).isEqualTo(Protocol.PLAYER_VOLUME)
@@ -105,17 +107,15 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `reduce volume when muted`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers {
-      PlayerStatusModel(100, mute = true)
-    }
+  fun `reduce volume when muted`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(100, mute = true))
     volumeModifyUseCase.reduceVolume()
     assertThat(slot.isCaptured).isFalse()
   }
 
   @Test
-  fun `reduce volume when volume is zero`() {
-    every { provider.hint(PlayerStatusModel::class).getValue() } answers { PlayerStatusModel(0) }
+  fun `reduce volume when volume is zero`() = runBlockingTest(testDispatcher) {
+    appState.playerStatus.emit(PlayerStatusModel(0))
     volumeModifyUseCase.reduceVolume()
     assertThat(slot.isCaptured).isFalse()
   }

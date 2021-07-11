@@ -18,8 +18,6 @@ import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModel
-import com.kelsos.mbrc.networking.connections.DefaultSettingsModelImpl
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.preferences.ClientInformationModel
 import com.kelsos.mbrc.preferences.ClientInformationModelImpl
@@ -233,7 +231,6 @@ class ConnectivityVerifierImplTest : KoinTest {
     singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
     singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
     singleBy<SerializationAdapter, SerializationAdapterImpl>()
-    single<DefaultSettingsModel> { DefaultSettingsModelImpl }
     singleBy<ClientInformationStore, ClientInformationStoreImpl>()
     single<ClientInformationModel> {
       ClientInformationModelImpl(

@@ -1,17 +1,21 @@
 package com.kelsos.mbrc.networking.protocol
 
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
+import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
+import kotlinx.coroutines.flow.firstOrNull
 
 class VolumeModifyUseCaseImpl(
-  private val playerStatusLiveDataProvider: PlayerStatusState,
-  private val messageQueue: MessageQueue
+  private val appState: AppState,
+  private val queue: MessageQueue
 ) : VolumeModifyUseCase {
 
-  override fun increment() {
+  private suspend fun currentVolume() = appState.playerStatus.firstOrNull()?.volume ?: 0
+  private suspend fun isMute() = appState.playerStatus.firstOrNull()?.mute ?: false
+
+  override suspend fun increment() {
     val volume: Int
-    val currentVolume = playerStatusLiveDataProvider.getValue()?.volume ?: 0
+    val currentVolume = currentVolume()
 
     volume = if (currentVolume <= 90) {
       val mod = currentVolume % DEFAULT_STEP
@@ -27,9 +31,9 @@ class VolumeModifyUseCaseImpl(
     send(volume)
   }
 
-  override fun decrement() {
+  override suspend fun decrement() {
     val volume: Int
-    val currentVolume = playerStatusLiveDataProvider.getValue()?.volume ?: 0
+    val currentVolume = currentVolume()
 
     volume = if (currentVolume >= 10) {
       val mod = currentVolume % DEFAULT_STEP
@@ -46,13 +50,13 @@ class VolumeModifyUseCaseImpl(
     send(volume)
   }
 
-  override fun reduceVolume() {
-    playerStatusLiveDataProvider.getValue()?.run {
-      if (mute || volume == 0) {
-        return
-      }
-      send((volume * 0.2).toInt())
+  override suspend fun reduceVolume() {
+    val volume = currentVolume()
+    val mute = isMute()
+    if (mute || volume == 0) {
+      return
     }
+    send((volume * 0.2).toInt())
   }
 
   /**
@@ -60,8 +64,8 @@ class VolumeModifyUseCaseImpl(
    *
    * @param volume The new volume value that will be send to the plugin.
    */
-  private fun send(volume: Int) {
-    messageQueue.queue(SocketMessage.create(Protocol.PlayerVolume, volume))
+  private suspend fun send(volume: Int) {
+    queue.queue(SocketMessage.create(Protocol.PlayerVolume, volume))
   }
 
   companion object {

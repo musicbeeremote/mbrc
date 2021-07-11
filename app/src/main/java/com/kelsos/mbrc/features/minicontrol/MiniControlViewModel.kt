@@ -1,30 +1,35 @@
 package com.kelsos.mbrc.features.minicontrol
 
 import androidx.lifecycle.ViewModel
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
-import com.kelsos.mbrc.content.activestatus.livedata.TrackPositionState
+import androidx.lifecycle.viewModelScope
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.models.PlayerStatusModel
+import com.kelsos.mbrc.common.state.models.PlayingPosition
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.client.next
 import com.kelsos.mbrc.networking.client.playPause
 import com.kelsos.mbrc.networking.client.previous
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class MiniControlViewModel(
-  val playingTrack: PlayingTrackState,
-  val playerStatus: PlayerStatusState,
-  val trackPosition: TrackPositionState,
+  appState: AppState,
   private val userActionUseCase: UserActionUseCase
 ) : ViewModel() {
+  val playingTrack: Flow<PlayingTrack> = appState.playingTrack
+  val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
+  val playingPosition: Flow<PlayingPosition> = appState.playingPosition
 
   fun next() {
-    userActionUseCase.next()
+    viewModelScope.launch { userActionUseCase.next() }
   }
 
   fun previous() {
-    userActionUseCase.previous()
+    viewModelScope.launch { userActionUseCase.previous() }
   }
 
   fun playPause() {
-    userActionUseCase.playPause()
+    viewModelScope.launch { userActionUseCase.playPause() }
   }
 }

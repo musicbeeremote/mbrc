@@ -3,8 +3,9 @@ package com.kelsos.mbrc.features.nowplaying.presentation
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.content.activestatus.livedata.PlayingTrackState
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
 import com.kelsos.mbrc.features.nowplaying.domain.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
@@ -23,19 +24,22 @@ class NowPlayingViewModel(
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,
   private val userActionUseCase: UserActionUseCase,
-  val trackState: PlayingTrackState,
+  appState: AppState,
 ) : BaseViewModel<NowPlayingUiMessages>() {
 
   val list: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
+  val playingTracks: Flow<PlayingTrack> = appState.playingTrack
 
   init {
     moveManager.onMoveCommit { originalPosition, finalPosition ->
-      userActionUseCase.moveTrack(
-        NowPlayingMoveRequest(
-          originalPosition,
-          finalPosition
+      viewModelScope.launch(dispatchers.network) {
+        userActionUseCase.moveTrack(
+          NowPlayingMoveRequest(
+            originalPosition,
+            finalPosition
+          )
         )
-      )
+      }
     }
   }
 
@@ -55,7 +59,7 @@ class NowPlayingViewModel(
   }
 
   fun search(query: String) {
-    viewModelScope.launch(dispatchers.network) {
+    viewModelScope.launch(dispatchers.database) {
       val position = repository.findPosition(query)
       if (position > 0) {
         play(position)
@@ -64,13 +68,13 @@ class NowPlayingViewModel(
   }
 
   fun moveTrack(from: Int, to: Int) {
-    viewModelScope.launch(dispatchers.network) {
-      moveManager.move(from, to)
-    }
+    moveManager.move(from, to)
   }
 
   fun play(position: Int) {
-    userActionUseCase.playTrack(position + 1)
+    viewModelScope.launch(dispatchers.network) {
+      userActionUseCase.playTrack(position + 1)
+    }
   }
 
   fun removeTrack(position: Int) {
@@ -81,8 +85,6 @@ class NowPlayingViewModel(
   }
 
   fun move() {
-    viewModelScope.launch {
-      moveManager.commit()
-    }
+    moveManager.commit()
   }
 }

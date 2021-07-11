@@ -1,35 +1,46 @@
 package com.kelsos.mbrc.platform.mediasession
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
 import androidx.media.VolumeProviderCompat
-import com.kelsos.mbrc.content.activestatus.livedata.PlayerStatusState
+import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.common.state.models.PlayerStatusModel
+import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.client.performUserAction
 import com.kelsos.mbrc.networking.protocol.Protocol
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 class RemoteVolumeProvider(
-  private val statusLiveDataProvider: PlayerStatusState,
-  private val userActionUseCase: UserActionUseCase
-) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, 100, 0), LifecycleOwner {
+  appState: AppState,
+  dispatchers: AppCoroutineDispatchers,
+  private val userActionUseCase: UserActionUseCase,
+) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, MAX_VOLUME, MIN_VOLUME) {
 
-  private val lifecycleRegistry = LifecycleRegistry(this)
-  override fun getLifecycle(): Lifecycle = lifecycleRegistry
+  private val job = SupervisorJob()
+  private val scope = CoroutineScope(job + dispatchers.network)
+  private val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
+  private suspend fun currentVolume() = playerStatus.firstOrNull()?.volume ?: MIN_VOLUME
 
   init {
-    val volume = statusLiveDataProvider.getValue()?.volume ?: 0
-    super.setCurrentVolume(volume)
-    statusLiveDataProvider.observe(this) {
-      if (super.getCurrentVolume() != it.volume) {
-        super.setCurrentVolume(it.volume)
+    scope.launch {
+      val volume = currentVolume()
+      super.setCurrentVolume(volume)
+      playerStatus.collect { status ->
+        if (super.getCurrentVolume() != status.volume) {
+          super.setCurrentVolume(status.volume)
+        }
       }
     }
-    lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
   }
 
   override fun onSetVolumeTo(volume: Int) {
-    userActionUseCase.performUserAction(Protocol.PlayerVolume, volume)
+    scope.launch {
+      userActionUseCase.performUserAction(Protocol.PlayerVolume, volume)
+    }
     currentVolume = volume
   }
 
@@ -37,11 +48,19 @@ class RemoteVolumeProvider(
     if (direction == 0) {
       return
     }
-    val oldVolume = statusLiveDataProvider.getValue()?.volume ?: 0
-    val volume = oldVolume.plus(direction)
-      .coerceAtLeast(0)
-      .coerceAtMost(100)
-    userActionUseCase.performUserAction(Protocol.PlayerVolume, volume)
-    currentVolume = volume
+
+    scope.launch {
+      val previousVolume = currentVolume()
+      val newVolume = previousVolume.plus(direction)
+        .coerceAtLeast(MIN_VOLUME)
+        .coerceAtMost(MAX_VOLUME)
+      userActionUseCase.performUserAction(Protocol.PlayerVolume, newVolume)
+      currentVolume = newVolume
+    }
+  }
+
+  companion object {
+    const val MIN_VOLUME = 0
+    const val MAX_VOLUME = 100
   }
 }
