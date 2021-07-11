@@ -12,7 +12,6 @@ import com.kelsos.mbrc.common.state.models.PlayerStatus
 import com.kelsos.mbrc.common.state.models.PlayerStatusModel
 import com.kelsos.mbrc.common.state.models.PlayingPosition
 import com.kelsos.mbrc.common.state.models.TrackRating
-import com.kelsos.mbrc.common.ui.extensions.md5
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.events.ShuffleMode
@@ -37,6 +36,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okio.HashingSink.Companion.md5
+import okio.blackholeSink
+import okio.buffer
+import okio.source
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -291,7 +294,13 @@ class UpdateCover(
     val success = bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, fileStream)
     fileStream.close()
 
-    val md5 = file.md5()
+    val md5 = md5(blackholeSink()).use { hashingSink ->
+      file.source().buffer().use { source ->
+        source.readAll(hashingSink)
+        hashingSink.hash.md5().hex()
+      }
+    }
+
     val extension = file.extension
     val newFile = File(app.filesDir, "$md5.$extension")
     if (newFile.exists()) {
