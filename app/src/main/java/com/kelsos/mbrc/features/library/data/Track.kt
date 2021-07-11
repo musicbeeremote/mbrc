@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.features.library.data
 
-import com.kelsos.mbrc.common.utilities.RemoteUtils.sha1
+import okio.ByteString.Companion.encodeUtf8
 
 data class Track(
   var artist: String,
@@ -15,4 +15,4 @@ data class Track(
   var id: Long
 )
 
-fun Track.key(): String = sha1("${albumArtist}_$album")
+fun Track.key(): String = "${albumArtist}_$album".encodeUtf8().sha1().hex()

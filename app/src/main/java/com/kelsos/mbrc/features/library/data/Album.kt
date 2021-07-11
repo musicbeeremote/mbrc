@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.features.library.data
 
-import com.kelsos.mbrc.common.utilities.RemoteUtils
+import okio.ByteString.Companion.encodeUtf8
 
 data class Album(
   var id: Long,
@@ -9,4 +9,4 @@ data class Album(
   val cover: String?
 )
 
-fun Album.key(): String = RemoteUtils.sha1("${artist}_$album")
+fun Album.key(): String = "${artist}_$album".encodeUtf8().sha1().hex()
