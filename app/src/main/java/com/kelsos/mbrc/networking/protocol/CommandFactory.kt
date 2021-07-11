@@ -2,8 +2,8 @@ package com.kelsos.mbrc.networking.protocol
 
 import com.kelsos.mbrc.protocol.ProtocolAction
 import com.kelsos.mbrc.protocol.ProtocolPingHandle
-import com.kelsos.mbrc.protocol.ProtocolPongHandle
 import com.kelsos.mbrc.protocol.ProtocolVersionUpdate
+import com.kelsos.mbrc.protocol.SimpleLogCommand
 import com.kelsos.mbrc.protocol.UpdateCover
 import com.kelsos.mbrc.protocol.UpdateLastFm
 import com.kelsos.mbrc.protocol.UpdateLfmRating
@@ -44,7 +44,9 @@ class CommandFactoryImpl : CommandFactory, KoinComponent {
     Protocol.NowPlayingPosition -> getKoin().get<UpdatePlaybackPositionCommand>()
     Protocol.PluginVersion -> getKoin().get<UpdatePluginVersionCommand>()
     Protocol.Ping -> getKoin().get<ProtocolPingHandle>()
-    Protocol.Pong -> getKoin().get<ProtocolPongHandle>()
+    Protocol.Pong,
+    Protocol.PlayerNext,
+    Protocol.PlayerPrevious -> getKoin().get<SimpleLogCommand>()
     Protocol.ProtocolTag -> getKoin().get<ProtocolVersionUpdate>()
     else -> error("Not supported message context $protocol")
   }

@@ -352,9 +352,9 @@ class ProtocolPingHandle(
   }
 }
 
-class ProtocolPongHandle : ProtocolAction {
+class SimpleLogCommand : ProtocolAction {
   override suspend fun execute(protocolMessage: ProtocolMessage) {
-    Timber.d(protocolMessage.data.toString())
+    Timber.d("handled command: $protocolMessage")
   }
 }
 

@@ -124,7 +124,7 @@ import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.protocol.ProtocolPingHandle
-import com.kelsos.mbrc.protocol.ProtocolPongHandle
+import com.kelsos.mbrc.protocol.SimpleLogCommand
 import com.kelsos.mbrc.protocol.ProtocolVersionUpdate
 import com.kelsos.mbrc.protocol.UpdateCover
 import com.kelsos.mbrc.protocol.UpdateLastFm
@@ -279,7 +279,7 @@ val appModule = module {
   single<UpdatePlaybackPositionCommand>()
   single<UpdatePluginVersionCommand>()
   single<ProtocolPingHandle>()
-  single<ProtocolPongHandle>()
+  single<SimpleLogCommand>()
   single<ProtocolVersionUpdate>()
 
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
