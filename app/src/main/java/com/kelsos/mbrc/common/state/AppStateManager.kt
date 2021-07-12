@@ -88,7 +88,8 @@ class AppStateManager(
     scope.launch {
       val playingPosition = appState.playingPosition
       val position = playingPosition.first()
-      val newPosition = position.copy(current = position.current + UPDATE_PERIOD_MS)
+      val current = (position.current + UPDATE_PERIOD_MS).coerceAtMost(position.total)
+      val newPosition = position.copy(current = current)
       playingPosition.emit(newPosition)
     }
   }
