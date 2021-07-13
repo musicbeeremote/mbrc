@@ -72,6 +72,7 @@ class SyncWorker(
         SyncCategory.ARTISTS -> R.string.notification__sync_artists
         SyncCategory.TRACKS -> R.string.notification__sync_tracks
         SyncCategory.PLAYLISTS -> R.string.notification__sync_playlists
+        SyncCategory.COVERS -> R.string.notification__sync_covers
         else -> error("not supported")
       },
       current,

@@ -72,14 +72,17 @@ class ApiBase(
   suspend fun <T : Any, P : Any> getAll(
     request: Protocol,
     payload: List<P>,
-    clazz: KClass<T>
+    clazz: KClass<T>,
+    progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> }
   ): Flow<ResponseWithPayload<P, T>> {
     val type = Types.newParameterizedType(GenericSocketMessage::class.java, clazz.java)
 
     return flow {
       val start = now()
       val connection = apiRequestManager.openConnection()
+      var current = 0
       for (item in payload) {
+        progress(++current, payload.size)
         val entryStart = now()
         val message = SocketMessage.create(request, item)
         val response = apiRequestManager.request(connection, message)

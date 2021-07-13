@@ -2,6 +2,7 @@ package com.kelsos.mbrc.features.library.repositories
 
 import android.app.Application
 import arrow.core.Either
+import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.data.AlbumCover
 import com.kelsos.mbrc.features.library.data.Cover
@@ -25,13 +26,14 @@ class CoverCache(
 ) {
 
   private val cache = File(app.cacheDir, "covers")
+
   init {
     if (!cache.exists()) {
       cache.mkdir()
     }
   }
 
-  suspend fun cache(): Either<Throwable, Unit> = Either.catch {
+  suspend fun cache(progress: Progress = { _, _ -> }): Either<Throwable, Unit> = Either.catch {
     val covers = withContext(dispatchers.database) {
       val albumCovers = mutableListOf<AlbumCover>()
       val covers = albumRepository.getCovers()
@@ -50,7 +52,7 @@ class CoverCache(
     }
     withContext(dispatchers.network) {
       val updated = mutableListOf<AlbumCover>()
-      api.getAll(Protocol.LibraryCover, covers, Cover::class).onCompletion {
+      api.getAll(Protocol.LibraryCover, covers, Cover::class, progress).onCompletion {
         Timber.v("Updated covers for ${updated.size} albums")
         withContext(dispatchers.database) {
           albumRepository.updateCovers(updated)

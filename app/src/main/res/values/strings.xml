@@ -142,6 +142,7 @@
   <string name="media__artists">Artists</string>
   <string name="media__tracks">Tracks</string>
   <string name="media__playlists">Playlists</string>
+  <string name="media__covers">Covers</string>
   <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote:</string>
   <string name="nav_radio">Radio</string>
   <string name="radio__refresh_failed">There was an error while refreshing the radio stations</string>
@@ -177,12 +178,14 @@
   <string name="notification__sync_artists">%1$d of %2$d artists</string>
   <string name="notification__sync_tracks">%1$d of %2$d tracks</string>
   <string name="notification__sync_playlists">%1$d of %2$d playlists</string>
+  <string name="notification__sync_covers">%1$d of %2$d covers</string>
   <string name="library_container__sync_text">"Syncing %1$d of %2$d %3$s"</string>
   <string name="library__category_genres">Genres</string>
   <string name="library__category_artists">Artists</string>
   <string name="library__category_albums">Albums</string>
   <string name="library__category_tracks">Tracks</string>
   <string name="library__category_playlists">Playlists</string>
+  <string name="library__category_covers">Covers</string>
   <string name="connection_manager__host">mbrc://%1$s:%2$d</string>
   <string name="output_selection__icon_content_description">Speaker Icon</string>
   <string name="library__action_clear">Clear</string>

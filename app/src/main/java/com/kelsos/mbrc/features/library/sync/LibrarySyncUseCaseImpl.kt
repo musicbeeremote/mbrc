@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.features.library.sync
 
 import arrow.core.computations.either
+import arrow.core.handleError
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
@@ -9,6 +10,7 @@ import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.library.sync.SyncCategory.ALBUMS
 import com.kelsos.mbrc.features.library.sync.SyncCategory.ARTISTS
+import com.kelsos.mbrc.features.library.sync.SyncCategory.COVERS
 import com.kelsos.mbrc.features.library.sync.SyncCategory.GENRES
 import com.kelsos.mbrc.features.library.sync.SyncCategory.PLAYLISTS
 import com.kelsos.mbrc.features.library.sync.SyncCategory.TRACKS
@@ -58,7 +60,9 @@ class LibrarySyncUseCaseImpl(
         trackRepository.getRemote { current, total -> progress(current, total, TRACKS) }.bind()
         playlistRepository.getRemote { current, total -> progress(current, total, PLAYLISTS) }
           .bind()
-        coverCache.cache().bind()
+        coverCache.cache { current, total -> progress(current, total, COVERS) }.bind()
+      }.handleError {
+        Timber.e(it, "Sync failed")
       }.fold({ SyncResult.FAILED }, { SyncResult.SUCCESS })
     } else {
       SyncResult.NOOP

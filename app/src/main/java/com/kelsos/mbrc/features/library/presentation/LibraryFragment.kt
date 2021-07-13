@@ -73,6 +73,7 @@ class LibraryFragment(
     SyncCategory.ALBUMS -> getString(R.string.library__category_albums)
     SyncCategory.TRACKS -> getString(R.string.library__category_tracks)
     SyncCategory.PLAYLISTS -> getString(R.string.library__category_playlists)
+    SyncCategory.COVERS -> getString(R.string.library__category_covers)
     else -> ""
   }
 
@@ -188,7 +189,7 @@ class LibraryFragment(
     val updateStatusJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
       viewModel.syncState.collect {
         binding.libraryStatsGenreValue.text = it.genres.toString()
-        binding.libraryStatsArtistLabel.text = it.artists.toString()
+        binding.libraryStatsArtistValue.text = it.artists.toString()
         binding.libraryStatsAlbumValue.text = it.albums.toString()
         binding.libraryStatsTrackValue.text = it.tracks.toString()
         binding.libraryStatsPlaylistValue.text = it.playlists.toString()

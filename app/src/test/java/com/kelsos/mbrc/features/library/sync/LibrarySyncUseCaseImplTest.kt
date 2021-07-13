@@ -65,7 +65,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     every { syncMetrics.librarySyncStarted() } answers { }
     every { syncMetrics.librarySyncFailed() } answers { }
     coEvery { connectivityVerifier.verify() } coAnswers { true.right() }
-    coEvery { coverCache.cache() } coAnswers { Unit.right() }
+    coEvery { coverCache.cache(any()) } coAnswers { Unit.right() }
   }
 
   @After
