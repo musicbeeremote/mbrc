@@ -26,6 +26,7 @@ import org.koin.core.component.KoinComponent
 @OptIn(KoinApiExtension::class)
 class CommandFactoryImpl : CommandFactory, KoinComponent {
 
+  @Suppress("ComplexMethod")
   override fun create(protocol: Protocol): ProtocolAction = when (protocol) {
     Protocol.NowPlayingTrack -> getKoin().get<UpdateNowPlayingTrack>()
     Protocol.NowPlayingCover -> getKoin().get<UpdateCover>()

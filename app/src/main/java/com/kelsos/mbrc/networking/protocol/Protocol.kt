@@ -122,6 +122,7 @@ sealed class Protocol(val context: String) {
 
     const val UNKNOWN_COMMAND = "unknowncommand"
 
+    @Suppress("ComplexMethod")
     fun fromString(context: String): Protocol = when (context) {
       PLAYER -> Player
       PROTOCOL_TAG -> ProtocolTag

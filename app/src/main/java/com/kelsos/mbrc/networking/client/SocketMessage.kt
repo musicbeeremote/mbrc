@@ -13,6 +13,10 @@ data class SocketMessage(
   val data: Any = ""
 ) {
 
+  override fun toString(): String {
+    return "{ context=$context, data=$data }"
+  }
+
   companion object {
     fun create(protocol: Protocol, data: Any = ""): SocketMessage {
       return SocketMessage(protocol.context, data)

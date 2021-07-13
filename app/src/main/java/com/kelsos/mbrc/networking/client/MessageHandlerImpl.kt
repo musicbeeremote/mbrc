@@ -4,79 +4,93 @@ import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.networking.connections.ConnectionState
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
-import com.kelsos.mbrc.networking.protocol.CommandExecutor
+import com.kelsos.mbrc.networking.protocol.CommandFactory
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.preferences.ClientInformationStore
-import com.squareup.moshi.Moshi
+import com.kelsos.mbrc.protocol.ProtocolAction
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.HashMap
 
 class MessageHandlerImpl(
-  private val commandExecutor: CommandExecutor,
+  private val commandFactory: CommandFactory,
   private val messageQueue: MessageQueue,
   private val uiMessages: UiMessages,
   private val connectionState: ConnectionState,
   private val clientInformationStore: ClientInformationStore,
   private val dispatchers: AppCoroutineDispatchers,
-  private val moshi: Moshi
 ) : MessageHandler {
-  private val adapter by lazy { moshi.adapter(SocketMessage::class.java) }
 
-  override suspend fun handleMessage(rawMessage: String) {
-    val replies = rawMessage.split("\r\n".toRegex()).dropLastWhile(String::isEmpty)
+  private var commands: MutableMap<Protocol, ProtocolAction> = HashMap()
 
-    replies.forEach { message -> process(message) }
-  }
+  override suspend fun process(message: SocketMessage) = withContext(dispatchers.network) {
+    val context = Protocol.fromString(message.context)
 
-  private suspend fun process(message: String) = withContext(dispatchers.io) {
-    val value = runCatching { adapter.fromJson(message) }
-    if (value.isFailure) {
-      return@withContext
-    }
-    val node = checkNotNull(value.getOrThrow()) { "socket message should not be null" }
-    val context = Protocol.fromString(node.context)
-
-    Timber.v("received message with context -> ${node.context}:${node.data}")
+    Timber.v("received message with context -> ${message.context}:${message.data}")
 
     when (context) {
-      Protocol.ClientNotAllowed -> {
-        clientNotAllowed()
-        return@withContext
-      }
-      Protocol.CommandUnavailable -> {
-        uiMessages.messages.emit(UiMessage.PartyModeCommandUnavailable)
-        return@withContext
-      }
-      Protocol.UnknownCommand -> {
-        return@withContext
-      }
-      else -> {
-        val status = connectionState.connection.firstOrNull() ?: ConnectionStatus.Off
+      Protocol.ClientNotAllowed -> clientNotAllowed()
+      Protocol.CommandUnavailable -> uiMessages.messages.emit(UiMessage.PartyModeCommandUnavailable)
+      Protocol.UnknownCommand -> Unit
+      else -> handle(message, context)
+    }
+  }
 
-        val dataPayload = node.data
+  private suspend fun handle(
+    message: SocketMessage,
+    context: Protocol
+  ) {
 
-        if (context == Protocol.Player) {
-          sendProtocolPayload()
-          return@withContext
-        } else if (context == Protocol.ProtocolTag) {
-          val protocolVersion: Int = try {
-            dataPayload.toString().toInt()
-          } catch (ignore: Exception) {
-            2
-          }
+    val data = message.data
 
-          commandExecutor.queue(MessageEvent(Protocol.ProtocolTag, protocolVersion))
-          connectionState.connection.emit(ConnectionStatus.Active)
-          messageQueue.queue(SocketMessage.create(Protocol.Init))
-          return@withContext
-        }
+    if (handshake(context, data)) {
+      return
+    }
 
-        if (status == ConnectionStatus.Active) {
-          commandExecutor.queue(MessageEvent(context, dataPayload))
-        }
+    val status = connectionState.connection.firstOrNull() ?: ConnectionStatus.Off
+    if (status == ConnectionStatus.Active) {
+      execute(MessageEvent(context, data))
+    }
+  }
+
+  private suspend fun handshake(
+    context: Protocol,
+    dataPayload: Any
+  ): Boolean = when (context) {
+    Protocol.Player -> {
+      sendProtocolPayload()
+      true
+    }
+    Protocol.ProtocolTag -> {
+      val protocolVersion: Int = try {
+        dataPayload.toString().toInt()
+      } catch (ignore: Exception) {
+        2
       }
+
+      execute(MessageEvent(Protocol.ProtocolTag, protocolVersion))
+      connectionState.connection.emit(ConnectionStatus.Active)
+      messageQueue.queue(SocketMessage.create(Protocol.Init))
+      true
+    }
+    else -> false
+  }
+
+  private suspend fun execute(event: MessageEvent) {
+    get(event.type)
+      .onSuccess { it.execute(event) }
+      .onFailure { Timber.e(it, "Failed to execute command for $event") }
+  }
+
+  private fun get(context: Protocol) = runCatching {
+    val command = commands[context]
+    if (command != null) {
+      return@runCatching command
+    }
+    commandFactory.create(context).also { commandInstance ->
+      commands[context] = commandInstance
     }
   }
 
@@ -91,13 +105,5 @@ class MessageHandlerImpl(
   private suspend fun clientNotAllowed() {
     uiMessages.messages.emit(UiMessage.NotAllowed)
     connectionState.connection.emit(ConnectionStatus.Off)
-  }
-
-  override fun start() {
-    commandExecutor.start()
-  }
-
-  override fun stop() {
-    commandExecutor.stop()
   }
 }

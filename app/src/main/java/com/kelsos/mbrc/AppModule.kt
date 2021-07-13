@@ -103,8 +103,6 @@ import com.kelsos.mbrc.networking.connections.ConnectionRepositoryImpl
 import com.kelsos.mbrc.networking.connections.ConnectionState
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscoveryImpl
-import com.kelsos.mbrc.networking.protocol.CommandExecutor
-import com.kelsos.mbrc.networking.protocol.CommandExecutorImpl
 import com.kelsos.mbrc.networking.protocol.CommandFactory
 import com.kelsos.mbrc.networking.protocol.CommandFactoryImpl
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
@@ -124,8 +122,8 @@ import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.protocol.ProtocolPingHandle
-import com.kelsos.mbrc.protocol.SimpleLogCommand
 import com.kelsos.mbrc.protocol.ProtocolVersionUpdate
+import com.kelsos.mbrc.protocol.SimpleLogCommand
 import com.kelsos.mbrc.protocol.UpdateCover
 import com.kelsos.mbrc.protocol.UpdateLastFm
 import com.kelsos.mbrc.protocol.UpdateLfmRating
@@ -213,7 +211,6 @@ val appModule = module {
 
   singleBy<MessageQueue, MessageQueueImpl>()
   singleBy<MessageHandler, MessageHandlerImpl>()
-  singleBy<CommandExecutor, CommandExecutorImpl>()
 
   singleBy<IClientConnectionManager, ClientConnectionManager>()
   singleBy<CommandFactory, CommandFactoryImpl>()
@@ -282,13 +279,13 @@ val appModule = module {
   single<SimpleLogCommand>()
   single<ProtocolVersionUpdate>()
 
+  single<SocketActivityChecker>()
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
   singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
 
   factoryBy<ClientInformationModel, ClientInformationModelImpl>()
   factoryBy<MoveManager, MoveManagerImpl>()
 
-  factory<SocketActivityChecker>()
   factory<RemoteBroadcastReceiver>()
   factory<SessionNotificationManager>()
   factory<RemoteSessionManager>()
