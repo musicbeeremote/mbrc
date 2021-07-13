@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.state.domain.PlayerState
@@ -14,6 +16,8 @@ import com.kelsos.mbrc.common.ui.extensions.getDimens
 import com.kelsos.mbrc.databinding.FragmentMiniControlBinding
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -32,30 +36,36 @@ class MiniControlFragment : Fragment() {
 
     val playPause = binding.miniControlPlayPause
     lifecycleScope.launch {
-      viewModel.playerStatus.collect { status ->
-        when (status.state) {
-          PlayerState.Playing -> playPause.setImageResource(R.drawable.ic_action_pause)
-          else -> playPause.setImageResource(R.drawable.ic_action_play)
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.playerStatus.map { it.state }.distinctUntilChanged().collect { state ->
+          when (state) {
+            PlayerState.Playing -> playPause.setImageResource(R.drawable.ic_action_pause)
+            else -> playPause.setImageResource(R.drawable.ic_action_play)
+          }
         }
       }
     }
 
     lifecycleScope.launch {
-      viewModel.playingTrack.collect { track ->
-        binding.miniControlArtist.text = getString(
-          R.string.mini_control__artist,
-          track.artist,
-          track.album
-        )
-        binding.miniControlTitle.text = track.title
-        updateCover(track.coverUrl)
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.playingTrack.collect { track ->
+          binding.miniControlArtist.text = getString(
+            R.string.mini_control__artist,
+            track.artist,
+            track.album
+          )
+          binding.miniControlTitle.text = track.title
+          updateCover(track.coverUrl)
+        }
       }
     }
 
     lifecycleScope.launch {
-      viewModel.playingPosition.collect { position ->
-        binding.miniControlProgress.max = position.total.toInt()
-        binding.miniControlProgress.progress = position.current.toInt()
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.playingPosition.collect { position ->
+          binding.miniControlProgress.max = position.total.toInt()
+          binding.miniControlProgress.progress = position.current.toInt()
+        }
       }
     }
 

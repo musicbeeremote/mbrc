@@ -9,7 +9,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.changelog.ChangelogDialog
@@ -68,34 +70,42 @@ class PlayerFragment : Fragment() {
     }
 
     lifecycleScope.launch {
-      viewModel.playerStatus.collect { status ->
-        updateStatus(status)
-      }
-    }
-
-    lifecycleScope.launch {
-      viewModel.playingPosition.collect { position ->
-        binding.playerScreenTotalProgress.text = position.progress()
-        binding.playerScreenProgress.progress = position.current.toInt()
-        binding.playerScreenProgress.max = position.total.toInt()
-      }
-    }
-
-    lifecycleScope.launch {
-      viewModel.playingTrackRating.collect { rating ->
-        if (rating.isFavorite()) {
-          love?.setIcon(R.drawable.ic_favorite_black_24dp)
-        } else {
-          love?.setIcon(R.drawable.ic_favorite_border_black_24dp)
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.playerStatus.collect { status ->
+          updateStatus(status)
         }
       }
     }
 
     lifecycleScope.launch {
-      viewModel.playingTrack.collect { track ->
-        binding.playerScreenAlbumCover.loadImage(track.coverUrl)
-        binding.playerScreenTrackArtist.text = track.artistInfo()
-        binding.playerScreenTrackTitle.text = track.title
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.playingPosition.collect { position ->
+          binding.playerScreenTotalProgress.text = position.progress()
+          binding.playerScreenProgress.progress = position.current.toInt()
+          binding.playerScreenProgress.max = position.total.toInt()
+        }
+      }
+    }
+
+    lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.playingTrackRating.collect { rating ->
+          if (rating.isFavorite()) {
+            love?.setIcon(R.drawable.ic_favorite_black_24dp)
+          } else {
+            love?.setIcon(R.drawable.ic_favorite_border_black_24dp)
+          }
+        }
+      }
+    }
+
+    lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.playingTrack.collect { track ->
+          binding.playerScreenAlbumCover.loadImage(track.coverUrl)
+          binding.playerScreenTrackArtist.text = track.artistInfo()
+          binding.playerScreenTrackTitle.text = track.title
+        }
       }
     }
 
