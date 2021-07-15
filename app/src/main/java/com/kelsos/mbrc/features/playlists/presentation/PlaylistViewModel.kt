@@ -2,6 +2,7 @@ package com.kelsos.mbrc.features.playlists.presentation
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.features.playlists.domain.Playlist
@@ -18,7 +19,7 @@ class PlaylistViewModel(
   private val userActionUseCase: UserActionUseCase
 ) : BaseViewModel<PlaylistUiMessages>() {
 
-  val playlists: Flow<PagingData<Playlist>> = repository.getAll()
+  val playlists: Flow<PagingData<Playlist>> = repository.getAll().cachedIn(viewModelScope)
 
   fun play(path: String) {
     viewModelScope.launch(dispatchers.network) {
