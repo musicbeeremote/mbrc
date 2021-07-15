@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface GenreDao {
@@ -14,6 +15,9 @@ interface GenreDao {
 
   @Insert(onConflict = OnConflictStrategy.ABORT)
   fun insertAll(list: List<GenreEntity>)
+
+  @Update()
+  fun update(list: List<GenreEntity>)
 
   @Query("select * from genre order by genre")
   fun getAll(): PagingSource<Int, GenreEntity>

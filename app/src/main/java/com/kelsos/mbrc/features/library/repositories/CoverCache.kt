@@ -35,16 +35,16 @@ class CoverCache(
 
   suspend fun cache(progress: Progress = { _, _ -> }): Either<Throwable, Unit> = Either.catch {
     val covers = withContext(dispatchers.database) {
-      val albumCovers = mutableListOf<AlbumCover>()
       val covers = albumRepository.getCovers()
-      withContext(dispatchers.network) {
+      val albumCovers = mutableListOf<AlbumCover>()
+      withContext(dispatchers.io) {
         val files = cache.listFiles()?.map { it.nameWithoutExtension } ?: emptyList()
 
         for (cover in covers) {
           if (cover.hash.isNullOrBlank() || files.contains(cover.key())) {
             albumCovers.add(cover)
           } else {
-            albumCovers.add(cover.copy(hash = ""))
+            albumCovers.add(cover.copy(hash = null))
           }
         }
       }
@@ -81,6 +81,7 @@ class CoverCache(
             val file = File(cache, payload.key())
             val decodeBase64 = cover.decodeBase64()
             if (decodeBase64 != null) {
+              Timber.v("saving cover for $payload -> ${file.path}")
               file.sink().buffer().use { sink -> sink.write(decodeBase64) }
             }
             updated.add(payload.copy(hash = hash))

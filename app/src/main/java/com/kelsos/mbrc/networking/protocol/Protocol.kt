@@ -55,6 +55,8 @@ sealed class Protocol(val context: String) {
   object UnknownCommand : Protocol(UNKNOWN_COMMAND)
   object LibraryCover : Protocol(LIBRARY_COVER)
 
+  override fun toString(): String = context
+
   companion object {
     const val PLAYER = "player"
     const val PROTOCOL_TAG = "protocol"
