@@ -9,7 +9,6 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import androidx.annotation.CallSuper
 import androidx.core.content.getSystemService
-import androidx.multidex.MultiDexApplication
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
@@ -24,7 +23,7 @@ import timber.log.Timber
 
 @SuppressLint("Registered")
 @OptIn(KoinApiExtension::class, KoinExperimentalAPI::class)
-open class App : MultiDexApplication() {
+open class App : Application() {
 
   @CallSuper
   override fun onCreate() {
