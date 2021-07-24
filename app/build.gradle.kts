@@ -90,6 +90,7 @@ android {
 
   buildFeatures {
     viewBinding = true
+    compose = true
   }
 
   defaultConfig {
@@ -127,6 +128,10 @@ android {
       "-Xopt-in=kotlin.RequiresOptIn",
       "-Xopt-in=kotlin.time.ExperimentalTime",
     )
+  }
+
+  composeOptions {
+    kotlinCompilerExtensionVersion = "1.0.0-rc02"
   }
 
   signingConfigs {
@@ -240,12 +245,14 @@ dependencies {
   testImplementation(libs.threetenbp)
 
   implementation(libs.arrowKt)
+  implementation(libs.androidx.activity.activityCompose)
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.constraintlayout)
   implementation(libs.androidx.datastore)
   implementation(libs.androidx.fragment.ktx)
+  implementation(libs.androidx.navigation.navigationCompose)
   implementation(libs.androidx.media)
   implementation(libs.androidx.paging.runtime.ktx)
   implementation(libs.androidx.preference.ktx)
@@ -253,10 +260,12 @@ dependencies {
   implementation(libs.androidx.swiperefresh)
   implementation(libs.androidx.viewpager2)
   implementation(libs.androidx.work.ktx)
+  implementation(libs.bundles.androidx.compose)
   implementation(libs.bundles.androidx.lifecycle)
   implementation(libs.bundles.androidx.navigation)
   implementation(libs.bundles.androidx.room)
   implementation(libs.bundles.coroutines)
+  implementation(libs.bundles.google.accompanist)
   implementation(libs.bundles.koin)
   implementation(libs.google.material)
   implementation(libs.google.protobuf.javalite)
