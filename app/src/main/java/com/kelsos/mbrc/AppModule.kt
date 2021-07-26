@@ -284,7 +284,6 @@ val appModule = module {
   factory<MoveManagerImpl>() bind MoveManager::class
 
   factory<RemoteBroadcastReceiver>()
-  factory<SessionNotificationManager>()
   factory<RemoteSessionManager>()
   factory<RemoteVolumeProvider>()
   factory<LogHelper>()
