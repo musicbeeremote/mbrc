@@ -39,8 +39,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.experimental.builder.singleBy
+import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import timber.log.Timber
@@ -227,11 +228,11 @@ class ConnectivityVerifierImplTest : KoinTest {
     single { Moshi.Builder().build() }
     single { connectionRepository }
     single { dao }
-    singleBy<RequestManager, RequestManagerImpl>()
-    singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
-    singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
-    singleBy<SerializationAdapter, SerializationAdapterImpl>()
-    singleBy<ClientInformationStore, ClientInformationStoreImpl>()
+    single<RequestManagerImpl>() bind RequestManager::class
+    single<ConnectivityVerifierImpl>() bind ConnectivityVerifier::class
+    single<DeserializationAdapterImpl>() bind DeserializationAdapter::class
+    single<SerializationAdapterImpl>() bind SerializationAdapter::class
+    single<ClientInformationStoreImpl>() bind ClientInformationStore::class
     single<ClientInformationModel> {
       ClientInformationModelImpl(
         PreferenceManager.getDefaultSharedPreferences(

@@ -32,11 +32,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.experimental.builder.singleBy
+import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import java.util.ArrayList
 import java.util.concurrent.CountDownLatch
 
 @RunWith(AndroidJUnit4::class)
@@ -337,7 +337,7 @@ class ConnectionRepositoryTest : KoinTest {
 
     single { mockk<RemoteServiceDiscovery>() }
 
-    singleBy<ConnectionRepository, ConnectionRepositoryImpl>()
+    single<ConnectionRepositoryImpl>() bind ConnectionRepository::class
     single {
       val resources = mockk<Resources>()
       every { resources.getString(any()) } returns "preferences_key"

@@ -15,12 +15,10 @@ import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
 import com.kelsos.mbrc.preferences.CallAction
 import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.runBlocking
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
-@OptIn(KoinApiExtension::class)
 class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
   private val settingsManager: SettingsManager by inject()

@@ -33,8 +33,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.experimental.builder.singleBy
+import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.util.concurrent.CountDownLatch
@@ -60,7 +61,7 @@ class NowPlayingRepositoryTest : KoinTest {
     val modules = listOf(
       module {
         single { dao }
-        singleBy<NowPlayingRepository, NowPlayingRepositoryImpl>()
+        single<NowPlayingRepositoryImpl>() bind NowPlayingRepository::class
         single { apiBase }
       },
       testDispatcherModule

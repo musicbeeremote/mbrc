@@ -7,7 +7,7 @@ androidx-test-espresso = ["androidx-test-espresso-intents", "androidx-test-espre
 coroutines = ["kotlin-coroutines-core", "kotlin-coroutines-android"]
 google-accompanist = ["google-accompanistCoil", "google-accompanistFlowLayout", "google-accompanistPager", "google-accompanistPagerIndicators", "google-accompanistSystemUIController"]
 google-firebase = ["google-firebase-analytics-ktx", "google-firebase-crashlytics-ktx", "google-firebase-perf-ktx"]
-koin = ["koin-android", "koin-viewmodel", "koin-ext", "koin-scope", "koin-fragment", "koin-workmanager"]
+koin = ["koin-android", "koin-workmanager", "koin-compose"]
 
 [libraries]
 android-threetenbp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "android-threetenbp" }
@@ -80,11 +80,8 @@ gradlePlugin-protobuf = { module = "gradle.plugin.com.google.protobuf:protobuf-g
 gradlePlugin-safeArgs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "gradlePlugin-safeArgs" }
 gradlePlugin-versionsBenManes = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradlePlugin-versionsBenManes" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koin-ext = { module = "io.insert-koin:koin-androidx-ext", version.ref = "koin" }
-koin-fragment = { module = "io.insert-koin:koin-androidx-fragment", version.ref = "koin" }
-koin-scope = { module = "io.insert-koin:koin-androidx-scope", version.ref = "koin" }
+koin-compose = { module ="io.insert-koin:koin-androidx-compose", version.ref ="koin"}
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
-koin-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koin" }
 koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin" }
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
@@ -143,7 +140,7 @@ gradlePlugin-performance = "1.4.0"
 gradlePlugin-protobuf = "0.8.16"
 gradlePlugin-safeArgs = "2.4.0-alpha05"
 gradlePlugin-versionsBenManes = "0.39.0"
-koin = "2.2.2"
+koin = "3.1.2"
 kotlin = "1.5.10"
 kotlinCoroutines = "1.5.0"
 lifecycleViewmodelCompose = "1.0.0-alpha07"

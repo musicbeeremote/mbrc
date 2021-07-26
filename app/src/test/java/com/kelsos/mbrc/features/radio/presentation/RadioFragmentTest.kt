@@ -35,7 +35,7 @@ import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
-import org.koin.experimental.builder.single
+import org.koin.dsl.single
 
 @RunWith(AndroidJUnit4::class)
 class RadioFragmentTest {

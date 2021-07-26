@@ -149,55 +149,52 @@ import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import org.koin.androidx.experimental.dsl.viewModel
 import org.koin.androidx.fragment.dsl.fragment
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.workmanager.dsl.worker
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
+import org.koin.dsl.factory
 import org.koin.dsl.module
-import org.koin.experimental.builder.factory
-import org.koin.experimental.builder.factoryBy
-import org.koin.experimental.builder.single
-import org.koin.experimental.builder.singleBy
+import org.koin.dsl.single
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-@OptIn(KoinApiExtension::class)
 val appModule = module {
   single { Moshi.Builder().build() }
-  singleBy<QueueUseCase, QueueUseCaseImpl>()
+  single<QueueUseCaseImpl>() bind QueueUseCase::class
 
-  singleBy<ConnectionRepository, ConnectionRepositoryImpl>()
+  single<ConnectionRepositoryImpl>() bind ConnectionRepository::class
 
-  singleBy<TrackRepository, TrackRepositoryImpl>()
-  singleBy<AlbumRepository, AlbumRepositoryImpl>()
-  singleBy<ArtistRepository, ArtistRepositoryImpl>()
-  singleBy<GenreRepository, GenreRepositoryImpl>()
+  single<TrackRepositoryImpl>() bind TrackRepository::class
+  single<AlbumRepositoryImpl>() bind AlbumRepository::class
+  single<ArtistRepositoryImpl>() bind ArtistRepository::class
+  single<GenreRepositoryImpl>() bind GenreRepository::class
 
-  singleBy<NowPlayingRepository, NowPlayingRepositoryImpl>()
-  singleBy<PlaylistRepository, PlaylistRepositoryImpl>()
+  single<NowPlayingRepositoryImpl>() bind NowPlayingRepository::class
+  single<PlaylistRepositoryImpl>() bind PlaylistRepository::class
   single<CoverCache>()
   single<SyncStatProvider>()
 
-  singleBy<SerializationAdapter, SerializationAdapterImpl>()
-  singleBy<DeserializationAdapter, DeserializationAdapterImpl>()
-  singleBy<DatabaseTransactionRunner, DatabaseTransactionRunnerImpl>()
-  singleBy<RequestManager, RequestManagerImpl>()
+  single<SerializationAdapterImpl>() bind SerializationAdapter::class
+  single<DeserializationAdapterImpl>() bind DeserializationAdapter::class
+  single<DatabaseTransactionRunnerImpl>() bind DatabaseTransactionRunner::class
+  single<RequestManagerImpl>() bind RequestManager::class
 
-  singleBy<UserActionUseCase, UserActionUseCaseImpl>()
+  single<UserActionUseCaseImpl>() bind UserActionUseCase::class
 
-  singleBy<ClientConnectionUseCase, ClientConnectionUseCaseImpl>()
+  single<ClientConnectionUseCaseImpl>() bind ClientConnectionUseCase::class
 
-  singleBy<SettingsManager, SettingsManagerImpl>()
-  singleBy<PlayingTrackCache, PlayingTrackCacheImpl>()
+  single<SettingsManagerImpl>() bind SettingsManager::class
+  single<PlayingTrackCacheImpl>() bind PlayingTrackCache::class
 
-  singleBy<LibrarySyncUseCase, LibrarySyncUseCaseImpl>()
-  singleBy<SyncWorkHandler, SyncWorkHandlerImpl>()
+  single<LibrarySyncUseCaseImpl>() bind LibrarySyncUseCase::class
+  single<SyncWorkHandlerImpl>() bind SyncWorkHandler::class
 
-  singleBy<RadioRepository, RadioRepositoryImpl>()
-  singleBy<ClientInformationStore, ClientInformationStoreImpl>()
-  singleBy<VolumeModifyUseCase, VolumeModifyUseCaseImpl>()
-  singleBy<OutputApi, OutputApiImpl>()
+  single<RadioRepositoryImpl>() bind RadioRepository::class
+  single<ClientInformationStoreImpl>() bind ClientInformationStore::class
+  single<VolumeModifyUseCaseImpl>() bind VolumeModifyUseCase::class
+  single<OutputApiImpl>() bind OutputApi::class
 
   single<AppState>()
   single<ConnectionState>()
@@ -209,22 +206,22 @@ val appModule = module {
     } as Executor
   }
 
-  singleBy<MessageQueue, MessageQueueImpl>()
-  singleBy<MessageHandler, MessageHandlerImpl>()
+  single<MessageQueueImpl>() bind MessageQueue::class
+  single<MessageHandlerImpl>() bind MessageHandler::class
 
-  singleBy<IClientConnectionManager, ClientConnectionManager>()
-  singleBy<CommandFactory, CommandFactoryImpl>()
-  singleBy<UiMessages, UiMessageQueueImpl>()
-  singleBy<RemoteServiceDiscovery, RemoteServiceDiscoveryImpl>()
+  single<ClientConnectionManager>() bind IClientConnectionManager::class
+  single<CommandFactoryImpl>() bind CommandFactory::class
+  single<UiMessageQueueImpl>() bind UiMessages::class
+  single<RemoteServiceDiscoveryImpl>() bind RemoteServiceDiscovery::class
 
-  singleBy<INotificationManager, SessionNotificationManager>()
-  singleBy<ServiceChecker, ServiceCheckerImpl>()
+  single<SessionNotificationManager>() bind INotificationManager::class
+  single<ServiceCheckerImpl>() bind ServiceChecker::class
   single<AppStateManager>()
 
   single<PopupActionHandler>()
   single<DefaultActionPreferenceStore>()
 
-  singleBy<WidgetUpdater, WidgetUpdaterImpl>()
+  single<WidgetUpdaterImpl>() bind WidgetUpdater::class
 
   single {
     val database = Executors.newSingleThreadExecutor { runnable ->
@@ -245,7 +242,7 @@ val appModule = module {
   single {
     WorkManager.getInstance(get())
   }
-  singleBy<WorkHandler, WorkHandlerImpl>()
+  single<WorkHandlerImpl>() bind WorkHandler::class
 
   single<ApiBase>()
 
@@ -281,10 +278,10 @@ val appModule = module {
 
   single<SocketActivityChecker>()
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
-  singleBy<ConnectivityVerifier, ConnectivityVerifierImpl>()
+  single<ConnectivityVerifierImpl>() bind ConnectivityVerifier::class
 
-  factoryBy<ClientInformationModel, ClientInformationModelImpl>()
-  factoryBy<MoveManager, MoveManagerImpl>()
+  factory<ClientInformationModelImpl>() bind ClientInformationModel::class
+  factory<MoveManagerImpl>() bind MoveManager::class
 
   factory<RemoteBroadcastReceiver>()
   factory<SessionNotificationManager>()

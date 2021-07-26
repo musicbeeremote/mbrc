@@ -20,10 +20,8 @@ import com.kelsos.mbrc.protocol.UpdateRating
 import com.kelsos.mbrc.protocol.UpdateRepeat
 import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 
-@OptIn(KoinApiExtension::class)
 class CommandFactoryImpl : CommandFactory, KoinComponent {
 
   @Suppress("ComplexMethod")
