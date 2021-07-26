@@ -78,15 +78,15 @@ class NavigationActivity : AppCompatActivity() {
     @ColorRes val colorId: Int
     when (connectionStatus) {
       ConnectionStatus.Off -> {
-        resId = R.string.drawer_connection_status_off
+        resId = R.string.drawer__connection__off
         colorId = R.color.black
       }
       ConnectionStatus.On -> {
-        resId = R.string.drawer_connection_status_on
+        resId = R.string.drawer__connection__on
         colorId = R.color.accent
       }
       ConnectionStatus.Active -> {
-        resId = R.string.drawer_connection_status_active
+        resId = R.string.drawer__connection__active
         colorId = R.color.power_on
       }
     }

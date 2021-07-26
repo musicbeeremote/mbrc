@@ -22,9 +22,9 @@
   <string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
   <string name="now_playing_search">Search</string>
   <string name="preferences_open_source">open_source</string>
-  <string name="drawer_connection_status_off">Offline</string>
-  <string name="drawer_connection_status_on">Authenticating</string>
-  <string name="drawer_connection_status_active">Connected</string>
+  <string name="drawer__connection__off">Offline</string>
+  <string name="drawer__connection__on">Authenticating</string>
+  <string name="drawer__connection__active">Connected</string>
   <string name="settings_dialog_hint_name">Computer name</string>
   <string name="settings_dialog_hint_host">Hostname / IP</string>
   <string name="settings_dialog_hint_port">Port number</string>
@@ -193,4 +193,5 @@
   <string name="library_album_tracks__title">%1$s by %2$s</string>
   <string name="library__action_only_album_artists">Display only album artists</string>
   <string name="library_details__empty_content">Placeholder image for an empty list</string>
+  <string name="drawer__connect__content">Connect to the plugin</string>
 </resources>
