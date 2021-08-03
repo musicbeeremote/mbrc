@@ -7,7 +7,7 @@ import androidx.paging.PagingSource
 import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.threeten.bp.Instant
+import java.time.Instant
 
 fun <T : Any, I : Any> PagingSource<Int, T>.paged(
   transform: suspend (value: T) -> I

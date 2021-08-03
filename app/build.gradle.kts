@@ -241,9 +241,6 @@ dependencies {
   testImplementation(libs.mockk)
   testImplementation(libs.robolectric)
 
-  //The android library only will fail the robolectric tests
-  testImplementation(libs.threetenbp)
-
   implementation(libs.arrowKt)
   implementation(libs.androidx.activity.activityCompose)
   implementation(libs.androidx.annotation)
@@ -276,8 +273,6 @@ dependencies {
 
   kapt(libs.androidx.room.compiler)
   kapt(libs.squareup.moshi.codegen)
-
-  implementation(libs.android.threetenbp)
 
   debugImplementation(libs.androidx.fragment.testing)
   debugImplementation(libs.squareup.leakcanary)

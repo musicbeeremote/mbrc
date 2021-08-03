@@ -9,7 +9,6 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import androidx.annotation.CallSuper
 import androidx.core.content.getSystemService
-import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.fragment.koin.fragmentFactory
@@ -49,10 +48,6 @@ open class App : Application() {
   }
 
   protected open fun initialize() {
-    if (!testMode()) {
-      AndroidThreeTen.init(this)
-    }
-
     startKoin {
       androidContext(this@App)
       fragmentFactory()

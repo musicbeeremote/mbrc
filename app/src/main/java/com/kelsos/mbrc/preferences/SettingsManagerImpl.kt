@@ -9,8 +9,8 @@ import com.kelsos.mbrc.logging.FileLoggingTree
 import com.kelsos.mbrc.preferences.CallAction.Companion.NONE
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.threeten.bp.Instant
 import timber.log.Timber
+import java.time.Instant
 
 class SettingsManagerImpl(
   private val context: Application,

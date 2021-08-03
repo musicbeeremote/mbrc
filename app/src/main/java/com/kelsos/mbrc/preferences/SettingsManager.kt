@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.preferences
 
 import kotlinx.coroutines.flow.StateFlow
-import org.threeten.bp.Instant
+import java.time.Instant
 
 interface SettingsManager {
   fun onlyAlbumArtists(): StateFlow<Boolean>
