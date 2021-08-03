@@ -19,7 +19,6 @@ plugins {
   id("com.google.protobuf")
   id("org.jmailen.kotlinter")
   id("io.gitlab.arturbosch.detekt")
-  id("androidx.navigation.safeargs.kotlin")
   id("idea")
   id("jacoco")
   id("com.google.firebase.firebase-perf")
@@ -131,7 +130,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.0.0-rc02"
+    kotlinCompilerExtensionVersion = libs.versions.compose.get()
   }
 
   signingConfigs {
@@ -261,6 +260,7 @@ dependencies {
   implementation(libs.bundles.androidx.lifecycle)
   implementation(libs.bundles.androidx.navigation)
   implementation(libs.bundles.androidx.room)
+  implementation(libs.bundles.coil)
   implementation(libs.bundles.coroutines)
   implementation(libs.bundles.google.accompanist)
   implementation(libs.bundles.koin)

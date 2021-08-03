@@ -2,17 +2,18 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 buildscript {
   dependencies {
-    val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs") as org.gradle.accessors.dm.LibrariesForLibs
+    val libs = project.extensions.getByType<VersionCatalogsExtension>()
+      .named("libs") as org.gradle.accessors.dm.LibrariesForLibs
     classpath(libs.gradlePlugin.kotlin)
     classpath(libs.gradlePlugin.android)
     classpath(libs.gradlePlugin.crashlytics)
     classpath(libs.gradlePlugin.detekt)
     classpath(libs.gradlePlugin.gms)
-    classpath(libs.gradlePlugin.safeArgs)
     classpath(libs.gradlePlugin.performance)
     classpath(libs.gradlePlugin.kotlinter)
     classpath(libs.gradlePlugin.protobuf)
     classpath(libs.gradlePlugin.versionsBenManes)
+    classpath(libs.jacoco)
   }
 
   repositories {
@@ -23,9 +24,9 @@ buildscript {
   }
 }
 
-apply(plugin="com.github.ben-manes.versions")
-apply(plugin="io.gitlab.arturbosch.detekt")
-apply(plugin="org.jmailen.kotlinter")
+apply(plugin = "com.github.ben-manes.versions")
+apply(plugin = "io.gitlab.arturbosch.detekt")
+apply(plugin = "org.jmailen.kotlinter")
 
 allprojects {
   buildscript {

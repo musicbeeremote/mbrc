@@ -4,8 +4,9 @@ androidx-lifecycle = ["androidx-lifecycle-runtime-ktx", "androidx-lifecycle-view
 androidx-navigation = ["androidx-navigation-ui-ktx", "androidx-navigation-fragment-ktx", "androidx-navigation-navigationCompose"]
 androidx-room = ["androidx-room-runtime", "androidx-room-ktx"]
 androidx-test-espresso = ["androidx-test-espresso-intents", "androidx-test-espresso-core", "androidx-test-espresso-contrib"]
+coil = ["coilKt-coil", "coilKt-coilCompose"]
 coroutines = ["kotlin-coroutines-core", "kotlin-coroutines-android"]
-google-accompanist = ["google-accompanistCoil", "google-accompanistFlowLayout", "google-accompanistPager", "google-accompanistPagerIndicators", "google-accompanistSystemUIController"]
+google-accompanist = ["google-accompanistFlowLayout", "google-accompanistPager", "google-accompanistPagerIndicators", "google-accompanistSystemUIController"]
 google-firebase = ["google-firebase-analytics-ktx", "google-firebase-crashlytics-ktx", "google-firebase-perf-ktx"]
 koin = ["koin-android", "koin-workmanager", "koin-compose"]
 
@@ -56,8 +57,8 @@ androidx-work-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "
 arrowKt = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrowKt" }
 cash-app-turbine = { module = "app.cash.turbine:turbine", version.ref = "cash-app-turbine" }
 coilKt-coil = { module="io.coil-kt:coil", version.ref="coil" }
+coilKt-coilCompose = { module="io.coil-kt:coil-compose", version.ref="coil" }
 com-android-tools-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
-google-accompanistCoil = { module="com.google.accompanist:accompanist-coil", version.ref="accompanist" }
 google-accompanistFlowLayout = { module="com.google.accompanist:accompanist-flowlayout", version.ref="accompanist" }
 google-accompanistPager = { module="com.google.accompanist:accompanist-pager", version.ref="accompanist" }
 google-accompanistPagerIndicators = { module="com.google.accompanist:accompanist-pager-indicators", version.ref="accompanist" }
@@ -76,8 +77,8 @@ gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 gradlePlugin-kotlinter = { module = "org.jmailen.gradle:kotlinter-gradle", version.ref = "gradlePlugin-kotlinter" }
 gradlePlugin-performance = { module = "com.google.firebase:perf-plugin", version.ref = "gradlePlugin-performance" }
 gradlePlugin-protobuf = { module = "gradle.plugin.com.google.protobuf:protobuf-gradle-plugin", version.ref = "gradlePlugin-protobuf" }
-gradlePlugin-safeArgs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "gradlePlugin-safeArgs" }
 gradlePlugin-versionsBenManes = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradlePlugin-versionsBenManes" }
+jacoco = { module = "org.jacoco:org.jacoco.core", version.ref  = "jacoco" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module ="io.insert-koin:koin-androidx-compose", version.ref ="koin"}
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
@@ -96,19 +97,19 @@ squareup-picasso = { module = "com.squareup.picasso:picasso", version.ref = "squ
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [versions]
-accompanist = "0.13.0"
-activityCompose = "1.3.0-beta02"
+accompanist = "0.16.0"
+activityCompose = "1.3.1"
 androidx-annotation = "1.2.0"
-androidx-appcompat = "1.3.0"
+androidx-appcompat = "1.3.1"
 androidx-arch-core-testing = "2.1.0"
-androidx-constraintlayout = "2.0.4"
+androidx-constraintlayout = "2.1.0"
 androidx-core-ktx = "1.6.0"
-androidx-datastore = "1.0.0-rc01"
-androidx-fragment = "1.3.5"
-androidx-lifecycle = "2.4.0-alpha02"
-androidx-media = "1.3.1"
+androidx-datastore = "1.0.0"
+androidx-fragment = "1.3.6"
+androidx-lifecycle = "2.4.0-alpha03"
+androidx-media = "1.4.1"
 androidx-navigation = "2.3.5"
-androidx-paging-runtime-ktx = "3.0.0"
+androidx-paging-runtime-ktx = "3.0.1"
 androidx-preference-ktx = "1.1.1"
 androidx-recyclerview = "1.2.1"
 androidx-room = "2.3.0"
@@ -121,30 +122,30 @@ androidx-test-truth = "1.4.0"
 androidx-viewpager2 = "1.0.0"
 androidx-work = "2.5.0"
 arrowKt = "0.13.2"
-cash-app-turbine = "0.5.2"
-coil = "1.2.2"
-compose = "1.0.0-rc01"
-composeUiTooling = "1.0.0-beta09"
+cash-app-turbine = "0.6.0"
+coil = "1.3.1"
+compose = "1.0.1"
+composeUiTooling = "1.0.1"
 desugar = "1.1.5"
-firebaseBom = "28.2.0"
+firebaseBom = "28.3.0"
 google-material = "1.4.0"
-gradlePlugin-agp = "7.0.0-rc01"
+gradlePlugin-agp = "7.0.0"
 gradlePlugin-crashlytics = "2.7.1"
 gradlePlugin-detekt = "1.17.1"
 gradlePlugin-gms = "4.3.8"
 gradlePlugin-kotlinter = "3.4.5"
 gradlePlugin-performance = "1.4.0"
-gradlePlugin-protobuf = "0.8.16"
-gradlePlugin-safeArgs = "2.4.0-alpha05"
+gradlePlugin-protobuf = "0.8.17"
 gradlePlugin-versionsBenManes = "0.39.0"
+jacoco = "0.8.7"
 koin = "3.1.2"
-kotlin = "1.5.10"
-kotlinCoroutines = "1.5.0"
+kotlin = "1.5.21"
+kotlinCoroutines = "1.5.1"
 lifecycleViewmodelCompose = "1.0.0-alpha07"
 mockk = "1.12.0"
-navigationCompose = "2.4.0-alpha04"
+navigationCompose = "2.4.0-alpha06"
 protobuf = "3.10.0"
-robolectric = "4.6"
+robolectric = "4.6.1"
 squareup-leakcanary = "2.7"
 squareup-moshi = "1.12.0"
 squareup-okio = "2.10.0"
