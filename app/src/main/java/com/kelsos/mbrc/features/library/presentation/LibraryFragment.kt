@@ -12,7 +12,6 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -124,16 +123,10 @@ class LibraryFragment(
     }.attach()
 
     genreScreen.setOnGenrePressedListener {
-      val action = LibraryFragmentDirections.actionShowGenreArtists(it.genre)
-      view.findNavController().navigate(action)
     }
     artistScreen.setOnArtistPressedListener {
-      val action = LibraryFragmentDirections.actionShowArtistAlbums(it.artist)
-      view.findNavController().navigate(action)
     }
     albumScreen.setOnAlbumPressedListener {
-      val action = LibraryFragmentDirections.actionShowAlbumTracks(it.album, it.artist)
-      view.findNavController().navigate(action)
     }
 
     var syncing = false

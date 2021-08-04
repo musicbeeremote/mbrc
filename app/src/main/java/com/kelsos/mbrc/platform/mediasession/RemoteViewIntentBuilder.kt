@@ -6,7 +6,7 @@ import android.app.PendingIntent.getActivity
 import android.app.PendingIntent.getBroadcast
 import android.content.Context
 import android.content.Intent
-import com.kelsos.mbrc.ui.navigation.player.PlayerFragment
+import com.kelsos.mbrc.NavigationActivity
 
 object RemoteViewIntentBuilder {
   const val PLAY_PRESSED = "com.kelsos.mbrc.notification.play"
@@ -20,7 +20,7 @@ object RemoteViewIntentBuilder {
     val flag = FLAG_UPDATE_CURRENT
 
     val intent = when (remoteIntentCode) {
-      RemoteIntentCode.Open -> Intent(context, PlayerFragment::class.java)
+      RemoteIntentCode.Open -> Intent(context, NavigationActivity::class.java)
       RemoteIntentCode.Play -> Intent(PLAY_PRESSED)
       RemoteIntentCode.Next -> Intent(NEXT_PRESSED)
       RemoteIntentCode.Close -> Intent(CLOSE_PRESSED)

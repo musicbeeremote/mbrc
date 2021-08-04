@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.common.ui.extensions.getDimens
@@ -28,7 +27,7 @@ class MiniControlFragment : Fragment() {
   private val binding get() = _binding!!
 
   private fun onControlClick() {
-    findNavController().navigate(R.id.main_navigation_fragment)
+    TODO("update navigation")
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

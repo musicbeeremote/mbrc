@@ -64,6 +64,9 @@ import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.features.output.OutputApi
 import com.kelsos.mbrc.features.output.OutputApiImpl
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
+import com.kelsos.mbrc.features.player.PlayerViewModel
+import com.kelsos.mbrc.features.player.RatingDialogViewModel
+import com.kelsos.mbrc.features.player.VolumeDialogViewModel
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter
 import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
@@ -143,9 +146,6 @@ import com.kelsos.mbrc.protocol.UpdateVolume
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.kelsos.mbrc.ui.helpfeedback.FeedbackViewModel
-import com.kelsos.mbrc.ui.navigation.player.PlayerViewModel
-import com.kelsos.mbrc.ui.navigation.player.RatingDialogViewModel
-import com.kelsos.mbrc.ui.navigation.player.VolumeDialogViewModel
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher

@@ -13,14 +13,4 @@ data class PlayerStatusModel(
   val scrobbling: Boolean = false,
   val repeat: Repeat = Repeat.None,
   var state: PlayerState = PlayerState.Undefined
-) {
-  fun isShuffleAutoDj(): Boolean = shuffle == ShuffleMode.AutoDJ
-
-  fun isShuffleOff(): Boolean = shuffle == ShuffleMode.Off
-
-  fun isRepeatOff(): Boolean = repeat == Repeat.None
-
-  fun isRepeatOne(): Boolean = repeat == Repeat.One
-
-  fun isPlaying(): Boolean = state == PlayerState.Playing
-}
+)

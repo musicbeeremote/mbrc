@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.os.HandlerCompat
-import androidx.navigation.fragment.findNavController
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -73,8 +72,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     manager.setOnPreferenceClickListener {
-      val navController = findNavController()
-      navController.navigate(R.id.action_settingsFragment_to_connectionManagerFragment)
+      TODO("Update navigation")
       false
     }
 

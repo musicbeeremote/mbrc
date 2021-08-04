@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.player
+package com.kelsos.mbrc.features.player
 
 import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.common.state.AppState
@@ -45,60 +45,28 @@ class PlayerViewModel(
     }
   }
 
-  fun stop(): Boolean {
-    viewModelScope.launch {
-      userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
+  fun interact(action: PlayerAction) {
+    if (action is PlayerAction.Seek) {
+      viewModelScope.launch {
+        progressRelay.emit(action.position)
+      }
+      return
     }
-    return true
-  }
 
-  fun shuffle() {
-    viewModelScope.launch {
-      userActionUseCase.perform(UserAction.toggle(Protocol.PlayerShuffle))
+    val userAction = when (action) {
+      PlayerAction.ToggleFavorite -> UserAction.toggle(Protocol.NowPlayingLfmRating)
+      PlayerAction.PlayNext -> UserAction(Protocol.PlayerNext, true)
+      PlayerAction.ResumePlayOrPause -> UserAction(Protocol.PlayerPlayPause, true)
+      PlayerAction.PlayPrevious -> UserAction(Protocol.PlayerPrevious, true)
+      PlayerAction.ToggleRepeat -> UserAction.toggle(Protocol.PlayerRepeat)
+      PlayerAction.ToggleScrobbling -> UserAction.toggle(Protocol.PlayerScrobble)
+      is PlayerAction.Seek -> throw IllegalArgumentException("Handled before")
+      PlayerAction.ToggleShuffle -> UserAction.toggle(Protocol.PlayerShuffle)
+      PlayerAction.Stop -> UserAction(Protocol.PlayerStop, true)
     }
-  }
-
-  fun repeat() {
     viewModelScope.launch {
-      userActionUseCase.perform(UserAction.toggle(Protocol.PlayerRepeat))
+      userActionUseCase.perform(userAction)
     }
-  }
-
-  fun seek(position: Int) {
-    viewModelScope.launch {
-      progressRelay.emit(position)
-    }
-  }
-
-  fun toggleScrobbling() {
-    viewModelScope.launch {
-      userActionUseCase.perform(UserAction.toggle(Protocol.PlayerScrobble))
-    }
-  }
-
-  fun play() {
-    viewModelScope.launch {
-      userActionUseCase.perform(UserAction(Protocol.PlayerPlayPause, true))
-    }
-  }
-
-  fun previous() {
-    viewModelScope.launch {
-      userActionUseCase.perform(UserAction(Protocol.PlayerPrevious, true))
-    }
-  }
-
-  fun next() {
-    viewModelScope.launch {
-      userActionUseCase.perform(UserAction(Protocol.PlayerNext, true))
-    }
-  }
-
-  fun favorite(): Boolean {
-    viewModelScope.launch {
-      userActionUseCase.perform(UserAction.toggle(Protocol.NowPlayingLfmRating))
-    }
-    return true
   }
 
   companion object {

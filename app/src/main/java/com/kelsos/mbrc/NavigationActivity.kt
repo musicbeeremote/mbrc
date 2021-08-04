@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import arrow.core.firstOrNone
 import com.kelsos.mbrc.app.RemoteApp
 import com.kelsos.mbrc.common.ui.BaseFragment
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.fragment.android.setupKoinFragmentFactory
@@ -22,6 +23,19 @@ import timber.log.Timber
 class NavigationActivity : AppCompatActivity() {
 
   private val viewmodel: NavigationViewModel by viewModel()
+
+  private fun share(track: PlayingTrack) {
+    val shareIntent = Intent.createChooser(sendIntent(track), null)
+    startActivity(shareIntent)
+  }
+
+  private fun sendIntent(track: PlayingTrack): Intent {
+    return Intent(Intent.ACTION_SEND).apply {
+      val payload = "Now Playing: ${track.artist} - ${track.title}"
+      type = "text/plain"
+      putExtra(Intent.EXTRA_TEXT, payload)
+    }
+  }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
@@ -55,7 +69,7 @@ class NavigationActivity : AppCompatActivity() {
     setupKoinFragmentFactory()
     super.onCreate(savedInstanceState)
     setContent {
-      RemoteApp(viewmodel)
+      RemoteApp(viewmodel) { share(it) }
     }
     viewmodel.startService()
   }

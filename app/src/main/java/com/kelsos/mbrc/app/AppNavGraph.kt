@@ -10,6 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.kelsos.mbrc.features.library.PlayingTrack
+import com.kelsos.mbrc.features.player.PlayerScreen
 import kotlinx.coroutines.launch
 
 sealed class Destination(val route: String) {
@@ -30,7 +32,8 @@ sealed class Destination(val route: String) {
 fun AppNavGraph(
   navController: NavHostController = rememberNavController(),
   scaffoldState: ScaffoldState = rememberScaffoldState(),
-  startDestination: Destination = Destination.Home
+  startDestination: Destination = Destination.Home,
+  share: (track: PlayingTrack) -> Unit
 ) {
   val actions = remember(navController) { AppActions(navController) }
   val coroutineScope = rememberCoroutineScope()
@@ -41,6 +44,7 @@ fun AppNavGraph(
     startDestination = startDestination.route
   ) {
     composable(Destination.Home.route) {
+      PlayerScreen(openDrawer, share)
     }
     composable(Destination.Library.route) {
     }

@@ -16,8 +16,7 @@ class UpdateRequiredFragment : Fragment() {
     savedInstanceState: Bundle?
   ): View {
     val binding = FragmentUpdateRequiredBinding.inflate(inflater, container, false)
-    val bundle = UpdateRequiredFragmentArgs.fromBundle(requireArguments())
-    val version = bundle.version
+    val version = ""
     val text = getString(R.string.plugin_update__description, version)
     binding.mainUpdateText.text = text
     binding.mainUpdateOk.setOnClickListener {

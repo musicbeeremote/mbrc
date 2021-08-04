@@ -4,8 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.common.state.AppState
+import com.kelsos.mbrc.features.player.LfmRating
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.kelsos.mbrc.utils.testDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest

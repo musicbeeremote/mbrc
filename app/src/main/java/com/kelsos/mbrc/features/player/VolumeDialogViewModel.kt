@@ -1,17 +1,18 @@
-package com.kelsos.mbrc.ui.navigation.player
+package com.kelsos.mbrc.features.player
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.common.state.AppState
-import com.kelsos.mbrc.common.state.models.PlayerStatusModel
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.sample
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
@@ -19,11 +20,26 @@ class VolumeDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
   appState: AppState
 ) : ViewModel() {
-  val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
+  private val _currentVolume: MutableStateFlow<Int> = MutableStateFlow(0)
+  private val _muted: MutableStateFlow<Boolean> = MutableStateFlow(false)
+  val currentVolume: Flow<Int> get() = _currentVolume
+  val muted: Flow<Boolean> get() = _muted
+
   private val volume: MutableSharedFlow<Int> = MutableSharedFlow()
   init {
     viewModelScope.launch {
-      volume.sample(VOLUME_THROTTLE_MS).collect { volume ->
+      appState.playerStatus.map { it.volume }.distinctUntilChanged().collect { volume ->
+        _currentVolume.emit(volume)
+      }
+    }
+    viewModelScope.launch {
+      appState.playerStatus.map { it.mute }.distinctUntilChanged().collect {
+        _muted.emit(it)
+      }
+    }
+    viewModelScope.launch {
+      volume.collect { volume ->
+        _currentVolume.emit(volume)
         userActionUseCase.perform(UserAction.create(Protocol.PlayerVolume, volume))
       }
     }
@@ -39,9 +55,5 @@ class VolumeDialogViewModel(
     viewModelScope.launch {
       this@VolumeDialogViewModel.volume.emit(volume)
     }
-  }
-
-  companion object {
-    private const val VOLUME_THROTTLE_MS = 400L
   }
 }

@@ -1,8 +1,8 @@
 package com.kelsos.mbrc.common.state.models
 
 data class PlayingPosition(val current: Duration = 0, val total: Duration = 0) {
-  private val totalMinutes get() = total.toMinutes()
-  private val currentMinutes get() = current.toMinutes()
+  val totalMinutes get() = total.toMinutes()
+  val currentMinutes get() = current.toMinutes()
 
   fun progress(): String {
     return "$currentMinutes / $totalMinutes"

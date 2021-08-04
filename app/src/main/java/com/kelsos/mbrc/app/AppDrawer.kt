@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -60,7 +62,11 @@ fun AppDrawer(
   onConnect: () -> Unit,
   exitApp: () -> Unit
 ) {
-  Column(modifier = Modifier.fillMaxSize()) {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .verticalScroll(rememberScrollState())
+  ) {
     AppHeader(connection, onConnect)
     DrawerButton(
       icon = Icons.Filled.Home,

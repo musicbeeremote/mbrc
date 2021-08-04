@@ -10,11 +10,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.NavigationViewModel
+import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.theme.RemoteTheme
 
 @Composable
-fun RemoteApp(viewModel: NavigationViewModel = viewModel()) {
+fun RemoteApp(
+  viewModel: NavigationViewModel = viewModel(),
+  share: (track: PlayingTrack) -> Unit = {}
+) {
   RemoteTheme {
     val navController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
@@ -41,7 +45,8 @@ fun RemoteApp(viewModel: NavigationViewModel = viewModel()) {
     ) {
       AppNavGraph(
         navController = navController,
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        share = share
       )
     }
   }

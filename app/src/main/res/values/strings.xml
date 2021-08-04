@@ -16,7 +16,7 @@
   <string name="settings_miscellaneous_incoming_call_description">Default action on incoming call \n\nRequires permission to read the Phone State.</string>
   <string name="info_service_description">This service is responsible for the communication of the application with the plugin.</string>
   <string name="application_description">Remote Control Application for MusicBee</string>
-  <string name="main_menu_title_share">Share</string>
+  <string name="player_topbar_share">Share</string>
   <string name="preferences_category_about">About MusicBee Remote</string>
   <string name="preferences_about_version">MusicBee Remote Version</string>
   <string name="alert_invalid_port_number">The valid port range is from 1 to 65535</string>
@@ -71,7 +71,7 @@
   <string name="menu_play">Play Now</string>
   <string name="menu_artist_albums">Get Albums</string>
   <string name="menu_genre_artists">Get Artists</string>
-  <string name="lastfm_scrobble">Last.fm Scrobbling</string>
+  <string name="player_topbar_lastfm_scrobble">Last.fm Scrobbling</string>
   <string name="lastfm_love">Love</string>
   <string name="rate_the_playing_track">Rate the playing track</string>
   <string name="feedback_title">How you feel about the application?</string>
@@ -194,4 +194,9 @@
   <string name="library__action_only_album_artists">Display only album artists</string>
   <string name="library_details__empty_content">Placeholder image for an empty list</string>
   <string name="drawer__connect__content">Connect to the plugin</string>
+  <string name="navigation_menu_description">Opens the navigation menu</string>
+  <string name="player_topbar_favorite">Press to remove the track from the favorites</string>
+  <string name="player_topbar_not_favorite">Press to add the track to favorites</string>
+  <string name="player_topbar_rating">Open the rating dialog to rate a track</string>
+  <string name="player_topbar_more">Open the menu with the share and last.fm scrobbling options</string>
 </resources>

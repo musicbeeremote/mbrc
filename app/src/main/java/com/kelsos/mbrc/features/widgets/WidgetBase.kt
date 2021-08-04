@@ -11,10 +11,10 @@ import android.widget.RemoteViews
 import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
-import com.kelsos.mbrc.ui.navigation.player.PlayerFragment
 import com.squareup.picasso.Picasso
 import java.io.File
 import kotlin.reflect.KClass
@@ -95,14 +95,9 @@ abstract class WidgetBase : AppWidgetProvider() {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
 
     for (appWidgetId in appWidgetIds) {
-      // Create an Intent to launch ExampleActivity
-      val intent = Intent(context, PlayerFragment::class.java)
+      val intent = Intent(context, NavigationActivity::class.java)
       val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-
-      // Get the layout for the App Widget and attach an on-click listener
-      // to the button
       val views = RemoteViews(context.packageName, layout())
-
       setupActionIntents(views, pendingIntent, context)
       // Tell the AppWidgetManager to perform an set on the current app widget
       appWidgetManager.updateAppWidget(appWidgetId, views)

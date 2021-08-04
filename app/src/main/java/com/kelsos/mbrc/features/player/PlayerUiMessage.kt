@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.player
+package com.kelsos.mbrc.features.player
 
 import com.kelsos.mbrc.ui.UiMessageBase
 

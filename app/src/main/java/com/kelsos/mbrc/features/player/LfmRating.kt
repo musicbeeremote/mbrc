@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.ui.navigation.player
+package com.kelsos.mbrc.features.player
 
 sealed class LfmRating {
   object Loved : LfmRating()

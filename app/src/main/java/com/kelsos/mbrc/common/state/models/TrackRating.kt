@@ -1,6 +1,6 @@
 package com.kelsos.mbrc.common.state.models
 
-import com.kelsos.mbrc.ui.navigation.player.LfmRating
+import com.kelsos.mbrc.features.player.LfmRating
 
 data class TrackRating(
   val lfmRating: LfmRating = LfmRating.Normal,

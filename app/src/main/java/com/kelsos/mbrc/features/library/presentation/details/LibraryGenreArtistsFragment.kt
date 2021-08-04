@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kelsos.mbrc.common.ui.extensions.setAppBarTitle
 import com.kelsos.mbrc.databinding.FragmentLibraryDetailsBinding
@@ -25,7 +23,6 @@ class LibraryGenreArtistsFragment(
   private val viewModel: GenreArtistViewModel,
   private val actionHandler: PopupActionHandler
 ) : Fragment(), MenuItemSelectedListener<Artist> {
-  private val args: LibraryGenreArtistsFragmentArgs by navArgs()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -53,8 +50,8 @@ class LibraryGenreArtistsFragment(
         artistAdapter.submitData(it)
       }
     }
-    viewModel.load(args.genre)
-    setAppBarTitle(args.genre)
+    viewModel.load("genre")
+    setAppBarTitle("genre")
     return binding.root
   }
 
@@ -68,7 +65,6 @@ class LibraryGenreArtistsFragment(
   }
 
   override fun onItemClicked(item: Artist) {
-    val action = LibraryGenreArtistsFragmentDirections.actionShowArtistAlbums(item.artist)
-    findNavController().navigate(action)
+    TODO("update navigation")
   }
 }

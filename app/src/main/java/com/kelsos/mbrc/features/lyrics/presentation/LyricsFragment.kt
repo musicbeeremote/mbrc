@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kelsos.mbrc.common.ui.extensions.animateIfEmpty
 import com.kelsos.mbrc.databinding.FragmentLyricsBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -43,7 +42,6 @@ class LyricsFragment : Fragment() {
     lifecycleScope.launch {
       viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
         viewModel.lyrics.collect { lyrics ->
-          binding.lyricsLyricsList.animateIfEmpty(adapter.itemCount)
           binding.lyricsEmptyGroup.isGone = lyrics.isNotEmpty()
           adapter.submitList(lyrics)
         }

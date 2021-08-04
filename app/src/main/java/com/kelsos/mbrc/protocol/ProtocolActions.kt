@@ -18,6 +18,7 @@ import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.lyrics.LyricsPayload
 import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
+import com.kelsos.mbrc.features.player.LfmRating
 import com.kelsos.mbrc.features.player.NowPlayingTrack
 import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
@@ -29,7 +30,6 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingMoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.NowPlayingTrackRemoveResponse
 import com.kelsos.mbrc.networking.protocol.responses.Position
-import com.kelsos.mbrc.ui.navigation.player.LfmRating
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
