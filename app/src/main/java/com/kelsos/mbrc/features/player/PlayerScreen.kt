@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Checkbox
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -369,11 +370,22 @@ private fun TrackInfo(
     .fillMaxWidth(),
   horizontalArrangement = Arrangement.SpaceBetween
 ) {
-  Column {
-    Text(text = playingTrack.title, style = MaterialTheme.typography.h6)
-    Text(text = playingTrack.artistInfo(), style = MaterialTheme.typography.subtitle2)
+  Column(modifier = Modifier.weight(1f)) {
+    Text(
+      text = playingTrack.title,
+      style = MaterialTheme.typography.h6,
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis
+    )
+    Text(
+      text = playingTrack.artistInfo(),
+      style = MaterialTheme.typography.subtitle2,
+      color = MaterialTheme.colors.onSurface.copy(0.7f),
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis
+    )
   }
-  Column {
+  Column(modifier = Modifier.wrapContentWidth().padding(start = 8.dp)) {
     VolumeControl()
   }
 }
