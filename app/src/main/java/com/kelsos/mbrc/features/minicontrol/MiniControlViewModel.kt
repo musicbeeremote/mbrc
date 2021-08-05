@@ -21,15 +21,13 @@ class MiniControlViewModel(
   val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
   val playingPosition: Flow<PlayingPosition> = appState.playingPosition
 
-  fun next() {
-    viewModelScope.launch { userActionUseCase.next() }
-  }
-
-  fun previous() {
-    viewModelScope.launch { userActionUseCase.previous() }
-  }
-
-  fun playPause() {
-    viewModelScope.launch { userActionUseCase.playPause() }
+  fun perform(action: MiniControlAction) {
+    viewModelScope.launch {
+      when (action) {
+        MiniControlAction.PlayNext -> userActionUseCase.next()
+        MiniControlAction.PlayPause -> userActionUseCase.playPause()
+        MiniControlAction.PlayPrevious -> userActionUseCase.previous()
+      }
+    }
   }
 }

@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.features.player
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,14 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.common.state.domain.Repeat
@@ -56,6 +52,7 @@ import com.kelsos.mbrc.common.state.models.PlayerStatusModel
 import com.kelsos.mbrc.common.state.models.PlayingPosition
 import com.kelsos.mbrc.common.state.models.TrackRating
 import com.kelsos.mbrc.common.ui.RemoteTopAppBar
+import com.kelsos.mbrc.common.ui.TrackCover
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.theme.RemoteTheme
@@ -116,9 +113,12 @@ fun PlayerScreenLandscape(
       Spacer(modifier = Modifier.weight(1f))
       PlayerActions(playerStatus, perform)
     }
-    Column(modifier = Modifier.fillMaxWidth(1f), verticalArrangement = Arrangement.Center) {
-      TrackCover(playingTrack)
-    }
+    TrackCover(
+      modifier = Modifier
+        .padding(16.dp)
+        .fillMaxSize(),
+      coverUrl = playingTrack.coverUrl,
+    )
   }
 }
 
@@ -133,32 +133,18 @@ fun PlayerScreenPortrait(
   openDrawer: () -> Unit
 ) = Column(modifier = Modifier.fillMaxSize()) {
   PlayerScreenAppBar(openDrawer, perform, trackRating, playerStatus, share, playingTrack)
-  Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-    TrackCover(playingTrack)
-  }
+  TrackCover(
+    modifier = Modifier
+      .padding(16.dp)
+      .fillMaxSize(),
+    coverUrl = playingTrack.coverUrl,
+  )
   ProgressControl(playingPosition, perform)
   Spacer(modifier = Modifier.weight(2f))
   TrackInfo(playingTrack)
   Spacer(modifier = Modifier.weight(1f))
   PlayerActions(playerStatus, perform)
 }
-
-@Composable
-private fun TrackCover(playingTrack: PlayingTrack) = Image(
-  painter = rememberImagePainter(
-    data = playingTrack.coverUrl,
-    builder = {
-      placeholder(R.drawable.ic_image_no_cover)
-      error(R.drawable.ic_image_no_cover)
-    }
-  ),
-  modifier = Modifier
-    .padding(16.dp)
-    .fillMaxWidth()
-    .clip(RoundedCornerShape(8.dp)),
-  contentScale = ContentScale.FillWidth,
-  contentDescription = null
-)
 
 @Composable
 private fun PlayerScreenAppBar(

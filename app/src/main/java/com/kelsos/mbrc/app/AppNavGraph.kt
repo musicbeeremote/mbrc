@@ -56,7 +56,7 @@ fun AppNavGraph(
     composable(Destination.Radio.route) {
     }
     composable(Destination.Lyrics.route) {
-      LyricsScreen(openDrawer)
+      LyricsScreen(openDrawer, navigateToHome = actions.navigateToHome)
     }
     composable(Destination.OutputSelection.route) {
     }
@@ -70,5 +70,8 @@ fun AppNavGraph(
 class AppActions(navController: NavController) {
   val upPress: () -> Unit = {
     navController.navigateUp()
+  }
+  val navigateToHome: () -> Unit = {
+    navController.navigate(Destination.Home.route)
   }
 }

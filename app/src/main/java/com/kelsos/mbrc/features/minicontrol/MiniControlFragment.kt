@@ -69,9 +69,11 @@ class MiniControlFragment : Fragment() {
     }
 
     binding.miniControl.setOnClickListener { onControlClick() }
-    binding.miniControlPlayNext.setOnClickListener { viewModel.next() }
-    playPause.setOnClickListener { viewModel.playPause() }
-    binding.miniControlPlayPrevious.setOnClickListener { viewModel.previous() }
+    binding.miniControlPlayNext.setOnClickListener { viewModel.perform(MiniControlAction.PlayNext) }
+    playPause.setOnClickListener { viewModel.perform(MiniControlAction.PlayPause) }
+    binding.miniControlPlayPrevious.setOnClickListener {
+      viewModel.perform(MiniControlAction.PlayPrevious)
+    }
   }
 
   override fun onCreateView(

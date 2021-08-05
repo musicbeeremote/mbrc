@@ -13,6 +13,7 @@ import com.kelsos.mbrc.NavigationViewModel
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.theme.RemoteTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun RemoteApp(
@@ -35,6 +36,7 @@ fun RemoteApp(
         AppDrawer(
           currentRoute = currentRoute,
           navigateTo = { destination ->
+            coroutineScope.launch { scaffoldState.drawerState.close() }
             navController.navigate(destination.route)
           },
           connection = connection,
