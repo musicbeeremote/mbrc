@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.lyrics.presentation
+package com.kelsos.mbrc.features.lyrics
 
 import androidx.lifecycle.ViewModel
 import com.kelsos.mbrc.common.state.AppState

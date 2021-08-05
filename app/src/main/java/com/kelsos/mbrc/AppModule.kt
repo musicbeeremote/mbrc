@@ -53,8 +53,7 @@ import com.kelsos.mbrc.features.library.sync.SyncStatProvider
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandlerImpl
 import com.kelsos.mbrc.features.library.sync.SyncWorker
-import com.kelsos.mbrc.features.lyrics.presentation.LyricsAdapter
-import com.kelsos.mbrc.features.lyrics.presentation.LyricsViewModel
+import com.kelsos.mbrc.features.lyrics.LyricsViewModel
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManager
 import com.kelsos.mbrc.features.nowplaying.domain.MoveManagerImpl
@@ -152,12 +151,10 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import org.koin.androidx.fragment.dsl.fragment
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.workmanager.dsl.worker
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.factory
 import org.koin.dsl.module
 import org.koin.dsl.single
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 val appModule = module {
@@ -198,13 +195,6 @@ val appModule = module {
 
   single<AppState>()
   single<ConnectionState>()
-
-  single { LyricsAdapter(get(named("diffExecutor"))) }
-  single(named("diffExecutor")) {
-    Executors.newSingleThreadExecutor { runnable ->
-      Thread(runnable, "diffExecutor")
-    } as Executor
-  }
 
   single<MessageQueueImpl>() bind MessageQueue::class
   single<MessageHandlerImpl>() bind MessageHandler::class

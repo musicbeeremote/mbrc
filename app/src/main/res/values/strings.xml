@@ -164,7 +164,7 @@
   <string name="playlists__refresh_success">Playlist Refresh was successful</string>
   <string name="now_playing__refresh_success">Now playing list was refreshed successfully</string>
   <string name="now_playing__refresh_failed">There was a problem refreshing the now playing list</string>
-  <string name="lyrics__empty_icon_content_description">An icon that is displayed when the list is empty</string>
+  <string name="lyrics__empty_icon_content_description">There are no lyrics for this track</string>
   <string name="mini_control__artist">%1$s - %2$s</string>
   <string name="notification__actions_id">mbrc__actions</string>
   <string name="notification__queue_title">Add tracks to the queue</string>

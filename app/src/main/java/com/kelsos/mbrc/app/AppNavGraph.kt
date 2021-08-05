@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.features.library.PlayingTrack
+import com.kelsos.mbrc.features.lyrics.LyricsScreen
 import com.kelsos.mbrc.features.player.PlayerScreen
 import kotlinx.coroutines.launch
 
@@ -55,6 +56,7 @@ fun AppNavGraph(
     composable(Destination.Radio.route) {
     }
     composable(Destination.Lyrics.route) {
+      LyricsScreen(openDrawer)
     }
     composable(Destination.OutputSelection.route) {
     }
