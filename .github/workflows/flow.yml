@@ -32,7 +32,7 @@ jobs:
             ~/.gradle
           key: jars-{{ hashFiles('build.gradle.kts') }}-{{ hashFiles('app/build.gradle.kts') }}
       - name: Lint
-        run: ./gradlew copyDummyDataForCi lintKotlin
+        run: ./gradlew lintKotlin
       - name: Setup Code Climate test-reporter
         run: |
           # download test reporter as a static binary
@@ -40,7 +40,7 @@ jobs:
           chmod +x ./cc-test-reporter
       - name: Run Tests
         run: |
-          ./gradlew copyDummyDataForCi jacocoTestReport -PdisablePreDex --continue --stacktrace --no-daemon --max-workers 4
+          ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace --no-daemon --max-workers 4
       - name: Upload coverage
         run: bash <(curl -s https://codecov.io/bash)
       - name: Set jacoco.xml path for code climate

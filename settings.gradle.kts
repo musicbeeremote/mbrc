@@ -6,9 +6,10 @@ pluginManagement {
   }
 }
 
-rootProject.name = "MusicBee Remote"
+rootProject.name = "mbrc"
 
 include(":changelog")
 include(":app")
 
 enableFeaturePreview("VERSION_CATALOGS")
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

@@ -1,5 +1,6 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.android.build.gradle.internal.lint.AndroidLintTask
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
@@ -215,6 +216,15 @@ detekt {
   }
 }
 
+val dummyGoogleServicesJson: Configuration by configurations.creating {
+  isCanBeResolved = true
+  isCanBeConsumed = false
+
+  attributes {
+    attribute(Attribute.of("google.services.json", String::class.java), "dummy-json")
+  }
+}
+
 idea {
   module {
     isDownloadJavadoc = true
@@ -225,7 +235,7 @@ idea {
 dependencies {
   coreLibraryDesugaring(libs.com.android.tools.desugar)
 
-  implementation(project(path = ":changelog"))
+  implementation(projects.changelog)
 
   testImplementation(libs.androidx.arch.core.testing)
   testImplementation(libs.androidx.room.testing)
@@ -279,6 +289,7 @@ dependencies {
 
   "playImplementation"(platform(libs.google.firebase.bom))
   "playImplementation"(libs.bundles.google.firebase)
+  dummyGoogleServicesJson(projects.mbrc)
 }
 
 protobuf {
@@ -294,6 +305,20 @@ protobuf {
         }
       }
     }
+  }
+}
+
+open class GenerateGoogleServicesJson : DefaultTask() {
+
+  @get:InputFiles
+  var configuration by project.objects.property<Configuration>()
+
+  @get:OutputFile
+  var outputJson by project.objects.property<File>()
+
+  @TaskAction
+  fun generateJson() {
+    outputJson.writeText(configuration.resolve().single().readText())
   }
 }
 
@@ -348,6 +373,34 @@ tasks {
         }"
       )
     }
+  }
+
+  val copyDummyGoogleServicesJson by registering(GenerateGoogleServicesJson::class) {
+    onlyIf { System.getenv("CI") == "true" }
+    configuration = dummyGoogleServicesJson
+    outputJson = file("google-services.json")
+  }
+
+  val checkGoogleServicesJson by registering {
+    onlyIf { System.getenv("CI") != "true" }
+    doLast {
+      if (!project.file("google-services.json").exists()) {
+        throw GradleException(
+          "You need a google-services.json file to run this project. Please refer to the CONTRIBUTING.md file for details."
+        )
+      }
+    }
+  }
+
+  afterEvaluate {
+    named("processGithubReleaseGoogleServices")
+      .dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
+    named("processPlayReleaseGoogleServices")
+      .dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
+    named("processGithubDebugGoogleServices")
+      .dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
+    named("processPlayDebugGoogleServices")
+      .dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
   }
 
   withType<Test> {
