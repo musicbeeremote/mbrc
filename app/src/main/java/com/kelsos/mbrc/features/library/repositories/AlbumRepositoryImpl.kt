@@ -28,9 +28,9 @@ class AlbumRepositoryImpl(
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAlbumsByArtist(artist: String): Flow<PagingData<Album>> =
-    dao.getAlbumsByArtist(artist).paged { it.toAlbum() }
+    paged({ dao.getAlbumsByArtist(artist) }) { it.toAlbum() }
 
-  override fun getAll(): Flow<PagingData<Album>> = dao.getAll().paged { it.toAlbum() }
+  override fun getAll(): Flow<PagingData<Album>> = paged({ dao.getAll() }) { it.toAlbum() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     return@catch withContext(dispatchers.network) {
@@ -71,7 +71,7 @@ class AlbumRepositoryImpl(
   }
 
   override fun search(term: String): Flow<PagingData<Album>> =
-    dao.search(term).paged { it.toAlbum() }
+    paged({ dao.search(term) }) { it.toAlbum() }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

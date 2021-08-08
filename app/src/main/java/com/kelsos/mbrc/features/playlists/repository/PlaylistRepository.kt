@@ -29,7 +29,7 @@ class PlaylistRepositoryImpl(
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAll(): Flow<PagingData<Playlist>> =
-    dao.getAll().paged { it.toPlaylist() }
+    paged({ dao.getAll() }) { it.toPlaylist() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
@@ -57,7 +57,7 @@ class PlaylistRepositoryImpl(
   }
 
   override fun search(term: String): Flow<PagingData<Playlist>> =
-    dao.search(term).paged { it.toPlaylist() }
+    paged({ dao.search(term) }) { it.toPlaylist() }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

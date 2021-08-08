@@ -39,7 +39,7 @@ class MockFactory<T : Any>(private val data: List<T> = emptyList()) : PagingSour
 
   override fun getRefreshKey(state: PagingState<Int, T>): Int? = null
 
-  fun flow(): Flow<PagingData<T>> = this.paged { it }
+  fun flow(): Flow<PagingData<T>> = paged({ this }) { it }
 }
 
 object TestDataFactories {

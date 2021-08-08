@@ -26,7 +26,7 @@ class GenreRepositoryImpl(
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override fun getAll(): Flow<PagingData<Genre>> = dao.getAll().paged {
+  override fun getAll(): Flow<PagingData<Genre>> = paged({ dao.getAll() }) {
     it.toGenre()
   }
 
@@ -65,7 +65,7 @@ class GenreRepositoryImpl(
     }
   }
 
-  override fun search(term: String): Flow<PagingData<Genre>> = dao.search(term).paged {
+  override fun search(term: String): Flow<PagingData<Genre>> = paged({ dao.search(term) }) {
     it.toGenre()
   }
 

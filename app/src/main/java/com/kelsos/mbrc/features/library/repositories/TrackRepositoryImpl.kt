@@ -26,16 +26,16 @@ class TrackRepositoryImpl(
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override fun getAll(): Flow<PagingData<Track>> = dao.getAll().paged { it.toTrack() }
+  override fun getAll(): Flow<PagingData<Track>> = paged({ dao.getAll() }) { it.toTrack() }
 
   override fun getAlbumTracks(
     album: String,
     artist: String
   ): Flow<PagingData<Track>> =
-    dao.getAlbumTracks(album, artist).paged { it.toTrack() }
+    paged({ dao.getAlbumTracks(album, artist) }) { it.toTrack() }
 
   override fun getNonAlbumTracks(artist: String): Flow<PagingData<Track>> =
-    dao.getNonAlbumTracks(artist).paged { it.toTrack() }
+    paged({ dao.getNonAlbumTracks(artist) }) { it.toTrack() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     return@catch withContext(dispatchers.network) {
@@ -71,7 +71,7 @@ class TrackRepositoryImpl(
   }
 
   override fun search(term: String): Flow<PagingData<Track>> {
-    return dao.search(term).paged { it.toTrack() }
+    return paged({ dao.search(term) }) { it.toTrack() }
   }
 
   override fun getGenreTrackPaths(genre: String): List<String> =

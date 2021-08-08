@@ -68,7 +68,7 @@ class ConnectionRepositoryImpl(
     dao.updateDefault(settings.id)
   }
 
-  override fun getAll(): Flow<PagingData<ConnectionSettings>> = dao.getAll().paged {
+  override fun getAll(): Flow<PagingData<ConnectionSettings>> = paged({ dao.getAll() }) {
     it.toConnection()
   }
 

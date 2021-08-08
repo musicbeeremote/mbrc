@@ -44,7 +44,7 @@ class NowPlayingRepositoryImpl(
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override fun getAll(): Flow<PagingData<NowPlaying>> = dao.getAll().paged {
+  override fun getAll(): Flow<PagingData<NowPlaying>> = paged({ dao.getAll() }) {
     it.toNowPlaying()
   }
 
@@ -81,7 +81,7 @@ class NowPlayingRepositoryImpl(
 
   override fun search(
     term: String
-  ): Flow<PagingData<NowPlaying>> = dao.search(term).paged { it.toNowPlaying() }
+  ): Flow<PagingData<NowPlaying>> = paged({ dao.search(term) }) { it.toNowPlaying() }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) {

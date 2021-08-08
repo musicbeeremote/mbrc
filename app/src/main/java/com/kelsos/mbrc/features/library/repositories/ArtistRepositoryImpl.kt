@@ -29,9 +29,9 @@ class ArtistRepositoryImpl(
   }
 
   override fun getArtistByGenre(genre: String): Flow<PagingData<Artist>> =
-    dao.getArtistByGenre(genre).paged { it.toArtist() }
+    paged({ dao.getArtistByGenre(genre) }) { it.toArtist() }
 
-  override fun getAll(): Flow<PagingData<Artist>> = dao.getAll().paged {
+  override fun getAll(): Flow<PagingData<Artist>> = paged({ dao.getAll() }) {
     it.toArtist()
   }
 
@@ -59,10 +59,10 @@ class ArtistRepositoryImpl(
   }
 
   override fun search(term: String): Flow<PagingData<Artist>> =
-    dao.search(term).paged { it.toArtist() }
+    paged({ dao.search(term) }) { it.toArtist() }
 
   override fun getAlbumArtistsOnly(): Flow<PagingData<Artist>> =
-    dao.getAlbumArtists().paged { it.toArtist() }
+    paged({ dao.getAlbumArtists() }) { it.toArtist() }
 
   override suspend fun cacheIsEmpty(): Boolean = withContext(dispatchers.database) {
     dao.count() == 0L

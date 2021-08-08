@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 
-fun <T : Any, I : Any> PagingSource<Int, T>.paged(
+fun <T : Any, I : Any> paged(
+  pagingSourceFactory: () -> PagingSource<Int, T>,
   transform: suspend (value: T) -> I
 ): Flow<PagingData<I>> {
   val config = PagingConfig(
@@ -17,7 +18,10 @@ fun <T : Any, I : Any> PagingSource<Int, T>.paged(
     pageSize = 60,
     maxSize = 200
   )
-  return Pager(config) { this }.flow.map { data -> data.map(transform) }
+  return Pager(
+    config,
+    pagingSourceFactory = pagingSourceFactory
+  ).flow.map { data -> data.map(transform) }
 }
 
 /**

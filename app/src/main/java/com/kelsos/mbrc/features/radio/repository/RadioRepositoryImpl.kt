@@ -29,7 +29,7 @@ class RadioRepositoryImpl(
   }
 
   override fun getAll(): Flow<PagingData<RadioStation>> =
-    dao.getAll().paged { it.toRadioStation() }
+    paged({ dao.getAll() }) { it.toRadioStation() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     return@catch withContext(dispatchers.network) {
@@ -56,7 +56,7 @@ class RadioRepositoryImpl(
 
   override fun search(
     term: String
-  ): Flow<PagingData<RadioStation>> = dao.search(term).paged { it.toRadioStation() }
+  ): Flow<PagingData<RadioStation>> = paged({ dao.search(term) }) { it.toRadioStation() }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }
