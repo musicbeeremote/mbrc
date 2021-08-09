@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.radio.domain
+package com.kelsos.mbrc.features.radio
 
 data class RadioStation(
   val name: String,

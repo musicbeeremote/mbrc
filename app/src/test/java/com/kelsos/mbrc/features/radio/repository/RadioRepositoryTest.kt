@@ -4,14 +4,16 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DiffUtil
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.features.radio.RadioRepository
+import com.kelsos.mbrc.features.radio.RadioRepositoryImpl
+import com.kelsos.mbrc.features.radio.RadioStation
+import com.kelsos.mbrc.features.radio.RadioStationDao
 import com.kelsos.mbrc.features.radio.RadioStationDto
-import com.kelsos.mbrc.features.radio.data.RadioStationDao
-import com.kelsos.mbrc.features.radio.domain.RadioStation
-import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.TestData
@@ -105,7 +107,7 @@ class RadioRepositoryTest : KoinTest {
     assertThat(repository.count()).isEqualTo(2)
 
     val differ = AsyncPagingDataDiffer(
-      diffCallback = RadioAdapter.RADIO_COMPARATOR,
+      diffCallback = RADIO_COMPARATOR,
       updateCallback = noopListUpdateCallback,
       mainDispatcher = testDispatcher,
       workerDispatcher = testDispatcher
@@ -143,7 +145,7 @@ class RadioRepositoryTest : KoinTest {
     assertThat(repository.getRemote().isRight()).isTrue()
 
     val differ = AsyncPagingDataDiffer(
-      diffCallback = RadioAdapter.RADIO_COMPARATOR,
+      diffCallback = RADIO_COMPARATOR,
       updateCallback = noopListUpdateCallback,
       mainDispatcher = testDispatcher,
       workerDispatcher = testDispatcher
@@ -176,5 +178,15 @@ class RadioRepositoryTest : KoinTest {
       )
     )
     job.cancel()
+  }
+}
+
+private val RADIO_COMPARATOR = object : DiffUtil.ItemCallback<RadioStation>() {
+  override fun areItemsTheSame(oldItem: RadioStation, newItem: RadioStation): Boolean {
+    return oldItem.id == newItem.id
+  }
+
+  override fun areContentsTheSame(oldItem: RadioStation, newItem: RadioStation): Boolean {
+    return oldItem.name == newItem.name
   }
 }

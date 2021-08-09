@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.lyrics.LyricsScreen
 import com.kelsos.mbrc.features.player.PlayerScreen
+import com.kelsos.mbrc.features.radio.RadioScreen
 import kotlinx.coroutines.launch
 
 sealed class Destination(val route: String) {
@@ -54,6 +55,11 @@ fun AppNavGraph(
     composable(Destination.Playlists.route) {
     }
     composable(Destination.Radio.route) {
+      RadioScreen(
+        openDrawer = openDrawer,
+        navigateToHome = actions.navigateToHome,
+        snackbarHostState = scaffoldState.snackbarHostState
+      )
     }
     composable(Destination.Lyrics.route) {
       LyricsScreen(openDrawer, navigateToHome = actions.navigateToHome)

@@ -14,6 +14,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
@@ -38,37 +39,38 @@ fun MiniControl(
   state: PlayerState,
   perform: (action: MiniControlAction) -> Unit,
   navigateToHome: () -> Unit
-) = Column(
-  modifier = Modifier
-    .background(color = DarkBackground)
-    .height(50.dp)
-    .fillMaxWidth()
-) {
-  Row(modifier = Modifier.height(2.dp)) {
-    LinearProgressIndicator(
-      progress = position.current.toFloat().div(position.total),
-      modifier = Modifier.fillMaxWidth()
-    )
-  }
-  Row(
+) = Surface(Modifier.background(color = DarkBackground)) {
+  Column(
     modifier = Modifier
+      .height(50.dp)
       .fillMaxWidth()
-      .padding(top = 2.dp)
-      .height(48.dp)
   ) {
-    TrackCover(
-      coverUrl = playingTrack.coverUrl,
+    Row(modifier = Modifier.height(2.dp)) {
+      LinearProgressIndicator(
+        progress = position.current.toFloat().div(position.total),
+        modifier = Modifier.fillMaxWidth()
+      )
+    }
+    Row(
       modifier = Modifier
-        .size(44.dp)
-        .padding(2.dp),
-      cornerRadius = 2.dp
-    )
-    PlayingTrackInfo(
-      modifier = Modifier.weight(1f),
-      navigateToHome = navigateToHome,
-      playingTrack = playingTrack
-    )
-    PlayerControls(perform, state)
+        .fillMaxWidth()
+        .padding(top = 2.dp)
+        .height(48.dp)
+    ) {
+      TrackCover(
+        coverUrl = playingTrack.coverUrl,
+        modifier = Modifier
+          .size(44.dp)
+          .padding(2.dp),
+        cornerRadius = 2.dp
+      )
+      PlayingTrackInfo(
+        modifier = Modifier.weight(1f),
+        navigateToHome = navigateToHome,
+        playingTrack = playingTrack
+      )
+      PlayerControls(perform, state)
+    }
   }
 }
 

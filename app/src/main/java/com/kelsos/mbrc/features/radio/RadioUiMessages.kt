@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.radio.presentation
+package com.kelsos.mbrc.features.radio
 
 import com.kelsos.mbrc.ui.UiMessageBase
 

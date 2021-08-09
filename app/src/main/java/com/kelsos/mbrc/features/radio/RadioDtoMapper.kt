@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.features.radio
 
 import com.kelsos.mbrc.common.data.Mapper
-import com.kelsos.mbrc.features.radio.data.RadioStationEntity
 
 object RadioDtoMapper :
   Mapper<RadioStationDto, RadioStationEntity> {

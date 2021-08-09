@@ -1,12 +1,12 @@
 [bundles]
-androidx-compose = ["androidx-compose-compiler", "androidx-compose-foundation", "androidx-compose-material", "androidx-compose-materialIconsExtended", "androidx-compose-runtimeLivedata", "androidx-compose-ui", "androidx-compose-uiTooling"]
+androidx-compose = ["androidx-compose-compiler", "androidx-compose-foundation", "androidx-compose-material", "androidx-compose-materialIconsExtended", "androidx-compose-runtimeLivedata", "androidx-compose-ui", "androidx-compose-uiTooling", "androidx-paging-compose"]
 androidx-lifecycle = ["androidx-lifecycle-runtime-ktx", "androidx-lifecycle-viewmodel-ktx", "androidx-lifecycle-common","androidx-lifecycle-lifecycleViewmodelCompose"]
 androidx-navigation = ["androidx-navigation-ui-ktx", "androidx-navigation-fragment-ktx", "androidx-navigation-navigationCompose"]
 androidx-room = ["androidx-room-runtime", "androidx-room-ktx"]
 androidx-test-espresso = ["androidx-test-espresso-intents", "androidx-test-espresso-core", "androidx-test-espresso-contrib"]
 coil = ["coilKt-coil", "coilKt-coilCompose"]
 coroutines = ["kotlin-coroutines-core", "kotlin-coroutines-android"]
-google-accompanist = ["google-accompanistFlowLayout", "google-accompanistPager", "google-accompanistPagerIndicators", "google-accompanistSystemUIController"]
+google-accompanist = ["google-accompanistFlowLayout", "google-accompanistPager", "google-accompanistPagerIndicators", "google-accompanistSystemUIController", "google-accompanistSwipeRefresh", "google-accompanistPlaceholder"]
 google-firebase = ["google-firebase-analytics-ktx", "google-firebase-crashlytics-ktx", "google-firebase-perf-ktx"]
 koin = ["koin-android", "koin-workmanager", "koin-compose"]
 
@@ -37,6 +37,7 @@ androidx-media = { module = "androidx.media:media", version.ref = "androidx-medi
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
 androidx-navigation-navigationCompose = { module="androidx.navigation:navigation-compose", version.ref="navigationCompose" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
+androidx-paging-compose = { module= "androidx.paging:paging-compose", version.ref = "androidx-paging-compose"}
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "androidx-paging-runtime-ktx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "androidx-preference-ktx" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "androidx-recyclerview" }
@@ -62,7 +63,9 @@ com-android-tools-desugar = { module = "com.android.tools:desugar_jdk_libs", ver
 google-accompanistFlowLayout = { module="com.google.accompanist:accompanist-flowlayout", version.ref="accompanist" }
 google-accompanistPager = { module="com.google.accompanist:accompanist-pager", version.ref="accompanist" }
 google-accompanistPagerIndicators = { module="com.google.accompanist:accompanist-pager-indicators", version.ref="accompanist" }
+google-accompanistPlaceholder = { module="com.google.accompanist:accompanist-placeholder-material", version.ref="accompanist" }
 google-accompanistSystemUIController = { module="com.google.accompanist:accompanist-systemuicontroller", version.ref="accompanist" }
+google-accompanistSwipeRefresh = { module="com.google.accompanist:accompanist-swiperefresh", version.ref="accompanist"}
 google-firebase-analytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 google-firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
@@ -109,6 +112,7 @@ androidx-fragment = "1.3.6"
 androidx-lifecycle = "2.4.0-alpha03"
 androidx-media = "1.4.1"
 androidx-navigation = "2.3.5"
+androidx-paging-compose = "1.0.0-alpha12"
 androidx-paging-runtime-ktx = "3.0.1"
 androidx-preference-ktx = "1.1.1"
 androidx-recyclerview = "1.2.1"

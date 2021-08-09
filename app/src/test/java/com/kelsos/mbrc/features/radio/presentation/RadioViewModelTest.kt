@@ -9,8 +9,10 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.features.queue.QueueResult
 import com.kelsos.mbrc.features.queue.QueueUseCase
-import com.kelsos.mbrc.features.radio.domain.RadioStation
-import com.kelsos.mbrc.features.radio.repository.RadioRepository
+import com.kelsos.mbrc.features.radio.RadioRepository
+import com.kelsos.mbrc.features.radio.RadioStation
+import com.kelsos.mbrc.features.radio.RadioUiMessages
+import com.kelsos.mbrc.features.radio.RadioViewModel
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.appCoroutineDispatchers
 import com.kelsos.mbrc.utils.testDispatcher

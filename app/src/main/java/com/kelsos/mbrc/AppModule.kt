@@ -73,10 +73,9 @@ import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.queue.QueueUseCase
 import com.kelsos.mbrc.features.queue.QueueUseCaseImpl
 import com.kelsos.mbrc.features.queue.QueueWorker
-import com.kelsos.mbrc.features.radio.presentation.RadioAdapter
-import com.kelsos.mbrc.features.radio.presentation.RadioViewModel
-import com.kelsos.mbrc.features.radio.repository.RadioRepository
-import com.kelsos.mbrc.features.radio.repository.RadioRepositoryImpl
+import com.kelsos.mbrc.features.radio.RadioRepository
+import com.kelsos.mbrc.features.radio.RadioRepositoryImpl
+import com.kelsos.mbrc.features.radio.RadioViewModel
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.features.work.WorkHandler
@@ -300,7 +299,6 @@ val uiModule = module {
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()
 
-  factory<RadioAdapter>()
   factory<PlaylistAdapter>()
   factory<GenreAdapter>()
   factory<ArtistAdapter>()

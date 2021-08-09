@@ -415,7 +415,7 @@ class UpdatePlaybackPositionCommand(
     appState.playingPosition.emit(
       PlayingPosition(
         response.current,
-        response.total
+        response.total.coerceAtLeast(0)
       )
     )
     val track = appState.playingTrack.first()
