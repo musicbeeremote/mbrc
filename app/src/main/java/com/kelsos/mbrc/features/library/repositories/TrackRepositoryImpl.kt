@@ -56,9 +56,7 @@ class TrackRepositoryImpl(
         withContext(dispatchers.database) {
 
           val matches = sources.chunked(50)
-            .flatMap { dao.findMatchingIds(it) }
-            .map { it.src to it.id }
-            .toMap()
+            .flatMap { dao.findMatchingIds(it) }.associate { it.src to it.id }
 
           val toUpdate = tracks.filter { matches.containsKey(it.src) }
           val toInsert = tracks.minus(toUpdate)

@@ -73,7 +73,7 @@ class PlaylistViewModelTest {
     viewModel.emitter.test {
       viewModel.reload()
       advanceUntilIdle()
-      assertThat(expectItem()).isEqualTo(PlaylistUiMessages.RefreshFailed)
+      assertThat(awaitItem()).isEqualTo(PlaylistUiMessages.RefreshFailed)
     }
   }
 
@@ -83,7 +83,7 @@ class PlaylistViewModelTest {
     viewModel.emitter.test {
       viewModel.reload()
       advanceUntilIdle()
-      assertThat(expectItem()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
+      assertThat(awaitItem()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
     }
   }
 

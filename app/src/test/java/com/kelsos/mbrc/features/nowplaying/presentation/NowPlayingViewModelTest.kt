@@ -69,7 +69,7 @@ class NowPlayingViewModelTest {
     viewModel.emitter.test {
       viewModel.reload()
       advanceUntilIdle()
-      assertThat(expectItem()).isEqualTo(NowPlayingUiMessages.RefreshFailed)
+      assertThat(awaitItem()).isEqualTo(NowPlayingUiMessages.RefreshFailed)
     }
   }
 
@@ -79,7 +79,7 @@ class NowPlayingViewModelTest {
     viewModel.emitter.test {
       viewModel.reload()
       advanceUntilIdle()
-      assertThat(expectItem()).isEqualTo(NowPlayingUiMessages.RefreshSuccess)
+      assertThat(awaitItem()).isEqualTo(NowPlayingUiMessages.RefreshSuccess)
     }
   }
 

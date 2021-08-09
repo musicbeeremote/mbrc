@@ -16,7 +16,7 @@ interface GenreDao {
   @Insert(onConflict = OnConflictStrategy.ABORT)
   fun insertAll(list: List<GenreEntity>)
 
-  @Update()
+  @Update
   fun update(list: List<GenreEntity>)
 
   @Query("select * from genre order by genre")

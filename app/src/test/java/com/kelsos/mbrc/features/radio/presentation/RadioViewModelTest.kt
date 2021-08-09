@@ -53,7 +53,7 @@ class RadioViewModelTest {
     coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
     radioViewModel.emitter.test {
       radioViewModel.reload()
-      assertThat(expectItem()).isEqualTo(RadioUiMessages.RefreshFailed)
+      assertThat(awaitItem()).isEqualTo(RadioUiMessages.RefreshFailed)
       cancelAndConsumeRemainingEvents()
     }
   }
@@ -63,7 +63,7 @@ class RadioViewModelTest {
     coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
     radioViewModel.emitter.test {
       radioViewModel.reload()
-      assertThat(expectItem()).isEqualTo(RadioUiMessages.RefreshSuccess)
+      assertThat(awaitItem()).isEqualTo(RadioUiMessages.RefreshSuccess)
       cancelAndConsumeRemainingEvents()
     }
   }
@@ -77,7 +77,7 @@ class RadioViewModelTest {
 
     radioViewModel.emitter.test {
       radioViewModel.play("http://radio.station")
-      assertThat(expectItem()).isEqualTo(RadioUiMessages.QueueSuccess)
+      assertThat(awaitItem()).isEqualTo(RadioUiMessages.QueueSuccess)
       cancelAndConsumeRemainingEvents()
     }
   }
@@ -89,7 +89,7 @@ class RadioViewModelTest {
     }
     radioViewModel.emitter.test {
       radioViewModel.play("http://radio.station")
-      assertThat(expectItem()).isEqualTo(RadioUiMessages.QueueFailed)
+      assertThat(awaitItem()).isEqualTo(RadioUiMessages.QueueFailed)
       cancelAndConsumeRemainingEvents()
     }
   }

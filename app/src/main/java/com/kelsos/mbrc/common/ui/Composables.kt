@@ -48,7 +48,7 @@ fun EmptyScreen(
   text: String,
   imageVector: ImageVector,
   contentDescription: String,
-  content: @Composable() (ColumnScope.() -> Unit)? = null
+  content: @Composable (ColumnScope.() -> Unit)? = null
 ) = Row(
   modifier = modifier,
   verticalAlignment = Alignment.CenterVertically,

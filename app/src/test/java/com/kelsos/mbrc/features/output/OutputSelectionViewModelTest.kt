@@ -67,7 +67,7 @@ class OutputSelectionViewModelTest {
 
     viewmodel.outputs.test {
       viewmodel.reload()
-      assertThat(expectItem()).isEqualTo(outputResponse)
+      assertThat(awaitItem()).isEqualTo(outputResponse)
       cancelAndConsumeRemainingEvents()
     }
   }
@@ -80,7 +80,7 @@ class OutputSelectionViewModelTest {
 
     viewmodel.emitter.test {
       viewmodel.reload()
-      assertThat(expectItem()).isEqualTo(OutputSelectionResult.ConnectionError)
+      assertThat(awaitItem()).isEqualTo(OutputSelectionResult.ConnectionError)
       cancelAndConsumeRemainingEvents()
     }
   }
@@ -98,7 +98,7 @@ class OutputSelectionViewModelTest {
 
     viewmodel.emitter.test {
       viewmodel.reload()
-      assertThat(expectItem()).isEqualTo(OutputSelectionResult.ConnectionError)
+      assertThat(awaitItem()).isEqualTo(OutputSelectionResult.ConnectionError)
       cancelAndConsumeRemainingEvents()
     }
   }
@@ -111,7 +111,7 @@ class OutputSelectionViewModelTest {
 
     viewmodel.emitter.test {
       viewmodel.reload()
-      assertThat(expectItem()).isEqualTo(OutputSelectionResult.UnknownError)
+      assertThat(awaitItem()).isEqualTo(OutputSelectionResult.UnknownError)
       cancelAndConsumeRemainingEvents()
     }
   }
@@ -129,13 +129,13 @@ class OutputSelectionViewModelTest {
 
     viewmodel.outputs.test {
       viewmodel.setOutput("Output 2")
-      assertThat(expectItem()).isEqualTo(outputResponse)
+      assertThat(awaitItem()).isEqualTo(outputResponse)
       cancelAndConsumeRemainingEvents()
     }
 
     viewmodel.emitter.test {
       viewmodel.setOutput("Output 2")
-      assertThat(expectItem()).isEqualTo(OutputSelectionResult.Success)
+      assertThat(awaitItem()).isEqualTo(OutputSelectionResult.Success)
       cancelAndConsumeRemainingEvents()
     }
   }
