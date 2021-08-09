@@ -5,9 +5,7 @@
   <dimen name="list_item_height">60dp</dimen>
   <dimen name="mini_control_height">48dp</dimen>
   <dimen name="list_item_single_height">48dp</dimen>
-  <dimen name="text_title_size">20sp</dimen>
   <dimen name="text_subhead_size">16sp</dimen>
-  <dimen name="text_body_size">14sp</dimen>
   <dimen name="list_dual_item_height">72dp</dimen>
 
   <dimen name="activity_horizontal_margin">16dp</dimen>
@@ -24,8 +22,6 @@
   <dimen name="dual_list_subtitle">14sp</dimen>
   <dimen name="mini_control_title_text_size">16sp</dimen>
   <dimen name="mini_control_subtitle_text_size">14sp</dimen>
-  <dimen name="nav_header_vertical_spacing">16dp</dimen>
-  <dimen name="nav_header_height">160dp</dimen>
   <dimen name="list_padding_top">8dp</dimen>
   <dimen name="empty_view_icon_margin_top">20dp</dimen>
   <dimen name="empty_view_icon_margin_bottom">40dp</dimen>

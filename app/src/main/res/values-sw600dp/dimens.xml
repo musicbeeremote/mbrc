@@ -2,7 +2,5 @@
 <resources>
   <dimen name="list_item_height">72dp</dimen>
   <dimen name="mini_control_height">60dp</dimen>
-  <dimen name="text_title_size">24sp</dimen>
   <dimen name="text_subhead_size">20sp</dimen>
-  <dimen name="text_body_size">16sp</dimen>
-</resources>
+  </resources>
