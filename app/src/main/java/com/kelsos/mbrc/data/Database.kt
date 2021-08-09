@@ -13,8 +13,8 @@ import com.kelsos.mbrc.features.library.data.TrackDao
 import com.kelsos.mbrc.features.library.data.TrackEntity
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingEntity
-import com.kelsos.mbrc.features.playlists.data.PlaylistDao
-import com.kelsos.mbrc.features.playlists.data.PlaylistEntity
+import com.kelsos.mbrc.features.playlists.PlaylistDao
+import com.kelsos.mbrc.features.playlists.PlaylistEntity
 import com.kelsos.mbrc.features.radio.RadioStationDao
 import com.kelsos.mbrc.features.radio.RadioStationEntity
 import com.kelsos.mbrc.networking.connections.ConnectionDao

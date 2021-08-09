@@ -8,7 +8,9 @@ import arrow.core.right
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.events.UserAction
-import com.kelsos.mbrc.features.playlists.domain.Playlist
+import com.kelsos.mbrc.features.playlists.Playlist
+import com.kelsos.mbrc.features.playlists.PlaylistUiMessages
+import com.kelsos.mbrc.features.playlists.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol

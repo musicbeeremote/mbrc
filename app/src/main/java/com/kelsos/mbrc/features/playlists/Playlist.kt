@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.playlists.domain
+package com.kelsos.mbrc.features.playlists
 
 data class Playlist(
   val name: String,

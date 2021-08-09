@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.playlists.presentation
+package com.kelsos.mbrc.features.playlists
 
 import com.kelsos.mbrc.ui.UiMessageBase
 

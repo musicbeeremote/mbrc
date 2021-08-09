@@ -66,8 +66,8 @@ import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import com.kelsos.mbrc.features.player.PlayerViewModel
 import com.kelsos.mbrc.features.player.RatingDialogViewModel
 import com.kelsos.mbrc.features.player.VolumeDialogViewModel
-import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter
-import com.kelsos.mbrc.features.playlists.presentation.PlaylistViewModel
+import com.kelsos.mbrc.features.playlists.PlaylistAdapter
+import com.kelsos.mbrc.features.playlists.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.queue.QueueUseCase

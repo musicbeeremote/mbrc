@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.playlists.presentation
+package com.kelsos.mbrc.features.playlists
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.databinding.FragmentPlaylistsBinding
-import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter.OnPlaylistPressedListener
+import com.kelsos.mbrc.features.playlists.PlaylistAdapter.OnPlaylistPressedListener
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop

@@ -7,10 +7,10 @@ import com.kelsos.mbrc.common.data.Repository
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
+import com.kelsos.mbrc.features.playlists.Playlist
+import com.kelsos.mbrc.features.playlists.PlaylistDao
 import com.kelsos.mbrc.features.playlists.PlaylistDto
 import com.kelsos.mbrc.features.playlists.PlaylistDtoMapper
-import com.kelsos.mbrc.features.playlists.data.PlaylistDao
-import com.kelsos.mbrc.features.playlists.domain.Playlist
 import com.kelsos.mbrc.features.playlists.toPlaylist
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol

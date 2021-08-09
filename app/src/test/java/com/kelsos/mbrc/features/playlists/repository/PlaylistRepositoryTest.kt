@@ -8,10 +8,10 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.features.playlists.Playlist
+import com.kelsos.mbrc.features.playlists.PlaylistAdapter
+import com.kelsos.mbrc.features.playlists.PlaylistDao
 import com.kelsos.mbrc.features.playlists.PlaylistDto
-import com.kelsos.mbrc.features.playlists.data.PlaylistDao
-import com.kelsos.mbrc.features.playlists.domain.Playlist
-import com.kelsos.mbrc.features.playlists.presentation.PlaylistAdapter
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.TestData
