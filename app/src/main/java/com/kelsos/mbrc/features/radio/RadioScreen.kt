@@ -1,16 +1,12 @@
 package com.kelsos.mbrc.features.radio
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -20,20 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.fade
-import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.kelsos.mbrc.R
@@ -41,6 +31,8 @@ import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.common.state.models.PlayingPosition
 import com.kelsos.mbrc.common.ui.EmptyScreen
 import com.kelsos.mbrc.common.ui.RemoteTopAppBar
+import com.kelsos.mbrc.common.ui.SingleLineRow
+import com.kelsos.mbrc.common.ui.pagingDataFlow
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.minicontrol.MiniControl
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
@@ -49,7 +41,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.getViewModel
 
@@ -162,71 +153,22 @@ fun RadioStationContent(
 }
 
 @Composable
-fun RadioStationRow(station: RadioStation?, play: (path: String) -> Unit) = Row(
-  modifier = Modifier
-    .fillMaxWidth()
-    .height(48.dp)
-    .clickable {
-      station?.let {
-        play(it.url)
-      }
+fun RadioStationRow(station: RadioStation?, play: (path: String) -> Unit) =
+  SingleLineRow(text = station?.name) {
+    station?.let {
+      play(it.url)
     }
-    .padding(horizontal = 16.dp, vertical = 8.dp),
-  verticalAlignment = Alignment.CenterVertically
-) {
-  Text(
-    text = station?.name ?: "",
-    style = MaterialTheme.typography.body1,
-    modifier = Modifier
-      .weight(1f)
-      .placeholder(
-        visible = station == null,
-        highlight = PlaceholderHighlight.fade()
-      ),
-    maxLines = 1,
-    overflow = TextOverflow.Ellipsis
-  )
-}
-
-@Preview
-@Composable
-fun PreviewRadioStationRowEmpty() {
-  RadioStationRow(station = null, play = {})
-}
-
-@Preview
-@Composable
-fun PreviewRadioStationRow() {
-  RadioStationRow(
-    station = RadioStation(
-      name = "Radio One",
-      id = 1,
-      url = ""
-    ),
-    play = {}
-  )
-}
+  }
 
 @Preview
 @Composable
 fun PreviewRadioScreen() {
-  val stationFlow = flow {
-    emit(
-      PagingData.from(
-        listOf(
-          RadioStation(
-            name = "Radio 1",
-            url = "",
-            id = 1,
-          )
-        )
-      )
-    )
-  }
   RemoteTheme {
     RadioScreen(
       openDrawer = { },
-      stations = stationFlow.collectAsLazyPagingItems(),
+      stations = pagingDataFlow(
+        RadioStation(name = "Radio 1", url = "", id = 1)
+      ).collectAsLazyPagingItems(),
       events = emptyFlow(),
       snackbarHostState = SnackbarHostState(),
       play = {},

@@ -37,8 +37,8 @@ fun MiniControl(
   playingTrack: PlayingTrack,
   position: PlayingPosition,
   state: PlayerState,
-  perform: (action: MiniControlAction) -> Unit,
-  navigateToHome: () -> Unit
+  perform: (action: MiniControlAction) -> Unit = {},
+  navigateToHome: () -> Unit = {}
 ) = Surface(Modifier.background(color = DarkBackground)) {
   Column(
     modifier = Modifier

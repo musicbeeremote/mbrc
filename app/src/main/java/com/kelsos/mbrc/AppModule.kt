@@ -66,7 +66,6 @@ import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import com.kelsos.mbrc.features.player.PlayerViewModel
 import com.kelsos.mbrc.features.player.RatingDialogViewModel
 import com.kelsos.mbrc.features.player.VolumeDialogViewModel
-import com.kelsos.mbrc.features.playlists.PlaylistAdapter
 import com.kelsos.mbrc.features.playlists.PlaylistViewModel
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
@@ -299,7 +298,6 @@ val uiModule = module {
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()
 
-  factory<PlaylistAdapter>()
   factory<GenreAdapter>()
   factory<ArtistAdapter>()
   factory<AlbumAdapter>()

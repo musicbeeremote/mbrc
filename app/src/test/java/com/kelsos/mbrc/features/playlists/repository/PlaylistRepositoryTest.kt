@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DiffUtil
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.playlists.Playlist
-import com.kelsos.mbrc.features.playlists.PlaylistAdapter
 import com.kelsos.mbrc.features.playlists.PlaylistDao
 import com.kelsos.mbrc.features.playlists.PlaylistDto
 import com.kelsos.mbrc.networking.ApiBase
@@ -40,6 +40,16 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.net.SocketTimeoutException
 import java.util.concurrent.CountDownLatch
+
+val PLAYLIST_COMPARATOR = object : DiffUtil.ItemCallback<Playlist>() {
+  override fun areItemsTheSame(oldItem: Playlist, newItem: Playlist): Boolean {
+    return oldItem.id == newItem.id
+  }
+
+  override fun areContentsTheSame(oldItem: Playlist, newItem: Playlist): Boolean {
+    return oldItem.name == newItem.name
+  }
+}
 
 @RunWith(AndroidJUnit4::class)
 class PlaylistRepositoryTest : KoinTest {
@@ -98,7 +108,7 @@ class PlaylistRepositoryTest : KoinTest {
     assertThat(repository.count()).isEqualTo(0)
 
     val differ = AsyncPagingDataDiffer(
-      diffCallback = PlaylistAdapter.PLAYLIST_COMPARATOR,
+      diffCallback = PLAYLIST_COMPARATOR,
       updateCallback = noopListUpdateCallback,
       mainDispatcher = testDispatcher,
       workerDispatcher = testDispatcher
@@ -136,7 +146,7 @@ class PlaylistRepositoryTest : KoinTest {
     assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
     val differ = AsyncPagingDataDiffer(
-      diffCallback = PlaylistAdapter.PLAYLIST_COMPARATOR,
+      diffCallback = PLAYLIST_COMPARATOR,
       updateCallback = noopListUpdateCallback,
       mainDispatcher = testDispatcher,
       workerDispatcher = testDispatcher
@@ -175,7 +185,7 @@ class PlaylistRepositoryTest : KoinTest {
 
     assertThat(repository.getRemote().isRight()).isTrue()
     val differ = AsyncPagingDataDiffer(
-      diffCallback = PlaylistAdapter.PLAYLIST_COMPARATOR,
+      diffCallback = PLAYLIST_COMPARATOR,
       updateCallback = noopListUpdateCallback,
       mainDispatcher = testDispatcher,
       workerDispatcher = testDispatcher
