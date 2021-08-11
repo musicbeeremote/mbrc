@@ -44,7 +44,7 @@ class LibraryFragment(
     if (search.isNotEmpty()) {
       closeSearch()
       viewModel.search(search)
-      setAppBarTitle(if (search.isBlank()) getString(R.string.nav_library) else search)
+      setAppBarTitle(search.ifBlank { getString(R.string.nav_library) })
       searchMenuItem.isVisible = false
       clearMenuItem.isVisible = true
       return true

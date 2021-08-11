@@ -65,10 +65,8 @@ class RequestManagerImpl(
     withContext(dispatchers.network) {
       connection.send(message.getBytes())
       val readLine = connection.readLine()
-      return@withContext if (readLine.isEmpty()) {
+      return@withContext readLine.ifEmpty {
         connection.readLine()
-      } else {
-        readLine
       }
     }
 

@@ -34,8 +34,8 @@ class AlbumViewHolder(
   override fun bindTo(item: Album) {
     val title = item.album
     val artist = item.artist
-    this.album.text = if (title.isBlank()) emptyAlbum else title
-    this.artist.text = if (artist.isBlank()) unknownArtist else artist
+    this.album.text = title.ifBlank { emptyAlbum }
+    this.artist.text = artist.ifBlank { unknownArtist }
 
     Picasso.get()
       .load(File(cache, item.key()))

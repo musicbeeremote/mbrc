@@ -18,11 +18,7 @@ class ArtistViewHolder(
   private val empty: String = itemView.context.getString(R.string.empty)
 
   override fun bindTo(item: Artist) {
-    title.text = if (item.artist.isBlank()) {
-      empty
-    } else {
-      item.artist
-    }
+    title.text = item.artist.ifBlank { empty }
   }
 
   override fun clear() {

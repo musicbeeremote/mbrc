@@ -32,7 +32,7 @@ class TrackViewHolder(
 
   override fun bindTo(item: Track) {
     title.text = item.title
-    artist.text = if (item.artist.isBlank()) unknownArtist else item.artist
+    artist.text = item.artist.ifBlank { unknownArtist }
     image.isGone = !coverMode
 
     if (!coverMode) {

@@ -18,7 +18,7 @@ class GenreViewHolder(
   private val empty: String by lazy { itemView.context.getString(R.string.empty) }
 
   override fun bindTo(item: Genre) {
-    title.text = if (item.genre.isBlank()) empty else item.genre
+    title.text = item.genre.ifBlank { empty }
   }
 
   override fun clear() {
