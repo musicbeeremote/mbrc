@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -14,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -77,7 +79,7 @@ fun PlaylistScreen(
   onRefresh: () -> Unit,
   play: (path: String) -> Unit,
   content: @Composable () -> Unit,
-) {
+) = Surface {
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {}
 
@@ -130,7 +132,7 @@ fun PlaylistRow(playlist: Playlist?, clicked: (path: String) -> Unit) =
     }
   }
 
-@Preview
+@Preview(device = Devices.PIXEL_4)
 @Composable
 fun PlaylistScreenPreview() {
   RemoteTheme {

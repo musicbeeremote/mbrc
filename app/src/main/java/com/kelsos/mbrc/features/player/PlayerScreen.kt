@@ -17,6 +17,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -103,23 +105,25 @@ fun PlayerScreenLandscape(
   perform: (action: PlayerAction) -> Unit,
   share: (track: PlayingTrack) -> Unit,
   openDrawer: () -> Unit
-) = Column(modifier = Modifier.fillMaxSize()) {
-  PlayerScreenAppBar(openDrawer, perform, trackRating, playerStatus, share, playingTrack)
-  Row(modifier = Modifier.fillMaxWidth()) {
-    Column(modifier = Modifier.fillMaxWidth(0.6f)) {
-      Spacer(modifier = Modifier.weight(2f))
-      TrackInfo(playingTrack)
-      Spacer(modifier = Modifier.weight(1f))
-      ProgressControl(playingPosition, perform)
-      Spacer(modifier = Modifier.weight(1f))
-      PlayerActions(playerStatus, perform)
+) = Surface() {
+  Column(modifier = Modifier.fillMaxSize()) {
+    PlayerScreenAppBar(openDrawer, perform, trackRating, playerStatus, share, playingTrack)
+    Row(modifier = Modifier.fillMaxWidth()) {
+      Column(modifier = Modifier.fillMaxWidth(0.6f)) {
+        Spacer(modifier = Modifier.weight(2f))
+        TrackInfo(playingTrack)
+        Spacer(modifier = Modifier.weight(1f))
+        ProgressControl(playingPosition, perform)
+        Spacer(modifier = Modifier.weight(1f))
+        PlayerActions(playerStatus, perform)
+      }
+      TrackCover(
+        modifier = Modifier
+          .padding(16.dp)
+          .fillMaxSize(),
+        coverUrl = playingTrack.coverUrl,
+      )
     }
-    TrackCover(
-      modifier = Modifier
-        .padding(16.dp)
-        .fillMaxSize(),
-      coverUrl = playingTrack.coverUrl,
-    )
   }
 }
 
@@ -132,19 +136,21 @@ fun PlayerScreenPortrait(
   perform: (action: PlayerAction) -> Unit,
   share: (track: PlayingTrack) -> Unit,
   openDrawer: () -> Unit
-) = Column(modifier = Modifier.fillMaxSize()) {
-  PlayerScreenAppBar(openDrawer, perform, trackRating, playerStatus, share, playingTrack)
-  TrackCover(
-    modifier = Modifier
-      .padding(16.dp)
-      .fillMaxSize(),
-    coverUrl = playingTrack.coverUrl,
-  )
-  ProgressControl(playingPosition, perform)
-  Spacer(modifier = Modifier.weight(2f))
-  TrackInfo(playingTrack)
-  Spacer(modifier = Modifier.weight(1f))
-  PlayerActions(playerStatus, perform)
+) = Surface {
+  Column(modifier = Modifier.fillMaxSize()) {
+    PlayerScreenAppBar(openDrawer, perform, trackRating, playerStatus, share, playingTrack)
+    TrackCover(
+      modifier = Modifier
+        .padding(16.dp)
+        .fillMaxSize(),
+      coverUrl = playingTrack.coverUrl,
+    )
+    ProgressControl(playingPosition, perform)
+    Spacer(modifier = Modifier.weight(2f))
+    TrackInfo(playingTrack)
+    Spacer(modifier = Modifier.weight(1f))
+    PlayerActions(playerStatus, perform)
+  }
 }
 
 @Composable
@@ -385,7 +391,11 @@ private fun TrackInfo(
       overflow = TextOverflow.Ellipsis
     )
   }
-  Column(modifier = Modifier.wrapContentWidth().padding(start = 8.dp)) {
+  Column(
+    modifier = Modifier
+      .wrapContentWidth()
+      .padding(start = 8.dp)
+  ) {
     VolumeControl()
   }
 }
@@ -407,11 +417,39 @@ private fun VolumeControl() {
   )
 }
 
-@Preview(showBackground = true)
+@Preview(device = Devices.PIXEL_4)
 @Composable
-fun PlayerScreenPreview() {
+fun PlayerScreenPortaitPreview() {
   RemoteTheme {
     PlayerScreenPortrait(
+      playingTrack = PlayingTrack(
+        artist = "Caravan Palace",
+        album = "Panic",
+        title = "Rock It for Me",
+        year = "2008"
+      ),
+      playingPosition = PlayingPosition(63000, 174000),
+      playerStatus = PlayerStatusModel(
+        mute = true,
+        state = PlayerState.Paused,
+        repeat = Repeat.One,
+        scrobbling = false,
+        shuffle = ShuffleMode.AutoDJ,
+        volume = 10
+      ),
+      trackRating = TrackRating(lfmRating = LfmRating.Loved, rating = 4.5f),
+      perform = {},
+      share = {},
+      openDrawer = {}
+    )
+  }
+}
+
+@Preview(device = Devices.PIXEL_4)
+@Composable
+fun PlayerScreenLandscapePreview() {
+  RemoteTheme {
+    PlayerScreenLandscape(
       playingTrack = PlayingTrack(
         artist = "Caravan Palace",
         album = "Panic",
