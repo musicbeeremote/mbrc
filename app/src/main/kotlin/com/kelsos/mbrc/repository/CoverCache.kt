@@ -34,8 +34,9 @@ constructor(
   }
 
   suspend fun cache() {
-    val map = withContext(dispatchers.db) {
-      albumRepository.getAllCursor()
+    val covers = withContext(dispatchers.db) {
+      val albumCovers = mutableListOf<CoverInfo>()
+      val covers = albumRepository.getAllCursor()
         .map {
           CoverInfo(
             artist = it.artist ?: "",
@@ -43,23 +44,44 @@ constructor(
             hash = it.cover ?: ""
           )
         }
+      withContext(dispatchers.io) {
+        val files = cache.listFiles()?.map { it.nameWithoutExtension } ?: emptyList()
+
+        for (cover in covers) {
+          if (cover.hash.isBlank() || files.contains(cover.key())) {
+            albumCovers.add(cover)
+          } else {
+            albumCovers.add(cover.copy(hash = ""))
+          }
+        }
+      }
+      albumCovers
     }
     withContext(dispatchers.io) {
       val updated = mutableListOf<CoverInfo>()
-      api.getAll(Protocol.LibraryCover, map, Cover::class).onCompletion {
+      api.getAll(Protocol.LibraryCover, covers, Cover::class).onCompletion {
         Timber.v("Updated ${updated.size} albums")
         albumRepository.updateCovers(updated)
       }.collect { (payload, response) ->
-        if (response.status == 200 && !response.cover.isNullOrEmpty() && !response.hash.isNullOrEmpty()) {
-          try {
+        if (response.status == 304) {
+          Timber.v("cover for $payload did not change")
+          return@collect
+        }
+        val cover = response.cover
+        val hash = response.hash
+
+        if (response.status == 200 && !cover.isNullOrEmpty() && !hash.isNullOrEmpty()) {
+          val result = runCatching {
             val file = File(cache, payload.key())
-            val decodeBase64 = response.cover.decodeBase64()
+            val decodeBase64 = cover.decodeBase64()
             if (decodeBase64 != null) {
               file.sink().buffer().use { sink -> sink.write(decodeBase64) }
             }
-            updated.add(payload.copy(hash = response.hash))
-          } catch (e: Exception) {
-            Timber.e(e)
+            updated.add(payload.copy(hash = hash))
+          }
+
+          if (result.isFailure) {
+            Timber.e(result.exceptionOrNull(), "Could not save cover for $payload")
           }
         }
       }

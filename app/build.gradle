@@ -23,8 +23,8 @@ def gitHash() {
   return "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 }
 
-def version = "1.5.0"
-def version_code = 122
+def version = "1.5.1"
+def version_code = 124
 
 android {
   compileSdkVersion 30
