@@ -1,7 +1,6 @@
 package com.kelsos.mbrc.ui.help_feedback
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -11,10 +10,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.kelsos.mbrc.BuildConfig.APPLICATION_ID
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.logging.LogHelper
 import com.kelsos.mbrc.utilities.RemoteUtils.getVersion
@@ -98,7 +99,7 @@ class FeedbackFragment : Fragment() {
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
     emailIntent.putExtra(Intent.EXTRA_TEXT, feedbackText)
     if (logs != null) {
-      val logsUri = Uri.fromFile(logs)
+      val logsUri = FileProvider.getUriForFile(requireContext(), "$APPLICATION_ID.fileprovider", logs)
       emailIntent.putExtra(Intent.EXTRA_STREAM, logsUri)
     }
 
