@@ -3,6 +3,18 @@ Changelog
 
 ## [Unreleased]
 
+## [1.5.1] - 2021-09-13
+### Changed
+- Fixes an issue where the last playing track information would not properly persist.
+- [#228] Fixes an issue where pressing the up volume button once would decrease the volume.
+- Fixes a crash when attempting to send debug logs via the Feedback screen.
+- [#232] Fixes an issue that would cut the album title when in the album library tab.
+- [#227] Fixes an issue that would fail to properly sync album covers after the first sync.
+
+[#228]: https://github.com/musicbeeremote/android-app/issues/228 
+[#232]: https://github.com/musicbeeremote/android-app/issues/232 
+[#227]: https://github.com/musicbeeremote/android-app/issues/227
+
 ## [1.5.0] - 2021-04-03
 ### Added
 - [#103], [#113] Adds radio station support.
@@ -153,7 +165,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/musicbeeremote/android-app/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/musicbeeremote/android-app/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/musicbeeremote/android-app/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.1...v1.3.0

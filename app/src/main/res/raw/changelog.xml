@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+     version="1.5.1"
+     release="Sep 13,2021">
+    <bug>Fixes an issue where the last playing track information would not properly persist.</bug>
+    <bug>Fixes an issue where pressing the up volume button once would decrease the volume.</bug>
+    <bug>Fixes a crash when attempting to send debug logs via the Feedback screen.</bug>
+    <bug>Fixes an issue that would cut the album title when in the album library tab.</bug>
+    <bug>Fixes an issue that would fail to properly sync album covers after the first sync.</bug>
+  </version>
+  <version
     version="1.5.0"
     release="Apr 13,2021">
     <feature>Adds radio station support.</feature>
