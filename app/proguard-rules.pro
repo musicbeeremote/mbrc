@@ -181,3 +181,4 @@
 }
 
 -keep class androidx.datastore.*.** {*;}
+-keep public class * extends com.google.protobuf.GeneratedMessageLite { *; }
