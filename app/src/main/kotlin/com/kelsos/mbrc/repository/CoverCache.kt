@@ -5,6 +5,7 @@ import com.kelsos.mbrc.constants.Protocol
 import com.kelsos.mbrc.data.CoverInfo
 import com.kelsos.mbrc.data.key
 import com.kelsos.mbrc.data.library.Cover
+import com.kelsos.mbrc.data.library.key
 import com.kelsos.mbrc.di.modules.AppDispatchers
 import com.kelsos.mbrc.networking.ApiBase
 import kotlinx.coroutines.flow.collect
@@ -60,8 +61,19 @@ constructor(
     withContext(dispatchers.io) {
       val updated = mutableListOf<CoverInfo>()
       api.getAll(Protocol.LibraryCover, covers, Cover::class).onCompletion {
-        Timber.v("Updated ${updated.size} albums")
-        albumRepository.updateCovers(updated)
+        Timber.v("Updated covers for ${updated.size} albums")
+        withContext(dispatchers.db) {
+          albumRepository.updateCovers(updated)
+        }
+        val storedCovers = albumRepository.getAllCursor().map { it.key() }
+        val coverFiles = cache.listFiles()
+        if (coverFiles != null) {
+          val notInDb = coverFiles.filter { !storedCovers.contains(it.nameWithoutExtension) }
+          Timber.v("deleting ${notInDb.size} covers no longer in db")
+          for (file in notInDb) {
+            runCatching { file.delete() }
+          }
+        }
       }.collect { (payload, response) ->
         if (response.status == 304) {
           Timber.v("cover for $payload did not change")
