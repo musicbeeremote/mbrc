@@ -25,16 +25,18 @@ constructor(
 
   override fun onSetVolumeTo(volume: Int) {
     post(UserAction.create(Protocol.PlayerVolume, volume))
+    currentVolume = volume
   }
 
   override fun onAdjustVolume(direction: Int) {
-    if (direction > 0) {
-      val volume = mainDataModel.volume + 5
-      post(UserAction.create(Protocol.PlayerVolume, if (volume < 100) volume else 100))
-    } else {
-      val volume = mainDataModel.volume - 5
-      post(UserAction.create(Protocol.PlayerVolume, if (volume > 0) volume else 0))
+    if (direction == 0) {
+      return
     }
+    val volume = mainDataModel.volume.plus(direction)
+      .coerceAtLeast(0)
+      .coerceAtMost(100)
+    post(UserAction.create(Protocol.PlayerVolume, volume))
+    currentVolume = volume
   }
 
   private fun post(action: UserAction) {
