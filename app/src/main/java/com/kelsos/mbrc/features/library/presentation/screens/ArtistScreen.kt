@@ -35,7 +35,7 @@ class ArtistScreen(
 
   override fun bind(viewHolder: LibraryViewHolder) {
     this.viewHolder = viewHolder
-    viewHolder.setup(R.string.artists_list_empty, adapter)
+    viewHolder.setup(R.string.library_artists_list_empty, adapter)
     adapter.setMenuItemSelectedListener(this)
   }
 

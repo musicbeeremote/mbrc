@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.common.ui
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -148,10 +151,68 @@ fun SingleLineRow(text: String?, clicked: () -> Unit) = Row(
   )
 }
 
-@Preview
+@Composable
+fun DoubleLineRow(lineOne: String?, lineTwo: String?, coverUrl: String?, clicked: () -> Unit) = Row(
+  modifier = Modifier
+    .fillMaxWidth()
+    .height(72.dp)
+    .clickable { clicked() }
+    .padding(horizontal = 16.dp, vertical = 8.dp),
+  verticalAlignment = Alignment.CenterVertically
+) {
+  if (coverUrl != null) {
+    Column(modifier = Modifier.width(48.dp).height(48.dp)) {
+      TrackCover(
+        coverUrl = coverUrl,
+        modifier = Modifier
+          .size(44.dp)
+          .padding(4.dp),
+        cornerRadius = 2.dp
+      )
+    }
+  }
+  Column(modifier = Modifier.fillMaxSize()) {
+    Text(
+      text = lineOne ?: "",
+      style = MaterialTheme.typography.body1,
+      modifier = Modifier
+        .weight(1f)
+        .placeholder(
+          visible = lineOne == null,
+          highlight = PlaceholderHighlight.fade()
+        ),
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis
+    )
+    Text(
+      text = lineTwo ?: "",
+      style = MaterialTheme.typography.subtitle2,
+      modifier = Modifier
+        .weight(1f)
+        .placeholder(
+          visible = lineTwo == null,
+          highlight = PlaceholderHighlight.fade()
+        ),
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis
+    )
+  }
+}
+
+@Preview(
+  uiMode = UI_MODE_NIGHT_YES
+)
 @Composable
 fun SingleLineRowPreview() {
   SingleLineRow(text = "Playlist") {}
+}
+
+@Preview(
+  uiMode = UI_MODE_NIGHT_YES
+)
+@Composable
+fun DoubleLineRowPreview() {
+  DoubleLineRow(lineOne = "Album", lineTwo = "Artist", coverUrl = "") {}
 }
 
 @Preview

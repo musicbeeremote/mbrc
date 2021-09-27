@@ -48,7 +48,7 @@ class AlbumScreen(
 
   override fun bind(viewHolder: LibraryViewHolder) {
     this.viewHolder = viewHolder
-    viewHolder.setup(R.string.albums_list_empty, adapter)
+    viewHolder.setup(R.string.library_albums_list_empty, adapter)
     adapter.setMenuItemSelectedListener(this)
   }
 

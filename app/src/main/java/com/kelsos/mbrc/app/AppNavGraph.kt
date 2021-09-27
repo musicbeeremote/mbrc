@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.kelsos.mbrc.features.library.LibraryScreen
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.lyrics.LyricsScreen
 import com.kelsos.mbrc.features.player.PlayerScreen
@@ -50,6 +51,7 @@ fun AppNavGraph(
       PlayerScreen(openDrawer, share)
     }
     composable(Destination.Library.route) {
+      LibraryScreen(openDrawer)
     }
     composable(Destination.NowPlaying.route) {
     }

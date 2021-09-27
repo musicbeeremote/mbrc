@@ -234,7 +234,10 @@ val appModule = module {
 
   single<ApiBase>()
 
-  single { Room.databaseBuilder(get(), Database::class.java, "cache.db").build() }
+  single {
+    Room.databaseBuilder(get(), Database::class.java, "cache.db")
+      .fallbackToDestructiveMigrationFrom(1, 2, 3, 4).build()
+  }
   single { get<Database>().genreDao() }
   single { get<Database>().artistDao() }
   single { get<Database>().albumDao() }

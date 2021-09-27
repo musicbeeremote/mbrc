@@ -104,8 +104,10 @@
   <string name="setting_miscellaneous_debug_logging">Debug Logging</string>
   <string name="now_playing_list_empty">No tracks found</string>
   <string name="playlists_list_empty">No playlists found</string>
-  <string name="artists_list_empty">No artists found</string>
-  <string name="albums_list_empty">No albums found</string>
+  <string name="library_artists_list_empty">No artists found</string>
+  <string name="library_albums_list_empty">No albums found</string>
+  <string name="library_tracks_list_empty">No tracks found</string>
+  <string name="library_genres_list_empty">No genres found</string>
   <string name="swipe_to_refresh">Swipe to refresh the list.</string>
   <string name="playlists__refresh_failed">There was an error while trying to load the playlists.</string>
   <string name="now_playing_search_hint">Search and play a track</string>
