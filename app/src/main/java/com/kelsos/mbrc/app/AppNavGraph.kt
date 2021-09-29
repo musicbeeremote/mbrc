@@ -51,7 +51,7 @@ fun AppNavGraph(
       PlayerScreen(openDrawer, share)
     }
     composable(Destination.Library.route) {
-      LibraryScreen(openDrawer)
+      LibraryScreen(openDrawer, coroutineScope)
     }
     composable(Destination.NowPlaying.route) {
     }

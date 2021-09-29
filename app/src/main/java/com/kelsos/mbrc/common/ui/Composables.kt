@@ -164,11 +164,11 @@ private fun PopupMenu(menuContent: @Composable() (ColumnScope.() -> Unit)) {
   Column {
     var showMenu by remember { mutableStateOf(false) }
     IconButton(onClick = { showMenu = !showMenu }, modifier = Modifier.padding(end = 16.dp)) {
-      Icon(
-        imageVector = Icons.Filled.MoreVert,
-        contentDescription = stringResource(id = R.string.menu_overflow_description)
-      )
-    }
+    Icon(
+      imageVector = Icons.Filled.MoreVert,
+      contentDescription = stringResource(id = R.string.menu_overflow_description)
+    )
+  }
     DropdownMenu(
       expanded = showMenu,
       onDismissRequest = { showMenu = false },

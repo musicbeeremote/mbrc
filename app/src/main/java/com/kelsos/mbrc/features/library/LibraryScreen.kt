@@ -22,16 +22,20 @@ import com.kelsos.mbrc.common.ui.RemoteTopAppBar
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.theme.RemoteTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun LibraryScreen(openDrawer: () -> Unit) {
+fun LibraryScreen(openDrawer: () -> Unit, coroutineScope: CoroutineScope) {
   val vm = getViewModel<LibraryViewModel>()
   LibraryScreen(
     openDrawer = openDrawer, sync = { vm.refresh() },
     action = { queue, meta, id ->
       vm.queue(id, meta, queue)
-    }
+    },
+    coroutineScope
   )
 }
 
@@ -40,7 +44,8 @@ fun LibraryScreen(openDrawer: () -> Unit) {
 fun LibraryScreen(
   openDrawer: () -> Unit,
   sync: () -> Unit,
-  action: (queue: Queue, meta: Meta, id: Long) -> Unit
+  action: (queue: Queue, meta: Meta, id: Long) -> Unit,
+  coroutineScope: CoroutineScope
 ) = Surface {
   val tabs = listOf(
     R.string.media__genres,
@@ -49,7 +54,7 @@ fun LibraryScreen(
     R.string.media__tracks
   )
 
-  val pagerState = rememberPagerState(pageCount = tabs.size)
+  val pagerState = rememberPagerState(pageCount = tabs.size, initialOffscreenLimit = 2)
 
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {
@@ -66,25 +71,29 @@ fun LibraryScreen(
         Tab(
           text = { Text(text = stringResource(id = titleId)) },
           selected = pagerState.currentPage == index,
-          onClick = {}
+          onClick = {
+            coroutineScope.launch {
+              pagerState.scrollToPage(index)
+            }
+          }
         )
       }
     }
     HorizontalPager(
       modifier = Modifier.weight(1f),
       state = pagerState
-    ) {
-      when (pagerState.currentPage) {
-        0 -> GenresScreen(sync = sync) { queue, id ->
+    ) { page ->
+      when (page) {
+        Pages.GENRES -> GenresScreen(sync = sync) { queue, id ->
           action(queue, Meta.Genre, id)
         }
-        1 -> ArtistsScreen(sync = sync) { queue, id ->
+        Pages.ARTISTS -> ArtistsScreen(sync = sync) { queue, id ->
           action(queue, Meta.Artist, id)
         }
-        2 -> AlbumsScreen(sync = sync) { queue, id ->
+        Pages.ALBUMS -> AlbumsScreen(sync = sync) { queue, id ->
           action(queue, Meta.Album, id)
         }
-        3 -> TracksScreen(sync = sync) { queue, id ->
+        Pages.TRACKS -> TracksScreen(sync = sync) { queue, id ->
           action(queue, Meta.Track, id)
         }
       }
@@ -92,10 +101,17 @@ fun LibraryScreen(
   }
 }
 
+object Pages {
+  const val GENRES = 0
+  const val ARTISTS = 1
+  const val ALBUMS = 2
+  const val TRACKS = 3
+}
+
 @Preview(device = Devices.PIXEL_4)
 @Composable
 fun LibraryScreenPreview() {
   RemoteTheme {
-    LibraryScreen(openDrawer = {})
+    LibraryScreen(openDrawer = {}, coroutineScope = MainScope())
   }
 }
