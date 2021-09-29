@@ -112,6 +112,7 @@ fun PlaylistScreen(
         modifier = Modifier.weight(1f),
         items = playlists,
         isRefreshing = isRefreshing,
+        key = { it.id },
         onRefresh = onRefresh
       ) {
         PlaylistRow(playlist = it, clicked = play)

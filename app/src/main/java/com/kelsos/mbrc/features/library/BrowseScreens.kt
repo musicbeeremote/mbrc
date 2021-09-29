@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.features.library
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -28,13 +30,19 @@ import com.kelsos.mbrc.features.library.presentation.AlbumViewModel
 import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
 import com.kelsos.mbrc.features.library.presentation.GenreViewModel
 import com.kelsos.mbrc.features.library.presentation.TrackViewModel
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.theme.RemoteTheme
 import org.koin.androidx.compose.getViewModel
+
+typealias QueueAction = (queue: Queue) -> Unit
+
+typealias QueueActionWithId = (queue: Queue, id: Long) -> Unit
 
 @Composable
 fun <T : Any> BrowseScreen(
   items: LazyPagingItems<T>,
   text: String,
+  key: (t: T) -> Long,
   sync: () -> Unit,
   itemContent: @Composable LazyItemScope.(value: T?) -> Unit
 ) = Surface(modifier = Modifier.fillMaxSize()) {
@@ -51,27 +59,70 @@ fun <T : Any> BrowseScreen(
         }
       }
     } else {
-      ScreenContent(items = items, itemContent = itemContent)
+      ScreenContent(items = items, itemContent = itemContent, key = key)
     }
   }
 }
 
 @Composable
-fun GenresScreen(sync: () -> Unit = {}) {
+private fun ActionMenu(@StringRes defaultAction: Int? = null, action: QueueAction) {
+  DropdownMenuItem(onClick = { action(Queue.Now) }) {
+    Text(text = stringResource(id = R.string.menu_play))
+  }
+  if (defaultAction != null) {
+    DropdownMenuItem(onClick = { action(Queue.Default) }) {
+      Text(text = stringResource(id = defaultAction))
+    }
+  } else {
+    DropdownMenuItem(onClick = { action(Queue.PlayAlbum) }) {
+      Text(text = stringResource(id = R.string.menu_play_album))
+    }
+    DropdownMenuItem(onClick = { action(Queue.PlayArtist) }) {
+      Text(text = stringResource(id = R.string.menu_play_artist))
+    }
+    DropdownMenuItem(onClick = { action(Queue.PlayAll) }) {
+      Text(text = stringResource(id = R.string.menu_play_queue_all))
+    }
+  }
+  DropdownMenuItem(onClick = { action(Queue.Next) }) {
+    Text(text = stringResource(id = R.string.menu_queue_next))
+  }
+  DropdownMenuItem(onClick = { action(Queue.Last) }) {
+    Text(text = stringResource(id = R.string.menu_queue_last))
+  }
+}
+
+@Composable
+fun GenresScreen(sync: () -> Unit, action: QueueActionWithId) {
   val vm = getViewModel<GenreViewModel>()
-  GenresScreen(genres = vm.genres.collectAsLazyPagingItems(), sync = sync)
+  GenresScreen(genres = vm.genres.collectAsLazyPagingItems(), sync = sync, action = action)
 }
 
 @Composable
 fun GenresScreen(
   genres: LazyPagingItems<Genre>,
-  sync: () -> Unit
+  sync: () -> Unit,
+  action: QueueActionWithId
 ) = BrowseScreen(
   items = genres,
   text = stringResource(id = R.string.library_genres_list_empty),
+  key = { it.id },
   sync = sync
-) {
-  SingleLineRow(text = it?.genre, clicked = {})
+) { genre ->
+  SingleLineRow(
+    text = genre?.genre,
+    clicked = {
+      genre?.let { genre ->
+        action(Queue.Default, genre.id)
+      }
+    }
+  ) {
+    ActionMenu(defaultAction = R.string.menu_genre_artists) { queue ->
+      genre?.let { genre ->
+        action(queue, genre.id)
+      }
+    }
+  }
 }
 
 @Preview
@@ -85,27 +136,46 @@ fun GenresScreenPreview() {
           id = 1
         )
       ).collectAsLazyPagingItems(),
-      sync = {}
+      sync = {},
+      action = { _, _ -> }
     )
   }
 }
 
 @Composable
-fun ArtistsScreen(sync: () -> Unit = {}) {
+fun ArtistsScreen(sync: () -> Unit, action: QueueActionWithId) {
   val vm = getViewModel<ArtistViewModel>()
-  ArtistsScreen(artists = vm.artists.collectAsLazyPagingItems(), sync = sync)
+  ArtistsScreen(artists = vm.artists.collectAsLazyPagingItems(), sync = sync, action = action)
 }
 
 @Composable
 fun ArtistsScreen(
   artists: LazyPagingItems<Artist>,
-  sync: () -> Unit
+  sync: () -> Unit,
+  action: QueueActionWithId
 ) = BrowseScreen(
   items = artists,
   text = stringResource(id = R.string.library_artists_list_empty),
-  sync = sync
-) {
-  SingleLineRow(text = it?.artist, clicked = { })
+  key = { it.id },
+  sync = sync,
+) { artist ->
+  SingleLineRow(
+    text = artist?.artist,
+    clicked = {
+      artist?.let { artist ->
+        action(Queue.Default, artist.id)
+      }
+    }
+  ) {
+    ActionMenu(
+      defaultAction = R.string.menu_artist_albums,
+      action = { queue ->
+        artist?.let { artist ->
+          action(queue, artist.id)
+        }
+      }
+    )
+  }
 }
 
 @Preview
@@ -119,27 +189,46 @@ fun ArtistsScreenPreview() {
           id = 1
         )
       ).collectAsLazyPagingItems(),
-      sync = {}
+      sync = {},
+      action = { _, _ -> }
     )
   }
 }
 
 @Composable
-fun AlbumsScreen(sync: () -> Unit = {}) {
+fun AlbumsScreen(sync: () -> Unit, action: QueueActionWithId) {
   val vm = getViewModel<AlbumViewModel>()
-  AlbumsScreen(albums = vm.albums.collectAsLazyPagingItems(), sync = sync)
+  AlbumsScreen(albums = vm.albums.collectAsLazyPagingItems(), sync = sync, action = action)
 }
 
 @Composable
 fun AlbumsScreen(
   albums: LazyPagingItems<Album>,
-  sync: () -> Unit
+  sync: () -> Unit,
+  action: QueueActionWithId
 ) = BrowseScreen(
   items = albums,
   text = stringResource(id = R.string.library_albums_list_empty),
+  key = { it.id },
   sync = sync
-) {
-  DoubleLineRow(lineOne = it?.album, lineTwo = it?.artist, coverUrl = null, clicked = { })
+) { album ->
+  DoubleLineRow(
+    lineOne = album?.album, lineTwo = album?.artist, coverUrl = "",
+    clicked = {
+      album?.let { album ->
+        action(Queue.Default, album.id)
+      }
+    }
+  ) {
+    ActionMenu(
+      defaultAction = R.string.menu_album_tracks,
+      action = { queue ->
+        album?.let { album ->
+          action(queue, album.id)
+        }
+      }
+    )
+  }
 }
 
 @Preview
@@ -155,27 +244,45 @@ fun AlbumsScreenPreview() {
           id = 1
         )
       ).collectAsLazyPagingItems(),
-      sync = {}
+      sync = {},
+      action = { _, _ -> }
     )
   }
 }
 
 @Composable
-fun TracksScreen(sync: () -> Unit = {}) {
+fun TracksScreen(sync: () -> Unit, action: QueueActionWithId) {
   val vm = getViewModel<TrackViewModel>()
-  TracksScreen(tracks = vm.tracks.collectAsLazyPagingItems(), sync = sync)
+  TracksScreen(tracks = vm.tracks.collectAsLazyPagingItems(), sync = sync, action = action)
 }
 
 @Composable
 fun TracksScreen(
   tracks: LazyPagingItems<Track>,
-  sync: () -> Unit
+  sync: () -> Unit,
+  action: QueueActionWithId
 ) = BrowseScreen(
   items = tracks,
   text = stringResource(id = R.string.library_tracks_list_empty),
+  key = { it.id },
   sync = sync
-) {
-  DoubleLineRow(lineOne = it?.title, lineTwo = it?.album, coverUrl = null, clicked = { })
+) { track ->
+  DoubleLineRow(
+    lineOne = track?.title,
+    lineTwo = track?.artist,
+    coverUrl = "",
+    clicked = {
+      track?.let { track ->
+        action(Queue.Default, track.id)
+      }
+    }
+  ) {
+    ActionMenu { queue ->
+      track?.let { track ->
+        action(queue, track.id)
+      }
+    }
+  }
 }
 
 @Preview
@@ -197,7 +304,8 @@ fun TrackScreenPreview() {
           id = 1
         )
       ).collectAsLazyPagingItems(),
-      sync = {}
+      sync = {},
+      action = { _, _ -> }
     )
   }
 }
