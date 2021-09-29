@@ -85,8 +85,7 @@ val version = "1.5.1"
 val code = 124
 
 android {
-  compileSdk = 30
-  buildToolsVersion = "30.0.3"
+  compileSdk = 31
 
   buildFeatures {
     viewBinding = true
@@ -96,7 +95,7 @@ android {
   defaultConfig {
     applicationId = "com.kelsos.mbrc"
     minSdk = 23
-    targetSdk = 30
+    targetSdk = 31
     versionCode = code
     versionName = version
     buildConfigField("String", "GIT_SHA", "\"${gitHash()}\"")

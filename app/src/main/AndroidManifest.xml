@@ -4,6 +4,15 @@
     package="com.kelsos.mbrc"
     android:installLocation="auto">
 
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+  <uses-sdk tools:overrideLibrary="timber.log" />
+
   <application
       android:name=".App"
       android:allowBackup="true"
@@ -15,8 +24,8 @@
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
     <activity
         android:name=".ui.activities.SplashActivity"
-        android:noHistory="true"
-        android:exported="true">
+        android:exported="true"
+        android:noHistory="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
@@ -29,9 +38,17 @@
         android:label="@string/title_activity_bottom_navigation" />
 
     <provider
-        android:name="androidx.work.impl.WorkManagerInitializer"
-        android:authorities="${applicationId}.workmanager-init"
-        tools:node="remove" />
+        android:name="androidx.startup.InitializationProvider"
+        android:authorities="${applicationId}.androidx-startup"
+        android:exported="false"
+        tools:node="merge">
+      <!-- If you are using androidx.startup to initialize other components -->
+      <meta-data
+          android:name="androidx.work.WorkManagerInitializer"
+          android:value="androidx.startup"
+          tools:node="remove" />
+    </provider>
+
 
     <receiver
         android:name="com.kelsos.mbrc.features.widgets.WidgetNormal"
@@ -80,22 +97,13 @@
     <provider
         android:name="androidx.core.content.FileProvider"
         android:authorities="${applicationId}.fileprovider"
-        android:grantUriPermissions="true"
-        android:exported="false">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/filepaths"/>
+        android:exported="false"
+        android:grantUriPermissions="true">
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/filepaths" />
     </provider>
 
   </application>
-
-  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-  <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-  <uses-sdk tools:overrideLibrary="timber.log" />
 
 </manifest>
