@@ -6,6 +6,7 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ConnectivityVerifierImpl(
   private val deserializationAdapter: DeserializationAdapter,
@@ -32,6 +33,7 @@ class ConnectivityVerifierImpl(
       return@withContext true
     }
   }.mapLeft {
+    Timber.v(it)
     if (it is NoValidPluginConnection) it else NoValidPluginConnection(it)
   }
 

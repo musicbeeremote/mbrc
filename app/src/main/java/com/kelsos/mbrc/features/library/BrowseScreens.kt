@@ -12,8 +12,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.net.toUri
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.R
@@ -26,6 +28,7 @@ import com.kelsos.mbrc.features.library.data.Album
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.data.Track
+import com.kelsos.mbrc.features.library.data.key
 import com.kelsos.mbrc.features.library.presentation.AlbumViewModel
 import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
 import com.kelsos.mbrc.features.library.presentation.GenreViewModel
@@ -33,6 +36,7 @@ import com.kelsos.mbrc.features.library.presentation.TrackViewModel
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.theme.RemoteTheme
 import org.koin.androidx.compose.getViewModel
+import java.io.File
 
 typealias QueueAction = (queue: Queue) -> Unit
 
@@ -212,8 +216,15 @@ fun AlbumsScreen(
   key = { it.id },
   sync = sync
 ) { album ->
+
+  val cover = if (album != null) {
+    val cache = File(LocalContext.current.cacheDir, "covers")
+    File(cache, album.key()).toUri().toString()
+  } else {
+    ""
+  }
   DoubleLineRow(
-    lineOne = album?.album, lineTwo = album?.artist, coverUrl = "",
+    lineOne = album?.album, lineTwo = album?.artist, coverUrl = cover,
     clicked = {
       album?.let { album ->
         action(Queue.Default, album.id)
@@ -267,10 +278,16 @@ fun TracksScreen(
   key = { it.id },
   sync = sync
 ) { track ->
+  val cover = if (track != null) {
+    val cache = File(LocalContext.current.cacheDir, "covers")
+    File(cache, track.key()).toUri().toString()
+  } else {
+    ""
+  }
   DoubleLineRow(
     lineOne = track?.title,
     lineTwo = track?.artist,
-    coverUrl = "",
+    coverUrl = cover,
     clicked = {
       track?.let { track ->
         action(Queue.Default, track.id)

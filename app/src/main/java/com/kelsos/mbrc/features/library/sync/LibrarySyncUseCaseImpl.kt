@@ -47,6 +47,8 @@ class LibrarySyncUseCaseImpl(
 
     val canEstablishConnection = connectivityVerifier.verify().fold({ false }, { true })
     if (!canEstablishConnection) {
+      running = false
+      Timber.v("Connection could not be established")
       return SyncResult.FAILED
     }
 
