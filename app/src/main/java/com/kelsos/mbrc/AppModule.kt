@@ -23,7 +23,6 @@ import com.kelsos.mbrc.features.library.presentation.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
 import com.kelsos.mbrc.features.library.presentation.GenreAdapter
 import com.kelsos.mbrc.features.library.presentation.GenreViewModel
-import com.kelsos.mbrc.features.library.presentation.LibraryFragment
 import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.library.presentation.TrackAdapter
@@ -34,10 +33,6 @@ import com.kelsos.mbrc.features.library.presentation.details.LibraryGenreArtists
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.AlbumTrackViewModel
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.ArtistAlbumViewModel
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.GenreArtistViewModel
-import com.kelsos.mbrc.features.library.presentation.screens.AlbumScreen
-import com.kelsos.mbrc.features.library.presentation.screens.ArtistScreen
-import com.kelsos.mbrc.features.library.presentation.screens.GenreScreen
-import com.kelsos.mbrc.features.library.presentation.screens.TrackScreen
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.AlbumRepositoryImpl
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
@@ -281,7 +276,6 @@ val appModule = module {
 
   worker { QueueWorker(get(), get(), get()) }
   worker { SyncWorker(get(), get(), get(), get()) }
-  fragment { LibraryFragment(get()) }
   fragment { LibraryAlbumTracksFragment(get(), get(), get()) }
   fragment { LibraryArtistAlbumsFragment(get(), get(), get()) }
   fragment { LibraryGenreArtistsFragment(get(), get(), get()) }
@@ -313,10 +307,6 @@ val uiModule = module {
   viewModel<TrackViewModel>()
 
   single<LibrarySearchModel>()
-  factory<GenreScreen>()
-  factory<AlbumScreen>()
-  factory<ArtistScreen>()
-  factory<TrackScreen>()
 
   viewModel<GenreArtistViewModel>()
   viewModel<ArtistAlbumViewModel>()

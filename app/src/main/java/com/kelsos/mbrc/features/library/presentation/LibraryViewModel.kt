@@ -22,7 +22,7 @@ class LibraryViewModel(
 ) : BaseViewModel<SyncResult>() {
 
   val syncProgress = syncWorkHandler.syncProgress()
-  val albumArtistOnly get() = settingsManager.onlyAlbumArtists().value
+  val albumArtistOnly get() = settingsManager.onlyAlbumArtists()
   val syncState = syncStatProvider.stats
 
   fun refresh() {
