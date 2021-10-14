@@ -16,20 +16,12 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
-import com.kelsos.mbrc.features.library.PopupActionHandler
-import com.kelsos.mbrc.features.library.presentation.AlbumAdapter
 import com.kelsos.mbrc.features.library.presentation.AlbumViewModel
-import com.kelsos.mbrc.features.library.presentation.ArtistAdapter
 import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
-import com.kelsos.mbrc.features.library.presentation.GenreAdapter
 import com.kelsos.mbrc.features.library.presentation.GenreViewModel
 import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
-import com.kelsos.mbrc.features.library.presentation.TrackAdapter
 import com.kelsos.mbrc.features.library.presentation.TrackViewModel
-import com.kelsos.mbrc.features.library.presentation.details.LibraryAlbumTracksFragment
-import com.kelsos.mbrc.features.library.presentation.details.LibraryArtistAlbumsFragment
-import com.kelsos.mbrc.features.library.presentation.details.LibraryGenreArtistsFragment
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.AlbumTrackViewModel
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.ArtistAlbumViewModel
 import com.kelsos.mbrc.features.library.presentation.details.viemodels.GenreArtistViewModel
@@ -141,7 +133,6 @@ import com.kelsos.mbrc.ui.helpfeedback.FeedbackViewModel
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import org.koin.androidx.fragment.dsl.fragment
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.bind
@@ -201,7 +192,6 @@ val appModule = module {
   single<ServiceCheckerImpl>() bind ServiceChecker::class
   single<AppStateManager>()
 
-  single<PopupActionHandler>()
   single<DefaultActionPreferenceStore>()
 
   single<WidgetUpdaterImpl>() bind WidgetUpdater::class
@@ -276,9 +266,6 @@ val appModule = module {
 
   worker { QueueWorker(get(), get(), get()) }
   worker { SyncWorker(get(), get(), get(), get()) }
-  fragment { LibraryAlbumTracksFragment(get(), get(), get()) }
-  fragment { LibraryArtistAlbumsFragment(get(), get(), get()) }
-  fragment { LibraryGenreArtistsFragment(get(), get(), get()) }
 }
 
 val uiModule = module {
@@ -295,10 +282,6 @@ val uiModule = module {
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()
 
-  factory<GenreAdapter>()
-  factory<ArtistAdapter>()
-  factory<AlbumAdapter>()
-  factory<TrackAdapter>()
   factory<ConnectionAdapter>()
 
   viewModel<AlbumViewModel>()

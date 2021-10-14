@@ -4,13 +4,14 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DiffUtil
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.features.library.data.Genre
 import com.kelsos.mbrc.features.library.data.GenreDao
 import com.kelsos.mbrc.features.library.dto.GenreDto
-import com.kelsos.mbrc.features.library.presentation.GenreAdapter
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepositoryImpl
 import com.kelsos.mbrc.networking.ApiBase
@@ -77,7 +78,15 @@ class GenreRepositoryImplTest : KoinTest {
     repository.getRemote()
 
     val differ = AsyncPagingDataDiffer(
-      diffCallback = GenreAdapter.DIFF_CALLBACK,
+      diffCallback = object : DiffUtil.ItemCallback<Genre>() {
+        override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean {
+          return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean {
+          return oldItem.genre == newItem.genre
+        }
+      },
       updateCallback = noopListUpdateCallback,
       mainDispatcher = testDispatcher,
       workerDispatcher = testDispatcher
