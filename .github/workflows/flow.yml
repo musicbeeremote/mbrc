@@ -10,8 +10,13 @@ on:
       - master
       - development
 
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    timeout-minutes: 40
     runs-on: ubuntu-latest
     env:
       JVM_OPTS: -Xmx3200m
@@ -20,11 +25,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: 11
-      - name: Download Dependencies
-        run: ./gradlew androidDependencies
+          distribution: 'adopt'
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
@@ -32,7 +36,7 @@ jobs:
             ~/.gradle
           key: jars-{{ hashFiles('build.gradle.kts') }}-{{ hashFiles('app/build.gradle.kts') }}
       - name: Lint
-        run: ./gradlew lintKotlin
+        run: ./gradlew lintKotlin --continue --no-daemon
       - name: Setup Code Climate test-reporter
         run: |
           # download test reporter as a static binary
@@ -40,7 +44,7 @@ jobs:
           chmod +x ./cc-test-reporter
       - name: Run Tests
         run: |
-          ./gradlew jacocoTestReport -PdisablePreDex --continue --stacktrace --no-daemon --max-workers 4
+          ./gradlew jacocoTestReport --continue --no-daemon
       - name: Upload coverage
         run: bash <(curl -s https://codecov.io/bash)
       - name: Set jacoco.xml path for code climate
