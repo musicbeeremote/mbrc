@@ -1,6 +1,5 @@
 <!-- Shields -->
 ![CI](https://github.com/musicbeeremote/android-app/workflows/CI/badge.svg)
-[![codecov](https://codecov.io/gh/musicbeeremote/android-app/branch/master/graph/badge.svg)](https://codecov.io/gh/musicbeeremote/android-app)
 ![GitHub](https://img.shields.io/github/license/musicbeeremote/android-app.svg)
 ![GitHub release](https://img.shields.io/github/release/musicbeeremote/android-app.svg)
 [![Discord](https://img.shields.io/discord/420977901215678474.svg?style=popout)](https://discordapp.com/invite/rceTb57)

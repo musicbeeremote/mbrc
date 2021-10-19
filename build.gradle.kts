@@ -13,7 +13,6 @@ buildscript {
     classpath(libs.gradlePlugin.kotlinter)
     classpath(libs.gradlePlugin.protobuf)
     classpath(libs.gradlePlugin.versionsBenManes)
-    classpath(libs.jacoco)
   }
 
   repositories {

@@ -3,11 +3,11 @@ name: CI
 on:
   pull_request:
     branches:
-      - master
+      - main
       - development
   push:
     branches:
-      - master
+      - main
       - development
 
 concurrency:
@@ -37,21 +37,9 @@ jobs:
           key: jars-{{ hashFiles('build.gradle.kts') }}-{{ hashFiles('app/build.gradle.kts') }}
       - name: Lint
         run: ./gradlew lintKotlin --continue --no-daemon
-      - name: Setup Code Climate test-reporter
-        run: |
-          # download test reporter as a static binary
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
       - name: Run Tests
         run: |
-          ./gradlew jacocoTestReport --continue --no-daemon
-      - name: Upload coverage
-        run: bash <(curl -s https://codecov.io/bash)
-      - name: Set jacoco.xml path for code climate
-        run:  JACOCO_SOURCE_PATH=app/src/main/java ./cc-test-reporter format-coverage app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
-      - name: Upload code climate report
-        if: success()
-        run: ./cc-test-reporter upload-coverage -r $CC_TEST_REPORTER_ID
+          ./gradlew testGithubDebugUnitTest --continue --no-daemon
       - uses: actions/upload-artifact@v2
         with:
           name: test-results

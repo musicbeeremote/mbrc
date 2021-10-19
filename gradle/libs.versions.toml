@@ -81,7 +81,6 @@ gradlePlugin-kotlinter = { module = "org.jmailen.gradle:kotlinter-gradle", versi
 gradlePlugin-performance = { module = "com.google.firebase:perf-plugin", version.ref = "gradlePlugin-performance" }
 gradlePlugin-protobuf = { module = "gradle.plugin.com.google.protobuf:protobuf-gradle-plugin", version.ref = "gradlePlugin-protobuf" }
 gradlePlugin-versionsBenManes = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradlePlugin-versionsBenManes" }
-jacoco = { module = "org.jacoco:org.jacoco.core", version.ref  = "jacoco" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module ="io.insert-koin:koin-androidx-compose", version.ref ="koin"}
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
@@ -141,7 +140,6 @@ gradlePlugin-kotlinter = "3.6.0"
 gradlePlugin-performance = "1.4.0"
 gradlePlugin-protobuf = "0.8.17"
 gradlePlugin-versionsBenManes = "0.39.0"
-jacoco = "0.8.7"
 koin = "3.1.2"
 kotlin = "1.5.30"
 kotlinCoroutines = "1.5.2"
