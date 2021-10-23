@@ -4,24 +4,21 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.paging.AsyncPagingDataDiffer
-import androidx.paging.LoadState
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
-import com.kelsos.mbrc.utils.noopListUpdateCallback
+import com.kelsos.mbrc.utils.collectDataForTest
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
+import com.kelsos.mbrc.utils.testScope
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
@@ -37,7 +34,7 @@ import org.koin.dsl.module
 import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import java.util.concurrent.CountDownLatch
+import kotlin.time.Duration
 
 @RunWith(AndroidJUnit4::class)
 class ConnectionRepositoryTest : KoinTest {
@@ -101,7 +98,7 @@ class ConnectionRepositoryTest : KoinTest {
   }
 
   @Test
-  fun addMultipleNewSettingsRemoveOne() = runBlockingTest(testDispatcher) {
+  fun addMultipleNewSettingsRemoveOne() = testScope.runBlockingTest {
     val settings = createSettings("192.167.90.10")
     val settings1 = createSettings("192.167.90.11")
     val settings2 = createSettings("192.167.90.12")
@@ -125,33 +122,11 @@ class ConnectionRepositoryTest : KoinTest {
 
     assertThat(repository.count()).isEqualTo(3)
 
-    val differ = AsyncPagingDataDiffer(
-      diffCallback = ConnectionAdapter.CONNECTION_COMPARATOR,
-      updateCallback = noopListUpdateCallback,
-      mainDispatcher = testDispatcher,
-      workerDispatcher = testDispatcher
-    )
-    val latch = CountDownLatch(1)
-    differ.addLoadStateListener {
-      if (it.prepend == LoadState.NotLoading(endOfPaginationReached = true)) {
-        latch.countDown()
-      }
+    repository.getAll().test(timeout = Duration.seconds(10)) {
+      val data = awaitItem().collectDataForTest()
+      assertThat(data).containsExactlyElementsIn(settingsList)
     }
-
-    val job = launch {
-      repository.getAll().collectLatest {
-        differ.submitData(it)
-      }
-    }
-
     advanceUntilIdle()
-    @Suppress("BlockingMethodInNonBlockingContext")
-    latch.await()
-
-    val snapshot = differ.snapshot()
-    assertThat(snapshot.items).containsExactlyElementsIn(settingsList)
-
-    job.cancel()
   }
 
   @Test

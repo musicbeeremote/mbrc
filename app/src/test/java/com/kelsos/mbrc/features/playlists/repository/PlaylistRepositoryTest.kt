@@ -2,11 +2,9 @@ package com.kelsos.mbrc.features.playlists.repository
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.paging.AsyncPagingDataDiffer
-import androidx.paging.LoadState
-import androidx.recyclerview.widget.DiffUtil
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.playlists.Playlist
@@ -17,14 +15,11 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.TestData.mockApi
 import com.kelsos.mbrc.utils.TestDataFactories
-import com.kelsos.mbrc.utils.noopListUpdateCallback
+import com.kelsos.mbrc.utils.collectDataForTest
 import com.kelsos.mbrc.utils.result
-import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
@@ -39,17 +34,7 @@ import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.net.SocketTimeoutException
-import java.util.concurrent.CountDownLatch
-
-val PLAYLIST_COMPARATOR = object : DiffUtil.ItemCallback<Playlist>() {
-  override fun areItemsTheSame(oldItem: Playlist, newItem: Playlist): Boolean {
-    return oldItem.id == newItem.id
-  }
-
-  override fun areContentsTheSame(oldItem: Playlist, newItem: Playlist): Boolean {
-    return oldItem.name == newItem.name
-  }
-}
+import kotlin.time.Duration
 
 @RunWith(AndroidJUnit4::class)
 class PlaylistRepositoryTest : KoinTest {
@@ -104,36 +89,13 @@ class PlaylistRepositoryTest : KoinTest {
 
   @Test
   fun `it should be initially empty`() = runBlockingTest {
-    assertThat(repository.cacheIsEmpty())
+    assertThat(repository.cacheIsEmpty()).isTrue()
     assertThat(repository.count()).isEqualTo(0)
-
-    val differ = AsyncPagingDataDiffer(
-      diffCallback = PLAYLIST_COMPARATOR,
-      updateCallback = noopListUpdateCallback,
-      mainDispatcher = testDispatcher,
-      workerDispatcher = testDispatcher
-    )
-
-    val latch = CountDownLatch(1)
-    differ.addLoadStateListener {
-      if (it.prepend == LoadState.NotLoading(endOfPaginationReached = true)) {
-        latch.countDown()
-      }
+    repository.getAll().test(timeout = Duration.seconds(10)) {
+      val data = awaitItem().collectDataForTest()
+      assertThat(data).isEmpty()
     }
-
-    val job = launch {
-      repository.getAll().collectLatest {
-        differ.submitData(it)
-      }
-    }
-
     advanceUntilIdle()
-    @Suppress("BlockingMethodInNonBlockingContext")
-    latch.await()
-
-    assertThat(differ.snapshot()).isEmpty()
-
-    job.cancel()
   }
 
   @Test
@@ -145,33 +107,11 @@ class PlaylistRepositoryTest : KoinTest {
     }
     assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
-    val differ = AsyncPagingDataDiffer(
-      diffCallback = PLAYLIST_COMPARATOR,
-      updateCallback = noopListUpdateCallback,
-      mainDispatcher = testDispatcher,
-      workerDispatcher = testDispatcher
-    )
-
-    val latch = CountDownLatch(1)
-    differ.addLoadStateListener {
-      if (it.prepend == LoadState.NotLoading(endOfPaginationReached = true)) {
-        latch.countDown()
-      }
+    repository.getAll().test(timeout = Duration.seconds(10)) {
+      val data = awaitItem().collectDataForTest()
+      assertThat(data).hasSize(20)
     }
-
-    val job = launch {
-      repository.getAll().collectLatest {
-        differ.submitData(it)
-      }
-    }
-
     advanceUntilIdle()
-    @Suppress("BlockingMethodInNonBlockingContext")
-    latch.await()
-
-    assertThat(differ.snapshot()).hasSize(20)
-
-    job.cancel()
   }
 
   @Test
@@ -184,40 +124,17 @@ class PlaylistRepositoryTest : KoinTest {
     }
 
     assertThat(repository.getRemote().isRight()).isTrue()
-    val differ = AsyncPagingDataDiffer(
-      diffCallback = PLAYLIST_COMPARATOR,
-      updateCallback = noopListUpdateCallback,
-      mainDispatcher = testDispatcher,
-      workerDispatcher = testDispatcher
-    )
-
-    val latch = CountDownLatch(1)
-    differ.addLoadStateListener {
-      if (it.prepend == LoadState.NotLoading(endOfPaginationReached = true)) {
-        latch.countDown()
-      }
-    }
-
-    val job = launch {
-      repository.search("Metal").collectLatest {
-        differ.submitData(it)
-      }
-    }
-
-    advanceUntilIdle()
-    @Suppress("BlockingMethodInNonBlockingContext")
-    latch.await()
-
-    val snapshot = differ.snapshot()
-    assertThat(snapshot).hasSize(1)
-    assertThat(snapshot).containsExactly(
-      Playlist(
-        name = "Heavy Metal",
-        url = """C:\library\metal.m3u""",
-        id = 6
+    repository.search("Metal").test(timeout = Duration.seconds(10)) {
+      val data = awaitItem().collectDataForTest()
+      assertThat(data).hasSize(1)
+      assertThat(data).containsExactly(
+        Playlist(
+          name = "Heavy Metal",
+          url = """C:\library\metal.m3u""",
+          id = 6
+        )
       )
-    )
-
-    job.cancel()
+    }
+    advanceUntilIdle()
   }
 }
