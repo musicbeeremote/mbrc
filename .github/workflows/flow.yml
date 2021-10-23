@@ -14,12 +14,42 @@ concurrency:
   group: build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  JVM_OPTS: -Xmx3200m
+
 jobs:
-  build:
-    timeout-minutes: 40
+  check:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'adopt'
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Static analysis
+        run: |
+          ./gradlew app:staticAnalysis app:collectSarifReports --continue --no-daemon
+      - name: Upload Report
+        uses: github/codeql-action/upload-sarif@v1
+        if: ${{ always() }}
+        with:
+          sarif_file: app/build/reports/sarif/
+  test:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
-      JVM_OPTS: -Xmx3200m
       CC_TEST_REPORTER_ID: 4c45cf8b47a2ab0a5ae149b266e533747e8c3330aa3f5e7d2898d460c6d11562
     steps:
       - name: Checkout
@@ -33,10 +63,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle
-          key: jars-{{ hashFiles('build.gradle.kts') }}-{{ hashFiles('app/build.gradle.kts') }}
-      - name: Lint
-        run: ./gradlew lintKotlin --continue --no-daemon
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Run Tests
         run: |
           ./gradlew testGithubDebugUnitTest --continue --no-daemon

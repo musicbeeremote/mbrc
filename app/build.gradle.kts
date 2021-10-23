@@ -185,6 +185,10 @@ android {
     }
   }
 
+  lintOptions {
+    isAbortOnError = false
+  }
+
   lint {
     isWarningsAsErrors = true
     lintConfig = rootProject.file("config/lint.xml")
