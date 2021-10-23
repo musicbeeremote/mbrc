@@ -129,7 +129,6 @@ import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
-import com.kelsos.mbrc.ui.helpfeedback.FeedbackViewModel
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -277,7 +276,6 @@ val uiModule = module {
   viewModel<NowPlayingViewModel>()
   viewModel<LibraryViewModel>()
   viewModel<PlaylistViewModel>()
-  viewModel<FeedbackViewModel>()
   viewModel<OutputSelectionViewModel>()
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()

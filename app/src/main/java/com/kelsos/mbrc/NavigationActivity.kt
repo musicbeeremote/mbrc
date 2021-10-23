@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import arrow.core.firstOrNone
 import com.kelsos.mbrc.app.RemoteApp
 import com.kelsos.mbrc.common.ui.BaseFragment
+import com.kelsos.mbrc.features.help.sendFeedback
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import kotlinx.coroutines.flow.collect
@@ -69,7 +70,7 @@ class NavigationActivity : AppCompatActivity() {
     setupKoinFragmentFactory()
     super.onCreate(savedInstanceState)
     setContent {
-      RemoteApp(viewmodel) { share(it) }
+      RemoteApp(viewmodel, sendFeedback = { sendFeedback(it) }) { share(it) }
     }
     viewmodel.startService()
   }

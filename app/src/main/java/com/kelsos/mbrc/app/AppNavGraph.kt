@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.features.help.HelpFeedbackScreen
+import com.kelsos.mbrc.features.help.SendFeedback
 import com.kelsos.mbrc.features.library.LibraryScreen
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.lyrics.LyricsScreen
@@ -38,7 +39,8 @@ fun AppNavGraph(
   navController: NavHostController = rememberNavController(),
   scaffoldState: ScaffoldState = rememberScaffoldState(),
   startDestination: Destination = Destination.Home,
-  share: (track: PlayingTrack) -> Unit
+  share: (track: PlayingTrack) -> Unit,
+  sendFeedback: SendFeedback
 ) {
   val actions = remember(navController) { AppActions(navController) }
   val coroutineScope = rememberCoroutineScope()
@@ -78,7 +80,7 @@ fun AppNavGraph(
     composable(Destination.Settings.route) {
     }
     composable(Destination.Help.route) {
-      HelpFeedbackScreen(openDrawer = openDrawer, coroutineScope = coroutineScope)
+      HelpFeedbackScreen(openDrawer = openDrawer, coroutineScope = coroutineScope, sendFeedback)
     }
   }
 }

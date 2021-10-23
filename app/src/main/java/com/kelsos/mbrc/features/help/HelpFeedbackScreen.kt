@@ -34,18 +34,20 @@ import com.google.accompanist.pager.rememberPagerState
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.RemoteTopAppBar
 import com.kelsos.mbrc.theme.RemoteTheme
-import com.kelsos.mbrc.ui.helpfeedback.FeedbackViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
 
 const val HELP_PAGE = 0
 const val FEEDBACK_PAGE = 1
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun HelpFeedbackScreen(openDrawer: () -> Unit, coroutineScope: CoroutineScope) = Surface {
+fun HelpFeedbackScreen(
+  openDrawer: () -> Unit,
+  coroutineScope: CoroutineScope,
+  sendFeedback: SendFeedback
+) = Surface {
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {
     }
@@ -78,7 +80,7 @@ fun HelpFeedbackScreen(openDrawer: () -> Unit, coroutineScope: CoroutineScope) =
 
       when (page) {
         HELP_PAGE -> HelpScreen()
-        FEEDBACK_PAGE -> FeedbackScreen()
+        FEEDBACK_PAGE -> FeedbackScreen(sendFeedback, coroutineScope)
       }
     }
   }
@@ -103,21 +105,8 @@ fun HelpScreen() {
   })
 }
 
-private data class Feedback(
-  val feedback: String,
-  val includeLogs: Boolean,
-  val includeDeviceInfo: Boolean
-)
-
-private typealias SendFeedback = (feedback: Feedback) -> Unit
-
 @Composable
-fun FeedbackScreen(vm: FeedbackViewModel = getViewModel()) {
-  FeedbackScreen(onSend = {})
-}
-
-@Composable
-private fun FeedbackScreen(onSend: SendFeedback) = Surface {
+private fun FeedbackScreen(onSend: SendFeedback, coroutineScope: CoroutineScope) = Surface {
   var feedback by remember { mutableStateOf("") }
   var includeLogs by remember { mutableStateOf(false) }
   var includeDevice by remember { mutableStateOf(false) }
@@ -127,66 +116,106 @@ private fun FeedbackScreen(onSend: SendFeedback) = Surface {
       .fillMaxSize()
       .padding(16.dp)
   ) {
-    Row(
-      modifier = Modifier
-        .padding(8.dp)
-        .fillMaxWidth(),
-      horizontalArrangement = Arrangement.Center
-    ) {
-      Text(text = stringResource(id = R.string.feedback_title))
-    }
-    Row(
+    FeedbackTitle()
+    FeedbackText(
       modifier = Modifier
         .padding(vertical = 16.dp)
-        .weight(1f)
-    ) {
-      OutlinedTextField(
-        modifier = Modifier
-          .fillMaxSize()
-          .defaultMinSize(minHeight = 150.dp),
-        value = feedback,
-        onValueChange = { feedback = it },
-        placeholder = {
-          Text(text = stringResource(id = R.string.feedback_hint))
-        }
-      )
-    }
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 10.dp)
-    ) {
-      Column {
-        Checkbox(checked = includeLogs, onCheckedChange = { includeLogs = it })
-      }
-      Column(modifier = Modifier.padding(start = 8.dp)) {
-        Text(text = stringResource(id = R.string.feedback_logs))
+        .weight(1f),
+      feedback = feedback, onValueChange = { feedback = it }
+    )
+    IncludeLogs(includeLogs) { includeLogs = it }
+    IncludeDeviceInfo(includeDevice) { includeDevice = it }
+    SendFeedback(feedback) {
+      coroutineScope.launch {
+        onSend(Feedback(feedback, includeLogs, includeDevice))
       }
     }
-    Row(
+  }
+}
+
+@Composable
+private fun FeedbackText(
+  modifier: Modifier,
+  feedback: String,
+  onValueChange: (String) -> Unit
+) {
+  Row(
+    modifier = modifier
+  ) {
+    OutlinedTextField(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 10.dp)
+        .fillMaxSize()
+        .defaultMinSize(minHeight = 150.dp),
+      value = feedback,
+      onValueChange = onValueChange,
+      placeholder = {
+        Text(text = stringResource(id = R.string.feedback_hint))
+      }
+    )
+  }
+}
+
+@Composable
+private fun FeedbackTitle() {
+  Row(
+    modifier = Modifier
+      .padding(8.dp)
+      .fillMaxWidth(),
+    horizontalArrangement = Arrangement.Center
+  ) {
+    Text(text = stringResource(id = R.string.feedback_title))
+  }
+}
+
+@Composable
+private fun SendFeedback(feedback: String, onClick: () -> Unit) {
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(top = 16.dp),
+    horizontalArrangement = Arrangement.Center
+  ) {
+    Button(
+      onClick = onClick,
+      modifier = Modifier.fillMaxWidth(0.8f),
+      enabled = feedback.isNotBlank()
     ) {
-      Column {
-        Checkbox(checked = includeDevice, onCheckedChange = { includeDevice = it })
-      }
-      Column(modifier = Modifier.padding(start = 8.dp)) {
-        Text(text = stringResource(id = R.string.feedback_device_information))
-      }
+      Text(text = stringResource(id = R.string.feedback_button_text))
     }
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 16.dp),
-      horizontalArrangement = Arrangement.Center
-    ) {
-      Button(
-        onClick = { onSend(Feedback(feedback, includeLogs, includeDevice)) },
-        modifier = Modifier.fillMaxWidth(0.8f)
-      ) {
-        Text(text = stringResource(id = R.string.feedback_button_text))
-      }
+  }
+}
+
+@Composable
+private fun IncludeDeviceInfo(
+  includeDevice: Boolean,
+  onCheckedChange: (Boolean) -> Unit
+) {
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(vertical = 10.dp)
+  ) {
+    Column {
+      Checkbox(checked = includeDevice, onCheckedChange = onCheckedChange)
+    }
+    Column(modifier = Modifier.padding(start = 8.dp)) {
+      Text(text = stringResource(id = R.string.feedback_device_information))
+    }
+  }
+}
+
+@Composable
+private fun IncludeLogs(includeLogs: Boolean, onChange: (include: Boolean) -> Unit) {
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(vertical = 10.dp)
+  ) {
+    Column {
+      Checkbox(checked = includeLogs, onCheckedChange = onChange)
+    }
+    Column(modifier = Modifier.padding(start = 8.dp)) {
+      Text(text = stringResource(id = R.string.feedback_logs))
     }
   }
 }
@@ -195,7 +224,7 @@ private fun FeedbackScreen(onSend: SendFeedback) = Surface {
 @Composable
 fun FeedbackScreenPreview() {
   RemoteTheme {
-    FeedbackScreen(onSend = {})
+    FeedbackScreen(onSend = {}, coroutineScope = MainScope())
   }
 }
 
@@ -203,6 +232,6 @@ fun FeedbackScreenPreview() {
 @Composable
 fun HelpFeedbackScreenPreview() {
   RemoteTheme {
-    HelpFeedbackScreen({}, MainScope())
+    HelpFeedbackScreen({}, MainScope(), { })
   }
 }

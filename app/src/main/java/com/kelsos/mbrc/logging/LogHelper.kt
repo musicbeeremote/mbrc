@@ -16,7 +16,7 @@ class LogHelper {
 
   suspend fun logsExist(filesDir: File): Boolean = withContext(Dispatchers.IO) {
     try {
-      val logDir = File(filesDir, FileLoggingTree.LOGS_DIR)
+      val logDir = File(filesDir, LOGS_DIR)
       logDir.listFiles()?.any { it.extension != "lck" } ?: false
     } catch (e: Exception) {
       Timber.e(e, "Log access failed")
@@ -25,7 +25,7 @@ class LogHelper {
   }
 
   suspend fun zipLogs(filesDir: File, cacheDir: File?): File = withContext(Dispatchers.IO) {
-    val logDir = File(filesDir, FileLoggingTree.LOGS_DIR)
+    val logDir = File(filesDir, LOGS_DIR)
     if (!logDir.exists()) {
       throw FileNotFoundException(logDir.canonicalPath)
     }
