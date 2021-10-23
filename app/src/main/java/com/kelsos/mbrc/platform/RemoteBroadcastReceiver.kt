@@ -8,12 +8,12 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.telephony.TelephonyManager
 import com.kelsos.mbrc.events.UserAction
+import com.kelsos.mbrc.features.settings.CallAction
+import com.kelsos.mbrc.features.settings.SettingsManager
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.VolumeModifyUseCase
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder
-import com.kelsos.mbrc.preferences.CallAction
-import com.kelsos.mbrc.preferences.SettingsManager
 import kotlinx.coroutines.runBlocking
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -33,7 +33,7 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   fun filter(context: Context): IntentFilter {
     val hasPermission =
       context.checkSelfPermission(READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-    val handleCallAction = settingsManager.getCallAction() != CallAction.None
+    val handleCallAction = runBlocking { settingsManager.getCallAction() } != CallAction.None
 
     return IntentFilter().apply {
       if (hasPermission && handleCallAction) {
@@ -73,7 +73,7 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   }
 
   private fun handleRinging() {
-    when (settingsManager.getCallAction()) {
+    when (runBlocking { settingsManager.getCallAction() }) {
       CallAction.Pause -> performAction(Protocol.PlayerPause)
       CallAction.Stop -> performAction(Protocol.PlayerStop)
       CallAction.Reduce -> runBlocking { volumeModifyUseCase.reduceVolume() }

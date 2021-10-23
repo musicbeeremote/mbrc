@@ -1,10 +1,12 @@
 syntax = "proto3";
 
-option java_package = "com.kelsos.mbrc.content.activestatus";
+option java_package = "com.kelsos.mbrc.features.settings";
 option java_multiple_files = true;
 
 message Settings {
   Cache cache = 1;
+  User user = 2;
+  App app = 3;
 }
 
 message Cache {
@@ -14,4 +16,33 @@ message Cache {
   string year = 4;
   string path = 5;
   string cover = 6;
+}
+
+message User {
+  bool enableLog = 1;
+  bool updateCheck = 2;
+  bool displayAlbumArtist = 3;
+  enum CallAction {
+    NONE = 0;
+    PAUSE = 1;
+    STOP = 2;
+    REDUCE = 3;
+  }
+  CallAction callAction = 4;
+  enum LibraryAction {
+    NOW = 0;
+    NEXT = 1;
+    LAST = 2;
+    PLAY_ALL = 3;
+    PLAY_ALBUM = 4;
+    PLAY_ARTIST = 5;
+  }
+  LibraryAction libraryAction = 5;
+}
+
+message App {
+  string uuid = 1;
+  uint64 lastUpdateCheck = 2;
+  uint64 lastRequiredUpdateCheck = 3;
+  uint64 lastRunVersion = 4;
 }

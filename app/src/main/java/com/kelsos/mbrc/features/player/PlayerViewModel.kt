@@ -7,9 +7,9 @@ import com.kelsos.mbrc.common.state.models.PlayingPosition
 import com.kelsos.mbrc.common.state.models.TrackRating
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.features.library.PlayingTrack
+import com.kelsos.mbrc.features.settings.SettingsManager
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow

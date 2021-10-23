@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kelsos.mbrc.features.library.data.Artist
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
-import com.kelsos.mbrc.preferences.SettingsManager
+import com.kelsos.mbrc.features.settings.SettingsManager
 import com.kelsos.mbrc.ui.BaseViewModel
 import com.kelsos.mbrc.ui.UiMessageBase
 import kotlinx.coroutines.FlowPreview

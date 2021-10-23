@@ -7,8 +7,6 @@ import androidx.work.WorkManager
 import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.common.state.AppStateManager
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
-import com.kelsos.mbrc.content.activestatus.PlayingTrackCacheImpl
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.data.DatabaseTransactionRunner
 import com.kelsos.mbrc.data.DatabaseTransactionRunnerImpl
@@ -62,6 +60,13 @@ import com.kelsos.mbrc.features.queue.QueueWorker
 import com.kelsos.mbrc.features.radio.RadioRepository
 import com.kelsos.mbrc.features.radio.RadioRepositoryImpl
 import com.kelsos.mbrc.features.radio.RadioViewModel
+import com.kelsos.mbrc.features.settings.ClientInformationStore
+import com.kelsos.mbrc.features.settings.ClientInformationStoreImpl
+import com.kelsos.mbrc.features.settings.DefaultActionPreferenceStore
+import com.kelsos.mbrc.features.settings.PlayingTrackCache
+import com.kelsos.mbrc.features.settings.PlayingTrackCacheImpl
+import com.kelsos.mbrc.features.settings.SettingsManager
+import com.kelsos.mbrc.features.settings.SettingsManagerImpl
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.features.work.WorkHandler
@@ -101,13 +106,6 @@ import com.kelsos.mbrc.platform.mediasession.INotificationManager
 import com.kelsos.mbrc.platform.mediasession.RemoteSessionManager
 import com.kelsos.mbrc.platform.mediasession.RemoteVolumeProvider
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
-import com.kelsos.mbrc.preferences.ClientInformationModel
-import com.kelsos.mbrc.preferences.ClientInformationModelImpl
-import com.kelsos.mbrc.preferences.ClientInformationStore
-import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
-import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
-import com.kelsos.mbrc.preferences.SettingsManager
-import com.kelsos.mbrc.preferences.SettingsManagerImpl
 import com.kelsos.mbrc.protocol.ProtocolPingHandle
 import com.kelsos.mbrc.protocol.ProtocolVersionUpdate
 import com.kelsos.mbrc.protocol.SimpleLogCommand
@@ -255,7 +253,6 @@ val appModule = module {
   single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
   single<ConnectivityVerifierImpl>() bind ConnectivityVerifier::class
 
-  factory<ClientInformationModelImpl>() bind ClientInformationModel::class
   factory<MoveManagerImpl>() bind MoveManager::class
 
   factory<RemoteBroadcastReceiver>()

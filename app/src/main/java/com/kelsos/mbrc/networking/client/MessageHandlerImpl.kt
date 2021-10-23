@@ -2,17 +2,16 @@ package com.kelsos.mbrc.networking.client
 
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.events.MessageEvent
+import com.kelsos.mbrc.features.settings.ClientInformationStore
 import com.kelsos.mbrc.networking.connections.ConnectionState
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.protocol.CommandFactory
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
-import com.kelsos.mbrc.preferences.ClientInformationStore
 import com.kelsos.mbrc.protocol.ProtocolAction
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.HashMap
 
 class MessageHandlerImpl(
   private val commandFactory: CommandFactory,

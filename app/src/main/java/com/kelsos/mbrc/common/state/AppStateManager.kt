@@ -2,7 +2,7 @@ package com.kelsos.mbrc.common.state
 
 import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
+import com.kelsos.mbrc.features.settings.PlayingTrackCache
 import com.kelsos.mbrc.networking.connections.ConnectionState
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager

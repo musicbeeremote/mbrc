@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.activestatus
+package com.kelsos.mbrc.features.settings
 
 import android.content.Context
 import androidx.datastore.core.CorruptionException

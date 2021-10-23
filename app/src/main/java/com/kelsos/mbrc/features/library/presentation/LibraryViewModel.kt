@@ -7,8 +7,8 @@ import com.kelsos.mbrc.features.library.sync.SyncResult
 import com.kelsos.mbrc.features.library.sync.SyncStatProvider
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
 import com.kelsos.mbrc.features.queue.Queue
+import com.kelsos.mbrc.features.settings.SettingsManager
 import com.kelsos.mbrc.features.work.WorkHandler
-import com.kelsos.mbrc.preferences.SettingsManager
 import com.kelsos.mbrc.ui.BaseViewModel
 import kotlinx.coroutines.launch
 
@@ -36,7 +36,9 @@ class LibraryViewModel(
   }
 
   fun setAlbumArtistOnly(checked: Boolean) {
-    settingsManager.setShouldDisplayOnlyAlbumArtist(checked)
+    viewModelScope.launch {
+      settingsManager.setShouldDisplayOnlyAlbumArtist(checked)
+    }
   }
 
   fun updateStats() {

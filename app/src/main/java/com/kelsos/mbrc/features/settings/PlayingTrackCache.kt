@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.content.activestatus
+package com.kelsos.mbrc.features.settings
 
 import android.app.Application
 import androidx.datastore.core.DataStore

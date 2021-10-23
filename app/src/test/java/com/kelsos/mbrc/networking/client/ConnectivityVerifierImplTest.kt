@@ -1,11 +1,9 @@
 package com.kelsos.mbrc.networking.client
 
 import android.content.Context
-import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import arrow.core.Either
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
@@ -13,21 +11,17 @@ import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.settings.ClientInformationStore
 import com.kelsos.mbrc.networking.RequestManager
 import com.kelsos.mbrc.networking.RequestManagerImpl
 import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.preferences.ClientInformationModel
-import com.kelsos.mbrc.preferences.ClientInformationModelImpl
-import com.kelsos.mbrc.preferences.ClientInformationStore
-import com.kelsos.mbrc.preferences.ClientInformationStoreImpl
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
 import com.squareup.moshi.Moshi
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.resetMain
@@ -74,7 +68,7 @@ class ConnectivityVerifierImplTest : KoinTest {
       .allowMainThreadQueries()
       .build()
     dao = db.connectionDao()
-    every { informationStore.getClientId() } returns "abc"
+    coEvery { informationStore.getClientId() } returns "abc"
     startKoin {
       modules(listOf(testModule, testDispatcherModule))
     }
@@ -224,7 +218,6 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   private val testModule = module {
-    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
     single { Moshi.Builder().build() }
     single { connectionRepository }
     single { dao }
@@ -232,13 +225,6 @@ class ConnectivityVerifierImplTest : KoinTest {
     single<ConnectivityVerifierImpl>() bind ConnectivityVerifier::class
     single<DeserializationAdapterImpl>() bind DeserializationAdapter::class
     single<SerializationAdapterImpl>() bind SerializationAdapter::class
-    single<ClientInformationStoreImpl>() bind ClientInformationStore::class
-    single<ClientInformationModel> {
-      ClientInformationModelImpl(
-        PreferenceManager.getDefaultSharedPreferences(
-          appContext
-        )
-      )
-    }
+    single { informationStore }
   }
 }

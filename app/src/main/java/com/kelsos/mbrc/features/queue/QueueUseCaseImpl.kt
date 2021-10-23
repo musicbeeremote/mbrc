@@ -15,9 +15,9 @@ import com.kelsos.mbrc.features.queue.Queue.Default
 import com.kelsos.mbrc.features.queue.Queue.PlayAlbum
 import com.kelsos.mbrc.features.queue.Queue.PlayAll
 import com.kelsos.mbrc.features.queue.Queue.PlayArtist
+import com.kelsos.mbrc.features.settings.DefaultActionPreferenceStore
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.preferences.DefaultActionPreferenceStore
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -37,7 +37,7 @@ class QueueUseCaseImpl(
     action: Queue
   ) = withContext(dispatchers.network) {
     val selectedAction = when (action) {
-      Default -> Queue.fromString(settings.defaultAction)
+      Default -> settings.getDefaultAction()
       PlayAlbum,
       PlayArtist -> PlayAll
       else -> action

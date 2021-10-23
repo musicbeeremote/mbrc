@@ -13,7 +13,6 @@ import com.kelsos.mbrc.common.state.models.PlayerStatusModel
 import com.kelsos.mbrc.common.state.models.PlayingPosition
 import com.kelsos.mbrc.common.state.models.TrackRating
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.content.activestatus.PlayingTrackCache
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.lyrics.LyricsPayload
@@ -21,6 +20,7 @@ import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
 import com.kelsos.mbrc.features.player.LfmRating
 import com.kelsos.mbrc.features.player.NowPlayingTrack
 import com.kelsos.mbrc.features.player.cover.CoverPayload
+import com.kelsos.mbrc.features.settings.PlayingTrackCache
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.SocketActivityChecker

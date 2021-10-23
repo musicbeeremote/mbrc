@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.preferences
+package com.kelsos.mbrc.features.settings
 
 sealed class CallAction(val string: String) {
   object None : CallAction(NONE)
