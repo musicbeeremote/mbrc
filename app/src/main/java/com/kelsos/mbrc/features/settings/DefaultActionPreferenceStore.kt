@@ -16,7 +16,7 @@ class DefaultActionPreferenceStore(
   }
 }
 
-private fun Queue.Companion.from(libraryAction: User.LibraryAction?): Queue = when (libraryAction) {
+fun Queue.Companion.from(libraryAction: User.LibraryAction?): Queue = when (libraryAction) {
   User.LibraryAction.NOW -> Queue.Now
   User.LibraryAction.NEXT -> Queue.Next
   User.LibraryAction.LAST -> Queue.Last

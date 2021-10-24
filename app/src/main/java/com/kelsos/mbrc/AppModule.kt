@@ -67,6 +67,7 @@ import com.kelsos.mbrc.features.settings.PlayingTrackCache
 import com.kelsos.mbrc.features.settings.PlayingTrackCacheImpl
 import com.kelsos.mbrc.features.settings.SettingsManager
 import com.kelsos.mbrc.features.settings.SettingsManagerImpl
+import com.kelsos.mbrc.features.settings.SettingsViewModel
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.features.work.WorkHandler
@@ -291,4 +292,5 @@ val uiModule = module {
   viewModel<AlbumTrackViewModel>()
 
   viewModel<NavigationViewModel>()
+  viewModel<SettingsViewModel>()
 }

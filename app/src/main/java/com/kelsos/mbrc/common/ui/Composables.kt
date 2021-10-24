@@ -54,7 +54,7 @@ fun <T : Any> pagingDataFlow(vararg elements: T) = flow {
 @Composable
 fun RemoteTopAppBar(
   openDrawer: () -> Unit,
-  content: @Composable ColumnScope.() -> Unit
+  content: (@Composable ColumnScope.() -> Unit)? = null
 ) = TopAppBar(
   backgroundColor = MaterialTheme.colors.primary,
   contentColor = contentColorFor(
@@ -68,7 +68,9 @@ fun RemoteTopAppBar(
         contentDescription = stringResource(id = R.string.navigation_menu_description)
       )
     }
-    Column(content = content)
+    if (content != null) {
+      Column(content = content)
+    }
   }
 }
 

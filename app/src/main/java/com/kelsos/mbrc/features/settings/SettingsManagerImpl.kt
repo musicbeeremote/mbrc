@@ -1,7 +1,9 @@
 package com.kelsos.mbrc.features.settings
 
 import android.app.Application
+import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.common.utilities.RemoteUtils.getVersionCode
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.logging.FileLoggingTree
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -16,9 +18,51 @@ class SettingsManagerImpl(
 
   private val dataStore = context.dataStore
 
+  override val state: Flow<SettingsState>
+    get() = dataStore.data.map {
+      SettingsState(
+        version = BuildConfig.VERSION_NAME,
+        revision = BuildConfig.GIT_SHA,
+        buildTime = BuildConfig.BUILD_TIME,
+        callAction = CallAction.from(it.user.callAction),
+        libraryAction = Queue.from(it.user.libraryAction),
+        onlyAlbumArtists = it.user.displayAlbumArtist,
+        checkPluginUpdate = it.user.updateCheck,
+        debugLog = it.user.enableLog
+      )
+    }
+
   init {
     runBlocking {
       setupManager()
+    }
+  }
+
+  override suspend fun setCallAction(callAction: CallAction) {
+    TODO("Not yet implemented")
+  }
+
+  override suspend fun setDebugLogging(enabled: Boolean) {
+    dataStore.updateData {
+      val settings = dataStore.data.first().toBuilder()
+      val userSettings = settings.user.toBuilder()
+        .setEnableLog(enabled)
+        .build()
+      settings.setUser(userSettings).build()
+    }
+  }
+
+  override suspend fun setLibraryAction(queue: Queue) {
+    TODO("Not yet implemented")
+  }
+
+  override suspend fun setPluginUpdateCheck(enabled: Boolean) {
+    dataStore.updateData {
+      val settings = dataStore.data.first().toBuilder()
+      val userSettings = settings.user.toBuilder()
+        .setUpdateCheck(enabled)
+        .build()
+      settings.setUser(userSettings).build()
     }
   }
 
@@ -32,6 +76,7 @@ class SettingsManagerImpl(
       fileLoggingTree?.let { Timber.uproot(it) }
     }
   }
+
   override suspend fun getCallAction(): CallAction {
     val settings = dataStore.data.first()
     return CallAction.from(settings.user.callAction)

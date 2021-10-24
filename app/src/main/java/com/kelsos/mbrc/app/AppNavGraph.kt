@@ -18,6 +18,7 @@ import com.kelsos.mbrc.features.lyrics.LyricsScreen
 import com.kelsos.mbrc.features.player.PlayerScreen
 import com.kelsos.mbrc.features.playlists.PlaylistScreen
 import com.kelsos.mbrc.features.radio.RadioScreen
+import com.kelsos.mbrc.features.settings.SettingsScreen
 import kotlinx.coroutines.launch
 
 sealed class Destination(val route: String) {
@@ -78,6 +79,7 @@ fun AppNavGraph(
     composable(Destination.OutputSelection.route) {
     }
     composable(Destination.Settings.route) {
+      SettingsScreen()
     }
     composable(Destination.Help.route) {
       HelpFeedbackScreen(openDrawer = openDrawer, coroutineScope = coroutineScope, sendFeedback)

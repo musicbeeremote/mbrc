@@ -22,9 +22,7 @@
   <dimen name="dual_list_subtitle">14sp</dimen>
   <dimen name="mini_control_title_text_size">16sp</dimen>
   <dimen name="mini_control_subtitle_text_size">14sp</dimen>
-  <dimen name="list_padding_top">8dp</dimen>
   <dimen name="empty_view_icon_margin_top">20dp</dimen>
   <dimen name="empty_view_icon_margin_bottom">40dp</dimen>
   <dimen name="empty_view_icon_size">80dp</dimen>
-  <dimen name="list_album_size">48dp</dimen>
   </resources>
