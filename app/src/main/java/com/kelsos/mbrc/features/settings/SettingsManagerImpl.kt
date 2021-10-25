@@ -53,7 +53,21 @@ class SettingsManagerImpl(
   }
 
   override suspend fun setLibraryAction(queue: Queue) {
-    TODO("Not yet implemented")
+    val action = when (queue) {
+      Queue.Last -> User.LibraryAction.LAST
+      Queue.Next -> User.LibraryAction.NEXT
+      Queue.PlayAlbum -> User.LibraryAction.PLAY_ALBUM
+      Queue.PlayAll -> User.LibraryAction.PLAY_ALL
+      Queue.PlayArtist -> User.LibraryAction.PLAY_ARTIST
+      else -> User.LibraryAction.NOW
+    }
+    dataStore.updateData {
+      val settings = dataStore.data.first().toBuilder()
+      val userSettings = settings.user.toBuilder()
+        .setLibraryAction(action)
+        .build()
+      settings.setUser(userSettings).build()
+    }
   }
 
   override suspend fun setPluginUpdateCheck(enabled: Boolean) {

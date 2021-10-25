@@ -257,12 +257,43 @@ private fun LibraryActionSetting(libraryAction: Queue, setLibraryAction: (queue:
   }
 }
 
+private data class QueueOption(
+  val text: String,
+  val action: Queue
+)
+
 @Composable
 private fun LibraryActionDialog(
   libraryAction: Queue,
   setLibraryAction: (queue: Queue) -> Unit,
   dismiss: () -> Unit
 ) {
+  val options = listOf(
+    QueueOption(
+      text = stringResource(id = R.string.menu_play),
+      action = Queue.Now
+    ),
+    QueueOption(
+      text = stringResource(id = R.string.menu_queue_next),
+      action = Queue.Next
+    ),
+    QueueOption(
+      text = stringResource(id = R.string.menu_queue_last),
+      action = Queue.Last
+    ),
+    QueueOption(
+      text = stringResource(id = R.string.menu_play_queue_all),
+      action = Queue.PlayAll
+    ),
+    QueueOption(
+      text = stringResource(id = R.string.menu_play_artist),
+      action = Queue.PlayArtist
+    ),
+    QueueOption(
+      text = stringResource(id = R.string.menu_play_album),
+      action = Queue.PlayAlbum
+    )
+  )
   Dialog(onDismissRequest = dismiss) {
     Column(
       modifier = Modifier
@@ -270,10 +301,27 @@ private fun LibraryActionDialog(
         .background(color = MaterialTheme.colors.surface)
         .padding(8.dp)
     ) {
-      RadioRow(
-        text = stringResource(id = R.string.menu_play),
-        selected = libraryAction == Queue.Now
-      ) { setLibraryAction(Queue.Now) }
+      Row(modifier = Modifier.padding(8.dp)) {
+        Text(text = stringResource(id = R.string.settings_misc_library_default_title))
+      }
+      Row(modifier = Modifier.padding(8.dp)) {
+        Text(
+          text = stringResource(id = R.string.settings_misc_library_default_description),
+          style = MaterialTheme.typography.caption
+        )
+      }
+      options.forEach { (text, action) ->
+        RadioRow(
+          text = text,
+          selected = action == libraryAction
+        ) { setLibraryAction(action) }
+      }
+      Row {
+        Spacer(modifier = Modifier.weight(1f))
+        TextButton(onClick = dismiss) {
+          Text(text = stringResource(id = android.R.string.ok))
+        }
+      }
     }
   }
 }
