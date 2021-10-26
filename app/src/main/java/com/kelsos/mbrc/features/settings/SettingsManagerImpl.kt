@@ -39,7 +39,19 @@ class SettingsManagerImpl(
   }
 
   override suspend fun setCallAction(callAction: CallAction) {
-    TODO("Not yet implemented")
+    val action = when (callAction) {
+      CallAction.None -> User.CallAction.NONE
+      CallAction.Pause -> User.CallAction.PAUSE
+      CallAction.Reduce -> User.CallAction.REDUCE
+      CallAction.Stop -> User.CallAction.STOP
+    }
+    dataStore.updateData {
+      val settings = dataStore.data.first().toBuilder()
+      val userSettings = settings.user.toBuilder()
+        .setCallAction(action)
+        .build()
+      settings.setUser(userSettings).build()
+    }
   }
 
   override suspend fun setDebugLogging(enabled: Boolean) {

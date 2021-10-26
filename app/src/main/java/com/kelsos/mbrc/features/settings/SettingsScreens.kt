@@ -2,6 +2,7 @@ package com.kelsos.mbrc.features.settings
 
 import android.webkit.WebView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -257,9 +258,9 @@ private fun LibraryActionSetting(libraryAction: Queue, setLibraryAction: (queue:
   }
 }
 
-private data class QueueOption(
+private data class Option<T>(
   val text: String,
-  val action: Queue
+  val action: T
 )
 
 @Composable
@@ -269,31 +270,50 @@ private fun LibraryActionDialog(
   dismiss: () -> Unit
 ) {
   val options = listOf(
-    QueueOption(
+    Option(
       text = stringResource(id = R.string.menu_play),
       action = Queue.Now
     ),
-    QueueOption(
+    Option(
       text = stringResource(id = R.string.menu_queue_next),
       action = Queue.Next
     ),
-    QueueOption(
+    Option(
       text = stringResource(id = R.string.menu_queue_last),
       action = Queue.Last
     ),
-    QueueOption(
+    Option(
       text = stringResource(id = R.string.menu_play_queue_all),
       action = Queue.PlayAll
     ),
-    QueueOption(
+    Option(
       text = stringResource(id = R.string.menu_play_artist),
       action = Queue.PlayArtist
     ),
-    QueueOption(
+    Option(
       text = stringResource(id = R.string.menu_play_album),
       action = Queue.PlayAlbum
     )
   )
+  SettingsDialog(
+    title = stringResource(id = R.string.settings_misc_library_default_title),
+    summary = stringResource(id = R.string.settings_misc_library_default_description),
+    options = options,
+    selection = libraryAction,
+    dismiss = dismiss,
+    setSelection = setLibraryAction
+  )
+}
+
+@Composable
+private fun <T> SettingsDialog(
+  title: String,
+  summary: String,
+  options: List<Option<out T>>,
+  selection: T,
+  dismiss: () -> Unit,
+  setSelection: (action: T) -> Unit
+) {
   Dialog(onDismissRequest = dismiss) {
     Column(
       modifier = Modifier
@@ -302,19 +322,19 @@ private fun LibraryActionDialog(
         .padding(8.dp)
     ) {
       Row(modifier = Modifier.padding(8.dp)) {
-        Text(text = stringResource(id = R.string.settings_misc_library_default_title))
+        Text(text = title)
       }
       Row(modifier = Modifier.padding(8.dp)) {
         Text(
-          text = stringResource(id = R.string.settings_misc_library_default_description),
+          text = summary,
           style = MaterialTheme.typography.caption
         )
       }
       options.forEach { (text, action) ->
         RadioRow(
           text = text,
-          selected = action == libraryAction
-        ) { setLibraryAction(action) }
+          selected = action == selection
+        ) { setSelection(action) }
       }
       Row {
         Spacer(modifier = Modifier.weight(1f))
@@ -328,7 +348,12 @@ private fun LibraryActionDialog(
 
 @Composable
 private fun RadioRow(text: String, selected: Boolean, onClick: () -> Unit) {
-  Row(modifier = Modifier.padding(10.dp)) {
+  Row(
+    modifier = Modifier
+      .clickable { onClick() }
+      .padding(10.dp)
+      .fillMaxWidth()
+  ) {
     RadioButton(
       selected = selected,
       onClick = onClick
@@ -364,10 +389,51 @@ private fun CallActionSetting(
   callAction: CallAction,
   setCallAction: (callAction: CallAction) -> Unit
 ) {
+  var show by remember { mutableStateOf(false) }
   SettingWithSummary(
     text = stringResource(id = R.string.settings_misc_call_action_title),
     summary = stringResource(id = R.string.settings_misc_call_action_description),
-    onClick = {}
+    onClick = { show = true }
+  )
+
+  if (show) {
+    CallActionDialog(callAction, setCallAction) {
+      show = false
+    }
+  }
+}
+
+@Composable
+private fun CallActionDialog(
+  callAction: CallAction,
+  setCallAction: (callAction: CallAction) -> Unit,
+  dismiss: () -> Unit
+) {
+  val options = listOf(
+    Option(
+      text = stringResource(id = R.string.call_action_none),
+      action = CallAction.None
+    ),
+    Option(
+      text = stringResource(id = R.string.call_action_reduce),
+      action = CallAction.Reduce
+    ),
+    Option(
+      text = stringResource(id = R.string.call_action_pause),
+      action = CallAction.Pause
+    ),
+    Option(
+      text = stringResource(id = R.string.call_action_stop),
+      action = CallAction.Stop
+    )
+  )
+  SettingsDialog(
+    title = stringResource(id = R.string.settings_misc_call_action_title),
+    summary = stringResource(id = R.string.settings_misc_call_action_description),
+    options = options,
+    selection = callAction,
+    dismiss = dismiss,
+    setSelection = { setCallAction(it) }
   )
 }
 

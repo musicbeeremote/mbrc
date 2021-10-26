@@ -153,4 +153,8 @@
   <string name="player_topbar_more">Open the menu with the share and last.fm scrobbling options</string>
   <string name="settings_about_revision">Revision</string>
   <string name="settings_about_build_time">Build Time</string>
+  <string name="call_action_none">None</string>
+  <string name="call_action_reduce">Reduce</string>
+  <string name="call_action_pause">Pause</string>
+  <string name="call_action_stop">Stop</string>
 </resources>
