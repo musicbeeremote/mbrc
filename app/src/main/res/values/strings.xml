@@ -22,16 +22,9 @@
   <string name="drawer__connection__off">Offline</string>
   <string name="drawer__connection__on">Authenticating</string>
   <string name="drawer__connection__active">Connected</string>
-  <string name="settings_dialog_hint_name">Computer name</string>
-  <string name="settings_dialog_hint_host">Hostname / IP</string>
-  <string name="settings_dialog_hint_port">Port number</string>
-  <string name="artist_placeholder">Artistname</string>
   <string name="connection_manager_scan">SCAN</string>
   <string name="connection_manager_add">ADD</string>
   <string name="connection_default_description">Represents if this connection is the default selected connection</string>
-  <string name="connectivity_manager_default">Set default</string>
-  <string name="connectivity_manager_edit">Edit</string>
-  <string name="connectivity_manager_delete">Delete</string>
   <string name="settings_about_oss_license">Open source licenses</string>
   <string name="settings_manage_connections">Manage Connections</string>
   <string name="settings_misc_library_default_title">Library Track Action</string>
@@ -66,11 +59,9 @@
   <string name="nav_playlists">Playlists</string>
   <string name="nav_library">Library</string>
   <string name="library_search_hint">Search your library</string>
-  <string name="no_results_found">Sorry could not find any results for your search!</string>
   <string name="notification_action_previous">Previous</string>
   <string name="notification_action_play">Play/Pause</string>
   <string name="notification_action_next">Next</string>dw
-  <string name="description_computer_icon">Computer icon</string>
   <string name="no_lyrics">No lyrics found</string>
   <string name="settings_misc_debug_description">Enables debug logging for the application. May cause performance degradation since it logs everything.</string>
   <string name="settings_misc_debug_title">Debug Logging</string>
@@ -85,7 +76,6 @@
   <string name="now_playing_search_hint">Search and play a track</string>
   <string name="feedback_device_information">Include Device &amp; Application Information</string>
   <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
-  <string name="library__action_refresh">Refresh</string>
   <string name="feedback_logs">Include Logs</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="menu_play_artist">Play Now (Queue Artist)</string>
@@ -141,10 +131,7 @@
   <string name="library__category_playlists">Playlists</string>
   <string name="library__category_covers">Covers</string>
   <string name="connection_manager__host">mbrc://%1$s:%2$d</string>
-  <string name="output_selection__icon_content_description">Speaker Icon</string>
-  <string name="library__action_clear">Clear</string>
   <string name="library__action_only_album_artists">Display only album artists</string>
-  <string name="library_details__empty_content">Placeholder image for an empty list</string>
   <string name="drawer__connect__content">Connect to the plugin</string>
   <string name="navigation_menu_description">Opens the navigation menu</string>
   <string name="player_topbar_favorite">Press to remove the track from the favorites</string>

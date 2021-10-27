@@ -126,7 +126,6 @@ import com.kelsos.mbrc.protocol.UpdateRating
 import com.kelsos.mbrc.protocol.UpdateRepeat
 import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionAdapter
 import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -277,8 +276,6 @@ val uiModule = module {
   viewModel<OutputSelectionViewModel>()
   viewModel<RatingDialogViewModel>()
   viewModel<VolumeDialogViewModel>()
-
-  factory<ConnectionAdapter>()
 
   viewModel<AlbumViewModel>()
   viewModel<GenreViewModel>()
