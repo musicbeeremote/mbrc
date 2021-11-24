@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.features.help.HelpFeedbackScreen
 import com.kelsos.mbrc.features.help.SendFeedback
@@ -18,6 +19,7 @@ import com.kelsos.mbrc.features.lyrics.LyricsScreen
 import com.kelsos.mbrc.features.player.PlayerScreen
 import com.kelsos.mbrc.features.playlists.PlaylistScreen
 import com.kelsos.mbrc.features.radio.RadioScreen
+import com.kelsos.mbrc.features.settings.ConnectionManagerScreen
 import com.kelsos.mbrc.features.settings.SettingsScreen
 import kotlinx.coroutines.launch
 
@@ -30,6 +32,8 @@ sealed class Destination(val route: String) {
   object Lyrics : Destination("lyrics")
   object OutputSelection : Destination("output_selection")
   object Settings : Destination("settings")
+  object General : Destination("general")
+  object ConnectionManager : Destination("connection_manager")
   object Help : Destination("help")
 
   fun matches(route: String): Boolean = route == this.route
@@ -78,8 +82,13 @@ fun AppNavGraph(
     }
     composable(Destination.OutputSelection.route) {
     }
-    composable(Destination.Settings.route) {
-      SettingsScreen()
+    navigation(startDestination = Destination.General.route, route = Destination.Settings.route) {
+      composable(Destination.General.route) {
+        SettingsScreen(navigateToConnectionManager = actions.navigateToConnectionManager)
+      }
+      composable(Destination.ConnectionManager.route) {
+        ConnectionManagerScreen(snackbarHostState = scaffoldState.snackbarHostState)
+      }
     }
     composable(Destination.Help.route) {
       HelpFeedbackScreen(openDrawer = openDrawer, coroutineScope = coroutineScope, sendFeedback)
@@ -93,5 +102,8 @@ class AppActions(navController: NavController) {
   }
   val navigateToHome: () -> Unit = {
     navController.navigate(Destination.Home.route)
+  }
+  val navigateToConnectionManager: () -> Unit = {
+    navController.navigate(Destination.ConnectionManager.route)
   }
 }

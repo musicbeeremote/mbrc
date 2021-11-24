@@ -62,6 +62,7 @@ import com.kelsos.mbrc.features.radio.RadioRepositoryImpl
 import com.kelsos.mbrc.features.radio.RadioViewModel
 import com.kelsos.mbrc.features.settings.ClientInformationStore
 import com.kelsos.mbrc.features.settings.ClientInformationStoreImpl
+import com.kelsos.mbrc.features.settings.ConnectionManagerViewModel
 import com.kelsos.mbrc.features.settings.DefaultActionPreferenceStore
 import com.kelsos.mbrc.features.settings.PlayingTrackCache
 import com.kelsos.mbrc.features.settings.PlayingTrackCacheImpl
@@ -126,7 +127,6 @@ import com.kelsos.mbrc.protocol.UpdateRating
 import com.kelsos.mbrc.protocol.UpdateRepeat
 import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
-import com.kelsos.mbrc.ui.connectionmanager.ConnectionManagerViewModel
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher

@@ -119,14 +119,21 @@ private fun SettingWithSummary(
 }
 
 @Composable
-fun SettingsScreen(vm: SettingsViewModel = getViewModel()) {
+fun SettingsScreen(
+  vm: SettingsViewModel = getViewModel(),
+  navigateToConnectionManager: () -> Unit
+) {
   val uiState by vm.state.collectAsState(initial = SettingsState.default())
   val actions = vm.actions
-  SettingsScreen(uiState, actions)
+  SettingsScreen(uiState, actions, navigateToConnectionManager)
 }
 
 @Composable
-private fun SettingsScreen(state: SettingsState, actions: SettingsActions) = Surface {
+private fun SettingsScreen(
+  state: SettingsState,
+  actions: SettingsActions,
+  navigateToConnectionManager: () -> Unit
+) = Surface {
   val scrollState = rememberScrollState()
   Column(
     modifier = Modifier
@@ -135,7 +142,7 @@ private fun SettingsScreen(state: SettingsState, actions: SettingsActions) = Sur
   ) {
     RemoteTopAppBar(openDrawer = { /*TODO*/ })
     Category(text = stringResource(id = R.string.settings_connection)) {
-      ManageConnections()
+      ManageConnections(navigateToConnectionManager)
     }
     Divider()
     Category(text = stringResource(id = R.string.settings_miscellaneous)) {
@@ -379,9 +386,11 @@ private fun DebugLoggingSetting(debugLog: Boolean, toggle: (enabled: Boolean) ->
 }
 
 @Composable
-private fun ManageConnections() {
-  Setting(text = stringResource(id = R.string.settings_manage_connections)) {
-  }
+private fun ManageConnections(navigateToConnectionManager: () -> Unit) {
+  Setting(
+    text = stringResource(id = R.string.settings_manage_connections),
+    onClick = navigateToConnectionManager
+  )
 }
 
 @Composable
@@ -460,6 +469,6 @@ private fun HeaderPreview() {
 @Composable
 private fun SettingsScreenPreview() {
   RemoteTheme {
-    SettingsScreen()
+    SettingsScreen(navigateToConnectionManager = { })
   }
 }

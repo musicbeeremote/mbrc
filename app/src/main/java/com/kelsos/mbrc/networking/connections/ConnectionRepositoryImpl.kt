@@ -28,15 +28,11 @@ class ConnectionRepositoryImpl(
   override suspend fun save(settings: ConnectionSettings) {
     withContext(dispatchers.database) {
       val entity = settings.toConnectionEntity()
-      val id = dao.findId(settings.address, settings.port)
-      id?.let {
-        settings.id = it
-      }
 
       if (settings.id > 0) {
         dao.update(entity)
       } else {
-        settings.id = dao.insert(entity)
+        dao.insert(entity)
       }
 
       if (count() == 1L) {

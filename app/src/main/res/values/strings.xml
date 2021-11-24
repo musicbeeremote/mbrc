@@ -144,4 +144,14 @@
   <string name="call_action_reduce">Reduce</string>
   <string name="call_action_pause">Pause</string>
   <string name="call_action_stop">Stop</string>
+  <string name="connection_manager_edit_name">Name</string>
+  <string name="connection_manager_edit_host">Host</string>
+  <string name="connection_manager_edit_port">Port</string>
+  <string name="connection_manager_edit_save">Save</string>
+  <string name="connection_manager_default">Set Default</string>
+  <string name="connection_manager_edit">Edit</string>
+  <string name="connection_manager_delete">Delete</string>
+  <string name="connection_manager_discovery_no_wifi">Discovery requires a WiFi connection</string>
+  <string name="connection_manager_discovery_not_found">An active connection could not be detected</string>
+  <string name="connection_manager_discovery_complete">A connection was found</string>
 </resources>

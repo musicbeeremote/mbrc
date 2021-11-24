@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.platform.mediasession
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.PendingIntent.getActivity
 import android.app.PendingIntent.getBroadcast
@@ -17,7 +18,7 @@ object RemoteViewIntentBuilder {
 
   fun getPendingIntent(remoteIntentCode: RemoteIntentCode, context: Context): PendingIntent {
     val code = remoteIntentCode.code
-    val flag = FLAG_UPDATE_CURRENT
+    val flag = FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
 
     val intent = when (remoteIntentCode) {
       RemoteIntentCode.Open -> Intent(context, NavigationActivity::class.java)
