@@ -79,7 +79,7 @@ class NowPlayingViewModel(
 
   fun removeTrack(position: Int) {
     viewModelScope.launch(dispatchers.network) {
-      delay(400)
+      delay(timeMillis = 400)
       userActionUseCase.removeTrack(position)
     }
   }

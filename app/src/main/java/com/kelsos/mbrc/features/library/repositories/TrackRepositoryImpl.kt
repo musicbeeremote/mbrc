@@ -14,7 +14,6 @@ import com.kelsos.mbrc.features.library.dto.toEntity
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 
@@ -27,6 +26,8 @@ class TrackRepositoryImpl(
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAll(): Flow<PagingData<Track>> = paged({ dao.getAll() }) { it.toTrack() }
+
+  override fun all(): List<Track> = dao.all().map { it.toTrack() }
 
   override fun getAlbumTracks(
     album: String,
@@ -55,11 +56,11 @@ class TrackRepositoryImpl(
 
         withContext(dispatchers.database) {
 
-          val matches = sources.chunked(50)
+          val matches = sources.chunked(size = 50)
             .flatMap { dao.findMatchingIds(it) }.associate { it.src to it.id }
 
           val toUpdate = tracks.filter { matches.containsKey(it.src) }
-          val toInsert = tracks.minus(toUpdate)
+          val toInsert = tracks.minus(toUpdate.toSet())
 
           dao.update(toUpdate.map { it.id = matches.getValue(it.src); it })
           dao.insertAll(toInsert)
@@ -71,6 +72,8 @@ class TrackRepositoryImpl(
   override fun search(term: String): Flow<PagingData<Track>> {
     return paged({ dao.search(term) }) { it.toTrack() }
   }
+
+  override fun simpleSearch(term: String): List<Track> = error("unavailable method")
 
   override fun getGenreTrackPaths(genre: String): List<String> =
     dao.getGenreTrackPaths(genre)

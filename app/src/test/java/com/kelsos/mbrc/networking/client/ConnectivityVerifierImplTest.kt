@@ -1,6 +1,7 @@
 package com.kelsos.mbrc.networking.client
 
 import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -18,24 +19,22 @@ import com.kelsos.mbrc.networking.connections.ConnectionDao
 import com.kelsos.mbrc.networking.connections.ConnectionRepository
 import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.kelsos.mbrc.utils.testDispatcherModule
 import com.squareup.moshi.Moshi
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.dsl.bind
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import timber.log.Timber
@@ -45,14 +44,13 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.net.ServerSocket
-import java.util.Random
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
 class ConnectivityVerifierImplTest : KoinTest {
 
-  private val port: Int = 46000
+  private val basePort: Int = 46000
   private val verifier: ConnectivityVerifier by inject()
   private lateinit var db: Database
   private lateinit var dao: ConnectionDao
@@ -60,9 +58,14 @@ class ConnectivityVerifierImplTest : KoinTest {
   private val connectionRepository: ConnectionRepository = mockk()
   private val moshi: Moshi by inject()
 
+  @get:Rule
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
+
   @Before
   fun setUp() {
-    Dispatchers.setMain(testDispatcher)
     val context = ApplicationProvider.getApplicationContext<Context>()
     db = Room.inMemoryDatabaseBuilder(context, Database::class.java)
       .allowMainThreadQueries()
@@ -78,7 +81,6 @@ class ConnectivityVerifierImplTest : KoinTest {
   fun tearDown() {
     db.close()
     stopKoin()
-    Dispatchers.resetMain()
   }
 
   private fun startMockServer(
@@ -86,9 +88,8 @@ class ConnectivityVerifierImplTest : KoinTest {
     responseContext: Protocol = Protocol.VerifyConnection,
     json: Boolean = true
   ): ServerSocket {
-    val random = Random()
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
-    val server = ServerSocket(port + random.nextInt(1000))
+    val server = getServer()
     val adapter = moshi.adapter(SocketMessage::class.java)
     val mockSocket = Runnable {
       server.soTimeout = 3000
@@ -139,8 +140,20 @@ class ConnectivityVerifierImplTest : KoinTest {
     return server
   }
 
+  private fun getServer(): ServerSocket {
+    val maxPort = basePort + 1000
+    for (port in basePort until maxPort) {
+      val server = runCatching { ServerSocket(port) }
+
+      if (server.isSuccess) {
+        return server.getOrThrow()
+      }
+    }
+    error("could not bind any port from $basePort to $maxPort")
+  }
+
   @Test
-  fun testSuccessfulVerification() = runBlockingTest(testDispatcher) {
+  fun testSuccessfulVerification() = runTest {
     val server = startMockServer()
 
     coEvery { connectionRepository.getDefault() } answers {
@@ -151,7 +164,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   @Test
-  fun testPrematureDisconnectDuringVerification() = runBlockingTest(testDispatcher) {
+  fun testPrematureDisconnectDuringVerification() = runTest {
     val server = startMockServer(true)
     coEvery { connectionRepository.getDefault() } answers {
       return@answers server.defaultConnection()
@@ -165,7 +178,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   @Test
-  fun testInvalidPluginResponseVerification() = runBlockingTest(testDispatcher) {
+  fun testInvalidPluginResponseVerification() = runTest {
     val server = startMockServer(false, Protocol.ClientNotAllowed)
     coEvery { connectionRepository.getDefault() } answers {
       return@answers server.defaultConnection()
@@ -178,17 +191,19 @@ class ConnectivityVerifierImplTest : KoinTest {
     assertThat(value).hasCauseThat().isNull()
   }
 
-  private fun ServerSocket.defaultConnection(): ConnectionSettings =
-    ConnectionSettings(
-      address = inetAddress.hostAddress,
+  private fun ServerSocket.defaultConnection(): ConnectionSettings {
+    val address = checkNotNull(inetAddress.hostAddress)
+    return ConnectionSettings(
+      address = address,
       port = localPort,
       name = "default",
       id = 1,
       isDefault = true
     )
+  }
 
   @Test
-  fun testVerificationNoConnection() = runBlockingTest(testDispatcher) {
+  fun testVerificationNoConnection() = runTest {
     startMockServer(true)
 
     coEvery { connectionRepository.getDefault() } answers {
@@ -203,7 +218,7 @@ class ConnectivityVerifierImplTest : KoinTest {
   }
 
   @Test
-  fun testVerificationNoJsonPayload() = runBlockingTest(testDispatcher) {
+  fun testVerificationNoJsonPayload() = runTest {
     startMockServer(false, Protocol.fromString("a"), false)
 
     coEvery { connectionRepository.getDefault() } answers {
@@ -221,10 +236,10 @@ class ConnectivityVerifierImplTest : KoinTest {
     single { Moshi.Builder().build() }
     single { connectionRepository }
     single { dao }
-    single<RequestManagerImpl>() bind RequestManager::class
-    single<ConnectivityVerifierImpl>() bind ConnectivityVerifier::class
-    single<DeserializationAdapterImpl>() bind DeserializationAdapter::class
-    single<SerializationAdapterImpl>() bind SerializationAdapter::class
+    singleOf(::RequestManagerImpl) { bind<RequestManager>() }
+    singleOf(::ConnectivityVerifierImpl) { bind<ConnectivityVerifier>() }
+    singleOf(::DeserializationAdapterImpl) { bind<DeserializationAdapter>() }
+    singleOf(::SerializationAdapterImpl) { bind<SerializationAdapter>() }
     single { informationStore }
   }
 }

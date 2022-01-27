@@ -51,7 +51,6 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettings
 import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.theme.Accent
 import com.kelsos.mbrc.theme.RemoteTheme
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.emptyFlow
 import org.koin.androidx.compose.getViewModel
 
@@ -172,7 +171,7 @@ private fun ConnectionManagerScreen(
       showDialog = true
     })
     Row {
-      Column(modifier = Modifier.weight(0.5f)) {
+      Column(modifier = Modifier.weight(weight = 0.5f)) {
         ActionButton(
           stringResource(id = R.string.connection_manager_scan)
         ) {
@@ -180,7 +179,7 @@ private fun ConnectionManagerScreen(
           actions.startDiscovery()
         }
       }
-      Column(modifier = Modifier.weight(0.5f)) {
+      Column(modifier = Modifier.weight(weight = 0.5f)) {
         ActionButton(stringResource(id = R.string.connection_manager_add)) {
           showDialog = true
         }
@@ -330,10 +329,10 @@ private fun ConnectionDialogContent(
         .padding(top = 8.dp),
       verticalAlignment = Alignment.Bottom
     ) {
-      Column(modifier = Modifier.weight(0.5f)) {
+      Column(modifier = Modifier.weight(weight = 0.5f)) {
         DialogButton(dismiss, stringResource(id = android.R.string.cancel))
       }
-      Column(modifier = Modifier.weight(0.5f)) {
+      Column(modifier = Modifier.weight(weight = 0.5f)) {
         DialogButton(
           onClick = {
             val settings = connection.copy(

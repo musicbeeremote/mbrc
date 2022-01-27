@@ -36,6 +36,9 @@ interface ArtistDao {
   @Query("select * from artist order by artist collate nocase asc")
   fun getAll(): PagingSource<Int, ArtistEntity>
 
+  @Query("select * from artist order by artist collate nocase asc")
+  fun all(): List<ArtistEntity>
+
   @Query(
     """
       select distinct artist.id, artist.artist, artist.date_added

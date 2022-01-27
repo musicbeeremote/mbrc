@@ -15,7 +15,6 @@ import com.kelsos.mbrc.features.playlists.toPlaylist
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 
@@ -30,6 +29,8 @@ class PlaylistRepositoryImpl(
 
   override fun getAll(): Flow<PagingData<Playlist>> =
     paged({ dao.getAll() }) { it.toPlaylist() }
+
+  override fun all(): List<Playlist> = dao.all().map { it.toPlaylist() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
@@ -58,6 +59,10 @@ class PlaylistRepositoryImpl(
 
   override fun search(term: String): Flow<PagingData<Playlist>> =
     paged({ dao.search(term) }) { it.toPlaylist() }
+
+  override fun simpleSearch(term: String): List<Playlist> {
+    return dao.simpleSearch(term).map { it.toPlaylist() }
+  }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

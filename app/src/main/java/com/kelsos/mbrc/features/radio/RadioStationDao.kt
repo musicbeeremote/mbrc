@@ -18,8 +18,14 @@ interface RadioStationDao {
   @Query("select * from radio_station")
   fun getAll(): PagingSource<Int, RadioStationEntity>
 
+  @Query("select * from radio_station")
+  fun all(): List<RadioStationEntity>
+
   @Query("select * from radio_station where name like '%' || :term || '%' ")
   fun search(term: String): PagingSource<Int, RadioStationEntity>
+
+  @Query("select * from radio_station where name like '%' || :term || '%' ")
+  fun simpleSearch(term: String): List<RadioStationEntity>
 
   @Query("select count(*) from radio_station")
   fun count(): Long

@@ -39,7 +39,7 @@ class LogHelper {
     }
 
     try {
-      val buffer = ByteArray(1024)
+      val buffer = ByteArray(size = 1024)
       val zipDir = File(cacheDir, LOGS_DIR)
       if (!zipDir.exists()) {
         zipDir.mkdir()

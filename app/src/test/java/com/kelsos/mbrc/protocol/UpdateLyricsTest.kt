@@ -8,11 +8,11 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.features.lyrics.LyricsPayload
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,7 +22,10 @@ import org.junit.runner.RunWith
 class UpdateLyricsTest {
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   private lateinit var updateLyrics: UpdateLyrics
   private lateinit var appState: AppState
@@ -51,7 +54,7 @@ class UpdateLyricsTest {
   }
 
   @Test
-  fun `not found lyrics should empty the cache`() = runBlockingTest(testDispatcher) {
+  fun `not found lyrics should empty the cache`() = runTest {
     val value = runCatching { adapter.fromJson(createMessage(LyricsPayload.NOT_FOUND)) }
     val socketMessage = checkNotNull(value.getOrNull())
     val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
@@ -61,7 +64,7 @@ class UpdateLyricsTest {
   }
 
   @Test
-  fun `lyrics should be translated`() = runBlockingTest(testDispatcher) {
+  fun `lyrics should be translated`() = runTest {
     val lyrics =
       """
       &lt;Lyrics&gt;

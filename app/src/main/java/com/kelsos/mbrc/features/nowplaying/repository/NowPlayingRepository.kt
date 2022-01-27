@@ -17,7 +17,6 @@ import com.kelsos.mbrc.features.nowplaying.toNowPlaying
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -47,6 +46,8 @@ class NowPlayingRepositoryImpl(
   override fun getAll(): Flow<PagingData<NowPlaying>> = paged({ dao.getAll() }) {
     it.toNowPlaying()
   }
+
+  override fun all(): List<NowPlaying> = dao.all().map { it.toNowPlaying() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
@@ -82,6 +83,10 @@ class NowPlayingRepositoryImpl(
   override fun search(
     term: String
   ): Flow<PagingData<NowPlaying>> = paged({ dao.search(term) }) { it.toNowPlaying() }
+
+  override fun simpleSearch(term: String): List<NowPlaying> {
+    return dao.simpleSearch(term).map { it.toNowPlaying() }
+  }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) {

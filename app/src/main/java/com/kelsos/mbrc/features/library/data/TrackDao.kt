@@ -18,6 +18,9 @@ interface TrackDao {
   @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
   fun getAll(): PagingSource<Int, TrackEntity>
 
+  @Query("select * from track order by album_artist asc, album asc, disc asc, trackno asc")
+  fun all(): List<TrackEntity>
+
   @Query(
     """
     select * from track where '%' || :term ||'%'
@@ -64,7 +67,7 @@ interface TrackDao {
   @Query(
     """
     select src from track
-    where (album_artist = :artist or artist = :artist) and album = :album 
+    where (album_artist = :artist or artist = :artist) and album = :album
     order by album_artist asc, album asc, disc asc, trackno asc
     """
   )

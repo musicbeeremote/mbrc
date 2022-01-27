@@ -24,6 +24,9 @@ interface ConnectionDao {
   @Query("select * from settings")
   fun getAll(): PagingSource<Int, ConnectionSettingsEntity>
 
+  @Query("select * from settings")
+  fun all(): List<ConnectionSettingsEntity>
+
   @Query("select count(*) from settings")
   fun count(): Long
 

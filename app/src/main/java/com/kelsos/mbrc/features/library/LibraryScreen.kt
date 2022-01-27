@@ -118,7 +118,7 @@ fun SyncMetricsContent(metrics: SyncedData, dismiss: () -> Unit) =
       Text(
         text = stringResource(id = R.string.library_stats__description),
         style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.onSurface.copy(0.7f)
+        color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
       )
     }
 
@@ -190,7 +190,7 @@ fun LibrarySyncIndicator(syncProgress: LibrarySyncProgress) = Surface(
         ),
         style = MaterialTheme.typography.subtitle2,
         modifier = Modifier.weight(1f, true),
-        color = MaterialTheme.colors.onSurface.copy(0.7f)
+        color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
       )
       val currentProgress = syncProgress.current.toFloat().div(syncProgress.total)
       val animatedProgress = animateFloatAsState(
@@ -277,7 +277,7 @@ fun LibraryScreen(
     R.string.media__tracks
   )
 
-  val pagerState = rememberPagerState(pageCount = tabs.size, initialOffscreenLimit = 2)
+  val pagerState = rememberPagerState()
 
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {
@@ -315,7 +315,8 @@ fun LibraryScreen(
     LibrarySyncIndicator(syncProgress = syncProgress)
     HorizontalPager(
       modifier = Modifier.weight(1f),
-      state = pagerState
+      state = pagerState,
+      count = tabs.size
     ) { page ->
       when (page) {
         Pages.GENRES -> GenresScreen(sync = sync) { queue, id ->

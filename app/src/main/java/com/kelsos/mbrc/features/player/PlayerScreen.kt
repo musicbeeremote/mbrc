@@ -109,12 +109,12 @@ fun PlayerScreenLandscape(
   Column(modifier = Modifier.fillMaxSize()) {
     PlayerScreenAppBar(openDrawer, perform, trackRating, playerStatus, share, playingTrack)
     Row(modifier = Modifier.fillMaxWidth()) {
-      Column(modifier = Modifier.fillMaxWidth(0.6f)) {
-        Spacer(modifier = Modifier.weight(2f))
+      Column(modifier = Modifier.fillMaxWidth(fraction = 0.6f)) {
+        Spacer(modifier = Modifier.weight(weight = 2f))
         TrackInfo(playingTrack)
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(weight = 1f))
         ProgressControl(playingPosition, perform)
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(weight = 1f))
         PlayerActions(playerStatus, perform)
       }
       TrackCover(
@@ -294,7 +294,7 @@ private fun PlayButton(
   iconSize: Dp
 ) = IconButton(
   onClick = { perform(PlayerAction.ResumePlayOrPause) },
-  modifier = Modifier.size(iconSize.times(2.8f))
+  modifier = Modifier.size(iconSize.times(other = 2.8f))
 ) {
   val imageVector = when (playerStatus.state) {
     PlayerState.Playing -> Icons.Filled.PauseCircleFilled
@@ -303,7 +303,7 @@ private fun PlayButton(
   Icon(
     imageVector = imageVector,
     contentDescription = stringResource(id = R.string.main_button_play_pause_description),
-    modifier = Modifier.size(iconSize.times(2.8f)),
+    modifier = Modifier.size(iconSize.times(other = 2.8f)),
     tint = MaterialTheme.colors.secondary
   )
 }
@@ -362,7 +362,7 @@ private fun ProgressControl(
       perform(PlayerAction.Seek(it.toInt()))
     },
     valueRange = 0f..playingPosition.total.toFloat(),
-    modifier = Modifier.fillMaxWidth(0.8f)
+    modifier = Modifier.fillMaxWidth(fraction = 0.8f)
   )
   Text(text = playingPosition.totalMinutes, style = MaterialTheme.typography.caption)
 }
@@ -376,7 +376,7 @@ private fun TrackInfo(
     .fillMaxWidth(),
   horizontalArrangement = Arrangement.SpaceBetween
 ) {
-  Column(modifier = Modifier.weight(1f)) {
+  Column(modifier = Modifier.weight(weight = 1f)) {
     Text(
       text = playingTrack.title,
       style = MaterialTheme.typography.h6,
@@ -386,7 +386,7 @@ private fun TrackInfo(
     Text(
       text = playingTrack.artistInfo(),
       style = MaterialTheme.typography.subtitle2,
-      color = MaterialTheme.colors.onSurface.copy(0.7f),
+      color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
       maxLines = 1,
       overflow = TextOverflow.Ellipsis
     )

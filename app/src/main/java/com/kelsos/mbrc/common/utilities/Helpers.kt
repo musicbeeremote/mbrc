@@ -11,7 +11,7 @@ import java.time.Instant
 
 fun <T : Any, I : Any> paged(
   pagingSourceFactory: () -> PagingSource<Int, T>,
-  transform: suspend (value: T) -> I
+  transform: (value: T) -> I
 ): Flow<PagingData<I>> {
   val config = PagingConfig(
     enablePlaceholders = true,

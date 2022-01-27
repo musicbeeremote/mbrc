@@ -59,7 +59,7 @@ class QueueWorker(
       .setOngoing(true)
       .build()
 
-    return ForegroundInfo(819, notification)
+    return ForegroundInfo(NOTIFICATION_ID, notification)
   }
 
   @RequiresApi(Build.VERSION_CODES.O)
@@ -84,6 +84,8 @@ class QueueWorker(
     const val ID = "queue_id"
     const val META = "queue_meta"
     const val ACTION = "queue_action"
+
+    const val NOTIFICATION_ID = 819
 
     fun createWorkRequest(
       id: Long,

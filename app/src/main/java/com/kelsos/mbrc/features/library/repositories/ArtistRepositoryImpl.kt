@@ -14,7 +14,6 @@ import com.kelsos.mbrc.features.library.dto.toEntity
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 
@@ -34,6 +33,8 @@ class ArtistRepositoryImpl(
   override fun getAll(): Flow<PagingData<Artist>> = paged({ dao.getAll() }) {
     it.toArtist()
   }
+
+  override fun all(): List<Artist> = dao.all().map { it.toArtist() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
@@ -60,6 +61,8 @@ class ArtistRepositoryImpl(
 
   override fun search(term: String): Flow<PagingData<Artist>> =
     paged({ dao.search(term) }) { it.toArtist() }
+
+  override fun simpleSearch(term: String): List<Artist> = error("unavailable method")
 
   override fun getAlbumArtistsOnly(): Flow<PagingData<Artist>> =
     paged({ dao.getAlbumArtists() }) { it.toArtist() }

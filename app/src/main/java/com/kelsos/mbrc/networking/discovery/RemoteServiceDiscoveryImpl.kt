@@ -44,7 +44,7 @@ class RemoteServiceDiscoveryImpl(
     val socket = create()
     val entity = retryIO(times = 4) {
       withContext(dispatchers.io) {
-        val buffer = ByteArray(512)
+        val buffer = ByteArray(size = 512)
         val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
           socket.receive(this)
           val message = String(data.copyOfRange(0, length), Charsets.UTF_8)

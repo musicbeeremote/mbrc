@@ -61,7 +61,10 @@ fun RemoteTopAppBar(
     backgroundColor = MaterialTheme.colors.primary
   ),
 ) {
-  Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+  Row(
+    horizontalArrangement = Arrangement.SpaceBetween,
+    modifier = Modifier.fillMaxWidth()
+  ) {
     IconButton(onClick = { openDrawer() }) {
       Icon(
         imageVector = Icons.Filled.Menu,
@@ -86,12 +89,15 @@ fun EmptyScreen(
   verticalAlignment = Alignment.CenterVertically,
   horizontalArrangement = Arrangement.Center
 ) {
-  Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+  Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier.weight(weight = 1f)
+  ) {
     Text(text = text, style = MaterialTheme.typography.h5)
     Icon(
       imageVector = imageVector,
       contentDescription = contentDescription,
-      modifier = Modifier.fillMaxSize(0.2f)
+      modifier = Modifier.fillMaxSize(fraction = 0.2f)
     )
     content?.invoke(this)
   }
@@ -165,11 +171,11 @@ fun SingleLineRow(
 fun PopupMenu(menuContent: @Composable() (ColumnScope.() -> Unit)) = Column {
   var showMenu by remember { mutableStateOf(false) }
   IconButton(onClick = { showMenu = !showMenu }, modifier = Modifier.padding(end = 16.dp)) {
-  Icon(
-    imageVector = Icons.Filled.MoreVert,
-    contentDescription = stringResource(id = R.string.menu_overflow_description)
-  )
-}
+    Icon(
+      imageVector = Icons.Filled.MoreVert,
+      contentDescription = stringResource(id = R.string.menu_overflow_description)
+    )
+  }
   DropdownMenu(
     expanded = showMenu,
     onDismissRequest = { showMenu = false },

@@ -13,14 +13,12 @@ import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.fragment.koin.fragmentFactory
 import org.koin.androidx.workmanager.koin.workManagerFactory
-import org.koin.core.KoinExperimentalAPI
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import timber.log.Timber
 
 @SuppressLint("Registered")
-@OptIn(KoinExperimentalAPI::class)
 open class App : Application() {
 
   @CallSuper

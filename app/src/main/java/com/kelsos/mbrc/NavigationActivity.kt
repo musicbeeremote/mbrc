@@ -15,10 +15,8 @@ import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.features.help.sendFeedback
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
-import kotlinx.coroutines.flow.collect
 import org.koin.androidx.fragment.android.setupKoinFragmentFactory
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.KoinExperimentalAPI
 import timber.log.Timber
 
 class NavigationActivity : AppCompatActivity() {
@@ -65,7 +63,6 @@ class NavigationActivity : AppCompatActivity() {
     }
   }
 
-  @OptIn(KoinExperimentalAPI::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     setupKoinFragmentFactory()
     super.onCreate(savedInstanceState)

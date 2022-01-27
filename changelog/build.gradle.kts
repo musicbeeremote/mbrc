@@ -1,11 +1,12 @@
 plugins {
-  id("com.android.library")
-  kotlin("android")
+  id(libs.plugins.android.library.get().pluginId)
+  id(libs.plugins.kotlinAndroid.get().pluginId)
+  alias(libs.plugins.kotlinter)
+  alias(libs.plugins.detekt)
 }
 
 android {
   compileSdk = 30
-  buildToolsVersion = "30.0.3"
 
   defaultConfig {
     minSdk = 23

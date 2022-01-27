@@ -6,16 +6,20 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.RemoteViews
 import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import coil.Coil
+import coil.request.ImageRequest
+import coil.target.Target
 import com.kelsos.mbrc.NavigationActivity
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.features.library.PlayingTrack
-import com.squareup.picasso.Picasso
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -135,11 +139,11 @@ abstract class WidgetBase : AppWidgetProvider() {
     val widget = RemoteViews(context.packageName, layout())
     val coverFile = File(path)
     if (coverFile.exists()) {
-      Picasso.get().invalidate(coverFile)
-      Picasso.get().load(coverFile)
-        .centerCrop()
-        .resizeDimen(imageSize(), imageSize())
-        .into(widget, imageId(), widgetsIds)
+      val request = ImageRequest.Builder(context)
+        .data(coverFile)
+        .target(RemoteViewsTarget(imageId(), widget))
+        .build()
+      Coil.imageLoader(context).enqueue(request)
     } else {
       widget.setImageViewResource(imageId(), R.drawable.ic_image_no_cover)
       widgetManager.updateAppWidget(widgetsIds, widget)
@@ -163,5 +167,18 @@ abstract class WidgetBase : AppWidgetProvider() {
       }
     )
     manager.updateAppWidget(widgetsIds, widget)
+  }
+}
+
+class RemoteViewsTarget(@IdRes private val id: Int, private val remoteViews: RemoteViews) : Target {
+
+  override fun onStart(placeholder: Drawable?) = setDrawable(placeholder)
+
+  override fun onError(error: Drawable?) = setDrawable(error)
+
+  override fun onSuccess(result: Drawable) = setDrawable(result)
+
+  private fun setDrawable(drawable: Drawable?) {
+    remoteViews.setImageViewBitmap(id, (drawable as? BitmapDrawable)?.bitmap)
   }
 }

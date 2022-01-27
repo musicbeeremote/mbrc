@@ -100,18 +100,18 @@ private fun LyricsContent(
 fun LyricsScreenPreview() {
   RemoteTheme {
     LyricsScreen(openDrawer = {}, lyrics = listOf("line one", "two", "three", "", "five")) {
-    MiniControl(
-      playingTrack = PlayingTrack(
-        artist = "Caravan Palace",
-        album = "Panic",
-        title = "Rock It for Me",
-        year = "2008"
-      ),
-      position = PlayingPosition(63000, 174000),
-      state = PlayerState.Playing,
-      perform = {},
-      navigateToHome = {}
-    )
-  }
+      MiniControl(
+        playingTrack = PlayingTrack(
+          artist = "Caravan Palace",
+          album = "Panic",
+          title = "Rock It for Me",
+          year = "2008"
+        ),
+        position = PlayingPosition(63000, 174000),
+        state = PlayerState.Playing,
+        perform = {},
+        navigateToHome = {}
+      )
+    }
   }
 }

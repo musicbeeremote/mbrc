@@ -92,7 +92,7 @@ private fun PlayingTrackInfo(
     Text(
       text = playingTrack.artist,
       style = MaterialTheme.typography.subtitle2,
-      color = MaterialTheme.colors.onSurface.copy(0.7f)
+      color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
     )
   }
 }

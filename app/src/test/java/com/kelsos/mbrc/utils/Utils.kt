@@ -6,21 +6,22 @@ import androidx.paging.PagingData
 import androidx.paging.PagingDataDiffer
 import arrow.core.Either
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import kotlinx.coroutines.test.TestScope
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 fun Either<Throwable, Unit>.result(): Any = fold({ it }, {})
 
-suspend fun <T : Any> PagingData<T>.collectDataForTest(): List<T> {
+suspend inline fun <T : Any> PagingData<T>.collectDataForTest(testScope: TestScope): List<T> {
+  val items = mutableListOf<T>()
   val latch = CountDownLatch(1)
   val dcb = object : DifferCallback {
     override fun onChanged(position: Int, count: Int) {}
     override fun onInserted(position: Int, count: Int) {}
     override fun onRemoved(position: Int, count: Int) {}
   }
-  val items = mutableListOf<T>()
-  val dif = object : PagingDataDiffer<T>(dcb, testDispatcher) {
+  val dif = object : PagingDataDiffer<T>(dcb, mainTestDispatcher) {
+    override fun postEvents(): Boolean = true
     override suspend fun presentNewList(
       previousList: NullPaddedList<T>,
       newList: NullPaddedList<T>,
@@ -39,14 +40,9 @@ suspend fun <T : Any> PagingData<T>.collectDataForTest(): List<T> {
     dif.collectFrom(this@collectDataForTest)
   }
 
-  val awaitResult = kotlin.runCatching {
-    latch.await(30, TimeUnit.SECONDS)
-  }
+  dif.retry()
 
-  if (awaitResult.isFailure) {
-    Timber.e(awaitResult.exceptionOrNull())
-  }
-
+  runCatching { latch.await(10, TimeUnit.SECONDS) }
   job.cancel()
 
   return items

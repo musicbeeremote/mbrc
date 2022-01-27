@@ -52,7 +52,7 @@ fun HelpFeedbackScreen(
     RemoteTopAppBar(openDrawer = openDrawer) {
     }
     val tabs = listOf(R.string.tab_help, R.string.tab_feedback)
-    val pagerState = rememberPagerState(pageCount = tabs.size, initialOffscreenLimit = 2)
+    val pagerState = rememberPagerState()
     TabRow(
       selectedTabIndex = pagerState.currentPage,
       indicator = { tabPositions ->
@@ -75,7 +75,8 @@ fun HelpFeedbackScreen(
     }
     HorizontalPager(
       modifier = Modifier.weight(1f),
-      state = pagerState
+      state = pagerState,
+      count = tabs.size
     ) { page ->
 
       when (page) {
@@ -177,7 +178,7 @@ private fun SendFeedback(feedback: String, onClick: () -> Unit) {
   ) {
     Button(
       onClick = onClick,
-      modifier = Modifier.fillMaxWidth(0.8f),
+      modifier = Modifier.fillMaxWidth(fraction = 0.8f),
       enabled = feedback.isNotBlank()
     ) {
       Text(text = stringResource(id = R.string.feedback_button_text))

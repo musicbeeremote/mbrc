@@ -2,6 +2,7 @@ package com.kelsos.mbrc.features.library.repositories
 
 import android.app.Application
 import arrow.core.Either
+import com.kelsos.mbrc.common.ApiStatus
 import com.kelsos.mbrc.common.data.Progress
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.data.AlbumCover
@@ -9,7 +10,6 @@ import com.kelsos.mbrc.features.library.data.Cover
 import com.kelsos.mbrc.features.library.data.key
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 import okio.ByteString.Companion.decodeBase64
@@ -68,7 +68,7 @@ class CoverCache(
         }
       }.collect { (payload, response) ->
         val status = response.status
-        if (status == 304) {
+        if (status == ApiStatus.NOT_MODIFIED) {
           Timber.v("cover for $payload did not change")
           return@collect
         }
@@ -76,7 +76,7 @@ class CoverCache(
         val cover = response.cover
         val hash = response.hash
 
-        if (status == 200 && !cover.isNullOrEmpty() && !hash.isNullOrEmpty()) {
+        if (status == ApiStatus.SUCCESS && !cover.isNullOrEmpty() && !hash.isNullOrEmpty()) {
           val result = runCatching {
             val file = File(cache, payload.key())
             val decodeBase64 = cover.decodeBase64()

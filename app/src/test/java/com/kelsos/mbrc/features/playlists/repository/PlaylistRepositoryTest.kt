@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.playlists.Playlist
@@ -12,15 +11,15 @@ import com.kelsos.mbrc.features.playlists.PlaylistDao
 import com.kelsos.mbrc.features.playlists.PlaylistDto
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.kelsos.mbrc.utils.TestData
 import com.kelsos.mbrc.utils.TestData.mockApi
 import com.kelsos.mbrc.utils.TestDataFactories
-import com.kelsos.mbrc.utils.collectDataForTest
 import com.kelsos.mbrc.utils.result
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -28,13 +27,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.dsl.bind
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.net.SocketTimeoutException
-import kotlin.time.Duration
 
 @RunWith(AndroidJUnit4::class)
 class PlaylistRepositoryTest : KoinTest {
@@ -46,7 +44,10 @@ class PlaylistRepositoryTest : KoinTest {
   private val repository: PlaylistRepository by inject()
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   @Before
   fun setUp() {
@@ -60,7 +61,7 @@ class PlaylistRepositoryTest : KoinTest {
         listOf(
           module {
             single { dao }
-            single<PlaylistRepositoryImpl>() bind PlaylistRepository::class
+            singleOf(::PlaylistRepositoryImpl) { bind<PlaylistRepository>() }
             single { apiBase }
           },
           testDispatcherModule
@@ -76,7 +77,7 @@ class PlaylistRepositoryTest : KoinTest {
   }
 
   @Test
-  fun `sync is failure if there is an exception`() = runBlockingTest {
+  fun `sync is failure if there is an exception`() = runTest {
     coEvery {
       apiBase.getAllPages(
         Protocol.PlaylistList,
@@ -88,18 +89,14 @@ class PlaylistRepositoryTest : KoinTest {
   }
 
   @Test
-  fun `it should be initially empty`() = runBlockingTest {
+  fun `it should be initially empty`() = runTest {
     assertThat(repository.cacheIsEmpty()).isTrue()
     assertThat(repository.count()).isEqualTo(0)
-    repository.getAll().test(timeout = Duration.seconds(10)) {
-      val data = awaitItem().collectDataForTest()
-      assertThat(data).isEmpty()
-    }
-    advanceUntilIdle()
+    assertThat(repository.all()).isEmpty()
   }
 
   @Test
-  fun `sync remote playlists and update database`() = runBlockingTest {
+  fun `sync remote playlists and update database`() = runTest {
     coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(20) {
         TestDataFactories.playlist(it)
@@ -107,15 +104,11 @@ class PlaylistRepositoryTest : KoinTest {
     }
     assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
-    repository.getAll().test(timeout = Duration.seconds(10)) {
-      val data = awaitItem().collectDataForTest()
-      assertThat(data).hasSize(20)
-    }
-    advanceUntilIdle()
+    assertThat(repository.all()).hasSize(20)
   }
 
   @Test
-  fun `it should filter the playlists when searching`() = runBlockingTest {
+  fun `it should filter the playlists when searching`() = runTest {
     val extra = listOf(PlaylistDto(name = "Heavy Metal", url = """C:\library\metal.m3u"""))
     coEvery { apiBase.getAllPages(Protocol.PlaylistList, PlaylistDto::class, any()) } answers {
       mockApi(5, extra) {
@@ -124,17 +117,14 @@ class PlaylistRepositoryTest : KoinTest {
     }
 
     assertThat(repository.getRemote().isRight()).isTrue()
-    repository.search("Metal").test(timeout = Duration.seconds(10)) {
-      val data = awaitItem().collectDataForTest()
-      assertThat(data).hasSize(1)
-      assertThat(data).containsExactly(
-        Playlist(
-          name = "Heavy Metal",
-          url = """C:\library\metal.m3u""",
-          id = 6
-        )
+    val data = repository.simpleSearch("Metal")
+    assertThat(data).hasSize(1)
+    assertThat(data).containsExactly(
+      Playlist(
+        name = "Heavy Metal",
+        url = """C:\library\metal.m3u""",
+        id = 6
       )
-    }
-    advanceUntilIdle()
+    )
   }
 }

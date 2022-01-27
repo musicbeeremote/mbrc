@@ -9,7 +9,6 @@ import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 
@@ -25,6 +24,8 @@ class RadioRepositoryImpl(
 
   override fun getAll(): Flow<PagingData<RadioStation>> =
     paged({ dao.getAll() }) { it.toRadioStation() }
+
+  override fun all(): List<RadioStation> = dao.all().map { it.toRadioStation() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     return@catch withContext(dispatchers.network) {
@@ -52,6 +53,10 @@ class RadioRepositoryImpl(
   override fun search(
     term: String
   ): Flow<PagingData<RadioStation>> = paged({ dao.search(term) }) { it.toRadioStation() }
+
+  override fun simpleSearch(term: String): List<RadioStation> {
+    return dao.simpleSearch(term).map { it.toRadioStation() }
+  }
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

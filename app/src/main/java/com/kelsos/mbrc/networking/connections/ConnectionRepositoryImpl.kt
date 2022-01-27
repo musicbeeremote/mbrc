@@ -68,6 +68,8 @@ class ConnectionRepositoryImpl(
     it.toConnection()
   }
 
+  override fun all(): List<ConnectionSettings> = dao.all().map { it.toConnection() }
+
   override suspend fun count(): Long {
     return withContext(dispatchers.database) {
       dao.count()

@@ -14,7 +14,6 @@ import com.kelsos.mbrc.features.library.dto.toEntity
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 
@@ -29,6 +28,8 @@ class GenreRepositoryImpl(
   override fun getAll(): Flow<PagingData<Genre>> = paged({ dao.getAll() }) {
     it.toGenre()
   }
+
+  override fun all(): List<Genre> = dao.all().map { it.toGenre() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
@@ -68,6 +69,8 @@ class GenreRepositoryImpl(
   override fun search(term: String): Flow<PagingData<Genre>> = paged({ dao.search(term) }) {
     it.toGenre()
   }
+
+  override fun simpleSearch(term: String): List<Genre> = error("unavailable method")
 
   override suspend fun cacheIsEmpty(): Boolean =
     withContext(dispatchers.database) { dao.count() == 0L }

@@ -6,13 +6,12 @@ import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.common.state.models.PlayerStatusModel
 import com.kelsos.mbrc.networking.client.MessageQueue
 import com.kelsos.mbrc.networking.client.SocketMessage
-import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,7 +34,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `increment volume from 10 by a step`() = runBlockingTest(testDispatcher) {
+  fun `increment volume from 10 by a step`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(10))
     volumeModifyUseCase.increment()
     val message = slot.captured
@@ -44,7 +43,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `increment volume from 12 by a step`() = runBlockingTest(testDispatcher) {
+  fun `increment volume from 12 by a step`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(12))
     volumeModifyUseCase.increment()
     val message = slot.captured
@@ -53,7 +52,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `increment volume from 17 by a step`() = runBlockingTest(testDispatcher) {
+  fun `increment volume from 17 by a step`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(17))
     volumeModifyUseCase.increment()
     val message = slot.captured
@@ -62,7 +61,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `increment volume from 92 by a step`() = runBlockingTest(testDispatcher) {
+  fun `increment volume from 92 by a step`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(92))
     volumeModifyUseCase.increment()
     val message = slot.captured
@@ -71,7 +70,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `decrement volume from 7 by a step`() = runBlockingTest(testDispatcher) {
+  fun `decrement volume from 7 by a step`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(7))
     volumeModifyUseCase.decrement()
     val message = slot.captured
@@ -80,7 +79,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `decrement volume from 10 by a step`() = runBlockingTest(testDispatcher) {
+  fun `decrement volume from 10 by a step`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(10))
     volumeModifyUseCase.decrement()
     val message = slot.captured
@@ -89,7 +88,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `decrement volume from 17 by a step`() = runBlockingTest(testDispatcher) {
+  fun `decrement volume from 17 by a step`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(17))
     volumeModifyUseCase.decrement()
     val message = slot.captured
@@ -98,7 +97,7 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `reduce volume from 100`() = runBlockingTest(testDispatcher) {
+  fun `reduce volume from 100`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(100))
     volumeModifyUseCase.reduceVolume()
     val message = slot.captured
@@ -107,14 +106,14 @@ class VolumeModifyUseCaseImplTest {
   }
 
   @Test
-  fun `reduce volume when muted`() = runBlockingTest(testDispatcher) {
+  fun `reduce volume when muted`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(100, mute = true))
     volumeModifyUseCase.reduceVolume()
     assertThat(slot.isCaptured).isFalse()
   }
 
   @Test
-  fun `reduce volume when volume is zero`() = runBlockingTest(testDispatcher) {
+  fun `reduce volume when volume is zero`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(0))
     volumeModifyUseCase.reduceVolume()
     assertThat(slot.isCaptured).isFalse()

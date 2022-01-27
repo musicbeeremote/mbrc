@@ -6,9 +6,9 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.features.player.LfmRating
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,7 +18,10 @@ import org.junit.runner.RunWith
 class UpdateLfmRatingTest {
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   private lateinit var updateLastRating: UpdateLfmRating
   private lateinit var appState: AppState
@@ -37,19 +40,19 @@ class UpdateLfmRatingTest {
   }
 
   @Test
-  fun `should change lfm rating to loved`() = runBlockingTest(testDispatcher) {
+  fun `should change lfm rating to loved`() = runTest {
     updateLastRating.execute(createMessage("Love"))
     assertThat(appState.playingTrackRating.first().lfmRating).isEqualTo(LfmRating.Loved)
   }
 
   @Test
-  fun `should change lfm rating to banned`() = runBlockingTest(testDispatcher) {
+  fun `should change lfm rating to banned`() = runTest {
     updateLastRating.execute(createMessage("Ban"))
     assertThat(appState.playingTrackRating.first().lfmRating).isEqualTo(LfmRating.Banned)
   }
 
   @Test
-  fun `should change lfm rating to normal`() = runBlockingTest(testDispatcher) {
+  fun `should change lfm rating to normal`() = runTest {
     val state = appState.playingTrackRating.first()
     appState.playingTrackRating.emit(state.copy(lfmRating = LfmRating.Loved))
     updateLastRating.execute(createMessage(""))

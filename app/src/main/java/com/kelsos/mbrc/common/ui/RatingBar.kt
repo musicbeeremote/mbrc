@@ -171,7 +171,7 @@ private val starPath = { size: Float ->
     val step = Math.PI / 5
 
     moveTo(cx, cy - outerRadius)
-    repeat(5) {
+    repeat(times = 5) {
       x = (cx + cos(rot) * outerRadius).toFloat()
       y = (cy + sin(rot) * outerRadius).toFloat()
       lineTo(x, y)
