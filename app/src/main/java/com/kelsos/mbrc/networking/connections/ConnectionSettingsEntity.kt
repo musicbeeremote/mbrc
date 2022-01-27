@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(
   tableName = "settings",
-  indices = [(Index(value = ["address", "port"], unique = true))]
+  indices = [(Index(value = ["address", "port"], unique = true))],
 )
 data class ConnectionSettingsEntity(
   @ColumnInfo(name = "address")
@@ -19,5 +19,5 @@ data class ConnectionSettingsEntity(
   @ColumnInfo(name = "is_default")
   var isDefault: Boolean? = null,
   @PrimaryKey(autoGenerate = true)
-  var id: Long = 0
+  var id: Long = 0,
 )

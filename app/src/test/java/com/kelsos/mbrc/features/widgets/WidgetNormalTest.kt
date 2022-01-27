@@ -33,13 +33,15 @@ class WidgetNormalTest {
   private var widgetId: Int = -1
   private lateinit var widgetView: View
 
-  private fun broadcastReceiver(value: (String) -> Unit): BroadcastReceiver {
-    return object : BroadcastReceiver() {
-      override fun onReceive(context: Context?, intent: Intent?) {
+  private fun broadcastReceiver(value: (String) -> Unit): BroadcastReceiver =
+    object : BroadcastReceiver() {
+      override fun onReceive(
+        context: Context?,
+        intent: Intent?,
+      ) {
         value(checkNotNull(intent?.action))
       }
     }
-  }
 
   @Before
   fun setUp() {
@@ -72,8 +74,8 @@ class WidgetNormalTest {
       PlayingTrack(
         artist = "Artist",
         title = "Title",
-        album = "Album"
-      )
+        album = "Album",
+      ),
     )
 
     shadowOf(getMainLooper()).idle()

@@ -9,11 +9,10 @@ import androidx.navigation.fragment.findNavController
 import com.kelsos.mbrc.databinding.FragmentUpdateRequiredBinding
 
 class UpdateRequiredFragment : Fragment() {
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ): View {
     val binding = FragmentUpdateRequiredBinding.inflate(inflater, container, false)
     val version = ""

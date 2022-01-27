@@ -22,5 +22,5 @@ data class TrackDto(
   @Json(name = "genre")
   var genre: String = "",
   @Json(name = "year")
-  var year: String = ""
+  var year: String = "",
 )

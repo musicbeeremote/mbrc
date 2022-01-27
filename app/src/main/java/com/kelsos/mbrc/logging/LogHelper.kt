@@ -8,38 +8,41 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class LogHelper {
+  suspend fun logsExist(filesDir: File): Boolean =
+    withContext(Dispatchers.IO) {
+      try {
+        val logDir = File(filesDir, LOGS_DIR)
+        logDir.listFiles()?.any { it.extension != "lck" } ?: false
+      } catch (e: SecurityException) {
+        Timber.e(e, "Log access failed")
+        return@withContext false
+      }
+    }
 
-  suspend fun logsExist(filesDir: File): Boolean = withContext(Dispatchers.IO) {
-    try {
+  suspend fun zipLogs(
+    filesDir: File,
+    cacheDir: File?,
+  ): File =
+    withContext(Dispatchers.IO) {
       val logDir = File(filesDir, LOGS_DIR)
-      logDir.listFiles()?.any { it.extension != "lck" } ?: false
-    } catch (e: Exception) {
-      Timber.e(e, "Log access failed")
-      return@withContext false
-    }
-  }
+      if (!logDir.exists()) {
+        throw FileNotFoundException(logDir.canonicalPath)
+      }
 
-  suspend fun zipLogs(filesDir: File, cacheDir: File?): File = withContext(Dispatchers.IO) {
-    val logDir = File(filesDir, LOGS_DIR)
-    if (!logDir.exists()) {
-      throw FileNotFoundException(logDir.canonicalPath)
-    }
+      val logFiles =
+        logDir.listFiles()?.filter {
+          it.extension != "lck"
+        }
 
-    val logFiles = logDir.listFiles()?.filter {
-      it.extension != "lck"
-    }
+      if (logFiles.isNullOrEmpty()) {
+        throw FileNotFoundException("No log files found")
+      }
 
-    if (logFiles.isNullOrEmpty()) {
-      throw RuntimeException("No log files found")
-    }
-
-    try {
-      val buffer = ByteArray(1024)
+      val buffer = ByteArray(size = 1024)
       val zipDir = File(cacheDir, LOGS_DIR)
       if (!zipDir.exists()) {
         zipDir.mkdir()
@@ -75,10 +78,7 @@ class LogHelper {
       fos.close()
 
       zipFile
-    } catch (e: IOException) {
-      throw RuntimeException(e)
     }
-  }
 
   companion object {
     private const val LOG_ZIP = "mbrc_logs.zip"

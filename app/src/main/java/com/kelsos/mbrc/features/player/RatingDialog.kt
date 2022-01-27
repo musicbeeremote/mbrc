@@ -16,21 +16,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.kelsos.mbrc.common.ui.RatingBar
 import com.kelsos.mbrc.theme.RemoteTheme
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun RatingDialog(showDialog: Boolean, dismiss: () -> Unit) {
-  val vm = getViewModel<RatingDialogViewModel>()
+fun RatingDialog(
+  showDialog: Boolean,
+  dismiss: () -> Unit,
+) {
+  val vm = koinViewModel<RatingDialogViewModel>()
   val rating by vm.rating.collectAsState(initial = 0f)
   if (showDialog) {
     Dialog(
       onDismissRequest = { dismiss() },
     ) {
       Row(
-        modifier = Modifier
-          .clip(RoundedCornerShape(8.dp))
-          .background(color = MaterialTheme.colors.surface)
-          .padding(8.dp)
+        modifier =
+          Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(color = MaterialTheme.colors.surface)
+            .padding(8.dp),
       ) {
         RatingDialogContent(rating) { vm.changeRating(it) }
       }
@@ -39,10 +43,13 @@ fun RatingDialog(showDialog: Boolean, dismiss: () -> Unit) {
 }
 
 @Composable
-fun RatingDialogContent(rating: Float, changeRating: (rating: Float) -> Unit) {
+fun RatingDialogContent(
+  rating: Float,
+  changeRating: (rating: Float) -> Unit,
+) {
   RatingBar(
     rating,
-    modifier = Modifier.padding(8.dp).height(36.dp)
+    modifier = Modifier.padding(8.dp).height(36.dp),
   ) {
     changeRating(it)
   }

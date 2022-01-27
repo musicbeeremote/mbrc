@@ -8,7 +8,9 @@ import com.kelsos.mbrc.features.library.PlayingTrack
 
 interface WidgetUpdater {
   fun updatePlayingTrack(track: PlayingTrack)
+
   fun updatePlayState(state: PlayerState)
+
   fun updateCover(path: String = "")
 
   companion object {
@@ -22,26 +24,22 @@ interface WidgetUpdater {
 }
 
 class WidgetUpdaterImpl(
-  private val context: Context
+  private val context: Context,
 ) : WidgetUpdater {
-
   private fun createIntent(clazz: Class<*>): Intent {
     val widgetUpdateIntent = Intent(context, clazz)
     widgetUpdateIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
     return widgetUpdateIntent
   }
 
-  private fun Intent.payload(track: PlayingTrack): Intent {
-    return putExtra(WidgetUpdater.INFO, true).putExtra(WidgetUpdater.TRACK_INFO, track)
-  }
+  private fun Intent.payload(track: PlayingTrack): Intent =
+    putExtra(WidgetUpdater.INFO, true).putExtra(WidgetUpdater.TRACK_INFO, track)
 
-  private fun Intent.payload(path: String): Intent {
-    return putExtra(WidgetUpdater.COVER, true).putExtra(WidgetUpdater.COVER_PATH, path)
-  }
+  private fun Intent.payload(path: String): Intent =
+    putExtra(WidgetUpdater.COVER, true).putExtra(WidgetUpdater.COVER_PATH, path)
 
-  private fun Intent.statePayload(state: PlayerState): Intent {
-    return putExtra(WidgetUpdater.STATE, true).putExtra(WidgetUpdater.PLAYER_STATE, state.state)
-  }
+  private fun Intent.statePayload(state: PlayerState): Intent =
+    putExtra(WidgetUpdater.STATE, true).putExtra(WidgetUpdater.PLAYER_STATE, state.state)
 
   override fun updatePlayingTrack(track: PlayingTrack) {
     val normalIntent = createIntent(WidgetNormal::class.java).payload(track)
@@ -61,7 +59,10 @@ class WidgetUpdaterImpl(
     broadcast(smallIntent, normalIntent)
   }
 
-  private fun broadcast(smallIntent: Intent, normalIntent: Intent) = with(context) {
+  private fun broadcast(
+    smallIntent: Intent,
+    normalIntent: Intent,
+  ) = with(context) {
     sendBroadcast(smallIntent)
     sendBroadcast(normalIntent)
   }

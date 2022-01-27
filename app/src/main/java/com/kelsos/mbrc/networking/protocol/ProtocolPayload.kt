@@ -10,5 +10,5 @@ data class ProtocolPayload(
   @Json(name = "no_broadcast")
   var noBroadcast: Boolean = false,
   @Json(name = "protocol_version")
-  var protocolVersion: Int = 3
+  var protocolVersion: Int = 3,
 )

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(
   tableName = "genre",
-  indices = [(Index("genre", name = "genre_genre_idx", unique = true))]
+  indices = [(Index("genre", name = "genre_genre_idx", unique = true))],
 )
 data class GenreEntity(
   @ColumnInfo
@@ -17,5 +17,5 @@ data class GenreEntity(
   @ColumnInfo(name = "date_updated")
   var dateUpdated: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  var id: Long = 0
+  var id: Long = 0,
 )

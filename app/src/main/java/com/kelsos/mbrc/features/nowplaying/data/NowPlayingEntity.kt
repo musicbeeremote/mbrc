@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(
   tableName = "now_playing",
-  indices = [Index("path", "position", name = "now_playing_track_idx", unique = true)]
+  indices = [Index("path", "position", name = "now_playing_track_idx", unique = true)],
 )
 data class NowPlayingEntity(
   @ColumnInfo(name = "title")
@@ -21,5 +21,5 @@ data class NowPlayingEntity(
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  var id: Long = 0
+  var id: Long = 0,
 )

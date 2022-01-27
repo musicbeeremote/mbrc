@@ -22,7 +22,6 @@ import org.robolectric.Shadows.shadowOf
 
 @RunWith(AndroidJUnit4::class)
 class WidgetUpdaterTest {
-
   @get:Rule
   val rule = InstantTaskExecutorRule()
 
@@ -33,10 +32,11 @@ class WidgetUpdaterTest {
   val flags = mutableListOf<Boolean>()
   val names = mutableListOf<String>()
 
-  private val classes = listOf(
-    "com.kelsos.mbrc.features.widgets.WidgetSmall",
-    "com.kelsos.mbrc.features.widgets.WidgetNormal"
-  )
+  private val classes =
+    listOf(
+      "com.kelsos.mbrc.features.widgets.WidgetSmall",
+      "com.kelsos.mbrc.features.widgets.WidgetNormal",
+    )
 
   @Before
   fun setUp() {
@@ -44,9 +44,15 @@ class WidgetUpdaterTest {
     widgetUpdater = WidgetUpdaterImpl(contextWrapper)
   }
 
-  private fun broadcastReceiver(flag: String, value: (Bundle) -> Unit): BroadcastReceiver {
+  private fun broadcastReceiver(
+    flag: String,
+    value: (Bundle) -> Unit,
+  ): BroadcastReceiver {
     return object : BroadcastReceiver() {
-      override fun onReceive(context: Context?, intent: Intent?) {
+      override fun onReceive(
+        context: Context?,
+        intent: Intent?,
+      ) {
         val bundle = intent?.extras ?: return
         flags.add(bundle.getBoolean(flag, false))
         value(bundle)
@@ -61,9 +67,10 @@ class WidgetUpdaterTest {
   fun `should broadcast two similar intents when updating cover`() {
     val values = mutableListOf<String>()
 
-    val broadcastReceiver = broadcastReceiver(WidgetUpdater.COVER) { bundle ->
-      values.add(bundle.getString(WidgetUpdater.COVER_PATH, ""))
-    }
+    val broadcastReceiver =
+      broadcastReceiver(WidgetUpdater.COVER) { bundle ->
+        values.add(bundle.getString(WidgetUpdater.COVER_PATH, ""))
+      }
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
     widgetUpdater.updateCover("/tmp/image.png")
@@ -78,9 +85,10 @@ class WidgetUpdaterTest {
   fun `should broadcast two similar intent when updating play state`() {
     val values = mutableListOf<String>()
 
-    val broadcastReceiver = broadcastReceiver(WidgetUpdater.STATE) { bundle ->
-      values.add(bundle.getString(WidgetUpdater.PLAYER_STATE, ""))
-    }
+    val broadcastReceiver =
+      broadcastReceiver(WidgetUpdater.STATE) { bundle ->
+        values.add(bundle.getString(WidgetUpdater.PLAYER_STATE, ""))
+      }
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
     widgetUpdater.updatePlayState(PlayerState.Stopped)
@@ -94,15 +102,17 @@ class WidgetUpdaterTest {
   @Test
   fun `should broadcast two similar intents when updating track info`() {
     val values = mutableListOf<PlayingTrack>()
-    val track = PlayingTrack(
-      artist = "Test Artist",
-      title = "Test Track",
-      album = "Test Album"
-    )
+    val track =
+      PlayingTrack(
+        artist = "Test Artist",
+        title = "Test Track",
+        album = "Test Album",
+      )
 
-    val broadcastReceiver = broadcastReceiver(WidgetUpdater.INFO) { bundle ->
-      values.add(checkNotNull(bundle.getParcelable(WidgetUpdater.TRACK_INFO)))
-    }
+    val broadcastReceiver =
+      broadcastReceiver(WidgetUpdater.INFO) { bundle ->
+        values.add(checkNotNull(bundle.getParcelable(WidgetUpdater.TRACK_INFO)))
+      }
 
     contextWrapper.registerReceiver(broadcastReceiver, intentFilter)
     widgetUpdater.updatePlayingTrack(track)

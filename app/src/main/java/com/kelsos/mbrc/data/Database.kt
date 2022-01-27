@@ -29,12 +29,11 @@ import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
     NowPlayingEntity::class,
     PlaylistEntity::class,
     RadioStationEntity::class,
-    ConnectionSettingsEntity::class
+    ConnectionSettingsEntity::class,
   ],
-  version = VERSION
+  version = VERSION,
 )
 abstract class Database : RoomDatabase() {
-
   abstract fun genreDao(): GenreDao
 
   abstract fun artistDao(): ArtistDao
@@ -52,6 +51,10 @@ abstract class Database : RoomDatabase() {
   abstract fun connectionDao(): ConnectionDao
 
   companion object {
+    const val V1 = 1
+    const val V2 = 2
+    const val V3 = 3
+    const val V4 = 4
     const val VERSION = 5
   }
 }

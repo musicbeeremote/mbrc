@@ -3,8 +3,8 @@ package com.kelsos.mbrc.features.library.data
 import com.kelsos.mbrc.common.data.Mapper
 
 object TrackEntityMapper : Mapper<TrackEntity, Track> {
-  override fun map(from: TrackEntity): Track {
-    return Track(
+  override fun map(from: TrackEntity): Track =
+    Track(
       artist = from.artist,
       title = from.title,
       src = from.src,
@@ -14,11 +14,8 @@ object TrackEntityMapper : Mapper<TrackEntity, Track> {
       album = from.album,
       genre = from.genre,
       year = from.year,
-      id = from.id
+      id = from.id,
     )
-  }
 }
 
-fun TrackEntity.toTrack(): Track {
-  return TrackEntityMapper.map(this)
-}
+fun TrackEntity.toTrack(): Track = TrackEntityMapper.map(this)

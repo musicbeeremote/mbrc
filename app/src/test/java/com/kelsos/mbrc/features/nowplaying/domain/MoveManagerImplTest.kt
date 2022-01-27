@@ -12,7 +12,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MoveManagerImplTest {
-
   private lateinit var onCommit: (Int, Int) -> Unit
 
   private val moveManager: MoveManager = MoveManagerImpl()

@@ -5,7 +5,7 @@ import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.metrics.empty
 import kotlinx.coroutines.CoroutineScope
@@ -40,8 +40,8 @@ class SyncStatProvider(
           artistRepository.count(),
           albumRepository.count(),
           trackRepository.count(),
-          playlistRepository.count()
-        )
+          playlistRepository.count(),
+        ),
       )
     }
   }

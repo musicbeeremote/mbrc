@@ -12,5 +12,5 @@ data class NowPlayingDto(
   @Json(name = "path")
   var path: String = "",
   @Json(name = "position")
-  var position: Int = 0
+  var position: Int = 0,
 )

@@ -5,7 +5,7 @@ import com.kelsos.mbrc.protocol.ProtocolMessage
 
 data class MessageEvent(
   override var type: Protocol,
-  override var data: Any = ""
+  override var data: Any = "",
 ) : ProtocolMessage {
   override fun toString(): String = "{context=${type.context}, data=$data}"
 }

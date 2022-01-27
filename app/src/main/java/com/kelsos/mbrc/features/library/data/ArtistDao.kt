@@ -8,7 +8,6 @@ import androidx.room.Query
 
 @Dao
 interface ArtistDao {
-
   @Query("delete from artist")
   fun deleteAll()
 
@@ -18,11 +17,13 @@ interface ArtistDao {
   @Query(
     """
       select distinct artist.id, artist.artist, artist.date_added
-      from artist inner join track on artist.artist = track.artist
-      where track.genre = :genre group by artist.artist order by artist.artist asc
-      """
+      from artist
+        inner join track on artist.artist = track.artist
+        inner join genre on genre.genre = track.genre
+      where genre.id = :genreId group by artist.artist order by artist.artist asc
+      """,
   )
-  fun getArtistByGenre(genre: String): PagingSource<Int, ArtistEntity>
+  fun getArtistByGenre(genreId: Long): PagingSource<Int, ArtistEntity>
 
   @Query("select * from artist where artist like '%' || :term || '%' ")
   fun search(term: String): PagingSource<Int, ArtistEntity>
@@ -36,12 +37,15 @@ interface ArtistDao {
   @Query("select * from artist order by artist collate nocase asc")
   fun getAll(): PagingSource<Int, ArtistEntity>
 
+  @Query("select * from artist order by artist collate nocase asc")
+  fun all(): List<ArtistEntity>
+
   @Query(
     """
       select distinct artist.id, artist.artist, artist.date_added
       from artist inner join track on artist.artist = track.artist
       where track.album_artist = artist.artist group by artist.artist order by artist.artist asc
-    """
+    """,
   )
   fun getAlbumArtists(): PagingSource<Int, ArtistEntity>
 

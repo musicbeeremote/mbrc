@@ -10,11 +10,10 @@ import com.kelsos.mbrc.changelog.databinding.ChangelogDialogEntryBinding
 import com.kelsos.mbrc.changelog.databinding.ChangelogDialogHeaderBinding
 
 class VersionAdapter(
-  private val changeLog: List<ChangeLogEntry>
+  private val changeLog: List<ChangeLogEntry>,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
   class VersionViewHolder(
-    binding: ChangelogDialogHeaderBinding
+    binding: ChangelogDialogHeaderBinding,
   ) : RecyclerView.ViewHolder(binding.root) {
     private val version: TextView = binding.changelogVersionVersion
     private val release: TextView = binding.changelogVersionRelease
@@ -33,17 +32,18 @@ class VersionAdapter(
   }
 
   class EntryViewHolder(
-    binding: ChangelogDialogEntryBinding
+    binding: ChangelogDialogEntryBinding,
   ) : RecyclerView.ViewHolder(binding.root) {
     private val text: TextView = binding.changelogEntryText
     private val type: TextView = binding.changelogEntryType
 
     fun bind(entry: ChangeLogEntry.Entry) {
-      val typeResId = when (entry.type) {
-        is EntryType.BUG -> R.string.entry__bug
-        is EntryType.FEATURE -> R.string.entry__feature
-        is EntryType.REMOVED -> R.string.entry__removed
-      }
+      val typeResId =
+        when (entry.type) {
+          is EntryType.BUG -> R.string.entry__bug
+          is EntryType.FEATURE -> R.string.entry__feature
+          is EntryType.REMOVED -> R.string.entry__removed
+        }
       type.setText(typeResId)
       text.text = HtmlCompat.fromHtml(entry.text, FROM_HTML_MODE_LEGACY)
     }
@@ -56,15 +56,20 @@ class VersionAdapter(
     }
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-    return when (viewType) {
+  override fun onCreateViewHolder(
+    parent: ViewGroup,
+    viewType: Int,
+  ): RecyclerView.ViewHolder =
+    when (viewType) {
       ITEM_VIEW_TYPE_HEADER -> VersionViewHolder.from(parent)
       ITEM_VIEW_TYPE_ITEM -> EntryViewHolder.from(parent)
       else -> throw ClassCastException("Unknown viewType $viewType")
     }
-  }
 
-  override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+  override fun onBindViewHolder(
+    holder: RecyclerView.ViewHolder,
+    position: Int,
+  ) {
     val version = changeLog[position]
     when (holder) {
       is VersionViewHolder -> holder.bind(version as ChangeLogEntry.Version)
@@ -72,16 +77,13 @@ class VersionAdapter(
     }
   }
 
-  override fun getItemViewType(position: Int): Int {
-    return when (changeLog[position]) {
+  override fun getItemViewType(position: Int): Int =
+    when (changeLog[position]) {
       is ChangeLogEntry.Version -> ITEM_VIEW_TYPE_HEADER
       is ChangeLogEntry.Entry -> ITEM_VIEW_TYPE_ITEM
     }
-  }
 
-  override fun getItemCount(): Int {
-    return changeLog.size
-  }
+  override fun getItemCount(): Int = changeLog.size
 
   companion object {
     private const val ITEM_VIEW_TYPE_HEADER = 0

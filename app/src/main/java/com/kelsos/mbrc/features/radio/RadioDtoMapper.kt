@@ -4,11 +4,8 @@ import com.kelsos.mbrc.common.data.Mapper
 
 object RadioDtoMapper :
   Mapper<RadioStationDto, RadioStationEntity> {
-  override fun map(from: RadioStationDto): RadioStationEntity {
-    return RadioStationEntity(from.name, from.url)
-  }
+  override fun map(from: RadioStationDto): RadioStationEntity =
+    RadioStationEntity(from.name, from.url)
 }
 
-fun RadioStationDto.toEntity(): RadioStationEntity {
-  return RadioDtoMapper.map(this)
-}
+fun RadioStationDto.toEntity(): RadioStationEntity = RadioDtoMapper.map(this)

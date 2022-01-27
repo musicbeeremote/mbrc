@@ -36,7 +36,7 @@ interface AlbumDao {
         album.date_added as date_added, album.id as id, album.cover as cover from album
         inner join track where album.album = track.album and track.album_artist = album.artist
         and (track.artist = :artist or track.album_artist = :artist) order by artist asc, album asc
-    """
+    """,
   )
   fun getAlbumsByArtist(artist: String): PagingSource<Int, AlbumEntity>
 
@@ -44,7 +44,11 @@ interface AlbumDao {
   fun getCovers(): List<AlbumCover>
 
   @Query("update album set cover = :cover where artist = :artist and album = :album")
-  fun updateCover(artist: String, album: String, cover: String)
+  fun updateCover(
+    artist: String,
+    album: String,
+    cover: String,
+  )
 
   @Transaction
   fun updateCovers(updated: List<AlbumCover>) {
@@ -55,7 +59,7 @@ interface AlbumDao {
       updateCover(
         artist = artist,
         album = album,
-        cover = hash
+        cover = hash,
       )
     }
   }

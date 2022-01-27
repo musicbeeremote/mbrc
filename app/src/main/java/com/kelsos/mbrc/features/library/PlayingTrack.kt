@@ -11,7 +11,7 @@ data class PlayingTrack(
   var year: String = "",
   var path: String = "",
   var coverUrl: String = "",
-  var duration: Long = 0
+  var duration: Long = 0,
 ) : Parcelable {
   fun artistInfo(): String {
     val artistBasic = "$artist - $album"

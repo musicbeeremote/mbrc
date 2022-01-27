@@ -10,18 +10,19 @@ data class SettingsState(
   val libraryAction: Queue,
   val onlyAlbumArtists: Boolean,
   val checkPluginUpdate: Boolean,
-  val debugLog: Boolean
+  val debugLog: Boolean,
 ) {
   companion object {
-    fun default() = SettingsState(
-      version = "",
-      revision = "",
-      buildTime = "",
-      callAction = CallAction.None,
-      libraryAction = Queue.Now,
-      onlyAlbumArtists = false,
-      checkPluginUpdate = false,
-      debugLog = false
-    )
+    fun default() =
+      SettingsState(
+        version = "",
+        revision = "",
+        buildTime = "",
+        callAction = CallAction.None,
+        libraryAction = Queue.Now,
+        onlyAlbumArtists = false,
+        checkPluginUpdate = false,
+        debugLog = false,
+      )
   }
 }

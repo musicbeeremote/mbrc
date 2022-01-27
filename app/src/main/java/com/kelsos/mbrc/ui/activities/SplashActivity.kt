@@ -12,7 +12,6 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class SplashActivity : AppCompatActivity() {
-
   private val dispatchers: AppCoroutineDispatchers by inject()
 
   override fun onCreate(savedInstanceState: Bundle?) {

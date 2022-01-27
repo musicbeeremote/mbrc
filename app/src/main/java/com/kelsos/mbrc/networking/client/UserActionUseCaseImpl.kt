@@ -8,10 +8,11 @@ import kotlinx.coroutines.launch
 
 class UserActionUseCaseImpl(
   private val messageQueue: MessageQueue,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppCoroutineDispatchers,
 ) : UserActionUseCase {
   private val job = SupervisorJob()
   private val scope = CoroutineScope(job + dispatchers.network)
+
   override suspend fun perform(action: UserAction) {
     messageQueue.queue(SocketMessage.create(action.protocol, action.data))
   }

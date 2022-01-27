@@ -15,7 +15,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 
@@ -23,13 +23,23 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
   settingsManager: SettingsManager,
   appState: AppState,
-  private val userActionUseCase: UserActionUseCase
+  private val userActionUseCase: UserActionUseCase,
 ) : BaseViewModel<PlayerUiMessage>() {
   private val progressRelay: MutableSharedFlow<Int> = MutableStateFlow(0)
-  val playingTrack: Flow<PlayingTrack> = appState.playingTrack
-  val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
-  val playingTrackRating: Flow<TrackRating> = appState.playingTrackRating
-  val playingPosition: Flow<PlayingPosition> = appState.playingPosition
+  val state: Flow<PlayerStateModel> =
+    combine(
+      appState.playingTrack,
+      appState.playerStatus,
+      appState.playingTrackRating,
+      appState.playingPosition,
+    ) { playingTrack, playerStatus, trackRating, playingPosition ->
+      PlayerStateModel(
+        playingTrack = playingTrack,
+        playerStatus = playerStatus,
+        trackRating = trackRating,
+        playingPosition = playingPosition,
+      )
+    }
 
   init {
     viewModelScope.launch {
@@ -53,17 +63,18 @@ class PlayerViewModel(
       return
     }
 
-    val userAction = when (action) {
-      PlayerAction.ToggleFavorite -> UserAction.toggle(Protocol.NowPlayingLfmRating)
-      PlayerAction.PlayNext -> UserAction(Protocol.PlayerNext, true)
-      PlayerAction.ResumePlayOrPause -> UserAction(Protocol.PlayerPlayPause, true)
-      PlayerAction.PlayPrevious -> UserAction(Protocol.PlayerPrevious, true)
-      PlayerAction.ToggleRepeat -> UserAction.toggle(Protocol.PlayerRepeat)
-      PlayerAction.ToggleScrobbling -> UserAction.toggle(Protocol.PlayerScrobble)
-      is PlayerAction.Seek -> throw IllegalArgumentException("Handled before")
-      PlayerAction.ToggleShuffle -> UserAction.toggle(Protocol.PlayerShuffle)
-      PlayerAction.Stop -> UserAction(Protocol.PlayerStop, true)
-    }
+    val userAction =
+      when (action) {
+        PlayerAction.ToggleFavorite -> UserAction.toggle(Protocol.NowPlayingLfmRating)
+        PlayerAction.PlayNext -> UserAction(Protocol.PlayerNext, true)
+        PlayerAction.ResumePlayOrPause -> UserAction(Protocol.PlayerPlayPause, true)
+        PlayerAction.PlayPrevious -> UserAction(Protocol.PlayerPrevious, true)
+        PlayerAction.ToggleRepeat -> UserAction.toggle(Protocol.PlayerRepeat)
+        PlayerAction.ToggleScrobbling -> UserAction.toggle(Protocol.PlayerScrobble)
+        is PlayerAction.Seek -> throw IllegalArgumentException("Handled before")
+        PlayerAction.ToggleShuffle -> UserAction.toggle(Protocol.PlayerShuffle)
+        PlayerAction.Stop -> UserAction(Protocol.PlayerStop, true)
+      }
     viewModelScope.launch {
       userActionUseCase.perform(userAction)
     }
@@ -73,3 +84,10 @@ class PlayerViewModel(
     private const val SAMPLE_PERIOD_MS = 800L
   }
 }
+
+data class PlayerStateModel(
+  val playingTrack: PlayingTrack = PlayingTrack(),
+  val playingPosition: PlayingPosition = PlayingPosition(),
+  val playerStatus: PlayerStatusModel = PlayerStatusModel(),
+  val trackRating: TrackRating = TrackRating(),
+)

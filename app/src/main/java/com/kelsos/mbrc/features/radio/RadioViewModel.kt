@@ -12,22 +12,29 @@ import kotlinx.coroutines.launch
 class RadioViewModel(
   private val radioRepository: RadioRepository,
   private val queueUseCase: QueueUseCase,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
 ) : BaseViewModel<RadioUiMessages>() {
+  val actions: RadioActions =
+    object : RadioActions {
+      override fun play(path: String) = this@RadioViewModel.play(path)
 
+      override fun reload() = this@RadioViewModel.reload()
+    }
   val radios: Flow<PagingData<RadioStation>> = radioRepository.getAll().cachedIn(viewModelScope)
 
   fun reload() {
     viewModelScope.launch(dispatchers.network) {
-      val result = radioRepository.getRemote()
-        .fold(
-          {
-            RadioUiMessages.RefreshFailed
-          },
-          {
-            RadioUiMessages.RefreshSuccess
-          }
-        )
+      val result =
+        radioRepository
+          .getRemote()
+          .fold(
+            {
+              RadioUiMessages.RefreshFailed
+            },
+            {
+              RadioUiMessages.RefreshSuccess
+            },
+          )
       emit(result)
     }
   }
@@ -35,12 +42,19 @@ class RadioViewModel(
   fun play(path: String) {
     viewModelScope.launch(dispatchers.network) {
       val response = queueUseCase.queuePath(path)
-      val uiMessage = if (response.success) {
-        RadioUiMessages.QueueSuccess
-      } else {
-        RadioUiMessages.QueueFailed
-      }
+      val uiMessage =
+        if (response.success) {
+          RadioUiMessages.QueueSuccess
+        } else {
+          RadioUiMessages.QueueFailed
+        }
       emit(uiMessage)
     }
   }
+}
+
+interface RadioActions {
+  fun play(path: String)
+
+  fun reload()
 }

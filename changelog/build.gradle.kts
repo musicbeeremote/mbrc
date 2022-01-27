@@ -1,15 +1,17 @@
 plugins {
-  id("com.android.library")
-  kotlin("android")
+  id(libs.plugins.android.library.get().pluginId)
+  id(libs.plugins.kotlinAndroid.get().pluginId)
+  alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.kotlinter)
+  alias(libs.plugins.detekt)
 }
 
 android {
-  compileSdk = 30
-  buildToolsVersion = "30.0.3"
+  namespace = "com.kelsos.mbrc.changelog"
+  compileSdk = 34
 
   defaultConfig {
-    minSdk = 23
-    targetSdk = 30
+    minSdk = 28
 
     consumerProguardFiles("consumer-rules.pro")
   }
@@ -24,10 +26,16 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
+
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
+
+  composeOptions {
+    kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+  }
+
   kotlinOptions {
     jvmTarget = "11"
   }
@@ -37,6 +45,7 @@ dependencies {
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.constraintlayout)
+  implementation(libs.bundles.androidx.compose)
   implementation(libs.google.material)
   implementation(libs.kotlin.stdlib)
 }

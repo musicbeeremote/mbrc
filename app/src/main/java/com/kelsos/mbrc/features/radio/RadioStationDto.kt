@@ -8,5 +8,5 @@ data class RadioStationDto(
   @Json(name = "name")
   var name: String = "",
   @Json(name = "url")
-  var url: String = ""
+  var url: String = "",
 )

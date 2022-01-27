@@ -4,12 +4,11 @@ import com.kelsos.mbrc.common.data.Mapper
 
 object PlaylistDtoMapper :
   Mapper<PlaylistDto, PlaylistEntity> {
-  override fun map(from: PlaylistDto): PlaylistEntity = PlaylistEntity(
-    name = from.name,
-    url = from.url
-  )
+  override fun map(from: PlaylistDto): PlaylistEntity =
+    PlaylistEntity(
+      name = from.name,
+      url = from.url,
+    )
 }
 
-fun PlaylistDto.toEntity(): PlaylistEntity {
-  return PlaylistDtoMapper.map(this)
-}
+fun PlaylistDto.toEntity(): PlaylistEntity = PlaylistDtoMapper.map(this)

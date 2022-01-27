@@ -10,10 +10,8 @@ object NowPlayingDtoMapper :
       from.title,
       from.artist,
       from.path,
-      from.position
+      from.position,
     )
 }
 
-fun NowPlayingDto.toEntity(): NowPlayingEntity {
-  return NowPlayingDtoMapper.map(this)
-}
+fun NowPlayingDto.toEntity(): NowPlayingEntity = NowPlayingDtoMapper.map(this)

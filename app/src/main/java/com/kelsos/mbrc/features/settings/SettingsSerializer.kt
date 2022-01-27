@@ -21,7 +21,10 @@ object SettingsSerializer : Serializer<Settings> {
     }
   }
 
-  override suspend fun writeTo(t: Settings, output: OutputStream) = t.writeTo(output)
+  override suspend fun writeTo(
+    t: Settings,
+    output: OutputStream,
+  ) = t.writeTo(output)
 }
 
 val Context.dataStore: DataStore<Settings> by dataStore("settings.db", SettingsSerializer)

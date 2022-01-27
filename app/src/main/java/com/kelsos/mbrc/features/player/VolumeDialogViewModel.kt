@@ -6,19 +6,16 @@ import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-@OptIn(FlowPreview::class)
 class VolumeDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
-  appState: AppState
+  appState: AppState,
 ) : ViewModel() {
   private val _currentVolume: MutableStateFlow<Int> = MutableStateFlow(0)
   private val _muted: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -26,6 +23,7 @@ class VolumeDialogViewModel(
   val muted: Flow<Boolean> get() = _muted
 
   private val volume: MutableSharedFlow<Int> = MutableSharedFlow()
+
   init {
     viewModelScope.launch {
       appState.playerStatus.map { it.volume }.distinctUntilChanged().collect { volume ->

@@ -4,9 +4,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class LibrarySearchModel {
-  private val _search: MutableStateFlow<String> = MutableStateFlow(
-    ""
-  )
+  private val _search: MutableStateFlow<String> =
+    MutableStateFlow(
+      "",
+    )
   val search: StateFlow<String>
     get() = _search
 

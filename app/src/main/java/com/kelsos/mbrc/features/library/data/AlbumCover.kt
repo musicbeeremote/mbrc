@@ -15,7 +15,7 @@ data class AlbumCover(
   val album: String,
   @ColumnInfo
   @Json(name = "hash")
-  val hash: String?
+  val hash: String?,
 )
 
 fun AlbumCover.key(): String = "${artist}_$album".encodeUtf8().sha1().hex()

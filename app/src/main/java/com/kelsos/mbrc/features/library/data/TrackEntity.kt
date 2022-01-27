@@ -30,5 +30,5 @@ data class TrackEntity(
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  var id: Long = 0
+  var id: Long = 0,
 )

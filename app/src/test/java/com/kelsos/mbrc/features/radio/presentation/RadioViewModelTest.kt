@@ -13,15 +13,15 @@ import com.kelsos.mbrc.features.radio.RadioRepository
 import com.kelsos.mbrc.features.radio.RadioStation
 import com.kelsos.mbrc.features.radio.RadioUiMessages
 import com.kelsos.mbrc.features.radio.RadioViewModel
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.appCoroutineDispatchers
-import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.CapturingSlot
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,9 +30,11 @@ import java.net.SocketTimeoutException
 
 @RunWith(AndroidJUnit4::class)
 class RadioViewModelTest {
+  @get:Rule
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var coroutineTestRule = CoroutineTestRule()
 
   private lateinit var repository: RadioRepository
   private lateinit var radioViewModel: RadioViewModel
@@ -49,48 +51,52 @@ class RadioViewModelTest {
   }
 
   @Test
-  fun `should notify the observer that refresh failed`() = runBlockingTest(testDispatcher) {
-    coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
-    radioViewModel.emitter.test {
-      radioViewModel.reload()
-      assertThat(awaitItem()).isEqualTo(RadioUiMessages.RefreshFailed)
-      cancelAndConsumeRemainingEvents()
+  fun `should notify the observer that refresh failed`() =
+    runTest {
+      coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
+      radioViewModel.emitter.test {
+        radioViewModel.reload()
+        assertThat(awaitItem()).isEqualTo(RadioUiMessages.RefreshFailed)
+        cancelAndConsumeRemainingEvents()
+      }
     }
-  }
 
   @Test
-  fun `should notify the observer that refresh succeeded`() = runBlockingTest(testDispatcher) {
-    coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
-    radioViewModel.emitter.test {
-      radioViewModel.reload()
-      assertThat(awaitItem()).isEqualTo(RadioUiMessages.RefreshSuccess)
-      cancelAndConsumeRemainingEvents()
+  fun `should notify the observer that refresh succeeded`() =
+    runTest {
+      coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
+      radioViewModel.emitter.test {
+        radioViewModel.reload()
+        assertThat(awaitItem()).isEqualTo(RadioUiMessages.RefreshSuccess)
+        cancelAndConsumeRemainingEvents()
+      }
     }
-  }
 
   @Test
-  fun `should call queue and notify success`() = testDispatcher.runBlockingTest {
-    val playArguments = slot<String>()
-    coEvery { queue.queuePath(capture(playArguments)) } answers {
-      QueueResult(true, 0)
-    }
+  fun `should call queue and notify success`() =
+    runTest {
+      val playArguments = slot<String>()
+      coEvery { queue.queuePath(capture(playArguments)) } answers {
+        QueueResult(true, 0)
+      }
 
-    radioViewModel.emitter.test {
-      radioViewModel.play("http://radio.station")
-      assertThat(awaitItem()).isEqualTo(RadioUiMessages.QueueSuccess)
-      cancelAndConsumeRemainingEvents()
+      radioViewModel.emitter.test {
+        radioViewModel.play("http://radio.station")
+        assertThat(awaitItem()).isEqualTo(RadioUiMessages.QueueSuccess)
+        cancelAndConsumeRemainingEvents()
+      }
     }
-  }
 
   @Test
-  fun `should notify on queue failure`() = runBlockingTest(testDispatcher) {
-    coEvery { queue.queuePath(any()) } answers {
-      QueueResult(false, 0)
+  fun `should notify on queue failure`() =
+    runTest {
+      coEvery { queue.queuePath(any()) } answers {
+        QueueResult(false, 0)
+      }
+      radioViewModel.emitter.test {
+        radioViewModel.play("http://radio.station")
+        assertThat(awaitItem()).isEqualTo(RadioUiMessages.QueueFailed)
+        cancelAndConsumeRemainingEvents()
+      }
     }
-    radioViewModel.emitter.test {
-      radioViewModel.play("http://radio.station")
-      assertThat(awaitItem()).isEqualTo(RadioUiMessages.QueueFailed)
-      cancelAndConsumeRemainingEvents()
-    }
-  }
 }

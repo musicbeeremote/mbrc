@@ -1,9 +1,6 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
 import io.gitlab.arturbosch.detekt.Detekt
 import java.io.ByteArrayOutputStream
 import java.io.FileInputStream
@@ -13,15 +10,17 @@ import java.util.Properties
 import java.util.TimeZone
 
 plugins {
-  id("com.android.application")
-  kotlin("android")
-  kotlin("kapt")
-  id("kotlin-parcelize")
-  id("com.google.protobuf")
-  id("org.jmailen.kotlinter")
-  id("io.gitlab.arturbosch.detekt")
-  id("idea")
-  id("com.google.firebase.firebase-perf")
+  id(libs.plugins.android.application.get().pluginId)
+  id(libs.plugins.kotlinAndroid.get().pluginId)
+  id(libs.plugins.kotlinParcelize.get().pluginId)
+  alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.protobuf)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.firebasePerf) apply false
+  alias(libs.plugins.googleServices) apply false
+  alias(libs.plugins.crashlytics) apply false
+  alias(libs.plugins.kotlinter)
+  alias(libs.plugins.detekt)
 }
 
 object KeyLoader {
@@ -84,26 +83,28 @@ val version = "1.5.1"
 val code = 124
 
 android {
-  compileSdk = 31
+  compileSdk = 34
 
   buildFeatures {
     viewBinding = true
     compose = true
+    buildConfig = true
   }
 
   defaultConfig {
+    namespace = "com.kelsos.mbrc"
     applicationId = "com.kelsos.mbrc"
-    minSdk = 23
-    targetSdk = 31
+    minSdk = 28
+    targetSdk = 34
     versionCode = code
     versionName = version
     buildConfigField("String", "GIT_SHA", "\"${gitHash()}\"")
     buildConfigField("String", "BUILD_TIME", "\"${buildTime()}\"")
 
-    kapt {
-      arguments {
-        arg("room.schemaLocation", "$projectDir/schemas")
-      }
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    ksp {
+      arg("room.schemaLocation", "$projectDir/schemas")
     }
   }
 
@@ -122,14 +123,14 @@ android {
   kotlinOptions {
     jvmTarget = "11"
     freeCompilerArgs = listOf(
-      "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-      "-Xopt-in=kotlin.RequiresOptIn",
-      "-Xopt-in=kotlin.time.ExperimentalTime",
+      "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "-opt-in=kotlin.RequiresOptIn",
+      "-opt-in=kotlin.time.ExperimentalTime",
     )
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = libs.versions.compose.get()
+    kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
   }
 
   signingConfigs {
@@ -155,7 +156,8 @@ android {
     getByName("debug") {
       applicationIdSuffix = ".dev"
       versionNameSuffix = "-dev"
-      isTestCoverageEnabled = true
+      enableUnitTestCoverage = true
+      enableAndroidTestCoverage = true
 
       buildConfigField("String", "GIT_SHA", "\"debug_build\"")
       buildConfigField("String", "BUILD_TIME", "\"debug_build\"")
@@ -166,15 +168,15 @@ android {
 
   productFlavors {
     create("play") {
-      apply(plugin = "com.google.gms.google-services")
-      apply(plugin = "com.google.firebase.crashlytics")
-      apply(plugin = "com.google.firebase.firebase-perf")
+      apply(plugin = libs.plugins.firebasePerf.get().pluginId)
+      apply(plugin = libs.plugins.googleServices.get().pluginId)
+      apply(plugin = libs.plugins.crashlytics.get().pluginId)
     }
 
     create("github") {}
   }
 
-  packagingOptions {
+  packaging {
     resources {
       excludes += "META-INF/ASL2.0"
       excludes += "META-INF/LICENSE"
@@ -185,12 +187,7 @@ android {
     }
   }
 
-  lintOptions {
-    isAbortOnError = false
-  }
-
   lint {
-    isWarningsAsErrors = true
     lintConfig = rootProject.file("config/lint.xml")
     sarifReport = true
   }
@@ -207,30 +204,12 @@ android {
   }
 }
 
-detekt {
-  input = files("src/main/java", "src/main/kotlin")
-  config = rootProject.files("config/detekt/detekt.yml")
-  buildUponDefaultConfig = true
-  reports {
-    sarif {
-      enabled = true
-    }
-  }
-}
-
 val dummyGoogleServicesJson: Configuration by configurations.creating {
   isCanBeResolved = true
   isCanBeConsumed = false
 
   attributes {
     attribute(Attribute.of("google.services.json", String::class.java), "dummy-json")
-  }
-}
-
-idea {
-  module {
-    isDownloadJavadoc = true
-    isDownloadSources = true
   }
 }
 
@@ -252,7 +231,6 @@ dependencies {
   testImplementation(libs.mockk)
   testImplementation(libs.robolectric)
 
-  implementation(libs.arrowKt)
   implementation(libs.androidx.activity.activityCompose)
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.appcompat)
@@ -272,6 +250,7 @@ dependencies {
   implementation(libs.bundles.androidx.lifecycle)
   implementation(libs.bundles.androidx.navigation)
   implementation(libs.bundles.androidx.room)
+  implementation(libs.bundles.arrow)
   implementation(libs.bundles.coil)
   implementation(libs.bundles.coroutines)
   implementation(libs.bundles.google.accompanist)
@@ -280,11 +259,10 @@ dependencies {
   implementation(libs.google.protobuf.javalite)
   implementation(libs.squareup.moshi.lib)
   implementation(libs.squareup.okio)
-  implementation(libs.squareup.picasso)
   implementation(libs.timber)
 
-  kapt(libs.androidx.room.compiler)
-  kapt(libs.squareup.moshi.codegen)
+  ksp(libs.androidx.room.compiler)
+  ksp(libs.squareup.moshi.codegen)
 
   debugImplementation(libs.androidx.fragment.testing)
   debugImplementation(libs.squareup.leakcanary)
@@ -301,7 +279,7 @@ protobuf {
 
   generateProtoTasks {
     all().forEach { task ->
-      task.plugins {
+      task.builtins {
         create("java") {
           option("lite")
         }
@@ -329,25 +307,16 @@ tasks {
     jvmTarget = "1.8"
   }
 
-  val lintReleaseSarifOutput =
-    project.layout.buildDirectory.file("reports/sarif/lint-results-release.sarif")
-  afterEvaluate {
-    // Needs to be in afterEvaluate because it's not created yet otherwise
-    named<AndroidLintTask>("lintGithubRelease") {
-      sarifReportOutputFile.set(lintReleaseSarifOutput)
-    }
-  }
-
   val staticAnalysis by registering {
     val detektAll by named<Detekt>("detekt")
-    val androidLintRelease = named<AndroidLintTask>("lintGithubRelease")
+    val androidLintRelease = named<AndroidLintTask>("lintReportGithubRelease")
 
     dependsOn(detekt, detektAll, androidLintRelease, lintKotlin)
   }
 
   register<Sync>("collectSarifReports") {
     val detektAll by named<Detekt>("detekt")
-    val androidLintRelease = named<AndroidLintTask>("lintGithubRelease")
+    val androidLintRelease = named<AndroidLintTask>("lintReportGithubRelease")
 
     mustRunAfter(detekt, detektAll, androidLintRelease, lintKotlin, staticAnalysis)
 
@@ -357,11 +326,11 @@ tasks {
     from(detekt.get().sarifReportFile) {
       rename { "detekt.sarif" }
     }
-    from(lintReleaseSarifOutput) {
+    from(androidLintRelease.get().sarifReportOutputFile) {
       rename { "android-lint.sarif" }
     }
 
-    into("$buildDir/reports/sarif")
+    into("${layout.buildDirectory}/reports/sarif")
 
     doLast {
       logger.info("Copied ${inputs.files.files.filter { it.exists() }} into ${outputs.files.files}")

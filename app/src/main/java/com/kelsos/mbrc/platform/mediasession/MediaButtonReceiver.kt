@@ -5,9 +5,13 @@ import android.content.Context
 import android.content.Intent
 import org.koin.core.component.KoinComponent
 
-class MediaButtonReceiver : BroadcastReceiver(), KoinComponent {
-
-  override fun onReceive(context: Context, intent: Intent) {
+class MediaButtonReceiver :
+  BroadcastReceiver(),
+  KoinComponent {
+  override fun onReceive(
+    context: Context,
+    intent: Intent,
+  ) {
     val action = intent.action
     if (
       action != Intent.ACTION_MEDIA_BUTTON
