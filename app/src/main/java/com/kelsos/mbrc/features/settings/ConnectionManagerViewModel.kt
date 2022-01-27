@@ -25,7 +25,7 @@ class ConnectionManagerActions(
   repository: ConnectionRepository,
   viewModelScope: CoroutineScope,
   dispatchers: AppCoroutineDispatchers,
-  events: MutableSharedFlow<DiscoveryStop>
+  events: MutableSharedFlow<DiscoveryStop>,
 ) : IConnectionManagerActions {
   override val startDiscovery: () -> Unit = {
     viewModelScope.launch(dispatchers.network) {
@@ -56,22 +56,24 @@ class ConnectionManagerActions(
 
 data class ConnectionManagerState(
   val events: Flow<DiscoveryStop>,
-  val settings: Flow<PagingData<ConnectionSettings>>
+  val settings: Flow<PagingData<ConnectionSettings>>,
 )
 
 class ConnectionManagerViewModel(
   repository: ConnectionRepository,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppCoroutineDispatchers,
 ) : ViewModel() {
   private val events: MutableSharedFlow<DiscoveryStop> = MutableSharedFlow()
-  val actions: IConnectionManagerActions = ConnectionManagerActions(
-    repository,
-    viewModelScope,
-    dispatchers,
-    events
-  )
-  val state = ConnectionManagerState(
-    events = events,
-    settings = repository.getAll().cachedIn(viewModelScope)
-  )
+  val actions: IConnectionManagerActions =
+    ConnectionManagerActions(
+      repository,
+      viewModelScope,
+      dispatchers,
+      events,
+    )
+  val state =
+    ConnectionManagerState(
+      events = events,
+      settings = repository.getAll().cachedIn(viewModelScope),
+    )
 }

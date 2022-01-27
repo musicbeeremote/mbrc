@@ -12,7 +12,7 @@ data class Track(
   var album: String,
   var genre: String,
   var year: String,
-  var id: Long
+  var id: Long,
 )
 
 fun Track.key(): String = "${albumArtist}_$album".encodeUtf8().sha1().hex()

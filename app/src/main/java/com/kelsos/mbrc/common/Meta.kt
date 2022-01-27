@@ -1,9 +1,14 @@
 package com.kelsos.mbrc.common
 
-sealed class Meta(val id: Int) {
+sealed class Meta(
+  val id: Int,
+) {
   object Genre : Meta(GENRE)
+
   object Artist : Meta(ARTIST)
+
   object Album : Meta(ALBUM)
+
   object Track : Meta(TRACK)
 
   companion object {
@@ -12,14 +17,13 @@ sealed class Meta(val id: Int) {
     const val ALBUM = 3
     const val TRACK = 4
 
-    fun fromId(id: Int): Meta {
-      return when (id) {
+    fun fromId(id: Int): Meta =
+      when (id) {
         GENRE -> Genre
         ARTIST -> Artist
         ALBUM -> Album
         TRACK -> Track
         else -> throw IllegalArgumentException("$id is not a recognised option")
       }
-    }
   }
 }

@@ -19,8 +19,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
-class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
-
+class RemoteBroadcastReceiver :
+  BroadcastReceiver(),
+  KoinComponent {
   private val settingsManager: SettingsManager by inject()
   private val volumeModifyUseCase: VolumeModifyUseCase by inject()
   private val userActionUseCase: UserActionUseCase by inject()
@@ -47,7 +48,10 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     }
   }
 
-  override fun onReceive(context: Context, intent: Intent) {
+  override fun onReceive(
+    context: Context,
+    intent: Intent,
+  ) {
     Timber.v("Incoming %s", intent)
     when (intent.action) {
       TelephonyManager.ACTION_PHONE_STATE_CHANGED -> {
@@ -67,7 +71,7 @@ class RemoteBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   }
 
   private fun stopService(context: Context) {
-    if (!RemoteService.SERVICE_STOPPING) {
+    if (!RemoteService.serviceStopping) {
       context.stopService(Intent(context, RemoteService::class.java))
     }
   }

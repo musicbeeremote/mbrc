@@ -12,5 +12,5 @@ data class DiscoveryMessage(
   @Json(name = "port")
   var port: Int = 0,
   @Json(name = "context")
-  var context: String = ""
+  var context: String = "",
 )

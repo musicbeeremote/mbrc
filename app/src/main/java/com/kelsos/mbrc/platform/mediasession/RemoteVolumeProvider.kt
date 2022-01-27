@@ -10,7 +10,6 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -19,10 +18,10 @@ class RemoteVolumeProvider(
   dispatchers: AppCoroutineDispatchers,
   private val userActionUseCase: UserActionUseCase,
 ) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, MAX_VOLUME, MIN_VOLUME) {
-
   private val job = SupervisorJob()
   private val scope = CoroutineScope(job + dispatchers.network)
   private val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
+
   private suspend fun currentVolume() = playerStatus.firstOrNull()?.volume ?: MIN_VOLUME
 
   init {
@@ -51,9 +50,11 @@ class RemoteVolumeProvider(
 
     scope.launch {
       val previousVolume = currentVolume()
-      val newVolume = previousVolume.plus(direction)
-        .coerceAtLeast(MIN_VOLUME)
-        .coerceAtMost(MAX_VOLUME)
+      val newVolume =
+        previousVolume
+          .plus(direction)
+          .coerceAtLeast(MIN_VOLUME)
+          .coerceAtMost(MAX_VOLUME)
       userActionUseCase.performUserAction(Protocol.PlayerVolume, newVolume)
       currentVolume = newVolume
     }

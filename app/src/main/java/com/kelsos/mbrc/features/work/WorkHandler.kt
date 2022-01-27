@@ -7,6 +7,6 @@ interface WorkHandler {
   fun queue(
     id: Long,
     meta: Meta,
-    action: Queue = Queue.Default
+    action: Queue = Queue.Default,
   )
 }

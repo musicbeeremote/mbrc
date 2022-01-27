@@ -5,9 +5,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.common.state.models.PlayerStatusModel
-import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,9 +15,11 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UpdateMuteTest {
+  @get:Rule
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var coroutineTestRule = CoroutineTestRule()
 
   private lateinit var update: UpdateMute
   private lateinit var appState: AppState
@@ -29,22 +31,25 @@ class UpdateMuteTest {
   }
 
   @Test
-  fun `It should set the mute to false`() = runBlockingTest(testDispatcher) {
-    appState.playerStatus.emit(PlayerStatusModel(mute = true))
-    update.execute(protocolMessage(status = false))
-    assertThat(appState.playerStatus.first().mute).isFalse()
-  }
+  fun `It should set the mute to false`() =
+    runTest {
+      appState.playerStatus.emit(PlayerStatusModel(mute = true))
+      update.execute(createTestProtocolMessage(status = false))
+      assertThat(appState.playerStatus.first().mute).isFalse()
+    }
 
   @Test
-  fun `It should set the mute to true`() = runBlockingTest(testDispatcher) {
-    update.execute(protocolMessage(status = true))
-    assertThat(appState.playerStatus.first().mute).isTrue()
-  }
+  fun `It should set the mute to true`() =
+    runTest {
+      update.execute(createTestProtocolMessage(status = true))
+      assertThat(appState.playerStatus.first().mute).isTrue()
+    }
 
   @Test
-  fun `It should set the mute to false if data is a string`() = runBlockingTest(testDispatcher) {
-    appState.playerStatus.emit(PlayerStatusModel(mute = true))
-    update.execute(protocolMessage(status = false, empty = true))
-    assertThat(appState.playerStatus.first().mute).isFalse()
-  }
+  fun `It should set the mute to false if data is a string`() =
+    runTest {
+      appState.playerStatus.emit(PlayerStatusModel(mute = true))
+      update.execute(createTestProtocolMessage(status = false, empty = true))
+      assertThat(appState.playerStatus.first().mute).isFalse()
+    }
 }

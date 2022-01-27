@@ -12,5 +12,5 @@ data class PlayerStatusModel(
   val shuffle: ShuffleMode = ShuffleMode.Off,
   val scrobbling: Boolean = false,
   val repeat: Repeat = Repeat.None,
-  var state: PlayerState = PlayerState.Undefined
+  var state: PlayerState = PlayerState.Undefined,
 )

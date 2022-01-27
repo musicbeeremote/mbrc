@@ -34,40 +34,44 @@ import com.kelsos.mbrc.theme.RemoteTheme
 
 @Composable
 fun MiniControl(
-  playingTrack: PlayingTrack,
-  position: PlayingPosition,
-  state: PlayerState,
+  vmState: MiniControlState,
   perform: (action: MiniControlAction) -> Unit = {},
-  navigateToHome: () -> Unit = {}
+  navigateToHome: () -> Unit = {},
 ) = Surface(Modifier.background(color = DarkBackground)) {
   Column(
-    modifier = Modifier
-      .height(50.dp)
-      .fillMaxWidth()
+    modifier =
+      Modifier
+        .height(50.dp)
+        .fillMaxWidth(),
   ) {
     Row(modifier = Modifier.height(2.dp)) {
+      val position = vmState.playingPosition
       LinearProgressIndicator(
         progress = position.current.toFloat().div(position.total),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
       )
     }
     Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 2.dp)
-        .height(48.dp)
+      modifier =
+        Modifier
+          .fillMaxWidth()
+          .padding(top = 2.dp)
+          .height(48.dp),
     ) {
+      val playingTrack = vmState.playingTrack
+      val state = vmState.playingState
       TrackCover(
         coverUrl = playingTrack.coverUrl,
-        modifier = Modifier
-          .size(44.dp)
-          .padding(2.dp),
-        cornerRadius = 2.dp
+        modifier =
+          Modifier
+            .size(44.dp)
+            .padding(2.dp),
+        cornerRadius = 2.dp,
       )
       PlayingTrackInfo(
         modifier = Modifier.weight(1f),
         navigateToHome = navigateToHome,
-        playingTrack = playingTrack
+        playingTrack = playingTrack,
       )
       PlayerControls(perform, state)
     }
@@ -78,21 +82,22 @@ fun MiniControl(
 private fun PlayingTrackInfo(
   modifier: Modifier = Modifier,
   navigateToHome: () -> Unit,
-  playingTrack: PlayingTrack
+  playingTrack: PlayingTrack,
 ) {
   Column(
-    modifier = modifier
-      .padding(horizontal = 4.dp, vertical = 2.dp)
-      .clickable {
-        navigateToHome()
-      },
-    verticalArrangement = Arrangement.Center
+    modifier =
+      modifier
+        .padding(horizontal = 4.dp, vertical = 2.dp)
+        .clickable {
+          navigateToHome()
+        },
+    verticalArrangement = Arrangement.Center,
   ) {
     Text(text = playingTrack.title, style = MaterialTheme.typography.body1)
     Text(
       text = playingTrack.artist,
       style = MaterialTheme.typography.subtitle2,
-      color = MaterialTheme.colors.onSurface.copy(0.7f)
+      color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
     )
   }
 }
@@ -100,7 +105,7 @@ private fun PlayingTrackInfo(
 @Composable
 private fun PlayerControls(
   perform: (action: MiniControlAction) -> Unit,
-  state: PlayerState
+  state: PlayerState,
 ) = Column {
   Row {
     IconButton(onClick = { perform(MiniControlAction.PlayPrevious) }) {
@@ -116,16 +121,17 @@ private fun PlayerControls(
 @Composable
 private fun PlayPauseButton(
   perform: (action: MiniControlAction) -> Unit,
-  state: PlayerState
+  state: PlayerState,
 ) = IconButton(onClick = { perform(MiniControlAction.PlayPause) }) {
-  val imageVector = if (state == PlayerState.Playing) {
-    Icons.Filled.Pause
-  } else {
-    Icons.Filled.PlayArrow
-  }
+  val imageVector =
+    if (state == PlayerState.Playing) {
+      Icons.Filled.Pause
+    } else {
+      Icons.Filled.PlayArrow
+    }
   Icon(
     imageVector = imageVector,
-    contentDescription = null
+    contentDescription = null,
   )
 }
 
@@ -135,16 +141,20 @@ fun MiniControlPreview() {
   RemoteTheme {
     Row(modifier = Modifier.fillMaxSize()) {
       MiniControl(
-        playingTrack = PlayingTrack(
-          artist = "Caravan Palace",
-          album = "Panic",
-          title = "Rock It for Me",
-          year = "2008"
-        ),
-        position = PlayingPosition(63000, 174000),
-        state = PlayerState.Playing,
+        vmState =
+          MiniControlState(
+            playingTrack =
+              PlayingTrack(
+                artist = "Caravan Palace",
+                album = "Panic",
+                title = "Rock It for Me",
+                year = "2008",
+              ),
+            playingPosition = PlayingPosition(63000, 174000),
+            playingState = PlayerState.Playing,
+          ),
         perform = {},
-        navigateToHome = {}
+        navigateToHome = {},
       )
     }
   }

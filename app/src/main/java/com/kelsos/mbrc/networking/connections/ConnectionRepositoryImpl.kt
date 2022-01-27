@@ -7,21 +7,22 @@ import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ConnectionRepositoryImpl(
   private val dao: ConnectionDao,
   private val dispatchers: AppCoroutineDispatchers,
-  private val discovery: RemoteServiceDiscovery
+  private val discovery: RemoteServiceDiscovery,
 ) : ConnectionRepository {
-
   override suspend fun discover(): DiscoveryStop {
     val discover = discovery.discover()
     return discover.fold(
       { it },
       {
+        Timber.v("Connection was successfully discovered $it")
         save(it.toConnection())
         DiscoveryStop.Complete
-      }
+      },
     )
   }
 
@@ -52,46 +53,43 @@ class ConnectionRepositoryImpl(
     }
   }
 
-  private fun getItemBefore(id: Long): ConnectionSettings? {
-    return dao.getPrevious(id)?.toConnection()
-  }
+  private fun getItemBefore(id: Long): ConnectionSettings? = dao.getPrevious(id)?.toConnection()
 
-  override fun getDefault(): ConnectionSettings? {
-    return dao.getDefault()?.toConnection()
-  }
+  override fun getDefault(): ConnectionSettings? = dao.getDefault()?.toConnection()
 
   override fun setDefault(settings: ConnectionSettings) {
     dao.updateDefault(settings.id)
   }
 
-  override fun getAll(): Flow<PagingData<ConnectionSettings>> = paged({ dao.getAll() }) {
-    it.toConnection()
-  }
+  override fun getAll(): Flow<PagingData<ConnectionSettings>> =
+    paged({ dao.getAll() }) {
+      it.toConnection()
+    }
 
-  override suspend fun count(): Long {
-    return withContext(dispatchers.database) {
+  override fun all(): List<ConnectionSettings> = dao.all().map { it.toConnection() }
+
+  override suspend fun count(): Long =
+    withContext(dispatchers.database) {
       dao.count()
     }
-  }
 }
 
-private fun ConnectionSettingsEntity.toConnection(): ConnectionSettings {
-  return ConnectionSettings(
+fun ConnectionSettingsEntity.toConnection(): ConnectionSettings =
+  ConnectionSettings(
     address = address,
     port = port,
     name = name,
     isDefault = isDefault ?: false,
-    id = id
+    id = id,
   )
-}
 
-private fun ConnectionSettings.toConnectionEntity(): ConnectionSettingsEntity {
+fun ConnectionSettings.toConnectionEntity(): ConnectionSettingsEntity {
   val isDefault = if (isDefault) isDefault else null
   return ConnectionSettingsEntity(
     address = address,
     port = port,
     name = name,
     isDefault = isDefault,
-    id = id
+    id = id,
   )
 }

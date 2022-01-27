@@ -6,7 +6,7 @@ interface QueueUseCase {
   suspend fun queue(
     id: Long,
     meta: Meta,
-    action: Queue = Queue.Default
+    action: Queue = Queue.Default,
   ): QueueResult
 
   suspend fun queuePath(path: String): QueueResult

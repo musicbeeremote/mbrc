@@ -11,31 +11,37 @@ import timber.log.Timber
 class ConnectivityVerifierImpl(
   private val deserializationAdapter: DeserializationAdapter,
   private val requestManager: RequestManager,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
 ) : ConnectivityVerifier {
+  override suspend fun verify(): Either<Throwable, Boolean> =
+    Either
+      .catch {
+        val type =
+          withContext(dispatchers.network) {
+            val connection = requestManager.openConnection(false)
+            val verifyMessage = SocketMessage.create(Protocol.VerifyConnection)
+            val response = requestManager.request(connection, verifyMessage)
+            connection.close()
+            val (context, _) =
+              deserializationAdapter.objectify(
+                response,
+                SocketMessage::class,
+              )
 
-  override suspend fun verify(): Either<Throwable, Boolean> = Either.catch {
-    withContext(dispatchers.network) {
-      val connection = requestManager.openConnection(false)
-      val verifyMessage = SocketMessage.create(Protocol.VerifyConnection)
-      val response = requestManager.request(connection, verifyMessage)
-      connection.close()
-      val (context, _) = deserializationAdapter.objectify(
-        response,
-        SocketMessage::class
-      )
+            return@withContext Protocol.fromString(context)
+          }
 
-      val type = Protocol.fromString(context)
+        if (type != Protocol.VerifyConnection) {
+          throw NoValidPluginConnection()
+        }
 
-      if (type != Protocol.VerifyConnection) {
-        throw NoValidPluginConnection()
+        return@catch true
+      }.mapLeft { cause ->
+        Timber.v(cause)
+        if (cause is NoValidPluginConnection) cause else NoValidPluginConnection(cause)
       }
-      return@withContext true
-    }
-  }.mapLeft {
-    Timber.v(it)
-    if (it is NoValidPluginConnection) it else NoValidPluginConnection(it)
-  }
 
-  class NoValidPluginConnection(cause: Throwable? = null) : Exception(cause)
+  class NoValidPluginConnection(
+    cause: Throwable? = null,
+  ) : Exception(cause)
 }

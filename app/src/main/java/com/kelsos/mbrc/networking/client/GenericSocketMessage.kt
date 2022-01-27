@@ -7,7 +7,6 @@ import com.squareup.moshi.JsonClass
 class GenericSocketMessage<T>(
   @param:Json(name = "context")
   var context: String,
-
   @param:Json(name = "data")
-  var data: T
+  var data: T,
 ) where T : Any

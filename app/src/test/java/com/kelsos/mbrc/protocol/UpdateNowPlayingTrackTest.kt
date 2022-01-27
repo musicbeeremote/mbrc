@@ -9,7 +9,7 @@ import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.mockk.Runs
@@ -18,7 +18,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,9 +26,11 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UpdateNowPlayingTrackTest {
+  @get:Rule
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var coroutineTestRule = CoroutineTestRule()
 
   private val widgetUpdater: WidgetUpdater = mockk()
   private lateinit var update: UpdateNowPlayingTrack
@@ -58,27 +60,29 @@ class UpdateNowPlayingTrackTest {
     appState = AppState()
     moshi = Moshi.Builder().build()
     adapter = moshi.adapter(SocketMessage::class.java)
-    update = UpdateNowPlayingTrack(
-      appState = appState,
-      updater = widgetUpdater,
-      mapper = moshi,
-      cache = mockk(relaxed = true)
-    )
+    update =
+      UpdateNowPlayingTrack(
+        appState = appState,
+        updater = widgetUpdater,
+        mapper = moshi,
+        cache = mockk(relaxed = true),
+      )
   }
 
   @Test
-  fun `it should update the playing track in the state`() = runBlockingTest(testDispatcher) {
-    val playingTrack = PlayingTrack()
-    appState.playingTrack.emit(playingTrack)
-    every { widgetUpdater.updatePlayingTrack(any()) } just Runs
+  fun `it should update the playing track in the state`() =
+    runTest {
+      val playingTrack = PlayingTrack()
+      appState.playingTrack.emit(playingTrack)
+      every { widgetUpdater.updatePlayingTrack(any()) } just Runs
 
-    val value = runCatching { adapter.fromJson(createMessage()) }
-    val socketMessage = checkNotNull(value.getOrNull())
-    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
-    update.execute(message)
+      val value = runCatching { adapter.fromJson(createMessage()) }
+      val socketMessage = checkNotNull(value.getOrNull())
+      val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
+      update.execute(message)
 
-    val track = appState.playingTrack.first()
-    assertThat(track.artist).isEqualTo("Gamma Ray")
-    verify(exactly = 1) { widgetUpdater.updatePlayingTrack(any()) }
-  }
+      val track = appState.playingTrack.first()
+      assertThat(track.artist).isEqualTo("Gamma Ray")
+      verify(exactly = 1) { widgetUpdater.updatePlayingTrack(any()) }
+    }
 }

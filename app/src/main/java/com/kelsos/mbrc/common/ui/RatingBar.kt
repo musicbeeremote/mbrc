@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,11 +40,13 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 const val STARS = 5
+const val HALF = 0.5f
 
 private fun Float.toRating(): Float {
   val integerPart = toInt()
-  return if (minus(integerPart) >= 0.5f) {
-    integerPart.plus(0.5f)
+
+  return if (minus(integerPart) >= HALF) {
+    integerPart.plus(HALF)
   } else {
     integerPart.toFloat()
   }
@@ -56,48 +59,52 @@ fun RatingBar(
   modifier: Modifier = Modifier,
   padding: Dp = 4.dp,
   color: Color = MaterialTheme.colors.secondary,
-  onRatingChanged: (Float) -> Unit
+  onRatingChanged: (Float) -> Unit,
 ) {
   var rowSize by remember { mutableStateOf(Size.Zero) }
-  var rating by remember { mutableStateOf(value) }
+  var rating by remember { mutableFloatStateOf(value) }
 
   Row(
-    modifier = modifier
-      .wrapContentSize()
-      .onSizeChanged { rowSize = it.toSize() }
-      .pointerInteropFilter {
-        when (it.action) {
-          MotionEvent.ACTION_DOWN -> {
-            rating = calculateRating(
-              padding = padding,
-              width = rowSize.width,
-              totalMoved = it.x
-            ).toRating()
+    modifier =
+      modifier
+        .wrapContentSize()
+        .onSizeChanged { rowSize = it.toSize() }
+        .pointerInteropFilter {
+          when (it.action) {
+            MotionEvent.ACTION_DOWN -> {
+              rating =
+                calculateRating(
+                  padding = padding,
+                  width = rowSize.width,
+                  totalMoved = it.x,
+                ).toRating()
+            }
+            MotionEvent.ACTION_MOVE -> {
+              rating =
+                calculateRating(
+                  padding = padding,
+                  width = rowSize.width,
+                  totalMoved = it.x.coerceIn(0f, rowSize.width),
+                ).toRating()
+            }
+            MotionEvent.ACTION_UP -> {
+              onRatingChanged(rating)
+            }
           }
-          MotionEvent.ACTION_MOVE -> {
-            rating = calculateRating(
-              padding = padding,
-              width = rowSize.width,
-              totalMoved = it.x.coerceIn(0f, rowSize.width)
-            ).toRating()
-          }
-          MotionEvent.ACTION_UP -> {
-            onRatingChanged(rating)
-          }
-        }
-        true
-      }
+          true
+        },
   ) {
     (1..STARS).forEach { step ->
-      val stepRating = when {
-        rating > step -> 1f
-        step.rem(rating) < 1 -> rating - (step - 1f)
-        else -> 0f
-      }
+      val stepRating =
+        when {
+          rating > step -> 1f
+          step.rem(rating) < 1 -> rating - (step - 1f)
+          else -> 0f
+        }
       RatingStar(
         rating = stepRating,
         padding = padding,
-        ratingColor = color
+        ratingColor = color,
       )
     }
   }
@@ -107,10 +114,10 @@ private fun calculateRating(
   stars: Int = STARS,
   padding: Dp,
   width: Float,
-  totalMoved: Float
+  totalMoved: Float,
 ): Float {
   var rowWidth = width
-  val emptySpace = stars.times(2).times(padding.value.toInt())
+  val emptySpace = stars.times(other = 2).times(padding.value.toInt())
   rowWidth -= emptySpace
   return if (totalMoved != 0f) {
     ((totalMoved / rowWidth) * stars)
@@ -124,41 +131,48 @@ private fun RatingStar(
   rating: Float,
   padding: Dp = 4.dp,
   ratingColor: Color = MaterialTheme.colors.secondary,
-  backgroundColor: Color = MaterialTheme.colors.onSurface
+  backgroundColor: Color = MaterialTheme.colors.onSurface,
 ) = BoxWithConstraints(
-  modifier = Modifier
-    .fillMaxHeight()
-    .padding(horizontal = padding)
-    .aspectRatio(1f)
-    .clip(starShape)
+  modifier =
+    Modifier
+      .fillMaxHeight()
+      .padding(horizontal = padding)
+      .aspectRatio(ratio = 1f)
+      .clip(starShape),
 ) {
   Canvas(modifier = Modifier.size(maxHeight)) {
     drawRect(
       brush = SolidColor(backgroundColor),
-      size = Size(
-        height = size.height * 1.4f,
-        width = size.width * 1.4f
-      ),
-      topLeft = Offset(
-        x = -(size.width * 0.1f),
-        y = -(size.height * 0.1f)
-      )
+      size =
+        Size(
+          height = size.height * SIZE_MODIFIER,
+          width = size.width * SIZE_MODIFIER,
+        ),
+      topLeft =
+        Offset(
+          x = -(size.width * OFFSET_MODIFIER),
+          y = -(size.height * OFFSET_MODIFIER),
+        ),
     )
     if (rating > 0) {
       drawRect(
         brush = SolidColor(ratingColor),
-        size = Size(
-          height = size.height * 1.4f,
-          width = size.width * rating
-        )
+        size =
+          Size(
+            height = size.height * SIZE_MODIFIER,
+            width = size.width * rating,
+          ),
       )
     }
   }
 }
 
-private val starShape = GenericShape { size, _ ->
-  addPath(starPath(size.height))
-}
+private val starShape =
+  GenericShape { size, _ ->
+    addPath(starPath(size.height))
+  }
+
+@Suppress("MagicNumber")
 private val starPath = { size: Float ->
   Path().apply {
     val outerRadius: Float = size / 1.8f
@@ -171,7 +185,7 @@ private val starPath = { size: Float ->
     val step = Math.PI / 5
 
     moveTo(cx, cy - outerRadius)
-    repeat(5) {
+    repeat(times = 5) {
       x = (cx + cos(rot) * outerRadius).toFloat()
       y = (cy + sin(rot) * outerRadius).toFloat()
       lineTo(x, y)
@@ -186,16 +200,19 @@ private val starPath = { size: Float ->
   }
 }
 
+private const val SIZE_MODIFIER = 1.4f
+private const val OFFSET_MODIFIER = 0.1f
+
 @Preview(showBackground = true)
 @Composable
 fun RatingBarPreview() {
   RemoteTheme {
     Column(
-      Modifier.fillMaxSize()
+      Modifier.fillMaxSize(),
     ) {
       RatingBar(
-        3.8f,
-        modifier = Modifier.height(48.dp)
+        value = 3.8f,
+        modifier = Modifier.height(48.dp),
       ) {
         Timber.v(it.toString())
       }

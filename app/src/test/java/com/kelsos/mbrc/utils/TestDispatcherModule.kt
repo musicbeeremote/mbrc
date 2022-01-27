@@ -1,22 +1,28 @@
 package com.kelsos.mbrc.utils
 
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import org.koin.dsl.module
 
-val testDispatcher = TestCoroutineDispatcher()
-val testScope = TestCoroutineScope(testDispatcher)
+private val scheduler = TestCoroutineScheduler()
 
-val appCoroutineDispatchers = AppCoroutineDispatchers(
-  testDispatcher,
-  testDispatcher,
-  testDispatcher,
-  testDispatcher
-)
+val mainTestDispatcher = StandardTestDispatcher(scheduler)
+val ioTestDispatcher = StandardTestDispatcher(scheduler, name = "io")
+val dbTestDispatcher = StandardTestDispatcher(scheduler, name = "db")
+val networkTestDispatcher = StandardTestDispatcher(scheduler, name = "network")
 
-val testDispatcherModule = module {
-  single {
-    appCoroutineDispatchers
+val appCoroutineDispatchers =
+  AppCoroutineDispatchers(
+    main = mainTestDispatcher,
+    io = ioTestDispatcher,
+    database = dbTestDispatcher,
+    network = networkTestDispatcher,
+  )
+
+val testDispatcherModule =
+  module {
+    single {
+      appCoroutineDispatchers
+    }
   }
-}

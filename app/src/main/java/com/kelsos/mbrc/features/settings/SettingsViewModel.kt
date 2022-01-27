@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 class SettingsActions(
   settings: SettingsManager,
   dispatchers: AppCoroutineDispatchers,
-  scope: CoroutineScope
+  scope: CoroutineScope,
 ) {
   val setDebugLogging: (enabled: Boolean) -> Unit = {
     scope.launch(dispatchers.io) {
@@ -19,7 +19,7 @@ class SettingsActions(
   }
   val setPluginUpdateCheck: (enabled: Boolean) -> Unit = {
     scope.launch(dispatchers.io) {
-      settings.setPluginUpdateCheck(it)
+      settings.updates.setPluginUpdateCheck(it)
     }
   }
   val setCallAction: (callAction: CallAction) -> Unit = {
@@ -36,7 +36,7 @@ class SettingsActions(
 
 class SettingsViewModel(
   settings: SettingsManager,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppCoroutineDispatchers,
 ) : ViewModel() {
   val state = settings.state
   val actions = SettingsActions(settings, dispatchers, viewModelScope)

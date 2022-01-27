@@ -15,13 +15,12 @@ import kotlin.reflect.KClass
 
 class ApiBase(
   private val adapter: DeserializationAdapter,
-  private val apiRequestManager: RequestManager
+  private val apiRequestManager: RequestManager,
 ) {
-
   suspend fun <T> getItem(
     request: Protocol,
     kClazz: KClass<T>,
-    payload: Any = ""
+    payload: Any = "",
   ): T where T : Any {
     val type = Types.newParameterizedType(GenericSocketMessage::class.java, kClazz.java)
     val connection = apiRequestManager.openConnection()
@@ -33,7 +32,7 @@ class ApiBase(
   suspend fun <T : Any> getAllPages(
     request: Protocol,
     clazz: KClass<T>,
-    progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> }
+    progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> },
   ): Flow<List<T>> {
     val inner = Types.newParameterizedType(Page::class.java, clazz.java)
     val type = Types.newParameterizedType(GenericSocketMessage::class.java, inner)
@@ -50,10 +49,11 @@ class ApiBase(
         Timber.v("fetching $request offset $offset [$limit]")
         val message = SocketMessage.create(request, range ?: "")
         val response = apiRequestManager.request(connection, message)
-        val socketMessage = adapter.objectify<GenericSocketMessage<Page<T>>>(
-          response,
-          type
-        )
+        val socketMessage =
+          adapter.objectify<GenericSocketMessage<Page<T>>>(
+            response,
+            type,
+          )
 
         Timber.v("duration ${now() - pageStart} ms")
         val page = socketMessage.data
@@ -73,7 +73,7 @@ class ApiBase(
     request: Protocol,
     payload: List<P>,
     clazz: KClass<T>,
-    progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> }
+    progress: suspend (current: Int, total: Int) -> Unit = { _, _ -> },
   ): Flow<ResponseWithPayload<P, T>> {
     val type = Types.newParameterizedType(GenericSocketMessage::class.java, clazz.java)
 
@@ -86,10 +86,11 @@ class ApiBase(
         val entryStart = now()
         val message = SocketMessage.create(request, item)
         val response = apiRequestManager.request(connection, message)
-        val socketMessage = adapter.objectify<GenericSocketMessage<T>>(
-          response,
-          type
-        )
+        val socketMessage =
+          adapter.objectify<GenericSocketMessage<T>>(
+            response,
+            type,
+          )
 
         Timber.v("duration ${now() - entryStart} ms")
         emit(ResponseWithPayload(item, socketMessage.data))
@@ -99,18 +100,18 @@ class ApiBase(
     }
   }
 
-  private fun getPageRange(offset: Int, limit: Int): PageRange? {
-    return takeIf { limit > 0 }?.run {
+  private fun getPageRange(
+    offset: Int,
+    limit: Int,
+  ): PageRange? =
+    takeIf { limit > 0 }?.run {
       PageRange().apply {
         this.offset = offset
         this.limit = limit
       }
     }
-  }
 
-  private fun now(): Long {
-    return System.currentTimeMillis()
-  }
+  private fun now(): Long = System.currentTimeMillis()
 
   companion object {
     const val LIMIT = 800

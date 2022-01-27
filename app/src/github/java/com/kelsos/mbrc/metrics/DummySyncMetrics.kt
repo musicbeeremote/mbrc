@@ -3,7 +3,6 @@ package com.kelsos.mbrc.metrics
 import timber.log.Timber
 
 class DummySyncMetrics : SyncMetrics {
-
   var start = 0L
 
   override fun librarySyncComplete(metrics: SyncedData) {

@@ -9,23 +9,21 @@ import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode.Next
 import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode.Play
 import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode.Previous
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
-import kotlin.reflect.KClass
 
 class WidgetSmall : WidgetBase() {
-  override fun layout(): Int = R.layout.widget_small
-
-  override fun imageSize(): Int = R.dimen.widget_small_height
-
-  override fun imageId(): Int = R.id.widget_small_image
-
-  override fun playButtonId(): Int = R.id.widget_small_play
-
-  override fun widgetClass(): KClass<out WidgetBase> = WidgetSmall::class
+  override val config: WidgetConfig =
+    WidgetConfig(
+      layout = R.layout.widget_small,
+      imageSize = R.dimen.widget_small_height,
+      imageId = R.id.widget_small_image,
+      playButtonId = R.id.widget_small_play,
+      widgetClass = WidgetSmall::class,
+    )
 
   override fun setupActionIntents(
     views: RemoteViews,
     pendingIntent: PendingIntent,
-    context: Context
+    context: Context,
   ) {
     views.setOnClickPendingIntent(R.id.widget_small_image, pendingIntent)
     views.setOnClickPendingIntent(R.id.widget_small_play, getPendingIntent(Play, context))
@@ -33,7 +31,10 @@ class WidgetSmall : WidgetBase() {
     views.setOnClickPendingIntent(R.id.widget_small_previous, getPendingIntent(Previous, context))
   }
 
-  override fun setupTrackInfo(views: RemoteViews, info: PlayingTrack) {
+  override fun setupTrackInfo(
+    views: RemoteViews,
+    info: PlayingTrack,
+  ) {
     views.setTextViewText(R.id.widget_small_line_one, info.title)
     views.setTextViewText(R.id.widget_small_line_two, info.artist)
   }

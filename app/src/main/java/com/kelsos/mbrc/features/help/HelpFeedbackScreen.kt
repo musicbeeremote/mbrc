@@ -1,7 +1,10 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.kelsos.mbrc.features.help
 
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,15 +12,17 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,10 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.pagerTabIndicatorOffset
-import com.google.accompanist.pager.rememberPagerState
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.RemoteTopAppBar
 import com.kelsos.mbrc.theme.RemoteTheme
@@ -41,25 +42,21 @@ import kotlinx.coroutines.launch
 const val HELP_PAGE = 0
 const val FEEDBACK_PAGE = 1
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HelpFeedbackScreen(
   openDrawer: () -> Unit,
   coroutineScope: CoroutineScope,
-  sendFeedback: SendFeedback
+  sendFeedback: SendFeedback,
 ) = Surface {
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {
     }
     val tabs = listOf(R.string.tab_help, R.string.tab_feedback)
-    val pagerState = rememberPagerState(pageCount = tabs.size, initialOffscreenLimit = 2)
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
     TabRow(
-      selectedTabIndex = pagerState.currentPage,
-      indicator = { tabPositions ->
-        TabRowDefaults.Indicator(
-          Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-        )
-      }
+      selectedTabIndex = selectedTabIndex.value,
+      modifier = Modifier.fillMaxWidth(),
     ) {
       tabs.forEachIndexed { index, titleId ->
         Tab(
@@ -69,15 +66,14 @@ fun HelpFeedbackScreen(
             coroutineScope.launch {
               pagerState.scrollToPage(index)
             }
-          }
+          },
         )
       }
     }
     HorizontalPager(
       modifier = Modifier.weight(1f),
-      state = pagerState
+      state = pagerState,
     ) { page ->
-
       when (page) {
         HELP_PAGE -> HelpScreen()
         FEEDBACK_PAGE -> FeedbackScreen(sendFeedback, coroutineScope)
@@ -87,8 +83,11 @@ fun HelpFeedbackScreen(
 }
 
 private class RemoteWebViewClient : WebViewClient() {
-  @Suppress("OverridingDeprecatedMember")
-  override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+  @Deprecated("")
+  override fun shouldOverrideUrlLoading(
+    view: WebView,
+    url: String,
+  ): Boolean {
     view.loadUrl(url)
     return false
   }
@@ -106,22 +105,28 @@ fun HelpScreen() {
 }
 
 @Composable
-private fun FeedbackScreen(onSend: SendFeedback, coroutineScope: CoroutineScope) = Surface {
+private fun FeedbackScreen(
+  onSend: SendFeedback,
+  coroutineScope: CoroutineScope,
+) = Surface {
   var feedback by remember { mutableStateOf("") }
   var includeLogs by remember { mutableStateOf(false) }
   var includeDevice by remember { mutableStateOf(false) }
 
   Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .padding(16.dp)
+    modifier =
+      Modifier
+        .fillMaxSize()
+        .padding(16.dp),
   ) {
     FeedbackTitle()
     FeedbackText(
-      modifier = Modifier
-        .padding(vertical = 16.dp)
-        .weight(1f),
-      feedback = feedback, onValueChange = { feedback = it }
+      modifier =
+        Modifier
+          .padding(vertical = 16.dp)
+          .weight(1f),
+      feedback = feedback,
+      onValueChange = { feedback = it },
     )
     IncludeLogs(includeLogs) { includeLogs = it }
     IncludeDeviceInfo(includeDevice) { includeDevice = it }
@@ -137,20 +142,21 @@ private fun FeedbackScreen(onSend: SendFeedback, coroutineScope: CoroutineScope)
 private fun FeedbackText(
   modifier: Modifier,
   feedback: String,
-  onValueChange: (String) -> Unit
+  onValueChange: (String) -> Unit,
 ) {
   Row(
-    modifier = modifier
+    modifier = modifier,
   ) {
     OutlinedTextField(
-      modifier = Modifier
-        .fillMaxSize()
-        .defaultMinSize(minHeight = 150.dp),
+      modifier =
+        Modifier
+          .fillMaxSize()
+          .defaultMinSize(minHeight = 150.dp),
       value = feedback,
       onValueChange = onValueChange,
       placeholder = {
         Text(text = stringResource(id = R.string.feedback_hint))
-      }
+      },
     )
   }
 }
@@ -158,27 +164,32 @@ private fun FeedbackText(
 @Composable
 private fun FeedbackTitle() {
   Row(
-    modifier = Modifier
-      .padding(8.dp)
-      .fillMaxWidth(),
-    horizontalArrangement = Arrangement.Center
+    modifier =
+      Modifier
+        .padding(8.dp)
+        .fillMaxWidth(),
+    horizontalArrangement = Arrangement.Center,
   ) {
     Text(text = stringResource(id = R.string.feedback_title))
   }
 }
 
 @Composable
-private fun SendFeedback(feedback: String, onClick: () -> Unit) {
+private fun SendFeedback(
+  feedback: String,
+  onClick: () -> Unit,
+) {
   Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(top = 16.dp),
-    horizontalArrangement = Arrangement.Center
+    modifier =
+      Modifier
+        .fillMaxWidth()
+        .padding(top = 16.dp),
+    horizontalArrangement = Arrangement.Center,
   ) {
     Button(
       onClick = onClick,
-      modifier = Modifier.fillMaxWidth(0.8f),
-      enabled = feedback.isNotBlank()
+      modifier = Modifier.fillMaxWidth(fraction = 0.8f),
+      enabled = feedback.isNotBlank(),
     ) {
       Text(text = stringResource(id = R.string.feedback_button_text))
     }
@@ -188,12 +199,13 @@ private fun SendFeedback(feedback: String, onClick: () -> Unit) {
 @Composable
 private fun IncludeDeviceInfo(
   includeDevice: Boolean,
-  onCheckedChange: (Boolean) -> Unit
+  onCheckedChange: (Boolean) -> Unit,
 ) {
   Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(vertical = 10.dp)
+    modifier =
+      Modifier
+        .fillMaxWidth()
+        .padding(vertical = 10.dp),
   ) {
     Column {
       Checkbox(checked = includeDevice, onCheckedChange = onCheckedChange)
@@ -205,11 +217,15 @@ private fun IncludeDeviceInfo(
 }
 
 @Composable
-private fun IncludeLogs(includeLogs: Boolean, onChange: (include: Boolean) -> Unit) {
+private fun IncludeLogs(
+  includeLogs: Boolean,
+  onChange: (include: Boolean) -> Unit,
+) {
   Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(vertical = 10.dp)
+    modifier =
+      Modifier
+        .fillMaxWidth()
+        .padding(vertical = 10.dp),
   ) {
     Column {
       Checkbox(checked = includeLogs, onCheckedChange = onChange)

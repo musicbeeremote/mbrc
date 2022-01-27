@@ -8,5 +8,5 @@ data class AlbumDto(
   @Json(name = "artist")
   var artist: String = "",
   @Json(name = "album")
-  var album: String = ""
+  var album: String = "",
 )

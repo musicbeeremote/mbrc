@@ -49,8 +49,6 @@ jobs:
   test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    env:
-      CC_TEST_REPORTER_ID: 4c45cf8b47a2ab0a5ae149b266e533747e8c3330aa3f5e7d2898d460c6d11562
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -70,7 +68,11 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Run Tests
         run: |
-          ./gradlew testGithubDebugUnitTest --continue --no-daemon
+          ./gradlew koverReport --continue --no-daemon
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./app/build/reports/kover/project-xml/report.xml
       - uses: actions/upload-artifact@v2
         with:
           name: test-results

@@ -8,7 +8,6 @@ import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.platform.mediasession.SessionNotificationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.first
@@ -24,7 +23,7 @@ class AppStateManager(
   private val connectionState: ConnectionState,
   private val notifications: SessionNotificationManager,
   private val trackCache: PlayingTrackCache,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
 ) {
   private var stateHandler: StateHandler? = null
   private var job = SupervisorJob()
@@ -51,9 +50,10 @@ class AppStateManager(
         notifications.updateState(state, currentPosition)
         timer?.cancel()
         if (state == PlayerState.Playing) {
-          timer = fixedRateTimer("progress", period = UPDATE_PERIOD_MS) {
-            updatePosition()
-          }
+          timer =
+            fixedRateTimer("progress", period = UPDATE_PERIOD_MS) {
+              updatePosition()
+            }
         }
       }
     }

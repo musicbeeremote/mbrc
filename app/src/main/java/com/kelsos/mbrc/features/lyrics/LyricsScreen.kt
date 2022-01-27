@@ -27,30 +27,27 @@ import com.kelsos.mbrc.common.ui.EmptyScreen
 import com.kelsos.mbrc.common.ui.RemoteTopAppBar
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.minicontrol.MiniControl
+import com.kelsos.mbrc.features.minicontrol.MiniControlState
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.theme.RemoteTheme
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LyricsScreen(openDrawer: () -> Unit, navigateToHome: () -> Unit) {
-  val vm = getViewModel<LyricsViewModel>()
+fun LyricsScreen(
+  openDrawer: () -> Unit,
+  navigateToHome: () -> Unit,
+) {
+  val vm = koinViewModel<LyricsViewModel>()
   val lyrics by vm.lyrics.collectAsState(initial = emptyList())
 
-  val miniVm = getViewModel<MiniControlViewModel>()
-  val playingTrack by miniVm.playingTrack.collectAsState(initial = PlayingTrack())
-  val position by miniVm.playingPosition.collectAsState(initial = PlayingPosition())
-  val playingState by miniVm.playerStatus.map { it.state }.distinctUntilChanged()
-    .collectAsState(initial = PlayerState.Undefined)
+  val miniVm = koinViewModel<MiniControlViewModel>()
+  val vmState by miniVm.state.collectAsState(initial = MiniControlState())
 
   LyricsScreen(openDrawer, lyrics) {
     MiniControl(
-      playingTrack = playingTrack,
-      position = position,
-      state = playingState,
+      vmState = vmState,
       perform = { miniVm.perform(it) },
-      navigateToHome = navigateToHome
+      navigateToHome = navigateToHome,
     )
   }
 }
@@ -59,7 +56,7 @@ fun LyricsScreen(openDrawer: () -> Unit, navigateToHome: () -> Unit) {
 private fun LyricsScreen(
   openDrawer: () -> Unit,
   lyrics: List<String>,
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) = Surface {
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {}
@@ -69,7 +66,7 @@ private fun LyricsScreen(
         modifier = Modifier.weight(1f),
         text = stringResource(id = R.string.no_lyrics),
         imageVector = Icons.Filled.ViewHeadline,
-        contentDescription = stringResource(id = R.string.lyrics__empty_icon_content_description)
+        contentDescription = stringResource(id = R.string.lyrics__empty_icon_content_description),
       )
     } else {
       LyricsContent(modifier = Modifier.weight(1f), lyrics = lyrics)
@@ -83,11 +80,11 @@ private fun LyricsScreen(
 @Composable
 private fun LyricsContent(
   modifier: Modifier = Modifier,
-  lyrics: List<String>
+  lyrics: List<String>,
 ) = Row(modifier = modifier) {
   LazyColumn(
     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-    modifier = Modifier.fillMaxWidth()
+    modifier = Modifier.fillMaxWidth(),
   ) {
     items(items = lyrics) {
       Text(text = it, style = MaterialTheme.typography.body1)
@@ -100,18 +97,22 @@ private fun LyricsContent(
 fun LyricsScreenPreview() {
   RemoteTheme {
     LyricsScreen(openDrawer = {}, lyrics = listOf("line one", "two", "three", "", "five")) {
-    MiniControl(
-      playingTrack = PlayingTrack(
-        artist = "Caravan Palace",
-        album = "Panic",
-        title = "Rock It for Me",
-        year = "2008"
-      ),
-      position = PlayingPosition(63000, 174000),
-      state = PlayerState.Playing,
-      perform = {},
-      navigateToHome = {}
-    )
-  }
+      MiniControl(
+        vmState =
+          MiniControlState(
+            playingTrack =
+              PlayingTrack(
+                artist = "Caravan Palace",
+                album = "Panic",
+                title = "Rock It for Me",
+                year = "2008",
+              ),
+            playingPosition = PlayingPosition(63000, 174000),
+            playingState = PlayerState.Playing,
+          ),
+        perform = {},
+        navigateToHome = {},
+      )
+    }
   }
 }

@@ -16,7 +16,10 @@ class MoveManagerImpl : MoveManager {
     finalPosition = -1
   }
 
-  override fun move(from: Int, to: Int) {
+  override fun move(
+    from: Int,
+    to: Int,
+  ) {
     if (originalPosition < 0) {
       originalPosition = from
     }

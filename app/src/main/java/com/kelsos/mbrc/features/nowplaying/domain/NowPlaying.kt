@@ -5,5 +5,5 @@ data class NowPlaying(
   val artist: String,
   val path: String,
   val position: Int,
-  val id: Long
+  val id: Long,
 )

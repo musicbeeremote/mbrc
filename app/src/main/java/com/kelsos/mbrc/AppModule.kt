@@ -8,21 +8,25 @@ import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.common.state.AppStateManager
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.data.Database.Companion.V1
+import com.kelsos.mbrc.data.Database.Companion.V2
+import com.kelsos.mbrc.data.Database.Companion.V3
+import com.kelsos.mbrc.data.Database.Companion.V4
 import com.kelsos.mbrc.data.DatabaseTransactionRunner
 import com.kelsos.mbrc.data.DatabaseTransactionRunnerImpl
 import com.kelsos.mbrc.data.DeserializationAdapter
 import com.kelsos.mbrc.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
+import com.kelsos.mbrc.features.library.details.AlbumTrackViewModel
+import com.kelsos.mbrc.features.library.details.ArtistAlbumViewModel
+import com.kelsos.mbrc.features.library.details.GenreArtistViewModel
 import com.kelsos.mbrc.features.library.presentation.AlbumViewModel
 import com.kelsos.mbrc.features.library.presentation.ArtistViewModel
 import com.kelsos.mbrc.features.library.presentation.GenreViewModel
 import com.kelsos.mbrc.features.library.presentation.LibrarySearchModel
 import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.library.presentation.TrackViewModel
-import com.kelsos.mbrc.features.library.presentation.details.viemodels.AlbumTrackViewModel
-import com.kelsos.mbrc.features.library.presentation.details.viemodels.ArtistAlbumViewModel
-import com.kelsos.mbrc.features.library.presentation.details.viemodels.GenreArtistViewModel
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.AlbumRepositoryImpl
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
@@ -30,6 +34,7 @@ import com.kelsos.mbrc.features.library.repositories.ArtistRepositoryImpl
 import com.kelsos.mbrc.features.library.repositories.CoverCache
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepositoryImpl
+import com.kelsos.mbrc.features.library.repositories.LibraryRepositories
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepositoryImpl
 import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCase
@@ -51,9 +56,9 @@ import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import com.kelsos.mbrc.features.player.PlayerViewModel
 import com.kelsos.mbrc.features.player.RatingDialogViewModel
 import com.kelsos.mbrc.features.player.VolumeDialogViewModel
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.playlists.PlaylistViewModel
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.queue.QueueUseCase
 import com.kelsos.mbrc.features.queue.QueueUseCaseImpl
 import com.kelsos.mbrc.features.queue.QueueWorker
@@ -130,164 +135,174 @@ import com.kelsos.mbrc.protocol.UpdateVolume
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.workmanager.dsl.worker
-import org.koin.dsl.bind
-import org.koin.dsl.factory
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.androidx.workmanager.dsl.workerOf
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.koin.dsl.single
 import java.util.concurrent.Executors
 
-val appModule = module {
-  single { Moshi.Builder().build() }
-  single<QueueUseCaseImpl>() bind QueueUseCase::class
+val appModule =
+  module {
+    single { Moshi.Builder().build() }
+    singleOf(::QueueUseCaseImpl) { bind<QueueUseCase>() }
 
-  single<ConnectionRepositoryImpl>() bind ConnectionRepository::class
+    singleOf(::ConnectionRepositoryImpl) { bind<ConnectionRepository>() }
 
-  single<TrackRepositoryImpl>() bind TrackRepository::class
-  single<AlbumRepositoryImpl>() bind AlbumRepository::class
-  single<ArtistRepositoryImpl>() bind ArtistRepository::class
-  single<GenreRepositoryImpl>() bind GenreRepository::class
+    singleOf(::TrackRepositoryImpl) { bind<TrackRepository>() }
+    singleOf(::AlbumRepositoryImpl) { bind<AlbumRepository>() }
+    singleOf(::ArtistRepositoryImpl) { bind<ArtistRepository>() }
+    singleOf(::GenreRepositoryImpl) { bind<GenreRepository>() }
 
-  single<NowPlayingRepositoryImpl>() bind NowPlayingRepository::class
-  single<PlaylistRepositoryImpl>() bind PlaylistRepository::class
-  single<CoverCache>()
-  single<SyncStatProvider>()
+    singleOf(::LibraryRepositories)
 
-  single<SerializationAdapterImpl>() bind SerializationAdapter::class
-  single<DeserializationAdapterImpl>() bind DeserializationAdapter::class
-  single<DatabaseTransactionRunnerImpl>() bind DatabaseTransactionRunner::class
-  single<RequestManagerImpl>() bind RequestManager::class
+    singleOf(::NowPlayingRepositoryImpl) { bind<NowPlayingRepository>() }
+    singleOf(::PlaylistRepositoryImpl) { bind<PlaylistRepository>() }
+    singleOf(::CoverCache)
+    singleOf(::SyncStatProvider)
 
-  single<UserActionUseCaseImpl>() bind UserActionUseCase::class
+    singleOf(::SerializationAdapterImpl) { bind<SerializationAdapter>() }
+    singleOf(::DeserializationAdapterImpl) { bind<DeserializationAdapter>() }
+    singleOf(::DatabaseTransactionRunnerImpl) { bind<DatabaseTransactionRunner>() }
+    singleOf(::RequestManagerImpl) { bind<RequestManager>() }
 
-  single<ClientConnectionUseCaseImpl>() bind ClientConnectionUseCase::class
+    singleOf(::UserActionUseCaseImpl) { bind<UserActionUseCase>() }
 
-  single<SettingsManagerImpl>() bind SettingsManager::class
-  single<PlayingTrackCacheImpl>() bind PlayingTrackCache::class
+    singleOf(::ClientConnectionUseCaseImpl) { bind<ClientConnectionUseCase>() }
 
-  single<LibrarySyncUseCaseImpl>() bind LibrarySyncUseCase::class
-  single<SyncWorkHandlerImpl>() bind SyncWorkHandler::class
+    singleOf(::SettingsManagerImpl) { bind<SettingsManager>() }
+    singleOf(::PlayingTrackCacheImpl) { bind<PlayingTrackCache>() }
 
-  single<RadioRepositoryImpl>() bind RadioRepository::class
-  single<ClientInformationStoreImpl>() bind ClientInformationStore::class
-  single<VolumeModifyUseCaseImpl>() bind VolumeModifyUseCase::class
-  single<OutputApiImpl>() bind OutputApi::class
+    singleOf(::LibrarySyncUseCaseImpl) { bind<LibrarySyncUseCase>() }
+    singleOf(::SyncWorkHandlerImpl) { bind<SyncWorkHandler>() }
 
-  single<AppState>()
-  single<ConnectionState>()
+    singleOf(::RadioRepositoryImpl) { bind<RadioRepository>() }
+    singleOf(::ClientInformationStoreImpl) { bind<ClientInformationStore>() }
+    singleOf(::VolumeModifyUseCaseImpl) { bind<VolumeModifyUseCase>() }
+    singleOf(::OutputApiImpl) { bind<OutputApi>() }
 
-  single<MessageQueueImpl>() bind MessageQueue::class
-  single<MessageHandlerImpl>() bind MessageHandler::class
+    singleOf(::AppState)
+    singleOf(::ConnectionState)
 
-  single<ClientConnectionManager>() bind IClientConnectionManager::class
-  single<CommandFactoryImpl>() bind CommandFactory::class
-  single<UiMessageQueueImpl>() bind UiMessages::class
-  single<RemoteServiceDiscoveryImpl>() bind RemoteServiceDiscovery::class
+    singleOf(::MessageQueueImpl) { bind<MessageQueue>() }
+    singleOf(::MessageHandlerImpl) { bind<MessageHandler>() }
 
-  single<SessionNotificationManager>() bind INotificationManager::class
-  single<ServiceCheckerImpl>() bind ServiceChecker::class
-  single<AppStateManager>()
+    singleOf(::ClientConnectionManager) { bind<IClientConnectionManager>() }
+    singleOf(::CommandFactoryImpl) { bind<CommandFactory>() }
+    singleOf(::UiMessageQueueImpl) { bind<UiMessages>() }
+    singleOf(::RemoteServiceDiscoveryImpl) { bind<RemoteServiceDiscovery>() }
 
-  single<DefaultActionPreferenceStore>()
+    singleOf(::SessionNotificationManager) { bind<INotificationManager>() }
+    singleOf(::ServiceCheckerImpl) { bind<ServiceChecker>() }
+    singleOf(::AppStateManager)
 
-  single<WidgetUpdaterImpl>() bind WidgetUpdater::class
+    singleOf(::DefaultActionPreferenceStore)
 
-  single {
-    val database = Executors.newSingleThreadExecutor { runnable ->
-      Thread(runnable, "DatabaseDispatcher")
-    }.asCoroutineDispatcher()
-    var threadId = 1
-    val network = Executors.newFixedThreadPool(2) { runnable ->
-      Thread(runnable, "NetworkDispatcher-worker-${threadId++}")
-    }.asCoroutineDispatcher()
-    AppCoroutineDispatchers(
-      main = Dispatchers.Main,
-      io = Dispatchers.IO,
-      database = database,
-      network = network
-    )
+    singleOf(::WidgetUpdaterImpl) { bind<WidgetUpdater>() }
+
+    single {
+      val database =
+        Executors
+          .newSingleThreadExecutor { runnable ->
+            Thread(runnable, "DatabaseDispatcher")
+          }.asCoroutineDispatcher()
+      var threadId = 1
+      val network =
+        Executors
+          .newFixedThreadPool(2) { runnable ->
+            Thread(runnable, "NetworkDispatcher-worker-${threadId++}")
+          }.asCoroutineDispatcher()
+      AppCoroutineDispatchers(
+        main = Dispatchers.Main,
+        io = Dispatchers.IO,
+        database = database,
+        network = network,
+      )
+    }
+
+    single {
+      WorkManager.getInstance(get())
+    }
+    singleOf(::WorkHandlerImpl) { bind<WorkHandler>() }
+
+    singleOf(::ApiBase)
+
+    single {
+      Room
+        .databaseBuilder(get(), Database::class.java, "cache.db")
+        .fallbackToDestructiveMigrationFrom(V1, V2, V3, V4)
+        .build()
+    }
+    single { get<Database>().genreDao() }
+    single { get<Database>().artistDao() }
+    single { get<Database>().albumDao() }
+    single { get<Database>().trackDao() }
+    single { get<Database>().nowPlayingDao() }
+    single { get<Database>().playlistDao() }
+    single { get<Database>().radioStationDao() }
+    single { get<Database>().connectionDao() }
+
+    singleOf(::UpdateNowPlayingTrack)
+    singleOf(::UpdateCover)
+    singleOf(::UpdateRating)
+    singleOf(::UpdatePlayerStatus)
+    singleOf(::UpdatePlayState)
+    singleOf(::UpdateRepeat)
+    singleOf(::UpdateVolume)
+    singleOf(::UpdateMute)
+    singleOf(::UpdateShuffle)
+    singleOf(::UpdateLastFm)
+    singleOf(::UpdateLyrics)
+    singleOf(::UpdateLfmRating)
+    singleOf(::UpdateNowPlayingTrackRemoval)
+    singleOf(::UpdateNowPlayingTrackMoved)
+    singleOf(::UpdatePlaybackPositionCommand)
+    singleOf(::UpdatePluginVersionCommand)
+    singleOf(::ProtocolPingHandle)
+    singleOf(::SimpleLogCommand)
+    singleOf(::ProtocolVersionUpdate)
+
+    singleOf(::SocketActivityChecker)
+    single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+    singleOf(::ConnectivityVerifierImpl) { bind<ConnectivityVerifier>() }
+
+    factoryOf(::MoveManagerImpl) { bind<MoveManager>() }
+
+    factoryOf(::RemoteBroadcastReceiver)
+    factoryOf(::RemoteSessionManager)
+    factoryOf(::RemoteVolumeProvider)
+    factoryOf(::LogHelper)
+
+    workerOf(::QueueWorker)
+    workerOf(::SyncWorker)
   }
 
-  single {
-    WorkManager.getInstance(get())
+val uiModule =
+  module {
+    viewModelOf(::ConnectionManagerViewModel)
+    viewModelOf(::PlayerViewModel)
+    viewModelOf(::MiniControlViewModel)
+    viewModelOf(::LyricsViewModel)
+    viewModelOf(::RadioViewModel)
+    viewModelOf(::NowPlayingViewModel)
+    viewModelOf(::LibraryViewModel)
+    viewModelOf(::PlaylistViewModel)
+    viewModelOf(::OutputSelectionViewModel)
+    viewModelOf(::RatingDialogViewModel)
+    viewModelOf(::VolumeDialogViewModel)
+
+    viewModelOf(::AlbumViewModel)
+    viewModelOf(::GenreViewModel)
+    viewModelOf(::ArtistViewModel)
+    viewModelOf(::TrackViewModel)
+
+    singleOf(::LibrarySearchModel)
+
+    viewModelOf(::GenreArtistViewModel)
+    viewModelOf(::ArtistAlbumViewModel)
+    viewModelOf(::AlbumTrackViewModel)
+
+    viewModelOf(::NavigationViewModel)
+    viewModelOf(::SettingsViewModel)
   }
-  single<WorkHandlerImpl>() bind WorkHandler::class
-
-  single<ApiBase>()
-
-  single {
-    Room.databaseBuilder(get(), Database::class.java, "cache.db")
-      .fallbackToDestructiveMigrationFrom(1, 2, 3, 4).build()
-  }
-  single { get<Database>().genreDao() }
-  single { get<Database>().artistDao() }
-  single { get<Database>().albumDao() }
-  single { get<Database>().trackDao() }
-  single { get<Database>().nowPlayingDao() }
-  single { get<Database>().playlistDao() }
-  single { get<Database>().radioStationDao() }
-  single { get<Database>().connectionDao() }
-
-  single<UpdateNowPlayingTrack>()
-  single<UpdateCover>()
-  single<UpdateRating>()
-  single<UpdatePlayerStatus>()
-  single<UpdatePlayState>()
-  single<UpdateRepeat>()
-  single<UpdateVolume>()
-  single<UpdateMute>()
-  single<UpdateShuffle>()
-  single<UpdateLastFm>()
-  single<UpdateLyrics>()
-  single<UpdateLfmRating>()
-  single<UpdateNowPlayingTrackRemoval>()
-  single<UpdateNowPlayingTrackMoved>()
-  single<UpdatePlaybackPositionCommand>()
-  single<UpdatePluginVersionCommand>()
-  single<ProtocolPingHandle>()
-  single<SimpleLogCommand>()
-  single<ProtocolVersionUpdate>()
-
-  single<SocketActivityChecker>()
-  single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
-  single<ConnectivityVerifierImpl>() bind ConnectivityVerifier::class
-
-  factory<MoveManagerImpl>() bind MoveManager::class
-
-  factory<RemoteBroadcastReceiver>()
-  factory<RemoteSessionManager>()
-  factory<RemoteVolumeProvider>()
-  factory<LogHelper>()
-
-  worker { QueueWorker(get(), get(), get()) }
-  worker { SyncWorker(get(), get(), get(), get()) }
-}
-
-val uiModule = module {
-  viewModel<ConnectionManagerViewModel>()
-  viewModel<PlayerViewModel>()
-  viewModel<MiniControlViewModel>()
-  viewModel<LyricsViewModel>()
-  viewModel<RadioViewModel>()
-  viewModel<NowPlayingViewModel>()
-  viewModel<LibraryViewModel>()
-  viewModel<PlaylistViewModel>()
-  viewModel<OutputSelectionViewModel>()
-  viewModel<RatingDialogViewModel>()
-  viewModel<VolumeDialogViewModel>()
-
-  viewModel<AlbumViewModel>()
-  viewModel<GenreViewModel>()
-  viewModel<ArtistViewModel>()
-  viewModel<TrackViewModel>()
-
-  single<LibrarySearchModel>()
-
-  viewModel<GenreArtistViewModel>()
-  viewModel<ArtistAlbumViewModel>()
-  viewModel<AlbumTrackViewModel>()
-
-  viewModel<NavigationViewModel>()
-  viewModel<SettingsViewModel>()
-}

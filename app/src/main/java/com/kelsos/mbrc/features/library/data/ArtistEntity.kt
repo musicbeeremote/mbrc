@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(
   tableName = "artist",
-  indices = [(Index("artist", name = "artist_artist_idx", unique = true))]
+  indices = [(Index("artist", name = "artist_artist_idx", unique = true))],
 )
 data class ArtistEntity(
   @ColumnInfo
@@ -15,5 +15,5 @@ data class ArtistEntity(
   @ColumnInfo(name = "date_added")
   var dateAdded: Long = 0,
   @PrimaryKey(autoGenerate = true)
-  var id: Long = 0
+  var id: Long = 0,
 )

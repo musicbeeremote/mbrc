@@ -11,50 +11,52 @@ import java.net.SocketTimeoutException
 
 class OutputSelectionViewModel(
   private val outputApi: OutputApi,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
 ) : BaseViewModel<OutputSelectionResult>() {
-
   private val _outputs: MutableSharedFlow<OutputResponse> = MutableSharedFlow()
 
   val outputs: SharedFlow<OutputResponse>
     get() = _outputs
 
-  private fun code(throwable: Throwable?): OutputSelectionResult {
-    return when (throwable?.cause ?: throwable) {
+  private fun code(throwable: Throwable?): OutputSelectionResult =
+    when (throwable?.cause ?: throwable) {
       is SocketException -> OutputSelectionResult.ConnectionError
       is SocketTimeoutException -> OutputSelectionResult.ConnectionError
       else -> OutputSelectionResult.UnknownError
     }
-  }
 
   fun reload() {
     viewModelScope.launch(dispatchers.network) {
-      val result = outputApi.getOutputs()
-        .fold(
-          {
-            code(it)
-          },
-          {
-            _outputs.emit(it)
-            OutputSelectionResult.Success
-          }
-        )
+      val result =
+        outputApi
+          .getOutputs()
+          .fold(
+            {
+              code(it)
+            },
+            {
+              _outputs.emit(it)
+              OutputSelectionResult.Success
+            },
+          )
       emit(result)
     }
   }
 
   fun setOutput(output: String) {
     viewModelScope.launch(dispatchers.network) {
-      val result = outputApi.setOutput(output)
-        .fold(
-          {
-            code(it)
-          },
-          {
-            _outputs.emit(it)
-            OutputSelectionResult.Success
-          }
-        )
+      val result =
+        outputApi
+          .setOutput(output)
+          .fold(
+            {
+              code(it)
+            },
+            {
+              _outputs.emit(it)
+              OutputSelectionResult.Success
+            },
+          )
       emit(result)
     }
   }

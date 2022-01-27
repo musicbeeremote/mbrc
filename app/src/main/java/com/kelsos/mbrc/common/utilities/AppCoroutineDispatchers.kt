@@ -6,5 +6,5 @@ data class AppCoroutineDispatchers(
   val main: CoroutineDispatcher,
   val io: CoroutineDispatcher,
   val database: CoroutineDispatcher,
-  val network: CoroutineDispatcher
+  val network: CoroutineDispatcher,
 )

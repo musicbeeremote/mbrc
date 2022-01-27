@@ -10,11 +10,11 @@ import com.kelsos.mbrc.events.MessageEvent
 import com.kelsos.mbrc.events.ShuffleMode
 import com.kelsos.mbrc.networking.client.SocketMessage
 import com.kelsos.mbrc.networking.protocol.Protocol
-import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,7 +23,10 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class UpdatePlayerStatusTest {
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   private lateinit var update: UpdatePlayerStatus
   private lateinit var state: AppState
@@ -56,21 +59,20 @@ class UpdatePlayerStatusTest {
   }
 
   @Test
-  fun `should update the player status when the message is processed`() = runBlockingTest(
-    testDispatcher
-  ) {
-    val original = state.playerStatus.first()
-    val fromJson = runCatching { adapter.fromJson(createMessage()) }
-    val socketMessage = checkNotNull(fromJson.getOrNull())
-    val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
-    update.execute(message)
-    val model = state.playerStatus.first()
-    assertThat(original).isNotEqualTo(model)
-    assertThat(model.scrobbling).isTrue()
-    assertThat(model.mute).isTrue()
-    assertThat(model.volume).isEqualTo(60)
-    assertThat(model.shuffle).isEqualTo(ShuffleMode.AutoDJ)
-    assertThat(model.state).isEqualTo(PlayerState.Playing)
-    assertThat(model.repeat).isEqualTo(Repeat.One)
-  }
+  fun `should update the player status when the message is processed`() =
+    runTest {
+      val original = state.playerStatus.first()
+      val fromJson = runCatching { adapter.fromJson(createMessage()) }
+      val socketMessage = checkNotNull(fromJson.getOrNull())
+      val message = MessageEvent(Protocol.fromString(socketMessage.context), socketMessage.data)
+      update.execute(message)
+      val model = state.playerStatus.first()
+      assertThat(original).isNotEqualTo(model)
+      assertThat(model.scrobbling).isTrue()
+      assertThat(model.mute).isTrue()
+      assertThat(model.volume).isEqualTo(60)
+      assertThat(model.shuffle).isEqualTo(ShuffleMode.AutoDJ)
+      assertThat(model.state).isEqualTo(PlayerState.Playing)
+      assertThat(model.repeat).isEqualTo(Repeat.One)
+    }
 }

@@ -18,14 +18,17 @@ class SingleFragmentActivity : AppCompatActivity() {
   }
 
   fun setFragment(fragment: Fragment) {
-    supportFragmentManager.beginTransaction()
+    supportFragmentManager
+      .beginTransaction()
       .add(R.id.single_fragment_content, fragment, "TEST")
       .commit()
   }
 
   @Suppress("unused")
   fun replaceFragment(fragment: Fragment) {
-    supportFragmentManager.beginTransaction()
-      .replace(R.id.single_fragment_content, fragment).commit()
+    supportFragmentManager
+      .beginTransaction()
+      .replace(R.id.single_fragment_content, fragment)
+      .commit()
   }
 }

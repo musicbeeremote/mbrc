@@ -4,15 +4,12 @@ import com.kelsos.mbrc.common.data.Mapper
 import com.kelsos.mbrc.networking.discovery.DiscoveryMessage
 
 object ConnectionMapper : Mapper<DiscoveryMessage, ConnectionSettingsEntity> {
-  override fun map(from: DiscoveryMessage): ConnectionSettingsEntity {
-    return ConnectionSettingsEntity().apply {
+  override fun map(from: DiscoveryMessage): ConnectionSettingsEntity =
+    ConnectionSettingsEntity().apply {
       address = from.address
       port = from.port
       name = from.name
     }
-  }
 }
 
-fun DiscoveryMessage.toConnection(): ConnectionSettingsEntity {
-  return ConnectionMapper.map(this)
-}
+fun DiscoveryMessage.toConnection(): ConnectionSettingsEntity = ConnectionMapper.map(this)

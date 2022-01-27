@@ -5,7 +5,6 @@ import com.kelsos.mbrc.features.library.data.TrackEntity
 import java.util.regex.Pattern
 
 object TrackDtoMapper : Mapper<TrackDto, TrackEntity> {
-
   private val pattern = Pattern.compile(""".*(\d{4}).*""")
   private val matcher = pattern.matcher("")
 
@@ -19,8 +18,8 @@ object TrackDtoMapper : Mapper<TrackDto, TrackEntity> {
     }
   }
 
-  override fun map(from: TrackDto): TrackEntity {
-    return TrackEntity(
+  override fun map(from: TrackDto): TrackEntity =
+    TrackEntity(
       from.artist,
       from.title,
       from.src,
@@ -30,11 +29,8 @@ object TrackDtoMapper : Mapper<TrackDto, TrackEntity> {
       from.album,
       from.genre,
       from.year,
-      parseYear(from.year)
+      parseYear(from.year),
     )
-  }
 }
 
-fun TrackDto.toEntity(): TrackEntity {
-  return TrackDtoMapper.map(this)
-}
+fun TrackDto.toEntity(): TrackEntity = TrackDtoMapper.map(this)

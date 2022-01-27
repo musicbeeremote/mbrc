@@ -7,9 +7,8 @@ import java.net.Socket
 
 class ActiveConnection(
   private val socket: Socket,
-  private val bufferedReader: BufferedReader
+  private val bufferedReader: BufferedReader,
 ) {
-
   fun send(bytes: ByteArray) {
     socket.getOutputStream().write(bytes)
   }

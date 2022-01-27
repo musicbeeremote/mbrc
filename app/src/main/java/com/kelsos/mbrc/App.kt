@@ -13,16 +13,13 @@ import com.kelsos.mbrc.common.utilities.CustomLoggingTree
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.fragment.koin.fragmentFactory
 import org.koin.androidx.workmanager.koin.workManagerFactory
-import org.koin.core.KoinExperimentalAPI
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import timber.log.Timber
 
 @SuppressLint("Registered")
-@OptIn(KoinExperimentalAPI::class)
 open class App : Application() {
-
   @CallSuper
   override fun onCreate() {
     super.onCreate()
@@ -30,20 +27,21 @@ open class App : Application() {
   }
 
   protected open fun appModules(): List<Module> {
-    val androidModule = module {
-      val app = this@App as Application
+    val androidModule =
+      module {
+        val app = this@App as Application
 
-      single { app.resources }
-      single { checkNotNull(app.getSystemService<ActivityManager>()) }
-      single { checkNotNull(app.getSystemService<AudioManager>()) }
-      single { checkNotNull(app.getSystemService<NotificationManager>()) }
-      single { checkNotNull(app.getSystemService<WifiManager>()) }
-      single { checkNotNull(app.getSystemService<ConnectivityManager>()) }
-    }
+        single { app.resources }
+        single { checkNotNull(app.getSystemService<ActivityManager>()) }
+        single { checkNotNull(app.getSystemService<AudioManager>()) }
+        single { checkNotNull(app.getSystemService<NotificationManager>()) }
+        single { checkNotNull(app.getSystemService<WifiManager>()) }
+        single { checkNotNull(app.getSystemService<ConnectivityManager>()) }
+      }
     return listOf(
       appModule,
       uiModule,
-      androidModule
+      androidModule,
     )
   }
 

@@ -7,26 +7,27 @@ import kotlinx.coroutines.flow.firstOrNull
 
 class VolumeModifyUseCaseImpl(
   private val appState: AppState,
-  private val queue: MessageQueue
+  private val queue: MessageQueue,
 ) : VolumeModifyUseCase {
-
   private suspend fun currentVolume() = appState.playerStatus.firstOrNull()?.volume ?: 0
+
   private suspend fun isMute() = appState.playerStatus.firstOrNull()?.mute ?: false
 
   override suspend fun increment() {
     val volume: Int
     val currentVolume = currentVolume()
 
-    volume = if (currentVolume <= 90) {
-      val mod = currentVolume % DEFAULT_STEP
-      when {
-        mod == 0 -> currentVolume + DEFAULT_STEP
-        mod < 5 -> currentVolume + (DEFAULT_STEP - mod)
-        else -> currentVolume + (20 - mod)
+    volume =
+      if (currentVolume <= MAX_VOLUME - DEFAULT_STEP) {
+        val mod = currentVolume % DEFAULT_STEP
+        when {
+          mod == MIN_VOLUME -> currentVolume + DEFAULT_STEP
+          mod < HALF_STEP -> currentVolume + (DEFAULT_STEP - mod)
+          else -> currentVolume + (DOUBLE_STEP - mod)
+        }
+      } else {
+        MAX_VOLUME
       }
-    } else {
-      100
-    }
 
     send(volume)
   }
@@ -35,17 +36,18 @@ class VolumeModifyUseCaseImpl(
     val volume: Int
     val currentVolume = currentVolume()
 
-    volume = if (currentVolume >= 10) {
-      val mod = currentVolume % DEFAULT_STEP
+    volume =
+      if (currentVolume >= DEFAULT_STEP) {
+        val mod = currentVolume % DEFAULT_STEP
 
-      when {
-        mod == 0 -> currentVolume - DEFAULT_STEP
-        mod < 5 -> currentVolume - (DEFAULT_STEP + mod)
-        else -> currentVolume - mod
+        when {
+          mod == MIN_VOLUME -> currentVolume - DEFAULT_STEP
+          mod < HALF_STEP -> currentVolume - (DEFAULT_STEP + mod)
+          else -> currentVolume - mod
+        }
+      } else {
+        MIN_VOLUME
       }
-    } else {
-      0
-    }
 
     send(volume)
   }
@@ -56,7 +58,7 @@ class VolumeModifyUseCaseImpl(
     if (mute || volume == 0) {
       return
     }
-    send((volume * 0.2).toInt())
+    send((volume * VOLUME_PERCENTAGE).toInt())
   }
 
   /**
@@ -70,5 +72,10 @@ class VolumeModifyUseCaseImpl(
 
   companion object {
     const val DEFAULT_STEP = 10
+    const val HALF_STEP = DEFAULT_STEP.div(other = 2)
+    const val DOUBLE_STEP = DEFAULT_STEP.times(other = 2)
+    const val MAX_VOLUME = 100
+    const val MIN_VOLUME = 0
+    const val VOLUME_PERCENTAGE = 0.2
   }
 }

@@ -15,27 +15,30 @@ import kotlinx.coroutines.flow.flow
 
 object TestData {
   fun createDB(context: Context): Database =
-    Room.inMemoryDatabaseBuilder(context, Database::class.java)
+    Room
+      .inMemoryDatabaseBuilder(context, Database::class.java)
       .allowMainThreadQueries()
       .build()
 
   fun <T> mockApi(
     count: Int,
     inject: List<T> = emptyList(),
-    make: (position: Int) -> T
-  ): Flow<List<T>> = flow {
-    emit((0 until count).map { make(it) } + inject)
-  }
+    make: (position: Int) -> T,
+  ): Flow<List<T>> =
+    flow {
+      emit((0 until count).map { make(it) } + inject)
+    }
 }
 
-class MockFactory<T : Any>(private val data: List<T> = emptyList()) : PagingSource<Int, T>() {
-  override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
-    return LoadResult.Page(
+class MockFactory<T : Any>(
+  private val data: List<T> = emptyList(),
+) : PagingSource<Int, T>() {
+  override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> =
+    LoadResult.Page(
       data = data,
       prevKey = null,
-      nextKey = null
+      nextKey = null,
     )
-  }
 
   override fun getRefreshKey(state: PagingState<Int, T>): Int? = null
 
@@ -43,27 +46,28 @@ class MockFactory<T : Any>(private val data: List<T> = emptyList()) : PagingSour
 }
 
 object TestDataFactories {
-  fun playlist(num: Int): PlaylistDto = PlaylistDto(
-    name = "Songs $num",
-    url = """C:\library\$num.m3u"""
-  )
+  fun playlist(num: Int): PlaylistDto =
+    PlaylistDto(
+      name = "Songs $num",
+      url = """C:\library\$num.m3u""",
+    )
 
-  fun nowPlayingList(index: Int): NowPlayingDto = NowPlayingDto(
-    title = "Song ${index + 1}",
-    artist = "Artist",
-    position = index + 1,
-    path = """C:\library\album\${index + 1}.mp3"""
-  )
+  fun nowPlayingList(index: Int): NowPlayingDto =
+    NowPlayingDto(
+      title = "Song ${index + 1}",
+      artist = "Artist",
+      position = index + 1,
+      path = """C:\library\album\${index + 1}.mp3""",
+    )
 
-  fun nowPlayingListEntities(total: Int): List<NowPlaying> {
-    return (1..total + 1).map {
+  fun nowPlayingListEntities(total: Int): List<NowPlaying> =
+    (1..total + 1).map {
       NowPlaying(
         artist = "Test artist",
         title = "Test title $it",
         id = it.toLong(),
         position = it,
-        path = """C:\library\album\$it.mp3"""
+        path = """C:\library\album\$it.mp3""",
       )
     }
-  }
 }

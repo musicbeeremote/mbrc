@@ -8,12 +8,14 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 
-class ChangelogParser(private val context: Context) {
+class ChangelogParser(
+  private val context: Context,
+) {
   private val ns: String? = null
 
-  fun changelog(@RawRes resId: Int): List<ChangeLogEntry> {
-    return parse(context.resources.openRawResource(resId))
-  }
+  fun changelog(
+    @RawRes resId: Int,
+  ): List<ChangeLogEntry> = parse(context.resources.openRawResource(resId))
 
   @Throws(XmlPullParserException::class, IOException::class)
   private fun parse(inputStream: InputStream): List<ChangeLogEntry> {
@@ -61,7 +63,8 @@ class ChangelogParser(private val context: Context) {
       when (val name = parser.name) {
         TAG_BUG,
         TAG_FEATURE,
-        TAG_REMOVED -> {
+        TAG_REMOVED,
+        -> {
           val text = readEntry(parser, name)
           val element = ChangeLogEntry.Entry(text, getType(name))
           entries.add(element)
@@ -74,13 +77,17 @@ class ChangelogParser(private val context: Context) {
 
   // Processes summary tags in the feed.
   @Throws(IOException::class, XmlPullParserException::class)
-  private fun readEntry(parser: XmlPullParser, name: String): String {
+  private fun readEntry(
+    parser: XmlPullParser,
+    name: String,
+  ): String {
     parser.require(XmlPullParser.START_TAG, ns, name)
-    val text = readText(parser)
-      .replace("\n", " ")
-      .replace("\\s+".toRegex(), " ")
-      .replace("\\[".toRegex(), "<")
-      .replace("]".toRegex(), ">")
+    val text =
+      readText(parser)
+        .replace("\n", " ")
+        .replace("\\s+".toRegex(), " ")
+        .replace("\\[".toRegex(), "<")
+        .replace("]".toRegex(), ">")
     parser.require(XmlPullParser.END_TAG, ns, name)
     return text
   }
@@ -99,7 +106,7 @@ class ChangelogParser(private val context: Context) {
   @Throws(XmlPullParserException::class, IOException::class)
   private fun skip(parser: XmlPullParser) {
     if (parser.eventType != XmlPullParser.START_TAG) {
-      throw IllegalStateException()
+      throw IllegalStateException("${parser.eventType} was not START_TAG")
     }
     var depth = 1
     while (depth != 0) {
@@ -119,13 +126,12 @@ class ChangelogParser(private val context: Context) {
     private const val ATTRIBUTE_VERSION = "version"
     private const val ATTRIBUTE_RELEASE = "release"
 
-    fun getType(type: String): EntryType {
-      return when (type) {
+    fun getType(type: String): EntryType =
+      when (type) {
         TAG_REMOVED -> EntryType.REMOVED
         TAG_FEATURE -> EntryType.FEATURE
         TAG_BUG -> EntryType.BUG
         else -> throw IllegalArgumentException("$type is not supported")
       }
-    }
   }
 }

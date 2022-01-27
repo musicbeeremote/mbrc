@@ -8,17 +8,17 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class RatingDialogViewModel(
   private val userActionUseCase: UserActionUseCase,
-  appState: AppState
+  appState: AppState,
 ) : ViewModel() {
   private val _rating: MutableStateFlow<Float> = MutableStateFlow(0f)
   val rating: Flow<Float> get() = _rating
+
   init {
     viewModelScope.launch {
       appState.playingTrackRating.map { it.rating }.distinctUntilChanged().collect {

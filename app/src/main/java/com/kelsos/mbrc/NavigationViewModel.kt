@@ -14,9 +14,10 @@ class NavigationViewModel(
   connectionState: ConnectionState,
   private val volume: VolumeModifyUseCase,
   private val connectionUseCase: ClientConnectionUseCase,
-  private val serviceChecker: ServiceChecker
+  private val serviceChecker: ServiceChecker,
 ) : ViewModel() {
   val connection: Flow<ConnectionStatus> = connectionState.connection
+
   fun startService() = serviceChecker.startServiceIfNotRunning()
 
   fun connect() = connectionUseCase.connect()

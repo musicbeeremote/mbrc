@@ -22,33 +22,36 @@ import com.kelsos.mbrc.protocol.UpdateShuffle
 import com.kelsos.mbrc.protocol.UpdateVolume
 import org.koin.core.component.KoinComponent
 
-class CommandFactoryImpl : CommandFactory, KoinComponent {
-
+class CommandFactoryImpl :
+  CommandFactory,
+  KoinComponent {
   @Suppress("ComplexMethod")
-  override fun create(protocol: Protocol): ProtocolAction = when (protocol) {
-    Protocol.NowPlayingTrack -> getKoin().get<UpdateNowPlayingTrack>()
-    Protocol.NowPlayingCover -> getKoin().get<UpdateCover>()
-    Protocol.NowPlayingRating -> getKoin().get<UpdateRating>()
-    Protocol.PlayerStatus -> getKoin().get<UpdatePlayerStatus>()
-    Protocol.PlayerState -> getKoin().get<UpdatePlayState>()
-    Protocol.PlayerRepeat -> getKoin().get<UpdateRepeat>()
-    Protocol.PlayerVolume -> getKoin().get<UpdateVolume>()
-    Protocol.PlayerMute -> getKoin().get<UpdateMute>()
-    Protocol.PlayerShuffle -> getKoin().get<UpdateShuffle>()
-    Protocol.PlayerScrobble -> getKoin().get<UpdateLastFm>()
-    Protocol.NowPlayingLyrics -> getKoin().get<UpdateLyrics>()
-    Protocol.NowPlayingLfmRating -> getKoin().get<UpdateLfmRating>()
-    Protocol.NowPlayingListRemove -> getKoin().get<UpdateNowPlayingTrackRemoval>()
-    Protocol.NowPlayingListMove -> getKoin().get<UpdateNowPlayingTrackMoved>()
-    Protocol.NowPlayingPosition -> getKoin().get<UpdatePlaybackPositionCommand>()
-    Protocol.PluginVersion -> getKoin().get<UpdatePluginVersionCommand>()
-    Protocol.Ping -> getKoin().get<ProtocolPingHandle>()
-    Protocol.Pong,
-    Protocol.PlayerNext,
-    Protocol.PlayerPrevious -> getKoin().get<SimpleLogCommand>()
-    Protocol.ProtocolTag -> getKoin().get<ProtocolVersionUpdate>()
-    else -> error("Not supported message context $protocol")
-  }
+  override fun create(protocol: Protocol): ProtocolAction =
+    when (protocol) {
+      Protocol.NowPlayingTrack -> getKoin().get<UpdateNowPlayingTrack>()
+      Protocol.NowPlayingCover -> getKoin().get<UpdateCover>()
+      Protocol.NowPlayingRating -> getKoin().get<UpdateRating>()
+      Protocol.PlayerStatus -> getKoin().get<UpdatePlayerStatus>()
+      Protocol.PlayerState -> getKoin().get<UpdatePlayState>()
+      Protocol.PlayerRepeat -> getKoin().get<UpdateRepeat>()
+      Protocol.PlayerVolume -> getKoin().get<UpdateVolume>()
+      Protocol.PlayerMute -> getKoin().get<UpdateMute>()
+      Protocol.PlayerShuffle -> getKoin().get<UpdateShuffle>()
+      Protocol.PlayerScrobble -> getKoin().get<UpdateLastFm>()
+      Protocol.NowPlayingLyrics -> getKoin().get<UpdateLyrics>()
+      Protocol.NowPlayingLfmRating -> getKoin().get<UpdateLfmRating>()
+      Protocol.NowPlayingListRemove -> getKoin().get<UpdateNowPlayingTrackRemoval>()
+      Protocol.NowPlayingListMove -> getKoin().get<UpdateNowPlayingTrackMoved>()
+      Protocol.NowPlayingPosition -> getKoin().get<UpdatePlaybackPositionCommand>()
+      Protocol.PluginVersion -> getKoin().get<UpdatePluginVersionCommand>()
+      Protocol.Ping -> getKoin().get<ProtocolPingHandle>()
+      Protocol.Pong,
+      Protocol.PlayerNext,
+      Protocol.PlayerPrevious,
+      -> getKoin().get<SimpleLogCommand>()
+      Protocol.ProtocolTag -> getKoin().get<ProtocolVersionUpdate>()
+      else -> error("Not supported message context $protocol")
+    }
 }
 
 interface CommandFactory {

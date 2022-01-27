@@ -1,12 +1,17 @@
 package com.kelsos.mbrc.features.library.sync
 
-import arrow.core.computations.either
-import arrow.core.handleError
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.raise.either
+import arrow.core.right
+import com.kelsos.mbrc.common.data.Repository
+import com.kelsos.mbrc.common.data.cacheIsEmpty
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.CoverCache
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
+import com.kelsos.mbrc.features.library.repositories.LibraryRepositories
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.library.sync.SyncCategory.ALBUMS
 import com.kelsos.mbrc.features.library.sync.SyncCategory.ARTISTS
@@ -14,61 +19,71 @@ import com.kelsos.mbrc.features.library.sync.SyncCategory.COVERS
 import com.kelsos.mbrc.features.library.sync.SyncCategory.GENRES
 import com.kelsos.mbrc.features.library.sync.SyncCategory.PLAYLISTS
 import com.kelsos.mbrc.features.library.sync.SyncCategory.TRACKS
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.metrics.SyncedData
 import com.kelsos.mbrc.networking.client.ConnectivityVerifier
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
+fun <L : Any, R : Any> Either<L, R>.orFailed(): Either<SyncResult, R> =
+  mapLeft {
+    SyncResult.FAILED
+  }
+
+fun Boolean.orNoOp(): Either<SyncResult, Boolean> =
+  if (!this) this.right() else SyncResult.NOOP.left()
+
+suspend fun <T : Any> Repository<T>.fetch(
+  progress: SyncProgress,
+  category: Int,
+): Either<SyncResult, Unit> =
+  getRemote { current, total ->
+    progress(
+      current,
+      total,
+      category,
+    )
+  }.orFailed()
+
 class LibrarySyncUseCaseImpl(
-  private val genreRepository: GenreRepository,
-  private val artistRepository: ArtistRepository,
-  private val albumRepository: AlbumRepository,
-  private val trackRepository: TrackRepository,
+  libraryRepositories: LibraryRepositories,
   private val playlistRepository: PlaylistRepository,
   private val connectivityVerifier: ConnectivityVerifier,
   private val metrics: SyncMetrics,
   private val coverCache: CoverCache,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
 ) : LibrarySyncUseCase {
+  private val genreRepository: GenreRepository = libraryRepositories.genreRepository
+  private val artistRepository: ArtistRepository = libraryRepositories.artistRepository
+  private val albumRepository: AlbumRepository = libraryRepositories.albumRepository
+  private val trackRepository: TrackRepository = libraryRepositories.trackRepository
 
   private var running: Boolean = false
 
-  override suspend fun sync(auto: Boolean, progress: SyncProgress): SyncResult {
-
-    if (isRunning()) {
-      Timber.v("Sync is already running")
-      return SyncResult.NOOP
-    }
-
-    running = true
-    Timber.v("Starting library metadata sync")
-
-    val canEstablishConnection = connectivityVerifier.verify().fold({ false }, { true })
-    if (!canEstablishConnection) {
-      running = false
-      Timber.v("Connection could not be established")
-      return SyncResult.FAILED
-    }
-
-    metrics.librarySyncStarted()
-
-    val result: SyncResult = if (checkIfShouldSync(auto)) {
-      either<Throwable, Unit> {
-        genreRepository.getRemote { current, total -> progress(current, total, GENRES) }.bind()
-        artistRepository.getRemote { current, total -> progress(current, total, ARTISTS) }.bind()
-        albumRepository.getRemote { current, total -> progress(current, total, ALBUMS) }.bind()
-        trackRepository.getRemote { current, total -> progress(current, total, TRACKS) }.bind()
-        playlistRepository.getRemote { current, total -> progress(current, total, PLAYLISTS) }
-          .bind()
-        coverCache.cache { current, total -> progress(current, total, COVERS) }.bind()
-      }.handleError {
-        Timber.e(it, "Sync failed")
-      }.fold({ SyncResult.FAILED }, { SyncResult.SUCCESS })
-    } else {
-      SyncResult.NOOP
-    }
+  override suspend fun sync(
+    auto: Boolean,
+    progress: SyncProgress,
+  ): SyncResult {
+    val result =
+      either {
+        running.orNoOp().bind()
+        running = true
+        Timber.v("Starting library metadata sync")
+        connectivityVerifier.verify().orFailed().bind()
+        metrics.librarySyncStarted()
+        checkIfShouldSync(auto).bind()
+        genreRepository.fetch(progress, GENRES).bind()
+        artistRepository.fetch(progress, ARTISTS).bind()
+        albumRepository.fetch(progress, ALBUMS).bind()
+        trackRepository.fetch(progress, TRACKS).bind()
+        playlistRepository.fetch(progress, PLAYLISTS).bind()
+        coverCache.cache { current, total -> progress(current, total, COVERS) }.orFailed().bind()
+      }.fold({
+        it
+      }, {
+        SyncResult.SUCCESS
+      })
 
     if (result == SyncResult.FAILED) {
       metrics.librarySyncFailed()
@@ -82,27 +97,27 @@ class LibrarySyncUseCaseImpl(
     return result
   }
 
-  override suspend fun syncStats(): SyncedData {
-    return SyncedData(
+  override suspend fun syncStats(): SyncedData =
+    SyncedData(
       genres = genreRepository.count(),
       artists = artistRepository.count(),
       albums = albumRepository.count(),
       tracks = trackRepository.count(),
-      playlists = playlistRepository.count()
+      playlists = playlistRepository.count(),
     )
-  }
 
-  private suspend fun checkIfShouldSync(auto: Boolean): Boolean = if (auto)
-    isEmpty()
-  else
-    true
+  private suspend fun checkIfShouldSync(auto: Boolean): Either<SyncResult, Boolean> =
+    if (auto) {
+      if (isEmpty()) true.right() else SyncResult.NOOP.left()
+    } else {
+      true.right()
+    }
 
-  private suspend fun isEmpty(): Boolean {
-    return genreRepository.cacheIsEmpty() &&
+  private suspend fun isEmpty(): Boolean =
+    genreRepository.cacheIsEmpty() &&
       artistRepository.cacheIsEmpty() &&
       albumRepository.cacheIsEmpty() &&
       trackRepository.cacheIsEmpty()
-  }
 
   override fun isRunning(): Boolean = running
 }

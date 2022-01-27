@@ -3,8 +3,6 @@ package com.kelsos.mbrc.features.queue
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -19,56 +17,55 @@ import kotlinx.coroutines.coroutineScope
 class QueueWorker(
   context: Context,
   params: WorkerParameters,
-  private val queueUseCase: QueueUseCase
+  private val queueUseCase: QueueUseCase,
 ) : CoroutineWorker(context, params) {
-
   private val notificationManager =
     context.getSystemService(Context.NOTIFICATION_SERVICE) as
       NotificationManager
 
-  override suspend fun doWork(): Result = coroutineScope {
+  override suspend fun doWork(): Result =
+    coroutineScope {
+      val id = inputData.getLong(ID, -1)
+      val meta = Meta.fromId(inputData.getInt(META, -1))
+      val action = Queue.fromString(inputData.getString(ACTION) ?: Queue.DEFAULT)
 
-    val id = inputData.getLong(ID, -1)
-    val meta = Meta.fromId(inputData.getInt(META, -1))
-    val action = Queue.fromString(inputData.getString(ACTION) ?: Queue.DEFAULT)
+      setForeground(createForegroundInfo())
 
-    setForeground(createForegroundInfo())
-
-    val result = queueUseCase.queue(id, meta, action)
-    if (result.success) {
-      Result.success()
-    } else {
-      Result.failure()
+      val result = queueUseCase.queue(id, meta, action)
+      if (result.success) {
+        Result.success()
+      } else {
+        Result.failure()
+      }
     }
-  }
 
   private fun createForegroundInfo(): ForegroundInfo {
     val id = applicationContext.getString(R.string.notification__actions_id)
     val title = applicationContext.getString(R.string.notification__queue_title)
     val description = applicationContext.getString(R.string.notification__queue_description)
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      createChannel(id)
-    }
+    createChannel(id)
 
-    val notification = NotificationCompat.Builder(applicationContext, id)
-      .setContentTitle(title)
-      .setTicker(title)
-      .setContentText(description)
-      .setSmallIcon(R.drawable.ic_mbrc_status)
-      .setOngoing(true)
-      .build()
+    val notification =
+      NotificationCompat
+        .Builder(applicationContext, id)
+        .setContentTitle(title)
+        .setTicker(title)
+        .setContentText(description)
+        .setSmallIcon(R.drawable.ic_mbrc_status)
+        .setOngoing(true)
+        .build()
 
-    return ForegroundInfo(819, notification)
+    return ForegroundInfo(NOTIFICATION_ID, notification)
   }
 
-  @RequiresApi(Build.VERSION_CODES.O)
   private fun createChannel(id: String) {
-    val channel = NotificationChannel(
-      id,
-      applicationContext.getString(R.string.notification__actions_name),
-      NotificationManager.IMPORTANCE_DEFAULT
-    )
+    val channel =
+      NotificationChannel(
+        id,
+        applicationContext.getString(R.string.notification__actions_name),
+        NotificationManager.IMPORTANCE_DEFAULT,
+      )
 
     channel.apply {
       this.description = applicationContext.getString(R.string.notification__actions_description)
@@ -85,17 +82,20 @@ class QueueWorker(
     const val META = "queue_meta"
     const val ACTION = "queue_action"
 
+    const val NOTIFICATION_ID = 819
+
     fun createWorkRequest(
       id: Long,
       meta: Meta,
-      action: Queue = Queue.Default
+      action: Queue = Queue.Default,
     ): OneTimeWorkRequest {
-
-      val input = Data.Builder()
-        .putLong(ID, id)
-        .putInt(META, meta.id)
-        .putString(ACTION, action.action)
-        .build()
+      val input =
+        Data
+          .Builder()
+          .putLong(ID, id)
+          .putInt(META, meta.id)
+          .putString(ACTION, action.action)
+          .build()
 
       return OneTimeWorkRequestBuilder<QueueWorker>()
         .setInputData(input)

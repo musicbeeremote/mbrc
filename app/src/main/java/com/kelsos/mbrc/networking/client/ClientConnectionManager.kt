@@ -8,72 +8,87 @@ import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.connections.toSocketAddress
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.sink
 import okio.source
 import timber.log.Timber
 import java.net.Socket
 import java.net.SocketAddress
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors.newSingleThreadExecutor
+
+class SocketThreading(
+  private val dispatchers: AppCoroutineDispatchers,
+) {
+  private var executorService: ExecutorService? = null
+  private var job: Job? = null
+  private var coroutineScope: CoroutineScope? = null
+
+  val executor: ExecutorService
+    get() = checkNotNull(executorService)
+  val scope: CoroutineScope
+    get() = checkNotNull(coroutineScope)
+
+  fun create() {
+    executorService = newSingleThreadExecutor { Thread(it, "SocketWorker") }
+    job = SupervisorJob()
+    coroutineScope = CoroutineScope(checkNotNull(job) + dispatchers.io)
+  }
+
+  fun destroy() {
+    job?.cancel()
+    executorService?.shutdown()
+  }
+}
 
 class ClientConnectionManager(
   private val activityChecker: SocketActivityChecker,
-  private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,
   private val moshi: Moshi,
   private val connectionRepository: ConnectionRepository,
   private val connectionState: ConnectionState,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
 ) : IClientConnectionManager {
-  private var executor = getExecutor()
-
-  private fun getExecutor() = newSingleThreadExecutor { Thread(it, "SocketWorker") }
-  private var job = SupervisorJob()
-  private var scope = CoroutineScope(job + dispatchers.io)
   private var connection: Connection? = null
+  private var threading = SocketThreading(dispatchers)
 
   override fun start() {
     stop()
-
-    job = SupervisorJob()
-    scope = CoroutineScope(job + dispatchers.io)
-
-    scope.launch {
+    threading.create()
+    threading.scope.launch {
       delay(DELAY_MS)
-      realStart()
+      if (connection?.isConnected == true) {
+        Timber.v("connection is already active")
+      } else {
+        realStart()
+      }
     }
   }
 
   private suspend fun realStart() {
-    if (executor.isShutdown) {
-      executor = getExecutor()
-    }
+    val default = connectionRepository.getDefault()
 
-    if (connection?.isConnected == true) {
-      Timber.v("connection is already active")
+    if (default == null) {
+      Timber.v("Skipping connection because of default missing")
       return
     }
 
-    delay(DELAY_MS)
-
-    val default = connectionRepository.getDefault() ?: return
     Timber.v("Attempting connection on $default")
     val onConnection: (Boolean) -> Unit = { connected ->
-      scope.launch {
+      threading.scope.launch {
         if (!connected) {
           activityChecker.stop()
           connectionState.connection.emit(ConnectionStatus.Off)
         } else {
           connectionState.connection.emit(ConnectionStatus.On)
-          messageQueue.queue(SocketMessage.player())
+          messageHandler.startHandshake()
         }
       }
     }
@@ -84,24 +99,9 @@ class ClientConnectionManager(
       return
     }
     val connection = Connection(result.getOrThrow(), moshi, dispatchers)
-
-    scope.launch {
-      messageQueue.messages.collect { message ->
-        withContext(dispatchers.network) {
-          val sendResult = connection.send(message)
-          if (sendResult.isFailure) {
-            Timber.e(checkNotNull(sendResult.exceptionOrNull()), "Send failed")
-          }
-        }
-      }
-    }
-    scope.launch {
-      connection.messages.collect {
-        messageHandler.process(it)
-      }
-    }
-
-    executor.execute(ConnectionRunnable(connection, onConnection))
+    messageHandler.handleOutgoing(threading.scope, connection::send)
+    messageHandler.listen(threading.scope, connection.messages)
+    threading.executor.execute(ConnectionRunnable(connection, onConnection))
 
     activityChecker.start()
     activityChecker.setPingTimeoutListener {
@@ -112,17 +112,15 @@ class ClientConnectionManager(
   }
 
   override fun stop() {
-    job.cancel()
+    threading.destroy()
     activityChecker.stop()
     connection?.cleanup()
-    executor.shutdownNow()
   }
 
   private class ConnectionRunnable(
     private val connection: Connection,
-    private val connected: (Boolean) -> Unit
+    private val connected: (Boolean) -> Unit,
   ) : Runnable {
-
     override fun run() {
       Timber.v("Socket connection is running")
       connected(connection.isConnected)
@@ -139,7 +137,7 @@ class ClientConnectionManager(
 class Connection(
   private val socket: Socket,
   moshi: Moshi,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppCoroutineDispatchers,
 ) {
   private val sink = socket.sink().buffer()
   private val source = socket.source().buffer()
@@ -166,29 +164,33 @@ class Connection(
     }
   }
 
-  fun send(message: SocketMessage) = runCatching {
-    if (!isConnected) {
-      Timber.d("Socket was not connected: skipping $message")
-      return@runCatching
+  fun send(message: SocketMessage) =
+    runCatching {
+      if (!isConnected) {
+        Timber.d("Socket was not connected: skipping $message")
+        return@runCatching
+      }
+      val address = socket.remoteSocketAddress
+      Timber.v("Sending to mbrc:/$address (connected: $isConnected)::$message")
+      adapter.toJson(sink, message)
+      sink.writeUtf8(NEWLINE)
+      sink.flush()
     }
-    val address = socket.remoteSocketAddress
-    Timber.v("Sending to mbrc:/$address (connected: $isConnected)::$message")
-    adapter.toJson(sink, message)
-    sink.writeUtf8(NEWLINE)
-    sink.flush()
-  }
 
   private fun emitMessages(rawMessage: String) {
-    val replies = rawMessage.split("\r\n".toRegex())
-      .dropLastWhile(String::isEmpty)
+    val replies =
+      rawMessage
+        .split("\r\n".toRegex())
+        .dropLastWhile(String::isEmpty)
 
     for (reply in replies) {
-      val result = runCatching {
-        val message = checkNotNull(adapter.fromJson(reply))
-        scope.launch {
-          _messages.emit(message)
+      val result =
+        runCatching {
+          val message = checkNotNull(adapter.fromJson(reply))
+          scope.launch {
+            _messages.emit(message)
+          }
         }
-      }
 
       if (result.isFailure) {
         val throwable = result.exceptionOrNull()
@@ -199,12 +201,13 @@ class Connection(
 
   fun listen() {
     while (isConnected) {
-      val result = runCatching {
-        val rawMessage = checkNotNull(source.readUtf8Line()) { "no data" }
-        if (rawMessage.isNotEmpty()) {
-          emitMessages(rawMessage)
+      val result =
+        runCatching {
+          val rawMessage = checkNotNull(source.readUtf8Line()) { "no data" }
+          if (rawMessage.isNotEmpty()) {
+            emitMessages(rawMessage)
+          }
         }
-      }
       if (result.isFailure) {
         Timber.e(checkNotNull(result.exceptionOrNull()), "Listener terminated")
         cleanup()

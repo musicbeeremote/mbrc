@@ -32,13 +32,15 @@ class WidgetSmallTest {
   private lateinit var widgetView: View
   private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-  private fun broadcastReceiver(value: (String) -> Unit): BroadcastReceiver {
-    return object : BroadcastReceiver() {
-      override fun onReceive(context: Context?, intent: Intent?) {
+  private fun broadcastReceiver(value: (String) -> Unit): BroadcastReceiver =
+    object : BroadcastReceiver() {
+      override fun onReceive(
+        context: Context?,
+        intent: Intent?,
+      ) {
         value(checkNotNull(intent?.action))
       }
     }
-  }
 
   @Before
   fun setUp() {
@@ -66,8 +68,8 @@ class WidgetSmallTest {
     updater.updatePlayingTrack(
       PlayingTrack(
         artist = "Artist",
-        title = "Title"
-      )
+        title = "Title",
+      ),
     )
     shadowOf(getMainLooper()).idle()
     widgetView = shadowAppWidgetManager.getViewFor(widgetId)

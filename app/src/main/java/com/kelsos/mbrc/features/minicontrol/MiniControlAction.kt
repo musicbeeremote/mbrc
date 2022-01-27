@@ -1,7 +1,9 @@
 package com.kelsos.mbrc.features.minicontrol
 
 sealed class MiniControlAction {
-  object PlayPrevious : MiniControlAction()
-  object PlayNext : MiniControlAction()
-  object PlayPause : MiniControlAction()
+  data object PlayPrevious : MiniControlAction()
+
+  data object PlayNext : MiniControlAction()
+
+  data object PlayPause : MiniControlAction()
 }

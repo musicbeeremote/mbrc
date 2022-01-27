@@ -1,8 +1,9 @@
 package com.kelsos.mbrc.features.library.sync
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
 interface SyncWorkHandler {
   fun sync(auto: Boolean = false)
-  fun syncProgress(): LiveData<LibrarySyncProgress>
+
+  fun syncProgress(): Flow<LibrarySyncProgress>
 }

@@ -1,39 +1,46 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import io.gitlab.arturbosch.detekt.Detekt
 
-buildscript {
-  dependencies {
-    val libs = project.extensions.getByType<VersionCatalogsExtension>()
-      .named("libs") as org.gradle.accessors.dm.LibrariesForLibs
-    classpath(libs.gradlePlugin.kotlin)
-    classpath(libs.gradlePlugin.android)
-    classpath(libs.gradlePlugin.crashlytics)
-    classpath(libs.gradlePlugin.detekt)
-    classpath(libs.gradlePlugin.gms)
-    classpath(libs.gradlePlugin.performance)
-    classpath(libs.gradlePlugin.kotlinter)
-    classpath(libs.gradlePlugin.protobuf)
-    classpath(libs.gradlePlugin.versionsBenManes)
-  }
-
-  repositories {
-    google()
-    maven {
-      url = uri("https://plugins.gradle.org/m2/")
-    }
-  }
+plugins {
+  alias(libs.plugins.versionsBenManes)
+  alias(libs.plugins.versionCatalogUpdate)
+  alias(libs.plugins.kover)
+  alias(libs.plugins.android.application) apply false
+  alias(libs.plugins.android.library) apply false
+  alias(libs.plugins.compose.compiler) apply false
+  alias(libs.plugins.kotlinAndroid) apply false
+  alias(libs.plugins.detekt)
 }
 
-apply(plugin = "com.github.ben-manes.versions")
-apply(plugin = "io.gitlab.arturbosch.detekt")
-apply(plugin = "org.jmailen.kotlinter")
-
 allprojects {
+  apply {
+    plugin("io.gitlab.arturbosch.detekt")
+  }
+
+  detekt {
+    source = objects.fileCollection().from(
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_SRC_DIR_JAVA,
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_TEST_SRC_DIR_JAVA,
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_SRC_DIR_KOTLIN,
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_TEST_SRC_DIR_KOTLIN,
+    )
+    config = rootProject.files("config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+  }
+
+  tasks.withType<Detekt>().configureEach {
+    reports {
+      xml.required.set(true)
+      html.required.set(true)
+      sarif.required.set(true)
+    }
+  }
+
   buildscript {
     repositories {
       google()
-      maven {
-        url = uri("https://plugins.gradle.org/m2/")
-      }
+      gradlePluginPortal()
+      mavenCentral()
     }
   }
 
@@ -41,7 +48,15 @@ allprojects {
     google()
     mavenCentral()
   }
+
+  dependencies {
+    val formatting = rootProject.libs.plugins.detektFormatting.get()
+    detektPlugins("${formatting.pluginId}:${formatting.version}")
+  }
 }
+
+
+kover {}
 
 // ReleaseType/DependencyUpdates are copied from:
 // https://github.com/chrisbanes/tivi/blob/main/buildSrc/src/main/java/app/tivi/buildsrc/DependencyUpdates.kt
@@ -68,7 +83,7 @@ object DependencyUpdates {
   private val devRegex = releaseKeywordRegex("dev")
 
   fun versionToRelease(version: String): ReleaseType {
-    val stableKeyword = stableKeywords.any { version.toUpperCase().contains(it) }
+    val stableKeyword = stableKeywords.any { version.uppercase().contains(it) }
     if (stableKeyword) return ReleaseType.RELEASE
 
     return when {
@@ -87,7 +102,7 @@ object DependencyUpdates {
 }
 
 fun isNonStable(version: String): Boolean {
-  val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+  val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
   val regex = "^[0-9,.v-]+(-r)?$".toRegex()
   val isStable = stableKeyword || regex.matches(version)
   return isStable.not()
@@ -117,4 +132,13 @@ val dummyGoogleServices: Configuration by configurations.creating {
 
 dependencies {
   dummyGoogleServices(files(rootProject.file("config/dummy-google-services.json")))
+}
+
+versionCatalogUpdate {
+ keep {
+   plugins.set(mutableListOf(
+     libs.plugins.kotlinParcelize,
+     libs.plugins.detektFormatting
+   ))
+ }
 }

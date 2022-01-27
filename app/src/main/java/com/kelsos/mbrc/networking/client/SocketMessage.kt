@@ -10,24 +10,19 @@ data class SocketMessage(
   @Json(name = "context")
   val context: String,
   @Json(name = "data")
-  val data: Any = ""
+  val data: Any = "",
 ) {
-
-  override fun toString(): String {
-    return "{ context=$context, data=$data }"
-  }
+  override fun toString(): String = "{ context=$context, data=$data }"
 
   companion object {
-    fun create(protocol: Protocol, data: Any = ""): SocketMessage {
-      return SocketMessage(protocol.context, data)
-    }
+    fun create(
+      protocol: Protocol,
+      data: Any = "",
+    ): SocketMessage = SocketMessage(protocol.context, data)
   }
 }
 
-fun SocketMessage.Companion.player(): SocketMessage {
-  return create(Protocol.Player, "Android")
-}
+fun SocketMessage.Companion.player(): SocketMessage = create(Protocol.Player, "Android")
 
-fun SocketMessage.Companion.protocol(payload: ProtocolPayload): SocketMessage {
-  return create(Protocol.ProtocolTag, payload)
-}
+fun SocketMessage.Companion.protocol(payload: ProtocolPayload): SocketMessage =
+  create(Protocol.ProtocolTag, payload)

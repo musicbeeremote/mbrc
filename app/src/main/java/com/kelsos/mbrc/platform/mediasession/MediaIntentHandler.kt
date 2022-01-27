@@ -7,48 +7,51 @@ import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 
 class MediaIntentHandler(
-  private val userActionUseCase: UserActionUseCase
+  private val userActionUseCase: UserActionUseCase,
 ) {
   private var previousClick: Long = 0
 
-  init {
-    previousClick = 0
+  private fun getKeyEventFromIntent(mediaIntent: Intent?): KeyEvent? {
+    val action = mediaIntent?.action
+
+    if (action == Intent.ACTION_MEDIA_BUTTON) {
+      val extras = mediaIntent.extras
+      return if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+        @Suppress("DEPRECATION")
+        extras?.getParcelable(Intent.EXTRA_KEY_EVENT) as KeyEvent?
+      } else {
+        extras?.getParcelable(Intent.EXTRA_KEY_EVENT, KeyEvent::class.java)
+      }
+    }
+    return null
+  }
+
+  private fun detectDoubleClick(): Boolean {
+    val currentClick = System.currentTimeMillis()
+    if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
+      return postAction(UserAction(Protocol.PlayerNext, true))
+    }
+    previousClick = currentClick
+    return postAction(UserAction(Protocol.PlayerPlayPause, true))
   }
 
   fun handleMediaIntent(mediaIntent: Intent?): Boolean {
-    var result = false
-    val intent = mediaIntent ?: return false
-    val action = intent.action
-
-    if (action == Intent.ACTION_MEDIA_BUTTON) {
-      val extras = intent.extras ?: return false
-
-      val event = extras.get(Intent.EXTRA_KEY_EVENT) as KeyEvent? ?: return false
-
-      if (event.action != KeyEvent.ACTION_DOWN) {
-        return false
-      }
-
-      result = when (event.keyCode) {
-        KeyEvent.KEYCODE_HEADSETHOOK -> {
-          val currentClick = System.currentTimeMillis()
-          if (currentClick - previousClick < DOUBLE_CLICK_INTERVAL) {
-            return postAction(UserAction(Protocol.PlayerNext, true))
-          }
-          previousClick = currentClick
-          postAction(UserAction(Protocol.PlayerPlayPause, true))
-        }
-        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> postAction(UserAction(Protocol.PlayerPlayPause, true))
-        KeyEvent.KEYCODE_MEDIA_PLAY -> postAction(UserAction(Protocol.PlayerPlay, true))
-        KeyEvent.KEYCODE_MEDIA_PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
-        KeyEvent.KEYCODE_MEDIA_STOP -> postAction(UserAction(Protocol.PlayerStop, true))
-        KeyEvent.KEYCODE_MEDIA_NEXT -> postAction(UserAction(Protocol.PlayerNext, true))
-        KeyEvent.KEYCODE_MEDIA_PREVIOUS ->
-          postAction(UserAction(Protocol.PlayerPrevious, true))
-        else -> false
-      }
+    val event = getKeyEventFromIntent(mediaIntent)
+    if (event?.action != KeyEvent.ACTION_DOWN) {
+      return false
     }
-    return result
+
+    return when (event.keyCode) {
+      KeyEvent.KEYCODE_HEADSETHOOK -> detectDoubleClick()
+      KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> postAction(UserAction(Protocol.PlayerPlayPause, true))
+      KeyEvent.KEYCODE_MEDIA_PLAY -> postAction(UserAction(Protocol.PlayerPlay, true))
+      KeyEvent.KEYCODE_MEDIA_PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
+      KeyEvent.KEYCODE_MEDIA_STOP -> postAction(UserAction(Protocol.PlayerStop, true))
+      KeyEvent.KEYCODE_MEDIA_NEXT -> postAction(UserAction(Protocol.PlayerNext, true))
+      KeyEvent.KEYCODE_MEDIA_PREVIOUS ->
+        postAction(UserAction(Protocol.PlayerPrevious, true))
+      else -> false
+    }
   }
 
   private fun postAction(action: UserAction): Boolean {

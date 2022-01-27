@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.kelsos.mbrc"
-    android:installLocation="auto">
+  xmlns:tools="http://schemas.android.com/tools"
+  android:installLocation="auto">
 
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
   <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
   <uses-permission android:name="android.permission.READ_PHONE_STATE" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
   <uses-sdk tools:overrideLibrary="timber.log" />
 
   <application
-      android:name=".App"
-      android:allowBackup="true"
-      android:description="@string/application_description"
-      android:icon="@mipmap/ic_launcher"
-      android:label="@string/application_name"
-      android:logo="@mipmap/ic_launcher"
-      android:theme="@style/Theme.App"
-      tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+    android:name=".App"
+    android:allowBackup="true"
+    android:description="@string/application_description"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/application_name"
+    android:logo="@mipmap/ic_launcher"
+    android:theme="@style/Theme.App"
+    tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
     <activity
-        android:name=".ui.activities.SplashActivity"
-        android:exported="true"
-        android:noHistory="true">
+      android:name=".ui.activities.SplashActivity"
+      android:exported="true"
+      android:noHistory="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
@@ -34,58 +34,59 @@
     </activity>
 
     <activity
-        android:name=".NavigationActivity"
-        android:label="@string/title_activity_bottom_navigation" />
+      android:name=".NavigationActivity"
+      android:label="@string/title_activity_bottom_navigation" />
 
     <provider
-        android:name="androidx.startup.InitializationProvider"
-        android:authorities="${applicationId}.androidx-startup"
-        android:exported="false"
-        tools:node="merge">
+      android:name="androidx.startup.InitializationProvider"
+      android:authorities="${applicationId}.androidx-startup"
+      android:exported="false"
+      tools:node="merge">
       <!-- If you are using androidx.startup to initialize other components -->
       <meta-data
-          android:name="androidx.work.WorkManagerInitializer"
-          android:value="androidx.startup"
-          tools:node="remove" />
+        android:name="androidx.work.WorkManagerInitializer"
+        android:value="androidx.startup"
+        tools:node="remove" />
     </provider>
 
 
     <receiver
-        android:name="com.kelsos.mbrc.features.widgets.WidgetNormal"
-        android:exported="true">
+      android:name="com.kelsos.mbrc.features.widgets.WidgetNormal"
+      android:exported="false">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
 
       <meta-data
-          android:name="android.appwidget.provider"
-          android:resource="@xml/remote_widget_normal" />
+        android:name="android.appwidget.provider"
+        android:resource="@xml/remote_widget_normal" />
     </receiver>
 
     <receiver
-        android:name=".platform.mediasession.MediaButtonReceiver"
-        android:exported="false">
+      android:name=".platform.mediasession.MediaButtonReceiver"
+      android:exported="false">
       <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
     </receiver>
 
     <receiver
-        android:name="com.kelsos.mbrc.features.widgets.WidgetSmall"
-        android:exported="true">
+      android:name="com.kelsos.mbrc.features.widgets.WidgetSmall"
+      android:exported="false">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
 
       <meta-data
-          android:name="android.appwidget.provider"
-          android:resource="@xml/remote_widget_small" />
+        android:name="android.appwidget.provider"
+        android:resource="@xml/remote_widget_small" />
     </receiver>
 
     <service
-        android:name=".platform.RemoteService"
-        android:description="@string/info_service_description"
-        android:exported="false">
+      android:name=".platform.RemoteService"
+      android:description="@string/info_service_description"
+      android:exported="false"
+      android:foregroundServiceType="connectedDevice">
       <intent-filter>
         <action android:name="com.kelsos.mbrc.notification.play" />
         <action android:name="com.kelsos.mbrc.notification.next" />
@@ -94,14 +95,19 @@
       </intent-filter>
     </service>
 
+    <service
+      android:name="androidx.work.impl.foreground.SystemForegroundService"
+      android:foregroundServiceType="dataSync"
+      tools:node="merge" />
+
     <provider
-        android:name="androidx.core.content.FileProvider"
-        android:authorities="${applicationId}.fileprovider"
-        android:exported="false"
-        android:grantUriPermissions="true">
+      android:name="androidx.core.content.FileProvider"
+      android:authorities="${applicationId}.fileprovider"
+      android:exported="false"
+      android:grantUriPermissions="true">
       <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/filepaths" />
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/filepaths" />
     </provider>
 
   </application>

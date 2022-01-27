@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository : Repository<Album> {
   fun getAlbumsByArtist(artist: String): Flow<PagingData<Album>>
+
   suspend fun updateCovers(updated: List<AlbumCover>)
+
   suspend fun getCovers(): List<AlbumCover>
 }

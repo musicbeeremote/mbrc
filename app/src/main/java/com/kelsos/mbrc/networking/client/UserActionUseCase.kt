@@ -9,14 +9,21 @@ import com.kelsos.mbrc.networking.protocol.Protocol.PlayerPrevious
 
 interface UserActionUseCase {
   suspend fun perform(action: UserAction)
+
   fun tryPerform(action: UserAction)
 }
 
-fun UserActionUseCase.perform(protocol: Protocol, data: Any) {
+fun UserActionUseCase.perform(
+  protocol: Protocol,
+  data: Any,
+) {
   tryPerform(UserAction.create(protocol, data))
 }
 
-suspend fun UserActionUseCase.performUserAction(protocol: Protocol, data: Any) {
+suspend fun UserActionUseCase.performUserAction(
+  protocol: Protocol,
+  data: Any,
+) {
   perform(UserAction.create(protocol, data))
 }
 

@@ -6,5 +6,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ArtistDto(
   @Json(name = "artist")
-  var artist: String = ""
+  var artist: String = "",
 )

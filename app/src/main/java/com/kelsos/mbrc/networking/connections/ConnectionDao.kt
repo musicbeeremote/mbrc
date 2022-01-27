@@ -11,7 +11,6 @@ import androidx.room.Update
 
 @Dao
 interface ConnectionDao {
-
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insert(settings: ConnectionSettingsEntity): Long
 
@@ -23,6 +22,9 @@ interface ConnectionDao {
 
   @Query("select * from settings")
   fun getAll(): PagingSource<Int, ConnectionSettingsEntity>
+
+  @Query("select * from settings")
+  fun all(): List<ConnectionSettingsEntity>
 
   @Query("select count(*) from settings")
   fun count(): Long
@@ -37,7 +39,10 @@ interface ConnectionDao {
   fun getPrevious(id: Long): ConnectionSettingsEntity?
 
   @Query("select id from settings where address = :address and port = :port")
-  fun findId(address: String, port: Int): Long?
+  fun findId(
+    address: String,
+    port: Int,
+  ): Long?
 
   @Query("select * from settings where is_default = 1")
   fun getDefault(): ConnectionSettingsEntity?

@@ -5,9 +5,8 @@ import kotlinx.coroutines.flow.first
 import java.util.UUID
 
 class ClientInformationStoreImpl(
-  context: Context
+  context: Context,
 ) : ClientInformationStore {
-
   private val dataStore = context.dataStore
 
   override suspend fun getClientId(): String {
@@ -16,10 +15,13 @@ class ClientInformationStoreImpl(
     return uuid.ifBlank {
       val newUuid = UUID.randomUUID().toString()
       dataStore.updateData {
-        val app = settings.app.toBuilder()
-          .setUuid(newUuid)
-          .build()
-        settings.toBuilder()
+        val app =
+          settings.app
+            .toBuilder()
+            .setUuid(newUuid)
+            .build()
+        settings
+          .toBuilder()
           .setApp(app)
           .build()
       }
