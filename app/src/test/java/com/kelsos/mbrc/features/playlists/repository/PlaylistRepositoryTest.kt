@@ -5,10 +5,13 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.data.cacheIsEmpty
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.playlists.Playlist
 import com.kelsos.mbrc.features.playlists.PlaylistDao
 import com.kelsos.mbrc.features.playlists.PlaylistDto
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.rules.CoroutineTestRule
@@ -92,7 +95,7 @@ class PlaylistRepositoryTest : KoinTest {
   fun `it should be initially empty`() = runTest {
     assertThat(repository.cacheIsEmpty()).isTrue()
     assertThat(repository.count()).isEqualTo(0)
-    assertThat(repository.all()).isEmpty()
+    assertThat(repository.test.getAll()).isEmpty()
   }
 
   @Test
@@ -104,7 +107,7 @@ class PlaylistRepositoryTest : KoinTest {
     }
     assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
-    assertThat(repository.all()).hasSize(20)
+    assertThat(repository.test.getAll()).hasSize(20)
   }
 
   @Test
@@ -117,7 +120,7 @@ class PlaylistRepositoryTest : KoinTest {
     }
 
     assertThat(repository.getRemote().isRight()).isTrue()
-    val data = repository.simpleSearch("Metal")
+    val data = repository.test.search("Metal")
     assertThat(data).hasSize(1)
     assertThat(data).containsExactly(
       Playlist(

@@ -1,7 +1,5 @@
 package com.kelsos.mbrc.common.ui
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -9,10 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -36,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
@@ -123,48 +117,26 @@ fun <T : Any> ScreenContent(
   }
 }
 
+data class SwipeScreenContent<T : Any>(
+  val items: LazyPagingItems<T>,
+  val key: (t: T) -> Long,
+  val isRefreshing: Boolean,
+  val onRefresh: () -> Unit,
+)
+
 @Composable
 fun <T : Any> SwipeRefreshScreen(
   modifier: Modifier = Modifier,
-  items: LazyPagingItems<T>,
-  isRefreshing: Boolean,
-  key: (t: T) -> Long,
-  onRefresh: () -> Unit,
+  content: SwipeScreenContent<T>,
   itemContent: @Composable (LazyItemScope.(value: T?) -> Unit)
 ) {
   SwipeRefresh(
-    state = rememberSwipeRefreshState(isRefreshing),
-    onRefresh = { onRefresh() },
+    state = rememberSwipeRefreshState(content.isRefreshing),
+    onRefresh = { content.onRefresh() },
     modifier = modifier
   ) {
-    ScreenContent(items = items, itemContent = itemContent, key = key)
+    ScreenContent(items = content.items, itemContent = itemContent, key = content.key)
   }
-}
-
-@Composable
-fun SingleLineRow(
-  text: String?,
-  clicked: () -> Unit = {},
-  menuContent: @Composable ColumnScope.() -> Unit
-) = Row(
-  modifier = Modifier
-    .fillMaxWidth()
-    .height(48.dp)
-    .clickable { clicked() },
-  verticalAlignment = Alignment.CenterVertically,
-  horizontalArrangement = Arrangement.SpaceBetween
-) {
-  Column(modifier = Modifier.weight(1f)) {
-    Text(
-      text = text ?: "",
-      style = MaterialTheme.typography.body1,
-      modifier = Modifier
-        .padding(start = 16.dp),
-      maxLines = 1,
-      overflow = TextOverflow.Ellipsis
-    )
-  }
-  PopupMenu(menuContent)
 }
 
 @Composable
@@ -200,75 +172,6 @@ fun PopupMenu(
     onDismissRequest = { setVisible(false) },
     content = menuContent
   )
-}
-
-@Composable
-fun DoubleLineRow(
-  lineOne: String?,
-  lineTwo: String?,
-  coverUrl: String?,
-  clicked: () -> Unit = {},
-  menuContent: @Composable ColumnScope.() -> Unit
-) = Row(
-  modifier = Modifier
-    .fillMaxWidth()
-    .height(72.dp)
-    .clickable { clicked() }
-    .padding(vertical = 8.dp),
-  verticalAlignment = Alignment.CenterVertically
-) {
-  if (coverUrl != null) {
-    Column(
-      modifier = Modifier
-        .padding(start = 16.dp)
-        .width(48.dp)
-        .height(48.dp)
-    ) {
-      TrackCover(
-        coverUrl = coverUrl,
-        modifier = Modifier
-          .size(48.dp),
-        cornerRadius = 2.dp
-      )
-    }
-  }
-  Column(
-    modifier = Modifier
-      .weight(1f)
-      .padding(start = 16.dp),
-    Arrangement.SpaceAround
-  ) {
-    Text(
-      text = lineOne ?: "",
-      style = MaterialTheme.typography.body1,
-      maxLines = 1,
-      overflow = TextOverflow.Ellipsis
-    )
-    Text(
-      text = lineTwo ?: "",
-      style = MaterialTheme.typography.subtitle2,
-      color = MaterialTheme.colors.onSurface.copy(0.7f),
-      maxLines = 1,
-      overflow = TextOverflow.Ellipsis
-    )
-  }
-  PopupMenu(menuContent)
-}
-
-@Preview(
-  uiMode = UI_MODE_NIGHT_YES
-)
-@Composable
-fun SingleLineRowPreview() {
-  SingleLineRow(text = "Playlist") {}
-}
-
-@Preview(
-  uiMode = UI_MODE_NIGHT_YES
-)
-@Composable
-fun DoubleLineRowPreview() {
-  DoubleLineRow(lineOne = "Album", lineTwo = "Artist", coverUrl = "") {}
 }
 
 @Preview

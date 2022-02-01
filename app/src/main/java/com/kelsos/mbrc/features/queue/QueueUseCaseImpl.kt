@@ -1,15 +1,14 @@
 package com.kelsos.mbrc.features.queue
 
+import arrow.core.Either
 import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.common.Meta.Album
 import com.kelsos.mbrc.common.Meta.Artist
 import com.kelsos.mbrc.common.Meta.Genre
 import com.kelsos.mbrc.common.Meta.Track
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
-import com.kelsos.mbrc.features.library.repositories.AlbumRepository
-import com.kelsos.mbrc.features.library.repositories.ArtistRepository
-import com.kelsos.mbrc.features.library.repositories.GenreRepository
-import com.kelsos.mbrc.features.library.repositories.TrackRepository
+import com.kelsos.mbrc.features.library.repositories.LibraryRepositories
+import com.kelsos.mbrc.features.library.repositories.TrackQuery
 import com.kelsos.mbrc.features.player.cover.CoverPayload
 import com.kelsos.mbrc.features.queue.Queue.Default
 import com.kelsos.mbrc.features.queue.Queue.PlayAlbum
@@ -22,14 +21,15 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class QueueUseCaseImpl(
-  private val trackRepository: TrackRepository,
-  private val genreRepository: GenreRepository,
-  private val artistRepository: ArtistRepository,
-  private val albumRepository: AlbumRepository,
+  repositories: LibraryRepositories,
   private val settings: DefaultActionPreferenceStore,
   private val dispatchers: AppCoroutineDispatchers,
   private val api: ApiBase
 ) : QueueUseCase {
+  private val genreRepository = repositories.genreRepository
+  private val artistRepository = repositories.artistRepository
+  private val albumRepository = repositories.albumRepository
+  private val trackRepository = repositories.trackRepository
 
   override suspend fun queue(
     id: Long,
@@ -54,21 +54,22 @@ class QueueUseCaseImpl(
     return@withContext QueueResult(success, paths.size)
   }
 
-  override suspend fun queuePath(path: String): QueueResult {
-    var success = false
-    try {
-      success = queueRequest(Queue.Now, listOf(path), path)
-    } catch (e: Exception) {
-      Timber.e(e)
-    }
-    return QueueResult(success, 1)
+  override suspend fun queuePath(path: String): QueueResult = Either.catch {
+    queueRequest(Queue.Now, listOf(path), path)
+  }.fold(
+    {
+      Timber.e(it)
+      QueueResult(false, 1)
+    }, {
+    QueueResult(it, 1)
   }
+  )
 
   private suspend fun tracksForGenre(id: Long): List<String> =
     withContext(dispatchers.database) {
       val genre = genreRepository.getById(id)
       if (genre != null) {
-        trackRepository.getGenreTrackPaths(genre = genre.genre)
+        trackRepository.getTrackPaths(query = TrackQuery.Genre(genre.genre))
       } else {
         emptyList()
       }
@@ -77,7 +78,7 @@ class QueueUseCaseImpl(
   private suspend fun tracksForArtist(id: Long): List<String> = withContext(dispatchers.database) {
     val artist = artistRepository.getById(id)
     if (artist != null) {
-      trackRepository.getArtistTrackPaths(artist = artist.artist)
+      trackRepository.getTrackPaths(query = TrackQuery.Artist(artist.artist))
     } else {
       emptyList()
     }
@@ -86,7 +87,7 @@ class QueueUseCaseImpl(
   private suspend fun tracksForAlbum(id: Long): List<String> = withContext(dispatchers.database) {
     val album = albumRepository.getById(id)
     if (album != null) {
-      trackRepository.getAlbumTrackPaths(album.album, album.artist)
+      trackRepository.getTrackPaths(TrackQuery.Album(album.album, album.artist))
     } else {
       emptyList()
     }
@@ -100,13 +101,13 @@ class QueueUseCaseImpl(
       ?: throw IllegalArgumentException("$action is not supported")
 
     when (action) {
-      PlayAll -> QueueData(trackRepository.getAllTrackPaths(), track.src)
+      PlayAll -> QueueData(trackRepository.getTrackPaths(TrackQuery.All), track.src)
       PlayAlbum -> QueueData(
-        trackRepository.getAlbumTrackPaths(track.album, track.albumArtist),
+        trackRepository.getTrackPaths(TrackQuery.Album(track.album, track.albumArtist)),
         track.src
       )
       PlayArtist -> QueueData(
-        trackRepository.getArtistTrackPaths(track.artist),
+        trackRepository.getTrackPaths(TrackQuery.Artist(track.artist)),
         track.src
 
       )
@@ -121,18 +122,17 @@ class QueueUseCaseImpl(
   ): Boolean {
     return withContext(dispatchers.network) {
       Timber.v("Queueing ${tracks.size} $type")
-      try {
+      return@withContext Either.catch {
         val response = api.getItem(
           Protocol.NowPlayingQueue,
           QueueResponse::class,
           QueuePayload(type.action, tracks, play)
         )
-
-        return@withContext response.code == CoverPayload.SUCCESS
-      } catch (e: Exception) {
-        Timber.e(e)
-        return@withContext false
-      }
+        response.code == CoverPayload.SUCCESS
+      }.fold({
+        Timber.e(it)
+        false
+      }, { it })
     }
   }
 }

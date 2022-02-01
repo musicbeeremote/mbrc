@@ -3,6 +3,7 @@ package com.kelsos.mbrc.features.library.repositories
 import androidx.paging.PagingData
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
+import com.kelsos.mbrc.common.data.TestApi
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
@@ -22,21 +23,21 @@ class TrackRepositoryImpl(
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers
 ) : TrackRepository {
+  override val test: TestApi<Track> = object : TestApi<Track> {
+    override fun search(term: String): List<Track> = error("unavailable method")
+    override fun getAll(): List<Track> = dao.all().map { it.toTrack() }
+  }
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAll(): Flow<PagingData<Track>> = paged({ dao.getAll() }) { it.toTrack() }
 
-  override fun all(): List<Track> = dao.all().map { it.toTrack() }
-
-  override fun getAlbumTracks(
-    album: String,
-    artist: String
-  ): Flow<PagingData<Track>> =
-    paged({ dao.getAlbumTracks(album, artist) }) { it.toTrack() }
-
-  override fun getNonAlbumTracks(artist: String): Flow<PagingData<Track>> =
-    paged({ dao.getNonAlbumTracks(artist) }) { it.toTrack() }
+  override fun getTracks(query: PagingTrackQuery): Flow<PagingData<Track>> = when (query) {
+    is PagingTrackQuery.Album -> paged({
+      dao.getAlbumTracks(query.album, query.artist)
+    }) { it.toTrack() }
+    is PagingTrackQuery.NonAlbum -> paged({ dao.getNonAlbumTracks(query.artist) }) { it.toTrack() }
+  }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     return@catch withContext(dispatchers.network) {
@@ -73,21 +74,12 @@ class TrackRepositoryImpl(
     return paged({ dao.search(term) }) { it.toTrack() }
   }
 
-  override fun simpleSearch(term: String): List<Track> = error("unavailable method")
-
-  override fun getGenreTrackPaths(genre: String): List<String> =
-    dao.getGenreTrackPaths(genre)
-
-  override fun getArtistTrackPaths(artist: String): List<String> =
-    dao.getArtistTrackPaths(artist)
-
-  override fun getAlbumTrackPaths(album: String, artist: String): List<String> =
-    dao.getAlbumTrackPaths(album, artist)
-
-  override fun getAllTrackPaths(): List<String> = dao.getAllTrackPaths()
-
-  override suspend fun cacheIsEmpty(): Boolean =
-    withContext(dispatchers.database) { dao.count() == 0L }
+  override fun getTrackPaths(query: TrackQuery): List<String> = when (query) {
+    is TrackQuery.All -> dao.getAllTrackPaths()
+    is TrackQuery.Genre -> dao.getGenreTrackPaths(query.genre)
+    is TrackQuery.Artist -> dao.getArtistTrackPaths(query.artist)
+    is TrackQuery.Album -> dao.getAlbumTrackPaths(query.album, query.artist)
+  }
 
   override suspend fun getById(id: Long): Track? {
     return withContext(dispatchers.database) {

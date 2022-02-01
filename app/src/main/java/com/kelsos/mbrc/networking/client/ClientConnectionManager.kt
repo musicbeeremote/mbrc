@@ -8,72 +8,80 @@ import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.networking.connections.toSocketAddress
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.sink
 import okio.source
 import timber.log.Timber
 import java.net.Socket
 import java.net.SocketAddress
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors.newSingleThreadExecutor
+
+class SocketThreading(private val dispatchers: AppCoroutineDispatchers) {
+  private var _executor: ExecutorService? = null
+  private var _job: Job? = null
+  private var _scope: CoroutineScope? = null
+
+  val executor: ExecutorService
+    get() = checkNotNull(_executor)
+  val scope: CoroutineScope
+    get() = checkNotNull(_scope)
+
+  fun create() {
+    _executor = newSingleThreadExecutor { Thread(it, "SocketWorker") }
+    _job = SupervisorJob()
+    _scope = CoroutineScope(checkNotNull(_job) + dispatchers.io)
+  }
+
+  fun destroy() {
+    _job?.cancel()
+    _executor?.shutdown()
+  }
+}
 
 class ClientConnectionManager(
   private val activityChecker: SocketActivityChecker,
-  private val messageQueue: MessageQueue,
   private val messageHandler: MessageHandler,
   private val moshi: Moshi,
   private val connectionRepository: ConnectionRepository,
   private val connectionState: ConnectionState,
   private val dispatchers: AppCoroutineDispatchers
 ) : IClientConnectionManager {
-  private var executor = getExecutor()
 
-  private fun getExecutor() = newSingleThreadExecutor { Thread(it, "SocketWorker") }
-  private var job = SupervisorJob()
-  private var scope = CoroutineScope(job + dispatchers.io)
   private var connection: Connection? = null
+  private var threading = SocketThreading(dispatchers)
 
   override fun start() {
     stop()
-
-    job = SupervisorJob()
-    scope = CoroutineScope(job + dispatchers.io)
-
-    scope.launch {
+    threading.create()
+    threading.scope.launch {
       delay(DELAY_MS)
-      realStart()
+      if (connection?.isConnected == true) {
+        Timber.v("connection is already active")
+      } else {
+        realStart()
+      }
     }
   }
 
   private suspend fun realStart() {
-    if (executor.isShutdown) {
-      executor = getExecutor()
-    }
-
-    if (connection?.isConnected == true) {
-      Timber.v("connection is already active")
-      return
-    }
-
-    delay(DELAY_MS)
-
-    val default = connectionRepository.getDefault() ?: return
+    val default = checkNotNull(connectionRepository.getDefault())
     Timber.v("Attempting connection on $default")
     val onConnection: (Boolean) -> Unit = { connected ->
-      scope.launch {
+      threading.scope.launch {
         if (!connected) {
           activityChecker.stop()
           connectionState.connection.emit(ConnectionStatus.Off)
         } else {
           connectionState.connection.emit(ConnectionStatus.On)
-          messageQueue.queue(SocketMessage.player())
+          messageHandler.startHandshake()
         }
       }
     }
@@ -84,24 +92,9 @@ class ClientConnectionManager(
       return
     }
     val connection = Connection(result.getOrThrow(), moshi, dispatchers)
-
-    scope.launch {
-      messageQueue.messages.collect { message ->
-        withContext(dispatchers.network) {
-          val sendResult = connection.send(message)
-          if (sendResult.isFailure) {
-            Timber.e(checkNotNull(sendResult.exceptionOrNull()), "Send failed")
-          }
-        }
-      }
-    }
-    scope.launch {
-      connection.messages.collect {
-        messageHandler.process(it)
-      }
-    }
-
-    executor.execute(ConnectionRunnable(connection, onConnection))
+    messageHandler.handleOutgoing(threading.scope, connection::send)
+    messageHandler.listen(threading.scope, connection.messages)
+    threading.executor.execute(ConnectionRunnable(connection, onConnection))
 
     activityChecker.start()
     activityChecker.setPingTimeoutListener {
@@ -112,10 +105,9 @@ class ClientConnectionManager(
   }
 
   override fun stop() {
-    job.cancel()
+    threading.destroy()
     activityChecker.stop()
     connection?.cleanup()
-    executor.shutdownNow()
   }
 
   private class ConnectionRunnable(

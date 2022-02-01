@@ -8,7 +8,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -18,7 +17,7 @@ class LogHelper {
     try {
       val logDir = File(filesDir, LOGS_DIR)
       logDir.listFiles()?.any { it.extension != "lck" } ?: false
-    } catch (e: Exception) {
+    } catch (e: SecurityException) {
       Timber.e(e, "Log access failed")
       return@withContext false
     }
@@ -35,49 +34,45 @@ class LogHelper {
     }
 
     if (logFiles.isNullOrEmpty()) {
-      throw RuntimeException("No log files found")
+      throw FileNotFoundException("No log files found")
     }
 
-    try {
-      val buffer = ByteArray(size = 1024)
-      val zipDir = File(cacheDir, LOGS_DIR)
-      if (!zipDir.exists()) {
-        zipDir.mkdir()
-      }
-      val zipFile = File(zipDir, LOG_ZIP)
-
-      if (zipFile.exists()) {
-        zipFile.delete()
-      }
-
-      val fos = FileOutputStream(zipFile)
-      val zos = ZipOutputStream(fos)
-      logFiles.forEach {
-        val ze = ZipEntry(it.name)
-        zos.putNextEntry(ze)
-        val fin = FileInputStream(it)
-
-        var len: Int
-        do {
-          len = fin.read(buffer)
-          if (len <= 0) {
-            break
-          }
-          zos.write(buffer, 0, len)
-        } while (true)
-
-        fin.close()
-        zos.closeEntry()
-      }
-
-      zos.close()
-      fos.flush()
-      fos.close()
-
-      zipFile
-    } catch (e: IOException) {
-      throw RuntimeException(e)
+    val buffer = ByteArray(size = 1024)
+    val zipDir = File(cacheDir, LOGS_DIR)
+    if (!zipDir.exists()) {
+      zipDir.mkdir()
     }
+    val zipFile = File(zipDir, LOG_ZIP)
+
+    if (zipFile.exists()) {
+      zipFile.delete()
+    }
+
+    val fos = FileOutputStream(zipFile)
+    val zos = ZipOutputStream(fos)
+    logFiles.forEach {
+      val ze = ZipEntry(it.name)
+      zos.putNextEntry(ze)
+      val fin = FileInputStream(it)
+
+      var len: Int
+      do {
+        len = fin.read(buffer)
+        if (len <= 0) {
+          break
+        }
+        zos.write(buffer, 0, len)
+      } while (true)
+
+      fin.close()
+      zos.closeEntry()
+    }
+
+    zos.close()
+    fos.flush()
+    fos.close()
+
+    zipFile
   }
 
   companion object {

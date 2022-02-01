@@ -9,9 +9,9 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.events.Event
 import com.kelsos.mbrc.events.UserAction
 import com.kelsos.mbrc.features.playlists.Playlist
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.PlaylistUiMessages
 import com.kelsos.mbrc.features.playlists.PlaylistViewModel
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.rules.CoroutineTestRule
@@ -66,7 +66,7 @@ class PlaylistViewModelTest {
   fun `should notify the observer that refresh failed`() = runTest {
     coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
     viewModel.emitter.test {
-      viewModel.reload()
+      viewModel.actions.reload()
       advanceUntilIdle()
       assertThat(awaitItem()).isEqualTo(PlaylistUiMessages.RefreshFailed)
     }
@@ -76,7 +76,7 @@ class PlaylistViewModelTest {
   fun `should notify the observer that refresh succeeded`() = runTest {
     coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
     viewModel.emitter.test {
-      viewModel.reload()
+      viewModel.actions.reload()
       advanceUntilIdle()
       assertThat(awaitItem()).isEqualTo(PlaylistUiMessages.RefreshSuccess)
     }
@@ -86,7 +86,7 @@ class PlaylistViewModelTest {
   fun `should send a play action`() = runTest {
     val userAction = slot<UserAction>()
     coEvery { userActionUseCase.perform(capture(userAction)) } just Runs
-    viewModel.play("""C:\playlists\metal.m3u""")
+    viewModel.actions.play("""C:\playlists\metal.m3u""")
     advanceUntilIdle()
     assertThat(userAction.captured.protocol).isEqualTo(Protocol.PlaylistPlay)
     assertThat(userAction.captured.data).isEqualTo("""C:\playlists\metal.m3u""")

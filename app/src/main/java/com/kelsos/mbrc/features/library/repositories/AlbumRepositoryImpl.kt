@@ -3,6 +3,7 @@ package com.kelsos.mbrc.features.library.repositories
 import androidx.paging.PagingData
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
+import com.kelsos.mbrc.common.data.TestApi
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
@@ -24,14 +25,17 @@ class AlbumRepositoryImpl(
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers
 ) : AlbumRepository {
+  override val test: TestApi<Album> = object : TestApi<Album> {
+    override fun getAll(): List<Album> = dao.all().map { it.toAlbum() }
+    override fun search(term: String): List<Album> = error("unavailable method")
+  }
+
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAlbumsByArtist(artist: String): Flow<PagingData<Album>> =
     paged({ dao.getAlbumsByArtist(artist) }) { it.toAlbum() }
 
   override fun getAll(): Flow<PagingData<Album>> = paged({ dao.getAll() }) { it.toAlbum() }
-
-  override fun all(): List<Album> = dao.all().map { it.toAlbum() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     return@catch withContext(dispatchers.network) {
@@ -73,11 +77,6 @@ class AlbumRepositoryImpl(
 
   override fun search(term: String): Flow<PagingData<Album>> =
     paged({ dao.search(term) }) { it.toAlbum() }
-
-  override fun simpleSearch(term: String): List<Album> = error("unavailable method")
-
-  override suspend fun cacheIsEmpty(): Boolean =
-    withContext(dispatchers.database) { dao.count() == 0L }
 
   override suspend fun updateCovers(updated: List<AlbumCover>) {
     dao.updateCovers(updated)

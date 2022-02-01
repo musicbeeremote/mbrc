@@ -8,6 +8,10 @@ import com.kelsos.mbrc.common.state.AppState
 import com.kelsos.mbrc.common.state.AppStateManager
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.data.Database
+import com.kelsos.mbrc.data.Database.Companion.V1
+import com.kelsos.mbrc.data.Database.Companion.V2
+import com.kelsos.mbrc.data.Database.Companion.V3
+import com.kelsos.mbrc.data.Database.Companion.V4
 import com.kelsos.mbrc.data.DatabaseTransactionRunner
 import com.kelsos.mbrc.data.DatabaseTransactionRunnerImpl
 import com.kelsos.mbrc.data.DeserializationAdapter
@@ -30,6 +34,7 @@ import com.kelsos.mbrc.features.library.repositories.ArtistRepositoryImpl
 import com.kelsos.mbrc.features.library.repositories.CoverCache
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
 import com.kelsos.mbrc.features.library.repositories.GenreRepositoryImpl
+import com.kelsos.mbrc.features.library.repositories.LibraryRepositories
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.library.repositories.TrackRepositoryImpl
 import com.kelsos.mbrc.features.library.sync.LibrarySyncUseCase
@@ -51,9 +56,9 @@ import com.kelsos.mbrc.features.output.OutputSelectionViewModel
 import com.kelsos.mbrc.features.player.PlayerViewModel
 import com.kelsos.mbrc.features.player.RatingDialogViewModel
 import com.kelsos.mbrc.features.player.VolumeDialogViewModel
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.playlists.PlaylistViewModel
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.queue.QueueUseCase
 import com.kelsos.mbrc.features.queue.QueueUseCaseImpl
 import com.kelsos.mbrc.features.queue.QueueWorker
@@ -149,6 +154,8 @@ val appModule = module {
   singleOf(::ArtistRepositoryImpl) { bind<ArtistRepository>() }
   singleOf(::GenreRepositoryImpl) { bind<GenreRepository>() }
 
+  singleOf(::LibraryRepositories)
+
   singleOf(::NowPlayingRepositoryImpl) { bind<NowPlayingRepository>() }
   singleOf(::PlaylistRepositoryImpl) { bind<PlaylistRepository>() }
   singleOf(::CoverCache)
@@ -218,7 +225,7 @@ val appModule = module {
 
   single {
     Room.databaseBuilder(get(), Database::class.java, "cache.db")
-      .fallbackToDestructiveMigrationFrom(1, 2, 3, 4).build()
+      .fallbackToDestructiveMigrationFrom(V1, V2, V3, V4).build()
   }
   single { get<Database>().genreDao() }
   single { get<Database>().artistDao() }

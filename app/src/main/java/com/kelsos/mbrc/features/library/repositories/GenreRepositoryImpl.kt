@@ -3,6 +3,7 @@ package com.kelsos.mbrc.features.library.repositories
 import androidx.paging.PagingData
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
+import com.kelsos.mbrc.common.data.TestApi
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
@@ -22,14 +23,16 @@ class GenreRepositoryImpl(
   private val dao: GenreDao,
   private val dispatchers: AppCoroutineDispatchers
 ) : GenreRepository {
+  override val test: TestApi<Genre> = object : TestApi<Genre> {
+    override fun getAll(): List<Genre> = dao.all().map { it.toGenre() }
+    override fun search(term: String): List<Genre> = error("unavailable method")
+  }
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAll(): Flow<PagingData<Genre>> = paged({ dao.getAll() }) {
     it.toGenre()
   }
-
-  override fun all(): List<Genre> = dao.all().map { it.toGenre() }
 
   override suspend fun getRemote(progress: Progress): Either<Throwable, Unit> = Either.catch {
     withContext(dispatchers.network) {
@@ -69,11 +72,6 @@ class GenreRepositoryImpl(
   override fun search(term: String): Flow<PagingData<Genre>> = paged({ dao.search(term) }) {
     it.toGenre()
   }
-
-  override fun simpleSearch(term: String): List<Genre> = error("unavailable method")
-
-  override suspend fun cacheIsEmpty(): Boolean =
-    withContext(dispatchers.database) { dao.count() == 0L }
 
   override suspend fun getById(id: Long): Genre? {
     return withContext(dispatchers.database) {

@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.data.cacheIsEmpty
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.nowplaying.NowPlayingDto
 import com.kelsos.mbrc.features.nowplaying.data.NowPlayingDao
@@ -80,7 +81,7 @@ class NowPlayingRepositoryTest : KoinTest {
   fun `it should be initially empty`() = runTest {
     assertThat(repository.cacheIsEmpty()).isTrue()
     assertThat(repository.count()).isEqualTo(0)
-    assertThat(repository.all()).isEmpty()
+    assertThat(repository.test.getAll()).isEmpty()
   }
 
   @Test
@@ -95,7 +96,7 @@ class NowPlayingRepositoryTest : KoinTest {
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(1, 5)
-    assertThat(repository.all().map { it.title }.take(6)).containsExactlyElementsIn(
+    assertThat(repository.test.getAll().map { it.title }.take(6)).containsExactlyElementsIn(
       listOf(
         "Song 2",
         "Song 3",
@@ -119,7 +120,7 @@ class NowPlayingRepositoryTest : KoinTest {
     assertThat(repository.count()).isEqualTo(20)
 
     repository.move(6, 1)
-    assertThat(repository.all().map { it.title }.take(7)).containsExactlyElementsIn(
+    assertThat(repository.test.getAll().map { it.title }.take(7)).containsExactlyElementsIn(
       listOf(
         "Song 6",
         "Song 1",
@@ -144,7 +145,7 @@ class NowPlayingRepositoryTest : KoinTest {
     assertThat(repository.count()).isEqualTo(20)
 
     repository.remove(2)
-    assertThat(repository.all().map { it.title }.take(4)).containsExactlyElementsIn(
+    assertThat(repository.test.getAll().map { it.title }.take(4)).containsExactlyElementsIn(
       listOf(
         "Song 1",
         "Song 3",
@@ -165,7 +166,7 @@ class NowPlayingRepositoryTest : KoinTest {
 
     assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
     assertThat(repository.count()).isEqualTo(20)
-    val data = repository.simpleSearch("Song 6")
+    val data = repository.test.search("Song 6")
     assertThat(data).hasSize(1)
     assertThat(data.first()).isEqualTo(
       NowPlaying(
@@ -190,7 +191,7 @@ class NowPlayingRepositoryTest : KoinTest {
     assertThat(repository.count()).isEqualTo(5)
     assertThat(repository.getRemote().result()).isInstanceOf(Unit::class.java)
 
-    val data = repository.all()
+    val data = repository.test.getAll()
     assertThat(data).hasSize(5)
     assertThat(data.map { it.id }.take(5)).containsExactlyElementsIn(
       listOf(

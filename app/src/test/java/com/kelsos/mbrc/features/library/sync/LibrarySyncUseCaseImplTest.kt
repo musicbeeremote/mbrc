@@ -4,12 +4,14 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.right
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.data.cacheIsEmpty
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.CoverCache
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
+import com.kelsos.mbrc.features.library.repositories.LibraryRepositories
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.networking.client.ConnectivityVerifier
 import com.kelsos.mbrc.rules.CoroutineTestRule
@@ -64,6 +66,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     single { mockk<SyncMetrics>() }
     single { mockk<CoverCache>() }
     single { mockk<ConnectivityVerifier>() }
+    single { LibraryRepositories(get(), get(), get(), get()) }
   }
 
   @Before

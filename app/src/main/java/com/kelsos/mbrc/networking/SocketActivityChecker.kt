@@ -28,10 +28,9 @@ class SocketActivityChecker(dispatchers: AppCoroutineDispatchers) {
     deferred = scope.async {
       delay(DELAY_MS)
       Timber.v("Ping was more than %d seconds ago", DELAY_MS)
-      try {
-        listener?.invoke()
-      } catch (e: Exception) {
-        Timber.v(e, "calling the onTimeout method failed")
+      val result = runCatching { listener?.invoke() }
+      if (result.isFailure) {
+        Timber.e(result.exceptionOrNull(), "calling the onTimeout method failed")
       }
     }
   }

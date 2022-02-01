@@ -1,8 +1,11 @@
 package com.kelsos.mbrc.app
 
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
@@ -20,7 +23,7 @@ import com.kelsos.mbrc.features.player.PlayerScreen
 import com.kelsos.mbrc.features.playlists.PlaylistScreen
 import com.kelsos.mbrc.features.radio.RadioScreen
 import com.kelsos.mbrc.features.settings.ConnectionManagerScreen
-import com.kelsos.mbrc.features.settings.SettingsScreen
+import com.kelsos.mbrc.features.settings.composables.SettingsScreen
 import kotlinx.coroutines.launch
 
 sealed class Destination(val route: String) {
@@ -38,6 +41,9 @@ sealed class Destination(val route: String) {
 
   fun matches(route: String): Boolean = route == this.route
 }
+
+val LocalSnackbarHostState =
+  compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
 @Composable
 fun AppNavGraph(
@@ -64,18 +70,20 @@ fun AppNavGraph(
     composable(Destination.NowPlaying.route) {
     }
     composable(Destination.Playlists.route) {
-      PlaylistScreen(
-        openDrawer = openDrawer,
-        navigateToHome = actions.navigateToHome,
-        snackbarHostState = scaffoldState.snackbarHostState
-      )
+      CompositionLocalProvider(LocalSnackbarHostState provides scaffoldState.snackbarHostState) {
+        PlaylistScreen(
+          openDrawer = openDrawer,
+          navigateToHome = actions.navigateToHome
+        )
+      }
     }
     composable(Destination.Radio.route) {
-      RadioScreen(
-        openDrawer = openDrawer,
-        navigateToHome = actions.navigateToHome,
-        snackbarHostState = scaffoldState.snackbarHostState
-      )
+      CompositionLocalProvider(LocalSnackbarHostState provides scaffoldState.snackbarHostState) {
+        RadioScreen(
+          openDrawer = openDrawer,
+          navigateToHome = actions.navigateToHome
+        )
+      }
     }
     composable(Destination.Lyrics.route) {
       LyricsScreen(openDrawer, navigateToHome = actions.navigateToHome)

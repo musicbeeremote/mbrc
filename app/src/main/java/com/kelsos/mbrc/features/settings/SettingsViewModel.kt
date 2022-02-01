@@ -19,7 +19,7 @@ class SettingsActions(
   }
   val setPluginUpdateCheck: (enabled: Boolean) -> Unit = {
     scope.launch(dispatchers.io) {
-      settings.setPluginUpdateCheck(it)
+      settings.updates.setPluginUpdateCheck(it)
     }
   }
   val setCallAction: (callAction: CallAction) -> Unit = {

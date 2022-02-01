@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.data.cacheIsEmpty
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.library.data.GenreDao
 import com.kelsos.mbrc.features.library.dto.GenreDto
@@ -65,7 +66,7 @@ class GenreRepositoryImplTest : KoinTest {
   fun getAndSaveRemote() = runTest {
     assertThat(repository.cacheIsEmpty()).isTrue()
     repository.getRemote()
-    val data = repository.all()
+    val data = repository.test.getAll()
     assertThat(data).hasSize(10)
     assertThat(data[0].genre).isEqualTo("Metal0")
   }

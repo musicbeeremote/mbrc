@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -27,6 +26,7 @@ import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.app.LocalSnackbarHostState
 import com.kelsos.mbrc.common.state.domain.PlayerState
 import com.kelsos.mbrc.common.state.models.PlayingPosition
 import com.kelsos.mbrc.common.ui.EmptyScreen
@@ -35,42 +35,30 @@ import com.kelsos.mbrc.common.ui.SingleLineRow
 import com.kelsos.mbrc.common.ui.pagingDataFlow
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.minicontrol.MiniControl
+import com.kelsos.mbrc.features.minicontrol.MiniControlState
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.theme.RemoteTheme
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun RadioScreen(
   openDrawer: () -> Unit,
-  navigateToHome: () -> Unit,
-  snackbarHostState: SnackbarHostState
+  navigateToHome: () -> Unit
 ) {
   val vm = getViewModel<RadioViewModel>()
   val miniVm = getViewModel<MiniControlViewModel>()
-  val playingTrack by miniVm.playingTrack.collectAsState(initial = PlayingTrack())
-  val position by miniVm.playingPosition.collectAsState(initial = PlayingPosition())
-  val playingState by miniVm.playerStatus.map { it.state }.distinctUntilChanged()
-    .collectAsState(initial = PlayerState.Undefined)
+  val vmState by miniVm.state.collectAsState(initial = MiniControlState())
 
   RadioScreen(
     openDrawer = openDrawer,
     stations = vm.radios.collectAsLazyPagingItems(),
     events = vm.emitter,
-    snackbarHostState = snackbarHostState,
-    play = { path ->
-      vm.play(path)
-    },
-    onRefresh = { vm.reload() }
+    actions = vm.actions
   ) {
     MiniControl(
-      playingTrack = playingTrack,
-      position = position,
-      state = playingState,
+      vmState = vmState,
       perform = { miniVm.perform(it) },
       navigateToHome = navigateToHome
     )
@@ -82,9 +70,7 @@ private fun RadioScreen(
   openDrawer: () -> Unit,
   stations: LazyPagingItems<RadioStation>,
   events: Flow<RadioUiMessages>,
-  snackbarHostState: SnackbarHostState,
-  play: (path: String) -> Unit,
-  onRefresh: () -> Unit,
+  actions: RadioActions,
   content: @Composable () -> Unit,
 ) {
   val messages = mapOf(
@@ -95,6 +81,7 @@ private fun RadioScreen(
     RadioUiMessages.RefreshFailed to stringResource(id = R.string.radio__refresh_failed)
   )
 
+  val snackbarHostState = LocalSnackbarHostState.current
   LaunchedEffect(snackbarHostState) {
     events.collect { message ->
       snackbarHostState.showSnackbar(messages.getValue(message))
@@ -113,17 +100,19 @@ private fun RadioScreen(
         imageVector = Icons.Filled.Radio,
         contentDescription = stringResource(id = R.string.radio__empty_icon_content_description)
       ) {
-        TextButton(onClick = { onRefresh() }) {
+        TextButton(onClick = { actions.reload() }) {
           Text(text = stringResource(id = R.string.press_to_sync))
         }
       }
     } else {
       SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing),
-        onRefresh = { onRefresh() },
+        onRefresh = { actions.reload() },
         modifier = Modifier.weight(1f)
       ) {
-        RadioStationContent(modifier = Modifier.weight(1f), stations = stations, play = play)
+        RadioStationContent(modifier = Modifier.weight(1f), stations = stations, play = {
+          actions.play(it)
+        })
       }
     }
 
@@ -170,19 +159,22 @@ fun PreviewRadioScreen() {
         RadioStation(name = "Radio 1", url = "", id = 1)
       ).collectAsLazyPagingItems(),
       events = emptyFlow(),
-      snackbarHostState = SnackbarHostState(),
-      play = {},
-      onRefresh = {},
+      actions = object : RadioActions {
+        override fun play(path: String) = Unit
+        override fun reload() = Unit
+      },
       {
         MiniControl(
-          playingTrack = PlayingTrack(
-            artist = "Caravan Palace",
-            album = "Panic",
-            title = "Rock It for Me",
-            year = "2008"
+          vmState = MiniControlState(
+            playingTrack = PlayingTrack(
+              artist = "Caravan Palace",
+              album = "Panic",
+              title = "Rock It for Me",
+              year = "2008"
+            ),
+            playingPosition = PlayingPosition(63000, 174000),
+            playingState = PlayerState.Playing,
           ),
-          position = PlayingPosition(63000, 174000),
-          state = PlayerState.Playing,
           perform = {},
           navigateToHome = {}
         )

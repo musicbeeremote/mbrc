@@ -3,6 +3,7 @@ package com.kelsos.mbrc.features.library.presentation.details.viemodels
 import androidx.paging.PagingData
 import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.features.library.data.Track
+import com.kelsos.mbrc.features.library.repositories.PagingTrackQuery
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.work.WorkHandler
@@ -22,7 +23,7 @@ class AlbumTrackViewModel(
   private val albumFlow: MutableSharedFlow<AlbumPayload> = MutableSharedFlow()
   @OptIn(FlowPreview::class)
   val tracks: Flow<PagingData<Track>> = albumFlow.flatMapMerge { (album, artist) ->
-    repository.getAlbumTracks(album = album, artist = artist)
+    repository.getTracks(query = PagingTrackQuery.Album(album = album, artist = artist))
   }
 
   fun load(album: String, artist: String) {

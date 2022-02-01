@@ -54,6 +54,8 @@ import com.kelsos.mbrc.theme.Connected
 import com.kelsos.mbrc.theme.Primary
 import com.kelsos.mbrc.theme.RemoteTheme
 
+private const val SEMI_TRANSPARENT = 0.6f
+
 @Composable
 fun AppDrawer(
   currentRoute: String,
@@ -200,7 +202,7 @@ private fun DrawerButton(
           imageVector = icon,
           contentDescription = null, // decorative
           colorFilter = ColorFilter.tint(textIconColor),
-          alpha = if (isSelected) 1f else 0.6f
+          alpha = if (isSelected) 1f else SEMI_TRANSPARENT
         )
         Spacer(Modifier.width(16.dp))
         Text(

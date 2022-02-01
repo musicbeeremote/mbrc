@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.data.cacheIsEmpty
 import com.kelsos.mbrc.data.Database
 import com.kelsos.mbrc.features.radio.RadioRepository
 import com.kelsos.mbrc.features.radio.RadioRepositoryImpl
@@ -101,7 +102,7 @@ class RadioRepositoryTest : KoinTest {
 
     assertThat(repository.getRemote().isRight()).isTrue()
     assertThat(repository.count()).isEqualTo(2)
-    assertThat(repository.all()).hasSize(2)
+    assertThat(repository.test.getAll()).hasSize(2)
   }
 
   @Test
@@ -114,7 +115,7 @@ class RadioRepositoryTest : KoinTest {
 
     assertThat(repository.getRemote().isRight()).isTrue()
 
-    val data = repository.simpleSearch("Metal")
+    val data = repository.test.search("Metal")
     assertThat(data).hasSize(1)
     assertThat(data).containsExactly(
       RadioStation(

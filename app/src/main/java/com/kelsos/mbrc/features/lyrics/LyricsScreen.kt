@@ -27,10 +27,9 @@ import com.kelsos.mbrc.common.ui.EmptyScreen
 import com.kelsos.mbrc.common.ui.RemoteTopAppBar
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.features.minicontrol.MiniControl
+import com.kelsos.mbrc.features.minicontrol.MiniControlState
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.theme.RemoteTheme
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -39,16 +38,11 @@ fun LyricsScreen(openDrawer: () -> Unit, navigateToHome: () -> Unit) {
   val lyrics by vm.lyrics.collectAsState(initial = emptyList())
 
   val miniVm = getViewModel<MiniControlViewModel>()
-  val playingTrack by miniVm.playingTrack.collectAsState(initial = PlayingTrack())
-  val position by miniVm.playingPosition.collectAsState(initial = PlayingPosition())
-  val playingState by miniVm.playerStatus.map { it.state }.distinctUntilChanged()
-    .collectAsState(initial = PlayerState.Undefined)
+  val vmState by miniVm.state.collectAsState(initial = MiniControlState())
 
   LyricsScreen(openDrawer, lyrics) {
     MiniControl(
-      playingTrack = playingTrack,
-      position = position,
-      state = playingState,
+      vmState = vmState,
       perform = { miniVm.perform(it) },
       navigateToHome = navigateToHome
     )
@@ -101,14 +95,16 @@ fun LyricsScreenPreview() {
   RemoteTheme {
     LyricsScreen(openDrawer = {}, lyrics = listOf("line one", "two", "three", "", "five")) {
       MiniControl(
-        playingTrack = PlayingTrack(
-          artist = "Caravan Palace",
-          album = "Panic",
-          title = "Rock It for Me",
-          year = "2008"
+        vmState = MiniControlState(
+          playingTrack = PlayingTrack(
+            artist = "Caravan Palace",
+            album = "Panic",
+            title = "Rock It for Me",
+            year = "2008"
+          ),
+          playingPosition = PlayingPosition(63000, 174000),
+          playingState = PlayerState.Playing,
         ),
-        position = PlayingPosition(63000, 174000),
-        state = PlayerState.Playing,
         perform = {},
         navigateToHome = {}
       )

@@ -4,7 +4,12 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import arrow.core.Either
-import arrow.core.left
+import arrow.core.flatMap
+import arrow.fx.coroutines.Resource
+import arrow.fx.coroutines.Schedule
+import arrow.fx.coroutines.release
+import arrow.fx.coroutines.resource
+import arrow.fx.coroutines.retry
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
 import com.kelsos.mbrc.networking.connections.toConnection
@@ -12,11 +17,11 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.IOException
 import java.net.DatagramPacket
+import java.net.Inet4Address
 import java.net.InetAddress
 import java.net.MulticastSocket
-import java.util.Locale
+import kotlin.time.Duration.Companion.seconds
 
 class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
@@ -24,112 +29,100 @@ class RemoteServiceDiscoveryImpl(
   private val moshi: Moshi,
   private val dispatchers: AppCoroutineDispatchers
 ) : RemoteServiceDiscovery {
-  private var multicastLock: WifiManager.MulticastLock? = null
-  private var group: InetAddress? = null
-
+  private var group: InetAddress = InetAddress.getByName(DISCOVERY_ADDRESS)
   private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
 
-  override suspend fun discover(): Either<DiscoveryStop, ConnectionSettingsEntity> {
-    if (!isWifiConnected()) {
-      return DiscoveryStop.NoWifi.left()
-    }
-
-    multicastLock = manager.createMulticastLock("locked").apply {
-      setReferenceCounted(true)
-      acquire()
-    }
-
-    Timber.v("Starting remote service discovery")
-
-    val socket = create()
-    val entity = retryIO(times = 4) {
-      withContext(dispatchers.io) {
-        val buffer = ByteArray(size = 512)
-        val discoveryMessage = with(DatagramPacket(buffer, buffer.size)) {
-          socket.receive(this)
-          val message = String(data.copyOfRange(0, length), Charsets.UTF_8)
-          Timber.v(message)
-          adapter.fromJson(message)
-        }
-        if (discoveryMessage == null || discoveryMessage.context != NOTIFY) {
-          throw IOException("unexpected message")
-        }
-        discoveryMessage.toConnection()
+  private val lock: Resource<WifiManager.MulticastLock>
+    get() = resource {
+      Timber.v("Acquiring multicast lock")
+      manager.createMulticastLock("locked").apply {
+        setReferenceCounted(true)
+        acquire()
       }
+    } release {
+      Timber.v("Releasing multicast lock")
+      it.release()
     }
 
-    try {
-      socket.leaveGroup(group)
-      socket.close()
-    } catch (e: IOException) {
-      Timber.v("While cleaning up the discovery ${e.message}")
-    } finally {
-      stopDiscovery()
-    }
+  private val socket: Resource<MulticastSocket>
+    get() = resource {
+      Timber.v("Joining multicast group $group")
+      return@resource Either.catch {
+        MulticastSocket(MULTICAST_PORT).apply {
+          soTimeout = SO_TIMEOUT
+          joinGroup(group)
 
-    if (entity.isLeft()) {
-      return DiscoveryStop.NotFound.left()
-    }
+          val message = adapter.toJson(
+            DiscoveryMessage(
+              context = Protocol.DISCOVERY,
+              address = getWifiAddress() ?: ""
+            )
+          ).toByteArray()
 
-    return entity.mapLeft { DiscoveryStop.Complete }
-  }
-
-  private fun stopDiscovery() {
-    multicastLock?.release()
-    multicastLock = null
-  }
-
-  private fun getWifiAddress(): String {
-    val mInfo = manager.connectionInfo
-    val address = mInfo.ipAddress
-    return String.format(
-      Locale.getDefault(),
-      "%d.%d.%d.%d",
-      address and 0xff,
-      address shr 8 and 0xff,
-      address shr 16 and 0xff,
-      address shr 24 and 0xff
-    )
-  }
-
-  private fun isWifiConnected(): Boolean {
-    val network = connectivityManager.activeNetwork ?: return false
-    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-    return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-  }
-
-  private fun create(): MulticastSocket {
-    try {
-      return MulticastSocket(MULTICAST_PORT).apply {
-        soTimeout = SO_TIMEOUT
-        joinGroup(
-          InetAddress.getByName(DISCOVERY_ADDRESS).also {
-            group = it
-          }
-        )
-
-        val message = with(DiscoveryMessage()) {
-          context = Protocol.DISCOVERY
-          address = getWifiAddress()
-          adapter.toJson(this).toByteArray()
-        }
-
-        send(
-          DatagramPacket(
+          val packet = DatagramPacket(
             message,
             message.size,
             group,
             MULTICAST_PORT
           )
-        )
-      }
-    } catch (e: IOException) {
-      Timber.v(e, "Failed to open multicast socket")
-      throw e
+          send(packet)
+        }
+      }.fold({ throw it }, { it })
+    } release { socket ->
+      Timber.v("Leaving multicast group")
+      socket.leaveGroup(group)
+      socket.close()
     }
+
+  private suspend fun MulticastSocket.listen(): Either<DiscoveryStop, ConnectionSettingsEntity> =
+    Either.catch {
+      Schedule.recurs<DiscoveryMessage>(RETRIES)
+        .and(Schedule.spaced(1.seconds))
+        .and(Schedule.doUntil { it.context == NOTIFY })
+        .zipRight(Schedule.identity())
+        .repeat {
+          Schedule.recurs<Throwable>(RETRIES)
+            .and(Schedule.spaced(1.seconds))
+            .retry { readMessage() }
+        }
+        .toConnection()
+    }.mapLeft { DiscoveryStop.NotFound }
+
+  private fun MulticastSocket.readMessage(): DiscoveryMessage {
+    val buffer = ByteArray(size = 512)
+    val packet = DatagramPacket(buffer, buffer.size)
+    receive(packet)
+    val message = String(packet.data.copyOfRange(0, packet.length), Charsets.UTF_8)
+    Timber.v("received discovery message $message")
+    return checkNotNull(adapter.fromJson(message))
   }
 
+  override suspend fun discover(): Either<DiscoveryStop, ConnectionSettingsEntity> =
+    withContext(dispatchers.io) {
+      isWifiConnected.flatMap {
+        lock.zip(socket).map { it.second } use {
+          it.listen()
+        }
+      }
+    }
+
+  private fun getWifiAddress(): String? {
+    val activeNetwork = checkNotNull(connectivityManager.activeNetwork)
+    val linkProperties = checkNotNull(connectivityManager.getLinkProperties(activeNetwork))
+    return linkProperties.linkAddresses.filter {
+      it.address is Inet4Address
+    }.map { it.address.hostAddress }.first()
+  }
+
+  private val isWifiConnected: Either<DiscoveryStop, Boolean>
+    get() = Either.catch {
+      val activeNetwork = checkNotNull(connectivityManager.activeNetwork)
+      val capabilities = checkNotNull(connectivityManager.getNetworkCapabilities(activeNetwork))
+      return@catch checkNotNull(capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
+    }.mapLeft { DiscoveryStop.NoWifi }
+
   companion object {
+    private const val RETRIES = 4
     private const val NOTIFY = "notify"
     private const val SO_TIMEOUT = 15 * 1000
     private const val MULTICAST_PORT = 45345
