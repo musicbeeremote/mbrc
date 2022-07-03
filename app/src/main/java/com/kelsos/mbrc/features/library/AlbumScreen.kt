@@ -43,7 +43,9 @@ fun AlbumsScreen(
     ""
   }
   DoubleLineRow(
-    lineOne = album?.album, lineTwo = album?.artist, coverUrl = cover,
+    lineOne = album?.album,
+    lineTwo = album?.artist,
+    coverUrl = cover,
     clicked = {
       album?.let { album ->
         action(Queue.Default, album.id)

@@ -20,6 +20,7 @@ class GenreArtistViewModel(
   private val workHandler: WorkHandler
 ) : BaseViewModel<UiMessageBase>() {
   private val genreFlow: MutableSharedFlow<String> = MutableSharedFlow()
+
   @OptIn(FlowPreview::class)
   val artists: Flow<PagingData<Artist>> = genreFlow.flatMapMerge {
     repository.getArtistByGenre(it)

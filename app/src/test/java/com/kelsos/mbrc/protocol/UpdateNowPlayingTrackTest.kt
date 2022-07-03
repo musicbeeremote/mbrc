@@ -53,7 +53,7 @@ class UpdateNowPlayingTrackTest {
           "path" : "C:\\music\\metal\\Gamma Ray\\No world\\order\\Damn the machine.mp3"
         }
       }
-      """.trimMargin()
+    """.trimMargin()
   }
 
   @Before

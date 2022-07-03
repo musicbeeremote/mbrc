@@ -53,7 +53,7 @@ fun RemoteTopAppBar(
   backgroundColor = MaterialTheme.colors.primary,
   contentColor = contentColorFor(
     backgroundColor = MaterialTheme.colors.primary
-  ),
+  )
 ) {
   Row(
     horizontalArrangement = Arrangement.SpaceBetween,
@@ -121,7 +121,7 @@ data class SwipeScreenContent<T : Any>(
   val items: LazyPagingItems<T>,
   val key: (t: T) -> Long,
   val isRefreshing: Boolean,
-  val onRefresh: () -> Unit,
+  val onRefresh: () -> Unit
 )
 
 @Composable
@@ -140,7 +140,7 @@ fun <T : Any> SwipeRefreshScreen(
 }
 
 @Composable
-fun PopupMenu(menuContent: @Composable() (ColumnScope.() -> Unit)) = Column {
+fun PopupMenu(menuContent: @Composable (ColumnScope.() -> Unit)) = Column {
   var showMenu by remember { mutableStateOf(false) }
   IconButton(onClick = { showMenu = !showMenu }, modifier = Modifier.padding(end = 16.dp)) {
     Icon(
@@ -159,7 +159,7 @@ fun PopupMenu(menuContent: @Composable() (ColumnScope.() -> Unit)) = Column {
 fun PopupMenu(
   isVisible: Boolean,
   setVisible: (isVisible: Boolean) -> Unit,
-  menuContent: @Composable() (ColumnScope.() -> Unit)
+  menuContent: @Composable (ColumnScope.() -> Unit)
 ) = Column {
   IconButton(onClick = { setVisible(!isVisible) }) {
     Icon(

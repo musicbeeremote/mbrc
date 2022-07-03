@@ -34,20 +34,20 @@ class UpdateMuteTest {
   @Test
   fun `It should set the mute to false`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(mute = true))
-    update.execute(protocolMessage(status = false))
+    update.execute(createTestProtocolMessage(status = false))
     assertThat(appState.playerStatus.first().mute).isFalse()
   }
 
   @Test
   fun `It should set the mute to true`() = runTest {
-    update.execute(protocolMessage(status = true))
+    update.execute(createTestProtocolMessage(status = true))
     assertThat(appState.playerStatus.first().mute).isTrue()
   }
 
   @Test
   fun `It should set the mute to false if data is a string`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(mute = true))
-    update.execute(protocolMessage(status = false, empty = true))
+    update.execute(createTestProtocolMessage(status = false, empty = true))
     assertThat(appState.playerStatus.first().mute).isFalse()
   }
 }

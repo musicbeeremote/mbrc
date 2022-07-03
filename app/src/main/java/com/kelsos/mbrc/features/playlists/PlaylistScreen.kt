@@ -51,7 +51,7 @@ fun PlaylistScreen(
     playlists = vm.playlists.collectAsLazyPagingItems(),
     events = vm.emitter,
     openDrawer = openDrawer,
-    actions = vm.actions,
+    actions = vm.actions
   ) {
     MiniControl(
       vmState = vmState,
@@ -67,7 +67,7 @@ fun PlaylistScreen(
   events: Flow<PlaylistUiMessages>,
   openDrawer: () -> Unit,
   actions: IPlaylistActions,
-  content: @Composable () -> Unit,
+  content: @Composable () -> Unit
 ) = Surface {
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {}
@@ -153,7 +153,7 @@ fun PlaylistScreenPreview() {
             year = "2008"
           ),
           playingPosition = PlayingPosition(63000, 174000),
-          playingState = PlayerState.Playing,
+          playingState = PlayerState.Playing
         ),
         perform = {},
         navigateToHome = {}

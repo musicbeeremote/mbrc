@@ -1,17 +1,17 @@
 [versions]
 accompanist = "0.23.1"
-activityCompose = "1.4.0"
-androidx-annotation = "1.3.0"
-androidx-appcompat = "1.4.1"
+activityCompose = "1.5.0"
+androidx-annotation = "1.4.0"
+androidx-appcompat = "1.4.2"
 androidx-arch-core-testing = "2.1.0"
-androidx-constraintlayout = "2.1.3"
-androidx-core-ktx = "1.7.0"
+androidx-constraintlayout = "2.1.4"
+androidx-core-ktx = "1.8.0"
 androidx-datastore = "1.0.0"
-androidx-fragment = "1.4.1"
-androidx-lifecycle = "2.4.1"
-androidx-media = "1.5.0"
-androidx-navigation = "2.4.1"
-androidx-paging-compose = "1.0.0-alpha14"
+androidx-fragment = "1.5.0"
+androidx-lifecycle = "2.5.0"
+androidx-media = "1.6.0"
+androidx-navigation = "2.5.0"
+androidx-paging-compose = "1.0.0-alpha15"
 androidx-paging-runtime-ktx = "3.1.1"
 androidx-preference-ktx = "1.2.0"
 androidx-recyclerview = "1.2.1"
@@ -24,37 +24,37 @@ androidx-test-runner = "1.4.0"
 androidx-test-truth = "1.4.0"
 androidx-viewpager2 = "1.0.0"
 androidx-work = "2.7.1"
-arrowKt = "1.0.1"
-cash-app-turbine = "0.7.0"
-coil = "1.4.0"
+arrowKt = "1.1.2"
+cash-app-turbine = "0.8.0"
+coil = "2.1.0"
 compose = "1.1.1"
-composeCompiler = "1.1.1"
+composeCompiler = "1.2.0"
 composeUiTooling = "1.1.1"
-desugar = "1.1.5"
-firebaseBom = "29.2.0"
-google-material = "1.5.0"
-gradlePlugin-agp = "7.3.0-alpha06"
-gradlePlugin-crashlytics = "2.8.1"
-gradlePlugin-detekt = "1.19.0"
+desugar = "1.2.0"
+firebaseBom = "30.2.0"
+google-material = "1.6.1"
+gradlePlugin-agp = "7.4.0-alpha08"
+gradlePlugin-crashlytics = "2.9.1"
+gradlePlugin-detekt = "1.20.0"
 gradlePlugin-firebasePerf = "1.4.1"
-gradlePlugin-gms = "4.3.10"
-gradlePlugin-kotlinter = "3.9.0"
-gradlePlugin-kover = "0.5.0"
-gradlePlugin-ksp = "1.6.10-1.0.4"
-gradlePlugin-protobuf = "0.8.18"
-gradlePlugin-versionCatalog = "0.3.1"
+gradlePlugin-gms = "4.3.13"
+gradlePlugin-kotlinter = "3.11.1"
+gradlePlugin-kover = "0.5.1"
+gradlePlugin-ksp = "1.7.0-1.0.6"
+gradlePlugin-protobuf = "0.8.19"
+gradlePlugin-versionCatalog = "0.5.1"
 gradlePlugin-versionsBenManes = "0.42.0"
-koin = "3.2.0-beta-1"
-kotlin = "1.6.10"
-kotlinCoroutines = "1.6.0"
-lifecycleViewmodelCompose = "2.4.1"
-mockk = "1.12.3"
-navigationCompose = "2.4.1"
-protobuf = "3.19.4"
-robolectric = "4.7.3"
-squareup-leakcanary = "2.8.1"
+koin = "3.2.0"
+kotlin = "1.7.0"
+kotlinCoroutines = "1.6.3"
+lifecycleViewmodelCompose = "2.5.0"
+mockk = "1.12.4"
+navigationCompose = "2.5.0"
+protobuf = "3.21.2"
+robolectric = "4.8.1"
+squareup-leakcanary = "2.9.1"
 squareup-moshi = "1.13.0"
-squareup-okio = "3.0.0"
+squareup-okio = "3.2.0"
 timber = "5.0.1"
 
 [libraries]
@@ -135,22 +135,70 @@ squareup-okio = { module = "com.squareup.okio:okio", version.ref = "squareup-oki
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [bundles]
-androidx-compose = ["androidx-compose-compiler", "androidx-compose-foundation", "androidx-compose-material", "androidx-compose-materialIconsExtended", "androidx-compose-runtimeLivedata", "androidx-compose-ui", "androidx-compose-uiTooling", "androidx-paging-compose"]
-androidx-lifecycle = ["androidx-lifecycle-common", "androidx-lifecycle-lifecycleViewmodelCompose", "androidx-lifecycle-runtime-ktx", "androidx-lifecycle-viewmodel-ktx"]
-androidx-navigation = ["androidx-navigation-fragment-ktx", "androidx-navigation-navigationCompose", "androidx-navigation-ui-ktx"]
-androidx-room = ["androidx-room-ktx", "androidx-room-paging", "androidx-room-runtime"]
-androidx-test-espresso = ["androidx-test-espresso-contrib", "androidx-test-espresso-core", "androidx-test-espresso-intents"]
-coil = ["coilKt-coil", "coilKt-coilCompose"]
-coroutines = ["kotlin-coroutines-android", "kotlin-coroutines-core"]
-google-accompanist = ["google-accompanistFlowLayout", "google-accompanistPager", "google-accompanistPagerIndicators", "google-accompanistPlaceholder", "google-accompanistSwipeRefresh", "google-accompanistSystemUIController"]
-google-firebase = ["google-firebase-analytics-ktx", "google-firebase-crashlytics-ktx", "google-firebase-perf-ktx"]
-koin = ["koin-android", "koin-compose", "koin-workmanager"]
+androidx-compose = [
+    "androidx-compose-compiler",
+    "androidx-compose-foundation",
+    "androidx-compose-material",
+    "androidx-compose-materialIconsExtended",
+    "androidx-compose-runtimeLivedata",
+    "androidx-compose-ui",
+    "androidx-compose-uiTooling",
+    "androidx-paging-compose",
+]
+androidx-lifecycle = [
+    "androidx-lifecycle-common",
+    "androidx-lifecycle-lifecycleViewmodelCompose",
+    "androidx-lifecycle-runtime-ktx",
+    "androidx-lifecycle-viewmodel-ktx",
+]
+androidx-navigation = [
+    "androidx-navigation-fragment-ktx",
+    "androidx-navigation-navigationCompose",
+    "androidx-navigation-ui-ktx",
+]
+androidx-room = [
+    "androidx-room-ktx",
+    "androidx-room-paging",
+    "androidx-room-runtime",
+]
+androidx-test-espresso = [
+    "androidx-test-espresso-contrib",
+    "androidx-test-espresso-core",
+    "androidx-test-espresso-intents",
+]
+coil = [
+    "coilKt-coil",
+    "coilKt-coilCompose",
+]
+coroutines = [
+    "kotlin-coroutines-android",
+    "kotlin-coroutines-core",
+]
+google-accompanist = [
+    "google-accompanistFlowLayout",
+    "google-accompanistPager",
+    "google-accompanistPagerIndicators",
+    "google-accompanistPlaceholder",
+    "google-accompanistSwipeRefresh",
+    "google-accompanistSystemUIController",
+]
+google-firebase = [
+    "google-firebase-analytics-ktx",
+    "google-firebase-crashlytics-ktx",
+    "google-firebase-perf-ktx",
+]
+koin = [
+    "koin-android",
+    "koin-compose",
+    "koin-workmanager",
+]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradlePlugin-agp" }
 android-library = { id = "com.android.library", version.ref = "gradlePlugin-agp" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradlePlugin-crashlytics" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "gradlePlugin-detekt" }
+detektFormatting = { id = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "gradlePlugin-detekt" }
 firebasePerf = { id = "com.google.firebase.firebase-perf", version.ref = "gradlePlugin-firebasePerf" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "gradlePlugin-gms" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

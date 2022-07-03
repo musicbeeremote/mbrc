@@ -103,7 +103,7 @@ fun LyricsScreenPreview() {
             year = "2008"
           ),
           playingPosition = PlayingPosition(63000, 174000),
-          playingState = PlayerState.Playing,
+          playingState = PlayerState.Playing
         ),
         perform = {},
         navigateToHome = {}

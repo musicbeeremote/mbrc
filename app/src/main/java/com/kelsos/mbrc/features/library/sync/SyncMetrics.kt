@@ -27,7 +27,7 @@ import com.kelsos.mbrc.metrics.SyncedData
 fun SyncMetricsDialog(metrics: SyncedData, showDialog: Boolean, dismiss: () -> Unit) {
   if (showDialog) {
     Dialog(
-      onDismissRequest = { dismiss() },
+      onDismissRequest = { dismiss() }
     ) {
       Surface(
         modifier = Modifier.clip(RoundedCornerShape(8.dp))

@@ -34,20 +34,20 @@ class UpdateLastFmTest {
   @Test
   fun `It should change the scrobbling status to false on incoming message`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(scrobbling = true))
-    updateLastFm.execute(protocolMessage(status = false))
+    updateLastFm.execute(createTestProtocolMessage(status = false))
     assertThat(appState.playerStatus.first().scrobbling).isFalse()
   }
 
   @Test
   fun `It should change the scrobbling status to true on incoming message`() = runTest {
-    updateLastFm.execute(protocolMessage(status = true))
+    updateLastFm.execute(createTestProtocolMessage(status = true))
     assertThat(appState.playerStatus.first().scrobbling).isTrue()
   }
 
   @Test
   fun `It should change the scrobbling status to false for invalid payload`() = runTest {
     appState.playerStatus.emit(PlayerStatusModel(scrobbling = true))
-    updateLastFm.execute(protocolMessage(status = false, empty = true))
+    updateLastFm.execute(createTestProtocolMessage(status = false, empty = true))
     assertThat(appState.playerStatus.first().scrobbling).isFalse()
   }
 }

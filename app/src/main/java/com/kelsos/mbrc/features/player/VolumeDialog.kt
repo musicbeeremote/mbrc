@@ -35,7 +35,7 @@ fun VolumeDialog(showDialog: Boolean, dismiss: () -> Unit) {
   val muted by vm.muted.collectAsState(initial = false)
   if (showDialog) {
     Dialog(
-      onDismissRequest = { dismiss() },
+      onDismissRequest = { dismiss() }
     ) {
       Surface(
         modifier = Modifier

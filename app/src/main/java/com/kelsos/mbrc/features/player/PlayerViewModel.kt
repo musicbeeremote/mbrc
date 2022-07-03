@@ -30,13 +30,13 @@ class PlayerViewModel(
     appState.playingTrack,
     appState.playerStatus,
     appState.playingTrackRating,
-    appState.playingPosition,
+    appState.playingPosition
   ) { playingTrack, playerStatus, trackRating, playingPosition ->
     PlayerStateModel(
       playingTrack = playingTrack,
       playerStatus = playerStatus,
       trackRating = trackRating,
-      playingPosition = playingPosition,
+      playingPosition = playingPosition
     )
   }
 

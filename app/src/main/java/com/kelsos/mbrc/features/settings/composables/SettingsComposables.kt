@@ -130,7 +130,7 @@ private fun HeaderPreview() {
 @Composable
 fun HtmlDialog(title: String, url: String, dismiss: () -> Unit) =
   Dialog(
-    onDismissRequest = dismiss,
+    onDismissRequest = dismiss
   ) {
     Column(
       modifier = Modifier

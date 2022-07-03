@@ -199,7 +199,7 @@ class NowPlayingRepositoryTest : KoinTest {
         2L,
         3L,
         4L,
-        5L,
+        5L
       )
     )
     advanceUntilIdle()

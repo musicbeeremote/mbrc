@@ -124,7 +124,6 @@ class SyncWorker(
     fun createWorkRequest(
       auto: Boolean = false
     ): OneTimeWorkRequest {
-
       Timber.i("Scheduling library sync")
       val input = Data.Builder()
         .putBoolean(AUTO, auto)

@@ -9,6 +9,7 @@ typealias Progress = suspend (current: Int, total: Int) -> Unit
 interface TestApi<T : Any> {
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun getAll(): List<T>
+
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun search(term: String): List<T>
 }
@@ -19,6 +20,7 @@ interface Repository<T : Any> {
   fun search(term: String): Flow<PagingData<T>>
   suspend fun count(): Long
   suspend fun getById(id: Long): T?
+
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   val test: TestApi<T>
 }

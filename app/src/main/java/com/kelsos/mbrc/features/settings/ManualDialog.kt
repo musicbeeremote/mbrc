@@ -40,7 +40,7 @@ fun ManualDialog(
   }
 
   Dialog(
-    onDismissRequest = { dismiss() },
+    onDismissRequest = { dismiss() }
   ) {
     Surface(
       modifier = Modifier

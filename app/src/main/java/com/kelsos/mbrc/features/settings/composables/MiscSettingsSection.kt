@@ -29,7 +29,7 @@ import com.kelsos.mbrc.features.settings.SettingsState
 @Composable
 fun MiscSettingsSection(
   state: SettingsState,
-  actions: SettingsActions,
+  actions: SettingsActions
 ) {
   Category(text = stringResource(id = R.string.settings_miscellaneous)) {
     CallActionSetting(state.callAction) { actions.setCallAction(it) }
@@ -95,7 +95,7 @@ private fun LibraryActionDialog(
   SettingsDialog(
     text = DialogText(
       title = stringResource(id = R.string.settings_misc_library_default_title),
-      summary = stringResource(id = R.string.settings_misc_library_default_description),
+      summary = stringResource(id = R.string.settings_misc_library_default_description)
     ),
     options = options,
     selection = libraryAction,
@@ -208,7 +208,7 @@ private fun CallActionDialog(
   SettingsDialog(
     text = DialogText(
       title = stringResource(id = R.string.settings_misc_call_action_title),
-      summary = stringResource(id = R.string.settings_misc_call_action_description),
+      summary = stringResource(id = R.string.settings_misc_call_action_description)
     ),
     options = options,
     selection = callAction,

@@ -91,7 +91,7 @@ fun PlayerScreenAppBar(
   state: PlayerStateModel,
   openDrawer: () -> Unit,
   perform: (action: PlayerAction) -> Unit,
-  share: (track: PlayingTrack) -> Unit,
+  share: (track: PlayingTrack) -> Unit
 ) {
   RemoteTopAppBar(openDrawer = openDrawer) {
     Row {

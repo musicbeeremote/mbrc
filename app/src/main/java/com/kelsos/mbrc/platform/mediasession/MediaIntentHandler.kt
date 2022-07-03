@@ -16,7 +16,12 @@ class MediaIntentHandler(
 
     if (action == Intent.ACTION_MEDIA_BUTTON) {
       val extras = mediaIntent.extras
-      return extras?.get(Intent.EXTRA_KEY_EVENT) as KeyEvent?
+      return if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+        @Suppress("DEPRECATION")
+        extras?.getParcelable(Intent.EXTRA_KEY_EVENT) as KeyEvent?
+      } else {
+        extras?.getParcelable(Intent.EXTRA_KEY_EVENT, KeyEvent::class.java)
+      }
     }
     return null
   }

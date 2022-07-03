@@ -47,7 +47,7 @@ class UpdatePlayerStatusTest {
           "playervolume":60
         }
       }
-      """.trimMargin()
+    """.trimMargin()
   }
 
   @Before

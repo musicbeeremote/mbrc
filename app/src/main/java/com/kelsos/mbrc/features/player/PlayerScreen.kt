@@ -90,7 +90,7 @@ fun PlayerScreenLandscape(
         modifier = Modifier
           .padding(16.dp)
           .fillMaxSize(),
-        coverUrl = state.playingTrack.coverUrl,
+        coverUrl = state.playingTrack.coverUrl
       )
     }
   }
@@ -109,7 +109,7 @@ fun PlayerScreenPortrait(
       modifier = Modifier
         .padding(16.dp)
         .fillMaxSize(),
-      coverUrl = state.playingTrack.coverUrl,
+      coverUrl = state.playingTrack.coverUrl
     )
     ProgressControl(state.playingPosition, perform)
     Spacer(modifier = Modifier.weight(2f))
@@ -213,7 +213,7 @@ fun PlayerScreenPortaitPreview() {
           shuffle = ShuffleMode.AutoDJ,
           volume = 10
         ),
-        trackRating = TrackRating(lfmRating = LfmRating.Loved, rating = 4.5f),
+        trackRating = TrackRating(lfmRating = LfmRating.Loved, rating = 4.5f)
       ),
       perform = {},
       share = {},
@@ -243,7 +243,7 @@ fun PlayerScreenLandscapePreview() {
           shuffle = ShuffleMode.AutoDJ,
           volume = 10
         ),
-        trackRating = TrackRating(lfmRating = LfmRating.Loved, rating = 4.5f),
+        trackRating = TrackRating(lfmRating = LfmRating.Loved, rating = 4.5f)
       ),
       perform = {},
       share = {},

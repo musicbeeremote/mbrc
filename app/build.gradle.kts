@@ -85,7 +85,7 @@ val version = "1.5.1"
 val code = 124
 
 android {
-  compileSdk = 31
+  compileSdk = 33
 
   buildFeatures {
     viewBinding = true
@@ -93,9 +93,10 @@ android {
   }
 
   defaultConfig {
+    namespace = "com.kelsos.mbrc"
     applicationId = "com.kelsos.mbrc"
-    minSdk = 23
-    targetSdk = 31
+    minSdk = 24
+    targetSdk = 33
     versionCode = code
     versionName = version
     buildConfigField("String", "GIT_SHA", "\"${gitHash()}\"")
@@ -207,17 +208,6 @@ android {
         val name = "$applicationId-$flavorName-${variant.versionCode}-v${variant.versionName}.apk"
         output.outputFileName = name
       }
-  }
-}
-
-detekt {
-  input = files("src/main/java", "src/main/kotlin")
-  config = rootProject.files("config/detekt/detekt.yml")
-  buildUponDefaultConfig = true
-  reports {
-    sarif {
-      required
-    }
   }
 }
 

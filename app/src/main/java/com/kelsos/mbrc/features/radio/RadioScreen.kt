@@ -71,7 +71,7 @@ private fun RadioScreen(
   stations: LazyPagingItems<RadioStation>,
   events: Flow<RadioUiMessages>,
   actions: RadioActions,
-  content: @Composable () -> Unit,
+  content: @Composable () -> Unit
 ) {
   val messages = mapOf(
     RadioUiMessages.QueueFailed to stringResource(id = R.string.radio__queue_failed),
@@ -173,7 +173,7 @@ fun PreviewRadioScreen() {
               year = "2008"
             ),
             playingPosition = PlayingPosition(63000, 174000),
-            playingState = PlayerState.Playing,
+            playingState = PlayerState.Playing
           ),
           perform = {},
           navigateToHome = {}

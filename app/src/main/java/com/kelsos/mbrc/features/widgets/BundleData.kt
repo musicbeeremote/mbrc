@@ -19,6 +19,11 @@ class BundleData(private val bundle: Bundle) {
   }
 
   fun playingTrack(): PlayingTrack {
-    return bundle.getParcelable(WidgetUpdater.TRACK_INFO) ?: PlayingTrack()
+    return if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+      @Suppress("DEPRECATION")
+      bundle.getParcelable(WidgetUpdater.TRACK_INFO) as PlayingTrack?
+    } else {
+      bundle.getParcelable(WidgetUpdater.TRACK_INFO, PlayingTrack::class.java)
+    } ?: PlayingTrack()
   }
 }

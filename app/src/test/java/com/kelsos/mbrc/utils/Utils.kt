@@ -16,9 +16,9 @@ suspend inline fun <T : Any> PagingData<T>.collectDataForTest(testScope: TestSco
   val items = mutableListOf<T>()
   val latch = CountDownLatch(1)
   val dcb = object : DifferCallback {
-    override fun onChanged(position: Int, count: Int) {}
-    override fun onInserted(position: Int, count: Int) {}
-    override fun onRemoved(position: Int, count: Int) {}
+    override fun onChanged(position: Int, count: Int) = Unit
+    override fun onInserted(position: Int, count: Int) = Unit
+    override fun onRemoved(position: Int, count: Int) = Unit
   }
   val dif = object : PagingDataDiffer<T>(dcb, mainTestDispatcher) {
     override fun postEvents(): Boolean = true

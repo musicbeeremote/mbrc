@@ -122,7 +122,8 @@ private fun FeedbackScreen(onSend: SendFeedback, coroutineScope: CoroutineScope)
       modifier = Modifier
         .padding(vertical = 16.dp)
         .weight(1f),
-      feedback = feedback, onValueChange = { feedback = it }
+      feedback = feedback,
+      onValueChange = { feedback = it }
     )
     IncludeLogs(includeLogs) { includeLogs = it }
     IncludeDeviceInfo(includeDevice) { includeDevice = it }

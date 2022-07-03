@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.features.library.sync
 
 import arrow.core.Either
-import arrow.core.computations.either
+import arrow.core.continuations.either
 import arrow.core.left
 import arrow.core.right
 import com.kelsos.mbrc.common.data.Repository
@@ -102,10 +102,11 @@ class LibrarySyncUseCaseImpl(
     )
   }
 
-  private suspend fun checkIfShouldSync(auto: Boolean): Either<SyncResult, Boolean> = if (auto)
+  private suspend fun checkIfShouldSync(auto: Boolean): Either<SyncResult, Boolean> = if (auto) {
     if (isEmpty()) true.right() else SyncResult.NOOP.left()
-  else
+  } else {
     true.right()
+  }
 
   private suspend fun isEmpty(): Boolean {
     return genreRepository.cacheIsEmpty() &&

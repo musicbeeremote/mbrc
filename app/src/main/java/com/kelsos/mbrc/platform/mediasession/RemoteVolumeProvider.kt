@@ -10,14 +10,13 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class RemoteVolumeProvider(
   appState: AppState,
   dispatchers: AppCoroutineDispatchers,
-  private val userActionUseCase: UserActionUseCase,
+  private val userActionUseCase: UserActionUseCase
 ) : VolumeProviderCompat(VOLUME_CONTROL_ABSOLUTE, MAX_VOLUME, MIN_VOLUME) {
 
   private val job = SupervisorJob()

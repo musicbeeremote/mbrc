@@ -21,7 +21,7 @@ class LibraryActions(
   private val syncWorkHandler: SyncWorkHandler,
   private val queueWorkHandler: WorkHandler,
   private val scope: CoroutineScope,
-  private val dispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppCoroutineDispatchers
 ) {
   fun refresh() {
     scope.launch(dispatchers.network) {
@@ -42,7 +42,7 @@ class LibraryActions(
 
 data class LibraryState(
   val albumArtistOnly: Boolean = false,
-  val syncState: SyncedData = SyncedData.empty(),
+  val syncState: SyncedData = SyncedData.empty()
 )
 
 class LibraryViewModel(

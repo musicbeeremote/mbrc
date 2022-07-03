@@ -22,7 +22,7 @@ class MessageHandlerImpl(
   private val uiMessages: UiMessages,
   private val connectionState: ConnectionState,
   private val clientInformationStore: ClientInformationStore,
-  private val dispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppCoroutineDispatchers
 ) : MessageHandler {
 
   private var commands: MutableMap<Protocol, ProtocolAction> = HashMap()
@@ -44,7 +44,6 @@ class MessageHandlerImpl(
     message: SocketMessage,
     context: Protocol
   ) {
-
     val data = message.data
 
     if (handshake(context, data)) {

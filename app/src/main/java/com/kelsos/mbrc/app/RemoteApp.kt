@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 fun RemoteApp(
   viewModel: NavigationViewModel = viewModel(),
   sendFeedback: SendFeedback,
-  share: (track: PlayingTrack) -> Unit = {},
+  share: (track: PlayingTrack) -> Unit = {}
 ) {
   RemoteTheme {
     val navController = rememberNavController()

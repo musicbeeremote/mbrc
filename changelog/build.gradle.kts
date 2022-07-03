@@ -6,11 +6,12 @@ plugins {
 }
 
 android {
-  compileSdk = 30
+  namespace = "com.kelsos.mbrc.changelog"
+  compileSdk = 33
 
   defaultConfig {
     minSdk = 23
-    targetSdk = 30
+    targetSdk = 33
 
     consumerProguardFiles("consumer-rules.pro")
   }

@@ -4,5 +4,5 @@ data class LibraryRepositories(
   val genreRepository: GenreRepository,
   val artistRepository: ArtistRepository,
   val albumRepository: AlbumRepository,
-  val trackRepository: TrackRepository,
+  val trackRepository: TrackRepository
 )

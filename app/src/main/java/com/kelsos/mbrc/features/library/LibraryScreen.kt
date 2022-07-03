@@ -148,7 +148,7 @@ fun SyncButton(sync: () -> Unit) {
 @Composable
 fun LibraryScreenOverflow(
   state: Flow<LibraryState>,
-  setAlbumArtistOnly: (enabled: Boolean) -> Unit,
+  setAlbumArtistOnly: (enabled: Boolean) -> Unit
 ) {
   var showMenu by remember { mutableStateOf(false) }
   var showMetricsDialog by remember { mutableStateOf(false) }
@@ -174,7 +174,7 @@ fun LibraryScreenOverflow(
       showMetricsDialog = true
     }) {
       Text(
-        text = stringResource(id = R.string.library_menu__sync_state),
+        text = stringResource(id = R.string.library_menu__sync_state)
       )
     }
   }

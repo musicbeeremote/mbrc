@@ -42,7 +42,7 @@ class UpdateLyricsTest {
           "lyrics": "$lyrics"
         }
       }
-      """.trimMargin()
+    """.trimMargin()
   }
 
   @Before

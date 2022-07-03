@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 private val DarkColors = darkColors(
   primary = Primary,
   primaryVariant = PrimaryDark,
-  secondary = Accent,
+  secondary = Accent
 )
 
 @Composable

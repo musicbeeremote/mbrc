@@ -24,7 +24,7 @@ class NowPlayingViewModel(
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,
   private val userActionUseCase: UserActionUseCase,
-  appState: AppState,
+  appState: AppState
 ) : BaseViewModel<NowPlayingUiMessages>() {
 
   val list: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)

@@ -1,4 +1,5 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
   alias(libs.plugins.versionsBenManes)
@@ -7,9 +8,33 @@ plugins {
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.android.library) apply false
   alias(libs.plugins.kotlinAndroid) apply false
+  alias(libs.plugins.detekt)
 }
 
 allprojects {
+  apply {
+    plugin("io.gitlab.arturbosch.detekt")
+  }
+
+  detekt {
+    source = objects.fileCollection().from(
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_SRC_DIR_JAVA,
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_TEST_SRC_DIR_JAVA,
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_SRC_DIR_KOTLIN,
+      io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_TEST_SRC_DIR_KOTLIN,
+    )
+    config = rootProject.files("config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+  }
+
+  tasks.withType<Detekt>().configureEach {
+    reports {
+      xml.required.set(true)
+      html.required.set(true)
+      sarif.required.set(true)
+    }
+  }
+
   buildscript {
     repositories {
       google()
@@ -21,6 +46,11 @@ allprojects {
   repositories {
     google()
     mavenCentral()
+  }
+
+  dependencies {
+    val formatting = rootProject.libs.plugins.detektFormatting.get()
+    detektPlugins("${formatting.pluginId}:${formatting.version}")
   }
 }
 
@@ -103,4 +133,13 @@ val dummyGoogleServices: Configuration by configurations.creating {
 
 dependencies {
   dummyGoogleServices(files(rootProject.file("config/dummy-google-services.json")))
+}
+
+versionCatalogUpdate {
+ keep {
+   plugins.set(mutableListOf(
+     libs.plugins.kotlinParcelize,
+     libs.plugins.detektFormatting
+   ))
+ }
 }

@@ -21,6 +21,7 @@ class AlbumTrackViewModel(
   private val workHandler: WorkHandler
 ) : BaseViewModel<UiMessageBase>() {
   private val albumFlow: MutableSharedFlow<AlbumPayload> = MutableSharedFlow()
+
   @OptIn(FlowPreview::class)
   val tracks: Flow<PagingData<Track>> = albumFlow.flatMapMerge { (album, artist) ->
     repository.getTracks(query = PagingTrackQuery.Album(album = album, artist = artist))

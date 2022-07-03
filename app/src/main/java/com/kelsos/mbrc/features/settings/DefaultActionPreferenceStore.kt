@@ -5,7 +5,7 @@ import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.first
 
 class DefaultActionPreferenceStore(
-  context: Context,
+  context: Context
 ) {
 
   private val dataStore = context.dataStore

@@ -29,7 +29,7 @@ fun ArtistsScreen(
   items = artists,
   text = stringResource(id = R.string.library_artists_list_empty),
   key = { it.id },
-  sync = sync,
+  sync = sync
 ) { artist ->
   SingleLineRow(
     text = artist?.artist,

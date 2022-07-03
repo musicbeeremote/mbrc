@@ -7,8 +7,8 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.fx.coroutines.Resource
 import arrow.fx.coroutines.Schedule
+import arrow.fx.coroutines.continuations.resource
 import arrow.fx.coroutines.release
-import arrow.fx.coroutines.resource
 import arrow.fx.coroutines.retry
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.networking.connections.ConnectionSettingsEntity
@@ -33,7 +33,7 @@ class RemoteServiceDiscoveryImpl(
   private val adapter by lazy { moshi.adapter(DiscoveryMessage::class.java) }
 
   private val lock: Resource<WifiManager.MulticastLock>
-    get() = resource {
+    get() = resource<WifiManager.MulticastLock> {
       Timber.v("Acquiring multicast lock")
       manager.createMulticastLock("locked").apply {
         setReferenceCounted(true)

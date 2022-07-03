@@ -60,9 +60,10 @@ class QueueUseCaseImpl(
     {
       Timber.e(it)
       QueueResult(false, 1)
-    }, {
-    QueueResult(it, 1)
-  }
+    },
+    {
+      QueueResult(it, 1)
+    }
   )
 
   private suspend fun tracksForGenre(id: Long): List<String> =

@@ -20,7 +20,7 @@ class SyncStatProvider(
   private val artistRepository: ArtistRepository,
   private val albumRepository: AlbumRepository,
   private val trackRepository: TrackRepository,
-  private val playlistRepository: PlaylistRepository,
+  private val playlistRepository: PlaylistRepository
 ) {
   private val _stats: MutableStateFlow<SyncedData> = MutableStateFlow(SyncedData.empty())
   private val job = Job()
