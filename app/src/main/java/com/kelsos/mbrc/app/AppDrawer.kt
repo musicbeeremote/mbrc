@@ -48,6 +48,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.features.help.HelpDestination
+import com.kelsos.mbrc.features.library.LibraryDestination
+import com.kelsos.mbrc.features.lyrics.LyricsDestination
+import com.kelsos.mbrc.features.nowplaying.NowPlayingDestination
+import com.kelsos.mbrc.features.output.OutputDestination
+import com.kelsos.mbrc.features.player.PlayerDestination
+import com.kelsos.mbrc.features.playlists.PlaylistDestination
+import com.kelsos.mbrc.features.radio.RadioDestination
+import com.kelsos.mbrc.features.settings.SettingsDestination
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.theme.Accent
 import com.kelsos.mbrc.theme.Connected
@@ -59,7 +68,7 @@ private const val SEMI_TRANSPARENT = 0.6f
 @Composable
 fun AppDrawer(
   currentRoute: String,
-  navigateTo: (destination: Destination) -> Unit,
+  navigateTo: (destination: String) -> Unit,
   connection: ConnectionStatus,
   onConnect: () -> Unit,
   exitApp: () -> Unit
@@ -79,7 +88,7 @@ fun AppDrawer(
 @Composable
 private fun LowerDrawer(
   currentRoute: String,
-  navigateTo: (destination: Destination) -> Unit,
+  navigateTo: (destination: String) -> Unit,
   exitApp: () -> Unit
 ) {
   Text(
@@ -92,22 +101,22 @@ private fun LowerDrawer(
   DrawerButton(
     icon = Icons.Filled.Speaker,
     label = stringResource(id = R.string.nav_output),
-    isSelected = Destination.OutputSelection.matches(currentRoute),
-    action = { navigateTo(Destination.OutputSelection) }
+    isSelected = currentRoute == OutputDestination.route,
+    action = { navigateTo(OutputDestination.route) }
   )
 
   DrawerButton(
     icon = Icons.Filled.Settings,
     label = stringResource(id = R.string.nav_settings),
-    isSelected = Destination.Settings.matches(currentRoute),
-    action = { navigateTo(Destination.Settings) }
+    isSelected = currentRoute == SettingsDestination.destination,
+    action = { navigateTo(SettingsDestination.route) }
   )
 
   DrawerButton(
     icon = Icons.Filled.Help,
     label = stringResource(id = R.string.nav_help),
-    isSelected = Destination.Help.matches(currentRoute),
-    action = { navigateTo(Destination.Help) }
+    isSelected = currentRoute == HelpDestination.route,
+    action = { navigateTo(HelpDestination.route) }
   )
 
   DrawerButton(
@@ -121,43 +130,43 @@ private fun LowerDrawer(
 @Composable
 private fun UpperDrawer(
   currentRoute: String,
-  navigateTo: (destination: Destination) -> Unit
+  navigateTo: (destination: String) -> Unit
 ) {
   DrawerButton(
     icon = Icons.Filled.Home,
     label = stringResource(id = R.string.nav_home),
-    isSelected = Destination.Home.matches(currentRoute),
-    action = { navigateTo(Destination.Home) }
+    isSelected = currentRoute == PlayerDestination.route,
+    action = { navigateTo(PlayerDestination.route) }
   )
   DrawerButton(
     icon = Icons.Filled.LibraryMusic,
     label = stringResource(id = R.string.nav_library),
-    isSelected = Destination.Library.matches(currentRoute),
-    action = { navigateTo(Destination.Library) }
+    isSelected = currentRoute == LibraryDestination.destination,
+    action = { navigateTo(LibraryDestination.destination) }
   )
   DrawerButton(
     icon = Icons.Filled.ViewList,
     label = stringResource(id = R.string.nav_now_playing),
-    isSelected = Destination.NowPlaying.matches(currentRoute),
-    action = { navigateTo(Destination.NowPlaying) }
+    isSelected = currentRoute == NowPlayingDestination.route,
+    action = { navigateTo(NowPlayingDestination.route) }
   )
   DrawerButton(
     icon = Icons.Filled.QueueMusic,
     label = stringResource(id = R.string.nav_playlists),
-    isSelected = Destination.Playlists.matches(currentRoute),
-    action = { navigateTo(Destination.Playlists) }
+    isSelected = currentRoute == PlaylistDestination.route,
+    action = { navigateTo(PlaylistDestination.route) }
   )
   DrawerButton(
     icon = Icons.Filled.Radio,
     label = stringResource(id = R.string.nav_radio),
-    isSelected = Destination.Radio.matches(currentRoute),
-    action = { navigateTo(Destination.Radio) }
+    isSelected = currentRoute == RadioDestination.route,
+    action = { navigateTo(RadioDestination.route) }
   )
   DrawerButton(
     icon = Icons.Filled.ViewHeadline,
     label = stringResource(id = R.string.nav_lyrics),
-    isSelected = Destination.Lyrics.matches(currentRoute),
-    action = { navigateTo(Destination.Lyrics) }
+    isSelected = currentRoute == LyricsDestination.route,
+    action = { navigateTo(LyricsDestination.route) }
   )
 }
 
@@ -291,6 +300,6 @@ fun ConnectionLabel(connection: ConnectionStatus) {
 @Composable
 fun RemoteDrawerPreview() {
   RemoteTheme {
-    AppDrawer(Destination.Home.route, {}, ConnectionStatus.Active, {}, {})
+    AppDrawer(PlayerDestination.route, {}, ConnectionStatus.Active, {}, {})
   }
 }

@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.features.library.presentation
 
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.common.Meta
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
+import com.kelsos.mbrc.features.library.sync.LibrarySyncProgress
 import com.kelsos.mbrc.features.library.sync.SyncResult
 import com.kelsos.mbrc.features.library.sync.SyncStatProvider
 import com.kelsos.mbrc.features.library.sync.SyncWorkHandler
@@ -42,7 +44,8 @@ class LibraryActions(
 
 data class LibraryState(
   val albumArtistOnly: Boolean = false,
-  val syncState: SyncedData = SyncedData.empty()
+  val syncState: SyncedData = SyncedData.empty(),
+  val syncProgress: LibrarySyncProgress = LibrarySyncProgress.empty()
 )
 
 class LibraryViewModel(
@@ -54,12 +57,17 @@ class LibraryViewModel(
   syncStatProvider: SyncStatProvider
 ) : BaseViewModel<SyncResult>() {
 
-  val syncProgress = syncWorkHandler.syncProgress()
-
   val state = combine(
     settingsManager.onlyAlbumArtists(),
-    syncStatProvider.stats
-  ) { a: Boolean, b: SyncedData -> LibraryState(a, b) }
+    syncStatProvider.stats,
+    syncWorkHandler.syncProgress().asFlow()
+  ) { onlyAlbumArtists: Boolean, syncedData: SyncedData, syncProgress: LibrarySyncProgress ->
+    LibraryState(
+      albumArtistOnly = onlyAlbumArtists,
+      syncState = syncedData,
+      syncProgress = syncProgress
+    )
+  }
   val actions: LibraryActions = LibraryActions(
     settingsManager,
     syncWorkHandler,

@@ -6,6 +6,6 @@ import com.kelsos.mbrc.features.library.data.Artist
 import kotlinx.coroutines.flow.Flow
 
 interface ArtistRepository : Repository<Artist> {
-  fun getArtistByGenre(genre: String): Flow<PagingData<Artist>>
+  fun getArtistByGenre(genreId: Long): Flow<PagingData<Artist>>
   fun getAlbumArtistsOnly(): Flow<PagingData<Artist>>
 }

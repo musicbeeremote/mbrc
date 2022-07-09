@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.NavigationViewModel
 import com.kelsos.mbrc.features.help.SendFeedback
 import com.kelsos.mbrc.features.library.PlayingTrack
+import com.kelsos.mbrc.features.player.PlayerDestination
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
 import com.kelsos.mbrc.theme.RemoteTheme
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ fun RemoteApp(
     val scaffoldState = rememberScaffoldState()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Home.route
+    val currentRoute = navBackStackEntry?.destination?.route ?: PlayerDestination.route
 
     val connection by viewModel.connection.collectAsState(initial = ConnectionStatus.Off)
 
@@ -39,7 +40,7 @@ fun RemoteApp(
           currentRoute = currentRoute,
           navigateTo = { destination ->
             coroutineScope.launch { scaffoldState.drawerState.close() }
-            navController.navigate(destination.route)
+            navController.navigate(destination)
           },
           connection = connection,
           onConnect = { viewModel.connect() },

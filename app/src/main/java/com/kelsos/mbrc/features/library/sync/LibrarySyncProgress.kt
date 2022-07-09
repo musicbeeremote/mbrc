@@ -5,4 +5,8 @@ data class LibrarySyncProgress(
   val total: Int,
   val category: Int,
   val running: Boolean
-)
+) {
+  companion object {
+    fun empty(): LibrarySyncProgress = LibrarySyncProgress(0, 0, 0, false)
+  }
+}

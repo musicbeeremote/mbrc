@@ -27,7 +27,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -52,33 +50,42 @@ import com.kelsos.mbrc.features.library.presentation.LibraryViewModel
 import com.kelsos.mbrc.features.library.sync.LibrarySyncProgress
 import com.kelsos.mbrc.features.library.sync.SyncCategory
 import com.kelsos.mbrc.features.library.sync.SyncMetricsDialog
+import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.theme.Accent
 import com.kelsos.mbrc.theme.DarkBackground
 import com.kelsos.mbrc.theme.RemoteTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+
+interface LibraryNavigator {
+  fun navigateToGenreArtists(id: Long)
+  fun navigateToArtistAlbums(id: Long)
+  fun navigateToAlbumTracks(id: Long)
+}
 
 @Composable
 fun LibraryScreen(
   openDrawer: () -> Unit,
   coroutineScope: CoroutineScope,
+  libraryNavigator: LibraryNavigator,
   vm: LibraryViewModel = getViewModel()
 ) {
   LibraryScreen(
     openDrawer = openDrawer,
     actions = vm.actions,
-    syncProgress = vm.syncProgress,
     state = vm.state,
+    libraryNavigator = libraryNavigator,
     coroutineScope
   )
 }
 
 @Composable
-fun LibrarySyncIndicator(syncProgress: LiveData<LibrarySyncProgress>) {
-  val progress by syncProgress.observeAsState(initial = LibrarySyncProgress(0, 0, 0, false))
+fun LibrarySyncIndicator(syncProgress: Flow<LibrarySyncProgress>) {
+  val progress by syncProgress.collectAsState(initial = LibrarySyncProgress.empty())
   LibrarySyncIndicator(syncProgress = progress)
 }
 
@@ -189,8 +196,8 @@ fun LibraryScreenOverflow(
 fun LibraryScreen(
   openDrawer: () -> Unit,
   actions: LibraryActions,
-  syncProgress: LiveData<LibrarySyncProgress>,
   state: Flow<LibraryState>,
+  libraryNavigator: LibraryNavigator,
   coroutineScope: CoroutineScope
 ) = Surface {
   val tabs = listOf(
@@ -202,7 +209,18 @@ fun LibraryScreen(
 
   val pagerState = rememberPagerState()
   val sync = actions::refresh
-  val action = actions::queue
+  val action = { id: Long, meta: Meta, action: Queue ->
+    if (meta != Meta.Track && action == Queue.Default) {
+      when (meta) {
+        Meta.Genre -> libraryNavigator.navigateToGenreArtists(id)
+        Meta.Album -> libraryNavigator.navigateToAlbumTracks(id)
+        Meta.Artist -> libraryNavigator.navigateToArtistAlbums(id)
+        else -> {}
+      }
+    } else {
+      actions.queue(id, meta, action)
+    }
+  }
   Column(modifier = Modifier.fillMaxSize()) {
     RemoteTopAppBar(openDrawer = openDrawer) {
       Row {
@@ -217,7 +235,7 @@ fun LibraryScreen(
       }
     }
     LibraryTabs(pagerState, tabs, coroutineScope)
-    LibrarySyncIndicator(syncProgress = syncProgress)
+    LibrarySyncIndicator(syncProgress = state.map { it.syncProgress })
     HorizontalPager(
       modifier = Modifier.weight(1f),
       state = pagerState,
@@ -279,6 +297,15 @@ object Pages {
 @Composable
 fun LibraryScreenPreview() {
   RemoteTheme {
-    LibraryScreen(openDrawer = {}, coroutineScope = MainScope())
+    LibraryScreen(
+      openDrawer = {},
+      coroutineScope = MainScope(),
+      libraryNavigator = object :
+        LibraryNavigator {
+        override fun navigateToGenreArtists(id: Long) = Unit
+        override fun navigateToArtistAlbums(id: Long) = Unit
+        override fun navigateToAlbumTracks(id: Long) = Unit
+      }
+    )
   }
 }

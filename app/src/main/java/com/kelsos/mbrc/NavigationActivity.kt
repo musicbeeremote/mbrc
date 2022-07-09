@@ -9,9 +9,7 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import arrow.core.firstOrNone
 import com.kelsos.mbrc.app.RemoteApp
-import com.kelsos.mbrc.common.ui.BaseFragment
 import com.kelsos.mbrc.features.help.sendFeedback
 import com.kelsos.mbrc.features.library.PlayingTrack
 import com.kelsos.mbrc.networking.connections.ConnectionStatus
@@ -100,15 +98,6 @@ class NavigationActivity : AppCompatActivity() {
       }
       else -> super.onKeyDown(keyCode, event)
     }
-  }
-
-  override fun onBackPressed() {
-    val fragments = supportFragmentManager.fragments
-
-    fragments.filterIsInstance<BaseFragment>()
-      .firstOrNone { fragment ->
-        fragment.onBackPressed()
-      }.fold({ super.onBackPressed() }, {})
   }
 
   companion object {
