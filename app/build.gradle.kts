@@ -1,9 +1,7 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
+import com.google.protobuf.gradle.*
 import io.gitlab.arturbosch.detekt.Detekt
 import java.io.ByteArrayOutputStream
 import java.io.FileInputStream
@@ -114,9 +112,9 @@ android {
     unitTests.all {
       if (it.name == "testGithubDebugUnitTest") {
         it.extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
-          isDisabled = false
-          binaryReportFile.set(file("$buildDir/custom/debug-report.bin"))
-          includes = listOf("com.kelsos.mbrc.*")
+          isDisabled.set(false)
+          reportFile.set(file("$buildDir/custom/debug-report.bin"))
+          includes.set(listOf("com.kelsos.mbrc.*"))
         }
       }
     }
@@ -131,9 +129,9 @@ android {
   kotlinOptions {
     jvmTarget = "11"
     freeCompilerArgs = listOf(
-      "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-      "-Xopt-in=kotlin.RequiresOptIn",
-      "-Xopt-in=kotlin.time.ExperimentalTime",
+      "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "-opt-in=kotlin.RequiresOptIn",
+      "-opt-in=kotlin.time.ExperimentalTime",
     )
   }
 
@@ -286,7 +284,7 @@ protobuf {
 
   generateProtoTasks {
     all().forEach { task ->
-      task.plugins {
+      task.builtins {
         create("java") {
           option("lite")
         }

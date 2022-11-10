@@ -55,9 +55,7 @@ allprojects {
 }
 
 
-kover {
-  instrumentAndroidPackage = false
-}
+kover {}
 
 // ReleaseType/DependencyUpdates are copied from:
 // https://github.com/chrisbanes/tivi/blob/main/buildSrc/src/main/java/app/tivi/buildsrc/DependencyUpdates.kt
