@@ -122,7 +122,7 @@ fun LibrarySyncIndicator(syncProgress: LibrarySyncProgress) = Surface(
         modifier = Modifier.weight(1f, true),
         color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
       )
-      val currentProgress = syncProgress.current.toFloat().div(syncProgress.total)
+      val currentProgress = syncProgress.float()
       val animatedProgress = animateFloatAsState(
         targetValue = currentProgress,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec

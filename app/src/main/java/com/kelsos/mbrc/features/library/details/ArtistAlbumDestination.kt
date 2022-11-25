@@ -21,6 +21,6 @@ fun NavGraphBuilder.artistsAlbumGraph() {
       }
     )
   ) {
-    TODO()
+    ArtistAlbumRoute()
   }
 }

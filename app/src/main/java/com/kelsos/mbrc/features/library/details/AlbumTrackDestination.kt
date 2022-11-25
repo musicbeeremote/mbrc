@@ -21,6 +21,6 @@ fun NavGraphBuilder.albumTrackGraph() {
       }
     )
   ) {
-    TODO()
+    AlbumTrackRoute()
   }
 }
