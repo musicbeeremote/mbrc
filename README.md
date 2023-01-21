@@ -28,6 +28,9 @@
     </p>
 </p>
 
+## Application development status
+As of January 2023 the application is now unpublished from Play Store and considered unmaintained. For the majority of 2022 I didn't have the energy or time to continue with the development and support of the application. I might still answer support e-mails and you can still use the available builds but the application will be as it is.
+
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
