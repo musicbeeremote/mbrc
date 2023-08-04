@@ -133,7 +133,7 @@ The source code of the application is licensed under the [GPLv3](https://www.gnu
 
 MusicBee Remote - [@MusicBeeRemote](https://twitter.com/musicbeeremote)
 
-Project Link: [https://github.com/musicbeeremote/android-app](https://github.com/musicbeeremote/android-app)
+Project Link: [https://github.com/musicbeeremote/mbrc-plugin](https://github.com/musicbeeremote/mbrc-plugin)
 
 ## Acknowledgements
 
