@@ -9,18 +9,15 @@ import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode
 import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode.Next
 import com.kelsos.mbrc.platform.mediasession.RemoteIntentCode.Play
 import com.kelsos.mbrc.platform.mediasession.RemoteViewIntentBuilder.getPendingIntent
-import kotlin.reflect.KClass
 
 class WidgetNormal : WidgetBase() {
-  override fun layout(): Int = R.layout.widget_normal
-
-  override fun imageSize(): Int = R.dimen.widget_normal_height
-
-  override fun imageId(): Int = R.id.widget_normal_image
-
-  override fun playButtonId(): Int = R.id.widget_normal_play
-
-  override fun widgetClass(): KClass<out WidgetBase> = WidgetNormal::class
+  override val config: WidgetConfig = WidgetConfig(
+    layout = R.layout.widget_normal,
+    imageSize = R.dimen.widget_normal_height,
+    imageId = R.id.widget_normal_image,
+    playButtonId = R.id.widget_normal_play,
+    widgetClass = WidgetNormal::class
+  )
 
   override fun setupActionIntents(
     views: RemoteViews,

@@ -99,7 +99,7 @@ class ChangelogParser(private val context: Context) {
   @Throws(XmlPullParserException::class, IOException::class)
   private fun skip(parser: XmlPullParser) {
     if (parser.eventType != XmlPullParser.START_TAG) {
-      throw IllegalStateException()
+      throw IllegalStateException("${parser.eventType} was not START_TAG")
     }
     var depth = 1
     while (depth != 0) {

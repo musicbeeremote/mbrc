@@ -36,6 +36,15 @@ interface NowPlayingDao {
   )
   fun search(term: String): PagingSource<Int, NowPlayingEntity>
 
+  @Query(
+    """
+      select * from now_playing
+      where title like '%' || :term || '%'
+      or artist like '%' || :term || '%'
+      """
+  )
+  fun simpleSearch(term: String): List<NowPlayingEntity>
+
   @Query("select count(*) from now_playing")
   fun count(): Long
 

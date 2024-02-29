@@ -1,39 +1,50 @@
 package com.kelsos.mbrc.features.library.sync
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import arrow.core.right
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.common.data.cacheIsEmpty
 import com.kelsos.mbrc.features.library.repositories.AlbumRepository
 import com.kelsos.mbrc.features.library.repositories.ArtistRepository
 import com.kelsos.mbrc.features.library.repositories.CoverCache
 import com.kelsos.mbrc.features.library.repositories.GenreRepository
+import com.kelsos.mbrc.features.library.repositories.LibraryRepositories
 import com.kelsos.mbrc.features.library.repositories.TrackRepository
-import com.kelsos.mbrc.features.playlists.repository.PlaylistRepository
+import com.kelsos.mbrc.features.playlists.PlaylistRepository
 import com.kelsos.mbrc.metrics.SyncMetrics
 import com.kelsos.mbrc.networking.client.ConnectivityVerifier
-import com.kelsos.mbrc.utils.testDispatcher
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.dsl.bind
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.koin.dsl.single
 import org.koin.test.KoinTest
 import org.koin.test.inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class LibrarySyncUseCaseImplTest : KoinTest {
+
+  @get:Rule
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   private val genreRepository: GenreRepository by inject()
   private val artistRepository: ArtistRepository by inject()
@@ -46,7 +57,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   private val coverCache: CoverCache by inject()
 
   private val testModule = module {
-    single<LibrarySyncUseCaseImpl>() bind LibrarySyncUseCase::class
+    singleOf(::LibrarySyncUseCaseImpl) { bind<LibrarySyncUseCase>() }
     single { mockk<GenreRepository>() }
     single { mockk<ArtistRepository>() }
     single { mockk<AlbumRepository>() }
@@ -55,6 +66,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
     single { mockk<SyncMetrics>() }
     single { mockk<CoverCache>() }
     single { mockk<ConnectivityVerifier>() }
+    single { LibraryRepositories(get(), get(), get(), get()) }
   }
 
   @Before
@@ -75,7 +87,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   }
 
   @Test
-  fun emptyLibraryAutoSync() = runBlockingTest(testDispatcher) {
+  fun emptyLibraryAutoSync() = runTest {
     mockCacheState(true)
     mockSuccessfulRepositoryResponse()
 
@@ -85,7 +97,7 @@ class LibrarySyncUseCaseImplTest : KoinTest {
   }
 
   @Test
-  fun nonEmptyLibraryAutoSync() = runBlockingTest(testDispatcher) {
+  fun nonEmptyLibraryAutoSync() = runTest {
     mockCacheState(false)
     mockSuccessfulRepositoryResponse()
 

@@ -34,9 +34,7 @@ import com.kelsos.mbrc.theme.RemoteTheme
 
 @Composable
 fun MiniControl(
-  playingTrack: PlayingTrack,
-  position: PlayingPosition,
-  state: PlayerState,
+  vmState: MiniControlState,
   perform: (action: MiniControlAction) -> Unit = {},
   navigateToHome: () -> Unit = {}
 ) = Surface(Modifier.background(color = DarkBackground)) {
@@ -46,6 +44,7 @@ fun MiniControl(
       .fillMaxWidth()
   ) {
     Row(modifier = Modifier.height(2.dp)) {
+      val position = vmState.playingPosition
       LinearProgressIndicator(
         progress = position.current.toFloat().div(position.total),
         modifier = Modifier.fillMaxWidth()
@@ -57,6 +56,8 @@ fun MiniControl(
         .padding(top = 2.dp)
         .height(48.dp)
     ) {
+      val playingTrack = vmState.playingTrack
+      val state = vmState.playingState
       TrackCover(
         coverUrl = playingTrack.coverUrl,
         modifier = Modifier
@@ -92,7 +93,7 @@ private fun PlayingTrackInfo(
     Text(
       text = playingTrack.artist,
       style = MaterialTheme.typography.subtitle2,
-      color = MaterialTheme.colors.onSurface.copy(0.7f)
+      color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
     )
   }
 }
@@ -135,14 +136,16 @@ fun MiniControlPreview() {
   RemoteTheme {
     Row(modifier = Modifier.fillMaxSize()) {
       MiniControl(
-        playingTrack = PlayingTrack(
-          artist = "Caravan Palace",
-          album = "Panic",
-          title = "Rock It for Me",
-          year = "2008"
+        vmState = MiniControlState(
+          playingTrack = PlayingTrack(
+            artist = "Caravan Palace",
+            album = "Panic",
+            title = "Rock It for Me",
+            year = "2008"
+          ),
+          playingPosition = PlayingPosition(63000, 174000),
+          playingState = PlayerState.Playing
         ),
-        position = PlayingPosition(63000, 174000),
-        state = PlayerState.Playing,
         perform = {},
         navigateToHome = {}
       )

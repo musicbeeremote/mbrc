@@ -6,15 +6,11 @@ import app.cash.turbine.test
 import arrow.core.left
 import arrow.core.right
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.kelsos.mbrc.utils.appCoroutineDispatchers
-import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,14 +23,16 @@ import java.net.SocketTimeoutException
 class OutputSelectionViewModelTest {
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   private lateinit var viewmodel: OutputSelectionViewModel
   private lateinit var outputApi: OutputApi
 
   @Before
   fun setUp() {
-    Dispatchers.setMain(testDispatcher)
     outputApi = mockk()
 
     viewmodel = OutputSelectionViewModel(
@@ -43,21 +41,15 @@ class OutputSelectionViewModelTest {
     )
   }
 
-  @After
-  fun tearDown() {
-    Dispatchers.resetMain()
-    testDispatcher.cleanupTestCoroutines()
-  }
-
   @Test
-  fun `originally view model should have empty values`() = runBlockingTest(testDispatcher) {
+  fun `originally view model should have empty values`() = runTest {
     viewmodel.outputs.test {
       expectNoEvents()
     }
   }
 
   @Test
-  fun `after reload it should return the output information`() = runBlockingTest(testDispatcher) {
+  fun `after reload it should return the output information`() = runTest {
     val outputResponse = OutputResponse(
       devices = listOf("Output 1", "Output 2"),
       active = "Output 2"
@@ -73,9 +65,7 @@ class OutputSelectionViewModelTest {
   }
 
   @Test
-  fun `if there is a socket timeout the emitter should have the proper result`() = runBlockingTest(
-    testDispatcher
-  ) {
+  fun `if there is a socket timeout the emitter should have the proper result`() = runTest {
     coEvery { outputApi.getOutputs() } answers { SocketTimeoutException().left() }
 
     viewmodel.emitter.test {
@@ -86,9 +76,7 @@ class OutputSelectionViewModelTest {
   }
 
   @Test
-  fun `if there is a socket exception the emitter should have a result`() = runBlockingTest(
-    testDispatcher
-  ) {
+  fun `if there is a socket exception the emitter should have a result`() = runTest {
     coEvery { outputApi.getOutputs() } answers { SocketException().left() }
 
     viewmodel.outputs.test {
@@ -104,9 +92,7 @@ class OutputSelectionViewModelTest {
   }
 
   @Test
-  fun `if there is an exception the emitter should have the proper result`() = runBlockingTest(
-    testDispatcher
-  ) {
+  fun `if there is an exception the emitter should have the proper result`() = runTest {
     coEvery { outputApi.getOutputs() } answers { IOException().left() }
 
     viewmodel.emitter.test {
@@ -117,9 +103,7 @@ class OutputSelectionViewModelTest {
   }
 
   @Test
-  fun `if the user changes the output the result should update the live data`() = runBlockingTest(
-    testDispatcher
-  ) {
+  fun `if the user changes the output the result should update the live data`() = runTest {
     val outputResponse = OutputResponse(
       devices = listOf("Output 1", "Output 2"),
       active = "Output 2"

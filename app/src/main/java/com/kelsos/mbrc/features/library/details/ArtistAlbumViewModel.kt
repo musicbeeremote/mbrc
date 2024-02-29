@@ -1,4 +1,4 @@
-package com.kelsos.mbrc.features.library.presentation.details.viemodels
+package com.kelsos.mbrc.features.library.details
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData

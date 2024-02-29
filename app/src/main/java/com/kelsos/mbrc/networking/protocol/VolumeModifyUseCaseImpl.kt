@@ -17,15 +17,15 @@ class VolumeModifyUseCaseImpl(
     val volume: Int
     val currentVolume = currentVolume()
 
-    volume = if (currentVolume <= 90) {
+    volume = if (currentVolume <= MAX_VOLUME - DEFAULT_STEP) {
       val mod = currentVolume % DEFAULT_STEP
       when {
-        mod == 0 -> currentVolume + DEFAULT_STEP
-        mod < 5 -> currentVolume + (DEFAULT_STEP - mod)
-        else -> currentVolume + (20 - mod)
+        mod == MIN_VOLUME -> currentVolume + DEFAULT_STEP
+        mod < HALF_STEP -> currentVolume + (DEFAULT_STEP - mod)
+        else -> currentVolume + (DOUBLE_STEP - mod)
       }
     } else {
-      100
+      MAX_VOLUME
     }
 
     send(volume)
@@ -35,16 +35,16 @@ class VolumeModifyUseCaseImpl(
     val volume: Int
     val currentVolume = currentVolume()
 
-    volume = if (currentVolume >= 10) {
+    volume = if (currentVolume >= DEFAULT_STEP) {
       val mod = currentVolume % DEFAULT_STEP
 
       when {
-        mod == 0 -> currentVolume - DEFAULT_STEP
-        mod < 5 -> currentVolume - (DEFAULT_STEP + mod)
+        mod == MIN_VOLUME -> currentVolume - DEFAULT_STEP
+        mod < HALF_STEP -> currentVolume - (DEFAULT_STEP + mod)
         else -> currentVolume - mod
       }
     } else {
-      0
+      MIN_VOLUME
     }
 
     send(volume)
@@ -56,7 +56,7 @@ class VolumeModifyUseCaseImpl(
     if (mute || volume == 0) {
       return
     }
-    send((volume * 0.2).toInt())
+    send((volume * VOLUME_PERCENTAGE).toInt())
   }
 
   /**
@@ -70,5 +70,10 @@ class VolumeModifyUseCaseImpl(
 
   companion object {
     const val DEFAULT_STEP = 10
+    const val HALF_STEP = DEFAULT_STEP.div(other = 2)
+    const val DOUBLE_STEP = DEFAULT_STEP.times(other = 2)
+    const val MAX_VOLUME = 100
+    const val MIN_VOLUME = 0
+    const val VOLUME_PERCENTAGE = 0.2
   }
 }

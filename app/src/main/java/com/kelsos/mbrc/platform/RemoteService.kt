@@ -64,7 +64,7 @@ class RemoteService : Service() {
       if (playing) {
         startForeground(NOW_PLAYING_PLACEHOLDER, placeholderNotification())
       } else {
-        stopForeground(false)
+        stopForeground(STOP_FOREGROUND_REMOVE)
       }
     }
     appStateManager.start()
@@ -75,7 +75,7 @@ class RemoteService : Service() {
     super.onDestroy()
     appStateManager.stop()
     SERVICE_STOPPING = true
-    stopForeground(true)
+    stopForeground(STOP_FOREGROUND_REMOVE)
     this.unregisterReceiver(receiver)
     handler.postDelayed(
       {

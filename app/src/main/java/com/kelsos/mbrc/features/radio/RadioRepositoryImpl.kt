@@ -3,13 +3,13 @@ package com.kelsos.mbrc.features.radio
 import androidx.paging.PagingData
 import arrow.core.Either
 import com.kelsos.mbrc.common.data.Progress
+import com.kelsos.mbrc.common.data.TestApi
 import com.kelsos.mbrc.common.utilities.AppCoroutineDispatchers
 import com.kelsos.mbrc.common.utilities.epoch
 import com.kelsos.mbrc.common.utilities.paged
 import com.kelsos.mbrc.networking.ApiBase
 import com.kelsos.mbrc.networking.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
 
@@ -18,6 +18,12 @@ class RadioRepositoryImpl(
   private val api: ApiBase,
   private val dispatchers: AppCoroutineDispatchers
 ) : RadioRepository {
+  override val test: TestApi<RadioStation> = object : TestApi<RadioStation> {
+    override fun search(term: String): List<RadioStation> =
+      dao.simpleSearch(term).map { it.toRadioStation() }
+
+    override fun getAll(): List<RadioStation> = dao.all().map { it.toRadioStation() }
+  }
 
   override suspend fun count(): Long = withContext(dispatchers.database) {
     dao.count()
@@ -52,9 +58,6 @@ class RadioRepositoryImpl(
   override fun search(
     term: String
   ): Flow<PagingData<RadioStation>> = paged({ dao.search(term) }) { it.toRadioStation() }
-
-  override suspend fun cacheIsEmpty(): Boolean =
-    withContext(dispatchers.database) { dao.count() == 0L }
 
   override suspend fun getById(id: Long): RadioStation? {
     return withContext(dispatchers.database) {

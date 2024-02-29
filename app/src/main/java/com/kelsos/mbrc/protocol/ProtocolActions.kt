@@ -240,15 +240,17 @@ class UpdateCover(
 
   private suspend fun retrieveCover(previousState: PlayingTrack) {
     withContext(dispatchers.network) {
-      try {
+      val result = runCatching {
         val response = api.getItem(Protocol.NowPlayingCover, CoverPayload::class)
         val bitmap = getBitmap(response.cover)
         val file = storeCover(bitmap)
 
         val coverUri = file.toUri().toString()
         update(previousState, coverUri)
-      } catch (e: Exception) {
-        removeCover(e, previousState)
+      }
+
+      if (result.isFailure) {
+        removeCover(result.exceptionOrNull(), previousState)
       }
     }
 
@@ -268,11 +270,7 @@ class UpdateCover(
   private fun getBitmap(base64: String): Bitmap {
     val decodedImage = Base64.decode(base64, Base64.DEFAULT)
     val bitmap = BitmapFactory.decodeByteArray(decodedImage, 0, decodedImage.size)
-    if (bitmap != null) {
-      return bitmap
-    } else {
-      throw RuntimeException("Base64 was not an image")
-    }
+    return checkNotNull(bitmap) { "Base64 was not an image" }
   }
 
   private suspend fun removeCover(it: Throwable? = null, previousState: PlayingTrack) {
@@ -308,13 +306,10 @@ class UpdateCover(
       return newFile
     }
 
-    if (success) {
-      file.renameTo(newFile)
-      Timber.v("file was renamed to ${newFile.absolutePath}")
-      return newFile
-    } else {
-      throw RuntimeException("unable to store cover")
-    }
+    check(success) { "unable to store cover" }
+    file.renameTo(newFile)
+    Timber.v("file was renamed to ${newFile.absolutePath}")
+    return newFile
   }
 
   private fun checkIfExists() {
@@ -431,6 +426,6 @@ class ProtocolVersionUpdate : ProtocolAction {
   }
 }
 
-private fun ProtocolMessage.asBoolean(): Boolean {
+fun ProtocolMessage.asBoolean(): Boolean {
   return data as? Boolean ?: false
 }

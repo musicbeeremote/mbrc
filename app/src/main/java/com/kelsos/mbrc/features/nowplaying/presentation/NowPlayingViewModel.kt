@@ -24,7 +24,7 @@ class NowPlayingViewModel(
   private val repository: NowPlayingRepository,
   private val moveManager: MoveManager,
   private val userActionUseCase: UserActionUseCase,
-  appState: AppState,
+  appState: AppState
 ) : BaseViewModel<NowPlayingUiMessages>() {
 
   val list: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
@@ -79,7 +79,7 @@ class NowPlayingViewModel(
 
   fun removeTrack(position: Int) {
     viewModelScope.launch(dispatchers.network) {
-      delay(400)
+      delay(timeMillis = 400)
       userActionUseCase.removeTrack(position)
     }
   }

@@ -9,7 +9,10 @@ import com.kelsos.mbrc.networking.protocol.CommandFactory
 import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import com.kelsos.mbrc.protocol.ProtocolAction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -19,12 +22,12 @@ class MessageHandlerImpl(
   private val uiMessages: UiMessages,
   private val connectionState: ConnectionState,
   private val clientInformationStore: ClientInformationStore,
-  private val dispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppCoroutineDispatchers
 ) : MessageHandler {
 
   private var commands: MutableMap<Protocol, ProtocolAction> = HashMap()
 
-  override suspend fun process(message: SocketMessage) = withContext(dispatchers.network) {
+  private suspend fun process(message: SocketMessage) = withContext(dispatchers.network) {
     val context = Protocol.fromString(message.context)
 
     Timber.v("received message with context -> ${message.context}:${message.data}")
@@ -41,7 +44,6 @@ class MessageHandlerImpl(
     message: SocketMessage,
     context: Protocol
   ) {
-
     val data = message.data
 
     if (handshake(context, data)) {
@@ -104,5 +106,30 @@ class MessageHandlerImpl(
   private suspend fun clientNotAllowed() {
     uiMessages.messages.emit(UiMessage.NotAllowed)
     connectionState.connection.emit(ConnectionStatus.Off)
+  }
+
+  override fun listen(scope: CoroutineScope, messages: Flow<SocketMessage>) {
+    scope.launch {
+      messages.collect {
+        process(it)
+      }
+    }
+  }
+
+  override fun handleOutgoing(scope: CoroutineScope, send: (SocketMessage) -> Result<Unit>) {
+    scope.launch {
+      messageQueue.messages.collect { message ->
+        withContext(dispatchers.network) {
+          val sendResult = send(message)
+          if (sendResult.isFailure) {
+            Timber.e(checkNotNull(sendResult.exceptionOrNull()), "Send failed")
+          }
+        }
+      }
+    }
+  }
+
+  override suspend fun startHandshake() {
+    messageQueue.queue(SocketMessage.player())
   }
 }

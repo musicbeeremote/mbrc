@@ -59,7 +59,7 @@ class SyncWorker(
     val notification = builder
       .build()
 
-    return ForegroundInfo(819, notification)
+    return ForegroundInfo(NOTIFICATION_ID, notification)
   }
 
   private fun updateProgress(current: Int, total: Int, category: Int) {
@@ -85,7 +85,7 @@ class SyncWorker(
       .setProgress(current, total, false)
       .setContentText(contextText)
 
-    notificationManager.notify(819, builder.build())
+    notificationManager.notify(NOTIFICATION_ID, builder.build())
   }
 
   override suspend fun doWork(): Result {
@@ -119,10 +119,11 @@ class SyncWorker(
 
     const val SYNC_WORK_TAG = "sync_work"
 
+    const val NOTIFICATION_ID = 819
+
     fun createWorkRequest(
       auto: Boolean = false
     ): OneTimeWorkRequest {
-
       Timber.i("Scheduling library sync")
       val input = Data.Builder()
         .putBoolean(AUTO, auto)

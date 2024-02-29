@@ -15,9 +15,9 @@ import com.kelsos.mbrc.features.nowplaying.repository.NowPlayingRepository
 import com.kelsos.mbrc.networking.client.UserActionUseCase
 import com.kelsos.mbrc.networking.protocol.NowPlayingMoveRequest
 import com.kelsos.mbrc.networking.protocol.Protocol
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.appCoroutineDispatchers
-import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.CapturingSlot
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -25,7 +25,8 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,6 +45,9 @@ class NowPlayingViewModelTest {
 
   @get:Rule
   var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   @Before
   fun setUp() {
@@ -64,7 +68,7 @@ class NowPlayingViewModelTest {
   }
 
   @Test
-  fun `should notify the observer that refresh failed`() = runBlockingTest(testDispatcher) {
+  fun `should notify the observer that refresh failed`() = runTest {
     coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
     viewModel.emitter.test {
       viewModel.reload()
@@ -74,7 +78,7 @@ class NowPlayingViewModelTest {
   }
 
   @Test
-  fun `should notify the observer that refresh succeeded`() = runBlockingTest(testDispatcher) {
+  fun `should notify the observer that refresh succeeded`() = runTest {
     coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
     viewModel.emitter.test {
       viewModel.reload()
@@ -84,31 +88,33 @@ class NowPlayingViewModelTest {
   }
 
   @Test
-  fun `move should commit the cached move instructions`() {
+  fun `move should commit the cached move instructions`() = runTest {
     val actionSlot = slot<UserAction>()
     coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.moveTrack(0, 1)
     viewModel.moveTrack(1, 2)
     viewModel.moveTrack(2, 3)
     viewModel.move()
+    advanceUntilIdle()
 
     assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListMove)
     assertThat(actionSlot.captured.data).isEqualTo(NowPlayingMoveRequest(0, 3))
   }
 
   @Test
-  fun `search should play perform user action`() {
+  fun `search should play perform user action`() = runTest {
     val actionSlot = slot<UserAction>()
     coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     coEvery { repository.findPosition(any()) } answers { 5 }
     viewModel.search("search")
-
+    viewModel.move()
+    advanceUntilIdle()
     assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListPlay)
     assertThat(actionSlot.captured.data).isEqualTo(6)
   }
 
   @Test
-  fun `remove should perform user action`() = runBlockingTest(testDispatcher) {
+  fun `remove should perform user action`() = runTest {
     val actionSlot = slot<UserAction>()
     coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.removeTrack(1)
@@ -118,10 +124,11 @@ class NowPlayingViewModelTest {
   }
 
   @Test
-  fun `play should perform user action`() {
+  fun `play should perform user action`() = runTest {
     val actionSlot = slot<UserAction>()
     coEvery { userActionUseCase.perform(capture(actionSlot)) } just Runs
     viewModel.play(2)
+    advanceUntilIdle()
 
     assertThat(actionSlot.captured.protocol).isEqualTo(Protocol.NowPlayingListPlay)
     assertThat(actionSlot.captured.data).isEqualTo(3)

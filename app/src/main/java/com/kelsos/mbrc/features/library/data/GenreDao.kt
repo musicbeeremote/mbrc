@@ -22,6 +22,9 @@ interface GenreDao {
   @Query("select * from genre order by genre")
   fun getAll(): PagingSource<Int, GenreEntity>
 
+  @Query("select * from genre order by genre")
+  fun all(): List<GenreEntity>
+
   @Query("select id, genre from genre order by genre")
   fun genres(): List<Genre>
 

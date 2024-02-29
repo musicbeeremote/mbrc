@@ -7,6 +7,7 @@ import com.kelsos.mbrc.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.networking.discovery.RemoteServiceDiscovery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ConnectionRepositoryImpl(
   private val dao: ConnectionDao,
@@ -19,6 +20,7 @@ class ConnectionRepositoryImpl(
     return discover.fold(
       { it },
       {
+        Timber.v("Connection was successfully discovered $it")
         save(it.toConnection())
         DiscoveryStop.Complete
       }
@@ -68,6 +70,8 @@ class ConnectionRepositoryImpl(
     it.toConnection()
   }
 
+  override fun all(): List<ConnectionSettings> = dao.all().map { it.toConnection() }
+
   override suspend fun count(): Long {
     return withContext(dispatchers.database) {
       dao.count()
@@ -75,7 +79,7 @@ class ConnectionRepositoryImpl(
   }
 }
 
-private fun ConnectionSettingsEntity.toConnection(): ConnectionSettings {
+fun ConnectionSettingsEntity.toConnection(): ConnectionSettings {
   return ConnectionSettings(
     address = address,
     port = port,
@@ -85,7 +89,7 @@ private fun ConnectionSettingsEntity.toConnection(): ConnectionSettings {
   )
 }
 
-private fun ConnectionSettings.toConnectionEntity(): ConnectionSettingsEntity {
+fun ConnectionSettings.toConnectionEntity(): ConnectionSettingsEntity {
   val isDefault = if (isDefault) isDefault else null
   return ConnectionSettingsEntity(
     address = address,

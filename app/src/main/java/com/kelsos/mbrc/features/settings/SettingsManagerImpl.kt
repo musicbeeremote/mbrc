@@ -32,6 +32,47 @@ class SettingsManagerImpl(
       )
     }
 
+  override val updates: UpdateChecking = object : UpdateChecking {
+    override suspend fun isPluginUpdateCheckEnabled(): Boolean {
+      val settings = dataStore.data.first()
+      return settings.user.updateCheck
+    }
+
+    override suspend fun getLastUpdated(required: Boolean): Instant {
+      val settings = dataStore.data.first()
+      val epoch = if (required) {
+        settings.app.lastRequiredUpdateCheck
+      } else {
+        settings.app.lastUpdateCheck
+      }
+      return Instant.ofEpochMilli(epoch)
+    }
+
+    override suspend fun setLastUpdated(lastChecked: Instant, required: Boolean) {
+      val epoch = lastChecked.toEpochMilli()
+      dataStore.updateData {
+        val settings = dataStore.data.first()
+        val appBuilder = settings.app.toBuilder()
+        val appSettings = if (required) {
+          appBuilder.setLastRequiredUpdateCheck(epoch)
+        } else {
+          appBuilder.setLastUpdateCheck(epoch)
+        }
+        settings.toBuilder().setApp(appSettings.build()).build()
+      }
+    }
+
+    override suspend fun setPluginUpdateCheck(enabled: Boolean) {
+      dataStore.updateData {
+        val settings = dataStore.data.first().toBuilder()
+        val userSettings = settings.user.toBuilder()
+          .setUpdateCheck(enabled)
+          .build()
+        settings.setUser(userSettings).build()
+      }
+    }
+  }
+
   init {
     runBlocking {
       setupManager()
@@ -82,16 +123,6 @@ class SettingsManagerImpl(
     }
   }
 
-  override suspend fun setPluginUpdateCheck(enabled: Boolean) {
-    dataStore.updateData {
-      val settings = dataStore.data.first().toBuilder()
-      val userSettings = settings.user.toBuilder()
-        .setUpdateCheck(enabled)
-        .build()
-      settings.setUser(userSettings).build()
-    }
-  }
-
   private suspend fun setupManager() {
     val settings = dataStore.data.first()
     val loggingEnabled = settings.user.enableLog
@@ -106,35 +137,6 @@ class SettingsManagerImpl(
   override suspend fun getCallAction(): CallAction {
     val settings = dataStore.data.first()
     return CallAction.from(settings.user.callAction)
-  }
-
-  override suspend fun isPluginUpdateCheckEnabled(): Boolean {
-    val settings = dataStore.data.first()
-    return settings.user.updateCheck
-  }
-
-  override suspend fun getLastUpdated(required: Boolean): Instant {
-    val settings = dataStore.data.first()
-    val epoch = if (required) {
-      settings.app.lastRequiredUpdateCheck
-    } else {
-      settings.app.lastUpdateCheck
-    }
-    return Instant.ofEpochMilli(epoch)
-  }
-
-  override suspend fun setLastUpdated(lastChecked: Instant, required: Boolean) {
-    val epoch = lastChecked.toEpochMilli()
-    dataStore.updateData {
-      val settings = dataStore.data.first()
-      val appBuilder = settings.app.toBuilder()
-      val appSettings = if (required) {
-        appBuilder.setLastRequiredUpdateCheck(epoch)
-      } else {
-        appBuilder.setLastUpdateCheck(epoch)
-      }
-      settings.toBuilder().setApp(appSettings.build()).build()
-    }
   }
 
   override fun onlyAlbumArtists(): Flow<Boolean> {
@@ -175,7 +177,7 @@ class SettingsManagerImpl(
   }
 }
 
-private fun CallAction.Companion.from(callAction: User.CallAction?): CallAction =
+fun CallAction.Companion.from(callAction: User.CallAction?): CallAction =
   when (callAction) {
     User.CallAction.PAUSE -> CallAction.Pause
     User.CallAction.STOP -> CallAction.Stop

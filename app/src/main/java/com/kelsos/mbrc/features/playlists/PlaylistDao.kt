@@ -17,8 +17,14 @@ interface PlaylistDao {
   @Query("select * from playlists")
   fun getAll(): PagingSource<Int, PlaylistEntity>
 
+  @Query("select * from playlists")
+  fun all(): List<PlaylistEntity>
+
   @Query("select * from playlists where name like '%'|| :term ||'%'")
   fun search(term: String): PagingSource<Int, PlaylistEntity>
+
+  @Query("select * from playlists where name like '%'|| :term ||'%'")
+  fun simpleSearch(term: String): List<PlaylistEntity>
 
   @Query("select count(*) from playlists")
   fun count(): Long

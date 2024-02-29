@@ -24,7 +24,7 @@ fun RatingDialog(showDialog: Boolean, dismiss: () -> Unit) {
   val rating by vm.rating.collectAsState(initial = 0f)
   if (showDialog) {
     Dialog(
-      onDismissRequest = { dismiss() },
+      onDismissRequest = { dismiss() }
     ) {
       Row(
         modifier = Modifier

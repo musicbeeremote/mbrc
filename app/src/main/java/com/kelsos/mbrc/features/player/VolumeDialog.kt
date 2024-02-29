@@ -26,6 +26,8 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.theme.RemoteTheme
 import org.koin.androidx.compose.getViewModel
 
+private const val MAX_VOLUME = 100f
+
 @Composable
 fun VolumeDialog(showDialog: Boolean, dismiss: () -> Unit) {
   val vm = getViewModel<VolumeDialogViewModel>()
@@ -33,7 +35,7 @@ fun VolumeDialog(showDialog: Boolean, dismiss: () -> Unit) {
   val muted by vm.muted.collectAsState(initial = false)
   if (showDialog) {
     Dialog(
-      onDismissRequest = { dismiss() },
+      onDismissRequest = { dismiss() }
     ) {
       Surface(
         modifier = Modifier
@@ -66,7 +68,7 @@ private fun DialogContent(
       onValueChange = {
         updateVolume(it.toInt())
       },
-      valueRange = 0f..100f,
+      valueRange = 0f..MAX_VOLUME,
       modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
     )
   }

@@ -27,7 +27,6 @@ class QueueWorker(
       NotificationManager
 
   override suspend fun doWork(): Result = coroutineScope {
-
     val id = inputData.getLong(ID, -1)
     val meta = Meta.fromId(inputData.getInt(META, -1))
     val action = Queue.fromString(inputData.getString(ACTION) ?: Queue.DEFAULT)
@@ -59,7 +58,7 @@ class QueueWorker(
       .setOngoing(true)
       .build()
 
-    return ForegroundInfo(819, notification)
+    return ForegroundInfo(NOTIFICATION_ID, notification)
   }
 
   @RequiresApi(Build.VERSION_CODES.O)
@@ -85,12 +84,13 @@ class QueueWorker(
     const val META = "queue_meta"
     const val ACTION = "queue_action"
 
+    const val NOTIFICATION_ID = 819
+
     fun createWorkRequest(
       id: Long,
       meta: Meta,
       action: Queue = Queue.Default
     ): OneTimeWorkRequest {
-
       val input = Data.Builder()
         .putLong(ID, id)
         .putInt(META, meta.id)

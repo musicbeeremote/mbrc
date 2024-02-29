@@ -13,15 +13,15 @@ import com.kelsos.mbrc.features.radio.RadioRepository
 import com.kelsos.mbrc.features.radio.RadioStation
 import com.kelsos.mbrc.features.radio.RadioUiMessages
 import com.kelsos.mbrc.features.radio.RadioViewModel
+import com.kelsos.mbrc.rules.CoroutineTestRule
 import com.kelsos.mbrc.utils.MockFactory
 import com.kelsos.mbrc.utils.appCoroutineDispatchers
-import com.kelsos.mbrc.utils.testDispatcher
 import io.mockk.CapturingSlot
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,7 +32,10 @@ import java.net.SocketTimeoutException
 class RadioViewModelTest {
 
   @get:Rule
-  val rule = InstantTaskExecutorRule()
+  var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+  @get:Rule
+  var coroutineTestRule = CoroutineTestRule()
 
   private lateinit var repository: RadioRepository
   private lateinit var radioViewModel: RadioViewModel
@@ -49,7 +52,7 @@ class RadioViewModelTest {
   }
 
   @Test
-  fun `should notify the observer that refresh failed`() = runBlockingTest(testDispatcher) {
+  fun `should notify the observer that refresh failed`() = runTest {
     coEvery { repository.getRemote(any()) } coAnswers { SocketTimeoutException().left() }
     radioViewModel.emitter.test {
       radioViewModel.reload()
@@ -59,7 +62,7 @@ class RadioViewModelTest {
   }
 
   @Test
-  fun `should notify the observer that refresh succeeded`() = runBlockingTest(testDispatcher) {
+  fun `should notify the observer that refresh succeeded`() = runTest {
     coEvery { repository.getRemote(any()) } coAnswers { Unit.right() }
     radioViewModel.emitter.test {
       radioViewModel.reload()
@@ -69,7 +72,7 @@ class RadioViewModelTest {
   }
 
   @Test
-  fun `should call queue and notify success`() = testDispatcher.runBlockingTest {
+  fun `should call queue and notify success`() = runTest {
     val playArguments = slot<String>()
     coEvery { queue.queuePath(capture(playArguments)) } answers {
       QueueResult(true, 0)
@@ -83,7 +86,7 @@ class RadioViewModelTest {
   }
 
   @Test
-  fun `should notify on queue failure`() = runBlockingTest(testDispatcher) {
+  fun `should notify on queue failure`() = runTest {
     coEvery { queue.queuePath(any()) } answers {
       QueueResult(false, 0)
     }

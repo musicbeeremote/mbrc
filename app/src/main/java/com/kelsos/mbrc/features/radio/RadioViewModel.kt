@@ -15,6 +15,10 @@ class RadioViewModel(
   private val dispatchers: AppCoroutineDispatchers
 ) : BaseViewModel<RadioUiMessages>() {
 
+  val actions: RadioActions = object : RadioActions {
+    override fun play(path: String) = this@RadioViewModel.play(path)
+    override fun reload() = this@RadioViewModel.reload()
+  }
   val radios: Flow<PagingData<RadioStation>> = radioRepository.getAll().cachedIn(viewModelScope)
 
   fun reload() {
@@ -43,4 +47,9 @@ class RadioViewModel(
       emit(uiMessage)
     }
   }
+}
+
+interface RadioActions {
+  fun play(path: String)
+  fun reload()
 }

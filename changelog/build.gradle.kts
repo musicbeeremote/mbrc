@@ -1,15 +1,17 @@
 plugins {
-  id("com.android.library")
-  kotlin("android")
+  id(libs.plugins.android.library.get().pluginId)
+  id(libs.plugins.kotlinAndroid.get().pluginId)
+  alias(libs.plugins.kotlinter)
+  alias(libs.plugins.detekt)
 }
 
 android {
-  compileSdk = 30
-  buildToolsVersion = "30.0.3"
+  namespace = "com.kelsos.mbrc.changelog"
+  compileSdk = 33
 
   defaultConfig {
     minSdk = 23
-    targetSdk = 30
+    targetSdk = 33
 
     consumerProguardFiles("consumer-rules.pro")
   }

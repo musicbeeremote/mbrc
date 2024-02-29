@@ -11,6 +11,7 @@ import com.kelsos.mbrc.networking.protocol.Protocol
 import com.kelsos.mbrc.networking.protocol.ProtocolPayload
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.BufferedReader
 import java.io.IOException
 import java.net.Socket
 import java.nio.charset.Charset
@@ -32,26 +33,40 @@ class RequestManagerImpl(
       val bufferedReader = inputStream.bufferedReader(Charset.defaultCharset())
 
       while (handshake) {
-        val line = bufferedReader.readLine()
-        if (line.isNullOrEmpty()) {
-          break
-        }
-
-        val message = deserializationAdapter.objectify(line, SocketMessage::class)
-
-        val context = Protocol.fromString(message.context)
-        Timber.v("incoming context => ${context.context}")
-        if (Protocol.Player == context) {
-          val payload = getProtocolPayload()
-          socket.send(SocketMessage.create(Protocol.ProtocolTag, payload))
-        } else if (Protocol.ProtocolTag == context) {
-          Timber.v("socket handshake complete")
+        if (socket.isHandshakeComplete(bufferedReader)) {
           break
         }
       }
 
       return@withContext ActiveConnection(socket, bufferedReader)
     }
+
+  private suspend fun Socket.isHandshakeComplete(
+    bufferedReader: BufferedReader
+  ): Boolean {
+    val line = bufferedReader.readLine()
+    if (!line.isNullOrEmpty()) {
+      val message = deserializationAdapter.objectify(line, SocketMessage::class)
+
+      val context = Protocol.fromString(message.context)
+      Timber.v("incoming context => ${context.context}")
+      val isDone = when (context) {
+        Protocol.Player -> {
+          val payload = getProtocolPayload()
+          send(SocketMessage.create(Protocol.ProtocolTag, payload))
+          false
+        }
+        Protocol.ProtocolTag -> {
+          Timber.v("socket handshake complete")
+          true
+        }
+        else -> false
+      }
+      return isDone
+    }
+    Timber.v("was empty")
+    return true
+  }
 
   private suspend fun getProtocolPayload(): ProtocolPayload {
     return ProtocolPayload(

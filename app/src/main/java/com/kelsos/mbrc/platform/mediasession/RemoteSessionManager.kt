@@ -37,7 +37,9 @@ class RemoteSessionManager(
     val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
     mediaButtonIntent.component = myEventReceiver
     val mediaPendingIntent = PendingIntent.getBroadcast(
-      context.applicationContext, 0, mediaButtonIntent,
+      context.applicationContext,
+      0,
+      mediaButtonIntent,
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 

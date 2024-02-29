@@ -8,10 +8,13 @@ import java.util.ArrayList
 class Page<T> {
   @Json(name = "total")
   var total: Int = 0
+
   @Json(name = "offset")
   var offset: Int = 0
+
   @Json(name = "limit")
   var limit: Int = 0
+
   @Json(name = "data")
   var data: List<T> = ArrayList()
 }
