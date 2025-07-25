@@ -15,11 +15,11 @@ fun NowPlayingDto.toEntity(): NowPlayingEntity = NowPlayingDtoMapper.map(this)
 
 object NowPlayingEntityMapper : Mapper<NowPlayingEntity, NowPlaying> {
   override fun map(from: NowPlayingEntity): NowPlaying = NowPlaying(
-    title = from.title.orEmpty(),
-    artist = from.artist.orEmpty(),
-    path = from.path.orEmpty(),
-    position = from.position ?: 0,
-    id = from.id ?: 0
+    title = from.title,
+    artist = from.artist,
+    path = from.path,
+    position = from.position,
+    id = from.id
   )
 }
 

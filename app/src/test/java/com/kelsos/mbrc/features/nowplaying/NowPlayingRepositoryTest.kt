@@ -260,7 +260,7 @@ class NowPlayingRepositoryTest : KoinTest {
       val position = 4
       val originalCount = dao.count()
       val itemToRemove = dao.all().find { it.position == position }
-      val itemsAfterPosition = dao.all().filter { it.position != null && it.position > position }
+      val itemsAfterPosition = dao.all().filter { it.position > position }
 
       repository.remove(position)
 
@@ -282,7 +282,7 @@ class NowPlayingRepositoryTest : KoinTest {
       // Verify items after the removed position shifted down correctly
       itemsAfterPosition.forEach { originalItem ->
         val updatedItem = dao.all().find { it.id == originalItem.id }
-        assertThat(updatedItem?.position).isEqualTo(originalItem.position!! - 1)
+        assertThat(updatedItem?.position).isEqualTo(originalItem.position - 1)
       }
     }
   }
@@ -350,7 +350,7 @@ class NowPlayingRepositoryTest : KoinTest {
       val position = 3
       val originalCount = dao.count()
       val itemToRemove = dao.all().find { it.position == position }
-      val itemsAfterPosition = dao.all().filter { it.position != null && it.position > position }
+      val itemsAfterPosition = dao.all().filter { it.position > position }
 
       repository.remove(position)
 
@@ -372,7 +372,7 @@ class NowPlayingRepositoryTest : KoinTest {
       // Verify items after the removed position shifted down correctly
       itemsAfterPosition.forEach { originalItem ->
         val updatedItem = dao.all().find { it.id == originalItem.id }
-        assertThat(updatedItem?.position).isEqualTo(originalItem.position!! - 1)
+        assertThat(updatedItem?.position).isEqualTo(originalItem.position - 1)
       }
     }
   }
