@@ -9,7 +9,7 @@ class SettingsActivity : CommonToolbarActivity(R.layout.activity_settings) {
     super.onCreate(savedInstanceState)
 
     supportActionBar?.setHomeButtonEnabled(true)
-    setToolbarTitle(R.string.nav_settings)
+    setToolbarTitle(R.string.common_settings)
 
     val fragment = SettingsFragment.newInstance()
     supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
