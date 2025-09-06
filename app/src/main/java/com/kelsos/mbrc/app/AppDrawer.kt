@@ -408,7 +408,7 @@ private data class DrawerItem(val screen: Screen, val icon: ImageVector, val tit
 private val primaryNavigationItems = listOf(
   DrawerItem(Screen.Home, Icons.Default.Home, R.string.nav_now_playing),
   DrawerItem(Screen.NowPlayingList, Icons.AutoMirrored.Filled.QueueMusic, R.string.nav_queue),
-  DrawerItem(Screen.Library, Icons.Default.LibraryMusic, R.string.nav_library),
+  DrawerItem(Screen.Library, Icons.Default.LibraryMusic, R.string.common_library),
   DrawerItem(Screen.Playlists, Icons.AutoMirrored.Filled.PlaylistPlay, R.string.nav_playlists),
   DrawerItem(Screen.Radio, Icons.Default.Radio, R.string.nav_radio)
 )

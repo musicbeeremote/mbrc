@@ -8,12 +8,14 @@ import com.kelsos.mbrc.common.state.ConnectionStatus
 import com.kelsos.mbrc.features.settings.ConnectionRepository
 import com.kelsos.mbrc.features.settings.ConnectionSettings
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
+import com.kelsos.mbrc.platform.ServiceChecker
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -33,12 +35,14 @@ class DrawerViewModelTest : KoinTest {
     single<ConnectionStateFlow> { mockk(relaxed = true) }
     single<ClientConnectionUseCase> { mockk(relaxed = true) }
     single<ConnectionRepository> { mockk(relaxed = true) }
+    single<ServiceChecker> { mockk(relaxed = true) }
     singleOf(::DrawerViewModel)
   }
 
   private val viewModel: DrawerViewModel by inject()
   private val connectionStateFlow: ConnectionStateFlow by inject()
   private val clientConnectionUseCase: ClientConnectionUseCase by inject()
+  private val serviceChecker: ServiceChecker by inject()
 
   private val connectionStatusFlow = MutableStateFlow<ConnectionStatus>(ConnectionStatus.Offline)
 
@@ -135,6 +139,7 @@ class DrawerViewModelTest : KoinTest {
       viewModel.toggleConnection()
 
       // Then
+      verify(exactly = 1) { serviceChecker.startServiceIfNotRunning() }
       coVerify(exactly = 1) { clientConnectionUseCase.connect() }
       coVerify(exactly = 0) { clientConnectionUseCase.disconnect() }
     }
@@ -151,6 +156,7 @@ class DrawerViewModelTest : KoinTest {
       viewModel.toggleConnection()
 
       // Then
+      verify(exactly = 1) { serviceChecker.startServiceIfNotRunning() }
       coVerify(exactly = 1) { clientConnectionUseCase.connect() }
       coVerify(exactly = 0) { clientConnectionUseCase.disconnect() }
     }
@@ -201,6 +207,7 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionStateFlow> { mockk(relaxed = true) }
         single<ClientConnectionUseCase> { mockk(relaxed = true) }
         single<ConnectionRepository> { mockConnectionRepository }
+        single<ServiceChecker> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -245,6 +252,7 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionStateFlow> { mockk(relaxed = true) }
         single<ClientConnectionUseCase> { mockk(relaxed = true) }
         single<ConnectionRepository> { mockConnectionRepository }
+        single<ServiceChecker> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -288,6 +296,7 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionStateFlow> { mockk(relaxed = true) }
         single<ClientConnectionUseCase> { mockk(relaxed = true) }
         single<ConnectionRepository> { mockConnectionRepository }
+        single<ServiceChecker> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -330,6 +339,7 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionStateFlow> { mockk(relaxed = true) }
         single<ClientConnectionUseCase> { mockk(relaxed = true) }
         single<ConnectionRepository> { mockConnectionRepository }
+        single<ServiceChecker> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -373,6 +383,7 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionStateFlow> { mockk(relaxed = true) }
         single<ClientConnectionUseCase> { mockk(relaxed = true) }
         single<ConnectionRepository> { mockConnectionRepository }
+        single<ServiceChecker> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 

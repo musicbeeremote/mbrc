@@ -10,7 +10,7 @@
     <item
       android:id="@+id/nav_library"
       android:icon="@drawable/baseline_library_music_24"
-      android:title="@string/nav_library" />
+      android:title="@string/common_library" />
 
     <item
       android:id="@+id/nav_now_playing"

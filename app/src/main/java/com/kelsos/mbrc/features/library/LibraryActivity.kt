@@ -180,7 +180,7 @@ class LibraryActivity :
     }
 
     R.id.library_search_clear -> {
-      supportActionBar?.setTitle(R.string.nav_library)
+      supportActionBar?.setTitle(R.string.common_library)
       supportActionBar?.subtitle = ""
       viewModel.search()
       searchMenuItem?.isVisible = true

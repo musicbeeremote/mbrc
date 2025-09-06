@@ -1,10 +1,12 @@
 package com.kelsos.mbrc.features.settings
 
+import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+@Immutable
 data class ConnectionSettings(
   val address: String,
   val port: Int,
