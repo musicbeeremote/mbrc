@@ -159,6 +159,7 @@
   <string name="radio__loading_failed">There was an error while loading the radio stations</string>
   <string name="radio__loading_success">Radios were successfully refreshed</string>
   <string name="radio__no_radio_stations">No radio stations found</string>
+  <string name="radio__play">Play radio station</string>
   <string name="radio__play_failed">There was an error while trying to play the radio station.</string>
   <string name="radio__play_successful">The radio stations has been queued successfully.</string>
   <string name="rate_the_playing_track">Rate the playing track</string>
@@ -188,7 +189,6 @@
   <string name="sync_notification__channel_description">Shows the progress of the library metadata sync</string>
   <string name="sync_notification__channel_name">Library Metadata Sync</string>
   <string name="tab_help">Help</string>
-  <string name="title_activity_radios">Radios</string>
   <string name="unknown_artist">Unknown artist</string>
   <string name="update_required__content_description">Update icon</string>
   <string name="action_failed">Oops! Something went wrong with playback. Give it another try.</string>
