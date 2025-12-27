@@ -15,9 +15,10 @@ fun <T : Any, I : Any> paged(
 ): Flow<PagingData<I>> {
   val config =
     PagingConfig(
-      enablePlaceholders = true,
-      pageSize = 60,
-      maxSize = 200
+      enablePlaceholders = false,
+      pageSize = 50,
+      prefetchDistance = 25,
+      initialLoadSize = 100
     )
   return Pager(
     config,

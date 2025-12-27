@@ -8,14 +8,10 @@
   <string name="action_stop">Stop</string>
   <string name="action_none">Do nothing</string>
   <string name="action_reduce_volume">Reduce volume</string>
-  <string name="album_tracks__cover_content">The cover of the album</string>
-  <string name="album_tracks__play">Play Album</string>
-  <string name="album_tracks__play__content_description">Plays all the tracks</string>
   <string name="albums_list_empty">No albums found</string>
   <string name="application_description">Remote Control Application for MusicBee</string>
   <string name="application_name">MusicBee Remote</string>
   <string name="application_starting">Attempting to establish connection…</string>
-  <string name="artist_placeholder">Artistname</string>
   <string name="artists_list_empty">No artists found</string>
   <string name="common_add">Add</string>
   <string name="common_edit">Edit</string>
@@ -72,17 +68,15 @@
   <string name="lastfm_love">Love</string>
   <string name="lastfm_scrobble">Last.fm Scrobbling</string>
   <string name="library__sync_complete">Sync completed successfully. %1$s , %2$s, %3$s, %4$s and %5$s are available.</string>
-  <string name="library__sync_complete_title">Sync complete</string>
   <string name="library__sync_failed">The library metadata sync was incomplete or failed completely. This might result in queueing not working properly..</string>
   <string name="library__sync_progress">Syncing %1$d of %2$d %3$s</string>
   <string name="library_actionbar_refresh">Refresh</string>
   <string name="library_album_artists_only">Only Album Artists</string>
   <string name="library_menu__sync_state">Library Sync State</string>
+  <string name="library_search_clear">Clear search</string>
   <string name="library_search_hint">Search your library</string>
-  <string name="library_search_subtitle">Displaying results for search</string>
   <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote:</string>
   <string name="library_stats__title">Library Sync Information</string>
-  <string name="library_sync_in_progress">Library metadata sync in progress, please wait…</string>
   <string name="main__dialog_plugin_outdated_message">A newer version of the plugin is available.\nPlease consider updating.</string>
   <string name="main_button_mute_description">When pressed it toggles the volume mute.</string>
   <string name="main_button_next_description">When pressed it plays the next track.</string>
@@ -99,12 +93,8 @@
   <string name="media__genres">Genres</string>
   <string name="media__playlists">Playlists</string>
   <string name="media__tracks">Tracks</string>
-  <string name="menu_album_tracks">Get Album Tracks</string>
-  <string name="menu_artist_albums">Get Albums</string>
-  <string name="menu_genre_artists">Get Artists</string>
   <string name="menu_overflow_description">More options</string>
   <string name="menu_play">Play Now</string>
-  <string name="menu_play_album">Play Now (Album)</string>
   <string name="menu_play_artist">Play Now (Artist)</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="menu_queue_last">Queue Last</string>
@@ -124,7 +114,6 @@
   <string name="nav_connections">Connections</string>
   <string name="common_settings">Settings</string>
   <string name="no_lyrics">No lyrics found</string>
-  <string name="no_results_found">Sorry could not find any results for your search!</string>
   <string name="non_album_tracks">Non album tracks</string>
   <string name="notification__session_channel_description">Used to display the media control notification.</string>
   <string name="notification__session_channel_name">MusicBee Remote Session</string>
@@ -152,10 +141,8 @@
   <string name="preferences_about_version">MusicBee Remote Version</string>
   <string name="preferences_category_about">About MusicBee Remote</string>
   <string name="preferences_library_track_default_action_title">Library Track Action</string>
-  <string name="press_to_sync">Press here to sync</string>
   <string name="queue_result__failure">Queueing was unsuccessful</string>
   <string name="queue_result__success">%1$s successfully added to the queue</string>
-  <string name="queue_result__success_title">Queued Successfully</string>
   <string name="radio__loading_failed">There was an error while loading the radio stations</string>
   <string name="radio__loading_success">Radios were successfully refreshed</string>
   <string name="radio__no_radio_stations">No radio stations found</string>
@@ -189,7 +176,9 @@
   <string name="sync_notification__channel_description">Shows the progress of the library metadata sync</string>
   <string name="sync_notification__channel_name">Library Metadata Sync</string>
   <string name="tab_help">Help</string>
+  <string name="unknown_album">Unknown album</string>
   <string name="unknown_artist">Unknown artist</string>
+  <string name="unknown_title">Unknown title</string>
   <string name="update_required__content_description">Update icon</string>
   <string name="action_failed">Oops! Something went wrong with playback. Give it another try.</string>
 

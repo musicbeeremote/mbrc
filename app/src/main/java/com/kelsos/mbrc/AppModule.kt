@@ -24,7 +24,6 @@ import com.kelsos.mbrc.data.SerializationAdapter
 import com.kelsos.mbrc.data.SerializationAdapterImpl
 import com.kelsos.mbrc.features.help.FeedbackViewModel
 import com.kelsos.mbrc.features.library.CoverCache
-import com.kelsos.mbrc.features.library.LibraryActivity
 import com.kelsos.mbrc.features.library.LibrarySearchModel
 import com.kelsos.mbrc.features.library.LibrarySyncUseCase
 import com.kelsos.mbrc.features.library.LibrarySyncUseCaseImpl
@@ -32,30 +31,19 @@ import com.kelsos.mbrc.features.library.LibrarySyncWorkHandler
 import com.kelsos.mbrc.features.library.LibrarySyncWorkHandlerImpl
 import com.kelsos.mbrc.features.library.LibrarySyncWorker
 import com.kelsos.mbrc.features.library.LibraryViewModel
-import com.kelsos.mbrc.features.library.albums.AlbumEntryAdapter
 import com.kelsos.mbrc.features.library.albums.AlbumRepository
 import com.kelsos.mbrc.features.library.albums.AlbumRepositoryImpl
-import com.kelsos.mbrc.features.library.albums.ArtistAlbumsActivity
 import com.kelsos.mbrc.features.library.albums.ArtistAlbumsViewModel
-import com.kelsos.mbrc.features.library.albums.BrowseAlbumFragment
 import com.kelsos.mbrc.features.library.albums.BrowseAlbumViewModel
-import com.kelsos.mbrc.features.library.artists.ArtistEntryAdapter
 import com.kelsos.mbrc.features.library.artists.ArtistRepository
 import com.kelsos.mbrc.features.library.artists.ArtistRepositoryImpl
-import com.kelsos.mbrc.features.library.artists.BrowseArtistFragment
 import com.kelsos.mbrc.features.library.artists.BrowseArtistViewModel
-import com.kelsos.mbrc.features.library.artists.GenreArtistsActivity
 import com.kelsos.mbrc.features.library.artists.GenreArtistsViewModel
-import com.kelsos.mbrc.features.library.genres.BrowseGenreFragment
 import com.kelsos.mbrc.features.library.genres.BrowseGenreViewModel
-import com.kelsos.mbrc.features.library.genres.GenreEntryAdapter
 import com.kelsos.mbrc.features.library.genres.GenreRepository
 import com.kelsos.mbrc.features.library.genres.GenreRepositoryImpl
-import com.kelsos.mbrc.features.library.tracks.AlbumTracksActivity
 import com.kelsos.mbrc.features.library.tracks.AlbumTracksViewModel
-import com.kelsos.mbrc.features.library.tracks.BrowseTrackFragment
 import com.kelsos.mbrc.features.library.tracks.BrowseTrackViewModel
-import com.kelsos.mbrc.features.library.tracks.TrackEntryAdapter
 import com.kelsos.mbrc.features.library.tracks.TrackRepository
 import com.kelsos.mbrc.features.library.tracks.TrackRepositoryImpl
 import com.kelsos.mbrc.features.lyrics.LyricsActivity
@@ -308,46 +296,6 @@ val appModule =
       viewModelOf(::LyricsViewModel)
     }
 
-    scope<LibraryActivity> {
-      viewModelOf(::LibraryViewModel)
-      scopedOf(::LibrarySearchModel)
-    }
-
-    scope<BrowseGenreFragment> {
-      viewModelOf(::BrowseGenreViewModel)
-      scopedOf(::GenreEntryAdapter)
-    }
-
-    scope<BrowseArtistFragment> {
-      viewModelOf(::BrowseArtistViewModel)
-      scopedOf(::ArtistEntryAdapter)
-    }
-
-    scope<BrowseAlbumFragment> {
-      viewModelOf(::BrowseAlbumViewModel)
-      scopedOf(::AlbumEntryAdapter)
-    }
-
-    scope<BrowseTrackFragment> {
-      viewModelOf(::BrowseTrackViewModel)
-      scopedOf(::TrackEntryAdapter)
-    }
-
-    scope<GenreArtistsActivity> {
-      viewModelOf(::GenreArtistsViewModel)
-      scopedOf(::ArtistEntryAdapter)
-    }
-
-    scope<ArtistAlbumsActivity> {
-      viewModelOf(::ArtistAlbumsViewModel)
-      scopedOf(::AlbumEntryAdapter)
-    }
-
-    scope<AlbumTracksActivity> {
-      viewModelOf(::AlbumTracksViewModel)
-      scopedOf(::TrackEntryAdapter)
-    }
-
     scope<NowPlayingActivity> {
       viewModelOf(::NowPlayingViewModel)
       scopedOf(::NowPlayingAdapter)
@@ -381,5 +329,6 @@ val appModule =
     viewModelOf(::GenreArtistsViewModel)
     viewModelOf(::ArtistAlbumsViewModel)
     viewModelOf(::AlbumTracksViewModel)
+    // Library ViewModels made global for Compose usage
     singleOf(::LogHelperImpl) { bind<LogHelper>() }
   }

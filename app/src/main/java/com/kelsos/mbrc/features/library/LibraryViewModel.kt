@@ -14,15 +14,17 @@ class LibraryViewModel(
   private val settingsManager: SettingsManager,
   private val connectionStateFlow: ConnectionStateFlow
 ) : BaseViewModel<LibraryUiEvent>() {
-  val progress: Flow<LibrarySyncProgress>
-    get() = librarySyncWorkHandler.syncProgress()
+  // Cache flows to prevent creating new instances on every access
+  val progress: Flow<LibrarySyncProgress> = librarySyncWorkHandler.syncProgress()
 
-  val syncResults: Flow<SyncResult>
-    get() = librarySyncWorkHandler.syncResults()
+  val syncResults: Flow<SyncResult> = librarySyncWorkHandler.syncResults()
+
+  val albumArtistsOnly: Flow<Boolean>
+    get() = settingsManager.shouldDisplayOnlyArtists
 
   fun search(string: String = "") {
     viewModelScope.launch {
-      searchModel.term.emit(string)
+      searchModel.setTerm(string)
     }
   }
 

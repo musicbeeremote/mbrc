@@ -18,20 +18,14 @@ abstract class BaseTrackViewModel(
   abstract val tracks: Flow<PagingData<Track>>
 
   fun queue(action: Queue, track: Track) {
-    val queueAction = getQueueAction(action)
-
     viewModelScope.launch {
       if (!checkConnection()) {
         emit(TrackUiMessage.NetworkUnavailable)
         return@launch
       }
 
-      val result =
-        if (action == Queue.Default) {
-          queueHandler.queueTrack(track = track, type = queueAction)
-        } else {
-          queueHandler.queueTrack(track = track, type = action)
-        }
+      val queueAction = getQueueAction(action)
+      val result = queueHandler.queueTrack(track = track, type = queueAction)
 
       val message =
         if (result.success) {

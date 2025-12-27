@@ -298,9 +298,10 @@ fun <T : Any> SwipeRefreshScreen(
             count = items.itemCount,
             key = key?.let { keyFunc ->
               { index ->
-                items[index]?.let(keyFunc) ?: index
+                items.peek(index)?.let(keyFunc) ?: index
               }
-            }
+            },
+            contentType = { "list_item" }
           ) { index ->
             items[index]?.let { item ->
               itemContent(item)
@@ -308,7 +309,7 @@ fun <T : Any> SwipeRefreshScreen(
           }
 
           if (items.loadState.append is LoadState.Loading) {
-            item {
+            item(contentType = "loading") {
               Box(
                 modifier = Modifier
                   .fillMaxWidth()
@@ -317,6 +318,67 @@ fun <T : Any> SwipeRefreshScreen(
               ) {
                 CircularProgressIndicator()
               }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * A simple paging list screen without pull-to-refresh functionality.
+ * Use this for drilldown screens where refresh is not needed.
+ */
+@Composable
+fun <T : Any> PagingListScreen(
+  items: LazyPagingItems<T>,
+  modifier: Modifier = Modifier,
+  emptyMessage: String = stringResource(R.string.no_data),
+  emptyIcon: ImageVector? = null,
+  key: ((T) -> Any)? = null,
+  itemContent: @Composable (T) -> Unit
+) {
+  when (items.loadState.refresh) {
+    is LoadState.Loading if items.itemCount == 0 -> {
+      LoadingScreen(modifier = modifier)
+    }
+
+    is LoadState.NotLoading if items.itemCount == 0 -> {
+      EmptyScreen(
+        message = emptyMessage,
+        icon = emptyIcon,
+        modifier = modifier
+      )
+    }
+
+    else -> {
+      LazyColumn(
+        modifier = modifier.fillMaxSize()
+      ) {
+        items(
+          count = items.itemCount,
+          key = key?.let { keyFunc ->
+            { index ->
+              items.peek(index)?.let(keyFunc) ?: index
+            }
+          },
+          contentType = { "list_item" }
+        ) { index ->
+          items[index]?.let { item ->
+            itemContent(item)
+          }
+        }
+
+        if (items.loadState.append is LoadState.Loading) {
+          item(contentType = "loading") {
+            Box(
+              modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+              contentAlignment = Alignment.Center
+            ) {
+              CircularProgressIndicator()
             }
           }
         }

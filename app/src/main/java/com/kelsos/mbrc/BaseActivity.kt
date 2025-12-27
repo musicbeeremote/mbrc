@@ -27,7 +27,6 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.common.state.ConnectionStatus
-import com.kelsos.mbrc.features.library.LibraryActivity
 import com.kelsos.mbrc.features.lyrics.LyricsActivity
 import com.kelsos.mbrc.features.nowplaying.NowPlayingActivity
 import com.kelsos.mbrc.features.output.OutputSelectionDialog
@@ -200,7 +199,7 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
       }
 
       R.id.nav_library -> {
-        createBackStack(Intent(this, LibraryActivity::class.java))
+        // Library is now handled in Compose navigation
       }
 
       R.id.nav_now_playing -> {

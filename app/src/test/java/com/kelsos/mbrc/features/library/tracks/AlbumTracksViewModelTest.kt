@@ -178,8 +178,8 @@ class AlbumTracksViewModelTest : KoinTest {
         viewModel.queueAlbum(albumInfo)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Should not emit any events for queueAlbum (it doesn't emit result)
-        expectNoEvents()
+        val event = awaitItem()
+        assertThat(event).isEqualTo(TrackUiMessage.QueueSuccess(10))
       }
 
       // Verify queue handler was called
@@ -247,14 +247,14 @@ class AlbumTracksViewModelTest : KoinTest {
         viewModel.queueAlbum(albumInfo) // Should succeed (first call)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // No events expected for successful queueAlbum
-        expectNoEvents()
+        val firstEvent = awaitItem()
+        assertThat(firstEvent).isEqualTo(TrackUiMessage.QueueSuccess(10))
 
         viewModel.queueAlbum(albumInfo) // Should fail (second call)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        val event = awaitItem()
-        assertThat(event).isEqualTo(TrackUiMessage.NetworkUnavailable)
+        val secondEvent = awaitItem()
+        assertThat(secondEvent).isEqualTo(TrackUiMessage.NetworkUnavailable)
       }
 
       // Verify queue handler was only called once (when connected)

@@ -138,7 +138,7 @@ class LibraryViewModelTest : KoinTest {
       testDispatcher.scheduler.advanceUntilIdle()
 
       // Then
-      coVerify(exactly = 1) { librarySearchModel.term.emit(searchTerm) }
+      coVerify(exactly = 1) { librarySearchModel.setTerm(searchTerm) }
     }
   }
 
@@ -150,7 +150,7 @@ class LibraryViewModelTest : KoinTest {
       testDispatcher.scheduler.advanceUntilIdle()
 
       // Then
-      coVerify(exactly = 1) { librarySearchModel.term.emit("") }
+      coVerify(exactly = 1) { librarySearchModel.setTerm("") }
     }
   }
 

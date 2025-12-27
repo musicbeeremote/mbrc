@@ -8,15 +8,13 @@ import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.settings.SettingsManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 open class BaseLibraryViewModel<T : UiMessageBase>(
   private val settingsManager: SettingsManager,
   private val connectionStateFlow: ConnectionStateFlow
 ) : BaseViewModel<T>() {
-  protected fun getQueueAction(action: Queue): Queue = if (action == Queue.Default) {
-    // Get the current track default action from settings
-    val trackAction = runBlocking { settingsManager.libraryTrackDefaultActionFlow.first() }
+  protected suspend fun getQueueAction(action: Queue): Queue = if (action == Queue.Default) {
+    val trackAction = settingsManager.libraryTrackDefaultActionFlow.first()
     Queue.fromTrackAction(trackAction)
   } else {
     action

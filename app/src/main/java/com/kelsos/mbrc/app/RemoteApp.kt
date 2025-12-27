@@ -76,7 +76,12 @@ fun RemoteApp() {
     ) {
       Scaffold(
         topBar = {
-          if (!currentScreenConfig.hasCustomTopBar) {
+          val customTopBar = currentScreenConfig.topBar
+          if (customTopBar != null) {
+            // Screen provides a completely custom topBar
+            customTopBar()
+          } else {
+            // Use default RemoteTopAppBar with optional actions
             RemoteTopAppBar(
               title = getCurrentScreenTitle(navController),
               navigationIcon = {
@@ -110,6 +115,9 @@ fun RemoteApp() {
             startDestination = Screen.Home.route,
             onScreenConfigChange = { config ->
               currentScreenConfig = config
+            },
+            onOpenDrawer = {
+              scope.launch { drawerState.open() }
             }
           )
         }

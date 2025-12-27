@@ -69,23 +69,6 @@
     </provider>
 
     <activity
-      android:name=".features.library.LibraryActivity"
-      android:label="@string/common_library"
-      android:parentActivityName=".features.player.PlayerActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".features.player.PlayerActivity" />
-    </activity>
-
-    <activity android:name=".features.library.tracks.AlbumTracksActivity" />
-
-    <activity android:name=".features.library.albums.ArtistAlbumsActivity" />
-
-    <activity android:name=".features.library.artists.GenreArtistsActivity" />
-
-    <activity
       android:name=".features.lyrics.LyricsActivity"
       android:label="@string/nav_lyrics"
       android:parentActivityName=".features.player.PlayerActivity">

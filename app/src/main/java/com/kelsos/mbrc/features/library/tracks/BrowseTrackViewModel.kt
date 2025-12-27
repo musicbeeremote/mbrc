@@ -7,21 +7,23 @@ import com.kelsos.mbrc.features.library.LibrarySearchModel
 import com.kelsos.mbrc.features.library.LibrarySyncUseCase
 import com.kelsos.mbrc.features.queue.QueueHandler
 import com.kelsos.mbrc.features.settings.SettingsManager
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class BrowseTrackViewModel(
   private val repository: TrackRepository,
   private val librarySyncUseCase: LibrarySyncUseCase,
   queueHandler: QueueHandler,
-  searchModel: LibrarySearchModel,
+  private val searchModel: LibrarySearchModel,
   settingsManager: SettingsManager,
   connectionStateFlow: ConnectionStateFlow
 ) : BaseTrackViewModel(queueHandler, settingsManager, connectionStateFlow) {
   override val tracks =
     searchModel.term
-      .flatMapMerge {
+      .flatMapLatest {
         if (it.isEmpty()) {
           repository.getAll()
         } else {

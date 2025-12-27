@@ -6,12 +6,29 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Configuration for screen-level UI elements that should be rendered
  * by the main app scaffold.
+ *
+ * This follows the single-Scaffold pattern recommended by Google where only the root
+ * composable owns a Scaffold, and child screens pass their UI configuration up via callbacks.
  */
 data class ScreenConfig(
-  val floatingActionButton: (@Composable () -> Unit)? = null,
-  val snackbarMessages: Flow<String>? = null,
+  /**
+   * Custom topBar composable. When provided, the parent scaffold will use this
+   * instead of the default RemoteTopAppBar. This allows screens to have complex
+   * topBars (with search, tabs, progress indicators) without needing their own Scaffold.
+   */
+  val topBar: (@Composable () -> Unit)? = null,
+  /**
+   * Actions to show in the default RemoteTopAppBar. Only used when topBar is null.
+   */
   val topBarActions: (@Composable () -> Unit)? = null,
-  val hasCustomTopBar: Boolean = false
+  /**
+   * Floating action button composable to show in the Scaffold.
+   */
+  val floatingActionButton: (@Composable () -> Unit)? = null,
+  /**
+   * Flow of snackbar messages to show. Messages are automatically displayed as they're emitted.
+   */
+  val snackbarMessages: Flow<String>? = null
 ) {
   companion object {
     /**

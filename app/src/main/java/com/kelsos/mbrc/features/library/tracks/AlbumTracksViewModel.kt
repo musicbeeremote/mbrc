@@ -6,10 +6,12 @@ import com.kelsos.mbrc.features.library.albums.AlbumInfo
 import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.QueueHandler
 import com.kelsos.mbrc.features.settings.SettingsManager
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class AlbumTracksViewModel(
   private val repository: TrackRepository,
   private val queueHandler: QueueHandler,
@@ -19,7 +21,7 @@ class AlbumTracksViewModel(
   private val albumInfo = MutableSharedFlow<AlbumInfo>(replay = 1)
 
   override val tracks =
-    albumInfo.flatMapMerge {
+    albumInfo.flatMapLatest {
       val query =
         if (it.album.isEmpty()) {
           PagingTrackQuery.NonAlbum(artist = it.artist)
@@ -41,11 +43,16 @@ class AlbumTracksViewModel(
         emit(TrackUiMessage.NetworkUnavailable)
         return@launch
       }
-      queueHandler.queueAlbum(
+      val queueResult = queueHandler.queueAlbum(
         type = Queue.Now,
         album = album.album,
         artist = album.artist
       )
+      if (queueResult.success) {
+        emit(TrackUiMessage.QueueSuccess(queueResult.tracks))
+      } else {
+        emit(TrackUiMessage.QueueFailed)
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.library.artists
 
+import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -7,6 +8,7 @@ import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+@Immutable
 data class Artist(val artist: String, val id: Long)
 
 @JsonClass(generateAdapter = true)

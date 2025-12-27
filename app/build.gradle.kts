@@ -130,6 +130,12 @@ android {
     }
   }
 
+  // Enable Compose compiler reports for debugging performance
+  composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_reports")
+    metricsDestination = layout.buildDirectory.dir("compose_metrics")
+  }
+
   signingConfigs {
     create("release") {
       storeFile = file(KeyLoader.getValue(KeyLoader.KEYSTORE_PATH))

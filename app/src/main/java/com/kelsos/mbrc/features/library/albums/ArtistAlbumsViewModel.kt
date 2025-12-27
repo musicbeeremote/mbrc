@@ -6,11 +6,13 @@ import androidx.paging.cachedIn
 import com.kelsos.mbrc.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.features.queue.QueueHandler
 import com.kelsos.mbrc.features.settings.SettingsManager
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ArtistAlbumsViewModel(
   private val repository: AlbumRepository,
   queueHandler: QueueHandler,
@@ -21,7 +23,7 @@ class ArtistAlbumsViewModel(
 
   override val albums: Flow<PagingData<Album>> =
     artistFilter
-      .flatMapMerge { repository.getAlbumsByArtist(it) }
+      .flatMapLatest { repository.getAlbumsByArtist(it) }
       .cachedIn(viewModelScope)
 
   fun load(artist: String) {

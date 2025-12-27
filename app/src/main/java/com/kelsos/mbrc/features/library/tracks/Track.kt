@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.library.tracks
 
+import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -8,6 +9,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import okio.ByteString.Companion.encodeUtf8
 
+@Immutable
 data class Track(
   val artist: String,
   val title: String,

@@ -30,7 +30,16 @@ data class LibrarySyncProgress(
   val current: Int,
   val total: Int,
   val running: Boolean
-)
+) {
+  companion object {
+    val Idle = LibrarySyncProgress(
+      category = LibraryMediaType.Genres,
+      current = 0,
+      total = 0,
+      running = false
+    )
+  }
+}
 
 interface LibrarySyncWorkHandler {
   fun sync(auto: Boolean = false)
@@ -51,13 +60,27 @@ class LibrarySyncWorkHandlerImpl(private val workManager: WorkManager) : Library
   }
 
   override fun syncResults(): Flow<SyncResult> {
+    var wasRunning = false
     return workManager
       .getWorkInfosForUniqueWorkFlow(LibrarySyncWorker.SYNC_WORK_TAG)
       .map { workInfoList ->
-        if (workInfoList.isEmpty()) return@map null
+        if (workInfoList.isEmpty()) {
+          wasRunning = false
+          return@map null
+        }
         val workInfo = workInfoList.first()
+
         when (workInfo.state) {
+          WorkInfo.State.RUNNING -> {
+            wasRunning = true
+            null
+          }
+
           WorkInfo.State.SUCCEEDED -> {
+            // Only emit if work was running in this session
+            if (!wasRunning) return@map null
+            wasRunning = false
+
             val data = workInfo.outputData
             val keys = data.keyValueMap.keys
 
@@ -69,11 +92,17 @@ class LibrarySyncWorkHandlerImpl(private val workManager: WorkManager) : Library
           }
 
           WorkInfo.State.FAILED -> {
+            if (!wasRunning) return@map null
+            wasRunning = false
             val message = workInfo.outputData.getString("error") ?: "Unknown failure"
             SyncResult.Failed(message)
           }
 
-          WorkInfo.State.CANCELLED -> SyncResult.Failed("Sync was cancelled")
+          WorkInfo.State.CANCELLED -> {
+            if (!wasRunning) return@map null
+            wasRunning = false
+            SyncResult.Failed("Sync was cancelled")
+          }
 
           else -> null
         }

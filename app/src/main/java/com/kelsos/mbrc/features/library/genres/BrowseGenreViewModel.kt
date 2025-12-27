@@ -4,28 +4,28 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kelsos.mbrc.common.state.ConnectionStateFlow
-import com.kelsos.mbrc.features.library.BaseLibraryViewModel
 import com.kelsos.mbrc.features.library.LibrarySearchModel
 import com.kelsos.mbrc.features.library.LibrarySyncUseCase
-import com.kelsos.mbrc.features.queue.Queue
 import com.kelsos.mbrc.features.queue.QueueHandler
 import com.kelsos.mbrc.features.settings.SettingsManager
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class BrowseGenreViewModel(
   private val repository: GenreRepository,
   private val librarySyncUseCase: LibrarySyncUseCase,
-  private val queueHandler: QueueHandler,
-  searchModel: LibrarySearchModel,
+  queueHandler: QueueHandler,
+  private val searchModel: LibrarySearchModel,
   settingsManager: SettingsManager,
   connectionStateFlow: ConnectionStateFlow
-) : BaseLibraryViewModel<GenreUiMessage>(settingsManager, connectionStateFlow) {
-  val genres: Flow<PagingData<Genre>> =
+) : BaseGenreViewModel(queueHandler, settingsManager, connectionStateFlow) {
+  override val genres: Flow<PagingData<Genre>> =
     searchModel.term
-      .flatMapMerge { term ->
+      .flatMapLatest { term ->
         if (term.isEmpty()) {
           repository.getAll()
         } else {
@@ -42,29 +42,6 @@ class BrowseGenreViewModel(
         return@launch
       }
       librarySyncUseCase.sync()
-    }
-  }
-
-  fun queue(queue: Queue, genre: Genre) {
-    if (queue === Queue.Default) {
-      launchDefault(GenreUiMessage.OpenArtists(genre))
-      return
-    }
-
-    viewModelScope.launch {
-      if (!checkConnection()) {
-        emit(GenreUiMessage.NetworkUnavailable)
-        return@launch
-      }
-
-      val result = queueHandler.queueGenre(queue, genre.genre)
-      val event =
-        if (result.success) {
-          GenreUiMessage.QueueSuccess(result.tracks)
-        } else {
-          GenreUiMessage.QueueFailed
-        }
-      emit(event)
     }
   }
 }
