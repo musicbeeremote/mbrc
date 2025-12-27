@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.kelsos.mbrc.features.help.compose.HelpFeedbackScreen
+import com.kelsos.mbrc.features.playlists.compose.PlaylistScreen
 import com.kelsos.mbrc.features.radio.compose.RadioScreen
 import com.kelsos.mbrc.features.settings.compose.ConnectionManagerScreenWithConfig
 import com.kelsos.mbrc.features.settings.compose.SettingsScreen
@@ -51,10 +52,8 @@ fun AppNavGraph(
     }
 
     composable(Screen.Playlists.route) {
-      // Reset screen config for placeholder screens
       onScreenConfigChange(ScreenConfig.Empty)
-      // TODO: Implement PlaylistsScreen
-      PlaceholderScreen("Playlists")
+      PlaylistScreen(snackbarHostState = snackbarHostState)
     }
 
     composable(Screen.Radio.route) {
@@ -111,17 +110,6 @@ fun AppNavGraph(
       PlaceholderScreen("Genre Artists (ID: $genreId)")
     }
 
-    composable(
-      route = Screen.PlaylistTracks.ROUTE,
-      arguments = listOf(
-        navArgument("playlistId") { type = NavType.LongType }
-      )
-    ) { backStackEntry ->
-      val playlistId = backStackEntry.arguments?.getLong("playlistId") ?: 0L
-      // TODO: Implement PlaylistTracksScreen
-      PlaceholderScreen("Playlist Tracks (ID: $playlistId)")
-    }
-
     composable(Screen.NowPlayingList.route) {
       // TODO: Implement NowPlayingListScreen
       PlaceholderScreen("Now Playing List")
@@ -174,12 +162,6 @@ sealed class Screen(val route: String) {
   data class GenreArtists(val genreId: Long) : Screen("genre_artists/$genreId") {
     companion object {
       const val ROUTE = "genre_artists/{genreId}"
-    }
-  }
-
-  data class PlaylistTracks(val playlistId: Long) : Screen("playlist_tracks/$playlistId") {
-    companion object {
-      const val ROUTE = "playlist_tracks/{playlistId}"
     }
   }
 }

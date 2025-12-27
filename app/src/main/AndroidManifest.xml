@@ -107,17 +107,6 @@
         android:value=".features.player.PlayerActivity" />
     </activity>
 
-    <activity
-      android:name=".features.playlists.PlaylistActivity"
-      android:label="@string/nav_playlists"
-      android:parentActivityName=".features.player.PlayerActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".features.player.PlayerActivity" />
-    </activity>
-
     <receiver
       android:name=".features.widgets.WidgetNormal"
       android:exported="false">

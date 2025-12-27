@@ -77,8 +77,6 @@ import com.kelsos.mbrc.features.player.PlayerActivity
 import com.kelsos.mbrc.features.player.PlayerViewModel
 import com.kelsos.mbrc.features.player.RatingDialogFragment
 import com.kelsos.mbrc.features.player.RatingDialogViewModel
-import com.kelsos.mbrc.features.playlists.PlaylistActivity
-import com.kelsos.mbrc.features.playlists.PlaylistAdapter
 import com.kelsos.mbrc.features.playlists.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.PlaylistRepositoryImpl
 import com.kelsos.mbrc.features.playlists.PlaylistViewModel
@@ -199,9 +197,6 @@ val appModule =
     singleOf(::PlaylistRepositoryImpl) { bind<PlaylistRepository>() }
     singleOf(::RadioRepositoryImpl) { bind<RadioRepository>() }
     singleOf(::ConnectionRepositoryImpl) { bind<ConnectionRepository>() }
-
-    singleOf(::GenreEntryAdapter)
-    singleOf(::ArtistEntryAdapter)
 
     singleOf(::QueueHandler)
 
@@ -359,11 +354,6 @@ val appModule =
       scopedOf(::MoveManagerImpl) { bind<MoveManager>() }
     }
 
-    scope<PlaylistActivity> {
-      viewModelOf(::PlaylistViewModel)
-      scopedOf(::PlaylistAdapter)
-    }
-
     scope<RatingDialogFragment> {
       viewModelOf(::RatingDialogViewModel)
     }
@@ -379,5 +369,17 @@ val appModule =
     viewModelOf(::FeedbackViewModel)
     // RadioViewModel made global for Compose usage
     viewModelOf(::RadioViewModel)
+    // PlaylistViewModel made global for Compose usage
+    viewModelOf(::PlaylistViewModel)
+    // Library ViewModels made global for Compose usage
+    singleOf(::LibrarySearchModel)
+    viewModelOf(::LibraryViewModel)
+    viewModelOf(::BrowseGenreViewModel)
+    viewModelOf(::BrowseArtistViewModel)
+    viewModelOf(::BrowseAlbumViewModel)
+    viewModelOf(::BrowseTrackViewModel)
+    viewModelOf(::GenreArtistsViewModel)
+    viewModelOf(::ArtistAlbumsViewModel)
+    viewModelOf(::AlbumTracksViewModel)
     singleOf(::LogHelperImpl) { bind<LogHelper>() }
   }

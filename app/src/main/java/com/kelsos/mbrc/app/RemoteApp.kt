@@ -152,6 +152,5 @@ private fun getDetailScreenTitle(route: String): String = when {
   route.startsWith("album_tracks") -> ""
   route.startsWith("artist_albums") -> ""
   route.startsWith("genre_artists") -> ""
-  route.startsWith("playlist_tracks") -> ""
   else -> stringResource(R.string.application_name)
 }

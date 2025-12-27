@@ -32,7 +32,6 @@ import com.kelsos.mbrc.features.lyrics.LyricsActivity
 import com.kelsos.mbrc.features.nowplaying.NowPlayingActivity
 import com.kelsos.mbrc.features.output.OutputSelectionDialog
 import com.kelsos.mbrc.features.player.PlayerActivity
-import com.kelsos.mbrc.features.playlists.PlaylistActivity
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.networking.client.UiMessage
 import com.kelsos.mbrc.networking.client.UiMessageQueue
@@ -209,7 +208,7 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
       }
 
       R.id.nav_playlists -> {
-        createBackStack(Intent(this, PlaylistActivity::class.java))
+        // TODO: Navigate to Compose settings screen
       }
 
       R.id.nav_lyrics -> {
@@ -217,7 +216,6 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
       }
 
       R.id.nav_settings -> {
-        // Settings is now handled in Compose navigation
         // TODO: Navigate to Compose settings screen
       }
 
