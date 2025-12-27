@@ -11,6 +11,7 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlinAndroid)
   alias(libs.plugins.kotlinParcelize)
+  alias(libs.plugins.kotlinCompose)
   alias(libs.plugins.ksp)
   alias(libs.plugins.protobuf)
   alias(libs.plugins.googleServices) apply false
@@ -18,6 +19,7 @@ plugins {
   alias(libs.plugins.kotlinter)
   alias(libs.plugins.kover)
   alias(libs.plugins.detekt)
+  alias(libs.plugins.screenshot)
 }
 
 object KeyLoader {
@@ -75,9 +77,13 @@ val compileSDKVersion = 36
 android {
   compileSdk = compileSDKVersion
   namespace = "com.kelsos.mbrc"
+  testNamespace = "com.kelsos.mbrc.test"
+
+  experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
   buildFeatures {
     buildConfig = true
+    compose = true
   }
 
   defaultConfig {
@@ -95,6 +101,13 @@ android {
   testOptions {
     unitTests.isReturnDefaultValues = true
     unitTests.isIncludeAndroidResources = true
+  }
+
+  // Configure screenshot tests to use less memory
+  tasks.withType<Test>().matching { it.name.contains("ScreenshotTest") }.configureEach {
+    maxHeapSize = "4g"
+    maxParallelForks = 1
+    forkEvery = 10 // Restart JVM every 10 tests to free memory
   }
 
   compileOptions {
@@ -163,6 +176,8 @@ android {
     resources {
       excludes += "META-INF/ASL2.0"
       excludes += "META-INF/LICENSE"
+      excludes += "META-INF/LICENSE.md"
+      excludes += "META-INF/LICENSE-notice.md"
       excludes += "META-INF/NOTICE"
       excludes += "META-INF/services/javax.annotation.processing.Processor"
       excludes += "**/module-info.class"
@@ -222,9 +237,11 @@ dependencies {
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.constraintlayout)
   implementation(libs.androidx.datastore)
+  implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.fragment.ktx)
   implementation(libs.bundles.androidx.media3)
   implementation(libs.androidx.paging.runtime.ktx)
+  implementation(libs.androidx.paging.compose)
   implementation(libs.androidx.preference.ktx)
   implementation(libs.androidx.recyclerview)
   implementation(libs.androidx.core.splashscreen)
@@ -242,6 +259,14 @@ dependencies {
   implementation(libs.squareup.okio)
   implementation(libs.squareup.okhttp)
   implementation(libs.timber)
+
+  implementation(platform(libs.androidx.compose.bom))
+  implementation(libs.bundles.androidx.compose)
+  implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.navigation.compose)
+  implementation(libs.androidx.paging.compose)
+  implementation(libs.coilKt.compose)
+  implementation(libs.androidx.palette)
 
   ksp(libs.androidx.room.compiler)
   ksp(libs.squareup.moshi.codegen)
@@ -266,9 +291,19 @@ dependencies {
   androidTestImplementation(libs.androidx.test.runner)
   androidTestImplementation(libs.androidx.test.junit)
   androidTestImplementation(libs.truth)
+  androidTestImplementation(platform(libs.androidx.compose.bom))
+  androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+  androidTestImplementation(libs.koin.test)
+  androidTestImplementation(libs.kotlin.coroutines.test)
+  androidTestImplementation(libs.mockk.android)
 
   debugImplementation(libs.squareup.leakcanary)
   debugImplementation(libs.androidx.fragment.testing)
+  debugImplementation(libs.androidx.compose.ui.tooling)
+  debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+  screenshotTestImplementation(libs.screenshot.validation.api)
+  screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 
   "playImplementation"(platform(libs.google.firebase.bom))
   "playImplementation"(libs.bundles.google.firebase) {
@@ -340,15 +375,17 @@ tasks {
     val staticAnalysis by registering {
       val detektRelease by named<Detekt>("detektGithubRelease")
       val androidLintReportRelease = named<AndroidLintTask>("lintReportGithubRelease")
+      val lintKotlinTask = named("lintKotlin")
 
-      dependsOn(detekt, detektRelease, androidLintReportRelease, lintKotlin)
+      dependsOn(detekt, detektRelease, androidLintReportRelease, lintKotlinTask)
     }
 
     register<Sync>("collectSarifReports") {
       val detektRelease by named<Detekt>("detektGithubRelease")
       val androidLintReportRelease = named<AndroidLintTask>("lintReportGithubRelease")
+      val lintKotlinTask = named("lintKotlin")
 
-      mustRunAfter(detekt, detektRelease, androidLintReportRelease, lintKotlin, staticAnalysis)
+      mustRunAfter(detekt, detektRelease, androidLintReportRelease, lintKotlinTask, staticAnalysis)
 
       from(detektRelease.sarifReportFile) {
         rename { "detekt-release.sarif" }
@@ -379,9 +416,10 @@ tasks {
   }
 
   val checkGoogleServicesJson by registering {
+    val googleServicesFile = file("google-services.json")
     onlyIf { System.getenv("CI") != "true" }
     doLast {
-      if (!project.file("google-services.json").exists()) {
+      if (!googleServicesFile.exists()) {
         throw GradleException(
           "You need a google-services.json file to run this project." +
             " Please refer to the CONTRIBUTING.md file for details."
@@ -396,6 +434,25 @@ tasks {
     named("processGithubDebugGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
     named("processPlayDebugGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
   }
+
+  val verifyLocal by registering {
+    description = "Run all local verification checks"
+    dependsOn(
+      "lintKotlin",
+      "detektGithubDebug",
+      "lintReportGithubDebug",
+      "testGithubDebugUnitTest",
+      "validateGithubDebugScreenshotTest"
+    )
+  }
+
+  val verifyAll by registering {
+    description = "Run all verification checks including instrumentation tests"
+    dependsOn(
+      verifyLocal,
+      "connectedGithubDebugAndroidTest"
+    )
+  }
 }
 
 configurations.all {
@@ -403,6 +460,9 @@ configurations.all {
     force("com.google.code.findbugs:jsr305:3.0.2")
     force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.libs.versions.kotlin.get()}")
     force("org.jetbrains.kotlin:kotlin-reflect:${project.libs.versions.kotlin.get()}")
+    // Room 2.8.x requires kotlinx-serialization 1.8.x for migration testing
+    force("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
+    force("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
   }
 }
 

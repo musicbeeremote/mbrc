@@ -45,3 +45,25 @@ dependencies {
   implementation(libs.google.material)
   implementation(libs.kotlin.stdlib)
 }
+
+detekt {
+  source.setFrom(files("src/main/java", "src/main/kotlin"))
+  config.setFrom(files(rootProject.file("config/detekt/detekt.yml")))
+  buildUponDefaultConfig = true
+}
+
+tasks {
+  val verifyLocal by registering {
+    description = "Run all local verification checks for changelog module"
+    dependsOn(
+      "lintKotlin",
+      "detekt",
+      "lint"
+    )
+  }
+
+  val verifyAll by registering {
+    description = "Run all verification checks for changelog module"
+    dependsOn(verifyLocal)
+  }
+}
