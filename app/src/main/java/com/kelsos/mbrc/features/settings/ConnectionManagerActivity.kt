@@ -77,7 +77,9 @@ class ConnectionManagerActivity :
     val message: String =
       when (event) {
         DiscoveryStop.NoWifi -> getString(R.string.con_man_no_wifi)
+
         DiscoveryStop.NotFound -> getString(R.string.con_man_not_found)
+
         is DiscoveryStop.Complete -> {
           getString(R.string.con_man_success)
         }

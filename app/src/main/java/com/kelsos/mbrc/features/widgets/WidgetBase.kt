@@ -31,6 +31,7 @@ abstract class WidgetBase : AppWidgetProvider() {
       AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
         whenNotNull(context, intent.extras, this::updateWidget)
       }
+
       else -> {
         val extras = intent?.extras
         if (context == null || extras == null) {
@@ -69,6 +70,7 @@ abstract class WidgetBase : AppWidgetProvider() {
             playingTrack
           )
         }
+
         data.isState() ->
           updatePlayState(
             context,

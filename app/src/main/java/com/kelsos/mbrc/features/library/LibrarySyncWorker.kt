@@ -67,11 +67,14 @@ class LibrarySyncWorkHandlerImpl(private val workManager: WorkManager) : Library
               SyncResult.Noop
             }
           }
+
           WorkInfo.State.FAILED -> {
             val message = workInfo.outputData.getString("error") ?: "Unknown failure"
             SyncResult.Failed(message)
           }
+
           WorkInfo.State.CANCELLED -> SyncResult.Failed("Sync was cancelled")
+
           else -> null
         }
       }.filterNotNull()
@@ -181,7 +184,6 @@ class LibrarySyncWorker(
     return when (syncResult) {
       is SyncResult.Success -> Result.success(syncResult.stats.toWorkData())
       SyncResult.Noop -> Result.success()
-
       is SyncResult.Failed -> Result.failure(workDataOf("error" to syncResult.message))
     }
   }

@@ -82,15 +82,19 @@ class RadioActivity :
           val resId =
             when (it) {
               RadioUiMessages.QueueFailed -> R.string.radio__play_failed
+
               RadioUiMessages.QueueSuccess -> R.string.radio__play_successful
+
               RadioUiMessages.RefreshFailed -> {
                 swipeLayout.isRefreshing = false
                 R.string.radio__loading_failed
               }
+
               RadioUiMessages.RefreshSuccess -> {
                 swipeLayout.isRefreshing = false
                 R.string.radio__loading_success
               }
+
               RadioUiMessages.NetworkUnavailable -> {
                 swipeLayout.isRefreshing = false
                 R.string.connection_error_network_unavailable

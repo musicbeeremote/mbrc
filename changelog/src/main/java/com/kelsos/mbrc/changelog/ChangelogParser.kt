@@ -66,6 +66,7 @@ class ChangelogParser(private val context: Context) {
           val element = ChangeLogEntry.Entry(text, getType(name))
           entries.add(element)
         }
+
         else -> skip(parser)
       }
     }

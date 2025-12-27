@@ -126,7 +126,9 @@ class LibraryActivity :
               syncFailure()
               hideSyncProgress()
             }
+
             SyncResult.Noop -> Unit
+
             is SyncResult.Success -> {
               syncComplete(syncResult.stats)
               hideSyncProgress()

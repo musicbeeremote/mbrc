@@ -46,21 +46,31 @@ class MediaIntentHandler(
 
     return when (event.keyCode) {
       KeyEvent.KEYCODE_HEADSETHOOK -> detectDoubleClick()
+
       KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> postAction(UserAction(Protocol.PlayerPlayPause, true))
+
       KeyEvent.KEYCODE_MEDIA_PLAY -> postAction(UserAction(Protocol.PlayerPlay, true))
+
       KeyEvent.KEYCODE_MEDIA_PAUSE -> postAction(UserAction(Protocol.PlayerPause, true))
+
       KeyEvent.KEYCODE_MEDIA_STOP -> postAction(UserAction(Protocol.PlayerStop, true))
+
       KeyEvent.KEYCODE_MEDIA_NEXT -> postAction(UserAction(Protocol.PlayerNext, true))
+
       KeyEvent.KEYCODE_MEDIA_PREVIOUS -> postAction(UserAction(Protocol.PlayerPrevious, true))
+
       KeyEvent.KEYCODE_VOLUME_UP -> {
         runBlocking { volumeModifyUseCase.increase() }
         true
       }
+
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
         runBlocking { volumeModifyUseCase.decrease() }
         true
       }
+
       KeyEvent.KEYCODE_VOLUME_MUTE -> postAction(UserAction.toggle(Protocol.PlayerMute))
+
       else -> false
     }
   }

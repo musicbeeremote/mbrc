@@ -111,16 +111,19 @@ class QueueHandler(
               trackRepository.getTrackPaths(TrackQuery.All)
             }
           }
+
           Queue.PlayAlbum -> {
             action = Queue.AddAll
             path = track.src
             trackRepository.getTrackPaths(TrackQuery.Album(track.album, track.albumArtist))
           }
+
           Queue.PlayArtist -> {
             action = Queue.AddAll
             path = track.src
             trackRepository.getTrackPaths(TrackQuery.Artist(track.artist))
           }
+
           else -> {
             path = null
             listOf(track.src)

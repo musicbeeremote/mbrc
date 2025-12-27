@@ -123,13 +123,16 @@ class ClientConnectionManagerImpl(
 
   private fun classifyNetworkError(exception: Throwable): NetworkError = when (exception) {
     is SocketTimeoutException -> NetworkError.ConnectionTimeout(exception)
+
     is SocketException ->
       if (exception.message?.contains("refused") == true) {
         NetworkError.ConnectionRefused(exception)
       } else {
         NetworkError.SocketError(exception)
       }
+
     is IOException -> NetworkError.SocketError(exception)
+
     else -> NetworkError.UnknownError(exception)
   }
 
@@ -139,20 +142,25 @@ class ClientConnectionManagerImpl(
     val uiMessage =
       when (networkError) {
         is NetworkError.ConnectionTimeout -> UiMessage.ConnectionError.ConnectionTimeout
+
         is NetworkError.ConnectionRefused -> UiMessage.ConnectionError.ConnectionRefused
+
         is NetworkError.SocketError -> {
           val message = networkError.cause.message
           when {
             message?.contains("Network is unreachable", ignoreCase = true) == true ->
               UiMessage.ConnectionError.NetworkUnavailable
+
             message?.contains("No route to host", ignoreCase = true) == true ->
               UiMessage.ConnectionError.ServerNotFound
+
             else ->
               UiMessage.ConnectionError.UnknownConnectionError(
                 message ?: "Socket connection failed"
               )
           }
         }
+
         is NetworkError.UnknownError ->
           UiMessage.ConnectionError.UnknownConnectionError(
             networkError.cause.message ?: "Unknown connection error"
@@ -173,6 +181,7 @@ class ClientConnectionManagerImpl(
         )
         discoveryStop.settings
       }
+
       else -> {
         Timber.v("Discovery did not complete, will not connect to any servers")
         null

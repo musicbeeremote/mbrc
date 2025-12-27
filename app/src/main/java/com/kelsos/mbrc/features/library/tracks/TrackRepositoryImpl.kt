@@ -25,6 +25,7 @@ class TrackRepositoryImpl(
       paged({
         dao.getAlbumTracks(query.album, query.artist)
       }) { it.toTrack() }
+
     is PagingTrackQuery.NonAlbum ->
       paged(
         { dao.getNonAlbumTracks(query.artist) }

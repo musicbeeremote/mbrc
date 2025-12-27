@@ -91,6 +91,7 @@ class MiniControlFragment : ScopeFragment() {
                 Snackbar.LENGTH_SHORT
               ).show()
             }
+
             MiniControlUiMessages.ActionFailed -> {
               Snackbar.make(view, R.string.action_failed, Snackbar.LENGTH_SHORT).show()
             }

@@ -46,12 +46,14 @@ class MessageHandlerImpl(
 
       when (context) {
         Protocol.ClientNotAllowed -> clientNotAllowed()
+
         Protocol.CommandUnavailable ->
           uiMessageQueue.messages.emit(
             UiMessage.PartyModeCommandUnavailable
           )
 
         Protocol.UnknownCommand -> Unit
+
         else -> handle(message, context)
       }
     }

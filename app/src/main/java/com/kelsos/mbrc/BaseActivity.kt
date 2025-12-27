@@ -300,12 +300,15 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
             is UiMessage.PluginUpdateRequired -> {
               showPluginUpdateRequired(message.minimumVersion)
             }
+
             is UiMessage.PluginUpdateAvailable -> {
               showPluginUpdateAvailable()
             }
+
             is UiMessage.ConnectionError -> {
               showConnectionError(message)
             }
+
             else -> {
               // Handle other message types if needed
             }
@@ -356,18 +359,25 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
   private fun getConnectionErrorMessage(error: UiMessage.ConnectionError): String = when (error) {
     is UiMessage.ConnectionError.ServerNotFound ->
       getString(R.string.connection_error_server_not_found)
+
     is UiMessage.ConnectionError.ConnectionTimeout ->
       getString(R.string.connection_error_timeout)
+
     is UiMessage.ConnectionError.ConnectionRefused ->
       getString(R.string.connection_error_refused)
+
     is UiMessage.ConnectionError.NetworkUnavailable ->
       getString(R.string.connection_error_network_unavailable)
+
     is UiMessage.ConnectionError.AuthenticationFailed ->
       getString(R.string.connection_error_authentication_failed)
+
     is UiMessage.ConnectionError.UnsupportedProtocolVersion ->
       getString(R.string.connection_error_unsupported_protocol)
+
     is UiMessage.ConnectionError.AllRetriesExhausted ->
       getString(R.string.connection_error_all_retries_exhausted)
+
     is UiMessage.ConnectionError.UnknownConnectionError ->
       getString(R.string.connection_error_unknown, error.message)
   }
@@ -378,6 +388,7 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
     is UiMessage.ConnectionError.NetworkUnavailable,
     is UiMessage.ConnectionError.UnknownConnectionError
     -> true
+
     is UiMessage.ConnectionError.ConnectionRefused,
     is UiMessage.ConnectionError.AuthenticationFailed,
     is UiMessage.ConnectionError.UnsupportedProtocolVersion,

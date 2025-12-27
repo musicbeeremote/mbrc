@@ -56,10 +56,15 @@ class RemoteBroadcastReceiver(
           handleRinging()
         }
       }
+
       RemoteViewIntentBuilder.PLAY_PRESSED -> performAction(Protocol.PlayerPlayPause)
+
       RemoteViewIntentBuilder.NEXT_PRESSED -> performAction(Protocol.PlayerNext)
+
       RemoteViewIntentBuilder.CLOSE_PRESSED -> stopService(context)
+
       RemoteViewIntentBuilder.PREVIOUS_PRESSED -> performAction(Protocol.PlayerPrevious)
+
       RemoteViewIntentBuilder.CANCELLED_NOTIFICATION -> stopService(context)
     }
   }
