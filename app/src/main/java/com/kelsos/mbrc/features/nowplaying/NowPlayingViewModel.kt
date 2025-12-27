@@ -116,9 +116,24 @@ class NowPlayingActions(
 
   override fun search(query: String) {
     scope.launch(dispatchers.database) {
-      val position = repository.findPosition(query)
-      if (position > 0) {
-        play(position)
+      val result = repository.searchTrack(query)
+      if (result == null || result.position <= 0) {
+        emit(NowPlayingUiMessages.SearchNotFound)
+        return@launch
+      }
+
+      // Check connection before playing
+      if (!connectionStateFlow.isConnected()) {
+        emit(NowPlayingUiMessages.NetworkUnavailable)
+        return@launch
+      }
+
+      try {
+        userActionUseCase.playTrack(result.position)
+        emit(NowPlayingUiMessages.SearchSuccess(result.title))
+      } catch (e: IOException) {
+        Timber.e(e)
+        emit(NowPlayingUiMessages.PlayFailed)
       }
     }
   }

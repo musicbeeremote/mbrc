@@ -19,6 +19,8 @@ interface NowPlayingRepository : Repository<NowPlaying> {
   suspend fun remove(position: Int)
 
   suspend fun findPosition(query: String): Int
+
+  suspend fun searchTrack(query: String): SearchResult?
 }
 
 val NowPlayingEntity.key: String
@@ -97,6 +99,14 @@ class NowPlayingRepositoryImpl(
     }
     return@withContext dao.findPositionByQuery(query) ?: -1
   }
+
+  override suspend fun searchTrack(query: String): SearchResult? =
+    withContext(dispatchers.database) {
+      if (query.isBlank()) {
+        return@withContext null
+      }
+      return@withContext dao.searchTrack(query)
+    }
 
   override suspend fun getById(id: Long): NowPlaying? {
     return withContext(dispatchers.database) {

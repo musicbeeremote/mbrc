@@ -52,8 +52,6 @@ import com.kelsos.mbrc.features.minicontrol.MiniControlFragment
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.features.nowplaying.MoveManager
 import com.kelsos.mbrc.features.nowplaying.MoveManagerImpl
-import com.kelsos.mbrc.features.nowplaying.NowPlayingActivity
-import com.kelsos.mbrc.features.nowplaying.NowPlayingAdapter
 import com.kelsos.mbrc.features.nowplaying.NowPlayingRepository
 import com.kelsos.mbrc.features.nowplaying.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.features.nowplaying.NowPlayingViewModel
@@ -147,7 +145,6 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.scopedOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -296,11 +293,9 @@ val appModule =
       viewModelOf(::LyricsViewModel)
     }
 
-    scope<NowPlayingActivity> {
-      viewModelOf(::NowPlayingViewModel)
-      scopedOf(::NowPlayingAdapter)
-      scopedOf(::MoveManagerImpl) { bind<MoveManager>() }
-    }
+    // NowPlaying components for Compose - MoveManager is singleton to track moves across recompositions
+    singleOf(::MoveManagerImpl) { bind<MoveManager>() }
+    viewModelOf(::NowPlayingViewModel)
 
     scope<RatingDialogFragment> {
       viewModelOf(::RatingDialogViewModel)

@@ -46,7 +46,6 @@
   <string name="content_description__speaker_icon">Represents an audio output device</string>
   <string name="dash">-</string>
   <string name="description_album_cover">It displays the album cover for the current track.</string>
-  <string name="drag_n_drop_description">Used as an anchor for drag and drop</string>
   <string name="drawer_close">Close navigation drawer</string>
   <string name="drawer_connection_status_active">Connected</string>
   <string name="drawer_connection_status_off">Offline</string>
@@ -70,10 +69,10 @@
   <string name="library__sync_complete">Sync completed successfully. %1$s , %2$s, %3$s, %4$s and %5$s are available.</string>
   <string name="library__sync_failed">The library metadata sync was incomplete or failed completely. This might result in queueing not working properly..</string>
   <string name="library__sync_progress">Syncing %1$d of %2$d %3$s</string>
-  <string name="library_actionbar_refresh">Refresh</string>
+  <string name="action_refresh">Refresh</string>
   <string name="library_album_artists_only">Only Album Artists</string>
   <string name="library_menu__sync_state">Library Sync State</string>
-  <string name="library_search_clear">Clear search</string>
+  <string name="action_search_clear">Clear search</string>
   <string name="library_search_hint">Search your library</string>
   <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote:</string>
   <string name="library_stats__title">Library Sync Information</string>
@@ -125,8 +124,6 @@
   <string name="notification__sync_progress_genres">Genres (%1$d/%2$d)</string>
   <string name="notification__sync_progress_playlists">Playlists (%1$d/%2$d)</string>
   <string name="notification__sync_progress_tracks">Tracks (%1$d/%2$d)</string>
-  <string name="now_playing_indicator">Should be shown if the track is currently playing</string>
-  <string name="now_playing_search">Search</string>
   <string name="now_playing_search_hint">Search and play a track</string>
   <string name="open_source_licenses_title">Open source licenses</string>
   <string name="output_selection__close_dialog">Close</string>
@@ -172,7 +169,6 @@
   <string name="theme_light">Light</string>
   <string name="theme_dark">Dark</string>
 
-  <string name="swipe_to_refresh">Swipe to refresh the list.</string>
   <string name="sync_notification__channel_description">Shows the progress of the library metadata sync</string>
   <string name="sync_notification__channel_name">Library Metadata Sync</string>
   <string name="tab_help">Help</string>
@@ -188,4 +184,9 @@
   <!-- Compose UI strings -->
   <string name="navigate_back">Navigate back</string>
   <string name="no_data">No data available</string>
+  <string name="menu_remove_track">Remove track</string>
+  <string name="now_playing__empty_list">Your queue is empty</string>
+  <string name="now_playing__drag_handle">Drag to reorder</string>
+  <string name="now_playing__search_success">Playing: %1$s</string>
+  <string name="now_playing__search_not_found">No track found matching your search</string>
 </resources>

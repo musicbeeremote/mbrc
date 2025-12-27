@@ -49,7 +49,7 @@
         tools:ignore="MissingPrefix,UnusedAttribute" />
 
       <androidx.constraintlayout.widget.Group
-        android:id="@id/empty_view"
+        android:id="@+id/empty_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:constraint_referenced_ids="empty_icon, empty_view_text" />

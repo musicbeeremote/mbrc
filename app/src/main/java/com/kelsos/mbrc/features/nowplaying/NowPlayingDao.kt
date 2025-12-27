@@ -108,6 +108,16 @@ interface NowPlayingDao {
   )
   fun findPositionByQuery(query: String): Int?
 
+  @Query(
+    """
+        select position, title from now_playing
+        where title like '%' || :query || '%'
+        or artist like '%' || :query || '%'
+        limit 1
+        """
+  )
+  fun searchTrack(query: String): SearchResult?
+
   @Update
   fun update(existing: List<NowPlayingEntity>)
 

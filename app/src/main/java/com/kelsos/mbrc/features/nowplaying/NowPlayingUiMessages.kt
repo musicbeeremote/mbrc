@@ -5,13 +5,17 @@ import com.kelsos.mbrc.common.mvvm.UiMessageBase
 sealed class NowPlayingUiMessages : UiMessageBase {
   class RefreshFailed(val throwable: Throwable) : NowPlayingUiMessages()
 
-  object RefreshSucceeded : NowPlayingUiMessages()
+  data object RefreshSucceeded : NowPlayingUiMessages()
 
-  object NetworkUnavailable : NowPlayingUiMessages()
+  data object NetworkUnavailable : NowPlayingUiMessages()
 
-  object PlayFailed : NowPlayingUiMessages()
+  data object PlayFailed : NowPlayingUiMessages()
 
-  object RemoveFailed : NowPlayingUiMessages()
+  data object RemoveFailed : NowPlayingUiMessages()
 
-  object MoveFailed : NowPlayingUiMessages()
+  data object MoveFailed : NowPlayingUiMessages()
+
+  data class SearchSuccess(val trackTitle: String) : NowPlayingUiMessages()
+
+  data object SearchNotFound : NowPlayingUiMessages()
 }

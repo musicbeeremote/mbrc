@@ -28,7 +28,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.common.state.ConnectionStatus
 import com.kelsos.mbrc.features.lyrics.LyricsActivity
-import com.kelsos.mbrc.features.nowplaying.NowPlayingActivity
 import com.kelsos.mbrc.features.output.OutputSelectionDialog
 import com.kelsos.mbrc.features.player.PlayerActivity
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
@@ -203,7 +202,7 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
       }
 
       R.id.nav_now_playing -> {
-        createBackStack(Intent(this, NowPlayingActivity::class.java))
+        // Now Playing is now handled in Compose navigation
       }
 
       R.id.nav_playlists -> {

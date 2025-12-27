@@ -20,6 +20,7 @@ import com.kelsos.mbrc.features.library.compose.LibraryScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.AlbumTracksScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.ArtistAlbumsScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.GenreArtistsScreen
+import com.kelsos.mbrc.features.nowplaying.compose.NowPlayingScreen
 import com.kelsos.mbrc.features.playlists.compose.PlaylistScreen
 import com.kelsos.mbrc.features.radio.compose.RadioScreen
 import com.kelsos.mbrc.features.settings.compose.ConnectionManagerScreenWithConfig
@@ -175,8 +176,11 @@ fun AppNavGraph(
     }
 
     composable(Screen.NowPlayingList.route) {
-      // TODO: Implement NowPlayingListScreen
-      PlaceholderScreen("Now Playing List")
+      NowPlayingScreen(
+        onOpenDrawer = onOpenDrawer,
+        snackbarHostState = snackbarHostState,
+        onScreenConfigChange = onScreenConfigChange
+      )
     }
 
     composable(Screen.Lyrics.route) {

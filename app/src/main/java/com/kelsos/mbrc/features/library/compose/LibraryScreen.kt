@@ -406,7 +406,7 @@ private fun LibraryTopBar(
           }) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = stringResource(R.string.library_search_clear)
+              contentDescription = stringResource(R.string.action_search_clear)
             )
           }
         },
@@ -418,7 +418,7 @@ private fun LibraryTopBar(
             }) {
               Icon(
                 imageVector = Icons.Default.Clear,
-                contentDescription = stringResource(R.string.library_search_clear)
+                contentDescription = stringResource(R.string.action_search_clear)
               )
             }
           }
@@ -439,7 +439,7 @@ private fun LibraryTopBar(
           IconButton(onClick = onSync) {
             Icon(
               imageVector = Icons.Default.Refresh,
-              contentDescription = stringResource(R.string.library_actionbar_refresh)
+              contentDescription = stringResource(R.string.action_refresh)
             )
           }
 

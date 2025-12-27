@@ -416,12 +416,13 @@ class NowPlayingViewModelTest : KoinTest {
   }
 
   @Test
-  fun searchShouldCallPlayWhenPositionFound() {
+  fun searchShouldCallPlayAndEmitSuccessWhenTrackFound() {
     runTest(testDispatcher) {
       // Given
       val query = "test song"
       val foundPosition = 10
-      coEvery { repository.findPosition(query) } returns foundPosition
+      val trackTitle = "Test Song Title"
+      coEvery { repository.searchTrack(query) } returns SearchResult(foundPosition, trackTitle)
       coEvery { connectionStateFlow.isConnected() } returns true
       coEvery { userActionUseCase.perform(any()) } returns Unit
 
@@ -430,12 +431,13 @@ class NowPlayingViewModelTest : KoinTest {
         viewModel.actions.search(query)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Should not emit any events since play succeeds
-        expectNoEvents()
+        // Should emit SearchSuccess with track title
+        val event = awaitItem()
+        assertThat(event).isEqualTo(NowPlayingUiMessages.SearchSuccess(trackTitle))
       }
 
       // Verify repository search was called
-      coVerify(exactly = 1) { repository.findPosition(query) }
+      coVerify(exactly = 1) { repository.searchTrack(query) }
       // Verify play was called with found position
       coVerify(exactly = 1) {
         userActionUseCase.perform(UserAction(Protocol.NowPlayingListPlay, foundPosition))
@@ -444,35 +446,37 @@ class NowPlayingViewModelTest : KoinTest {
   }
 
   @Test
-  fun searchShouldNotCallPlayWhenPositionNotFound() {
+  fun searchShouldEmitNotFoundWhenNoTrackMatches() {
     runTest(testDispatcher) {
       // Given
       val query = "nonexistent song"
-      coEvery { repository.findPosition(query) } returns -1
+      coEvery { repository.searchTrack(query) } returns null
 
       // When & Then
       viewModel.events.test {
         viewModel.actions.search(query)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Should not emit any events
-        expectNoEvents()
+        // Should emit SearchNotFound
+        val event = awaitItem()
+        assertThat(event).isEqualTo(NowPlayingUiMessages.SearchNotFound)
       }
 
       // Verify repository search was called
-      coVerify(exactly = 1) { repository.findPosition(query) }
+      coVerify(exactly = 1) { repository.searchTrack(query) }
       // Verify play was not called
       coVerify(exactly = 0) { userActionUseCase.perform(any()) }
     }
   }
 
   @Test
-  fun searchShouldEmitNetworkUnavailableWhenPositionFoundButNotConnected() {
+  fun searchShouldEmitNetworkUnavailableWhenTrackFoundButNotConnected() {
     runTest(testDispatcher) {
       // Given
       val query = "test song"
       val foundPosition = 10
-      coEvery { repository.findPosition(query) } returns foundPosition
+      val trackTitle = "Test Song Title"
+      coEvery { repository.searchTrack(query) } returns SearchResult(foundPosition, trackTitle)
       coEvery { connectionStateFlow.isConnected() } returns false
 
       // When & Then
@@ -480,12 +484,13 @@ class NowPlayingViewModelTest : KoinTest {
         viewModel.actions.search(query)
         testDispatcher.scheduler.advanceUntilIdle()
 
+        // Should emit NetworkUnavailable only (search aborts when not connected)
         val event = awaitItem()
         assertThat(event).isEqualTo(NowPlayingUiMessages.NetworkUnavailable)
       }
 
       // Verify repository search was called
-      coVerify(exactly = 1) { repository.findPosition(query) }
+      coVerify(exactly = 1) { repository.searchTrack(query) }
       // Verify user action is not called when not connected
       coVerify(exactly = 0) { userActionUseCase.perform(any()) }
     }

@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.nowplaying
 
+import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -7,6 +8,7 @@ import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+@Immutable
 data class NowPlaying(
   val title: String,
   val artist: String,
@@ -50,3 +52,5 @@ data class NowPlayingEntity(
 )
 
 data class CachedNowPlaying(val id: Long, val path: String, val position: Int)
+
+data class SearchResult(val position: Int, val title: String)
