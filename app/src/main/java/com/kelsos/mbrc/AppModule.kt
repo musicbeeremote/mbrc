@@ -46,7 +46,6 @@ import com.kelsos.mbrc.features.library.tracks.AlbumTracksViewModel
 import com.kelsos.mbrc.features.library.tracks.BrowseTrackViewModel
 import com.kelsos.mbrc.features.library.tracks.TrackRepository
 import com.kelsos.mbrc.features.library.tracks.TrackRepositoryImpl
-import com.kelsos.mbrc.features.lyrics.LyricsActivity
 import com.kelsos.mbrc.features.lyrics.LyricsViewModel
 import com.kelsos.mbrc.features.minicontrol.MiniControlFragment
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
@@ -289,9 +288,7 @@ val appModule =
       viewModelOf(::PlayerViewModel)
     }
 
-    scope<LyricsActivity> {
-      viewModelOf(::LyricsViewModel)
-    }
+    viewModelOf(::LyricsViewModel)
 
     // NowPlaying components for Compose - MoveManager is singleton to track moves across recompositions
     singleOf(::MoveManagerImpl) { bind<MoveManager>() }

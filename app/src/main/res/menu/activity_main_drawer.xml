@@ -27,11 +27,6 @@
       android:icon="@drawable/baseline_radio_24"
       android:title="@string/nav_radio" />
 
-    <item
-      android:id="@+id/nav_lyrics"
-      android:icon="@drawable/baseline_view_headline_24"
-      android:title="@string/nav_lyrics" />
-
   </group>
 
   <item android:title="@string/nav_option_title">

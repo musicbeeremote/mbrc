@@ -27,7 +27,6 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.common.state.ConnectionStatus
-import com.kelsos.mbrc.features.lyrics.LyricsActivity
 import com.kelsos.mbrc.features.output.OutputSelectionDialog
 import com.kelsos.mbrc.features.player.PlayerActivity
 import com.kelsos.mbrc.networking.ClientConnectionUseCase
@@ -207,10 +206,6 @@ abstract class BaseActivity(@LayoutRes val contentLayoutId: Int) :
 
       R.id.nav_playlists -> {
         // TODO: Navigate to Compose settings screen
-      }
-
-      R.id.nav_lyrics -> {
-        createBackStack(Intent(this, LyricsActivity::class.java))
       }
 
       R.id.nav_settings -> {

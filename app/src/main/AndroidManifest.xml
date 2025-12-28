@@ -68,17 +68,6 @@
         tools:node="remove" />
     </provider>
 
-    <activity
-      android:name=".features.lyrics.LyricsActivity"
-      android:label="@string/nav_lyrics"
-      android:parentActivityName=".features.player.PlayerActivity">
-
-      <!-- Parent activity meta-data to support 4.0 and lower -->
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".features.player.PlayerActivity" />
-    </activity>
-
     <receiver
       android:name=".features.widgets.WidgetNormal"
       android:exported="false">

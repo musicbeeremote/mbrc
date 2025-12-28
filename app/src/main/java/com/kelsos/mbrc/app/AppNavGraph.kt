@@ -20,6 +20,7 @@ import com.kelsos.mbrc.features.library.compose.LibraryScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.AlbumTracksScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.ArtistAlbumsScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.GenreArtistsScreen
+import com.kelsos.mbrc.features.lyrics.compose.LyricsScreen
 import com.kelsos.mbrc.features.nowplaying.compose.NowPlayingScreen
 import com.kelsos.mbrc.features.playlists.compose.PlaylistScreen
 import com.kelsos.mbrc.features.radio.compose.RadioScreen
@@ -184,8 +185,9 @@ fun AppNavGraph(
     }
 
     composable(Screen.Lyrics.route) {
-      // TODO: Implement LyricsScreen
-      PlaceholderScreen("Lyrics")
+      LyricsScreen(
+        onCollapse = { navController.popBackStack() }
+      )
     }
 
     composable(Screen.ConnectionManager.route) {

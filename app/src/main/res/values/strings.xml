@@ -42,7 +42,6 @@
   <string name="connection_manager_default_indicator">Default connection</string>
   <string name="connection_manager_open_menu">Add or scan</string>
   <string name="connection_manager_close_menu">Close menu</string>
-  <string name="content_description__empty_warning">Warning sign showing that there are no entries</string>
   <string name="content_description__speaker_icon">Represents an audio output device</string>
   <string name="dash">-</string>
   <string name="description_album_cover">It displays the album cover for the current track.</string>
@@ -113,6 +112,7 @@
   <string name="nav_connections">Connections</string>
   <string name="common_settings">Settings</string>
   <string name="no_lyrics">No lyrics found</string>
+  <string name="lyrics_collapse">Collapse lyrics</string>
   <string name="non_album_tracks">Non album tracks</string>
   <string name="notification__session_channel_description">Used to display the media control notification.</string>
   <string name="notification__session_channel_name">MusicBee Remote Session</string>

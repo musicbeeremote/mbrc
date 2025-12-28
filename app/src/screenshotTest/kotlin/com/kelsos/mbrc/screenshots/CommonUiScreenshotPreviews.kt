@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MusicNote
@@ -23,6 +24,7 @@ import com.kelsos.mbrc.common.ui.compose.LoadingScreen
 import com.kelsos.mbrc.common.ui.compose.MoreOptionsButton
 import com.kelsos.mbrc.common.ui.compose.RemoteTopAppBar
 import com.kelsos.mbrc.common.ui.compose.SingleLineRow
+import com.kelsos.mbrc.common.ui.compose.ThinSlider
 import com.kelsos.mbrc.theme.RemoteTheme
 
 @PreviewTest
@@ -264,6 +266,74 @@ fun ErrorScreenNoRetryLight() {
   RemoteTheme(darkTheme = false) {
     Surface(modifier = Modifier.fillMaxSize()) {
       ErrorScreen(message = "Unable to load data")
+    }
+  }
+}
+
+@PreviewTest
+@Preview(showBackground = true)
+@Composable
+fun ThinSliderLight() {
+  RemoteTheme(darkTheme = false) {
+    Surface(modifier = Modifier.fillMaxWidth()) {
+      ThinSlider(
+        value = 0.5f,
+        onValueChange = {},
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(16.dp)
+      )
+    }
+  }
+}
+
+@PreviewTest
+@Preview(showBackground = true)
+@Composable
+fun ThinSliderDark() {
+  RemoteTheme(darkTheme = true) {
+    Surface(modifier = Modifier.fillMaxWidth()) {
+      ThinSlider(
+        value = 0.5f,
+        onValueChange = {},
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(16.dp)
+      )
+    }
+  }
+}
+
+@PreviewTest
+@Preview(showBackground = true)
+@Composable
+fun ThinSliderAtStartLight() {
+  RemoteTheme(darkTheme = false) {
+    Surface(modifier = Modifier.fillMaxWidth()) {
+      ThinSlider(
+        value = 0f,
+        onValueChange = {},
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(16.dp)
+      )
+    }
+  }
+}
+
+@PreviewTest
+@Preview(showBackground = true)
+@Composable
+fun ThinSliderAtEndDark() {
+  RemoteTheme(darkTheme = true) {
+    Surface(modifier = Modifier.fillMaxWidth()) {
+      ThinSlider(
+        value = 1f,
+        onValueChange = {},
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(16.dp)
+      )
     }
   }
 }
