@@ -133,8 +133,8 @@
   <string name="playlists_list_empty">No playlists found</string>
   <string name="playlists_load_failed">There was an error while trying to load the playlists.</string>
   <string name="playlists_load_success">Your playlists have been successfully loaded</string>
-  <string name="plugin_update__description">It seems that you have connected to an older version of the plugin.\n\nSome features will not function properly unless you update the plugin to %1$s.</string>
-  <string name="plugin_update__title">Plugin Update Required</string>
+  <string name="plugin_update__description">Please update the MusicBee plugin to version %1$s to enjoy all features.</string>
+  <string name="plugin_update__title">Plugin Outdated</string>
   <string name="preferences_about_version">MusicBee Remote Version</string>
   <string name="preferences_category_about">About MusicBee Remote</string>
   <string name="preferences_library_track_default_action_title">Library Track Action</string>
