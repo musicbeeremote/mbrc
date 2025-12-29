@@ -374,6 +374,23 @@ tasks {
     }
   }
 
+  val detektAll by registering(Detekt::class) {
+    description = "Run detekt on all source sets (main, test, androidTest)"
+    jvmTarget = "11"
+    setSource(files(
+      "src/main/java", "src/main/kotlin",
+      "src/test/java", "src/test/kotlin",
+      "src/androidTest/java", "src/androidTest/kotlin",
+      "src/github/java", "src/github/kotlin",
+      "src/play/java", "src/play/kotlin"
+    ))
+    config.setFrom(files(rootProject.file("config/detekt/detekt.yml")))
+    buildUponDefaultConfig = true
+    reports {
+      sarif.required.set(true)
+    }
+  }
+
   val lintReportReleaseSarifOutput = project.layout.buildDirectory.file("reports/sarif/lint-results-release.sarif")
 
   afterEvaluate {
@@ -382,28 +399,20 @@ tasks {
     }
 
     val staticAnalysis by registering {
-      val detektRelease by named<Detekt>("detektGithubRelease")
       val androidLintReportRelease = named<AndroidLintTask>("lintReportGithubRelease")
       val lintKotlinTask = named("lintKotlin")
 
-      dependsOn(detekt, detektRelease, androidLintReportRelease, lintKotlinTask)
+      dependsOn(detektAll, androidLintReportRelease, lintKotlinTask)
     }
 
     register<Sync>("collectSarifReports") {
-      val detektRelease by named<Detekt>("detektGithubRelease")
       val androidLintReportRelease = named<AndroidLintTask>("lintReportGithubRelease")
       val lintKotlinTask = named("lintKotlin")
 
-      mustRunAfter(detekt, detektRelease, androidLintReportRelease, lintKotlinTask, staticAnalysis)
+      mustRunAfter(detektAll, androidLintReportRelease, lintKotlinTask, staticAnalysis)
 
-      from(detektRelease.sarifReportFile) {
-        rename { "detekt-release.sarif" }
-      }
-      detekt.forEach {
-        from(it.sarifReportFile) {
-          val name = it.sarifReportFile.get().asFile.nameWithoutExtension.prefixIfNot("detekt").toKebabCase()
-          rename { "$name.sarif" }
-        }
+      from(detektAll.get().sarifReportFile) {
+        rename { "detekt-unified.sarif" }
       }
       from(lintReportReleaseSarifOutput) {
         rename { "android-lint.sarif" }
