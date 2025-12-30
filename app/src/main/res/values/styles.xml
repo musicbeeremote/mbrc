@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <style name="Theme.App.AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.Primary">
-    <item name="android:background">?attr/colorPrimaryDark</item>
-    <item name="android:elevation">4dp</item>
-    <item name="elevation">4dp</item>
-    <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
-  </style>
-
-  <style name="Theme.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-    <item name="android:background">?attr/colorPrimary</item>
-    <item name="titleTextColor">?attr/colorOnPrimary</item>
-    <item name="subtitleTextColor">?attr/colorOnPrimary</item>
-    <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
-    <item name="popupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
-    <item name="navigationIconTint">?attr/colorOnPrimary</item>
-    <item name="android:minHeight">?attr/actionBarSize</item>
-  </style>
-
   <style name="WidgetTheme" parent="Theme.App">
     <item name="android:colorBackground">@color/widget_background</item>
     <item name="android:textColorPrimary">@color/widget_text_primary</item>

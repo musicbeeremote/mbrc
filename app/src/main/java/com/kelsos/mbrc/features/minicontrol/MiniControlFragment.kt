@@ -20,9 +20,9 @@ import coil3.size.Scale
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.app.MainActivity
 import com.kelsos.mbrc.common.state.PlayerState
 import com.kelsos.mbrc.extensions.getDimens
-import com.kelsos.mbrc.features.player.PlayerActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -57,7 +57,7 @@ class MiniControlFragment : ScopeFragment() {
     }
     view.findViewById<View>(R.id.mini_control).setOnClickListener {
       val builder = TaskStackBuilder.create(requireContext())
-      builder.addNextIntentWithParentStack(Intent(context, PlayerActivity::class.java))
+      builder.addNextIntentWithParentStack(Intent(context, MainActivity::class.java))
       builder.startActivities()
     }
 

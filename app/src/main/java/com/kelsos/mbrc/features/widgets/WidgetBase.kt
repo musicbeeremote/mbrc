@@ -15,10 +15,10 @@ import coil3.request.error
 import coil3.size.Precision
 import coil3.size.Scale
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.app.MainActivity
 import com.kelsos.mbrc.common.state.PlayerState
 import com.kelsos.mbrc.common.state.PlayingTrack
 import com.kelsos.mbrc.common.utilities.whenNotNull
-import com.kelsos.mbrc.features.player.PlayerActivity
 import timber.log.Timber
 
 abstract class WidgetBase : AppWidgetProvider() {
@@ -98,7 +98,7 @@ abstract class WidgetBase : AppWidgetProvider() {
     }
 
     for (appWidgetId in appWidgetIds) {
-      val intent = Intent(context, PlayerActivity::class.java)
+      val intent = Intent(context, MainActivity::class.java)
       val pendingIntent =
         PendingIntent.getActivity(
           context,
@@ -169,7 +169,7 @@ abstract class WidgetBase : AppWidgetProvider() {
   }
 
   private fun preserveActions(context: Context, views: RemoteViews) {
-    val intent = Intent(context, PlayerActivity::class.java)
+    val intent = Intent(context, MainActivity::class.java)
     val pendingIntent =
       PendingIntent.getActivity(
         context,

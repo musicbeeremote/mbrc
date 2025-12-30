@@ -1,14 +1,8 @@
 package com.kelsos.mbrc.app
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,8 +14,8 @@ import com.kelsos.mbrc.features.library.compose.LibraryScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.AlbumTracksScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.ArtistAlbumsScreen
 import com.kelsos.mbrc.features.library.compose.drilldown.GenreArtistsScreen
-import com.kelsos.mbrc.features.lyrics.compose.LyricsScreen
 import com.kelsos.mbrc.features.nowplaying.compose.NowPlayingScreen
+import com.kelsos.mbrc.features.player.compose.PlayerScreen
 import com.kelsos.mbrc.features.playlists.compose.PlaylistScreen
 import com.kelsos.mbrc.features.radio.compose.RadioScreen
 import com.kelsos.mbrc.features.settings.compose.ConnectionManagerScreenWithConfig
@@ -49,10 +43,10 @@ fun AppNavGraph(
   ) {
     // Main screens accessible from drawer
     composable(Screen.Home.route) {
-      // Reset screen config for placeholder screens
-      onScreenConfigChange(ScreenConfig.Empty)
-      // TODO: Implement HomeScreen (Player/Now Playing)
-      PlaceholderScreen("Now Playing")
+      PlayerScreen(
+        onNavigateToNowPlaying = { navController.navigate(Screen.NowPlayingList.route) },
+        onScreenConfigChange = onScreenConfigChange
+      )
     }
 
     composable(Screen.Library.route) {
@@ -184,12 +178,6 @@ fun AppNavGraph(
       )
     }
 
-    composable(Screen.Lyrics.route) {
-      LyricsScreen(
-        onCollapse = { navController.popBackStack() }
-      )
-    }
-
     composable(Screen.ConnectionManager.route) {
       ConnectionManagerScreenWithConfig(
         onScreenConfigChange = onScreenConfigChange
@@ -213,7 +201,6 @@ sealed class Screen(val route: String) {
 
   // Screens without arguments
   data object NowPlayingList : Screen("now_playing_list")
-  data object Lyrics : Screen("lyrics")
   data object ConnectionManager : Screen("connection_manager")
 
   // Detail screens with arguments (using companion objects for route templates)
@@ -268,21 +255,4 @@ fun ConfigurableScreenContainer(
   }
 
   content()
-}
-
-/**
- * Temporary placeholder screen for unimplemented screens.
- * Will be replaced with actual implementations in subsequent phases.
- */
-@Composable
-private fun PlaceholderScreen(screenName: String) {
-  Box(
-    modifier = Modifier.fillMaxSize(),
-    contentAlignment = Alignment.Center
-  ) {
-    Text(
-      text = "TODO: $screenName",
-      style = MaterialTheme.typography.headlineMedium
-    )
-  }
 }

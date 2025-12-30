@@ -10,8 +10,6 @@
   <color name="md_color_on_primary">#fff</color>
   <color name="md_color_on_surface">#212121</color>
   <color name="md_color_on_surface_variant">#757575</color>
-  <color name="connection_neutral">#000</color>
-  <color name="connection_on">#33A328</color>
   <!-- Widget colors for light mode -->
   <color name="widget_background">#FEFEFE</color>
   <color name="widget_text_primary">#212121</color>

@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -51,7 +52,8 @@ import com.kelsos.mbrc.R
 fun RemoteTopAppBar(
   title: String,
   navigationIcon: @Composable (() -> Unit)? = null,
-  actions: @Composable () -> Unit = {}
+  actions: @Composable () -> Unit = {},
+  transparent: Boolean = false
 ) {
   TopAppBar(
     title = {
@@ -63,8 +65,15 @@ fun RemoteTopAppBar(
     navigationIcon = {
       navigationIcon?.invoke()
     },
-    actions = { actions() }
-    // Using default Material 3 top app bar colors which automatically handles surface tint
+    actions = { actions() },
+    colors = if (transparent) {
+      TopAppBarDefaults.topAppBarColors(
+        containerColor = Color.Transparent,
+        scrolledContainerColor = Color.Transparent
+      )
+    } else {
+      TopAppBarDefaults.topAppBarColors()
+    }
   )
 }
 

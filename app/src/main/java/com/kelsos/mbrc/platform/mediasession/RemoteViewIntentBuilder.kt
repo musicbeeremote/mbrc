@@ -7,7 +7,7 @@ import android.app.PendingIntent.getActivity
 import android.app.PendingIntent.getBroadcast
 import android.content.Context
 import android.content.Intent
-import com.kelsos.mbrc.features.player.PlayerActivity
+import com.kelsos.mbrc.app.MainActivity
 
 object RemoteViewIntentBuilder {
   const val PLAY_PRESSED = "com.kelsos.mbrc.notification.play"
@@ -22,7 +22,7 @@ object RemoteViewIntentBuilder {
 
     val intent =
       when (remoteIntentCode) {
-        RemoteIntentCode.Open -> Intent(context, PlayerActivity::class.java)
+        RemoteIntentCode.Open -> Intent(context, MainActivity::class.java)
         RemoteIntentCode.Play -> Intent(PLAY_PRESSED)
         RemoteIntentCode.Next -> Intent(NEXT_PRESSED)
         RemoteIntentCode.Close -> Intent(CLOSE_PRESSED)

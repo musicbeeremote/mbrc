@@ -56,11 +56,8 @@ import com.kelsos.mbrc.features.nowplaying.NowPlayingRepositoryImpl
 import com.kelsos.mbrc.features.nowplaying.NowPlayingViewModel
 import com.kelsos.mbrc.features.output.OutputApi
 import com.kelsos.mbrc.features.output.OutputApiImpl
-import com.kelsos.mbrc.features.output.OutputSelectionDialog
 import com.kelsos.mbrc.features.output.OutputSelectionViewModel
-import com.kelsos.mbrc.features.player.PlayerActivity
 import com.kelsos.mbrc.features.player.PlayerViewModel
-import com.kelsos.mbrc.features.player.RatingDialogFragment
 import com.kelsos.mbrc.features.player.RatingDialogViewModel
 import com.kelsos.mbrc.features.playlists.PlaylistRepository
 import com.kelsos.mbrc.features.playlists.PlaylistRepositoryImpl
@@ -284,23 +281,16 @@ val appModule =
       viewModelOf(::MiniControlViewModel)
     }
 
-    scope<PlayerActivity> {
-      viewModelOf(::PlayerViewModel)
-    }
-
+    viewModelOf(::PlayerViewModel)
     viewModelOf(::LyricsViewModel)
 
     // NowPlaying components for Compose - MoveManager is singleton to track moves across recompositions
     singleOf(::MoveManagerImpl) { bind<MoveManager>() }
     viewModelOf(::NowPlayingViewModel)
 
-    scope<RatingDialogFragment> {
-      viewModelOf(::RatingDialogViewModel)
-    }
-
-    scope<OutputSelectionDialog> {
-      viewModelOf(::OutputSelectionViewModel)
-    }
+    // Rating and Output ViewModels for Compose usage
+    viewModelOf(::RatingDialogViewModel)
+    viewModelOf(::OutputSelectionViewModel)
 
     // Global ViewModels
     singleOf(::DrawerViewModel)

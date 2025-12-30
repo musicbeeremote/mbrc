@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="drawer_elevation">16dp</dimen>
   <dimen name="mini_control_height">50dp</dimen>
   <dimen name="mini_control_subtitle_text_size">14sp</dimen>
   <dimen name="mini_control_title_text_size">16sp</dimen>
-  <dimen name="nav_header_height">160dp</dimen>
-  <dimen name="nav_header_vertical_spacing">16dp</dimen>
-  <dimen name="normal_margin">16dp</dimen>
-  <dimen name="rating_bar_height">48dp</dimen>
-  <dimen name="rating_dialog_height">64dp</dimen>
   <dimen name="small_margin">8dp</dimen>
-  <dimen name="text_body_size">14sp</dimen>
-  <dimen name="text_subhead_size">16sp</dimen>
-  <dimen name="text_title_size">20sp</dimen>
   <dimen name="widget_normal_height">128dp</dimen>
   <dimen name="widget_normal_min_height">128dp</dimen>
   <dimen name="widget_normal_min_width">250dp</dimen>

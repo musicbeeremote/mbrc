@@ -22,6 +22,11 @@ data class ScreenConfig(
    */
   val topBarActions: (@Composable () -> Unit)? = null,
   /**
+   * When true, the top bar will be transparent and the content will extend behind it.
+   * Useful for screens with custom backgrounds (like player screen with gradient).
+   */
+  val transparentTopBar: Boolean = false,
+  /**
    * Floating action button composable to show in the Scaffold.
    */
   val floatingActionButton: (@Composable () -> Unit)? = null,
