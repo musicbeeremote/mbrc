@@ -18,6 +18,8 @@
   <application
     android:name=".App"
     android:allowBackup="true"
+    android:dataExtractionRules="@xml/data_extraction_rules"
+    android:fullBackupContent="@xml/full_backup_content"
     android:description="@string/application_description"
     android:enableOnBackInvokedCallback="true"
     android:icon="@mipmap/ic_launcher"

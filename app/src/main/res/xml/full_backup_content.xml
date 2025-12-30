@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Backup rules for Android 11 and below (API < 31).
+  See data_extraction_rules.xml for Android 12+ rules.
+
+  Include user settings (DataStore) and connection configuration (database).
+  Exclude transient cache data.
+-->
+<full-backup-content>
+  <!-- Include DataStore preferences for user settings -->
+  <include domain="file" path="datastore/settings.preferences_pb" />
+  <!-- Include database for connection settings -->
+  <include domain="database" path="." />
+</full-backup-content>
