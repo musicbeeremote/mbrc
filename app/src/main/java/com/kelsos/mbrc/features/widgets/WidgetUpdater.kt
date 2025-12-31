@@ -1,60 +1,103 @@
 package com.kelsos.mbrc.features.widgets
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.Intent
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
 import com.kelsos.mbrc.common.state.PlayerState
 import com.kelsos.mbrc.common.state.PlayingTrack
+import com.kelsos.mbrc.features.widgets.glance.NormalWidget
+import com.kelsos.mbrc.features.widgets.glance.SmallWidget
+import com.kelsos.mbrc.features.widgets.glance.WidgetGlanceStateDefinition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 interface WidgetUpdater {
   fun updatePlayingTrack(track: PlayingTrack)
 
   fun updatePlayState(state: PlayerState)
-
-  companion object {
-    const val STATE = "com.kelsos.mbrc.features.widgets.STATE"
-    const val INFO = "com.kelsos.mbrc.features.widgets.INFO"
-    const val TRACK_INFO = "com.kelsos.mbrc.features.widgets.TRACKINFO"
-    const val PLAYER_STATE = "com.kelsos.mbrc.features.widgets.PLAYER_STATE"
-  }
 }
 
 class WidgetUpdaterImpl(private val context: Context) : WidgetUpdater {
-  private fun createIntent(clazz: Class<*>): Intent {
-    val widgetUpdateIntent = Intent(context, clazz)
-    widgetUpdateIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-    return widgetUpdateIntent
-  }
+  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+  private var lastCoverUrl: String? = null
 
-  private fun Intent.payload(track: PlayingTrack): Intent = putExtra(WidgetUpdater.INFO, true)
-    .putExtra(WidgetUpdater.TRACK_INFO, track)
-
-  private fun Intent.statePayload(state: PlayerState): Intent = putExtra(WidgetUpdater.STATE, true)
-    .putExtra(WidgetUpdater.PLAYER_STATE, state.state)
-
+  @Suppress("TooGenericExceptionCaught") // Widget updates should not crash the app
   override fun updatePlayingTrack(track: PlayingTrack) {
-    val normalIntent = createIntent(WidgetNormal::class.java).payload(track)
-    val smallIntent = createIntent(WidgetSmall::class.java).payload(track)
-    broadcast(smallIntent, normalIntent)
-  }
+    scope.launch {
+      try {
+        Timber.v("Updating widget track: ${track.title} - ${track.artist}")
 
-  override fun updatePlayState(state: PlayerState) {
-    val normalIntent = createIntent(WidgetNormal::class.java).statePayload(state)
-    val smallIntent = createIntent(WidgetSmall::class.java).statePayload(state)
-    broadcast(smallIntent, normalIntent)
-  }
+        // Load cover if URL changed
+        if (track.coverUrl != lastCoverUrl) {
+          WidgetGlanceStateDefinition.loadAndCacheCover(context, track.coverUrl)
+          lastCoverUrl = track.coverUrl
+        }
 
-  private fun broadcast(smallIntent: Intent, normalIntent: Intent) {
-    try {
-      with(context) {
-        sendBroadcast(smallIntent)
-        sendBroadcast(normalIntent)
+        // Update state for all widget instances
+        updateAllWidgetStates { prefs ->
+          WidgetGlanceStateDefinition.trackInfoUpdate(
+            title = track.title,
+            artist = track.artist,
+            album = track.album,
+            coverUrl = track.coverUrl
+          )(prefs)
+        }
+
+        // Trigger widget updates
+        updateAllWidgets()
+      } catch (e: Exception) {
+        Timber.e(e, "Failed to update widget track")
       }
-      Timber.v("Widget broadcasts sent successfully")
-    } catch (e: SecurityException) {
-      Timber.e(e, "Failed to send widget broadcasts")
-      throw e
+    }
+  }
+
+  @Suppress("TooGenericExceptionCaught") // Widget updates should not crash the app
+  override fun updatePlayState(state: PlayerState) {
+    scope.launch {
+      try {
+        val isPlaying = state == PlayerState.Playing
+        Timber.v("Updating widget play state: $isPlaying")
+
+        // Update state for all widget instances
+        updateAllWidgetStates { prefs ->
+          WidgetGlanceStateDefinition.playStateUpdate(isPlaying)(prefs)
+        }
+
+        // Trigger widget updates
+        updateAllWidgets()
+      } catch (e: Exception) {
+        Timber.e(e, "Failed to update widget play state")
+      }
+    }
+  }
+
+  private suspend fun updateAllWidgetStates(
+    update: suspend (androidx.datastore.preferences.core.Preferences) ->
+    androidx.datastore.preferences.core.Preferences
+  ) {
+    val manager = GlanceAppWidgetManager(context)
+
+    // Update normal widgets
+    manager.getGlanceIds(NormalWidget::class.java).forEach { glanceId ->
+      updateAppWidgetState(context, WidgetGlanceStateDefinition, glanceId, update)
+    }
+
+    // Update small widgets
+    manager.getGlanceIds(SmallWidget::class.java).forEach { glanceId ->
+      updateAppWidgetState(context, WidgetGlanceStateDefinition, glanceId, update)
+    }
+  }
+
+  @Suppress("TooGenericExceptionCaught") // Widget updates should not crash the app
+  private suspend fun updateAllWidgets() {
+    try {
+      NormalWidget.updateAll(context)
+      SmallWidget.updateAll(context)
+    } catch (e: Exception) {
+      Timber.e(e, "Failed to update Glance widgets")
     }
   }
 }

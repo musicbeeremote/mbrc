@@ -56,8 +56,8 @@
     </provider>
 
     <receiver
-      android:name=".features.widgets.WidgetNormal"
-      android:exported="false">
+      android:name=".features.widgets.glance.NormalWidgetReceiver"
+      android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
@@ -77,8 +77,8 @@
     </receiver>
 
     <receiver
-      android:name=".features.widgets.WidgetSmall"
-      android:exported="false">
+      android:name=".features.widgets.glance.SmallWidgetReceiver"
+      android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>

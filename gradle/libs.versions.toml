@@ -15,6 +15,7 @@ androidx-lifecycle-viewmodel-compose = "2.10.0"
 androidx-media3 = "1.9.0"
 androidx-paging-runtime-ktx = "3.3.6"
 androidx-paging-compose = "3.3.6"
+androidx-glance = "1.1.1"
 androidx-palette = "1.0.0"
 androidx-preference-ktx = "1.2.1"
 androidx-recyclerview = "1.4.0"
@@ -88,6 +89,9 @@ androidx-paging-common-ktx = { module = "androidx.paging:paging-common-ktx", ver
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "androidx-paging-runtime-ktx" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging-compose" }
 androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "androidx-paging-runtime-ktx" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
+androidx-glance-testing = { module = "androidx.glance:glance-testing", version.ref = "androidx-glance" }
+androidx-glance-appwidget-testing = { module = "androidx.glance:glance-appwidget-testing", version.ref = "androidx-glance" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "androidx-palette" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "androidx-preference-ktx" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "androidx-recyclerview" }

@@ -274,6 +274,7 @@ dependencies {
   implementation(libs.androidx.paging.compose)
   implementation(libs.coilKt.compose)
   implementation(libs.androidx.palette)
+  implementation(libs.androidx.glance.appwidget)
 
   ksp(libs.androidx.room.compiler)
   ksp(libs.squareup.moshi.codegen)
@@ -293,6 +294,8 @@ dependencies {
   testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.mockk)
   testImplementation(libs.robolectric)
+  testImplementation(libs.androidx.glance.testing)
+  testImplementation(libs.androidx.glance.appwidget.testing)
 
   androidTestImplementation(libs.androidx.room.testing)
   androidTestImplementation(libs.androidx.test.runner)

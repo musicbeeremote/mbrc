@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/widget_normal_height"
+  android:background="?android:attr/colorBackground"
+  android:orientation="horizontal"
+  android:theme="@style/WidgetTheme">
+
+  <ImageView
+    android:layout_width="@dimen/widget_normal_height"
+    android:layout_height="@dimen/widget_normal_height"
+    android:contentDescription="@string/description_album_cover"
+    android:src="@drawable/ic_image_no_cover" />
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:gravity="center_vertical"
+      android:orientation="vertical"
+      android:paddingHorizontal="12dp"
+      android:paddingVertical="8dp">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="Track Title" />
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="12sp"
+        tools:text="Artist Name" />
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="12sp"
+        tools:text="Album Name" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:background="?attr/colorSurface"
+      android:gravity="center"
+      android:orientation="horizontal">
+
+      <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="@string/main_button_previous_description"
+        android:padding="8dp"
+        android:src="@drawable/baseline_skip_previous_24" />
+
+      <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="@string/main_button_play_pause_description"
+        android:padding="8dp"
+        android:src="@drawable/baseline_play_arrow_24" />
+
+      <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="@string/main_button_next_description"
+        android:padding="8dp"
+        android:src="@drawable/baseline_skip_next_24" />
+
+    </LinearLayout>
+
+  </LinearLayout>
+
+</LinearLayout>
