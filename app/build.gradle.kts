@@ -239,8 +239,6 @@ val dummyGoogleServicesJson: Configuration by configurations.creating {
 dependencies {
   coreLibraryDesugaring(libs.com.android.tools.desugar)
 
-  implementation(projects.changelog)
-
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.core.ktx)
@@ -323,9 +321,6 @@ dependencies {
 }
 
 
-dependencies {
-  kover(project(":changelog"))
-}
 
 
 kover {

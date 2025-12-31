@@ -36,6 +36,8 @@ import com.kelsos.mbrc.common.ui.compose.RemoteTopAppBar
 import com.kelsos.mbrc.features.settings.SettingsManager
 import com.kelsos.mbrc.features.settings.compose.UpdateRequiredScreen
 import com.kelsos.mbrc.features.theme.Theme
+import com.kelsos.mbrc.features.whatsnew.WhatsNewScreen
+import com.kelsos.mbrc.features.whatsnew.WhatsNewViewModel
 import com.kelsos.mbrc.networking.client.UiMessageQueue
 import com.kelsos.mbrc.theme.RemoteTheme
 import kotlinx.coroutines.launch
@@ -65,6 +67,7 @@ fun RemoteApp() {
     val scope = rememberCoroutineScope()
     val drawerViewModel: DrawerViewModel = koinViewModel()
     val uiMessageQueue: UiMessageQueue = koinInject()
+    val whatsNewViewModel: WhatsNewViewModel = koinViewModel()
 
     // Screen configuration state
     var currentScreenConfig by remember { mutableStateOf(ScreenConfig.Empty) }
@@ -73,9 +76,17 @@ fun RemoteApp() {
     var showUpdateRequired by remember { mutableStateOf(false) }
     var updateRequiredVersion by remember { mutableStateOf("") }
 
-    // Handle back press to close update required overlay
-    BackHandler(enabled = showUpdateRequired) {
-      showUpdateRequired = false
+    // What's New overlay state
+    val showWhatsNew by whatsNewViewModel.showWhatsNew.collectAsState()
+    val whatsNewEntries by whatsNewViewModel.entries.collectAsState()
+    val whatsNewLoading by whatsNewViewModel.isLoading.collectAsState()
+
+    // Handle back press to close overlays
+    BackHandler(enabled = showUpdateRequired || showWhatsNew) {
+      when {
+        showUpdateRequired -> showUpdateRequired = false
+        showWhatsNew -> whatsNewViewModel.dismiss()
+      }
     }
 
     // Handle screen-level snackbar messages
@@ -188,6 +199,26 @@ fun RemoteApp() {
           version = updateRequiredVersion,
           onDismiss = { showUpdateRequired = false },
           modifier = Modifier.fillMaxSize()
+        )
+      }
+
+      // What's New overlay with slide animation from bottom
+      AnimatedVisibility(
+        visible = showWhatsNew,
+        enter = slideInVertically(
+          initialOffsetY = { fullHeight -> fullHeight },
+          animationSpec = tween(durationMillis = 300)
+        ),
+        exit = slideOutVertically(
+          targetOffsetY = { fullHeight -> fullHeight },
+          animationSpec = tween(durationMillis = 300)
+        )
+      ) {
+        WhatsNewScreen(
+          entries = whatsNewEntries,
+          onDismiss = { whatsNewViewModel.dismiss() },
+          modifier = Modifier.fillMaxSize(),
+          isLoading = whatsNewLoading
         )
       }
     }

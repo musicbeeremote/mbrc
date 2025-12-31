@@ -179,4 +179,15 @@
   <string name="now_playing__drag_handle">Drag to reorder</string>
   <string name="now_playing__search_success">Playing: %1$s</string>
   <string name="now_playing__search_not_found">No track found matching your search</string>
+
+  <!-- What\'s New screen -->
+  <string name="whats_new_title">What\'s New</string>
+  <string name="whats_new_subtitle">Recent updates and improvements</string>
+  <string name="whats_new_got_it">Got it</string>
+  <string name="whats_new_empty">No changelog available</string>
+  <string name="whats_new_latest_badge">Latest</string>
+  <string name="entry_type_feature">New feature</string>
+  <string name="entry_type_bug">Bug fix</string>
+  <string name="entry_type_removed">Removed</string>
+  <string name="description_close">Close</string>
 </resources>

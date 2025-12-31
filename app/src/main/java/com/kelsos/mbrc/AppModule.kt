@@ -74,6 +74,7 @@ import com.kelsos.mbrc.features.settings.SettingsManager
 import com.kelsos.mbrc.features.settings.SettingsManagerDataStore
 import com.kelsos.mbrc.features.theme.ThemeManager
 import com.kelsos.mbrc.features.theme.ThemeManagerImpl
+import com.kelsos.mbrc.features.whatsnew.WhatsNewViewModel
 import com.kelsos.mbrc.features.widgets.WidgetUpdater
 import com.kelsos.mbrc.features.widgets.WidgetUpdaterImpl
 import com.kelsos.mbrc.logging.LogHelper
@@ -309,4 +310,7 @@ val appModule =
     viewModelOf(::AlbumTracksViewModel)
     // Library ViewModels made global for Compose usage
     singleOf(::LogHelperImpl) { bind<LogHelper>() }
+
+    // What's New ViewModel
+    viewModelOf(::WhatsNewViewModel)
   }
