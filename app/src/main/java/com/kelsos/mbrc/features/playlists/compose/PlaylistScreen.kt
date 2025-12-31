@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.playlists.compose
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.compose.SingleLineRow
 import com.kelsos.mbrc.common.ui.compose.SwipeRefreshScreen
+import com.kelsos.mbrc.features.minicontrol.MiniControl
 import com.kelsos.mbrc.features.playlists.Playlist
 import com.kelsos.mbrc.features.playlists.PlaylistUiMessages
 import com.kelsos.mbrc.features.playlists.PlaylistViewModel
@@ -30,8 +32,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PlaylistScreen(
-  modifier: Modifier = Modifier,
+  onNavigateToPlayer: () -> Unit,
   snackbarHostState: SnackbarHostState,
+  modifier: Modifier = Modifier,
   viewModel: PlaylistViewModel = koinViewModel()
 ) {
   val playlists = viewModel.playlists.collectAsLazyPagingItems()
@@ -74,21 +77,28 @@ fun PlaylistScreen(
     }
   }
 
-  SwipeRefreshScreen(
-    items = playlists,
-    isRefreshing = isRefreshing,
-    onRefresh = {
-      isRefreshing = true
-      viewModel.actions.reload()
-    },
-    modifier = modifier.fillMaxSize(),
-    emptyMessage = stringResource(R.string.playlists_list_empty),
-    emptyIcon = Icons.AutoMirrored.Filled.QueueMusic,
-    key = { it.id }
-  ) { playlist ->
-    PlaylistItem(
-      playlist = playlist,
-      onPlay = { viewModel.actions.play(it.url) }
+  Column(modifier = modifier.fillMaxSize()) {
+    SwipeRefreshScreen(
+      items = playlists,
+      isRefreshing = isRefreshing,
+      onRefresh = {
+        isRefreshing = true
+        viewModel.actions.reload()
+      },
+      modifier = Modifier.weight(1f),
+      emptyMessage = stringResource(R.string.playlists_list_empty),
+      emptyIcon = Icons.AutoMirrored.Filled.QueueMusic,
+      key = { it.id }
+    ) { playlist ->
+      PlaylistItem(
+        playlist = playlist,
+        onPlay = { viewModel.actions.play(it.url) }
+      )
+    }
+
+    MiniControl(
+      onNavigateToPlayer = onNavigateToPlayer,
+      snackbarHostState = snackbarHostState
     )
   }
 }

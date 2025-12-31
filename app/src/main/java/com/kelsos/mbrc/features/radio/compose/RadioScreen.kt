@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.radio.compose
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.common.ui.compose.SingleLineRow
 import com.kelsos.mbrc.common.ui.compose.SwipeRefreshScreen
+import com.kelsos.mbrc.features.minicontrol.MiniControl
 import com.kelsos.mbrc.features.radio.RadioStation
 import com.kelsos.mbrc.features.radio.RadioUiMessages
 import com.kelsos.mbrc.features.radio.RadioViewModel
@@ -30,8 +32,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RadioScreen(
-  modifier: Modifier = Modifier,
+  onNavigateToPlayer: () -> Unit,
   snackbarHostState: SnackbarHostState,
+  modifier: Modifier = Modifier,
   viewModel: RadioViewModel = koinViewModel()
 ) {
   val stations = viewModel.state.radios.collectAsLazyPagingItems()
@@ -73,21 +76,28 @@ fun RadioScreen(
     }
   }
 
-  SwipeRefreshScreen(
-    items = stations,
-    isRefreshing = isRefreshing,
-    onRefresh = {
-      isRefreshing = true
-      viewModel.actions.reload()
-    },
-    modifier = modifier.fillMaxSize(),
-    emptyMessage = stringResource(R.string.radio__no_radio_stations),
-    emptyIcon = Icons.Default.Radio,
-    key = { it.id }
-  ) { station ->
-    RadioStationItem(
-      station = station,
-      onPlay = { viewModel.actions.play(it.url) }
+  Column(modifier = modifier.fillMaxSize()) {
+    SwipeRefreshScreen(
+      items = stations,
+      isRefreshing = isRefreshing,
+      onRefresh = {
+        isRefreshing = true
+        viewModel.actions.reload()
+      },
+      modifier = Modifier.weight(1f),
+      emptyMessage = stringResource(R.string.radio__no_radio_stations),
+      emptyIcon = Icons.Default.Radio,
+      key = { it.id }
+    ) { station ->
+      RadioStationItem(
+        station = station,
+        onPlay = { viewModel.actions.play(it.url) }
+      )
+    }
+
+    MiniControl(
+      onNavigateToPlayer = onNavigateToPlayer,
+      snackbarHostState = snackbarHostState
     )
   }
 }

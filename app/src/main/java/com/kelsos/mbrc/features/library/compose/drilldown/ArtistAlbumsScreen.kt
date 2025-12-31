@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.library.compose.drilldown
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
@@ -21,6 +22,7 @@ import com.kelsos.mbrc.features.library.albums.Album
 import com.kelsos.mbrc.features.library.albums.AlbumUiMessage
 import com.kelsos.mbrc.features.library.albums.ArtistAlbumsViewModel
 import com.kelsos.mbrc.features.library.compose.components.AlbumListItem
+import com.kelsos.mbrc.features.minicontrol.MiniControl
 import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -31,6 +33,7 @@ fun ArtistAlbumsScreen(
   artistName: String,
   onNavigateBack: () -> Unit,
   onNavigateToAlbumTracks: (Album) -> Unit,
+  onNavigateToPlayer: () -> Unit,
   snackbarHostState: SnackbarHostState,
   onScreenConfigChange: (ScreenConfig) -> Unit,
   modifier: Modifier = Modifier,
@@ -74,17 +77,24 @@ fun ArtistAlbumsScreen(
     snackbarHostState = snackbarHostState
   )
 
-  PagingListScreen(
-    items = albums,
-    modifier = modifier.fillMaxSize(),
-    emptyMessage = stringResource(R.string.albums_list_empty),
-    emptyIcon = Icons.Default.Album,
-    key = { it.id }
-  ) { album ->
-    AlbumListItem(
-      album = album,
-      onClick = { viewModel.queue(Queue.Default, album) },
-      onQueue = { queue -> viewModel.queue(queue, album) }
+  Column(modifier = modifier.fillMaxSize()) {
+    PagingListScreen(
+      items = albums,
+      modifier = Modifier.weight(1f),
+      emptyMessage = stringResource(R.string.albums_list_empty),
+      emptyIcon = Icons.Default.Album,
+      key = { it.id }
+    ) { album ->
+      AlbumListItem(
+        album = album,
+        onClick = { viewModel.queue(Queue.Default, album) },
+        onQueue = { queue -> viewModel.queue(queue, album) }
+      )
+    }
+
+    MiniControl(
+      onNavigateToPlayer = onNavigateToPlayer,
+      snackbarHostState = snackbarHostState
     )
   }
 }

@@ -80,6 +80,7 @@ import com.kelsos.mbrc.common.ui.compose.LoadingScreen
 import com.kelsos.mbrc.common.ui.compose.RemoteTopAppBar
 import com.kelsos.mbrc.common.ui.compose.dragContainer
 import com.kelsos.mbrc.common.ui.compose.rememberDragDropState
+import com.kelsos.mbrc.features.minicontrol.MiniControl
 import com.kelsos.mbrc.features.nowplaying.NowPlaying
 import com.kelsos.mbrc.features.nowplaying.NowPlayingUiMessages
 import com.kelsos.mbrc.features.nowplaying.NowPlayingViewModel
@@ -88,6 +89,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun NowPlayingScreen(
   onOpenDrawer: () -> Unit,
+  onNavigateToPlayer: () -> Unit,
   snackbarHostState: SnackbarHostState,
   onScreenConfigChange: (ScreenConfig) -> Unit,
   viewModel: NowPlayingViewModel = koinViewModel()
@@ -120,20 +122,28 @@ fun NowPlayingScreen(
     onRefreshComplete = { isRefreshing = false }
   )
 
-  NowPlayingContent(
-    tracks = tracks,
-    playingTrackPath = playingTrack.path,
-    isRefreshing = isRefreshing,
-    isConnected = isConnected,
-    onRefresh = {
-      isRefreshing = true
-      viewModel.actions.reload()
-    },
-    onTrackClick = { position -> viewModel.actions.play(position) },
-    onTrackRemove = { position -> viewModel.actions.removeTrack(position) },
-    onTrackMove = { from, to -> viewModel.actions.moveTrack(from, to) },
-    onDragEnd = { viewModel.actions.move() }
-  )
+  Column(modifier = Modifier.fillMaxSize()) {
+    NowPlayingContent(
+      tracks = tracks,
+      playingTrackPath = playingTrack.path,
+      isRefreshing = isRefreshing,
+      isConnected = isConnected,
+      onRefresh = {
+        isRefreshing = true
+        viewModel.actions.reload()
+      },
+      onTrackClick = { position -> viewModel.actions.play(position) },
+      onTrackRemove = { position -> viewModel.actions.removeTrack(position) },
+      onTrackMove = { from, to -> viewModel.actions.moveTrack(from, to) },
+      onDragEnd = { viewModel.actions.move() },
+      modifier = Modifier.weight(1f)
+    )
+
+    MiniControl(
+      onNavigateToPlayer = onNavigateToPlayer,
+      snackbarHostState = snackbarHostState
+    )
+  }
 }
 
 @Composable
@@ -306,12 +316,13 @@ private fun NowPlayingContent(
   onTrackClick: (Int) -> Unit,
   onTrackRemove: (Int) -> Unit,
   onTrackMove: (Int, Int) -> Unit,
-  onDragEnd: () -> Unit
+  onDragEnd: () -> Unit,
+  modifier: Modifier = Modifier
 ) {
   PullToRefreshBox(
     isRefreshing = isRefreshing,
     onRefresh = onRefresh,
-    modifier = Modifier.fillMaxSize()
+    modifier = modifier.fillMaxSize()
   ) {
     when (val refreshState = tracks.loadState.refresh) {
       is LoadState.Loading if tracks.itemCount == 0 -> {

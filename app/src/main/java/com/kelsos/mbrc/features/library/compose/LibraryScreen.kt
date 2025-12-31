@@ -75,6 +75,7 @@ import com.kelsos.mbrc.features.library.compose.tabs.ArtistsTab
 import com.kelsos.mbrc.features.library.compose.tabs.GenresTab
 import com.kelsos.mbrc.features.library.compose.tabs.TracksTab
 import com.kelsos.mbrc.features.library.genres.Genre
+import com.kelsos.mbrc.features.minicontrol.MiniControl
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -84,6 +85,7 @@ fun LibraryScreen(
   onNavigateToGenreArtists: (Genre) -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
   onNavigateToAlbumTracks: (Album) -> Unit,
+  onNavigateToPlayer: () -> Unit,
   snackbarHostState: SnackbarHostState,
   onScreenConfigChange: (ScreenConfig) -> Unit,
   modifier: Modifier = Modifier,
@@ -138,6 +140,7 @@ fun LibraryScreen(
     onNavigateToGenreArtists = onNavigateToGenreArtists,
     onNavigateToArtistAlbums = onNavigateToArtistAlbums,
     onNavigateToAlbumTracks = onNavigateToAlbumTracks,
+    onNavigateToPlayer = onNavigateToPlayer,
     onSync = { viewModel.sync() },
     onTabClick = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
     modifier = modifier
@@ -276,6 +279,7 @@ private fun LibraryContent(
   onNavigateToGenreArtists: (Genre) -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
   onNavigateToAlbumTracks: (Album) -> Unit,
+  onNavigateToPlayer: () -> Unit,
   onSync: () -> Unit,
   onTabClick: (Int) -> Unit,
   modifier: Modifier = Modifier
@@ -294,7 +298,7 @@ private fun LibraryContent(
     HorizontalPager(
       state = pagerState,
       beyondViewportPageCount = 1,
-      modifier = Modifier.fillMaxSize()
+      modifier = Modifier.weight(1f)
     ) { page ->
       LibraryTabPage(
         tab = LibraryTab.entries[page],
@@ -306,6 +310,11 @@ private fun LibraryContent(
         onSync = onSync
       )
     }
+
+    MiniControl(
+      onNavigateToPlayer = onNavigateToPlayer,
+      snackbarHostState = snackbarHostState
+    )
   }
 }
 

@@ -47,7 +47,6 @@ import com.kelsos.mbrc.features.library.tracks.BrowseTrackViewModel
 import com.kelsos.mbrc.features.library.tracks.TrackRepository
 import com.kelsos.mbrc.features.library.tracks.TrackRepositoryImpl
 import com.kelsos.mbrc.features.lyrics.LyricsViewModel
-import com.kelsos.mbrc.features.minicontrol.MiniControlFragment
 import com.kelsos.mbrc.features.minicontrol.MiniControlViewModel
 import com.kelsos.mbrc.features.nowplaying.MoveManager
 import com.kelsos.mbrc.features.nowplaying.MoveManagerImpl
@@ -277,10 +276,7 @@ val appModule =
 
     singleOf(::MigrationManager)
 
-    scope<MiniControlFragment> {
-      viewModelOf(::MiniControlViewModel)
-    }
-
+    viewModelOf(::MiniControlViewModel)
     viewModelOf(::PlayerViewModel)
     viewModelOf(::LyricsViewModel)
 

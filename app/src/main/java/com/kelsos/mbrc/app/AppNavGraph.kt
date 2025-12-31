@@ -65,6 +65,7 @@ fun AppNavGraph(
           val encodedArtist = URLEncoder.encode(album.artist, StandardCharsets.UTF_8.toString())
           navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
         },
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
         snackbarHostState = snackbarHostState,
         onScreenConfigChange = onScreenConfigChange
       )
@@ -72,12 +73,18 @@ fun AppNavGraph(
 
     composable(Screen.Playlists.route) {
       onScreenConfigChange(ScreenConfig.Empty)
-      PlaylistScreen(snackbarHostState = snackbarHostState)
+      PlaylistScreen(
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        snackbarHostState = snackbarHostState
+      )
     }
 
     composable(Screen.Radio.route) {
       onScreenConfigChange(ScreenConfig.Empty)
-      RadioScreen(snackbarHostState = snackbarHostState)
+      RadioScreen(
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        snackbarHostState = snackbarHostState
+      )
     }
 
     composable(Screen.Settings.route) {
@@ -116,6 +123,7 @@ fun AppNavGraph(
       AlbumTracksScreen(
         albumInfo = albumInfo,
         onNavigateBack = { navController.popBackStack() },
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
         snackbarHostState = snackbarHostState,
         onScreenConfigChange = onScreenConfigChange
       )
@@ -140,6 +148,7 @@ fun AppNavGraph(
           val encodedArtist = URLEncoder.encode(album.artist, StandardCharsets.UTF_8.toString())
           navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
         },
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
         snackbarHostState = snackbarHostState,
         onScreenConfigChange = onScreenConfigChange
       )
@@ -165,6 +174,7 @@ fun AppNavGraph(
           val encodedName = URLEncoder.encode(artist.artist, StandardCharsets.UTF_8.toString())
           navController.navigate("artist_albums/${artist.id}/$encodedName")
         },
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
         snackbarHostState = snackbarHostState,
         onScreenConfigChange = onScreenConfigChange
       )
@@ -173,6 +183,7 @@ fun AppNavGraph(
     composable(Screen.NowPlayingList.route) {
       NowPlayingScreen(
         onOpenDrawer = onOpenDrawer,
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
         snackbarHostState = snackbarHostState,
         onScreenConfigChange = onScreenConfigChange
       )

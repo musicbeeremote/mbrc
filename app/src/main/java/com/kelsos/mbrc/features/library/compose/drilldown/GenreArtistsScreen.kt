@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.features.library.compose.drilldown
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -21,6 +22,7 @@ import com.kelsos.mbrc.features.library.artists.Artist
 import com.kelsos.mbrc.features.library.artists.ArtistUiMessage
 import com.kelsos.mbrc.features.library.artists.GenreArtistsViewModel
 import com.kelsos.mbrc.features.library.compose.components.ArtistListItem
+import com.kelsos.mbrc.features.minicontrol.MiniControl
 import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -32,6 +34,7 @@ fun GenreArtistsScreen(
   genreName: String,
   onNavigateBack: () -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
+  onNavigateToPlayer: () -> Unit,
   snackbarHostState: SnackbarHostState,
   onScreenConfigChange: (ScreenConfig) -> Unit,
   modifier: Modifier = Modifier,
@@ -75,17 +78,24 @@ fun GenreArtistsScreen(
     snackbarHostState = snackbarHostState
   )
 
-  PagingListScreen(
-    items = artists,
-    modifier = modifier.fillMaxSize(),
-    emptyMessage = stringResource(R.string.artists_list_empty),
-    emptyIcon = Icons.Default.Person,
-    key = { it.id }
-  ) { artist ->
-    ArtistListItem(
-      artist = artist,
-      onClick = { viewModel.queue(Queue.Default, artist) },
-      onQueue = { queue -> viewModel.queue(queue, artist) }
+  Column(modifier = modifier.fillMaxSize()) {
+    PagingListScreen(
+      items = artists,
+      modifier = Modifier.weight(1f),
+      emptyMessage = stringResource(R.string.artists_list_empty),
+      emptyIcon = Icons.Default.Person,
+      key = { it.id }
+    ) { artist ->
+      ArtistListItem(
+        artist = artist,
+        onClick = { viewModel.queue(Queue.Default, artist) },
+        onQueue = { queue -> viewModel.queue(queue, artist) }
+      )
+    }
+
+    MiniControl(
+      onNavigateToPlayer = onNavigateToPlayer,
+      snackbarHostState = snackbarHostState
     )
   }
 }

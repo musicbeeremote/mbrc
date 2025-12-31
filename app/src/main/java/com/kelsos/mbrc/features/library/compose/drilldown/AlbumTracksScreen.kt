@@ -48,6 +48,7 @@ import com.kelsos.mbrc.features.library.compose.components.AlbumCoverByKey
 import com.kelsos.mbrc.features.library.compose.components.TrackListItem
 import com.kelsos.mbrc.features.library.tracks.AlbumTracksViewModel
 import com.kelsos.mbrc.features.library.tracks.TrackUiMessage
+import com.kelsos.mbrc.features.minicontrol.MiniControl
 import com.kelsos.mbrc.features.queue.Queue
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
@@ -56,6 +57,7 @@ import org.koin.androidx.compose.koinViewModel
 fun AlbumTracksScreen(
   albumInfo: AlbumInfo,
   onNavigateBack: () -> Unit,
+  onNavigateToPlayer: () -> Unit,
   snackbarHostState: SnackbarHostState,
   onScreenConfigChange: (ScreenConfig) -> Unit,
   modifier: Modifier = Modifier,
@@ -94,54 +96,61 @@ fun AlbumTracksScreen(
     snackbarHostState = snackbarHostState
   )
 
-  when (tracks.loadState.refresh) {
-    is LoadState.Loading if tracks.itemCount == 0 -> {
-      LoadingScreen(modifier = modifier)
-    }
+  Column(modifier = modifier.fillMaxSize()) {
+    when (tracks.loadState.refresh) {
+      is LoadState.Loading if tracks.itemCount == 0 -> {
+        LoadingScreen(modifier = Modifier.weight(1f))
+      }
 
-    is LoadState.NotLoading if tracks.itemCount == 0 -> {
-      EmptyScreen(
-        message = stringResource(R.string.common_empty_no_tracks),
-        icon = Icons.Default.MusicNote,
-        modifier = modifier
-      )
-    }
+      is LoadState.NotLoading if tracks.itemCount == 0 -> {
+        EmptyScreen(
+          message = stringResource(R.string.common_empty_no_tracks),
+          icon = Icons.Default.MusicNote,
+          modifier = Modifier.weight(1f)
+        )
+      }
 
-    else -> {
-      val listState = rememberLazyListState()
-      LazyColumn(
-        state = listState,
-        modifier = modifier.fillMaxSize(),
-        flingBehavior = ScrollableDefaults.flingBehavior()
-      ) {
-        item(
-          key = "album_header",
-          contentType = "header"
+      else -> {
+        val listState = rememberLazyListState()
+        LazyColumn(
+          state = listState,
+          modifier = Modifier.weight(1f),
+          flingBehavior = ScrollableDefaults.flingBehavior()
         ) {
-          AlbumHeaderHorizontal(
-            albumInfo = albumInfo,
-            onPlayClick = { viewModel.queueAlbum(albumInfo) },
-            modifier = Modifier.fillMaxWidth()
-          )
-        }
-
-        items(
-          count = tracks.itemCount,
-          key = { index -> tracks.peek(index)?.id ?: index },
-          contentType = { "track_item" }
-        ) { index ->
-          tracks[index]?.let { track ->
-            TrackListItem(
-              track = track,
-              onClick = { viewModel.queue(Queue.Default, track) },
-              onQueue = { queue -> viewModel.queue(queue, track) },
-              showCover = false,
-              showAlbum = false
+          item(
+            key = "album_header",
+            contentType = "header"
+          ) {
+            AlbumHeaderHorizontal(
+              albumInfo = albumInfo,
+              onPlayClick = { viewModel.queueAlbum(albumInfo) },
+              modifier = Modifier.fillMaxWidth()
             )
+          }
+
+          items(
+            count = tracks.itemCount,
+            key = { index -> tracks.peek(index)?.id ?: index },
+            contentType = { "track_item" }
+          ) { index ->
+            tracks[index]?.let { track ->
+              TrackListItem(
+                track = track,
+                onClick = { viewModel.queue(Queue.Default, track) },
+                onQueue = { queue -> viewModel.queue(queue, track) },
+                showCover = false,
+                showAlbum = false
+              )
+            }
           }
         }
       }
     }
+
+    MiniControl(
+      onNavigateToPlayer = onNavigateToPlayer,
+      snackbarHostState = snackbarHostState
+    )
   }
 }
 
