@@ -175,8 +175,14 @@ For more detailed information you can check the [help](https://mbrc.kelsos.net/h
 
 ## Contributing
 
-Contribution is always welcome.
-The contribution guide should follow soon.
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- How to report bugs and suggest features
+- Development setup and code style
+- Testing requirements
+- Pull request process
+
+See the [open issues](https://github.com/musicbeeremote/mbrc/issues) for a list of known issues and feature requests.
 
 ## License
 
