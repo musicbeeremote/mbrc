@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.common.ui.compose.EmptyScreen
-import com.kelsos.mbrc.features.nowplaying.NowPlaying
-import com.kelsos.mbrc.features.nowplaying.compose.NowPlayingTrackItem
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.data.nowplaying.NowPlaying
+import com.kelsos.mbrc.core.ui.compose.EmptyScreen
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.playback.nowplaying.compose.NowPlayingTrackItem
 
 // Track Item - Normal State
 

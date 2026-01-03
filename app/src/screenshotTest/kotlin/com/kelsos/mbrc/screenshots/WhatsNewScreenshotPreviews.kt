@@ -3,10 +3,10 @@ package com.kelsos.mbrc.screenshots
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.features.whatsnew.ChangelogEntry
-import com.kelsos.mbrc.features.whatsnew.EntryType
-import com.kelsos.mbrc.features.whatsnew.WhatsNewScreen
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.misc.whatsnew.ChangelogEntry
+import com.kelsos.mbrc.feature.misc.whatsnew.EntryType
+import com.kelsos.mbrc.feature.misc.whatsnew.WhatsNewScreen
 
 private val sampleEntries = listOf(
   ChangelogEntry.Version(release = "2024-12-31", version = "1.6.0"),

@@ -5,7 +5,8 @@
   android:layout_height="@dimen/widget_small_height"
   android:background="?android:attr/colorBackground"
   android:orientation="horizontal"
-  android:theme="@style/WidgetTheme">
+  android:theme="@style/WidgetTheme"
+  tools:ignore="Overdraw">
 
   <ImageView
     android:layout_width="@dimen/widget_small_height"

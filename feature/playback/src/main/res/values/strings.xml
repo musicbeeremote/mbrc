@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Accessibility descriptions -->
+  <string name="description_album_cover">It displays the album cover for the current track.</string>
+  <string name="main_button_mute_description">When pressed it toggles the volume mute.</string>
+  <string name="main_button_next_description">When pressed it plays the next track.</string>
+  <string name="main_button_play_pause_description">When pressed either it starts playing a track or pauses it if it is already playing.</string>
+  <string name="main_button_previous_description">When pressed it plays the previous track</string>
+  <string name="main_button_repeat_description">When pressed it changes the repeat (all/none).</string>
+  <string name="main_button_shuffle_description">When pressed it changes the shuffle mode (on/off).</string>
+  <string name="menu_overflow_description">More options</string>
+
+  <!-- Actions -->
+  <string name="action_search_clear">Clear search</string>
+
+  <!-- Errors -->
+  <string name="connection_error_network_unavailable">Network is unreachable. Please check your network connection.</string>
+  <string name="radio__play_failed">There was an error while trying to play the radio station.</string>
+  <string name="refresh_failed">Refresh was unsuccessful.</string>
+
+  <!-- Last.fm -->
+  <string name="lastfm_love">Love</string>
+  <string name="lastfm_scrobble">Last.fm Scrobbling</string>
+
+  <!-- Lyrics -->
+  <string name="lyrics_collapse">Collapse lyrics</string>
+  <string name="lyrics_loading">Loading lyrics…</string>
+  <string name="lyrics_not_found">No lyrics available</string>
+  <string name="nav_lyrics">Lyrics</string>
+  <string name="no_lyrics">No lyrics found</string>
+
+  <!-- Now playing -->
+  <string name="menu_remove_track">Remove track</string>
+  <string name="nav_now_playing">Now playing</string>
+  <string name="now_playing__drag_handle">Drag to reorder</string>
+  <string name="now_playing__empty_list">Your queue is empty</string>
+  <string name="now_playing__search_not_found">No track found matching your search</string>
+  <string name="now_playing__search_success">Playing: %1$s</string>
+  <string name="now_playing_empty">The playlist is empty</string>
+  <string name="now_playing_move_failed">Failed to move track</string>
+  <string name="now_playing_search_hint">Search in playlist</string>
+  <string name="now_playing_search_no_results">No results found</string>
+  <string name="now_playing_track_removed">Track removed from playlist</string>
+
+  <!-- Output selection -->
+  <string name="output_error">Failed to load outputs</string>
+  <string name="output_loading">Loading outputs…</string>
+  <string name="output_selection__no_devices">No output devices found</string>
+  <string name="output_selection_title">Select Output</string>
+
+  <!-- Player -->
+  <string name="player_lfm_ban">Ban on Last.fm</string>
+  <string name="player_lfm_love">Love on Last.fm</string>
+  <string name="player_scrobbling">Scrobbling</string>
+  <string name="player_screen_title">Player</string>
+  <string name="player_track_rating">Track rating</string>
+  <string name="player_volume">Volume</string>
+
+  <!-- Rating -->
+  <string name="rate_the_playing_track">Rate the playing track</string>
+  <string name="rating_clear">Clear rating</string>
+
+  <!-- Unknown values -->
+  <string name="unknown_artist">Unknown artist</string>
+  <string name="unknown_title">Unknown title</string>
+</resources>

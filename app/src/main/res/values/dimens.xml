@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="small_margin">8dp</dimen>
   <dimen name="widget_normal_height">128dp</dimen>
   <dimen name="widget_normal_min_height">128dp</dimen>
   <dimen name="widget_normal_min_width">250dp</dimen>
-  <dimen name="widget_normal_text">16sp</dimen>
   <dimen name="widget_small_height">72dp</dimen>
   <dimen name="widget_small_min_height">40dp</dimen>
   <dimen name="widget_small_min_width">250dp</dimen>
-  <dimen name="widget_small_text">14sp</dimen>
 </resources>

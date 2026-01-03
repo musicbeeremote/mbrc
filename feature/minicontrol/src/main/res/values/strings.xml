@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Accessibility descriptions -->
+  <string name="description_album_cover">Album cover</string>
+  <string name="main_button_next_description">Play next track</string>
+  <string name="main_button_play_pause_description">Play or pause</string>
+  <string name="main_button_previous_description">Play previous track</string>
+
+  <!-- Unknown values -->
+  <string name="unknown_artist">Unknown artist</string>
+  <string name="unknown_title">Unknown title</string>
+</resources>

@@ -1,0 +1,12 @@
+package com.kelsos.mbrc.core.networking.protocol.payloads
+
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class NowPlayingMoveRequest(
+  @Json(name = "from")
+  val from: Int,
+  @Json(name = "to")
+  val to: Int
+)

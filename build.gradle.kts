@@ -40,6 +40,22 @@ allprojects {
   }
 }
 
+subprojects {
+  pluginManager.withPlugin("org.jetbrains.kotlin.android") {
+    apply(plugin = "org.jmailen.kotlinter")
+    apply(plugin = "org.jetbrains.kotlinx.kover")
+  }
+
+  pluginManager.withPlugin("com.android.library") {
+    configure<com.android.build.gradle.LibraryExtension> {
+      lint {
+        lintConfig = rootProject.file("config/lint.xml")
+        sarifReport = true
+      }
+    }
+  }
+}
+
 
 kover {}
 
@@ -54,6 +70,119 @@ val dummyGoogleServices: Configuration by configurations.creating {
 
 dependencies {
   dummyGoogleServices(files(rootProject.file("config/dummy-google-services.json")))
+
+  // Kover coverage aggregation - includes all modules for unified coverage reports
+  kover(project(":app"))
+  kover(project(":core:common"))
+  kover(project(":core:data"))
+  kover(project(":core:networking"))
+  kover(project(":core:platform"))
+  kover(project(":core:queue"))
+  kover(project(":core:ui"))
+  kover(project(":feature:content"))
+  kover(project(":feature:library"))
+  kover(project(":feature:minicontrol"))
+  kover(project(":feature:misc"))
+  kover(project(":feature:playback"))
+  kover(project(":feature:settings"))
+  kover(project(":feature:widgets"))
+}
+
+tasks.register("staticAnalysisAll") {
+  description = "Runs detekt, lint, and kotlinter on all modules"
+  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "detekt" } })
+  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "lintKotlin" } })
+  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "lint" } })
+}
+
+tasks.register("collectSarifReports") {
+  description = "Merges all SARIF reports from all modules into single files per tool"
+
+  mustRunAfter("staticAnalysisAll")
+
+  val reportsDir = layout.buildDirectory.dir("reports/sarif")
+
+  doLast {
+    val outputDir = reportsDir.get().asFile
+    outputDir.mkdirs()
+
+    // Collect and merge detekt SARIF reports
+    val detektFiles = subprojects.mapNotNull { subproject ->
+      val sarifFile = subproject.layout.buildDirectory.file("reports/detekt/detekt.sarif").get().asFile
+      if (sarifFile.exists()) sarifFile else null
+    }
+    if (detektFiles.isNotEmpty()) {
+      mergeSarifFiles(detektFiles, File(outputDir, "detekt.sarif"))
+      logger.lifecycle("Merged ${detektFiles.size} detekt reports into detekt.sarif")
+    }
+
+    // Collect and merge Android lint SARIF reports (by variant)
+    val allLintFiles = mutableListOf<File>()
+    listOf("debug", "release", "githubDebug", "githubRelease").forEach { variant ->
+      val lintFiles = subprojects.mapNotNull { subproject ->
+        val sarifFile = subproject.layout.buildDirectory.file("reports/lint-results-$variant.sarif").get().asFile
+        if (sarifFile.exists()) sarifFile else null
+      }
+      if (lintFiles.isNotEmpty()) {
+        mergeSarifFiles(lintFiles, File(outputDir, "lint-$variant.sarif"))
+        logger.lifecycle("Merged ${lintFiles.size} lint reports into lint-$variant.sarif")
+        allLintFiles.addAll(lintFiles)
+      }
+    }
+
+    // Create unified android-lint.sarif with all variants
+    if (allLintFiles.isNotEmpty()) {
+      mergeSarifFiles(allLintFiles, File(outputDir, "android-lint.sarif"))
+      logger.lifecycle("Merged ${allLintFiles.size} total lint reports into android-lint.sarif")
+    }
+
+    val files = outputDir.listFiles()?.filter { it.extension == "sarif" } ?: emptyList()
+    logger.lifecycle("Created ${files.size} merged SARIF reports in ${outputDir.absolutePath}")
+    files.forEach { logger.lifecycle("  - ${it.name}") }
+  }
+}
+
+fun mergeSarifFiles(inputFiles: List<File>, outputFile: File) {
+  val mergedRuns = mutableListOf<Map<String, Any?>>()
+  var schema: String? = null
+  var version: String? = null
+
+  inputFiles.forEach { file ->
+    @Suppress("UNCHECKED_CAST")
+    val json = groovy.json.JsonSlurper().parse(file) as Map<String, Any?>
+    schema = schema ?: json["\$schema"] as? String
+    version = version ?: json["version"] as? String
+    @Suppress("UNCHECKED_CAST")
+    val runs = json["runs"] as? List<Map<String, Any?>> ?: emptyList()
+    mergedRuns.addAll(runs)
+  }
+
+  val merged = mapOf(
+    "\$schema" to schema,
+    "version" to version,
+    "runs" to mergedRuns
+  )
+
+  outputFile.writeText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(merged)))
+}
+
+tasks.register("testAll") {
+  description = "Runs unit tests on all modules"
+  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "test" } })
+}
+
+tasks.register("verifyLocalAll") {
+  description = "Runs all local verification checks on all modules"
+  dependsOn("staticAnalysisAll")
+  dependsOn("testAll")
+  // App-specific tasks
+  dependsOn(":app:validateGithubDebugScreenshotTest")
+}
+
+tasks.register("verifyAll") {
+  description = "Runs all verification checks including instrumentation tests"
+  dependsOn("verifyLocalAll")
+  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "connectedDebugAndroidTest" } })
 }
 
 tasks.withType<DependencyUpdatesTask> {

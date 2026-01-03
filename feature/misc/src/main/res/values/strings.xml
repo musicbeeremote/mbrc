@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Navigation -->
+  <string name="nav_help">Help &amp; Feedback</string>
+
+  <!-- Common -->
+  <string name="description_close">Close</string>
+
+  <!-- Feedback -->
+  <string name="common_feedback">Feedback</string>
+  <string name="feedback_button_text">Send Feedback</string>
+  <string name="feedback_chooser_title">Send feedback using…</string>
+  <string name="feedback_device_information"><![CDATA[Include Device & Application Information]]></string>
+  <string name="feedback_logs">Include Logs</string>
+  <string name="feedback_subject">MusicBeeRemote InApp Feedback</string>
+  <string name="feedback_title">How you feel about the application?</string>
+  <string name="feedback_version_info">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
+  <string name="tab_help">Help</string>
+
+  <!-- Output selection -->
+  <string name="output_selection__no_devices">No output devices found</string>
+  <string name="output_selection_title">Select Output</string>
+
+  <!-- What\'s New -->
+  <string name="entry_type_bug">Bug fix</string>
+  <string name="entry_type_feature">New feature</string>
+  <string name="entry_type_removed">Removed</string>
+  <string name="whats_new_empty">No changelog available</string>
+  <string name="whats_new_got_it">Got it</string>
+  <string name="whats_new_latest_badge">Latest</string>
+  <string name="whats_new_subtitle">Recent updates and improvements</string>
+  <string name="whats_new_title">What\'s New</string>
+</resources>

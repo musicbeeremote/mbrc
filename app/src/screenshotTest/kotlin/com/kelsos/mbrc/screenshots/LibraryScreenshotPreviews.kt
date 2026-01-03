@@ -11,16 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.common.ui.compose.EmptyScreen
-import com.kelsos.mbrc.features.library.albums.Album
-import com.kelsos.mbrc.features.library.artists.Artist
-import com.kelsos.mbrc.features.library.compose.components.AlbumListItem
-import com.kelsos.mbrc.features.library.compose.components.ArtistListItem
-import com.kelsos.mbrc.features.library.compose.components.GenreListItem
-import com.kelsos.mbrc.features.library.compose.components.TrackListItem
-import com.kelsos.mbrc.features.library.genres.Genre
-import com.kelsos.mbrc.features.library.tracks.Track
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.data.library.album.Album
+import com.kelsos.mbrc.core.data.library.artist.Artist
+import com.kelsos.mbrc.core.data.library.genre.Genre
+import com.kelsos.mbrc.core.data.library.track.Track
+import com.kelsos.mbrc.core.ui.compose.EmptyScreen
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.library.compose.components.AlbumListItem
+import com.kelsos.mbrc.feature.library.compose.components.ArtistListItem
+import com.kelsos.mbrc.feature.library.compose.components.GenreListItem
+import com.kelsos.mbrc.feature.library.compose.components.TrackListItem
 
 @PreviewTest
 @Preview(showBackground = true)

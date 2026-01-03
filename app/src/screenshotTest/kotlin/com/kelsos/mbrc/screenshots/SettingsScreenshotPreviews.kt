@@ -4,16 +4,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.features.settings.CallAction
-import com.kelsos.mbrc.features.settings.TrackAction
-import com.kelsos.mbrc.features.settings.compose.BuildInfo
-import com.kelsos.mbrc.features.settings.compose.EmptySettingsActions
-import com.kelsos.mbrc.features.settings.compose.SettingsContentState
-import com.kelsos.mbrc.features.settings.compose.SettingsScreenContent
-import com.kelsos.mbrc.features.theme.Theme
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.common.settings.TrackAction
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.settings.compose.EmptySettingsActions
+import com.kelsos.mbrc.feature.settings.compose.PreviewAppInfo
+import com.kelsos.mbrc.feature.settings.compose.SettingsContentState
+import com.kelsos.mbrc.feature.settings.compose.SettingsScreenContent
+import com.kelsos.mbrc.feature.settings.data.CallAction
+import com.kelsos.mbrc.feature.settings.theme.Theme
 
-private val previewBuildInfo = BuildInfo(
+private val previewAppInfo = PreviewAppInfo(
   versionName = "1.6.0",
   buildTime = "2025-01-01T12:00:00Z",
   gitRevision = "abc1234"
@@ -24,8 +24,7 @@ private val previewState = SettingsContentState(
   pluginUpdatesEnabled = true,
   debugLoggingEnabled = false,
   incomingCallAction = CallAction.None,
-  trackDefaultAction = TrackAction.QueueNext,
-  buildInfo = previewBuildInfo
+  trackDefaultAction = TrackAction.QueueNext
 )
 
 @PreviewTest
@@ -36,7 +35,8 @@ fun SettingsScreenPreviewLight() {
     Scaffold { padding ->
       SettingsScreenContent(
         state = previewState,
-        actions = EmptySettingsActions
+        actions = EmptySettingsActions,
+        appInfo = previewAppInfo
       )
     }
   }
@@ -50,7 +50,8 @@ fun SettingsScreenPreviewDark() {
     Scaffold { padding ->
       SettingsScreenContent(
         state = previewState,
-        actions = EmptySettingsActions
+        actions = EmptySettingsActions,
+        appInfo = previewAppInfo
       )
     }
   }

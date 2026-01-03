@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Navigation -->
+  <string name="drawer_open">Open navigation drawer</string>
+  <string name="navigate_back">Navigate back</string>
+
+  <!-- Common actions -->
+  <string name="action_play">Play</string>
+  <string name="action_retry">Retry</string>
+  <string name="action_search_clear">Clear search</string>
+
+  <!-- Common UI -->
+  <string name="menu_overflow_description">More options</string>
+
+  <!-- FAB -->
+  <string name="fab_open_menu">Open actions menu</string>
+  <string name="fab_close_menu">Close actions menu</string>
+  <string name="no_data">No data available</string>
+
+  <!-- Queue results -->
+  <string name="queue_result__failure">Queueing was unsuccessful</string>
+  <string name="queue_result__success">%1$s successfully added to the queue</string>
+
+  <!-- Errors -->
+  <string name="connection_error_network_unavailable">Network is unreachable. Please check your network connection.</string>
+</resources>

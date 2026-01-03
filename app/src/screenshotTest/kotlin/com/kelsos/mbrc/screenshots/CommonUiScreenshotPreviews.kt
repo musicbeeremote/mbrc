@@ -15,16 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.common.ui.compose.BackNavigationIcon
-import com.kelsos.mbrc.common.ui.compose.DoubleLineRow
-import com.kelsos.mbrc.common.ui.compose.DrawerNavigationIcon
-import com.kelsos.mbrc.common.ui.compose.EmptyScreen
-import com.kelsos.mbrc.common.ui.compose.ErrorScreen
-import com.kelsos.mbrc.common.ui.compose.LoadingScreen
-import com.kelsos.mbrc.common.ui.compose.MoreOptionsButton
-import com.kelsos.mbrc.common.ui.compose.RemoteTopAppBar
-import com.kelsos.mbrc.common.ui.compose.SingleLineRow
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.ui.compose.BackNavigationIcon
+import com.kelsos.mbrc.core.ui.compose.DoubleLineRow
+import com.kelsos.mbrc.core.ui.compose.DrawerNavigationIcon
+import com.kelsos.mbrc.core.ui.compose.EmptyScreen
+import com.kelsos.mbrc.core.ui.compose.ErrorScreen
+import com.kelsos.mbrc.core.ui.compose.LoadingScreen
+import com.kelsos.mbrc.core.ui.compose.MoreOptionsButton
+import com.kelsos.mbrc.core.ui.compose.RemoteTopAppBar
+import com.kelsos.mbrc.core.ui.compose.SingleLineRow
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
 
 @PreviewTest
 @Preview(showBackground = true)

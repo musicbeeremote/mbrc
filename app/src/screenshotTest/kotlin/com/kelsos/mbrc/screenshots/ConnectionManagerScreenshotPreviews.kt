@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.screenshots
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -18,13 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.features.settings.ConnectionSettings
-import com.kelsos.mbrc.features.settings.compose.ConnectionFormFields
-import com.kelsos.mbrc.features.settings.compose.ConnectionItemContent
-import com.kelsos.mbrc.features.settings.compose.EmptyConnectionsState
-import com.kelsos.mbrc.features.settings.compose.FabMenu
-import com.kelsos.mbrc.features.settings.compose.ScanningOverlay
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.common.data.ConnectionSettings
+import com.kelsos.mbrc.core.ui.compose.FabItem
+import com.kelsos.mbrc.core.ui.compose.FabState
+import com.kelsos.mbrc.core.ui.compose.ScaffoldFab
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.settings.compose.ConnectionFormFields
+import com.kelsos.mbrc.feature.settings.compose.ConnectionItemContent
+import com.kelsos.mbrc.feature.settings.compose.EmptyConnectionsState
+import com.kelsos.mbrc.feature.settings.compose.ScanningOverlay
 
 // Sample connection data for previews
 private val sampleConnections = listOf(
@@ -51,21 +55,31 @@ private val sampleConnections = listOf(
   )
 )
 
+private val collapsedFabState = FabState.Expandable(
+  isExpanded = false,
+  onToggle = {},
+  items = listOf(
+    FabItem(icon = Icons.Filled.Search, label = "Scan", onClick = {}),
+    FabItem(icon = Icons.Filled.Add, label = "Add", onClick = {})
+  )
+)
+
+private val expandedFabState = FabState.Expandable(
+  isExpanded = true,
+  onToggle = {},
+  items = listOf(
+    FabItem(icon = Icons.Filled.Search, label = "Scan", onClick = {}),
+    FabItem(icon = Icons.Filled.Add, label = "Add", onClick = {})
+  )
+)
+
 @PreviewTest
 @Preview(name = "Connection Manager Empty Light", showBackground = true)
 @Composable
 fun ConnectionManagerEmptyPreviewLight() {
   RemoteTheme(darkTheme = false) {
     Scaffold(
-      floatingActionButton = {
-        FabMenu(
-          isExpanded = false,
-          isScanning = false,
-          onToggle = {},
-          onAddConnection = {},
-          onScanNetwork = {}
-        )
-      }
+      floatingActionButton = { ScaffoldFab(state = collapsedFabState) }
     ) { padding ->
       Box(
         modifier = Modifier
@@ -84,15 +98,7 @@ fun ConnectionManagerEmptyPreviewLight() {
 fun ConnectionManagerEmptyPreviewDark() {
   RemoteTheme(darkTheme = true) {
     Scaffold(
-      floatingActionButton = {
-        FabMenu(
-          isExpanded = false,
-          isScanning = false,
-          onToggle = {},
-          onAddConnection = {},
-          onScanNetwork = {}
-        )
-      }
+      floatingActionButton = { ScaffoldFab(state = collapsedFabState) }
     ) { padding ->
       Box(
         modifier = Modifier
@@ -111,15 +117,7 @@ fun ConnectionManagerEmptyPreviewDark() {
 fun ConnectionManagerWithConnectionsPreviewLight() {
   RemoteTheme(darkTheme = false) {
     Scaffold(
-      floatingActionButton = {
-        FabMenu(
-          isExpanded = false,
-          isScanning = false,
-          onToggle = {},
-          onAddConnection = {},
-          onScanNetwork = {}
-        )
-      }
+      floatingActionButton = { ScaffoldFab(state = collapsedFabState) }
     ) { padding ->
       LazyColumn(
         modifier = Modifier
@@ -146,15 +144,7 @@ fun ConnectionManagerWithConnectionsPreviewLight() {
 fun ConnectionManagerWithConnectionsPreviewDark() {
   RemoteTheme(darkTheme = true) {
     Scaffold(
-      floatingActionButton = {
-        FabMenu(
-          isExpanded = false,
-          isScanning = false,
-          onToggle = {},
-          onAddConnection = {},
-          onScanNetwork = {}
-        )
-      }
+      floatingActionButton = { ScaffoldFab(state = collapsedFabState) }
     ) { padding ->
       LazyColumn(
         modifier = Modifier
@@ -181,15 +171,7 @@ fun ConnectionManagerWithConnectionsPreviewDark() {
 fun ConnectionManagerFabExpandedPreview() {
   RemoteTheme(darkTheme = false) {
     Scaffold(
-      floatingActionButton = {
-        FabMenu(
-          isExpanded = true,
-          isScanning = false,
-          onToggle = {},
-          onAddConnection = {},
-          onScanNetwork = {}
-        )
-      }
+      floatingActionButton = { ScaffoldFab(state = expandedFabState) }
     ) { padding ->
       LazyColumn(
         modifier = Modifier

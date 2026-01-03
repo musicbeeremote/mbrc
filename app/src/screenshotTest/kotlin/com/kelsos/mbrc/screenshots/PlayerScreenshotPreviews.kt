@@ -4,18 +4,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.common.state.LfmRating
-import com.kelsos.mbrc.common.state.PlayerState
-import com.kelsos.mbrc.common.state.PlayingPosition
-import com.kelsos.mbrc.common.state.PlayingTrack
-import com.kelsos.mbrc.common.state.Repeat
-import com.kelsos.mbrc.common.state.ShuffleMode
-import com.kelsos.mbrc.common.state.TrackRating
-import com.kelsos.mbrc.features.player.IPlayerActions
-import com.kelsos.mbrc.features.player.PlaybackState
-import com.kelsos.mbrc.features.player.VolumeState
-import com.kelsos.mbrc.features.player.compose.PlayerScreenContent
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.common.state.BasicTrackInfo
+import com.kelsos.mbrc.core.common.state.LfmRating
+import com.kelsos.mbrc.core.common.state.PlayerState
+import com.kelsos.mbrc.core.common.state.PlayingPosition
+import com.kelsos.mbrc.core.common.state.Repeat
+import com.kelsos.mbrc.core.common.state.ShuffleMode
+import com.kelsos.mbrc.core.common.state.TrackRating
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.playback.player.IPlayerActions
+import com.kelsos.mbrc.feature.playback.player.PlaybackState
+import com.kelsos.mbrc.feature.playback.player.VolumeState
+import com.kelsos.mbrc.feature.playback.player.compose.PlayerScreenContent
 
 /**
  * No-op implementation of IPlayerActions for preview purposes.
@@ -304,7 +304,7 @@ fun PlayerShuffleRepeatDarkPreview() {
 fun PlayerEmptyTrackLightPreview() {
   RemoteTheme(darkTheme = false) {
     PlayerScreenContent(
-      playingTrack = PlayingTrack(),
+      playingTrack = BasicTrackInfo(),
       playingPosition = PlayingPosition(),
       trackRating = TrackRating(),
       volumeState = VolumeState(),
@@ -324,7 +324,7 @@ fun PlayerEmptyTrackLightPreview() {
 fun PlayerEmptyTrackDarkPreview() {
   RemoteTheme(darkTheme = true) {
     PlayerScreenContent(
-      playingTrack = PlayingTrack(),
+      playingTrack = BasicTrackInfo(),
       playingPosition = PlayingPosition(),
       trackRating = TrackRating(),
       volumeState = VolumeState(),
@@ -339,17 +339,60 @@ fun PlayerEmptyTrackDarkPreview() {
 }
 
 // =============================================================================
+// Stream Previews (Wave Indicator)
+// =============================================================================
+
+@PreviewTest
+@Preview(name = "Player Stream Light", showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+fun PlayerStreamLightPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenContent(
+      playingTrack = sampleStreamTrack(),
+      playingPosition = PlayingPosition(current = 125000, total = -1), // Stream (shows wave)
+      trackRating = TrackRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(name = "Player Stream Dark", showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+fun PlayerStreamDarkPreview() {
+  RemoteTheme(darkTheme = true) {
+    PlayerScreenContent(
+      playingTrack = sampleStreamTrack(),
+      playingPosition = PlayingPosition(current = 125000, total = -1), // Stream (shows wave)
+      trackRating = TrackRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {}
+    )
+  }
+}
+
+// =============================================================================
 // Sample Data Helpers
 // =============================================================================
 
-private fun samplePlayingTrack() = PlayingTrack(
+private fun samplePlayingTrack() = BasicTrackInfo(
   artist = "Pink Floyd",
   title = "Time",
   album = "The Dark Side of the Moon",
   year = "1973",
   path = "/music/time.mp3",
-  coverUrl = "",
-  duration = 413000
+  coverUrl = ""
 )
 
 private fun samplePlayingPosition() = PlayingPosition(
@@ -357,34 +400,40 @@ private fun samplePlayingPosition() = PlayingPosition(
   total = 413000
 )
 
-private fun samplePausedTrack() = PlayingTrack(
+private fun samplePausedTrack() = BasicTrackInfo(
   artist = "Queen",
   title = "Bohemian Rhapsody",
   album = "A Night at the Opera",
   year = "1975",
   path = "/music/bohemian.mp3",
-  coverUrl = "",
-  duration = 354000
+  coverUrl = ""
 )
 
-private fun sampleMutedTrack() = PlayingTrack(
+private fun sampleMutedTrack() = BasicTrackInfo(
   artist = "Led Zeppelin",
   title = "Stairway to Heaven",
   album = "Led Zeppelin IV",
   year = "1971",
   path = "/music/stairway.mp3",
-  coverUrl = "",
-  duration = 482000
+  coverUrl = ""
 )
 
-private fun sampleShuffleTrack() = PlayingTrack(
+private fun sampleShuffleTrack() = BasicTrackInfo(
   artist = "The Beatles",
   title = "Hey Jude",
   album = "Hey Jude",
   year = "1968",
   path = "/music/heyjude.mp3",
-  coverUrl = "",
-  duration = 431000
+  coverUrl = ""
+)
+
+private fun sampleStreamTrack() = BasicTrackInfo(
+  artist = "1.FM",
+  title = "Absolute 90s Party Zone",
+  album = "Internet Radio",
+  year = "",
+  path = "http://stream.1fm.com/90s",
+  coverUrl = ""
 )
 
 private fun sampleNormalRating() = TrackRating(

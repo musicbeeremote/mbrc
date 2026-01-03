@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- Light theme colors (better contrast for accessibility) -->
-  <color name="md_color_primary">#E65100</color>
-  <color name="md_color_primary_dark">#BF360C</color>
-  <color name="md_color_primary_variant">#FF8F00</color>
-  <color name="md_color_secondary">#BF360C</color>
+  <!-- Theme colors -->
   <color name="md_color_surface">#FEFEFE</color>
-  <color name="md_color_surface_variant">#F5F5F5</color>
-  <color name="md_color_on_primary">#fff</color>
-  <color name="md_color_on_surface">#212121</color>
-  <color name="md_color_on_surface_variant">#757575</color>
   <!-- Widget colors for light mode -->
   <color name="widget_background">#FEFEFE</color>
   <color name="widget_text_primary">#212121</color>

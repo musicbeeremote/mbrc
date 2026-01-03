@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Actions -->
+  <string name="action_refresh">Refresh</string>
+  <string name="action_search_clear">Clear search</string>
+
+  <!-- Album cover -->
+  <string name="description_album_cover">It displays the album cover for the current track.</string>
+
+  <!-- Empty states -->
+  <string name="albums_list_empty">No albums found</string>
+  <string name="artists_list_empty">No artists found</string>
+  <string name="common_empty_no_tracks">No tracks found</string>
+  <string name="genres_list_empty">No genres found</string>
+
+  <!-- Library -->
+  <string name="common_library">Library</string>
+  <string name="library__sync_complete">Sync completed successfully. %1$s , %2$s, %3$s, %4$s and %5$s are available.</string>
+  <string name="library__sync_failed">The library metadata sync was incomplete or failed completely. This might result in queueing not working properly..</string>
+  <string name="library__sync_progress">Syncing %1$d of %2$d %3$s</string>
+  <string name="library_album_artists_only">Only Album Artists</string>
+  <string name="library_menu__sync_state">Library Sync State</string>
+  <string name="library_search_hint">Search your library</string>
+  <string name="library_stats__description">The following metadata entries are currently available to MusicBee Remote:</string>
+  <string name="library_stats__title">Library Sync Information</string>
+
+  <!-- Media types -->
+  <string name="media__albums">Albums</string>
+  <string name="media__artists">Artists</string>
+  <string name="media__covers">Covers</string>
+  <string name="media__genres">Genres</string>
+  <string name="media__playlists">Playlists</string>
+  <string name="media__tracks">Tracks</string>
+
+  <!-- Menu -->
+  <string name="menu_overflow_description">More options</string>
+  <string name="menu_play">Play Now</string>
+  <string name="menu_play_artist">Play Now (Artist)</string>
+  <string name="menu_play_queue_all">Play Now (Queue All)</string>
+  <string name="menu_queue_last">Queue Last</string>
+  <string name="menu_queue_next">Queue Next</string>
+
+  <!-- Sync notification -->
+  <string name="notification__sync_description">Library metadata sync in progress</string>
+  <string name="notification__sync_progress_albums">Albums (%1$d/%2$d)</string>
+  <string name="notification__sync_progress_artists">Artists (%1$d/%2$d)</string>
+  <string name="notification__sync_progress_covers">Covers (%1$d/%2$d)</string>
+  <string name="notification__sync_progress_genres">Genres (%1$d/%2$d)</string>
+  <string name="notification__sync_progress_playlists">Playlists (%1$d/%2$d)</string>
+  <string name="notification__sync_progress_tracks">Tracks (%1$d/%2$d)</string>
+  <string name="notification__sync_title">Library Sync</string>
+  <string name="sync_notification__channel_description">Shows the progress of the library metadata sync</string>
+  <string name="sync_notification__channel_name">Library Metadata Sync</string>
+
+  <!-- Errors -->
+  <string name="connection_error_network_unavailable">Network is unreachable. Please check your network connection.</string>
+
+  <!-- Unknown values -->
+  <string name="non_album_tracks">Non album tracks</string>
+  <string name="unknown_album">Unknown album</string>
+  <string name="unknown_artist">Unknown artist</string>
+  <string name="unknown_title">Unknown title</string>
+</resources>

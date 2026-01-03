@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.common.ui.compose.EmptyScreen
-import com.kelsos.mbrc.features.playlists.Playlist
-import com.kelsos.mbrc.features.playlists.compose.PlaylistItem
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.data.playlist.Playlist
+import com.kelsos.mbrc.core.ui.compose.EmptyScreen
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.content.playlists.compose.PlaylistItem
 
 private val samplePlaylist = Playlist(
   id = 1,

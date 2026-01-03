@@ -5,7 +5,7 @@
   <application
       android:name="com.kelsos.mbrc.TestApplication"
       android:largeHeap="true"
-      tools:replace="android:name">
+      tools:node="replace">
   </application>
 
 </manifest>

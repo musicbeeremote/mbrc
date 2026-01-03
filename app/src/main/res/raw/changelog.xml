@@ -11,6 +11,9 @@
     <feature>Extends track search to include artist name matching.</feature>
     <feature>Adds improved mini player control with modern design.</feature>
     <feature>Adds support for resizable home screen widgets.</feature>
+    <feature>Adds animated wave indicator for streaming content in player and mini control.</feature>
+    <feature>Radio stations now load automatically when the screen opens.</feature>
+    <bug>Fixes elapsed time not updating correctly for streaming content.</bug>
     <bug>Fixes widget not updating track name and album art correctly.</bug>
     <bug>Fixes widget track info position not updating dynamically.</bug>
     <bug>Fixes volume buttons incorrectly muting the desktop app.</bug>

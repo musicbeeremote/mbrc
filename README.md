@@ -1,14 +1,13 @@
 <!-- Shields -->
-![CI](https://github.com/musicbeeremote/android-app/workflows/CI/badge.svg)
-[![codecov](https://codecov.io/gh/musicbeeremote/android-app/branch/master/graph/badge.svg)](https://codecov.io/gh/musicbeeremote/android-app)
-![GitHub](https://img.shields.io/github/license/musicbeeremote/android-app.svg)
-![GitHub release](https://img.shields.io/github/release/musicbeeremote/android-app.svg)
+![CI](https://github.com/musicbeeremote/mbrc/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/musicbeeremote/mbrc/branch/main/graph/badge.svg)](https://codecov.io/gh/musicbeeremote/mbrc)
+![GitHub](https://img.shields.io/github/license/musicbeeremote/mbrc.svg)
+![GitHub release](https://img.shields.io/github/release/musicbeeremote/mbrc.svg)
 [![Discord](https://img.shields.io/discord/420977901215678474.svg?style=popout)](https://discordapp.com/invite/rceTb57)
-[![Join the chat at https://gitter.im/musicbee-remote/Lobby](https://badges.gitter.im/musicbee-remote/Lobby.svg)](https://gitter.im/musicbee-remote/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 <br/>
 <p align="center">
-    <a href="https://github.com/musicbeeremote/android-app">
+    <a href="https://github.com/musicbeeremote/mbrc">
     <img src="logo.png" alt="Logo" width="80"   height="80" />
     </a>
 
@@ -18,14 +17,16 @@
         <br/>
         <a href="https://play.google.com/store/apps/details?id=com.kelsos.mbrc">Play Store</a>
         <br/>
+        <i>(Unavailable since January 2023, planned return in 2026)</i>
+        <br/>
         <br/>
         <a href="https://mbrc.kelsos.net/help/">Help</a>
         ·
         <a href="http://getmusicbee.com/forum/index.php?topic=7221.new;topicseen#new">MusicBee Forum</a>
         ·
-        <a href="https://github.com/musicbeeremote/android-app/issues">Report Bug</a>
+        <a href="https://github.com/musicbeeremote/mbrc/issues">Report Bug</a>
         ·
-        <a href="https://github.com/musicbeeremote/android-app/issues">Request Feature</a>
+        <a href="https://github.com/musicbeeremote/mbrc/issues">Request Feature</a>
     </p>
 </p>
 
@@ -37,6 +38,10 @@
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
+* [Development](#development)
+  * [Build Variants](#build-variants)
+  * [Common Commands](#common-commands)
+  * [Screenshot Testing](#screenshot-testing)
 * [Usage](#usage)
 * [Contributing](#contributing)
 * [License](#license)
@@ -48,21 +53,30 @@
 [![MusicBee Remote Screenshot][project-screenshot]](https://mbrc.kelsos.net)
 
 MusicBee Remote is an application that allows you to control [MusicBee](http://getmusicbee.com/) player.
-This is achieved by using a [plugin](https://github.com/kelsos/mbrc-plugin) that acts as a server.
+This is achieved by using a [plugin](https://github.com/musicbeeremote/mbrc-plugin) that acts as a server.
 The plugin exposes a TCP socket server and uses a JSON based protocol to communicate with the Android application.
 
 The application development started in 2011 for personal usage and then it was open sourced and released to Play Store so others could use it. The application was also presented as part of my thesis title "*Android and application development for mobile devices*".
 
 ### Built With
 
-* [Kotlin](https://kotlinlang.org/)
-* [Architecture Components](https://developer.android.com/topic/libraries/architecture)
-* [Koin](https://github.com/InsertKoinIO/koin)
-* [Moshi](https://github.com/square/moshi)
-* [mockk](https://mockk.io/)
-* [rxjava](https://github.com/ReactiveX/RxJava)
-* [arrow-kt](https://github.com/arrow-kt/arrow)
-* [robolectic](http://robolectric.org/)
+* [Kotlin](https://kotlinlang.org/) - Primary language
+* [Jetpack Compose](https://developer.android.com/jetpack/compose) - Modern declarative UI toolkit with Material 3
+* [Coroutines & Flow](https://kotlinlang.org/docs/coroutines-overview.html) - Asynchronous programming
+* [Koin](https://insert-koin.io/) - Dependency injection
+* [Room](https://developer.android.com/training/data-storage/room) - Local database with Paging 3 support
+* [Moshi](https://github.com/square/moshi) - JSON serialization
+* [Coil](https://coil-kt.github.io/coil/) - Image loading
+* [Glance](https://developer.android.com/jetpack/compose/glance) - Compose-based app widgets
+* [Media3](https://developer.android.com/media/media3) - Media session handling
+* [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) - Preferences storage
+
+#### Testing
+
+* [MockK](https://mockk.io/) - Mocking framework
+* [Robolectric](http://robolectric.org/) - Android unit testing
+* [Turbine](https://github.com/cashapp/turbine) - Flow testing
+* [Truth](https://truth.dev/) - Assertions
 
 ## Getting Started
 
@@ -70,33 +84,90 @@ In order to get started with the project as a developer there are a few steps yo
 
 ### Prerequisites
 
-Android Studio should be installed on your local machine and it should be up to date.
+**Android Requirements:**
+- Minimum: Android 6.0 (API 23 - Marshmallow)
+- Target: Android 16 (API 36)
 
-During development the Canary version of the Android Studio is used, but for release versions the stable version of AGP is always preferred.
+**Development Environment:**
+- Android Studio (stable version preferred) should be installed and up to date
 
 To get started with the the project you first have to clone the project.
 
 ```bash
-git clone https://github.com/musicbeeremote/android-app.git
+git clone https://github.com/musicbeeremote/mbrc.git
 ```
 
 Then you can open the project with Android Studio.
 
 ### Installation
 
-There is a number of ways you could install the application on your device. If you are a developer you can run install on Android Studio and that should take care of the installation.
+There are several ways to install the application on your device:
 
-Alternatively you could download a stable version of the Remote from [Play Store](https://play.google.com/store/apps/details?id=com.kelsos.mbrc).
+1. **GitHub Releases** (Recommended) - Download the latest version from [releases](https://github.com/musicbeeremote/mbrc/releases). This version doesn't include crash reporting or analytics.
 
-The Play Store version of the remote include FireBase and Crashlytics and collects anonymous analytics.
+2. **Android Studio** - If you are a developer, you can build and install directly from Android Studio.
 
-Alternatively there is a GitHub version on the [releases](https://github.com/musicbeeremote/android-app/releases) page that doesn't include any Crash or analytics reporting for people that are cautious about their privacy.
+3. **Play Store** - Currently unavailable (see note above), but planned to return in 2026. The Play Store version includes Firebase and Crashlytics for crash reporting and anonymous analytics.
+
+## Development
+
+### Build Variants
+
+The project has two product flavors:
+
+- **github** - Clean build without Firebase/Crashlytics, suitable for privacy-conscious users
+- **play** - Play Store build with Firebase/Crashlytics for crash reporting and analytics
+
+### Common Commands
+
+```bash
+# Build the project
+./gradlew build
+
+# Run unit tests
+./gradlew test
+
+# Run static analysis (detekt + lint)
+./gradlew staticAnalysis
+
+# Run all local checks (format, lint, detekt, unit tests, screenshot tests)
+./gradlew verifyLocal
+
+# Run all checks including instrumentation tests
+./gradlew verifyAll
+
+# Generate test coverage report
+./gradlew koverHtmlReport
+
+# Check for dependency updates
+./gradlew dependencyUpdates
+
+# Format code
+./gradlew formatKotlin
+
+# Check code formatting
+./gradlew lintKotlin
+```
+
+### Screenshot Testing
+
+The project uses Google Compose Preview Screenshot Testing for visual regression testing.
+
+```bash
+# Record reference screenshots (run after UI changes)
+./gradlew updateGithubDebugScreenshotTest
+
+# Validate screenshots against reference images
+./gradlew validateGithubDebugScreenshotTest
+```
+
+Screenshot tests are located in `app/src/screenshotTest/kotlin/` and use `@PreviewTest` annotations on Composable preview functions. Reference images are stored in `app/src/screenshotTestGithubDebug/reference/`.
 
 ## Usage
 
 In order to use the application you need a working WiFi connection, that doesn't have [access point isolation](https://www.howtogeek.com/179089/lock-down-your-wi-fi-network-with-your-routers-wireless-isolation-option/).
 
-You have to first install the [plugin](https://github.com/musicbeeremote/android-app/releases).
+You have to first install the [plugin](https://github.com/musicbeeremote/mbrc-plugin).
 
 After installing the plugin if you are not prompted to allow MusicBee or the plugin through the Windows Firewall you might have to manually configure Windows Firewall to allow the plugin to receive connections.
 
@@ -112,7 +183,7 @@ The contribution guide should follow soon.
 The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license. See `LICENSE` for more information.
 
     MusicBee Remote (for Android)
-    Copyright (C) 2011-2019  Konstantinos Paparas
+    Copyright (C) 2011-2025  Konstantinos Paparas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,7 +202,7 @@ The source code of the application is licensed under the [GPLv3](https://www.gnu
 
 MusicBee Remote - [@MusicBeeRemote](https://twitter.com/musicbeeremote)
 
-Project Link: [https://github.com/musicbeeremote/android-app](https://github.com/musicbeeremote/android-app)
+Project Link: [https://github.com/musicbeeremote/mbrc](https://github.com/musicbeeremote/mbrc)
 
 ## Acknowledgements
 
@@ -153,4 +224,4 @@ Apollo Player was one of the original sources of inspiration for the UI of Music
 
 * [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music)
 
-[project-screenshot]: https://raw.githubusercontent.com/musicbeeremote/android-app/master/screenshot.png
+[project-screenshot]: https://raw.githubusercontent.com/musicbeeremote/mbrc/main/screenshot.png

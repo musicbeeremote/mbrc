@@ -3,12 +3,12 @@ package com.kelsos.mbrc.screenshots
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.common.state.PlayerState
-import com.kelsos.mbrc.common.state.PlayingPosition
-import com.kelsos.mbrc.common.state.PlayingTrack
-import com.kelsos.mbrc.features.minicontrol.MiniControlContent
-import com.kelsos.mbrc.features.minicontrol.MiniControlState
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.common.state.BasicTrackInfo
+import com.kelsos.mbrc.core.common.state.PlayerState
+import com.kelsos.mbrc.core.common.state.PlayingPosition
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.minicontrol.MiniControlContent
+import com.kelsos.mbrc.feature.minicontrol.MiniControlState
 
 @PreviewTest
 @Preview(name = "MiniControl Playing Light", showBackground = true, widthDp = 360)
@@ -17,7 +17,7 @@ fun MiniControlPlayingLightPreview() {
   RemoteTheme(darkTheme = false) {
     MiniControlContent(
       state = MiniControlState(
-        playingTrack = PlayingTrack(
+        playingTrack = BasicTrackInfo(
           artist = "Parov Stelar",
           title = "All Night",
           album = "The Princess"
@@ -40,7 +40,7 @@ fun MiniControlPlayingDarkPreview() {
   RemoteTheme(darkTheme = true) {
     MiniControlContent(
       state = MiniControlState(
-        playingTrack = PlayingTrack(
+        playingTrack = BasicTrackInfo(
           artist = "Parov Stelar",
           title = "All Night",
           album = "The Princess"
@@ -63,7 +63,7 @@ fun MiniControlPausedLightPreview() {
   RemoteTheme(darkTheme = false) {
     MiniControlContent(
       state = MiniControlState(
-        playingTrack = PlayingTrack(
+        playingTrack = BasicTrackInfo(
           artist = "Caravan Palace",
           title = "Lone Digger",
           album = "Robot Face"
@@ -86,7 +86,7 @@ fun MiniControlPausedDarkPreview() {
   RemoteTheme(darkTheme = true) {
     MiniControlContent(
       state = MiniControlState(
-        playingTrack = PlayingTrack(
+        playingTrack = BasicTrackInfo(
           artist = "Caravan Palace",
           title = "Lone Digger",
           album = "Robot Face"

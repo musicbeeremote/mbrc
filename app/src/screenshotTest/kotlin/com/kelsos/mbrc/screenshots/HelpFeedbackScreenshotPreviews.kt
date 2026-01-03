@@ -3,10 +3,10 @@ package com.kelsos.mbrc.screenshots
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.features.help.compose.EmptyFeedbackActions
-import com.kelsos.mbrc.features.help.compose.FeedbackContentState
-import com.kelsos.mbrc.features.help.compose.HelpFeedbackScreenContent
-import com.kelsos.mbrc.theme.RemoteTheme
+import com.kelsos.mbrc.core.ui.theme.RemoteTheme
+import com.kelsos.mbrc.feature.misc.help.compose.EmptyFeedbackActions
+import com.kelsos.mbrc.feature.misc.help.compose.FeedbackContentState
+import com.kelsos.mbrc.feature.misc.help.compose.HelpFeedbackScreenContent
 
 private val emptyFeedbackState = FeedbackContentState()
 

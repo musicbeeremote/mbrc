@@ -1,6 +1,4 @@
-
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import com.android.build.gradle.internal.lint.AndroidLintTask
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import io.gitlab.arturbosch.detekt.Detekt
 import java.io.FileInputStream
@@ -20,6 +18,7 @@ plugins {
   alias(libs.plugins.kover)
   alias(libs.plugins.detekt)
   alias(libs.plugins.screenshot)
+  alias(libs.plugins.aboutlibraries)
 }
 
 object KeyLoader {
@@ -96,6 +95,8 @@ android {
     buildConfigField("String", "BUILD_TIME", "\"${buildTimeProvider.get()}\"")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    // Explicit test applicationId to avoid namespace collision with debug .dev suffix
+    testApplicationId = "com.kelsos.mbrc.test"
   }
 
   testOptions {
@@ -192,6 +193,9 @@ android {
   }
 
   sourceSets {
+    getByName("main") {
+      assets.srcDirs(layout.buildDirectory.dir("generated/assets/license"))
+    }
     getByName("androidTest") {
       assets.srcDirs("$projectDir/schemas")
     }
@@ -239,6 +243,20 @@ val dummyGoogleServicesJson: Configuration by configurations.creating {
 dependencies {
   coreLibraryDesugaring(libs.com.android.tools.desugar)
 
+  implementation(project(":core:platform"))
+  implementation(project(":core:networking"))
+  implementation(project(":core:data"))
+  implementation(project(":core:queue"))
+  implementation(project(":core:ui"))
+
+  implementation(project(":feature:library"))
+  implementation(project(":feature:minicontrol"))
+  implementation(project(":feature:playback"))
+  implementation(project(":feature:widgets"))
+  implementation(project(":feature:settings"))
+  implementation(project(":feature:content"))
+  implementation(project(":feature:misc"))
+
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.core.ktx)
@@ -279,6 +297,7 @@ dependencies {
   ksp(libs.androidx.room.compiler)
   ksp(libs.squareup.moshi.codegen)
 
+  testImplementation(testFixtures(project(":core:common")))
   testImplementation(libs.androidx.arch.core.testing)
   testImplementation(libs.androidx.room.testing)
   testImplementation(libs.androidx.test.core)
@@ -323,9 +342,6 @@ dependencies {
   dummyGoogleServicesJson(projects.mbrc)
 }
 
-
-
-
 kover {
   reports {
     filters.excludes.androidGeneratedClasses()
@@ -363,64 +379,11 @@ open class GenerateGoogleServicesJson : DefaultTask() {
 }
 
 tasks {
-  val detekt = withType<Detekt> {
+  withType<Detekt> {
     jvmTarget = "11"
     reports {
       sarif {
         required.set(true)
-      }
-    }
-  }
-
-  val detektAll by registering(Detekt::class) {
-    description = "Run detekt on all source sets (main, test, androidTest)"
-    jvmTarget = "11"
-    setSource(files(
-      "src/main/java", "src/main/kotlin",
-      "src/test/java", "src/test/kotlin",
-      "src/androidTest/java", "src/androidTest/kotlin",
-      "src/github/java", "src/github/kotlin",
-      "src/play/java", "src/play/kotlin"
-    ))
-    config.setFrom(files(rootProject.file("config/detekt/detekt.yml")))
-    buildUponDefaultConfig = true
-    reports {
-      sarif.required.set(true)
-    }
-  }
-
-  val lintReportReleaseSarifOutput = project.layout.buildDirectory.file("reports/sarif/lint-results-release.sarif")
-
-  afterEvaluate {
-    named<AndroidLintTask>("lintReportGithubRelease") {
-      sarifReportOutputFile.set(lintReportReleaseSarifOutput)
-    }
-
-    val staticAnalysis by registering {
-      val androidLintReportRelease = named<AndroidLintTask>("lintReportGithubRelease")
-      val lintKotlinTask = named("lintKotlin")
-
-      dependsOn(detektAll, androidLintReportRelease, lintKotlinTask)
-    }
-
-    register<Sync>("collectSarifReports") {
-      val androidLintReportRelease = named<AndroidLintTask>("lintReportGithubRelease")
-      val lintKotlinTask = named("lintKotlin")
-
-      mustRunAfter(detektAll, androidLintReportRelease, lintKotlinTask, staticAnalysis)
-
-      from(detektAll.get().sarifReportFile) {
-        rename { "detekt-unified.sarif" }
-      }
-      from(lintReportReleaseSarifOutput) {
-        rename { "android-lint.sarif" }
-      }
-
-      into(layout.buildDirectory.dir("reports/sarif"))
-
-      doLast {
-        logger.info("Copied ${inputs.files.files.filter { it.exists() }} into ${outputs.files.files}")
-        logger.info("Output dir contents:\n${outputs.files.files.first().listFiles()?.joinToString()}")
       }
     }
   }
@@ -444,30 +407,36 @@ tasks {
     }
   }
 
+  val generatedAssetsDir = layout.buildDirectory.dir("generated/assets/license")
+
+  val copyLicenseToAssets by registering(Copy::class) {
+    from(rootProject.file("LICENSE"))
+    into(generatedAssetsDir)
+    rename { "LICENSE.txt" }
+  }
+
   afterEvaluate {
+    // Hook license copy to asset processing and lint tasks
+    listOf(
+      "mergeGithubDebugAssets",
+      "mergeGithubReleaseAssets",
+      "mergePlayDebugAssets",
+      "mergePlayReleaseAssets",
+      "generateGithubDebugLintReportModel",
+      "generateGithubReleaseLintReportModel",
+      "generatePlayDebugLintReportModel",
+      "generatePlayReleaseLintReportModel",
+      "lintAnalyzeGithubDebug",
+      "lintAnalyzeGithubRelease",
+      "lintAnalyzePlayDebug",
+      "lintAnalyzePlayRelease"
+    ).forEach { taskName ->
+      tasks.findByName(taskName)?.dependsOn(copyLicenseToAssets)
+    }
     named("processGithubReleaseGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
     named("processPlayReleaseGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
     named("processGithubDebugGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
     named("processPlayDebugGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
-  }
-
-  val verifyLocal by registering {
-    description = "Run all local verification checks"
-    dependsOn(
-      "lintKotlin",
-      "detektGithubDebug",
-      "lintReportGithubDebug",
-      "testGithubDebugUnitTest",
-      "validateGithubDebugScreenshotTest"
-    )
-  }
-
-  val verifyAll by registering {
-    description = "Run all verification checks including instrumentation tests"
-    dependsOn(
-      verifyLocal,
-      "connectedGithubDebugAndroidTest"
-    )
   }
 }
 

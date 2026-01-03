@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="widget_normal_height">128dp</dimen>
+  <dimen name="widget_small_height">72dp</dimen>
+</resources>
