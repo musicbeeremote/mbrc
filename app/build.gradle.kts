@@ -364,17 +364,17 @@ protobuf {
   }
 }
 
-open class GenerateGoogleServicesJson : DefaultTask() {
+abstract class GenerateGoogleServicesJson : DefaultTask() {
 
   @get:InputFiles
-  var configuration by project.objects.property<Configuration>()
+  abstract val inputFiles: ConfigurableFileCollection
 
   @get:OutputFile
-  var outputJson by project.objects.property<File>()
+  abstract val outputJson: RegularFileProperty
 
   @TaskAction
   fun generateJson() {
-    outputJson.writeText(configuration.resolve().single().readText())
+    outputJson.get().asFile.writeText(inputFiles.singleFile.readText())
   }
 }
 
@@ -390,8 +390,8 @@ tasks {
 
   val copyDummyGoogleServicesJson by registering(GenerateGoogleServicesJson::class) {
     onlyIf { System.getenv("CI") == "true" }
-    configuration = dummyGoogleServicesJson
-    outputJson = file("google-services.json")
+    inputFiles.from(dummyGoogleServicesJson)
+    outputJson.set(file("google-services.json"))
   }
 
   val checkGoogleServicesJson by registering {

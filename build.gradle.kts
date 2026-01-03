@@ -142,25 +142,78 @@ tasks.register("collectSarifReports") {
   }
 }
 
+/**
+ * Merges multiple SARIF files into a single file with one run.
+ * GitHub CodeQL requires a single run per category, so we combine all results
+ * from multiple modules into one run instead of having multiple runs.
+ */
 fun mergeSarifFiles(inputFiles: List<File>, outputFile: File) {
-  val mergedRuns = mutableListOf<Map<String, Any?>>()
   var schema: String? = null
   var version: String? = null
+  var tool: Map<String, Any?>? = null
+  val allResults = mutableListOf<Map<String, Any?>>()
+  val allArtifacts = mutableListOf<Map<String, Any?>>()
+  val artifactIndexOffset = mutableMapOf<String, Int>()
 
   inputFiles.forEach { file ->
     @Suppress("UNCHECKED_CAST")
     val json = groovy.json.JsonSlurper().parse(file) as Map<String, Any?>
     schema = schema ?: json["\$schema"] as? String
     version = version ?: json["version"] as? String
+
     @Suppress("UNCHECKED_CAST")
     val runs = json["runs"] as? List<Map<String, Any?>> ?: emptyList()
-    mergedRuns.addAll(runs)
+
+    runs.forEach { run ->
+      // Use the first tool definition we encounter
+      @Suppress("UNCHECKED_CAST")
+      tool = tool ?: run["tool"] as? Map<String, Any?>
+
+      // Track artifact offset for this file to adjust indices
+      val currentOffset = allArtifacts.size
+      artifactIndexOffset[file.absolutePath] = currentOffset
+
+      // Collect artifacts
+      @Suppress("UNCHECKED_CAST")
+      val artifacts = run["artifacts"] as? List<Map<String, Any?>> ?: emptyList()
+      allArtifacts.addAll(artifacts)
+
+      // Collect results and adjust artifact indices if needed
+      @Suppress("UNCHECKED_CAST")
+      val results = run["results"] as? List<Map<String, Any?>> ?: emptyList()
+      if (currentOffset > 0 && artifacts.isNotEmpty()) {
+        // Adjust artifact location indices in results
+        results.forEach { result ->
+          @Suppress("UNCHECKED_CAST")
+          val locations = result["locations"] as? List<Map<String, Any?>>
+          locations?.forEach { location ->
+            @Suppress("UNCHECKED_CAST")
+            val physicalLocation = location["physicalLocation"] as? MutableMap<String, Any?>
+            val artifactIndex = physicalLocation?.get("artifactLocation") as? MutableMap<String, Any?>
+            val index = artifactIndex?.get("index") as? Int
+            if (index != null) {
+              artifactIndex["index"] = index + currentOffset
+            }
+          }
+        }
+      }
+      allResults.addAll(results)
+    }
+  }
+
+  // Build single merged run
+  val mergedRun = mutableMapOf<String, Any?>(
+    "tool" to tool,
+    "results" to allResults
+  )
+  if (allArtifacts.isNotEmpty()) {
+    mergedRun["artifacts"] = allArtifacts
   }
 
   val merged = mapOf(
     "\$schema" to schema,
     "version" to version,
-    "runs" to mergedRuns
+    "runs" to listOf(mergedRun)
   )
 
   outputFile.writeText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(merged)))

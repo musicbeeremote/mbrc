@@ -15,12 +15,15 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  JVM_OPTS: -Xmx6g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
-  GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx6g -XX:MaxMetaspaceSize=512m" -Dorg.gradle.daemon=false
+  JVM_OPTS: -Xmx6g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError
+  GRADLE_OPTS: >-
+    -Dorg.gradle.jvmargs=-Xmx6g\ -XX:MaxMetaspaceSize=1g
+    -Dorg.gradle.parallel=true
+    -Dorg.gradle.caching=true
 
 jobs:
   check:
-    timeout-minutes: 45
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,13 +37,17 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Static analysis
-        run: ./gradlew staticAnalysisAll collectSarifReports --continue --no-daemon
+        run: ./gradlew staticAnalysisAll collectSarifReports --continue
 
       - name: Upload Detekt SARIF
         uses: github/codeql-action/upload-sarif@v4
@@ -55,8 +62,9 @@ jobs:
         with:
           sarif_file: build/reports/sarif/android-lint.sarif
           category: android-lint
+
   test:
-    timeout-minutes: 45
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -69,13 +77,17 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Run Tests
-        run: ./gradlew koverXmlReport --continue --no-daemon
+        run: ./gradlew koverXmlReport --continue
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -104,7 +116,11 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -115,15 +131,37 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-30-google_apis-x86_64
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: echo "Generated AVD snapshot for caching."
+
       - name: Run Android Emulator and tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: 30
           target: google_apis
           arch: x86_64
-          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedDebugAndroidTest --no-daemon
+          script: ./gradlew connectedGithubDebugAndroidTest
 
       - uses: actions/upload-artifact@v6
         if: always()
