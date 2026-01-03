@@ -2,6 +2,62 @@ Changelog
 -----------
 
 ## [Unreleased]
+### Added
+- Complete UI rewrite using Jetpack Compose.
+- [#61] Adds light mode support alongside existing dark theme.
+- Adds What's New screen to display changelog on updates.
+- [#107] Moves library sync to WorkManager with detailed progress notifications.
+- Adds enhanced connection error handling with automatic retry logic.
+- Extends track search to include artist name matching.
+- Adds improved mini player control with modern design.
+- [#204] Adds support for resizable home screen widgets.
+- Adds animated wave indicator for streaming content in player and mini control.
+- Radio stations now load automatically when the screen opens.
+- [#205] Adds cover count support to library stats.
+- Adds support for Android 15 and 16 (API 35-36).
+- Adds data extraction rules for backup and cloud migration.
+
+### Changed
+- [#115] Fixes elapsed time not updating correctly for streaming content.
+- [#130] Fixes widget not updating track name and album art correctly.
+- Fixes widget track info position not updating dynamically.
+- Fixes volume buttons incorrectly muting the desktop app.
+- [#178] Fixes album artist view not showing compilation albums.
+- Fixes position updater not stopping properly on disconnect.
+- Fixes empty address handling in service discovery messages.
+- [#241] Fixes artist matching when searching in album library.
+- [#134] Fixes case-insensitive sorting for tracks, albums, genres, and artists.
+- Fixes notification update logic for connection state changes.
+- [#219] Fixes artist sorting to ignore "the" prefix.
+- [#242] Updates layouts for improved RTL support.
+- Migrates from RxJava to Kotlin Coroutines.
+- Migrates from Toothpick to Koin for dependency injection.
+- Migrates from DBFlow to Room for database.
+- Migrates from Picasso to Coil for image loading.
+- Migrates from Jackson to Moshi for JSON serialization.
+- Migrates home screen widgets to Glance Compose.
+- Migrates architecture from MVP to MVVM.
+- Improves offline status interaction handling.
+- Improves collection loss detection.
+- Updates database schema with non-nullable fields and unique indices.
+
+### Removed
+- Removes legacy View-based UI components.
+- Removes Butterknife.
+- Removes RxJava.
+- Removes ThreeTenBP (replaced with java.time).
+
+[#61]: https://github.com/musicbeeremote/mbrc/issues/61
+[#107]: https://github.com/musicbeeremote/mbrc/issues/107
+[#115]: https://github.com/musicbeeremote/mbrc/issues/115
+[#130]: https://github.com/musicbeeremote/mbrc/issues/130
+[#134]: https://github.com/musicbeeremote/mbrc/issues/134
+[#178]: https://github.com/musicbeeremote/mbrc/issues/178
+[#204]: https://github.com/musicbeeremote/mbrc/issues/204
+[#205]: https://github.com/musicbeeremote/mbrc/issues/205
+[#219]: https://github.com/musicbeeremote/mbrc/issues/219
+[#241]: https://github.com/musicbeeremote/mbrc/issues/241
+[#242]: https://github.com/musicbeeremote/mbrc/issues/242
 
 ## [1.5.1] - 2021-09-13
 ### Changed
@@ -165,16 +221,16 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/android-app/compare/v1.5.1...HEAD
-[1.5.1]: https://github.com/musicbeeremote/android-app/compare/v1.5.0...v1.5.1
-[1.5.0]: https://github.com/musicbeeremote/android-app/compare/v1.4.0...v1.5.0
-[1.4.0]: https://github.com/musicbeeremote/android-app/compare/v1.3.0...v1.4.0
-[1.3.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.1...v1.3.0
-[1.2.1]: https://github.com/musicbeeremote/android-app/compare/v1.2.0...v1.2.1
-[1.2.0]: https://github.com/musicbeeremote/android-app/compare/v1.2.0-beta1...v1.2.0
-[1.2.0-beta1]: https://github.com/musicbeeremote/android-app/compare/v1.1.0...v1.2.0-beta1
-[1.1.0]: https://github.com/musicbeeremote/android-app/compare/v1.0.1...v1.1.0
-[1.0.1]: https://github.com/musicbeeremote/android-app/compare/v1.0.0...v1.0.1
-[1.0.0-beta.2]: https://github.com/musicbeeremote/android-app/compare/v1.0.0-beta.1...v1.0.0-beta.2
-[1.0.0-beta.1]: https://github.com/musicbeeremote/android-app/compare/v1.0.0-alpha.1...v1.0.0-beta.1
-[1.0.0-alpha.1]: https://github.com/musicbeeremote/android-app/compare/v0.11.2...v1.0.0-alpha.1
+[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/musicbeeremote/mbrc/compare/v1.5.0...v1.5.1
+[1.5.0]: https://github.com/musicbeeremote/mbrc/compare/v1.4.0...v1.5.0
+[1.4.0]: https://github.com/musicbeeremote/mbrc/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/musicbeeremote/mbrc/compare/v1.2.1...v1.3.0
+[1.2.1]: https://github.com/musicbeeremote/mbrc/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/musicbeeremote/mbrc/compare/v1.2.0-beta1...v1.2.0
+[1.2.0-beta1]: https://github.com/musicbeeremote/mbrc/compare/v1.1.0...v1.2.0-beta1
+[1.1.0]: https://github.com/musicbeeremote/mbrc/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/musicbeeremote/mbrc/compare/v1.0.0...v1.0.1
+[1.0.0-beta.2]: https://github.com/musicbeeremote/mbrc/compare/v1.0.0-beta.1...v1.0.0-beta.2
+[1.0.0-beta.1]: https://github.com/musicbeeremote/mbrc/compare/v1.0.0-alpha.1...v1.0.0-beta.1
+[1.0.0-alpha.1]: https://github.com/musicbeeremote/mbrc/compare/v0.11.2...v1.0.0-alpha.1
