@@ -1,5 +1,5 @@
 [versions]
-aboutlibraries = "11.6.3"
+aboutlibraries = "13.2.1"
 androidx-annotation = "1.9.1"
 androidx-appcompat = "1.7.1"
 androidx-arch-core-testing = "2.2.0"
@@ -192,7 +192,7 @@ koin = [
 ]
 
 [plugins]
-aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutlibraries" }
 android-application = { id = "com.android.application", version.ref = "gradlePlugin-agp" }
 android-library = { id = "com.android.library", version.ref = "gradlePlugin-agp" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradlePlugin-crashlytics" }

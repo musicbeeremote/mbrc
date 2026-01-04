@@ -15,11 +15,15 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  JVM_OPTS: -Xmx6g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError
+  # JVM settings optimized for CI builds
+  # - 6GB heap for multi-module Android projects
+  # - ParallelGC is faster than G1GC for Android builds (9-20% improvement)
+  # - MaxMetaspaceSize prevents unbounded metaspace growth
   GRADLE_OPTS: >-
-    -Dorg.gradle.jvmargs=-Xmx6g\ -XX:MaxMetaspaceSize=1g
+    -Dorg.gradle.jvmargs=-Xmx6g\ -XX:+UseParallelGC\ -XX:MaxMetaspaceSize=1g\ -XX:+HeapDumpOnOutOfMemoryError\ -Dfile.encoding=UTF-8
     -Dorg.gradle.parallel=true
     -Dorg.gradle.caching=true
+    -Dorg.gradle.configuration-cache=true
 
 jobs:
   check:
@@ -35,19 +39,21 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
+          # Generate and submit dependency graph for security scanning
+          dependency-graph: generate-and-submit
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Static analysis
-        run: ./gradlew staticAnalysisAll collectSarifReports --continue
+        run: ./gradlew staticAnalysisAll collectSarifReports --continue --no-daemon
 
       - name: Upload Detekt SARIF
         uses: github/codeql-action/upload-sarif@v4
@@ -75,7 +81,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
@@ -87,12 +93,12 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Run Tests
-        run: ./gradlew koverXmlReport --continue
+        run: ./gradlew koverXmlReport --continue --no-daemon
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: ./app/build/reports/kover/project-xml/report.xml
+          files: ./build/reports/kover/report.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
@@ -114,7 +120,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
@@ -161,7 +167,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedGithubDebugAndroidTest
+          script: ./gradlew connectedGithubDebugAndroidTest --no-daemon
 
       - uses: actions/upload-artifact@v6
         if: always()
