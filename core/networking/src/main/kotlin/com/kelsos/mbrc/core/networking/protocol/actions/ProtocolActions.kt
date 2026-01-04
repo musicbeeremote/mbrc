@@ -21,6 +21,7 @@ import com.kelsos.mbrc.core.networking.protocol.models.PlayerStatus
 import com.kelsos.mbrc.core.networking.protocol.models.Position
 import com.kelsos.mbrc.core.networking.protocol.payloads.CoverPayload
 import com.kelsos.mbrc.core.networking.protocol.payloads.LyricsPayload
+import com.kelsos.mbrc.core.networking.protocol.payloads.NowPlayingDetailsPayload
 import com.kelsos.mbrc.core.networking.protocol.payloads.NowPlayingMoveResponse
 import com.kelsos.mbrc.core.networking.protocol.payloads.NowPlayingTrackRemoveResponse
 import com.squareup.moshi.Moshi
@@ -103,6 +104,7 @@ class UpdateNowPlayingTrack(
     stateHandler.updatePlayingTrack(newState)
     notifier.notifyTrackChanged(newState)
     notifier.persistTrackInfo(newState)
+    notifier.requestTrackDetails()
   }
 }
 
@@ -280,5 +282,15 @@ class UpdateNowPlayingList(private val nowPlayingHandler: NowPlayingHandler) : P
 class ProtocolVersionUpdate : ProtocolAction {
   override suspend fun execute(message: ProtocolMessage) {
     Timber.v(message.data.toString())
+  }
+}
+
+class UpdateNowPlayingDetails(moshi: Moshi, private val stateHandler: PlayerStateHandler) :
+  ProtocolAction {
+  private val adapter = moshi.adapter(NowPlayingDetailsPayload::class.java)
+
+  override suspend fun execute(message: ProtocolMessage) {
+    val payload = adapter.fromJsonValue(message.data) ?: return
+    stateHandler.updateTrackDetails(payload.toTrackDetails())
   }
 }

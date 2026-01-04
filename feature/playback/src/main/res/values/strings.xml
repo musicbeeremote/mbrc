@@ -60,6 +60,33 @@
   <string name="rate_the_playing_track">Rate the playing track</string>
   <string name="rating_clear">Clear rating</string>
 
+  <!-- Track Details -->
+  <string name="track_details_title">Track Details</string>
+  <string name="track_details_section_metadata">Metadata</string>
+  <string name="track_details_section_file">File Properties</string>
+  <string name="track_details_section_statistics">Statistics</string>
+  <string name="track_details_album_artist">Album Artist</string>
+  <string name="track_details_genre">Genre</string>
+  <string name="track_details_composer">Composer</string>
+  <string name="track_details_track">Track</string>
+  <string name="track_details_disc">Disc</string>
+  <string name="track_details_grouping">Grouping</string>
+  <string name="track_details_publisher">Publisher</string>
+  <string name="track_details_encoder">Encoder</string>
+  <string name="track_details_comment">Comment</string>
+  <string name="track_details_format">Format</string>
+  <string name="track_details_kind">Kind</string>
+  <string name="track_details_bitrate">Bitrate</string>
+  <string name="track_details_sample_rate">Sample Rate</string>
+  <string name="track_details_channels">Channels</string>
+  <string name="track_details_duration">Duration</string>
+  <string name="track_details_size">Size</string>
+  <string name="track_details_play_count">Play Count</string>
+  <string name="track_details_skip_count">Skip Count</string>
+  <string name="track_details_last_played">Last Played</string>
+  <string name="track_details_date_added">Date Added</string>
+  <string name="track_details_date_modified">Date Modified</string>
+
   <!-- Unknown values -->
   <string name="unknown_artist">Unknown artist</string>
   <string name="unknown_title">Unknown title</string>

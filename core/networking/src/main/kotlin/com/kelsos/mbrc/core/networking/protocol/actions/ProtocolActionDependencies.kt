@@ -3,6 +3,7 @@ package com.kelsos.mbrc.core.networking.protocol.actions
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.state.PlayerStatusModel
 import com.kelsos.mbrc.core.common.state.PlayingPosition
+import com.kelsos.mbrc.core.common.state.TrackDetails
 import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.common.state.TrackRating
 import kotlinx.coroutines.flow.Flow
@@ -15,10 +16,12 @@ interface PlayerStateHandler {
   val playerStatus: Flow<PlayerStatusModel>
   val playingTrack: Flow<TrackInfo>
   val playingTrackRating: Flow<TrackRating>
+  val playingTrackDetails: Flow<TrackDetails>
 
   fun updatePlayerStatus(status: PlayerStatusModel)
   fun updatePlayingTrack(track: TrackInfo)
   fun updateTrackRating(rating: TrackRating)
+  fun updateTrackDetails(details: TrackDetails)
   fun updateLyrics(lyrics: List<String>)
   fun updatePlayingPosition(position: PlayingPosition)
 }
@@ -31,6 +34,7 @@ interface TrackChangeNotifier {
   fun notifyTrackChanged(track: TrackInfo)
   fun notifyPlayStateChanged(state: PlayerState)
   suspend fun persistTrackInfo(track: TrackInfo)
+  suspend fun requestTrackDetails()
 }
 
 /**

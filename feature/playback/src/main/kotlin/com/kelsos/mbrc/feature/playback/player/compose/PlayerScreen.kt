@@ -122,6 +122,7 @@ fun PlayerScreen(
   val volumeState by viewModel.volumeState.collectAsState()
   val playbackState by viewModel.playbackState.collectAsState()
   val isScrobbling by viewModel.isScrobbling.collectAsState()
+  val trackDetails by viewModel.trackDetails.collectAsState()
 
   // Lyrics state
   val lyrics by lyricsViewModel.lyrics.collectAsState(initial = emptyList())
@@ -132,6 +133,7 @@ fun PlayerScreen(
   var showBottomSheet by remember { mutableStateOf(false) }
   var showOutputSelection by remember { mutableStateOf(false) }
   var showLyrics by remember { mutableStateOf(false) }
+  var showTrackDetails by remember { mutableStateOf(false) }
 
   val title = stringResource(R.string.nav_now_playing)
 
@@ -153,6 +155,7 @@ fun PlayerScreen(
     PlayerBottomSheet(
       isScrobbling = isScrobbling,
       onScrobbleToggle = viewModel.actions.toggleScrobbling,
+      onShowTrackDetails = { showTrackDetails = true },
       onDismiss = { showBottomSheet = false }
     )
   }
@@ -160,6 +163,13 @@ fun PlayerScreen(
   if (showOutputSelection) {
     OutputSelectionBottomSheet(
       onDismiss = { showOutputSelection = false }
+    )
+  }
+
+  if (showTrackDetails) {
+    TrackDetailsBottomSheet(
+      trackDetails = trackDetails,
+      onDismiss = { showTrackDetails = false }
     )
   }
 
@@ -203,6 +213,7 @@ fun PlayerScreen(
           lyrics = lyrics,
           playingTrack = lyricsPlayingTrack,
           playingPosition = lyricsPlayingPosition,
+          composer = trackDetails.composer,
           isPlaying = isPlaying,
           onCollapse = { showLyrics = false },
           onPlayPauseClick = lyricsViewModel::playPause,

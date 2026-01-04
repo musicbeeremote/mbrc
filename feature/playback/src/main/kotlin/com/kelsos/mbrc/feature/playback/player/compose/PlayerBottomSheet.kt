@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +38,7 @@ private const val RATING_STAR_COUNT = 5
 fun PlayerBottomSheet(
   isScrobbling: Boolean,
   onScrobbleToggle: () -> Unit,
+  onShowTrackDetails: () -> Unit,
   onDismiss: () -> Unit,
   viewModel: RatingDialogViewModel = koinViewModel()
 ) {
@@ -53,6 +55,30 @@ fun PlayerBottomSheet(
         .padding(horizontal = 24.dp)
         .padding(bottom = 32.dp)
     ) {
+      // Track Details option
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .clickable(onClick = {
+            onDismiss()
+            onShowTrackDetails()
+          })
+          .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Icon(
+          imageVector = Icons.Outlined.Info,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.size(24.dp)
+        )
+        Text(
+          text = stringResource(R.string.track_details_title),
+          style = MaterialTheme.typography.bodyLarge
+        )
+      }
+
       // Scrobbling toggle
       Row(
         modifier = Modifier

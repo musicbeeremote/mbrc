@@ -28,6 +28,7 @@ import com.kelsos.mbrc.core.networking.protocol.actions.UpdateLastFm
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateLfmRating
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateLyrics
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateMute
+import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingDetails
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingList
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingTrack
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingTrackMoved
@@ -120,6 +121,7 @@ val networkingModule = module {
   factoryOf(::UpdateNowPlayingTrackMoved)
   factoryOf(::UpdateNowPlayingTrackRemoval)
   factoryOf(::UpdateNowPlayingList)
+  factoryOf(::UpdateNowPlayingDetails)
   factoryOf(::UpdatePlaybackPositionCommand)
   factoryOf(::UpdatePluginVersionCommand)
   factoryOf(::ProtocolPingHandle)

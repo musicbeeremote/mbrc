@@ -38,6 +38,7 @@ sealed class Protocol(val context: String) {
   object NowPlayingLyrics : Protocol(NOW_PLAYING_LYRICS)
   object NowPlayingRating : Protocol(NOW_PLAYING_RATING)
   object NowPlayingLfmRating : Protocol(NOW_PLAYING_LFM_RATING)
+  object NowPlayingDetails : Protocol(NOW_PLAYING_DETAILS)
   object NowPlayingListChanged : Protocol(NOW_PLAYING_LIST_CHANGED)
   object NowPlayingListRemove : Protocol(NOW_PLAYING_LIST_REMOVE)
   object NowPlayingListMove : Protocol(NOW_PLAYING_LIST_MOVE)
@@ -108,6 +109,7 @@ sealed class Protocol(val context: String) {
     const val NOW_PLAYING_LYRICS = "nowplayinglyrics"
     const val NOW_PLAYING_RATING = "nowplayingrating"
     const val NOW_PLAYING_LFM_RATING = "nowplayinglfmrating"
+    const val NOW_PLAYING_DETAILS = "nowplayingdetails"
     const val NOW_PLAYING_LIST = "nowplayinglist"
     const val NOW_PLAYING_LIST_PLAY = "nowplayinglistplay"
     const val NOW_PLAYING_LIST_REMOVE = "nowplayinglistremove"
@@ -176,6 +178,7 @@ sealed class Protocol(val context: String) {
         NOW_PLAYING_LYRICS to NowPlayingLyrics,
         NOW_PLAYING_RATING to NowPlayingRating,
         NOW_PLAYING_LFM_RATING to NowPlayingLfmRating,
+        NOW_PLAYING_DETAILS to NowPlayingDetails,
         NOW_PLAYING_LIST to NowPlayingList,
         NOW_PLAYING_LIST_PLAY to NowPlayingListPlay,
         NOW_PLAYING_LIST_REMOVE to NowPlayingListRemove,

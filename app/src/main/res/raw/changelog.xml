@@ -2,8 +2,10 @@
 <changelog>
   <version
     version="1.6.0"
-    release="Dec 31, 2025">
+    release="Jan 31, 2026">
     <feature>Adds play all and shuffle all library options to the library menu.</feature>
+    <feature>Displays composer information in the lyrics screen header.</feature>
+    <feature>Adds track details panel showing extended metadata (composer, genre, bitrate, file info, play statistics).</feature>
     <feature>Complete UI rewrite using Jetpack Compose.</feature>
     <feature>Adds light mode support alongside existing dark theme.</feature>
     <feature>Adds What's New screen to display changelog on updates.</feature>

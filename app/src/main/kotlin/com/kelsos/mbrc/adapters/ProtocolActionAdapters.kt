@@ -9,6 +9,7 @@ import com.kelsos.mbrc.core.common.state.AppStatePublisher
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.state.PlayerStatusModel
 import com.kelsos.mbrc.core.common.state.PlayingPosition
+import com.kelsos.mbrc.core.common.state.TrackDetails
 import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.common.state.TrackRating
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
@@ -37,12 +38,10 @@ import timber.log.Timber
  * Adapts [AppStatePublisher] to [PlayerStateHandler] interface.
  */
 class PlayerStateHandlerImpl(private val appState: AppStatePublisher) : PlayerStateHandler {
-  override val playerStatus: Flow<PlayerStatusModel>
-    get() = appState.playerStatus
-  override val playingTrack: Flow<TrackInfo>
-    get() = appState.playingTrack
-  override val playingTrackRating: Flow<TrackRating>
-    get() = appState.playingTrackRating
+  override val playerStatus: Flow<PlayerStatusModel> = appState.playerStatus
+  override val playingTrack: Flow<TrackInfo> = appState.playingTrack
+  override val playingTrackRating: Flow<TrackRating> = appState.playingTrackRating
+  override val playingTrackDetails: Flow<TrackDetails> = appState.playingTrackDetails
 
   override fun updatePlayerStatus(status: PlayerStatusModel) {
     appState.updatePlayerStatus(status)
@@ -54,6 +53,10 @@ class PlayerStateHandlerImpl(private val appState: AppStatePublisher) : PlayerSt
 
   override fun updateTrackRating(rating: TrackRating) {
     appState.updateTrackRating(rating)
+  }
+
+  override fun updateTrackDetails(details: TrackDetails) {
+    appState.updateTrackDetails(details)
   }
 
   override fun updateLyrics(lyrics: List<String>) {
@@ -70,7 +73,10 @@ class PlayerStateHandlerImpl(private val appState: AppStatePublisher) : PlayerSt
  */
 class TrackChangeNotifierImpl(
   private val widgetUpdater: WidgetUpdater,
-  private val cache: PlayingTrackCache
+  private val cache: PlayingTrackCache,
+  private val playbackApi: PlaybackApi,
+  private val appState: AppStatePublisher,
+  private val dispatchers: AppCoroutineDispatchers
 ) : TrackChangeNotifier {
   override fun notifyTrackChanged(track: TrackInfo) {
     widgetUpdater.updatePlayingTrack(track.toPlayingTrack())
@@ -82,6 +88,17 @@ class TrackChangeNotifierImpl(
 
   override suspend fun persistTrackInfo(track: TrackInfo) {
     cache.persistInfo(track.toPlayingTrack())
+  }
+
+  override suspend fun requestTrackDetails() {
+    withContext(dispatchers.network) {
+      runCatching {
+        val details = playbackApi.getTrackDetails()
+        appState.updateTrackDetails(details.toTrackDetails())
+      }.onFailure { e ->
+        Timber.v(e, "Failed to fetch track details")
+      }
+    }
   }
 }
 

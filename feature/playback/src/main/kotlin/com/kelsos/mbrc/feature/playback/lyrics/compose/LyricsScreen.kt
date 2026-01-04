@@ -63,12 +63,14 @@ fun LyricsScreen(
   val lyrics by viewModel.lyrics.collectAsState(initial = emptyList())
   val playingTrack by viewModel.playingTrack.collectAsState()
   val playingPosition by viewModel.playingPosition.collectAsState()
+  val trackDetails by viewModel.trackDetails.collectAsState()
   val isPlaying by viewModel.isPlaying.collectAsState()
 
   LyricsScreenContent(
     lyrics = lyrics,
     playingTrack = playingTrack,
     playingPosition = playingPosition,
+    composer = trackDetails.composer,
     isPlaying = isPlaying,
     onCollapse = onCollapse,
     onPlayPauseClick = viewModel::playPause,
@@ -79,14 +81,15 @@ fun LyricsScreen(
 
 @Composable
 fun LyricsScreenContent(
+  modifier: Modifier = Modifier,
+  composer: String = "",
   lyrics: List<String>,
   playingTrack: TrackInfo,
   playingPosition: PlayingPosition,
   isPlaying: Boolean,
   onCollapse: () -> Unit,
   onPlayPauseClick: () -> Unit,
-  onSeek: (Float) -> Unit,
-  modifier: Modifier = Modifier
+  onSeek: (Float) -> Unit
 ) {
   Column(
     modifier = modifier
@@ -98,6 +101,7 @@ fun LyricsScreenContent(
     LyricsHeader(
       trackTitle = playingTrack.title,
       artistName = playingTrack.artist,
+      composer = composer,
       onCollapse = onCollapse
     )
 
@@ -141,6 +145,7 @@ fun LyricsScreenContent(
 private fun LyricsHeader(
   trackTitle: String,
   artistName: String,
+  composer: String,
   onCollapse: () -> Unit,
   modifier: Modifier = Modifier
 ) {
@@ -180,6 +185,16 @@ private fun LyricsHeader(
         overflow = TextOverflow.Ellipsis,
         textAlign = TextAlign.Center
       )
+      if (composer.isNotBlank()) {
+        Text(
+          text = stringResource(R.string.track_details_composer) + ": " + composer,
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          textAlign = TextAlign.Center
+        )
+      }
     }
 
     // Spacer to balance the collapse button

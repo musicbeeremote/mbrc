@@ -4,6 +4,8 @@ Changelog
 ## [Unreleased]
 ### Added
 - [#231] Adds play all and shuffle all library options to the library menu.
+- [#230] Displays composer information in the lyrics screen header.
+- Adds track details panel showing extended metadata (composer, genre, bitrate, file info, play statistics).
 - Complete UI rewrite using Jetpack Compose.
 - [#61] Adds light mode support alongside existing dark theme.
 - Adds What's New screen to display changelog on updates.
@@ -48,6 +50,7 @@ Changelog
 - Removes RxJava.
 - Removes ThreeTenBP (replaced with java.time).
 
+[#230]: https://github.com/musicbeeremote/mbrc/issues/230
 [#231]: https://github.com/musicbeeremote/mbrc/issues/231
 [#61]: https://github.com/musicbeeremote/mbrc/issues/61
 [#107]: https://github.com/musicbeeremote/mbrc/issues/107

@@ -6,6 +6,7 @@ import com.kelsos.mbrc.core.common.settings.ChangeLogChecker
 import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.BasicTrackInfo
 import com.kelsos.mbrc.core.common.state.PlayingPosition
+import com.kelsos.mbrc.core.common.state.TrackDetails
 import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.common.state.TrackRating
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
@@ -54,6 +55,9 @@ class PlayerViewModel(
     .map { it.scrobbling }
     .distinctUntilChanged()
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+  val trackDetails: StateFlow<TrackDetails> = appState.playingTrackDetails
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TrackDetails.EMPTY)
 
   val actions: IPlayerActions = PlayerActions(
     userActionUseCase = userActionUseCase,

@@ -158,6 +158,48 @@ fun LyricsPausedPreviewDark() {
 }
 
 // =============================================================================
+// With Composer Previews
+// =============================================================================
+
+@PreviewTest
+@Preview(name = "Lyrics With Composer Light", showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+fun LyricsWithComposerPreviewLight() {
+  RemoteTheme(darkTheme = false) {
+    LyricsScreenContent(
+      lyrics = sampleLyrics,
+      playingTrack = sampleTrack,
+      playingPosition = samplePosition,
+      composer = "Ludwig van Beethoven",
+      isPlaying = true,
+      onCollapse = {},
+      onPlayPauseClick = {},
+      onSeek = {},
+      modifier = Modifier.fillMaxSize()
+    )
+  }
+}
+
+@PreviewTest
+@Preview(name = "Lyrics With Composer Dark", showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+fun LyricsWithComposerPreviewDark() {
+  RemoteTheme(darkTheme = true) {
+    LyricsScreenContent(
+      lyrics = sampleLyrics,
+      playingTrack = sampleTrack,
+      playingPosition = samplePosition,
+      composer = "Ludwig van Beethoven",
+      isPlaying = true,
+      onCollapse = {},
+      onPlayPauseClick = {},
+      onSeek = {},
+      modifier = Modifier.fillMaxSize()
+    )
+  }
+}
+
+// =============================================================================
 // Stream Previews (Wave Indicator)
 // =============================================================================
 

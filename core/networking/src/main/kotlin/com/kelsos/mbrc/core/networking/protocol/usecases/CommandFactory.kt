@@ -8,6 +8,7 @@ import com.kelsos.mbrc.core.networking.protocol.actions.UpdateLastFm
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateLfmRating
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateLyrics
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateMute
+import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingDetails
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingList
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingTrack
 import com.kelsos.mbrc.core.networking.protocol.actions.UpdateNowPlayingTrackMoved
@@ -48,6 +49,7 @@ class CommandFactoryImpl(private val resolver: (KClass<out ProtocolAction>) -> P
       Protocol.PlayerScrobble to UpdateLastFm::class,
       Protocol.NowPlayingLyrics to UpdateLyrics::class,
       Protocol.NowPlayingLfmRating to UpdateLfmRating::class,
+      Protocol.NowPlayingDetails to UpdateNowPlayingDetails::class,
       Protocol.NowPlayingListRemove to UpdateNowPlayingTrackRemoval::class,
       Protocol.NowPlayingListMove to UpdateNowPlayingTrackMoved::class,
       Protocol.NowPlayingPosition to UpdatePlaybackPositionCommand::class,

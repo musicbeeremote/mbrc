@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.state.PlayingPosition
+import com.kelsos.mbrc.core.common.state.TrackDetails
 import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
@@ -22,6 +23,7 @@ class LyricsViewModel(appState: AppStateFlow, private val userActionUseCase: Use
   val lyrics: Flow<List<String>> = appState.lyrics
   val playingTrack: StateFlow<TrackInfo> = appState.playingTrack
   val playingPosition: StateFlow<PlayingPosition> = appState.playingPosition
+  val trackDetails: StateFlow<TrackDetails> = appState.playingTrackDetails
   val isPlaying: StateFlow<Boolean> = appState.playerStatus
     .map { it.state == PlayerState.Playing }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
