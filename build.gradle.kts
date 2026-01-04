@@ -95,20 +95,24 @@ tasks.register("staticAnalysisAll") {
   dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "lint" } })
 }
 
-tasks.register("collectSarifReports") {
-  description = "Merges all SARIF reports from all modules into single files per tool"
+abstract class CollectSarifReportsTask : DefaultTask() {
 
-  mustRunAfter("staticAnalysisAll")
+  @get:Input
+  abstract val subprojectBuildDirs: ListProperty<File>
 
-  val reportsDir = layout.buildDirectory.dir("reports/sarif")
+  @get:OutputDirectory
+  abstract val reportsDir: DirectoryProperty
 
-  doLast {
+  @TaskAction
+  fun execute() {
     val outputDir = reportsDir.get().asFile
     outputDir.mkdirs()
 
+    val buildDirs = subprojectBuildDirs.get()
+
     // Collect and merge detekt SARIF reports
-    val detektFiles = subprojects.mapNotNull { subproject ->
-      val sarifFile = subproject.layout.buildDirectory.file("reports/detekt/detekt.sarif").get().asFile
+    val detektFiles = buildDirs.mapNotNull { buildDir ->
+      val sarifFile = File(buildDir, "reports/detekt/detekt.sarif")
       if (sarifFile.exists()) sarifFile else null
     }
     if (detektFiles.isNotEmpty()) {
@@ -119,8 +123,8 @@ tasks.register("collectSarifReports") {
     // Collect and merge Android lint SARIF reports (by variant)
     val allLintFiles = mutableListOf<File>()
     listOf("debug", "release", "githubDebug", "githubRelease").forEach { variant ->
-      val lintFiles = subprojects.mapNotNull { subproject ->
-        val sarifFile = subproject.layout.buildDirectory.file("reports/lint-results-$variant.sarif").get().asFile
+      val lintFiles = buildDirs.mapNotNull { buildDir ->
+        val sarifFile = File(buildDir, "reports/lint-results-$variant.sarif")
         if (sarifFile.exists()) sarifFile else null
       }
       if (lintFiles.isNotEmpty()) {
@@ -140,83 +144,77 @@ tasks.register("collectSarifReports") {
     logger.lifecycle("Created ${files.size} merged SARIF reports in ${outputDir.absolutePath}")
     files.forEach { logger.lifecycle("  - ${it.name}") }
   }
-}
 
-/**
- * Merges multiple SARIF files into a single file with one run.
- * GitHub CodeQL requires a single run per category, so we combine all results
- * from multiple modules into one run instead of having multiple runs.
- */
-fun mergeSarifFiles(inputFiles: List<File>, outputFile: File) {
-  var schema: String? = null
-  var version: String? = null
-  var tool: Map<String, Any?>? = null
-  val allResults = mutableListOf<Map<String, Any?>>()
-  val allArtifacts = mutableListOf<Map<String, Any?>>()
-  val artifactIndexOffset = mutableMapOf<String, Int>()
+  private fun mergeSarifFiles(inputFiles: List<File>, outputFile: File) {
+    var schema: String? = null
+    var version: String? = null
+    var tool: Map<String, Any?>? = null
+    val allResults = mutableListOf<Map<String, Any?>>()
+    val allArtifacts = mutableListOf<Map<String, Any?>>()
 
-  inputFiles.forEach { file ->
-    @Suppress("UNCHECKED_CAST")
-    val json = groovy.json.JsonSlurper().parse(file) as Map<String, Any?>
-    schema = schema ?: json["\$schema"] as? String
-    version = version ?: json["version"] as? String
-
-    @Suppress("UNCHECKED_CAST")
-    val runs = json["runs"] as? List<Map<String, Any?>> ?: emptyList()
-
-    runs.forEach { run ->
-      // Use the first tool definition we encounter
+    inputFiles.forEach { file ->
       @Suppress("UNCHECKED_CAST")
-      tool = tool ?: run["tool"] as? Map<String, Any?>
+      val json = groovy.json.JsonSlurper().parse(file) as Map<String, Any?>
+      schema = schema ?: json["\$schema"] as? String
+      version = version ?: json["version"] as? String
 
-      // Track artifact offset for this file to adjust indices
-      val currentOffset = allArtifacts.size
-      artifactIndexOffset[file.absolutePath] = currentOffset
-
-      // Collect artifacts
       @Suppress("UNCHECKED_CAST")
-      val artifacts = run["artifacts"] as? List<Map<String, Any?>> ?: emptyList()
-      allArtifacts.addAll(artifacts)
+      val runs = json["runs"] as? List<Map<String, Any?>> ?: emptyList()
 
-      // Collect results and adjust artifact indices if needed
-      @Suppress("UNCHECKED_CAST")
-      val results = run["results"] as? List<Map<String, Any?>> ?: emptyList()
-      if (currentOffset > 0 && artifacts.isNotEmpty()) {
-        // Adjust artifact location indices in results
-        results.forEach { result ->
-          @Suppress("UNCHECKED_CAST")
-          val locations = result["locations"] as? List<Map<String, Any?>>
-          locations?.forEach { location ->
+      runs.forEach { run ->
+        @Suppress("UNCHECKED_CAST")
+        tool = tool ?: run["tool"] as? Map<String, Any?>
+
+        val currentOffset = allArtifacts.size
+
+        @Suppress("UNCHECKED_CAST")
+        val artifacts = run["artifacts"] as? List<Map<String, Any?>> ?: emptyList()
+        allArtifacts.addAll(artifacts)
+
+        @Suppress("UNCHECKED_CAST")
+        val results = run["results"] as? List<Map<String, Any?>> ?: emptyList()
+        if (currentOffset > 0 && artifacts.isNotEmpty()) {
+          results.forEach { result ->
             @Suppress("UNCHECKED_CAST")
-            val physicalLocation = location["physicalLocation"] as? MutableMap<String, Any?>
-            val artifactIndex = physicalLocation?.get("artifactLocation") as? MutableMap<String, Any?>
-            val index = artifactIndex?.get("index") as? Int
-            if (index != null) {
-              artifactIndex["index"] = index + currentOffset
+            val locations = result["locations"] as? List<Map<String, Any?>>
+            locations?.forEach { location ->
+              @Suppress("UNCHECKED_CAST")
+              val physicalLocation = location["physicalLocation"] as? MutableMap<String, Any?>
+              val artifactIndex = physicalLocation?.get("artifactLocation") as? MutableMap<String, Any?>
+              val index = artifactIndex?.get("index") as? Int
+              if (index != null) {
+                artifactIndex["index"] = index + currentOffset
+              }
             }
           }
         }
+        allResults.addAll(results)
       }
-      allResults.addAll(results)
     }
+
+    val mergedRun = mutableMapOf<String, Any?>(
+      "tool" to tool,
+      "results" to allResults
+    )
+    if (allArtifacts.isNotEmpty()) {
+      mergedRun["artifacts"] = allArtifacts
+    }
+
+    val merged = mapOf(
+      "\$schema" to schema,
+      "version" to version,
+      "runs" to listOf(mergedRun)
+    )
+
+    outputFile.writeText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(merged)))
   }
+}
 
-  // Build single merged run
-  val mergedRun = mutableMapOf<String, Any?>(
-    "tool" to tool,
-    "results" to allResults
-  )
-  if (allArtifacts.isNotEmpty()) {
-    mergedRun["artifacts"] = allArtifacts
-  }
-
-  val merged = mapOf(
-    "\$schema" to schema,
-    "version" to version,
-    "runs" to listOf(mergedRun)
-  )
-
-  outputFile.writeText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(merged)))
+tasks.register<CollectSarifReportsTask>("collectSarifReports") {
+  description = "Merges all SARIF reports from all modules into single files per tool"
+  mustRunAfter("staticAnalysisAll")
+  subprojectBuildDirs.set(subprojects.map { it.layout.buildDirectory.asFile.get() })
+  reportsDir.set(layout.buildDirectory.dir("reports/sarif"))
 }
 
 tasks.register("testAll") {
