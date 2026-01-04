@@ -127,10 +127,21 @@ fun LibraryScreen(
     else -> TopBarState.WithTitle(libraryTitle)
   }
 
+  val playAllLabel = stringResource(R.string.menu_play_all)
+  val shuffleAllLabel = stringResource(R.string.menu_shuffle_all)
+
   val menuItems = if (isSearchActive || syncProgress.running) {
     emptyList()
   } else {
     listOf(
+      MenuItem(
+        label = playAllLabel,
+        onClick = { viewModel.playAll(shuffle = false) }
+      ),
+      MenuItem(
+        label = shuffleAllLabel,
+        onClick = { viewModel.playAll(shuffle = true) }
+      ),
       MenuItem(
         label = albumArtistsOnlyLabel,
         onClick = { viewModel.updateAlbumArtistOnly(!albumArtistsOnly) },
@@ -200,6 +211,8 @@ private fun LibraryEventsEffect(
   onStatsReady: (LibraryStats) -> Unit
 ) {
   val networkUnavailableMessage = stringResource(R.string.connection_error_network_unavailable)
+  val playAllSuccessMessage = stringResource(R.string.library__play_all_success)
+  val playAllFailedMessage = stringResource(R.string.library__play_all_failed)
 
   LaunchedEffect(Unit) {
     viewModel.events.collect { event ->
@@ -210,6 +223,16 @@ private fun LibraryEventsEffect(
 
         is LibraryUiEvent.NetworkUnavailable -> snackbarHostState.showSnackbar(
           message = networkUnavailableMessage,
+          duration = SnackbarDuration.Short
+        )
+
+        is LibraryUiEvent.PlayAllSuccess -> snackbarHostState.showSnackbar(
+          message = playAllSuccessMessage,
+          duration = SnackbarDuration.Short
+        )
+
+        is LibraryUiEvent.PlayAllFailed -> snackbarHostState.showSnackbar(
+          message = playAllFailedMessage,
           duration = SnackbarDuration.Short
         )
       }

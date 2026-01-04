@@ -52,6 +52,10 @@ suspend fun UserActionUseCase.pause() {
   perform(UserAction.create(Protocol.PlayerPause))
 }
 
+suspend fun UserActionUseCase.playAllLibrary(shuffle: Boolean) {
+  perform(UserAction.create(Protocol.LibraryPlayAll, shuffle))
+}
+
 class UserActionUseCaseImpl(
   private val messageQueue: MessageQueue,
   dispatchers: AppCoroutineDispatchers
@@ -60,7 +64,7 @@ class UserActionUseCaseImpl(
   private val scope = CoroutineScope(job + dispatchers.network)
 
   override suspend fun perform(action: UserAction) {
-    messageQueue.queue(SocketMessage.Companion.create(action.protocol, action.data))
+    messageQueue.queue(SocketMessage.create(action.protocol, action.data))
   }
 
   override fun tryPerform(action: UserAction) {

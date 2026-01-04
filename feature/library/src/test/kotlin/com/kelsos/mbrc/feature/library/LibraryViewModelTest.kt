@@ -7,8 +7,10 @@ import com.kelsos.mbrc.core.common.settings.LibrarySettings
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
+import com.kelsos.mbrc.core.common.test.testDispatchers
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
+import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.feature.library.data.LibraryStats
 import com.kelsos.mbrc.feature.library.domain.LibrarySyncProgress
 import com.kelsos.mbrc.feature.library.domain.LibrarySyncUseCase
@@ -41,6 +43,7 @@ class LibraryViewModelTest : KoinTest {
       single<LibrarySyncUseCase> { mockk(relaxed = true) }
       single<LibrarySettings> { mockk(relaxed = true) }
       single<ConnectionStateFlow> { mockk(relaxed = true) }
+      single<UserActionUseCase> { mockk(relaxed = true) }
       singleOf(::LibraryViewModel)
     }
 
@@ -50,6 +53,7 @@ class LibraryViewModelTest : KoinTest {
   private val librarySyncUseCase: LibrarySyncUseCase by inject()
   private val librarySettings: LibrarySettings by inject()
   private val connectionStateFlow: ConnectionStateFlow by inject()
+  private val userActionUseCase: UserActionUseCase by inject()
 
   @Before
   fun setUp() {
@@ -216,7 +220,9 @@ class LibraryViewModelTest : KoinTest {
         librarySyncWorkHandler = librarySyncWorkHandler,
         librarySyncUseCase = librarySyncUseCase,
         librarySettings = librarySettings,
-        connectionStateFlow = connectionStateFlow
+        connectionStateFlow = connectionStateFlow,
+        userActionUseCase = userActionUseCase,
+        dispatchers = testDispatchers
       )
 
     // Then
@@ -247,7 +253,9 @@ class LibraryViewModelTest : KoinTest {
         librarySyncWorkHandler = librarySyncWorkHandler,
         librarySyncUseCase = librarySyncUseCase,
         librarySettings = librarySettings,
-        connectionStateFlow = connectionStateFlow
+        connectionStateFlow = connectionStateFlow,
+        userActionUseCase = userActionUseCase,
+        dispatchers = testDispatchers
       )
 
     // Then
@@ -299,6 +307,84 @@ class LibraryViewModelTest : KoinTest {
 
       // Verify sync handler was called once (for successful call)
       coVerify(exactly = 1) { librarySyncWorkHandler.sync(false) }
+    }
+  }
+
+  @Test
+  fun playAllShouldEmitNetworkUnavailableWhenNotConnected() {
+    runTest(testDispatcher) {
+      // Given
+      coEvery { connectionStateFlow.isConnected } returns false
+
+      // When & Then
+      viewModel.events.test {
+        viewModel.playAll(shuffle = false)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isEqualTo(LibraryUiEvent.NetworkUnavailable)
+      }
+
+      // Verify user action use case is not called when not connected
+      coVerify(exactly = 0) { userActionUseCase.perform(any()) }
+    }
+  }
+
+  @Test
+  fun playAllShouldEmitSuccessWhenConnected() {
+    runTest(testDispatcher) {
+      // Given
+      coEvery { connectionStateFlow.isConnected } returns true
+
+      // When & Then
+      viewModel.events.test {
+        viewModel.playAll(shuffle = false)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isEqualTo(LibraryUiEvent.PlayAllSuccess)
+      }
+
+      // Verify user action use case was called
+      coVerify(exactly = 1) { userActionUseCase.perform(any()) }
+    }
+  }
+
+  @Test
+  fun playAllWithShuffleShouldEmitSuccessWhenConnected() {
+    runTest(testDispatcher) {
+      // Given
+      coEvery { connectionStateFlow.isConnected } returns true
+
+      // When & Then
+      viewModel.events.test {
+        viewModel.playAll(shuffle = true)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isEqualTo(LibraryUiEvent.PlayAllSuccess)
+      }
+
+      // Verify user action use case was called
+      coVerify(exactly = 1) { userActionUseCase.perform(any()) }
+    }
+  }
+
+  @Test
+  fun playAllShouldEmitFailedWhenIOExceptionOccurs() {
+    runTest(testDispatcher) {
+      // Given
+      coEvery { connectionStateFlow.isConnected } returns true
+      coEvery { userActionUseCase.perform(any()) } throws java.io.IOException("Network error")
+
+      // When & Then
+      viewModel.events.test {
+        viewModel.playAll(shuffle = false)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isEqualTo(LibraryUiEvent.PlayAllFailed)
+      }
     }
   }
 }

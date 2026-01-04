@@ -3,6 +3,7 @@
   <version
     version="1.6.0"
     release="Dec 31, 2025">
+    <feature>Adds play all and shuffle all library options to the library menu.</feature>
     <feature>Complete UI rewrite using Jetpack Compose.</feature>
     <feature>Adds light mode support alongside existing dark theme.</feature>
     <feature>Adds What's New screen to display changelog on updates.</feature>

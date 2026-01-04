@@ -3,6 +3,7 @@ Changelog
 
 ## [Unreleased]
 ### Added
+- [#231] Adds play all and shuffle all library options to the library menu.
 - Complete UI rewrite using Jetpack Compose.
 - [#61] Adds light mode support alongside existing dark theme.
 - Adds What's New screen to display changelog on updates.
@@ -47,6 +48,7 @@ Changelog
 - Removes RxJava.
 - Removes ThreeTenBP (replaced with java.time).
 
+[#231]: https://github.com/musicbeeremote/mbrc/issues/231
 [#61]: https://github.com/musicbeeremote/mbrc/issues/61
 [#107]: https://github.com/musicbeeremote/mbrc/issues/107
 [#115]: https://github.com/musicbeeremote/mbrc/issues/115

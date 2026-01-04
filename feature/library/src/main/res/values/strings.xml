@@ -39,6 +39,10 @@
   <string name="menu_play_queue_all">Play Now (Queue All)</string>
   <string name="menu_queue_last">Queue Last</string>
   <string name="menu_queue_next">Queue Next</string>
+  <string name="menu_play_all">Play All</string>
+  <string name="menu_shuffle_all">Shuffle All</string>
+  <string name="library__play_all_success">Playing entire library</string>
+  <string name="library__play_all_failed">Failed to play library</string>
 
   <!-- Sync notification -->
   <string name="notification__sync_description">Library metadata sync in progress</string>

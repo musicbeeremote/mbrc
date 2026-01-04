@@ -9,4 +9,8 @@ sealed class LibraryUiEvent : UiMessageBase {
   class UpdateAlbumArtistOnly(val enabled: Boolean) : LibraryUiEvent()
 
   object NetworkUnavailable : LibraryUiEvent()
+
+  object PlayAllSuccess : LibraryUiEvent()
+
+  object PlayAllFailed : LibraryUiEvent()
 }
