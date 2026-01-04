@@ -205,9 +205,6 @@ android {
     lintConfig = rootProject.file("config/lint.xml")
     sarifReport = true
   }
-  kotlinOptions {
-    jvmTarget = "11"
-  }
 
   applicationVariants.all {
     val variant = this
