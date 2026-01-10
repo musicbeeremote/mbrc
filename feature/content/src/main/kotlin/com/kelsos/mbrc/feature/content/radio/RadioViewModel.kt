@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kelsos.mbrc.core.common.state.AppState
+import com.kelsos.mbrc.core.common.state.BasicTrackInfo
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
+import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.data.radio.RadioRepository
 import com.kelsos.mbrc.core.data.radio.RadioStation
@@ -13,6 +16,9 @@ import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -100,7 +106,8 @@ class RadioViewModel(
   radioRepository: RadioRepository,
   queueUseCase: PathQueueUseCase,
   connectionStateFlow: ConnectionStateFlow,
-  dispatchers: AppCoroutineDispatchers
+  dispatchers: AppCoroutineDispatchers,
+  appState: AppState
 ) : ViewModel() {
   private val events: MutableSharedFlow<RadioUiMessages> = MutableSharedFlow()
 
@@ -119,4 +126,7 @@ class RadioViewModel(
       events = events,
       radios = radioRepository.getAll().cachedIn(viewModelScope)
     )
+
+  val playingTrack: StateFlow<TrackInfo> = appState.playingTrack
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BasicTrackInfo())
 }

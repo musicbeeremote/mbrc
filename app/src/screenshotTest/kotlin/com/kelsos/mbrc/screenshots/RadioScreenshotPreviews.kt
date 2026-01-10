@@ -27,6 +27,7 @@ fun RadioStationItemLight() {
     Surface {
       RadioStationItem(
         station = sampleStation,
+        isPlaying = false,
         onPlay = {}
       )
     }
@@ -41,6 +42,37 @@ fun RadioStationItemDark() {
     Surface {
       RadioStationItem(
         station = sampleStation,
+        isPlaying = false,
+        onPlay = {}
+      )
+    }
+  }
+}
+
+@PreviewTest
+@Preview(showBackground = true)
+@Composable
+fun RadioStationItemPlayingLight() {
+  RemoteTheme(darkTheme = false) {
+    Surface {
+      RadioStationItem(
+        station = sampleStation,
+        isPlaying = true,
+        onPlay = {}
+      )
+    }
+  }
+}
+
+@PreviewTest
+@Preview(showBackground = true)
+@Composable
+fun RadioStationItemPlayingDark() {
+  RemoteTheme(darkTheme = true) {
+    Surface {
+      RadioStationItem(
+        station = sampleStation,
+        isPlaying = true,
         onPlay = {}
       )
     }
