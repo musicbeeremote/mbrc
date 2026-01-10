@@ -18,6 +18,7 @@ Changelog
 - Radio stations now load automatically when the screen opens.
 - Displays queue size in the Queue screen header.
 - [#155] Adds Go to Album and Go to Artist actions in player menu.
+- [#155] Adds Go to Album and Go to Artist actions in queue.
 - [#205] Adds cover count support to library stats.
 - Adds support for Android 15 and 16 (API 35-36).
 - Adds data extraction rules for backup and cloud migration.

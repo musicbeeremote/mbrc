@@ -33,6 +33,8 @@ fun NowPlayingTrackItemLight() {
         isPlaying = false,
         isDragging = false,
         onClick = {},
+        onGoToAlbum = {},
+        onGoToArtist = {},
         modifier = Modifier.fillMaxWidth()
       )
     }
@@ -56,6 +58,8 @@ fun NowPlayingTrackItemDark() {
         isPlaying = false,
         isDragging = false,
         onClick = {},
+        onGoToAlbum = {},
+        onGoToArtist = {},
         modifier = Modifier.fillMaxWidth()
       )
     }
@@ -81,6 +85,8 @@ fun NowPlayingTrackItemPlayingLight() {
         isPlaying = true,
         isDragging = false,
         onClick = {},
+        onGoToAlbum = {},
+        onGoToArtist = {},
         modifier = Modifier.fillMaxWidth()
       )
     }
@@ -104,6 +110,8 @@ fun NowPlayingTrackItemPlayingDark() {
         isPlaying = true,
         isDragging = false,
         onClick = {},
+        onGoToAlbum = {},
+        onGoToArtist = {},
         modifier = Modifier.fillMaxWidth()
       )
     }
@@ -129,6 +137,8 @@ fun NowPlayingTrackItemDraggingLight() {
         isPlaying = false,
         isDragging = true,
         onClick = {},
+        onGoToAlbum = {},
+        onGoToArtist = {},
         modifier = Modifier.fillMaxWidth()
       )
     }
@@ -152,6 +162,8 @@ fun NowPlayingTrackItemDraggingDark() {
         isPlaying = false,
         isDragging = true,
         onClick = {},
+        onGoToAlbum = {},
+        onGoToArtist = {},
         modifier = Modifier.fillMaxWidth()
       )
     }

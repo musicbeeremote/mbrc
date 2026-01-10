@@ -2,11 +2,15 @@ package com.kelsos.mbrc.ui
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.kelsos.mbrc.R
+import com.kelsos.mbrc.core.data.library.track.TrackRepository
 import com.kelsos.mbrc.feature.content.playlists.compose.PlaylistScreen
 import com.kelsos.mbrc.feature.content.radio.compose.RadioScreen
 import com.kelsos.mbrc.feature.library.albums.AlbumInfo
@@ -24,6 +28,8 @@ import com.kelsos.mbrc.feature.settings.compose.SettingsScreen
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 /**
  * Main navigation graph for the MusicBee Remote app.
@@ -195,9 +201,32 @@ fun AppNavGraph(
     }
 
     composable(Screen.NowPlayingList.route) {
+      val trackRepository: TrackRepository = koinInject()
+      val scope = rememberCoroutineScope()
+      val trackNotFoundMessage = stringResource(R.string.navigation_track_not_in_library)
+
       NowPlayingScreen(
         onOpenDrawer = onOpenDrawer,
         onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToAlbum = { path ->
+          scope.launch {
+            val track = trackRepository.getByPath(path)
+            if (track != null && track.album.isNotBlank()) {
+              val encodedAlbum = URLEncoder.encode(track.album, StandardCharsets.UTF_8.toString())
+              val encodedArtist = URLEncoder.encode(
+                track.albumArtist.ifBlank { track.artist },
+                StandardCharsets.UTF_8.toString()
+              )
+              navController.navigate("album_tracks/0/$encodedAlbum/$encodedArtist")
+            } else {
+              snackbarHostState.showSnackbar(trackNotFoundMessage)
+            }
+          }
+        },
+        onNavigateToArtist = { artist ->
+          val encodedName = URLEncoder.encode(artist, StandardCharsets.UTF_8.toString())
+          navController.navigate("artist_albums/0/$encodedName")
+        },
         snackbarHostState = snackbarHostState
       )
     }

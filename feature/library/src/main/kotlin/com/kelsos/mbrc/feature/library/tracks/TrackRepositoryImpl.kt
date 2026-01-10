@@ -87,4 +87,8 @@ class TrackRepositoryImpl(
       return@withContext entity.toTrack()
     }
   }
+
+  override suspend fun getByPath(path: String): Track? = withContext(dispatchers.database) {
+    dao.getByPath(path)?.toTrack()
+  }
 }

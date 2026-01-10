@@ -30,6 +30,7 @@
   <string name="common_settings">Settings</string>
 
   <!-- Drawer/Navigation -->
+  <string name="navigation_track_not_in_library">Track not found in library. Try syncing your library.</string>
   <string name="drawer_connection_status_active">Connected</string>
   <string name="drawer_connection_status_off">Offline</string>
   <string name="drawer_connection_status_on">Authenticating</string>

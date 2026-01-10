@@ -24,14 +24,20 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
+import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DragIndicator
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
@@ -85,6 +91,8 @@ import org.koin.androidx.compose.koinViewModel
 fun NowPlayingScreen(
   onOpenDrawer: () -> Unit,
   onNavigateToPlayer: () -> Unit,
+  onNavigateToAlbum: ((path: String) -> Unit)?,
+  onNavigateToArtist: (artist: String) -> Unit,
   snackbarHostState: SnackbarHostState,
   viewModel: NowPlayingViewModel = koinViewModel()
 ) {
@@ -167,6 +175,8 @@ fun NowPlayingScreen(
         onTrackRemove = { position -> viewModel.actions.removeTrack(position) },
         onTrackMove = { from, to -> viewModel.actions.moveTrack(from, to) },
         onDragEnd = { viewModel.actions.move() },
+        onGoToAlbum = onNavigateToAlbum,
+        onGoToArtist = onNavigateToArtist,
         modifier = Modifier.weight(1f)
       )
 
@@ -247,6 +257,8 @@ private fun NowPlayingContent(
   onTrackRemove: (Int) -> Unit,
   onTrackMove: (Int, Int) -> Unit,
   onDragEnd: () -> Unit,
+  onGoToAlbum: ((path: String) -> Unit)?,
+  onGoToArtist: (artist: String) -> Unit,
   modifier: Modifier = Modifier
 ) {
   // Hoist LazyListState here so it survives across refresh cycles
@@ -316,6 +328,8 @@ private fun NowPlayingContent(
             onTrackRemove = onTrackRemove,
             onTrackMove = onTrackMove,
             onDragEnd = onDragEnd,
+            onGoToAlbum = onGoToAlbum,
+            onGoToArtist = onGoToArtist,
             modifier = Modifier.weight(1f)
           )
         }
@@ -349,6 +363,8 @@ private fun NowPlayingTrackList(
   onTrackRemove: (Int) -> Unit,
   onTrackMove: (Int, Int) -> Unit,
   onDragEnd: () -> Unit,
+  onGoToAlbum: ((path: String) -> Unit)?,
+  onGoToArtist: (artist: String) -> Unit,
   modifier: Modifier = Modifier
 ) {
   val dragDropState = rememberDragDropState(
@@ -388,7 +404,9 @@ private fun NowPlayingTrackList(
           isDragging = isDragging,
           dragDropState = dragDropState,
           onClick = { onTrackClick(index + 1) },
-          onRemove = { onTrackRemove(index) }
+          onRemove = { onTrackRemove(index) },
+          onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
+          onGoToArtist = { onGoToArtist(track.artist) }
         )
       } else {
         NowPlayingTrackItem(
@@ -396,6 +414,8 @@ private fun NowPlayingTrackList(
           isPlaying = isPlaying,
           isDragging = false,
           onClick = { onTrackClick(index + 1) },
+          onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
+          onGoToArtist = { onGoToArtist(track.artist) },
           modifier = Modifier.animateItem()
         )
       }
@@ -425,7 +445,9 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
   isDragging: Boolean,
   dragDropState: DragDropState,
   onClick: () -> Unit,
-  onRemove: () -> Unit
+  onRemove: () -> Unit,
+  onGoToAlbum: (() -> Unit)?,
+  onGoToArtist: () -> Unit
 ) {
   val dismissState = rememberSwipeToDismissBoxState(
     SwipeToDismissBoxValue.Settled,
@@ -491,7 +513,9 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
       track = track,
       isPlaying = isPlaying,
       isDragging = isDragging,
-      onClick = onClick
+      onClick = onClick,
+      onGoToAlbum = onGoToAlbum,
+      onGoToArtist = onGoToArtist
     )
   }
 }
@@ -502,8 +526,12 @@ fun NowPlayingTrackItem(
   isPlaying: Boolean,
   isDragging: Boolean,
   onClick: () -> Unit,
+  onGoToAlbum: (() -> Unit)?,
+  onGoToArtist: () -> Unit,
   modifier: Modifier = Modifier
 ) {
+  var showMenu by remember { mutableStateOf(false) }
+
   val elevation by animateDpAsState(
     targetValue = if (isDragging) 8.dp else 0.dp,
     label = "drag_elevation"
@@ -540,7 +568,7 @@ fun NowPlayingTrackItem(
       Row(
         modifier = Modifier
           .weight(1f)
-          .padding(horizontal = 16.dp, vertical = 12.dp),
+          .padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
       ) {
         // Playing indicator - animated audio bars
@@ -575,7 +603,50 @@ fun NowPlayingTrackItem(
           )
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
+        // Overflow menu
+        Box {
+          IconButton(onClick = { showMenu = true }) {
+            Icon(
+              imageVector = Icons.Default.MoreVert,
+              contentDescription = stringResource(R.string.menu_overflow_description),
+              tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+          }
+
+          DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false }
+          ) {
+            if (onGoToAlbum != null) {
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.player_go_to_album)) },
+                leadingIcon = {
+                  Icon(
+                    imageVector = Icons.Default.Album,
+                    contentDescription = null
+                  )
+                },
+                onClick = {
+                  showMenu = false
+                  onGoToAlbum()
+                }
+              )
+            }
+            DropdownMenuItem(
+              text = { Text(stringResource(R.string.player_go_to_artist)) },
+              leadingIcon = {
+                Icon(
+                  imageVector = Icons.Default.Person,
+                  contentDescription = null
+                )
+              },
+              onClick = {
+                showMenu = false
+                onGoToArtist()
+              }
+            )
+          }
+        }
 
         // Drag handle
         Icon(
