@@ -54,8 +54,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -90,13 +92,14 @@ fun NowPlayingScreen(
   val playingTrack by viewModel.playingTrack.collectAsState()
   val connectionState by viewModel.connectionState.collectAsState(ConnectionStatus.Offline)
   val isConnected = connectionState is ConnectionStatus.Connected
+  val trackCount by viewModel.trackCount.collectAsState()
 
   var isRefreshing by remember { mutableStateOf(false) }
   var isSearchActive by rememberSaveable { mutableStateOf(false) }
   var searchQuery by rememberSaveable { mutableStateOf("") }
 
   val searchPlaceholder = stringResource(R.string.now_playing_search_hint)
-  val title = stringResource(R.string.nav_now_playing)
+  val title = stringResource(R.string.nav_queue)
 
   // Compute scaffold configuration based on current state
   val topBarState = if (isSearchActive) {
@@ -153,6 +156,7 @@ fun NowPlayingScreen(
       NowPlayingContent(
         tracks = tracks,
         playingTrackPath = playingTrack.path,
+        trackCount = trackCount,
         isRefreshing = isRefreshing,
         isConnected = isConnected,
         onRefresh = {
@@ -235,6 +239,7 @@ private fun NowPlayingEventsEffect(
 private fun NowPlayingContent(
   tracks: LazyPagingItems<NowPlaying>,
   playingTrackPath: String,
+  trackCount: Int,
   isRefreshing: Boolean,
   isConnected: Boolean,
   onRefresh: () -> Unit,
@@ -297,20 +302,40 @@ private fun NowPlayingContent(
       }
 
       else -> {
-        NowPlayingTrackList(
-          lazyListState = lazyListState,
-          draggableList = draggableList,
-          tracks = tracks,
-          playingTrackPath = playingTrackPath,
-          isConnected = isConnected,
-          onTrackClick = onTrackClick,
-          onTrackRemove = onTrackRemove,
-          onTrackMove = onTrackMove,
-          onDragEnd = onDragEnd
-        )
+        Column(modifier = Modifier.fillMaxSize()) {
+          if (trackCount > 0) {
+            QueueHeader(trackCount = trackCount)
+          }
+          NowPlayingTrackList(
+            lazyListState = lazyListState,
+            draggableList = draggableList,
+            tracks = tracks,
+            playingTrackPath = playingTrackPath,
+            isConnected = isConnected,
+            onTrackClick = onTrackClick,
+            onTrackRemove = onTrackRemove,
+            onTrackMove = onTrackMove,
+            onDragEnd = onDragEnd,
+            modifier = Modifier.weight(1f)
+          )
+        }
       }
     }
   }
+}
+
+@Composable
+private fun QueueHeader(trackCount: Int) {
+  Text(
+    text = pluralStringResource(R.plurals.now_playing__track_count, trackCount, trackCount),
+    style = MaterialTheme.typography.bodySmall,
+    color = MaterialTheme.colorScheme.onSurfaceVariant,
+    textAlign = TextAlign.End,
+    modifier = Modifier
+      .fillMaxWidth()
+      .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+      .padding(horizontal = 16.dp, vertical = 8.dp)
+  )
 }
 
 @Composable
@@ -323,7 +348,8 @@ private fun NowPlayingTrackList(
   onTrackClick: (Int) -> Unit,
   onTrackRemove: (Int) -> Unit,
   onTrackMove: (Int, Int) -> Unit,
-  onDragEnd: () -> Unit
+  onDragEnd: () -> Unit,
+  modifier: Modifier = Modifier
 ) {
   val dragDropState = rememberDragDropState(
     lazyListState = lazyListState,
@@ -343,7 +369,7 @@ private fun NowPlayingTrackList(
 
   LazyColumn(
     state = lazyListState,
-    modifier = Modifier
+    modifier = modifier
       .fillMaxSize()
       .then(dragModifier),
     flingBehavior = ScrollableDefaults.flingBehavior()

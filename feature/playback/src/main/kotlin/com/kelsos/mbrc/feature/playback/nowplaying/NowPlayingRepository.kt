@@ -25,6 +25,8 @@ interface NowPlayingRepository : Repository<NowPlaying> {
   suspend fun findPosition(query: String): Int
 
   suspend fun searchTrack(query: String): SearchResult?
+
+  fun observeCount(): Flow<Int>
 }
 
 val NowPlayingEntity.key: String
@@ -115,4 +117,6 @@ class NowPlayingRepositoryImpl(
       return@withContext entity.toNowPlaying()
     }
   }
+
+  override fun observeCount(): Flow<Int> = dao.observeCount()
 }

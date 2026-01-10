@@ -16,6 +16,7 @@ Changelog
 - [#204] Adds support for resizable home screen widgets.
 - Adds animated wave indicator for streaming content in player and mini control.
 - Radio stations now load automatically when the screen opens.
+- Displays queue size in the Queue screen header.
 - [#205] Adds cover count support to library stats.
 - Adds support for Android 15 and 16 (API 35-36).
 - Adds data extraction rules for backup and cloud migration.

@@ -16,6 +16,7 @@
     <feature>Adds support for resizable home screen widgets.</feature>
     <feature>Adds animated wave indicator for streaming content in player and mini control.</feature>
     <feature>Radio stations now load automatically when the screen opens.</feature>
+    <feature>Displays queue size in the Queue screen header.</feature>
     <bug>Fixes elapsed time not updating correctly for streaming content.</bug>
     <bug>Fixes widget not updating track name and album art correctly.</bug>
     <bug>Fixes widget track info position not updating dynamically.</bug>

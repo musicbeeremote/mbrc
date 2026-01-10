@@ -30,8 +30,13 @@
   <string name="no_lyrics">No lyrics found</string>
 
   <!-- Now playing -->
+  <plurals name="now_playing__track_count">
+    <item quantity="one">%d track queued</item>
+    <item quantity="other">%d tracks queued</item>
+  </plurals>
   <string name="menu_remove_track">Remove track</string>
   <string name="nav_now_playing">Now playing</string>
+  <string name="nav_queue">Queue</string>
   <string name="now_playing__drag_handle">Drag to reorder</string>
   <string name="now_playing__empty_list">Your queue is empty</string>
   <string name="now_playing__search_not_found">No track found matching your search</string>
