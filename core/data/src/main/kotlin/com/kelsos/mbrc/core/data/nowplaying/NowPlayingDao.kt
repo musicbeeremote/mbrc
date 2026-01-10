@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 @Dao
@@ -46,6 +47,9 @@ interface NowPlayingDao {
 
   @Query("select count(*) from now_playing")
   fun count(): Long
+
+  @Query("select count(*) from now_playing")
+  fun observeCount(): Flow<Int>
 
   @Query("delete from now_playing where date_added != :added")
   fun removePreviousEntries(added: Long)

@@ -17,6 +17,9 @@ import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -155,6 +158,8 @@ class NowPlayingViewModel(
   val tracks: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
   val playingTrack = appState.playingTrack
   val connectionState = connectionStateFlow.connection
+  val trackCount: StateFlow<Int> = repository.observeCount()
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
   val actions: NowPlayingActions =
     NowPlayingActions(
       scope = viewModelScope,

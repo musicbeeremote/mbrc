@@ -103,4 +103,7 @@ interface TrackDao {
 
   @Query("select * from track where id = :id")
   fun getById(id: Long): TrackEntity?
+
+  @Query("select * from track where src = :path")
+  fun getByPath(path: String): TrackEntity?
 }

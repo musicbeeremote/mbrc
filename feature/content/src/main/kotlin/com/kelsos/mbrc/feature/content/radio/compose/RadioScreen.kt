@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.content.radio.compose
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,16 +15,20 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.core.data.radio.RadioStation
 import com.kelsos.mbrc.core.ui.R as CoreUiR
+import com.kelsos.mbrc.core.ui.compose.AudioBarsIndicator
 import com.kelsos.mbrc.core.ui.compose.ScreenScaffold
 import com.kelsos.mbrc.core.ui.compose.SingleLineRow
 import com.kelsos.mbrc.core.ui.compose.SwipeRefreshScreen
@@ -42,6 +47,7 @@ fun RadioScreen(
   viewModel: RadioViewModel = koinViewModel()
 ) {
   val stations = viewModel.state.radios.collectAsLazyPagingItems()
+  val playingTrack by viewModel.playingTrack.collectAsState()
   var isRefreshing by remember { mutableStateOf(false) }
 
   val queueFailedMessage = stringResource(R.string.radio__play_failed)
@@ -92,7 +98,11 @@ fun RadioScreen(
     onOpenDrawer = onOpenDrawer,
     modifier = modifier
   ) { paddingValues ->
-    Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+    Column(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues)
+    ) {
       SwipeRefreshScreen(
         items = stations,
         isRefreshing = isRefreshing,
@@ -107,6 +117,7 @@ fun RadioScreen(
       ) { station ->
         RadioStationItem(
           station = station,
+          isPlaying = station.url == playingTrack.path,
           onPlay = { viewModel.actions.play(it.url) }
         )
       }
@@ -122,6 +133,7 @@ fun RadioScreen(
 @Composable
 fun RadioStationItem(
   station: RadioStation,
+  isPlaying: Boolean,
   onPlay: (RadioStation) -> Unit,
   modifier: Modifier = Modifier
 ) {
@@ -129,6 +141,7 @@ fun RadioStationItem(
     text = station.name,
     onClick = { onPlay(station) },
     modifier = modifier,
+    fontWeight = if (isPlaying) FontWeight.Bold else null,
     leadingContent = {
       Icon(
         imageVector = Icons.Default.Radio,
@@ -139,11 +152,23 @@ fun RadioStationItem(
     },
     trailingContent = {
       IconButton(onClick = { onPlay(station) }) {
-        Icon(
-          imageVector = Icons.Default.PlayArrow,
-          contentDescription = stringResource(R.string.radio__play),
-          tint = MaterialTheme.colorScheme.primary
-        )
+        if (isPlaying) {
+          Box(
+            modifier = Modifier.size(24.dp),
+            contentAlignment = Alignment.Center
+          ) {
+            AudioBarsIndicator(
+              color = MaterialTheme.colorScheme.primary,
+              barMaxHeight = 18.dp
+            )
+          }
+        } else {
+          Icon(
+            imageVector = Icons.Default.PlayArrow,
+            contentDescription = stringResource(R.string.radio__play),
+            tint = MaterialTheme.colorScheme.primary
+          )
+        }
       }
     }
   )

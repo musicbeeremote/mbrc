@@ -4,6 +4,8 @@ import androidx.paging.PagingData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.core.common.state.AppState
+import com.kelsos.mbrc.core.common.state.BasicTrackInfo
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
@@ -17,6 +19,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.io.IOException
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -38,6 +41,11 @@ class RadioViewModelTest : KoinTest {
       single<RadioRepository> { mockk(relaxed = true) }
       single<PathQueueUseCase> { mockk(relaxed = true) }
       single<ConnectionStateFlow> { mockk(relaxed = true) }
+      single<AppState> {
+        mockk(relaxed = true) {
+          every { playingTrack } returns MutableStateFlow(BasicTrackInfo())
+        }
+      }
       singleOf(::RadioViewModel)
     }
 

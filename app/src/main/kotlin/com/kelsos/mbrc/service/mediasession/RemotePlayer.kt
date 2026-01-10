@@ -7,7 +7,6 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.DeviceInfo
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaItem.LiveConfiguration
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.SimpleBasePlayer
@@ -68,104 +67,91 @@ class RemotePlayer(
     else -> STATE_IDLE
   }
 
-  override fun getState(): State {
-    val commands =
-      Player.Commands
-        .Builder()
-        .add(COMMAND_PLAY_PAUSE)
-        .add(COMMAND_STOP)
-        .add(COMMAND_PREPARE)
-        .add(COMMAND_SET_MEDIA_ITEM)
-        .add(COMMAND_GET_CURRENT_MEDIA_ITEM)
-        .add(COMMAND_RELEASE)
-        .add(COMMAND_SET_SHUFFLE_MODE)
-        .add(COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
-        .add(COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
-        .add(COMMAND_SEEK_TO_NEXT)
-        .add(COMMAND_SEEK_TO_PREVIOUS)
+  override fun getState(): State = runBlocking {
+    val statusModel = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
+    val position = appState.playingPosition.firstOrNull().orEmpty()
+    val playingTrack = appState.playingTrack.firstOrNull().orEmpty().toPlayingTrack()
+    val isStream = position.isStream
+
+    val commandsBuilder = Player.Commands
+      .Builder()
+      .add(COMMAND_PLAY_PAUSE)
+      .add(COMMAND_STOP)
+      .add(COMMAND_PREPARE)
+      .add(COMMAND_SET_MEDIA_ITEM)
+      .add(COMMAND_GET_CURRENT_MEDIA_ITEM)
+      .add(COMMAND_RELEASE)
+      .add(COMMAND_SET_SHUFFLE_MODE)
+      .add(COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+      .add(COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+      .add(COMMAND_SEEK_TO_NEXT)
+      .add(COMMAND_SEEK_TO_PREVIOUS)
+      .add(COMMAND_GET_CURRENT_MEDIA_ITEM)
+      .add(COMMAND_GET_METADATA)
+      .add(COMMAND_GET_TIMELINE)
+      .add(COMMAND_GET_DEVICE_VOLUME)
+      .add(COMMAND_SET_DEVICE_VOLUME_WITH_FLAGS)
+      .add(COMMAND_ADJUST_DEVICE_VOLUME_WITH_FLAGS)
+
+    // Only add seek commands for non-stream content
+    if (!isStream) {
+      commandsBuilder
         .add(COMMAND_SEEK_BACK)
         .add(COMMAND_SEEK_FORWARD)
-        .add(COMMAND_GET_CURRENT_MEDIA_ITEM)
-        .add(COMMAND_GET_METADATA)
-        .add(COMMAND_GET_TIMELINE)
         .add(COMMAND_SEEK_TO_DEFAULT_POSITION)
         .add(COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM)
-        .add(COMMAND_GET_DEVICE_VOLUME)
-        .add(COMMAND_SET_DEVICE_VOLUME_WITH_FLAGS)
-        .add(COMMAND_ADJUST_DEVICE_VOLUME_WITH_FLAGS)
-        .build()
-
-    return runBlocking {
-      val statusModel = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
-      val position = appState.playingPosition.firstOrNull().orEmpty()
-      val playingTrack = appState.playingTrack.firstOrNull().orEmpty().toPlayingTrack()
-
-      val item = playingTrack.toMediaItem()
-      val isStream = position.isStream
-      val durationUs = if (!isStream) {
-        position.total.toDuration(DurationUnit.MILLISECONDS).inWholeMicroseconds
-      } else {
-        C.TIME_UNSET
-      }
-      val mediaItemBuilder = MediaItemData
-        .Builder(0)
-        .setMediaItem(item)
-        .setMediaMetadata(item.mediaMetadata)
-        .setIsSeekable(!isStream)
-        .setDurationUs(durationUs)
-
-      // For streams without known duration, mark as live content
-      // This shows an indeterminate progress indicator in the notification
-      if (isStream) {
-        val liveConfig = LiveConfiguration.Builder()
-          .setTargetOffsetMs(C.TIME_UNSET)
-          .setMinOffsetMs(C.TIME_UNSET)
-          .setMaxOffsetMs(C.TIME_UNSET)
-          .setMinPlaybackSpeed(C.RATE_UNSET)
-          .setMaxPlaybackSpeed(C.RATE_UNSET)
-          .build()
-        mediaItemBuilder
-          .setIsDynamic(true)
-          .setIsPlaceholder(false)
-          .setLiveConfiguration(liveConfig)
-      }
-
-      val mediaItem = mediaItemBuilder.build()
-
-      val previous = MediaItemData.Builder("previous-track").build()
-      val next = MediaItemData.Builder("next-track").build()
-
-      val playlist = listOf(previous, mediaItem, next)
-
-      State
-        .Builder()
-        .setAvailableCommands(commands)
-        .setAudioAttributes(AudioAttributes.DEFAULT)
-        .setPlaybackState(getPlaybackState(statusModel.state))
-        .setShuffleModeEnabled(statusModel.shuffle === ShuffleMode.Shuffle)
-        .setPlayWhenReady(
-          statusModel.state == PlayerState.Playing,
-          PLAY_WHEN_READY_CHANGE_REASON_REMOTE
-        )
-        .setPlaylist(playlist)
-        .setPlaylistMetadata(
-          MediaMetadata
-            .Builder()
-            .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
-            .setTitle("Now Playing")
-            .build()
-        ).setCurrentMediaItemIndex(1)
-        .setContentPositionMs(position.current)
-        .setIsDeviceMuted(statusModel.mute)
-        .setDeviceVolume(statusModel.volume)
-        .setDeviceInfo(
-          DeviceInfo
-            .Builder(DeviceInfo.PLAYBACK_TYPE_REMOTE)
-            .setMinVolume(MIN_VOLUME)
-            .setMaxVolume(MAX_VOLUME)
-            .build()
-        ).build()
     }
+
+    val commands = commandsBuilder.build()
+
+    val item = playingTrack.toMediaItem()
+    // For streams, set duration equal to current position so progress appears full
+    val durationUs = if (!isStream) {
+      position.total.toDuration(DurationUnit.MILLISECONDS).inWholeMicroseconds
+    } else {
+      position.current.toDuration(DurationUnit.MILLISECONDS).inWholeMicroseconds
+    }
+    val mediaItem = MediaItemData
+      .Builder(0)
+      .setMediaItem(item)
+      .setMediaMetadata(item.mediaMetadata)
+      .setIsSeekable(!isStream)
+      .setDurationUs(durationUs)
+      .build()
+
+    val previous = MediaItemData.Builder("previous-track").build()
+    val next = MediaItemData.Builder("next-track").build()
+
+    val playlist = listOf(previous, mediaItem, next)
+
+    State
+      .Builder()
+      .setAvailableCommands(commands)
+      .setAudioAttributes(AudioAttributes.DEFAULT)
+      .setPlaybackState(getPlaybackState(statusModel.state))
+      .setShuffleModeEnabled(statusModel.shuffle === ShuffleMode.Shuffle)
+      .setPlayWhenReady(
+        statusModel.state == PlayerState.Playing,
+        PLAY_WHEN_READY_CHANGE_REASON_REMOTE
+      )
+      .setPlaylist(playlist)
+      .setPlaylistMetadata(
+        MediaMetadata
+          .Builder()
+          .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
+          .setTitle("Now Playing")
+          .build()
+      ).setCurrentMediaItemIndex(1)
+      .setContentPositionMs(position.current)
+      .setIsDeviceMuted(statusModel.mute)
+      .setDeviceVolume(statusModel.volume)
+      .setDeviceInfo(
+        DeviceInfo
+          .Builder(DeviceInfo.PLAYBACK_TYPE_REMOTE)
+          .setMinVolume(MIN_VOLUME)
+          .setMaxVolume(MAX_VOLUME)
+          .build()
+      ).build()
   }
 
   override fun getPlaceholderMediaItemData(mediaItem: MediaItem): MediaItemData {

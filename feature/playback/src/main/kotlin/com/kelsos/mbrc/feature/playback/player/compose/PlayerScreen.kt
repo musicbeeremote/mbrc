@@ -109,6 +109,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PlayerScreen(
   onNavigateToNowPlaying: () -> Unit,
+  onNavigateToAlbum: (album: String, artist: String) -> Unit,
+  onNavigateToArtist: (artist: String) -> Unit,
   snackbarHostState: SnackbarHostState,
   onOpenDrawer: () -> Unit,
   modifier: Modifier = Modifier,
@@ -156,6 +158,12 @@ fun PlayerScreen(
       isScrobbling = isScrobbling,
       onScrobbleToggle = viewModel.actions.toggleScrobbling,
       onShowTrackDetails = { showTrackDetails = true },
+      onGoToAlbum = playingTrack.album.takeIf { it.isNotEmpty() }?.let {
+        { onNavigateToAlbum(playingTrack.album, playingTrack.artist) }
+      },
+      onGoToArtist = playingTrack.artist.takeIf { it.isNotEmpty() }?.let {
+        { onNavigateToArtist(playingTrack.artist) }
+      },
       onDismiss = { showBottomSheet = false }
     )
   }
