@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- Theme colors -->
-  <color name="md_color_surface">#FEFEFE</color>
+  <color name="md_color_surface">#FAFAFA</color> <!-- Grey 50 -->
   <!-- Widget colors for light mode -->
-  <color name="widget_background">#FEFEFE</color>
+  <color name="widget_background">#FAFAFA</color> <!-- Grey 50 -->
   <color name="widget_text_primary">#212121</color>
   <color name="widget_text_secondary">#757575</color>
 </resources>

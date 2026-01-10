@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- Theme colors -->
-  <color name="md_color_surface">#121212</color>
+  <color name="md_color_surface">#212121</color> <!-- Grey 900 -->
   <!-- Widget colors for dark mode -->
-  <color name="widget_background">#121212</color>
+  <color name="widget_background">#212121</color> <!-- Grey 900 -->
   <color name="widget_text_primary">#FFFFFF</color>
   <color name="widget_text_secondary">#b2ffffff</color>
 </resources>

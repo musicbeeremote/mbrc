@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
@@ -285,6 +286,7 @@ private fun ControlButton(
   Image(
     provider = ImageProvider(iconRes),
     contentDescription = contentDescription,
+    colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
     modifier = modifier
       .fillMaxHeight()
       .clickable(onClick)
