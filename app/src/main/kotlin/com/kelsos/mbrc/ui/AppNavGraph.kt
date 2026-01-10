@@ -44,6 +44,15 @@ fun AppNavGraph(
     composable(Screen.Home.route) {
       PlayerScreen(
         onNavigateToNowPlaying = { navController.navigate(Screen.NowPlayingList.route) },
+        onNavigateToAlbum = { album, artist ->
+          val encodedAlbum = URLEncoder.encode(album, StandardCharsets.UTF_8.toString())
+          val encodedArtist = URLEncoder.encode(artist, StandardCharsets.UTF_8.toString())
+          navController.navigate("album_tracks/0/$encodedAlbum/$encodedArtist")
+        },
+        onNavigateToArtist = { artist ->
+          val encodedName = URLEncoder.encode(artist, StandardCharsets.UTF_8.toString())
+          navController.navigate("artist_albums/0/$encodedName")
+        },
         snackbarHostState = snackbarHostState,
         onOpenDrawer = onOpenDrawer
       )

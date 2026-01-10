@@ -54,6 +54,8 @@
   <string name="output_selection_title">Select Output</string>
 
   <!-- Player -->
+  <string name="player_go_to_album">Go to Album</string>
+  <string name="player_go_to_artist">Go to Artist</string>
   <string name="player_lfm_ban">Ban on Last.fm</string>
   <string name="player_lfm_love">Love on Last.fm</string>
   <string name="player_scrobbling">Scrobbling</string>
