@@ -35,10 +35,16 @@ interface AlbumDao {
 
   @Query(
     """
-        select distinct album.artist as artist, album.album as album,
-        album.date_added as date_added, album.id as id, album.cover as cover from album
-        inner join track where album.album = track.album and track.album_artist = album.artist
-        and (track.artist = :artist or track.album_artist = :artist) order by artist collate nocase asc, album collate nocase asc
+        SELECT album.artist AS artist, album.album AS album,
+        album.date_added AS date_added, album.id AS id, album.cover AS cover
+        FROM album
+        INNER JOIN track ON album.album = track.album AND track.album_artist = album.artist
+        WHERE track.artist = :artist OR track.album_artist = :artist
+        GROUP BY album.id
+        ORDER BY
+          CASE WHEN MIN(track.sortable_year) = '' THEN 1 ELSE 0 END ASC,
+          MIN(track.sortable_year) ASC,
+          album.album COLLATE NOCASE ASC
     """
   )
   fun getAlbumsByArtist(artist: String): PagingSource<Int, AlbumEntity>

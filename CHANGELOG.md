@@ -19,6 +19,7 @@ Changelog
 - Displays queue size in the Queue screen header.
 - [#155] Adds Go to Album and Go to Artist actions in player menu.
 - [#155] Adds Go to Album and Go to Artist actions in queue.
+- [#220] Sorts artist albums by release year.
 - [#205] Adds cover count support to library stats.
 - Adds support for Android 15 and 16 (API 35-36).
 - Adds data extraction rules for backup and cloud migration.
@@ -65,6 +66,7 @@ Changelog
 [#204]: https://github.com/musicbeeremote/mbrc/issues/204
 [#205]: https://github.com/musicbeeremote/mbrc/issues/205
 [#219]: https://github.com/musicbeeremote/mbrc/issues/219
+[#220]: https://github.com/musicbeeremote/mbrc/issues/220
 [#241]: https://github.com/musicbeeremote/mbrc/issues/241
 [#242]: https://github.com/musicbeeremote/mbrc/issues/242
 

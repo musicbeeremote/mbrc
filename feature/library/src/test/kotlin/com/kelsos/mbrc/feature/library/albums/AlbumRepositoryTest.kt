@@ -287,24 +287,25 @@ class AlbumRepositoryTest : KoinTest {
   }
 
   @Test
-  fun getAlbumsByArtistShouldReturnAlbumsForArtist() {
+  fun getAlbumsByArtistShouldReturnAlbumsSortedByYear() {
     runTest(testDispatcher) {
       // Given: Albums for different artists
       val albums =
         listOf(
-          AlbumEntity(artist = "Artist1", album = "Album1", dateAdded = 1000L),
-          AlbumEntity(artist = "Artist1", album = "Album2", dateAdded = 1000L),
-          AlbumEntity(artist = "Artist2", album = "Album3", dateAdded = 1000L)
+          AlbumEntity(artist = "Artist1", album = "Newer Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Older Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Middle Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "Other Album", dateAdded = 1000L)
         )
       dao.insert(albums)
 
-      // And: Tracks for those albums
+      // And: Tracks with different years
       val tracks =
         listOf(
           TrackEntity(
             artist = "Artist1",
             albumArtist = "Artist1",
-            album = "Album1",
+            album = "Newer Album",
             title = "Track1",
             src = "track1.mp3",
             trackno = 1,
@@ -317,27 +318,40 @@ class AlbumRepositoryTest : KoinTest {
           TrackEntity(
             artist = "Artist1",
             albumArtist = "Artist1",
-            album = "Album2",
+            album = "Older Album",
             title = "Track2",
             src = "track2.mp3",
             trackno = 1,
             disc = 1,
             genre = "Rock",
-            year = "2023",
-            sortableYear = "2023",
+            year = "2010",
+            sortableYear = "2010",
             dateAdded = 1000L
           ),
           TrackEntity(
-            artist = "Artist2",
-            albumArtist = "Artist2",
-            album = "Album3",
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Middle Album",
             title = "Track3",
             src = "track3.mp3",
             trackno = 1,
             disc = 1,
             genre = "Rock",
-            year = "2023",
-            sortableYear = "2023",
+            year = "2015",
+            sortableYear = "2015",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist2",
+            albumArtist = "Artist2",
+            album = "Other Album",
+            title = "Track4",
+            src = "track4.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
             dateAdded = 1000L
           )
         )
@@ -346,8 +360,80 @@ class AlbumRepositoryTest : KoinTest {
       // When: Get albums by artist
       val result = repository.getAlbumsByArtist("Artist1").asSnapshot()
 
-      // Then: Should only include albums for that artist
-      assertThat(result.map { it.album }).containsExactly("Album1", "Album2")
+      // Then: Should be sorted by year (oldest first)
+      assertThat(result.map { it.album }).containsExactly(
+        "Older Album",
+        "Middle Album",
+        "Newer Album"
+      ).inOrder()
+    }
+  }
+
+  @Test
+  fun getAlbumsByArtistShouldPutUnknownYearsAtEnd() {
+    runTest(testDispatcher) {
+      // Given: Albums where some have unknown years
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "Known Year Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Unknown Year Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Earlier Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Known Year Album",
+            title = "Track1",
+            src = "track1.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Unknown Year Album",
+            title = "Track2",
+            src = "track2.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "",
+            sortableYear = "",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Earlier Album",
+            title = "Track3",
+            src = "track3.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2015",
+            sortableYear = "2015",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      // When: Get albums by artist
+      val result = repository.getAlbumsByArtist("Artist1").asSnapshot()
+
+      // Then: Known years first (sorted), then unknown years at end
+      assertThat(result.map { it.album }).containsExactly(
+        "Earlier Album",
+        "Known Year Album",
+        "Unknown Year Album"
+      ).inOrder()
     }
   }
 
