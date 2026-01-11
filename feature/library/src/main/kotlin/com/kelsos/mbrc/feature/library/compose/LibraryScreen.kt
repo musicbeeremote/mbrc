@@ -10,6 +10,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
@@ -71,6 +72,7 @@ fun LibraryScreen(
   var isSearchActive by rememberSaveable { mutableStateOf(false) }
   var searchQuery by rememberSaveable { mutableStateOf("") }
   var statsToShow by remember { mutableStateOf<LibraryStats?>(null) }
+  var showSortSheet by rememberSaveable { mutableStateOf(false) }
 
   val albumArtistsOnly by viewModel.albumArtistsOnly.collectAsStateWithLifecycle(
     initialValue = false
@@ -161,10 +163,16 @@ fun LibraryScreen(
     )
   }
 
-  // Show search action in app bar when not searching and not syncing
+  // Show search and sort actions in app bar when not searching and not syncing
   val searchDescription = stringResource(R.string.library_search_hint)
+  val sortDescription = stringResource(R.string.sort_button_description)
   val actionItems = if (!isSearchActive && !syncProgress.running) {
     listOf(
+      ActionItem(
+        icon = Icons.AutoMirrored.Filled.Sort,
+        contentDescription = sortDescription,
+        onClick = { showSortSheet = true }
+      ),
       ActionItem(
         icon = Icons.Default.Search,
         contentDescription = searchDescription,
@@ -198,6 +206,8 @@ fun LibraryScreen(
       pagerState = pagerState,
       snackbarHostState = snackbarHostState,
       isSyncing = syncProgress.running,
+      showSortSheet = showSortSheet,
+      onDismissSortSheet = { showSortSheet = false },
       onNavigateToGenreArtists = onNavigateToGenreArtists,
       onNavigateToGenreAlbums = onNavigateToGenreAlbums,
       onNavigateToArtistAlbums = onNavigateToArtistAlbums,
@@ -294,6 +304,8 @@ private fun LibraryContent(
   pagerState: PagerState,
   snackbarHostState: SnackbarHostState,
   isSyncing: Boolean,
+  showSortSheet: Boolean,
+  onDismissSortSheet: () -> Unit,
   onNavigateToGenreArtists: (Genre) -> Unit,
   onNavigateToGenreAlbums: (Genre) -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
@@ -323,6 +335,8 @@ private fun LibraryContent(
         tab = LibraryTab.entries[page],
         snackbarHostState = snackbarHostState,
         isSyncing = isSyncing,
+        showSortSheet = showSortSheet && pagerState.currentPage == page,
+        onDismissSortSheet = onDismissSortSheet,
         onNavigateToGenreArtists = onNavigateToGenreArtists,
         onNavigateToGenreAlbums = onNavigateToGenreAlbums,
         onNavigateToArtistAlbums = onNavigateToArtistAlbums,
@@ -343,6 +357,8 @@ private fun LibraryTabPage(
   tab: LibraryTab,
   snackbarHostState: SnackbarHostState,
   isSyncing: Boolean,
+  showSortSheet: Boolean,
+  onDismissSortSheet: () -> Unit,
   onNavigateToGenreArtists: (Genre) -> Unit,
   onNavigateToGenreAlbums: (Genre) -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
@@ -353,8 +369,10 @@ private fun LibraryTabPage(
     LibraryTab.GENRES -> GenresTab(
       snackbarHostState = snackbarHostState,
       isSyncing = isSyncing,
+      showSortSheet = showSortSheet,
       onNavigateToGenreArtists = onNavigateToGenreArtists,
       onNavigateToGenreAlbums = onNavigateToGenreAlbums,
+      onDismissSortSheet = onDismissSortSheet,
       onSync = onSync
     )
 
