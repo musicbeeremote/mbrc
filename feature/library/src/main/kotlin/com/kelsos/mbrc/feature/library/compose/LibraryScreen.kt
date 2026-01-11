@@ -386,7 +386,9 @@ private fun LibraryTabPage(
     LibraryTab.ALBUMS -> AlbumsTab(
       snackbarHostState = snackbarHostState,
       isSyncing = isSyncing,
+      showSortSheet = showSortSheet,
       onNavigateToAlbumTracks = onNavigateToAlbumTracks,
+      onDismissSortSheet = onDismissSortSheet,
       onSync = onSync
     )
 

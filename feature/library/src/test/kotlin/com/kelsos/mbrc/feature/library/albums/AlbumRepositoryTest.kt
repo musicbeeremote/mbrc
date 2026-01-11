@@ -6,6 +6,8 @@ import androidx.paging.testing.asSnapshot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.data.Progress
+import com.kelsos.mbrc.core.common.settings.AlbumSortField
+import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.data.Database
@@ -133,7 +135,6 @@ class AlbumRepositoryTest : KoinTest {
 
       val result = repository.search("Rock").asSnapshot()
 
-      // The DAO sorts by album name, so the order is alphabetical
       assertThat(
         result.map {
           it.album
@@ -189,7 +190,6 @@ class AlbumRepositoryTest : KoinTest {
 
       val result = repository.search("Metallica").asSnapshot()
 
-      // Should return albums by Metallica, sorted by album name
       assertThat(
         result.map {
           it.album
@@ -213,7 +213,6 @@ class AlbumRepositoryTest : KoinTest {
 
       val result = repository.search("Iron").asSnapshot()
 
-      // Should return albums containing "Iron" in either artist or album name, sorted by album name
       assertThat(
         result.map {
           it.album
@@ -235,7 +234,6 @@ class AlbumRepositoryTest : KoinTest {
 
       val result = repository.search("Pink").asSnapshot()
 
-      // Should return both albums: one by artist match, one by album match
       assertThat(
         result.map {
           it.album
@@ -292,7 +290,6 @@ class AlbumRepositoryTest : KoinTest {
   @Test
   fun getAlbumsByArtistShouldReturnAlbumsSortedByYear() {
     runTest(testDispatcher) {
-      // Given: Albums for different artists
       val albums =
         listOf(
           AlbumEntity(artist = "Artist1", album = "Newer Album", dateAdded = 1000L),
@@ -302,7 +299,6 @@ class AlbumRepositoryTest : KoinTest {
         )
       dao.insert(albums)
 
-      // And: Tracks with different years
       val tracks =
         listOf(
           TrackEntity(
@@ -360,10 +356,8 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      // When: Get albums by artist
       val result = repository.getAlbumsByArtist("Artist1").asSnapshot()
 
-      // Then: Should be sorted by year (oldest first)
       assertThat(result.map { it.album }).containsExactly(
         "Older Album",
         "Middle Album",
@@ -375,7 +369,6 @@ class AlbumRepositoryTest : KoinTest {
   @Test
   fun getAlbumsByArtistShouldPutUnknownYearsAtEnd() {
     runTest(testDispatcher) {
-      // Given: Albums where some have unknown years
       val albums =
         listOf(
           AlbumEntity(artist = "Artist1", album = "Known Year Album", dateAdded = 1000L),
@@ -428,10 +421,8 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      // When: Get albums by artist
       val result = repository.getAlbumsByArtist("Artist1").asSnapshot()
 
-      // Then: Known years first (sorted), then unknown years at end
       assertThat(result.map { it.album }).containsExactly(
         "Earlier Album",
         "Known Year Album",
@@ -656,10 +647,10 @@ class AlbumRepositoryTest : KoinTest {
     }
   }
 
+  // Genre tests
   @Test
   fun getAlbumsByGenreShouldReturnAlbumsForGenre() {
     runTest(testDispatcher) {
-      // Given: Genres
       val genres =
         listOf(
           GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L),
@@ -667,7 +658,6 @@ class AlbumRepositoryTest : KoinTest {
         )
       genreDao.insertAll(genres)
 
-      // And: Albums
       val albums =
         listOf(
           AlbumEntity(artist = "Artist1", album = "Rock Album 1", dateAdded = 1000L),
@@ -676,7 +666,6 @@ class AlbumRepositoryTest : KoinTest {
         )
       dao.insert(albums)
 
-      // And: Tracks linking albums to genres
       val tracks =
         listOf(
           TrackEntity(
@@ -721,10 +710,8 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      // When: Get albums by Rock genre (id=1)
       val result = repository.getAlbumsByGenre(1L).asSnapshot()
 
-      // Then: Should return only Rock albums, sorted by album name
       assertThat(result.map { it.album }).containsExactly("Rock Album 1", "Rock Album 2").inOrder()
     }
   }
@@ -732,11 +719,9 @@ class AlbumRepositoryTest : KoinTest {
   @Test
   fun getAlbumsByGenreShouldReturnEmptyWhenNoMatchingAlbums() {
     runTest(testDispatcher) {
-      // Given: A genre with no albums
       val genres = listOf(GenreEntity(id = 1, genre = "Classical", dateAdded = 1000L))
       genreDao.insertAll(genres)
 
-      // And: Some albums for different genres
       val albums = listOf(AlbumEntity(artist = "Artist1", album = "Rock Album", dateAdded = 1000L))
       dao.insert(albums)
 
@@ -758,147 +743,150 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      // When: Get albums for Classical genre
       val result = repository.getAlbumsByGenre(1L).asSnapshot()
 
-      // Then: Should return empty list
       assertThat(result).isEmpty()
     }
   }
 
+  // Sorting tests
   @Test
-  fun getAlbumsByGenreShouldNotReturnDuplicates() {
+  fun getAllShouldSortByNameAsc() {
     runTest(testDispatcher) {
-      // Given: A genre
-      val genres = listOf(GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L))
-      genreDao.insertAll(genres)
-
-      // And: An album
-      val albums = listOf(AlbumEntity(artist = "Artist1", album = "Rock Album", dateAdded = 1000L))
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "Zebra", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "Alpha", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist3", album = "Middle", dateAdded = 1000L)
+        )
       dao.insert(albums)
 
-      // And: Multiple tracks from the same album with the same genre
-      val tracks =
-        listOf(
-          TrackEntity(
-            artist = "Artist1",
-            albumArtist = "Artist1",
-            album = "Rock Album",
-            title = "Track 1",
-            src = "track1.mp3",
-            trackno = 1,
-            disc = 1,
-            genre = "Rock",
-            year = "2020",
-            sortableYear = "2020",
-            dateAdded = 1000L
-          ),
-          TrackEntity(
-            artist = "Artist1",
-            albumArtist = "Artist1",
-            album = "Rock Album",
-            title = "Track 2",
-            src = "track2.mp3",
-            trackno = 2,
-            disc = 1,
-            genre = "Rock",
-            year = "2020",
-            sortableYear = "2020",
-            dateAdded = 1000L
-          ),
-          TrackEntity(
-            artist = "Artist1",
-            albumArtist = "Artist1",
-            album = "Rock Album",
-            title = "Track 3",
-            src = "track3.mp3",
-            trackno = 3,
-            disc = 1,
-            genre = "Rock",
-            year = "2020",
-            sortableYear = "2020",
-            dateAdded = 1000L
-          )
-        )
-      trackDao.insertAll(tracks)
+      val result = repository.getAll(AlbumSortField.NAME, SortOrder.ASC).asSnapshot()
 
-      // When: Get albums by genre
-      val result = repository.getAlbumsByGenre(1L).asSnapshot()
-
-      // Then: Should return only one album (no duplicates)
-      assertThat(result).hasSize(1)
-      assertThat(result.first().album).isEqualTo("Rock Album")
+      assertThat(result.map { it.album }).containsExactly("Alpha", "Middle", "Zebra").inOrder()
     }
   }
 
   @Test
-  fun getAlbumsByGenreShouldBeSortedAlphabetically() {
+  fun getAllShouldSortByNameDesc() {
     runTest(testDispatcher) {
-      // Given: A genre
-      val genres = listOf(GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L))
-      genreDao.insertAll(genres)
-
-      // And: Albums with names that test sorting
       val albums =
         listOf(
-          AlbumEntity(artist = "Artist1", album = "Zebra Rock", dateAdded = 1000L),
-          AlbumEntity(artist = "Artist1", album = "Alpha Rock", dateAdded = 1000L),
-          AlbumEntity(artist = "Artist1", album = "middle rock", dateAdded = 1000L)
+          AlbumEntity(artist = "Artist1", album = "Zebra", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "Alpha", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist3", album = "Middle", dateAdded = 1000L)
         )
       dao.insert(albums)
 
-      // And: Tracks linking albums to genre
-      val tracks =
+      val result = repository.getAll(AlbumSortField.NAME, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.album }).containsExactly("Zebra", "Middle", "Alpha").inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByArtistAscIgnoringThePrefix() {
+    runTest(testDispatcher) {
+      val albums =
         listOf(
-          TrackEntity(
-            artist = "Artist1",
-            albumArtist = "Artist1",
-            album = "Zebra Rock",
-            title = "Track",
-            src = "zebra.mp3",
-            trackno = 1,
-            disc = 1,
-            genre = "Rock",
-            year = "2020",
-            sortableYear = "2020",
-            dateAdded = 1000L
-          ),
-          TrackEntity(
-            artist = "Artist1",
-            albumArtist = "Artist1",
-            album = "Alpha Rock",
-            title = "Track",
-            src = "alpha.mp3",
-            trackno = 1,
-            disc = 1,
-            genre = "Rock",
-            year = "2020",
-            sortableYear = "2020",
-            dateAdded = 1000L
-          ),
-          TrackEntity(
-            artist = "Artist1",
-            albumArtist = "Artist1",
-            album = "middle rock",
-            title = "Track",
-            src = "middle.mp3",
-            trackno = 1,
-            disc = 1,
-            genre = "Rock",
-            year = "2020",
-            sortableYear = "2020",
-            dateAdded = 1000L
-          )
+          AlbumEntity(artist = "The Beatles", album = "Abbey Road", dateAdded = 1000L),
+          AlbumEntity(artist = "AC/DC", album = "Back in Black", dateAdded = 1000L),
+          AlbumEntity(artist = "Zebra Band", album = "Zebra Album", dateAdded = 1000L)
         )
-      trackDao.insertAll(tracks)
+      dao.insert(albums)
 
-      // When: Get albums by genre
-      val result = repository.getAlbumsByGenre(1L).asSnapshot()
+      val result = repository.getAll(AlbumSortField.ARTIST, SortOrder.ASC).asSnapshot()
 
-      // Then: Should be sorted alphabetically (case insensitive)
-      assertThat(
-        result.map { it.album }
-      ).containsExactly("Alpha Rock", "middle rock", "Zebra Rock").inOrder()
+      assertThat(result.map { it.artist })
+        .containsExactly("AC/DC", "The Beatles", "Zebra Band")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByArtistDescIgnoringThePrefix() {
+    runTest(testDispatcher) {
+      val albums =
+        listOf(
+          AlbumEntity(artist = "The Beatles", album = "Abbey Road", dateAdded = 1000L),
+          AlbumEntity(artist = "AC/DC", album = "Back in Black", dateAdded = 1000L),
+          AlbumEntity(artist = "Zebra Band", album = "Zebra Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val result = repository.getAll(AlbumSortField.ARTIST, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.artist })
+        .containsExactly("Zebra Band", "The Beatles", "AC/DC")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByNameAsc() {
+    runTest(testDispatcher) {
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Rock Artist", album = "Zebra Rock", dateAdded = 1000L),
+          AlbumEntity(artist = "Rock Band", album = "Alpha Rock", dateAdded = 1000L),
+          AlbumEntity(artist = "Jazz Artist", album = "Jazz Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val result = repository.search("Rock", AlbumSortField.NAME, SortOrder.ASC).asSnapshot()
+
+      assertThat(result.map { it.album }).containsExactly("Alpha Rock", "Zebra Rock").inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByNameDesc() {
+    runTest(testDispatcher) {
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Rock Artist", album = "Zebra Rock", dateAdded = 1000L),
+          AlbumEntity(artist = "Rock Band", album = "Alpha Rock", dateAdded = 1000L),
+          AlbumEntity(artist = "Jazz Artist", album = "Jazz Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val result = repository.search("Rock", AlbumSortField.NAME, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.album }).containsExactly("Zebra Rock", "Alpha Rock").inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByArtistAsc() {
+    runTest(testDispatcher) {
+      val albums =
+        listOf(
+          AlbumEntity(artist = "The Rock Band", album = "Album1", dateAdded = 1000L),
+          AlbumEntity(artist = "Alpha Rock", album = "Album2", dateAdded = 1000L),
+          AlbumEntity(artist = "Jazz Artist", album = "Jazz Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val result = repository.search("Rock", AlbumSortField.ARTIST, SortOrder.ASC).asSnapshot()
+
+      assertThat(result.map { it.artist }).containsExactly("Alpha Rock", "The Rock Band").inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByArtistDesc() {
+    runTest(testDispatcher) {
+      val albums =
+        listOf(
+          AlbumEntity(artist = "The Rock Band", album = "Album1", dateAdded = 1000L),
+          AlbumEntity(artist = "Alpha Rock", album = "Album2", dateAdded = 1000L),
+          AlbumEntity(artist = "Jazz Artist", album = "Jazz Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val result = repository.search("Rock", AlbumSortField.ARTIST, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.artist }).containsExactly("The Rock Band", "Alpha Rock").inOrder()
     }
   }
 

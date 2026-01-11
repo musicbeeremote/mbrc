@@ -2,6 +2,8 @@ package com.kelsos.mbrc.feature.library.albums
 
 import androidx.paging.PagingData
 import com.kelsos.mbrc.core.common.data.Progress
+import com.kelsos.mbrc.core.common.settings.AlbumSortField
+import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.common.utilities.epoch
 import com.kelsos.mbrc.core.data.library.album.Album
@@ -35,6 +37,20 @@ class AlbumRepositoryImpl(
   }
 
   override fun getAll(): Flow<PagingData<Album>> = paged({ dao.getAll() }) { it.toAlbum() }
+
+  override fun getAll(field: AlbumSortField, order: SortOrder): Flow<PagingData<Album>> = paged({
+    when (field) {
+      AlbumSortField.NAME -> when (order) {
+        SortOrder.ASC -> dao.getAllByNameAsc()
+        SortOrder.DESC -> dao.getAllByNameDesc()
+      }
+
+      AlbumSortField.ARTIST -> when (order) {
+        SortOrder.ASC -> dao.getAllByArtistAsc()
+        SortOrder.DESC -> dao.getAllByArtistDesc()
+      }
+    }
+  }) { it.toAlbum() }
 
   override suspend fun getRemote(progress: Progress?) {
     withContext(dispatchers.network) {
@@ -74,8 +90,25 @@ class AlbumRepositoryImpl(
     }
   }
 
-  override fun search(term: String): Flow<PagingData<Album>> = paged({
-    dao.search(term)
+  override fun search(term: String): Flow<PagingData<Album>> =
+    search(term, AlbumSortField.NAME, SortOrder.ASC)
+
+  override fun search(
+    term: String,
+    field: AlbumSortField,
+    order: SortOrder
+  ): Flow<PagingData<Album>> = paged({
+    when (field) {
+      AlbumSortField.NAME -> when (order) {
+        SortOrder.ASC -> dao.searchByNameAsc(term)
+        SortOrder.DESC -> dao.searchByNameDesc(term)
+      }
+
+      AlbumSortField.ARTIST -> when (order) {
+        SortOrder.ASC -> dao.searchByArtistAsc(term)
+        SortOrder.DESC -> dao.searchByArtistDesc(term)
+      }
+    }
   }) { it.toAlbum() }
 
   override suspend fun updateCovers(updated: List<AlbumCover>) {
