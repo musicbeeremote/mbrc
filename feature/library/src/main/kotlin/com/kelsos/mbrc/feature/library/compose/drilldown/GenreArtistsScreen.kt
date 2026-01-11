@@ -1,15 +1,11 @@
 package com.kelsos.mbrc.feature.library.compose.drilldown
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,10 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.core.common.settings.ArtistSortField
 import com.kelsos.mbrc.core.common.settings.ArtistSortPreference
@@ -31,6 +25,7 @@ import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.data.library.artist.Artist
 import com.kelsos.mbrc.core.queue.Queue
+import com.kelsos.mbrc.core.ui.compose.ActionItem
 import com.kelsos.mbrc.core.ui.compose.NavigationIconType
 import com.kelsos.mbrc.core.ui.compose.PagingListScreen
 import com.kelsos.mbrc.core.ui.compose.QueueResultEffect
@@ -92,41 +87,34 @@ fun GenreArtistsScreen(
     snackbarHostState = snackbarHostState
   )
 
+  val sortDescription = stringResource(R.string.sort_button_description)
+
   ScreenScaffold(
     title = genreName,
     snackbarHostState = snackbarHostState,
     navigationIcon = NavigationIconType.Back(onNavigateBack),
+    actionItems = listOf(
+      ActionItem(
+        icon = Icons.AutoMirrored.Filled.Sort,
+        contentDescription = sortDescription,
+        onClick = { showSortSheet = true }
+      )
+    ),
     modifier = modifier
   ) { paddingValues ->
     Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-      Box(modifier = Modifier.weight(1f)) {
-        PagingListScreen(
-          items = artists,
-          modifier = Modifier.fillMaxSize(),
-          emptyMessage = stringResource(R.string.artists_list_empty),
-          emptyIcon = Icons.Default.Person,
-          key = { it.id }
-        ) { artist ->
-          ArtistListItem(
-            artist = artist,
-            onClick = { viewModel.queue(Queue.Default, artist) },
-            onQueue = { queue -> viewModel.queue(queue, artist) }
-          )
-        }
-
-        FloatingActionButton(
-          onClick = { showSortSheet = true },
-          modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(16.dp),
-          containerColor = MaterialTheme.colorScheme.secondaryContainer,
-          contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-        ) {
-          Icon(
-            imageVector = Icons.AutoMirrored.Filled.Sort,
-            contentDescription = stringResource(R.string.sort_button_description)
-          )
-        }
+      PagingListScreen(
+        items = artists,
+        modifier = Modifier.weight(1f),
+        emptyMessage = stringResource(R.string.artists_list_empty),
+        emptyIcon = Icons.Default.Person,
+        key = { it.id }
+      ) { artist ->
+        ArtistListItem(
+          artist = artist,
+          onClick = { viewModel.queue(Queue.Default, artist) },
+          onQueue = { queue -> viewModel.queue(queue, artist) }
+        )
       }
 
       MiniControl(

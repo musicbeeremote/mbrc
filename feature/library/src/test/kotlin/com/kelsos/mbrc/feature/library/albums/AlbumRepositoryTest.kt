@@ -288,7 +288,7 @@ class AlbumRepositoryTest : KoinTest {
   }
 
   @Test
-  fun getAlbumsByArtistShouldReturnAlbumsSortedByYear() {
+  fun getAlbumsByArtistShouldReturnAlbumsSortedByName() {
     runTest(testDispatcher) {
       val albums =
         listOf(
@@ -356,18 +356,22 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      val result = repository.getAlbumsByArtist("Artist1").asSnapshot()
+      val result = repository.getAlbumsByArtist(
+        "Artist1",
+        AlbumSortField.NAME,
+        SortOrder.ASC
+      ).asSnapshot()
 
       assertThat(result.map { it.album }).containsExactly(
-        "Older Album",
         "Middle Album",
-        "Newer Album"
+        "Newer Album",
+        "Older Album"
       ).inOrder()
     }
   }
 
   @Test
-  fun getAlbumsByArtistShouldPutUnknownYearsAtEnd() {
+  fun getAlbumsByArtistShouldSortByNameDescending() {
     runTest(testDispatcher) {
       val albums =
         listOf(
@@ -421,7 +425,11 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      val result = repository.getAlbumsByArtist("Artist1").asSnapshot()
+      val result = repository.getAlbumsByArtist(
+        "Artist1",
+        AlbumSortField.NAME,
+        SortOrder.ASC
+      ).asSnapshot()
 
       assertThat(result.map { it.album }).containsExactly(
         "Earlier Album",
@@ -441,7 +449,11 @@ class AlbumRepositoryTest : KoinTest {
         )
       dao.insert(albums)
 
-      val result = repository.getAlbumsByArtist("Artist3").asSnapshot()
+      val result = repository.getAlbumsByArtist(
+        "Artist3",
+        AlbumSortField.NAME,
+        SortOrder.ASC
+      ).asSnapshot()
 
       assertThat(result).isEmpty()
     }

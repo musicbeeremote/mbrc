@@ -1,25 +1,14 @@
 package com.kelsos.mbrc.feature.library.compose.tabs
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.core.common.settings.ArtistSortField
@@ -40,7 +29,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 
-private val artistSortOptions = listOf(
+val artistSortOptions = listOf(
   SortOption(ArtistSortField.NAME, R.string.sort_by_name)
 )
 
@@ -48,7 +37,9 @@ private val artistSortOptions = listOf(
 fun ArtistsTab(
   snackbarHostState: SnackbarHostState,
   isSyncing: Boolean,
+  showSortSheet: Boolean,
   onNavigateToArtistAlbums: (Artist) -> Unit,
+  onDismissSortSheet: () -> Unit,
   onSync: () -> Unit,
   modifier: Modifier = Modifier,
   viewModel: BrowseArtistViewModel = koinViewModel()
@@ -58,7 +49,6 @@ fun ArtistsTab(
   val sortPreference by viewModel.sortPreference.collectAsStateWithLifecycle(
     initialValue = SortPreference(ArtistSortField.NAME, SortOrder.ASC)
   )
-  var showSortSheet by rememberSaveable { mutableStateOf(false) }
 
   // Handle navigation events
   LaunchedEffect(Unit) {
@@ -79,42 +69,27 @@ fun ArtistsTab(
     }.filterIsInstance<Outcome<Int>>()
   }
 
-  Box(modifier = modifier) {
-    LibraryBrowseTab(
-      items = artists,
-      queueResults = queueResults,
-      snackbarHostState = snackbarHostState,
-      syncState = SyncState(
-        isSyncing = isSyncing,
-        showSync = showSync,
-        onSync = onSync
-      ),
-      emptyState = EmptyState(
-        message = stringResource(R.string.artists_list_empty),
-        icon = Icons.Default.Person
-      ),
-      itemKey = { it.id }
-    ) { artist ->
-      ArtistListItem(
-        artist = artist,
-        onClick = { viewModel.queue(Queue.Default, artist) },
-        onQueue = { queue -> viewModel.queue(queue, artist) }
-      )
-    }
-
-    FloatingActionButton(
-      onClick = { showSortSheet = true },
-      modifier = Modifier
-        .align(Alignment.BottomEnd)
-        .padding(16.dp),
-      containerColor = MaterialTheme.colorScheme.secondaryContainer,
-      contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-    ) {
-      Icon(
-        imageVector = Icons.AutoMirrored.Filled.Sort,
-        contentDescription = stringResource(R.string.sort_button_description)
-      )
-    }
+  LibraryBrowseTab(
+    items = artists,
+    queueResults = queueResults,
+    snackbarHostState = snackbarHostState,
+    syncState = SyncState(
+      isSyncing = isSyncing,
+      showSync = showSync,
+      onSync = onSync
+    ),
+    emptyState = EmptyState(
+      message = stringResource(R.string.artists_list_empty),
+      icon = Icons.Default.Person
+    ),
+    itemKey = { it.id },
+    modifier = modifier
+  ) { artist ->
+    ArtistListItem(
+      artist = artist,
+      onClick = { viewModel.queue(Queue.Default, artist) },
+      onQueue = { queue -> viewModel.queue(queue, artist) }
+    )
   }
 
   if (showSortSheet) {
@@ -126,7 +101,7 @@ fun ArtistsTab(
       onSortSelected = { field, order ->
         viewModel.updateSortPreference(ArtistSortPreference(field, order))
       },
-      onDismiss = { showSortSheet = false }
+      onDismiss = onDismissSortSheet
     )
   }
 }
