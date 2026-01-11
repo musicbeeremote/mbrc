@@ -39,6 +39,13 @@ object SettingsDataStore {
     val CLIENT_UUID = stringPreferencesKey("uuid")
     val HALF_STAR_RATING = booleanPreferencesKey("mbrc.settings.half_star_rating")
     val SHOW_RATING_ON_PLAYER = booleanPreferencesKey("mbrc.settings.show_rating_on_player")
+
+    // Library sorting preferences
+    val GENRE_SORT = stringPreferencesKey("mbrc.library.sort.genre")
+    val ARTIST_SORT = stringPreferencesKey("mbrc.library.sort.artist")
+    val ALBUM_SORT = stringPreferencesKey("mbrc.library.sort.album")
+    val GENRE_ARTISTS_SORT = stringPreferencesKey("mbrc.library.sort.genre_artists")
+    val ARTIST_ALBUMS_SORT = stringPreferencesKey("mbrc.library.sort.artist_albums")
   }
 
   object DefaultValues {
@@ -53,5 +60,12 @@ object SettingsDataStore {
     const val REQUIRED_UPDATE_CHECK = 0L
     const val HALF_STAR_RATING = true
     const val SHOW_RATING_ON_PLAYER = false
+
+    // Library sorting defaults (format: "field:order")
+    const val GENRE_SORT = "name:asc"
+    const val ARTIST_SORT = "name:asc"
+    const val ALBUM_SORT = "name:asc"
+    const val GENRE_ARTISTS_SORT = "name:asc"
+    const val ARTIST_ALBUMS_SORT = "name:asc"
   }
 }
