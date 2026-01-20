@@ -20,6 +20,7 @@
     <feature>Adds Go to Album and Go to Artist actions in player menu.</feature>
     <feature>Adds Go to Album and Go to Artist actions in queue.</feature>
     <feature>Sorts artist albums by release year.</feature>
+    <feature>Adds playlist folder navigation support.</feature>
     <bug>Fixes elapsed time not updating correctly for streaming content.</bug>
     <bug>Fixes widget not updating track name and album art correctly.</bug>
     <bug>Fixes widget track info position not updating dynamically.</bug>

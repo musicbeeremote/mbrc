@@ -6,6 +6,7 @@ import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.common.utilities.epoch
 import com.kelsos.mbrc.core.data.paged
 import com.kelsos.mbrc.core.data.playlist.Playlist
+import com.kelsos.mbrc.core.data.playlist.PlaylistBrowserItem
 import com.kelsos.mbrc.core.data.playlist.PlaylistDao
 import com.kelsos.mbrc.core.data.playlist.PlaylistRepository
 import com.kelsos.mbrc.core.networking.api.ContentApi
@@ -50,4 +51,12 @@ class PlaylistRepositoryImpl(
       return@withContext entity.toPlaylist()
     }
   }
+
+  override fun getBrowserItemsAtPath(path: String): Flow<PagingData<PlaylistBrowserItem>> = paged({
+    if (path.isEmpty()) {
+      dao.getBrowserItemsAtRoot()
+    } else {
+      dao.getBrowserItemsAtPath(path)
+    }
+  }) { it }
 }

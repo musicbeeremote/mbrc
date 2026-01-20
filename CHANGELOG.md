@@ -20,6 +20,7 @@ Changelog
 - [#155] Adds Go to Album and Go to Artist actions in player menu.
 - [#155] Adds Go to Album and Go to Artist actions in queue.
 - [#220] Sorts artist albums by release year.
+- [#181] Adds playlist folder navigation support.
 - [#205] Adds cover count support to library stats.
 - Adds support for Android 15 and 16 (API 35-36).
 - Adds data extraction rules for backup and cloud migration.
@@ -63,6 +64,7 @@ Changelog
 [#134]: https://github.com/musicbeeremote/mbrc/issues/134
 [#155]: https://github.com/musicbeeremote/mbrc/issues/155
 [#178]: https://github.com/musicbeeremote/mbrc/issues/178
+[#181]: https://github.com/musicbeeremote/mbrc/issues/181
 [#204]: https://github.com/musicbeeremote/mbrc/issues/204
 [#205]: https://github.com/musicbeeremote/mbrc/issues/205
 [#219]: https://github.com/musicbeeremote/mbrc/issues/219

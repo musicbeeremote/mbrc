@@ -19,7 +19,9 @@ import com.kelsos.mbrc.core.networking.dto.PlaylistDto
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.io.IOException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -394,6 +396,212 @@ class PlaylistRepositoryTest : KoinTest {
         }
       ).containsExactly("Playlist 1 Updated", "Playlist 3")
       assertThat(storedPlaylists.map { it.url }).containsExactly("playlist1", "playlist3")
+    }
+  }
+
+  @Test
+  fun getBrowserItemsAtPathShouldReturnFoldersAndPlaylistsAtRoot() {
+    runTest(testDispatcher) {
+      // Given: playlists with mixed paths - some in folders, some at root
+      val playlists = listOf(
+        createPlaylistEntity(name = "MyMusic\\Tracks", url = "mymusic_tracks"),
+        createPlaylistEntity(name = "MyMusic\\Other", url = "mymusic_other"),
+        createPlaylistEntity(name = "Favorites", url = "favorites"),
+        createPlaylistEntity(name = "Rock Hits", url = "rock_hits")
+      )
+      dao.insertAll(playlists)
+
+      // When: getting browser items at root
+      val result = repository.getBrowserItemsAtPath("").asSnapshot()
+
+      // Then: should return MyMusic folder and root playlists
+      assertThat(result).hasSize(3)
+
+      // Folders should come first
+      val folder = result.first { it.isFolder }
+      assertThat(folder.name).isEqualTo("MyMusic")
+      assertThat(folder.path).isEqualTo("MyMusic")
+
+      // Playlists at root level
+      val playlistNames = result.filter { it.isPlaylist }.map { it.name }
+      assertThat(playlistNames).containsExactly("Favorites", "Rock Hits")
+    }
+  }
+
+  @Test
+  fun getBrowserItemsAtPathShouldReturnItemsInFolder() {
+    runTest(testDispatcher) {
+      // Given: playlists in a folder structure
+      val playlists = listOf(
+        createPlaylistEntity(name = "MyMusic\\Tracks", url = "mymusic_tracks"),
+        createPlaylistEntity(name = "MyMusic\\SubFolder\\Deep", url = "deep_playlist"),
+        createPlaylistEntity(name = "Favorites", url = "favorites")
+      )
+      dao.insertAll(playlists)
+
+      // When: getting browser items at MyMusic folder
+      val result = repository.getBrowserItemsAtPath("MyMusic").asSnapshot()
+
+      // Then: should return SubFolder as folder and Tracks as playlist
+      assertThat(result).hasSize(2)
+
+      val folder = result.find { it.isFolder }
+      assertThat(folder).isNotNull()
+      assertThat(folder!!.name).isEqualTo("SubFolder")
+      assertThat(folder.path).isEqualTo("MyMusic\\SubFolder")
+
+      val playlist = result.find { it.isPlaylist }
+      assertThat(playlist).isNotNull()
+      assertThat(playlist!!.name).isEqualTo("Tracks")
+      assertThat(playlist.path).isEqualTo("mymusic_tracks")
+    }
+  }
+
+  @Test
+  fun getBrowserItemsAtPathShouldGroupDuplicateFolders() {
+    runTest(testDispatcher) {
+      // Given: multiple playlists in the same folder
+      val playlists = listOf(
+        createPlaylistEntity(name = "Rock\\Playlist1", url = "rock1"),
+        createPlaylistEntity(name = "Rock\\Playlist2", url = "rock2"),
+        createPlaylistEntity(name = "Rock\\Playlist3", url = "rock3")
+      )
+      dao.insertAll(playlists)
+
+      // When: getting browser items at root
+      val result = repository.getBrowserItemsAtPath("").asSnapshot()
+
+      // Then: should return only one Rock folder
+      assertThat(result).hasSize(1)
+      assertThat(result.first().isFolder).isTrue()
+      assertThat(result.first().name).isEqualTo("Rock")
+    }
+  }
+
+  @Test
+  fun getBrowserItemsAtPathShouldReturnEmptyWhenNoItemsAtPath() {
+    runTest(testDispatcher) {
+      // Given: playlists only at root
+      val playlists = listOf(
+        createPlaylistEntity(name = "Favorites", url = "favorites")
+      )
+      dao.insertAll(playlists)
+
+      // When: getting browser items at non-existent folder
+      val result = repository.getBrowserItemsAtPath("NonExistent").asSnapshot()
+
+      // Then: should return empty list
+      assertThat(result).isEmpty()
+    }
+  }
+
+  @Test
+  fun getBrowserItemsAtPathShouldHandleNestedFolders() {
+    runTest(testDispatcher) {
+      // Given: deeply nested folder structure
+      val playlists = listOf(
+        createPlaylistEntity(name = "A\\B\\C\\Deep", url = "deep")
+      )
+      dao.insertAll(playlists)
+
+      // When: navigating through folders
+      val rootItems = repository.getBrowserItemsAtPath("").asSnapshot()
+      assertThat(rootItems).hasSize(1)
+      assertThat(rootItems.first().name).isEqualTo("A")
+      assertThat(rootItems.first().path).isEqualTo("A")
+
+      val aItems = repository.getBrowserItemsAtPath("A").asSnapshot()
+      assertThat(aItems).hasSize(1)
+      assertThat(aItems.first().name).isEqualTo("B")
+      assertThat(aItems.first().path).isEqualTo("A\\B")
+
+      val bItems = repository.getBrowserItemsAtPath("A\\B").asSnapshot()
+      assertThat(bItems).hasSize(1)
+      assertThat(bItems.first().name).isEqualTo("C")
+      assertThat(bItems.first().path).isEqualTo("A\\B\\C")
+
+      val cItems = repository.getBrowserItemsAtPath("A\\B\\C").asSnapshot()
+      assertThat(cItems).hasSize(1)
+      assertThat(cItems.first().isPlaylist).isTrue()
+      assertThat(cItems.first().name).isEqualTo("Deep")
+    }
+  }
+
+  @Test
+  fun getBrowserItemsAtPathShouldSortFoldersBeforePlaylists() {
+    runTest(testDispatcher) {
+      // Given: mix of folders and playlists that would sort differently
+      val playlists = listOf(
+        createPlaylistEntity(name = "Zebra\\Playlist", url = "zebra"),
+        createPlaylistEntity(name = "Alpha", url = "alpha"),
+        createPlaylistEntity(name = "Beta\\Playlist", url = "beta")
+      )
+      dao.insertAll(playlists)
+
+      // When: getting browser items at root
+      val result = repository.getBrowserItemsAtPath("").asSnapshot()
+
+      // Then: folders should come before playlists
+      assertThat(result).hasSize(3)
+      assertThat(result[0].isFolder).isTrue()
+      assertThat(result[1].isFolder).isTrue()
+      assertThat(result[2].isPlaylist).isTrue()
+    }
+  }
+
+  @Test
+  fun getRemoteShouldPropagateExceptionWhenApiFails() {
+    runTest(testDispatcher) {
+      // Given: existing playlists in database
+      val existingPlaylist = createPlaylistEntity(
+        name = "Existing Playlist",
+        url = "existing"
+      )
+      dao.insertAll(listOf(existingPlaylist))
+
+      // And: API throws an exception
+      every { contentApi.getPlaylists(any()) } returns flow {
+        throw IOException("Network error")
+      }
+
+      // When & Then: exception should propagate
+      var exceptionThrown = false
+      try {
+        repository.getRemote(null)
+      } catch (e: IOException) {
+        exceptionThrown = true
+      }
+
+      assertThat(exceptionThrown).isTrue()
+
+      // Note: Due to onCompletion running regardless of exception status,
+      // existing data is removed even when an exception occurs.
+      // This documents the current behavior (which may be a bug to fix later).
+      val storedPlaylists = dao.all()
+      assertThat(storedPlaylists).isEmpty()
+    }
+  }
+
+  @Test
+  fun getRemoteShouldHandleEmptyApiResponse() {
+    runTest(testDispatcher) {
+      // Given: existing playlists in database
+      val existingPlaylist = createPlaylistEntity(
+        name = "Existing Playlist",
+        url = "existing",
+        dateAdded = OLDER_DATE_ADDED
+      )
+      dao.insertAll(listOf(existingPlaylist))
+
+      // And: API returns empty list
+      every { contentApi.getPlaylists(any()) } returns flowOf(emptyList())
+
+      // When
+      repository.getRemote(null)
+
+      // Then: existing playlists should be removed (since they weren't in the remote response)
+      val storedPlaylists = dao.all()
+      assertThat(storedPlaylists).isEmpty()
     }
   }
 }

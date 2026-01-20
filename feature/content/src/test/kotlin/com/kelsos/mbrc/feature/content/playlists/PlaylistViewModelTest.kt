@@ -7,7 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
-import com.kelsos.mbrc.core.data.playlist.Playlist
+import com.kelsos.mbrc.core.data.playlist.PlaylistBrowserItem
 import com.kelsos.mbrc.core.data.playlist.PlaylistRepository
 import com.kelsos.mbrc.core.networking.protocol.actions.UserAction
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
@@ -276,13 +276,13 @@ class PlaylistViewModelTest : KoinTest {
   }
 
   @Test
-  fun playlistsShouldReturnRepositoryPagingData() {
+  fun itemsShouldReturnRepositoryPagingData() {
     // Given
-    val pagingData = PagingData.empty<Playlist>()
-    every { playlistRepository.getAll() } returns flowOf(pagingData)
+    val pagingData = PagingData.empty<PlaylistBrowserItem>()
+    every { playlistRepository.getBrowserItemsAtPath("") } returns flowOf(pagingData)
 
     // Then
-    assertThat(viewModel.playlists).isNotNull()
+    assertThat(viewModel.items).isNotNull()
     // Note: PagingData testing requires more setup, this verifies the flow is accessible
   }
 
@@ -331,6 +331,201 @@ class PlaylistViewModelTest : KoinTest {
         val secondEvent = awaitItem()
         assertThat(secondEvent).isEqualTo(PlaylistUiMessages.NetworkUnavailable)
       }
+    }
+  }
+
+  @Test
+  fun navigateToFolderShouldUpdateCurrentPath() {
+    runTest(testDispatcher) {
+      // Given
+      assertThat(viewModel.currentPath.value).isEmpty()
+
+      // When
+      viewModel.actions.navigateToFolder("MyMusic")
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      assertThat(viewModel.currentPath.value).isEqualTo("MyMusic")
+    }
+  }
+
+  @Test
+  fun navigateToFolderShouldHandleNestedFolders() {
+    runTest(testDispatcher) {
+      // Given
+      viewModel.actions.navigateToFolder("MyMusic")
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // When
+      viewModel.actions.navigateToFolder("MyMusic\\SubFolder")
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      assertThat(viewModel.currentPath.value).isEqualTo("MyMusic\\SubFolder")
+    }
+  }
+
+  @Test
+  fun navigateUpShouldReturnToParentFolder() {
+    runTest(testDispatcher) {
+      // Given
+      viewModel.actions.navigateToFolder("MyMusic\\SubFolder")
+      testDispatcher.scheduler.advanceUntilIdle()
+      assertThat(viewModel.currentPath.value).isEqualTo("MyMusic\\SubFolder")
+
+      // When
+      val result = viewModel.actions.navigateUp()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      assertThat(result).isTrue()
+      assertThat(viewModel.currentPath.value).isEqualTo("MyMusic")
+    }
+  }
+
+  @Test
+  fun navigateUpFromSingleLevelFolderShouldReturnToRoot() {
+    runTest(testDispatcher) {
+      // Given
+      viewModel.actions.navigateToFolder("MyMusic")
+      testDispatcher.scheduler.advanceUntilIdle()
+      assertThat(viewModel.currentPath.value).isEqualTo("MyMusic")
+
+      // When
+      val result = viewModel.actions.navigateUp()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      assertThat(result).isTrue()
+      assertThat(viewModel.currentPath.value).isEmpty()
+    }
+  }
+
+  @Test
+  fun navigateUpFromRootShouldReturnFalse() {
+    runTest(testDispatcher) {
+      // Given - at root
+      assertThat(viewModel.currentPath.value).isEmpty()
+
+      // When
+      val result = viewModel.actions.navigateUp()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      assertThat(result).isFalse()
+      assertThat(viewModel.currentPath.value).isEmpty()
+    }
+  }
+
+  @Test
+  fun navigateUpShouldHandleDeeplyNestedFolders() {
+    runTest(testDispatcher) {
+      // Given - deeply nested path
+      viewModel.actions.navigateToFolder("A\\B\\C\\D")
+      testDispatcher.scheduler.advanceUntilIdle()
+      assertThat(viewModel.currentPath.value).isEqualTo("A\\B\\C\\D")
+
+      // When & Then - navigate up through each level
+      assertThat(viewModel.actions.navigateUp()).isTrue()
+      testDispatcher.scheduler.advanceUntilIdle()
+      assertThat(viewModel.currentPath.value).isEqualTo("A\\B\\C")
+
+      assertThat(viewModel.actions.navigateUp()).isTrue()
+      testDispatcher.scheduler.advanceUntilIdle()
+      assertThat(viewModel.currentPath.value).isEqualTo("A\\B")
+
+      assertThat(viewModel.actions.navigateUp()).isTrue()
+      testDispatcher.scheduler.advanceUntilIdle()
+      assertThat(viewModel.currentPath.value).isEqualTo("A")
+
+      assertThat(viewModel.actions.navigateUp()).isTrue()
+      testDispatcher.scheduler.advanceUntilIdle()
+      assertThat(viewModel.currentPath.value).isEmpty()
+
+      // At root, should return false
+      assertThat(viewModel.actions.navigateUp()).isFalse()
+    }
+  }
+
+  @Test
+  fun currentPathShouldBeStateFlow() {
+    runTest(testDispatcher) {
+      // Given
+      val collectedPaths = mutableListOf<String>()
+      viewModel.currentPath.test {
+        collectedPaths.add(awaitItem()) // Initial empty
+
+        viewModel.actions.navigateToFolder("Folder1")
+        testDispatcher.scheduler.advanceUntilIdle()
+        collectedPaths.add(awaitItem())
+
+        viewModel.actions.navigateToFolder("Folder1\\Folder2")
+        testDispatcher.scheduler.advanceUntilIdle()
+        collectedPaths.add(awaitItem())
+
+        cancelAndIgnoreRemainingEvents()
+      }
+
+      // Then
+      assertThat(collectedPaths).containsExactly("", "Folder1", "Folder1\\Folder2").inOrder()
+    }
+  }
+
+  @Test
+  fun itemsFlowShouldReactToPathChanges() {
+    runTest(testDispatcher) {
+      // Given: repository returns different data for different paths
+      val rootItems = PagingData.empty<PlaylistBrowserItem>()
+      val folderItems = PagingData.empty<PlaylistBrowserItem>()
+
+      every { playlistRepository.getBrowserItemsAtPath("") } returns flowOf(rootItems)
+      every { playlistRepository.getBrowserItemsAtPath("MyMusic") } returns flowOf(folderItems)
+
+      // Collect the items flow to trigger flatMapLatest
+      viewModel.items.test {
+        // Initial path is empty, so first emission is for root
+        awaitItem()
+
+        // When: navigate to a folder
+        viewModel.actions.navigateToFolder("MyMusic")
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Await the new emission from folder path
+        awaitItem()
+
+        cancelAndIgnoreRemainingEvents()
+      }
+
+      // Then: repository should be called with the new path
+      coVerify { playlistRepository.getBrowserItemsAtPath("MyMusic") }
+    }
+  }
+
+  @Test
+  fun itemsFlowShouldCallRepositoryWithCorrectPathOnNavigateUp() {
+    runTest(testDispatcher) {
+      // Given
+      every { playlistRepository.getBrowserItemsAtPath(any()) } returns flowOf(PagingData.empty())
+
+      // Collect the items flow to trigger flatMapLatest
+      viewModel.items.test {
+        // Initial empty path
+        awaitItem()
+
+        // When: navigate to folder then back up
+        viewModel.actions.navigateToFolder("MyMusic\\SubFolder")
+        testDispatcher.scheduler.advanceUntilIdle()
+        awaitItem()
+
+        viewModel.actions.navigateUp()
+        testDispatcher.scheduler.advanceUntilIdle()
+        awaitItem()
+
+        cancelAndIgnoreRemainingEvents()
+      }
+
+      // Then: repository should be called with parent path
+      coVerify { playlistRepository.getBrowserItemsAtPath("MyMusic") }
     }
   }
 }
