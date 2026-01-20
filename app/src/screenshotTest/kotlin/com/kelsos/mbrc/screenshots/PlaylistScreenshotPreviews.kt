@@ -8,15 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
-import com.kelsos.mbrc.core.data.playlist.Playlist
+import com.kelsos.mbrc.core.data.playlist.PlaylistBrowserItem
 import com.kelsos.mbrc.core.ui.compose.EmptyScreen
 import com.kelsos.mbrc.core.ui.theme.RemoteTheme
-import com.kelsos.mbrc.feature.content.playlists.compose.PlaylistItem
+import com.kelsos.mbrc.feature.content.playlists.compose.BrowserItemRow
 
-private val samplePlaylist = Playlist(
-  id = 1,
+private val samplePlaylist = PlaylistBrowserItem(
+  itemType = PlaylistBrowserItem.ITEM_TYPE_PLAYLIST,
   name = "My Favorite Songs",
-  url = "playlist://favorites"
+  path = "playlist://favorites",
+  id = 1
 )
 
 @PreviewTest
@@ -25,9 +26,10 @@ private val samplePlaylist = Playlist(
 fun PlaylistItemLight() {
   RemoteTheme(darkTheme = false) {
     Surface {
-      PlaylistItem(
-        playlist = samplePlaylist,
-        onPlay = {}
+      BrowserItemRow(
+        item = samplePlaylist,
+        onFolderClick = {},
+        onPlaylistClick = {}
       )
     }
   }
@@ -39,9 +41,10 @@ fun PlaylistItemLight() {
 fun PlaylistItemDark() {
   RemoteTheme(darkTheme = true) {
     Surface {
-      PlaylistItem(
-        playlist = samplePlaylist,
-        onPlay = {}
+      BrowserItemRow(
+        item = samplePlaylist,
+        onFolderClick = {},
+        onPlaylistClick = {}
       )
     }
   }

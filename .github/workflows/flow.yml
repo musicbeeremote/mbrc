@@ -107,3 +107,35 @@ jobs:
         with:
           name: test-results
           path: app/build/test-results
+
+  screenshot:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Validate Screenshots
+        run: ./gradlew validateGithubDebugScreenshotTest --no-daemon
+
+      - uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: screenshot-diff
+          path: app/build/reports/screenshotTest
