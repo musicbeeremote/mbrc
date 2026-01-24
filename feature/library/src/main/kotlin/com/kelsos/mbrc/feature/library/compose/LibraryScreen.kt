@@ -58,6 +58,7 @@ import org.koin.androidx.compose.koinViewModel
 fun LibraryScreen(
   onOpenDrawer: () -> Unit,
   onNavigateToGenreArtists: (Genre) -> Unit,
+  onNavigateToGenreAlbums: (Genre) -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
   onNavigateToAlbumTracks: (Album) -> Unit,
   onNavigateToPlayer: () -> Unit,
@@ -194,6 +195,7 @@ fun LibraryScreen(
       snackbarHostState = snackbarHostState,
       isSyncing = syncProgress.running,
       onNavigateToGenreArtists = onNavigateToGenreArtists,
+      onNavigateToGenreAlbums = onNavigateToGenreAlbums,
       onNavigateToArtistAlbums = onNavigateToArtistAlbums,
       onNavigateToAlbumTracks = onNavigateToAlbumTracks,
       onNavigateToPlayer = onNavigateToPlayer,
@@ -289,6 +291,7 @@ private fun LibraryContent(
   snackbarHostState: SnackbarHostState,
   isSyncing: Boolean,
   onNavigateToGenreArtists: (Genre) -> Unit,
+  onNavigateToGenreAlbums: (Genre) -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
   onNavigateToAlbumTracks: (Album) -> Unit,
   onNavigateToPlayer: () -> Unit,
@@ -317,6 +320,7 @@ private fun LibraryContent(
         snackbarHostState = snackbarHostState,
         isSyncing = isSyncing,
         onNavigateToGenreArtists = onNavigateToGenreArtists,
+        onNavigateToGenreAlbums = onNavigateToGenreAlbums,
         onNavigateToArtistAlbums = onNavigateToArtistAlbums,
         onNavigateToAlbumTracks = onNavigateToAlbumTracks,
         onSync = onSync
@@ -336,6 +340,7 @@ private fun LibraryTabPage(
   snackbarHostState: SnackbarHostState,
   isSyncing: Boolean,
   onNavigateToGenreArtists: (Genre) -> Unit,
+  onNavigateToGenreAlbums: (Genre) -> Unit,
   onNavigateToArtistAlbums: (Artist) -> Unit,
   onNavigateToAlbumTracks: (Album) -> Unit,
   onSync: () -> Unit
@@ -345,6 +350,7 @@ private fun LibraryTabPage(
       snackbarHostState = snackbarHostState,
       isSyncing = isSyncing,
       onNavigateToGenreArtists = onNavigateToGenreArtists,
+      onNavigateToGenreAlbums = onNavigateToGenreAlbums,
       onSync = onSync
     )
 

@@ -31,7 +31,8 @@ fun GenreListItemLight() {
       GenreListItem(
         genre = Genre(genre = "Rock", id = 1),
         onClick = {},
-        onQueue = {}
+        onQueue = {},
+        onGoToAlbums = {}
       )
     }
   }
@@ -46,7 +47,8 @@ fun GenreListItemDark() {
       GenreListItem(
         genre = Genre(genre = "Rock", id = 1),
         onClick = {},
-        onQueue = {}
+        onQueue = {},
+        onGoToAlbums = {}
       )
     }
   }

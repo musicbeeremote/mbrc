@@ -34,6 +34,7 @@
 
   <!-- Menu -->
   <string name="menu_overflow_description">More options</string>
+  <string name="menu_go_to_albums">Go to Albums</string>
   <string name="menu_play">Play Now</string>
   <string name="menu_play_artist">Play Now (Artist)</string>
   <string name="menu_play_queue_all">Play Now (Queue All)</string>

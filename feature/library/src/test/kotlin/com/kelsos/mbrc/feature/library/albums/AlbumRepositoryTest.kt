@@ -13,6 +13,8 @@ import com.kelsos.mbrc.core.data.library.album.AlbumCover
 import com.kelsos.mbrc.core.data.library.album.AlbumDao
 import com.kelsos.mbrc.core.data.library.album.AlbumEntity
 import com.kelsos.mbrc.core.data.library.album.AlbumRepository
+import com.kelsos.mbrc.core.data.library.genre.GenreDao
+import com.kelsos.mbrc.core.data.library.genre.GenreEntity
 import com.kelsos.mbrc.core.data.library.track.TrackDao
 import com.kelsos.mbrc.core.data.library.track.TrackEntity
 import com.kelsos.mbrc.core.data.test.testDatabaseModule
@@ -49,6 +51,7 @@ class AlbumRepositoryTest : KoinTest {
   private val database: Database by inject()
   private val dao: AlbumDao by inject()
   private val trackDao: TrackDao by inject()
+  private val genreDao: GenreDao by inject()
   private val libraryApi: LibraryApi by inject()
 
   private val repository: AlbumRepository by inject()
@@ -650,6 +653,252 @@ class AlbumRepositoryTest : KoinTest {
       val count = repository.coverCount()
 
       assertThat(count).isEqualTo(0)
+    }
+  }
+
+  @Test
+  fun getAlbumsByGenreShouldReturnAlbumsForGenre() {
+    runTest(testDispatcher) {
+      // Given: Genres
+      val genres =
+        listOf(
+          GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L),
+          GenreEntity(id = 2, genre = "Jazz", dateAdded = 1000L)
+        )
+      genreDao.insertAll(genres)
+
+      // And: Albums
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "Rock Album 1", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Rock Album 2", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "Jazz Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      // And: Tracks linking albums to genres
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Rock Album 1",
+            title = "Rock Track 1",
+            src = "rock1.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Rock Album 2",
+            title = "Rock Track 2",
+            src = "rock2.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2021",
+            sortableYear = "2021",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist2",
+            albumArtist = "Artist2",
+            album = "Jazz Album",
+            title = "Jazz Track",
+            src = "jazz.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Jazz",
+            year = "2019",
+            sortableYear = "2019",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      // When: Get albums by Rock genre (id=1)
+      val result = repository.getAlbumsByGenre(1L).asSnapshot()
+
+      // Then: Should return only Rock albums, sorted by album name
+      assertThat(result.map { it.album }).containsExactly("Rock Album 1", "Rock Album 2").inOrder()
+    }
+  }
+
+  @Test
+  fun getAlbumsByGenreShouldReturnEmptyWhenNoMatchingAlbums() {
+    runTest(testDispatcher) {
+      // Given: A genre with no albums
+      val genres = listOf(GenreEntity(id = 1, genre = "Classical", dateAdded = 1000L))
+      genreDao.insertAll(genres)
+
+      // And: Some albums for different genres
+      val albums = listOf(AlbumEntity(artist = "Artist1", album = "Rock Album", dateAdded = 1000L))
+      dao.insert(albums)
+
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Rock Album",
+            title = "Track 1",
+            src = "track1.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      // When: Get albums for Classical genre
+      val result = repository.getAlbumsByGenre(1L).asSnapshot()
+
+      // Then: Should return empty list
+      assertThat(result).isEmpty()
+    }
+  }
+
+  @Test
+  fun getAlbumsByGenreShouldNotReturnDuplicates() {
+    runTest(testDispatcher) {
+      // Given: A genre
+      val genres = listOf(GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L))
+      genreDao.insertAll(genres)
+
+      // And: An album
+      val albums = listOf(AlbumEntity(artist = "Artist1", album = "Rock Album", dateAdded = 1000L))
+      dao.insert(albums)
+
+      // And: Multiple tracks from the same album with the same genre
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Rock Album",
+            title = "Track 1",
+            src = "track1.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Rock Album",
+            title = "Track 2",
+            src = "track2.mp3",
+            trackno = 2,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Rock Album",
+            title = "Track 3",
+            src = "track3.mp3",
+            trackno = 3,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      // When: Get albums by genre
+      val result = repository.getAlbumsByGenre(1L).asSnapshot()
+
+      // Then: Should return only one album (no duplicates)
+      assertThat(result).hasSize(1)
+      assertThat(result.first().album).isEqualTo("Rock Album")
+    }
+  }
+
+  @Test
+  fun getAlbumsByGenreShouldBeSortedAlphabetically() {
+    runTest(testDispatcher) {
+      // Given: A genre
+      val genres = listOf(GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L))
+      genreDao.insertAll(genres)
+
+      // And: Albums with names that test sorting
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "Zebra Rock", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Alpha Rock", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "middle rock", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      // And: Tracks linking albums to genre
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Zebra Rock",
+            title = "Track",
+            src = "zebra.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Alpha Rock",
+            title = "Track",
+            src = "alpha.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "middle rock",
+            title = "Track",
+            src = "middle.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      // When: Get albums by genre
+      val result = repository.getAlbumsByGenre(1L).asSnapshot()
+
+      // Then: Should be sorted alphabetically (case insensitive)
+      assertThat(
+        result.map { it.album }
+      ).containsExactly("Alpha Rock", "middle rock", "Zebra Rock").inOrder()
     }
   }
 }

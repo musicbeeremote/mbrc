@@ -74,4 +74,18 @@ interface AlbumDao {
 
   @Query("select * from album where id = :id")
   fun getById(id: Long): AlbumEntity?
+
+  @Query(
+    """
+        SELECT DISTINCT album.artist AS artist, album.album AS album,
+        album.date_added AS date_added, album.id AS id, album.cover AS cover
+        FROM album
+        INNER JOIN track ON album.album = track.album AND track.album_artist = album.artist
+        INNER JOIN genre ON genre.genre = track.genre
+        WHERE genre.id = :genreId
+        GROUP BY album.id
+        ORDER BY album.album COLLATE NOCASE ASC
+    """
+  )
+  fun getAlbumsByGenre(genreId: Long): PagingSource<Int, AlbumEntity>
 }

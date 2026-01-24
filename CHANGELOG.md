@@ -22,6 +22,7 @@ Changelog
 - [#220] Sorts artist albums by release year.
 - [#181] Adds playlist folder navigation support.
 - [#229] Adds ban track support alongside love for Last.fm ratings.
+- [#226] Adds albums by genre navigation for direct access to genre albums.
 - [#205] Adds cover count support to library stats.
 - Adds support for Android 15 and 16 (API 35-36).
 - Adds data extraction rules for backup and cloud migration.
@@ -70,6 +71,7 @@ Changelog
 [#205]: https://github.com/musicbeeremote/mbrc/issues/205
 [#219]: https://github.com/musicbeeremote/mbrc/issues/219
 [#220]: https://github.com/musicbeeremote/mbrc/issues/220
+[#226]: https://github.com/musicbeeremote/mbrc/issues/226
 [#229]: https://github.com/musicbeeremote/mbrc/issues/229
 [#241]: https://github.com/musicbeeremote/mbrc/issues/241
 [#242]: https://github.com/musicbeeremote/mbrc/issues/242

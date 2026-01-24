@@ -22,6 +22,7 @@
     <feature>Sorts artist albums by release year.</feature>
     <feature>Adds playlist folder navigation support.</feature>
     <feature>Adds ban track support alongside love for Last.fm ratings.</feature>
+    <feature>Adds albums by genre navigation for direct access to genre albums.</feature>
     <bug>Fixes elapsed time not updating correctly for streaming content.</bug>
     <bug>Fixes widget not updating track name and album art correctly.</bug>
     <bug>Fixes widget track info position not updating dynamically.</bug>

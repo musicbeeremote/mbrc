@@ -36,6 +36,7 @@ fun GenreListItem(
   genre: Genre,
   onClick: () -> Unit,
   onQueue: (Queue) -> Unit,
+  onGoToAlbums: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   var menuExpanded by remember { mutableStateOf(false) }
@@ -56,10 +57,11 @@ fun GenreListItem(
     trailingContent = {
       Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
         MoreOptionsButton(onClick = { menuExpanded = true })
-        LibraryItemMenu(
+        GenreItemMenu(
           expanded = menuExpanded,
           onDismiss = { menuExpanded = false },
-          onQueue = onQueue
+          onQueue = onQueue,
+          onGoToAlbums = onGoToAlbums
         )
       }
     }
@@ -242,6 +244,48 @@ private fun LibraryItemMenu(expanded: Boolean, onDismiss: () -> Unit, onQueue: (
     expanded = expanded,
     onDismissRequest = onDismiss
   ) {
+    DropdownMenuItem(
+      text = { Text(stringResource(R.string.menu_play)) },
+      onClick = {
+        onDismiss()
+        onQueue(Queue.Now)
+      }
+    )
+    DropdownMenuItem(
+      text = { Text(stringResource(R.string.menu_queue_next)) },
+      onClick = {
+        onDismiss()
+        onQueue(Queue.Next)
+      }
+    )
+    DropdownMenuItem(
+      text = { Text(stringResource(R.string.menu_queue_last)) },
+      onClick = {
+        onDismiss()
+        onQueue(Queue.Last)
+      }
+    )
+  }
+}
+
+@Composable
+private fun GenreItemMenu(
+  expanded: Boolean,
+  onDismiss: () -> Unit,
+  onQueue: (Queue) -> Unit,
+  onGoToAlbums: () -> Unit
+) {
+  DropdownMenu(
+    expanded = expanded,
+    onDismissRequest = onDismiss
+  ) {
+    DropdownMenuItem(
+      text = { Text(stringResource(R.string.menu_go_to_albums)) },
+      onClick = {
+        onDismiss()
+        onGoToAlbums()
+      }
+    )
     DropdownMenuItem(
       text = { Text(stringResource(R.string.menu_play)) },
       onClick = {

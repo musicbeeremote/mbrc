@@ -17,6 +17,7 @@ import com.kelsos.mbrc.feature.library.albums.AlbumInfo
 import com.kelsos.mbrc.feature.library.compose.LibraryScreen
 import com.kelsos.mbrc.feature.library.compose.drilldown.AlbumTracksScreen
 import com.kelsos.mbrc.feature.library.compose.drilldown.ArtistAlbumsScreen
+import com.kelsos.mbrc.feature.library.compose.drilldown.GenreAlbumsScreen
 import com.kelsos.mbrc.feature.library.compose.drilldown.GenreArtistsScreen
 import com.kelsos.mbrc.feature.misc.help.compose.HelpFeedbackScreen
 import com.kelsos.mbrc.feature.playback.nowplaying.compose.NowPlayingScreen
@@ -70,6 +71,10 @@ fun AppNavGraph(
         onNavigateToGenreArtists = { genre ->
           val encodedName = URLEncoder.encode(genre.genre, StandardCharsets.UTF_8.toString())
           navController.navigate("genre_artists/${genre.id}/$encodedName")
+        },
+        onNavigateToGenreAlbums = { genre ->
+          val encodedName = URLEncoder.encode(genre.genre, StandardCharsets.UTF_8.toString())
+          navController.navigate("genre_albums/${genre.id}/$encodedName")
         },
         onNavigateToArtistAlbums = { artist ->
           val encodedName = URLEncoder.encode(artist.artist, StandardCharsets.UTF_8.toString())
@@ -200,6 +205,32 @@ fun AppNavGraph(
       )
     }
 
+    composable(
+      route = Screen.GenreAlbums.ROUTE,
+      arguments = listOf(
+        navArgument("genreId") { type = NavType.LongType },
+        navArgument("genreName") { type = NavType.StringType }
+      )
+    ) { backStackEntry ->
+      val genreId = backStackEntry.arguments?.getLong("genreId") ?: 0L
+      val genreName = URLDecoder.decode(
+        backStackEntry.arguments?.getString("genreName").orEmpty(),
+        StandardCharsets.UTF_8.toString()
+      )
+      GenreAlbumsScreen(
+        genreId = genreId,
+        genreName = genreName,
+        onNavigateBack = { navController.popBackStack() },
+        onNavigateToAlbumTracks = { album ->
+          val encodedAlbum = URLEncoder.encode(album.album, StandardCharsets.UTF_8.toString())
+          val encodedArtist = URLEncoder.encode(album.artist, StandardCharsets.UTF_8.toString())
+          navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
+        },
+        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        snackbarHostState = snackbarHostState
+      )
+    }
+
     composable(Screen.NowPlayingList.route) {
       val trackRepository: TrackRepository = koinInject()
       val scope = rememberCoroutineScope()
@@ -278,6 +309,13 @@ sealed class Screen(val route: String) {
     Screen("genre_artists/$genreId/$genreName") {
     companion object {
       const val ROUTE = "genre_artists/{genreId}/{genreName}"
+    }
+  }
+
+  data class GenreAlbums(val genreId: Long, val genreName: String) :
+    Screen("genre_albums/$genreId/$genreName") {
+    companion object {
+      const val ROUTE = "genre_albums/{genreId}/{genreName}"
     }
   }
 }

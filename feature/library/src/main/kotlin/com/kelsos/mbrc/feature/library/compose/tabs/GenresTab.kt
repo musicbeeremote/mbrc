@@ -28,6 +28,7 @@ fun GenresTab(
   snackbarHostState: SnackbarHostState,
   isSyncing: Boolean,
   onNavigateToGenreArtists: (Genre) -> Unit,
+  onNavigateToGenreAlbums: (Genre) -> Unit,
   onSync: () -> Unit,
   modifier: Modifier = Modifier,
   viewModel: BrowseGenreViewModel = koinViewModel()
@@ -39,6 +40,12 @@ fun GenresTab(
   LaunchedEffect(Unit) {
     viewModel.events.filterIsInstance<GenreUiMessage.OpenArtists>().collect { event ->
       onNavigateToGenreArtists(event.genre)
+    }
+  }
+
+  LaunchedEffect(Unit) {
+    viewModel.events.filterIsInstance<GenreUiMessage.OpenAlbums>().collect { event ->
+      onNavigateToGenreAlbums(event.genre)
     }
   }
 
@@ -73,7 +80,8 @@ fun GenresTab(
     GenreListItem(
       genre = genre,
       onClick = { viewModel.queue(Queue.Default, genre) },
-      onQueue = { queue -> viewModel.queue(queue, genre) }
+      onQueue = { queue -> viewModel.queue(queue, genre) },
+      onGoToAlbums = { viewModel.goToAlbums(genre) }
     )
   }
 }

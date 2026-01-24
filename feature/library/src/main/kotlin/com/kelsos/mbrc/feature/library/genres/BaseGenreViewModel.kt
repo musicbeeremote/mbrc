@@ -42,4 +42,8 @@ abstract class BaseGenreViewModel(
       emit(message)
     }
   }
+
+  fun goToAlbums(genre: Genre) {
+    launchDefault(GenreUiMessage.OpenAlbums(genre))
+  }
 }

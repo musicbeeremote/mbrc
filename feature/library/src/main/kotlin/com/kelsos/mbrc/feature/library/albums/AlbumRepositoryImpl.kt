@@ -28,6 +28,12 @@ class AlbumRepositoryImpl(
     it.toAlbum()
   }
 
+  override fun getAlbumsByGenre(genreId: Long): Flow<PagingData<Album>> = paged({
+    dao.getAlbumsByGenre(genreId)
+  }) {
+    it.toAlbum()
+  }
+
   override fun getAll(): Flow<PagingData<Album>> = paged({ dao.getAll() }) { it.toAlbum() }
 
   override suspend fun getRemote(progress: Progress?) {

@@ -8,6 +8,7 @@ import com.kelsos.mbrc.core.queue.PathQueueUseCase
 import com.kelsos.mbrc.feature.library.albums.AlbumRepositoryImpl
 import com.kelsos.mbrc.feature.library.albums.ArtistAlbumsViewModel
 import com.kelsos.mbrc.feature.library.albums.BrowseAlbumViewModel
+import com.kelsos.mbrc.feature.library.albums.GenreAlbumsViewModel
 import com.kelsos.mbrc.feature.library.artists.ArtistRepositoryImpl
 import com.kelsos.mbrc.feature.library.artists.BrowseArtistViewModel
 import com.kelsos.mbrc.feature.library.artists.GenreArtistsViewModel
@@ -68,6 +69,7 @@ val libraryModule = module {
   viewModelOf(::BrowseAlbumViewModel)
   viewModelOf(::BrowseTrackViewModel)
   viewModelOf(::GenreArtistsViewModel)
+  viewModelOf(::GenreAlbumsViewModel)
   viewModelOf(::ArtistAlbumsViewModel)
   viewModelOf(::AlbumTracksViewModel)
 }
