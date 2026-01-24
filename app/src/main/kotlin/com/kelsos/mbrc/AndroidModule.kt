@@ -18,6 +18,8 @@ import com.kelsos.mbrc.core.platform.intents.MediaIntentBuilder
 import com.kelsos.mbrc.service.NotificationActionReceiver
 import com.kelsos.mbrc.service.ServiceChecker
 import com.kelsos.mbrc.service.ServiceCheckerImpl
+import com.kelsos.mbrc.service.ServiceLifecycleManager
+import com.kelsos.mbrc.service.ServiceLifecycleManagerImpl
 import com.kelsos.mbrc.service.mediasession.AppNotificationManager
 import com.kelsos.mbrc.service.mediasession.AppNotificationManagerImpl
 import com.kelsos.mbrc.service.mediasession.MediaIntentHandler
@@ -52,6 +54,7 @@ val androidModule = module {
   // Service Components
   singleOf(::NotificationActionReceiver)
   singleOf(::ServiceCheckerImpl) { bind<ServiceChecker>() }
+  singleOf(::ServiceLifecycleManagerImpl) { bind<ServiceLifecycleManager>() }
 
   // Media Session and Notifications
   singleOf(::MediaSessionManager)

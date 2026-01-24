@@ -104,9 +104,10 @@ class AppNotificationManagerImpl(
       val mediaSession = mediaSessionManager.mediaSession ?: return
       notification = notificationBuilder.createBuilder(this.notificationData, mediaSession).build()
       notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
-    } else {
-      cancel(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID)
     }
+    // When disconnected, don't cancel the notification here.
+    // The ServiceLifecycleManager will stop the service, and stopForeground(REMOVE)
+    // will handle notification removal safely.
   }
 
   override fun updateState(state: PlayerState, position: PlayingPosition) {

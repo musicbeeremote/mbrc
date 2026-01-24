@@ -6,6 +6,7 @@ import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.common.utilities.coroutines.ScopeBase
+import com.kelsos.mbrc.service.ServiceLifecycleManager
 import com.kelsos.mbrc.service.mediasession.AppNotificationManager
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -24,6 +25,7 @@ class AppStateManager(
   private val connectionState: ConnectionStateFlow,
   private val notifications: AppNotificationManager,
   private val trackCache: PlayingTrackCache,
+  private val serviceLifecycleManager: ServiceLifecycleManager,
   dispatchers: AppCoroutineDispatchers
 ) : ScopeBase(dispatchers.io) {
   private var isRunning = false
@@ -73,10 +75,31 @@ class AppStateManager(
     }
 
     launch {
+      // Track if we were ever connected to avoid triggering reconnection logic on initial Offline state
+      var wasConnected = false
+
       connectionState.connection.collect { connection ->
         notifications.connectionStateChanged(connection == ConnectionStatus.Connected)
-        if (connection == ConnectionStatus.Offline) {
-          stopPositionUpdater()
+        when (connection) {
+          ConnectionStatus.Offline -> {
+            stopPositionUpdater()
+            // Only track connection loss if we were previously connected
+            // This prevents stopping the service immediately on startup
+            if (wasConnected) {
+              serviceLifecycleManager.onConnectionLost()
+            }
+          }
+
+          ConnectionStatus.Connected -> {
+            wasConnected = true
+            serviceLifecycleManager.onConnectionRestored()
+          }
+
+          ConnectionStatus.Authenticating -> {
+            // Authenticating means we're in the process of connecting,
+            // so reset reconnection tracking
+            serviceLifecycleManager.onConnectionRestored()
+          }
         }
       }
     }
