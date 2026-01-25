@@ -391,7 +391,8 @@ private fun NowPlayingTrackList(
     flingBehavior = ScrollableDefaults.flingBehavior()
   ) {
     itemsIndexed(
-      items = draggableList
+      items = draggableList,
+      key = { _, track -> track.id }
     ) { index, track ->
       val isDragging = index == dragDropState.draggingItemIndex
       val isPlaying = track.path == playingTrackPath
@@ -450,8 +451,8 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
   onGoToArtist: () -> Unit
 ) {
   val dismissState = rememberSwipeToDismissBoxState(
-    SwipeToDismissBoxValue.Settled,
-    SwipeToDismissBoxDefaults.positionalThreshold
+    initialValue = SwipeToDismissBoxValue.Settled,
+    positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
   )
 
   // Apply drag visual effects
