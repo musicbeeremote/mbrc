@@ -68,13 +68,31 @@ class ClientConnectionManagerImpl(
   private val connectionConfig = ConnectionConfig()
   private var currentCycleInfo: ConnectionCycleInfo? = null
 
+  @Volatile
+  private var isStopping = false
+
+  // Track pending socket for cancellation during connect
+  @Volatile
+  private var pendingSocket: Socket? = null
+
   override fun start(cycleInfo: ConnectionCycleInfo?) {
+    // Don't restart if already connected
+    val currentStatus = connectionState.connection.value
+    if (currentStatus == ConnectionStatus.Connected) {
+      Timber.v("Already connected, ignoring start request")
+      return
+    }
+
     stop()
+    isStopping = false
+    onStart() // Reset coroutine scope after stop
     currentCycleInfo = cycleInfo
     launch {
       delay(DELAY_MS)
-      val currentStatus = connectionState.connection.firstOrNull()
-      if (currentStatus == ConnectionStatus.Connected) {
+      if (isStopping) return@launch
+      // Double-check in case connection succeeded during delay
+      val statusAfterDelay = connectionState.connection.firstOrNull()
+      if (statusAfterDelay == ConnectionStatus.Connected) {
         return@launch
       }
       // Emit connecting state only if not already connected
@@ -102,6 +120,12 @@ class ClientConnectionManagerImpl(
 
   private suspend fun attemptConnectionWithRetry(address: SocketAddress) {
     repeat(connectionConfig.maxRetries) { attempt ->
+      // Check if stop was requested
+      if (isStopping) {
+        Timber.v("Connection attempt cancelled - stop requested")
+        return
+      }
+
       if (attempt > 0) {
         val delayMs =
           minOf(
@@ -113,16 +137,33 @@ class ClientConnectionManagerImpl(
           "Retrying connection in ${delayMs}ms (attempt ${attempt + 1}/${connectionConfig.maxRetries})"
         )
         delay(delayMs)
+
+        // Check again after delay
+        if (isStopping) {
+          Timber.v("Connection attempt cancelled after delay - stop requested")
+          return
+        }
       }
 
-      val result = runCatching { Connection.connect(address) }
+      val result = runCatching { connectWithTracking(address) }
       result.fold(
         onSuccess = { socket ->
+          if (isStopping) {
+            // Stop was requested during connect, close the socket
+            Timber.v("Connection cancelled during connect - closing socket")
+            runCatching { socket.close() }
+            return
+          }
           Timber.v("Connection successful on attempt ${attempt + 1}")
           setupConnection(socket)
           return
         },
         onFailure = { exception ->
+          if (isStopping) {
+            Timber.v("Connection attempt cancelled - stop requested")
+            return
+          }
+
           val networkError = classifyNetworkError(exception)
           Timber.w("Connection attempt ${attempt + 1} failed: ${networkError::class.simpleName}")
 
@@ -133,6 +174,20 @@ class ClientConnectionManagerImpl(
           }
         }
       )
+    }
+  }
+
+  private fun connectWithTracking(address: SocketAddress): Socket {
+    val socket = Socket()
+    pendingSocket = socket
+    try {
+      socket.soTimeout = Connection.SO_TIMEOUT
+      socket.tcpNoDelay = true
+      socket.keepAlive = true
+      socket.connect(address, Connection.CONNECT_TIMEOUT)
+      return socket
+    } finally {
+      pendingSocket = null
     }
   }
 
@@ -313,9 +368,25 @@ class ClientConnectionManagerImpl(
   }
 
   override fun stop() {
+    Timber.v("Stopping connection manager")
+    isStopping = true
     currentCycleInfo = null
+
+    // Cancel all coroutines (including connection attempts)
+    onStop()
+
+    // Close any pending socket that's in the middle of connecting
+    pendingSocket?.let { socket ->
+      Timber.v("Closing pending socket during stop")
+      runCatching { socket.close() }
+      pendingSocket = null
+    }
+
     connection?.cleanup()
     activityChecker.stop()
+
+    // Set state to Offline immediately
+    connectionState.updateConnection(ConnectionStatus.Offline)
   }
 
   companion object {
@@ -480,8 +551,8 @@ class Connection(
   }
 
   companion object {
-    private const val SO_TIMEOUT = 30_000
-    private const val CONNECT_TIMEOUT = 15_000
+    internal const val SO_TIMEOUT = 30_000
+    internal const val CONNECT_TIMEOUT = 15_000
     private const val NEWLINE = "\r\n"
     private const val MAX_PARSE_FAILURES = 5
 

@@ -150,19 +150,36 @@ class DrawerViewModelTest : KoinTest {
   }
 
   @Test
-  fun `toggleConnection should connect when currently authenticating`() {
+  fun `toggleConnection should disconnect when currently authenticating`() {
     runTest(testDispatcher) {
       // Given
       connectionStatusFlow.value = ConnectionStatus.Authenticating
-      coEvery { clientConnectionUseCase.connect(any(), any()) } returns Unit
+      coEvery { clientConnectionUseCase.disconnect() } returns Unit
 
       // When
       viewModel.toggleConnection()
 
-      // Then
-      verify(exactly = 1) { serviceChecker.startServiceIfNotRunning() }
-      coVerify(exactly = 1) { clientConnectionUseCase.connect(any(), any()) }
-      coVerify(exactly = 0) { clientConnectionUseCase.disconnect() }
+      // Then - should disconnect, not connect
+      verify(exactly = 1) { serviceLifecycleManager.onIntentionalDisconnect() }
+      coVerify(exactly = 1) { clientConnectionUseCase.disconnect() }
+      coVerify(exactly = 0) { clientConnectionUseCase.connect(any(), any()) }
+    }
+  }
+
+  @Test
+  fun `toggleConnection should disconnect when currently connecting`() {
+    runTest(testDispatcher) {
+      // Given
+      connectionStatusFlow.value = ConnectionStatus.Connecting(cycle = 1, maxCycles = 3)
+      coEvery { clientConnectionUseCase.disconnect() } returns Unit
+
+      // When
+      viewModel.toggleConnection()
+
+      // Then - should disconnect, not connect
+      verify(exactly = 1) { serviceLifecycleManager.onIntentionalDisconnect() }
+      coVerify(exactly = 1) { clientConnectionUseCase.disconnect() }
+      coVerify(exactly = 0) { clientConnectionUseCase.connect(any(), any()) }
     }
   }
 

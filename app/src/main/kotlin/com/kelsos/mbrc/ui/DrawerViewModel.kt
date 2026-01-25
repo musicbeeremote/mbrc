@@ -54,9 +54,17 @@ class DrawerViewModel(
 
   fun isConnected(): Boolean = connectionStatus.value is ConnectionStatus.Connected
 
+  private fun isConnectingOrConnected(): Boolean = when (connectionStatus.value) {
+    is ConnectionStatus.Connected,
+    is ConnectionStatus.Connecting,
+    is ConnectionStatus.Authenticating -> true
+
+    is ConnectionStatus.Offline -> false
+  }
+
   fun toggleConnection() {
     viewModelScope.launch {
-      if (isConnected()) {
+      if (isConnectingOrConnected()) {
         // Notify that this is an intentional disconnect to prevent reconnection
         serviceLifecycleManager.onIntentionalDisconnect()
         clientConnectionUseCase.disconnect()
