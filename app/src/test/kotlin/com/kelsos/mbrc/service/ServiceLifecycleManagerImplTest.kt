@@ -4,9 +4,12 @@ import android.app.Application
 import android.content.Intent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.core.common.state.ConnectionStatePublisher
+import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
+import com.kelsos.mbrc.core.networking.ConnectionCycleInfo
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,12 +33,14 @@ import org.koin.test.inject
 class ServiceLifecycleManagerImplTest : KoinTest {
   private val application: Application = mockk(relaxed = true)
   private val connectionUseCase: ClientConnectionUseCase = mockk(relaxed = true)
+  private val connectionState: ConnectionStatePublisher = mockk(relaxed = true)
 
   private val testModule = module {
     single { application }
     single { connectionUseCase }
+    single { connectionState }
     single<ServiceLifecycleManager> {
-      ServiceLifecycleManagerImpl(get(), get(), get())
+      ServiceLifecycleManagerImpl(get(), get(), get(), get())
     }
   }
 
@@ -52,7 +57,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
     ServiceState.setStopping(false)
 
     // Setup default mocks
-    coEvery { connectionUseCase.connect() } just Runs
+    coEvery { connectionUseCase.connect(any(), any()) } just Runs
     every { application.stopService(any()) } returns true
   }
 
@@ -75,7 +80,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       testDispatcher.scheduler.advanceUntilIdle()
 
       // Then - no reconnection attempts should be made
-      coVerify(exactly = 0) { connectionUseCase.connect() }
+      coVerify(exactly = 0) { connectionUseCase.connect(any(), any()) }
       assertThat(serviceLifecycleManager.isStopPending).isFalse()
     }
   }
@@ -92,7 +97,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       testDispatcher.scheduler.advanceUntilIdle()
 
       // Then - no reconnection attempts should be made
-      coVerify(exactly = 0) { connectionUseCase.connect() }
+      coVerify(exactly = 0) { connectionUseCase.connect(any(), any()) }
       assertThat(serviceLifecycleManager.isStopPending).isFalse()
     }
   }
@@ -112,7 +117,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       )
 
       // Then - at least one reconnection attempt should be made
-      coVerify(atLeast = 1) { connectionUseCase.connect() }
+      coVerify(atLeast = 1) { connectionUseCase.connect(any(), any()) }
     }
   }
 
@@ -134,7 +139,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
 
       // Then - should only have one reconnection cycle running
       // After one cycle delay, only one connect call should have been made
-      coVerify(exactly = 1) { connectionUseCase.connect() }
+      coVerify(exactly = 1) { connectionUseCase.connect(any(), any()) }
     }
   }
 
@@ -157,7 +162,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       )
 
       // Then - no reconnection attempts should be made
-      coVerify(exactly = 0) { connectionUseCase.connect() }
+      coVerify(exactly = 0) { connectionUseCase.connect(any(), any()) }
       assertThat(serviceLifecycleManager.isStopPending).isFalse()
     }
   }
@@ -193,8 +198,10 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       // Advance through all reconnection cycles
       advanceThroughAllReconnectionCycles()
 
-      // Then - service should be stopped
+      // Then - service should be stopped and state should be Offline
       assertThat(serviceLifecycleManager.isStopPending).isTrue()
+
+      verify { connectionState.updateConnection(ConnectionStatus.Offline) }
 
       val intentSlot = slot<Intent>()
       verify { application.stopService(capture(intentSlot)) }
@@ -217,7 +224,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
 
       // Then - connect should be called MAX_RECONNECTION_CYCLES times
       coVerify(exactly = ServiceLifecycleManagerImpl.MAX_RECONNECTION_CYCLES) {
-        connectionUseCase.connect()
+        connectionUseCase.connect(any(), any())
       }
     }
   }
@@ -250,7 +257,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       )
 
       // Then - no connect calls should have been made
-      coVerify(exactly = 0) { connectionUseCase.connect() }
+      coVerify(exactly = 0) { connectionUseCase.connect(any(), any()) }
       verify(exactly = 0) { application.stopService(any()) }
     }
   }
@@ -269,7 +276,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       )
 
       // Verify first connect was called
-      coVerify(exactly = 1) { connectionUseCase.connect() }
+      coVerify(exactly = 1) { connectionUseCase.connect(any(), any()) }
 
       // When - connection is restored after first cycle
       serviceLifecycleManager.onConnectionRestored()
@@ -284,7 +291,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       )
 
       // Then - no additional connect calls should have been made
-      coVerify(exactly = 1) { connectionUseCase.connect() }
+      coVerify(exactly = 1) { connectionUseCase.connect(any(), any()) }
       verify(exactly = 0) { application.stopService(any()) }
     }
   }
@@ -302,7 +309,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       testDispatcher.scheduler.advanceUntilIdle()
 
       // Verify no connects happened
-      coVerify(exactly = 0) { connectionUseCase.connect() }
+      coVerify(exactly = 0) { connectionUseCase.connect(any(), any()) }
 
       // When - new connection loss occurs
       serviceLifecycleManager.onConnectionLost()
@@ -313,7 +320,7 @@ class ServiceLifecycleManagerImplTest : KoinTest {
       )
 
       // Then - new reconnection attempt should be made
-      coVerify(exactly = 1) { connectionUseCase.connect() }
+      coVerify(exactly = 1) { connectionUseCase.connect(any(), any()) }
     }
   }
 

@@ -2,8 +2,11 @@ package com.kelsos.mbrc.service
 
 import android.app.Application
 import android.content.Intent
+import com.kelsos.mbrc.core.common.state.ConnectionStatePublisher
+import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
+import com.kelsos.mbrc.core.networking.ConnectionCycleInfo
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +38,12 @@ interface ServiceLifecycleManager {
   fun onConnectionRestored()
 
   /**
+   * Called when the user intentionally disconnects. Prevents the
+   * reconnection loop from starting.
+   */
+  fun onIntentionalDisconnect()
+
+  /**
    * Check if the service is in the process of stopping due to connection failures.
    */
   val isStopPending: Boolean
@@ -43,6 +52,7 @@ interface ServiceLifecycleManager {
 class ServiceLifecycleManagerImpl(
   private val application: Application,
   private val connectionUseCase: ClientConnectionUseCase,
+  private val connectionState: ConnectionStatePublisher,
   dispatchers: AppCoroutineDispatchers
 ) : ServiceLifecycleManager {
   private val scope = CoroutineScope(SupervisorJob() + dispatchers.main)
@@ -50,11 +60,18 @@ class ServiceLifecycleManagerImpl(
   private val stopPending = AtomicBoolean(false)
   private val reconnectionCycle = AtomicInteger(0)
   private val isReconnecting = AtomicBoolean(false)
+  private val intentionalDisconnect = AtomicBoolean(false)
 
   override val isStopPending: Boolean
     get() = stopPending.get()
 
   override fun onConnectionLost() {
+    // Check if this was an intentional disconnect
+    if (intentionalDisconnect.compareAndSet(true, false)) {
+      Timber.v("Ignoring connection loss due to intentional disconnect")
+      return
+    }
+
     if (!ServiceState.isRunning || ServiceState.isStopping) {
       Timber.v("Service not running or already stopping, ignoring connection loss")
       return
@@ -69,6 +86,17 @@ class ServiceLifecycleManagerImpl(
     Timber.d("Connection lost, starting reconnection loop")
     reconnectionCycle.set(0)
     startReconnectionLoop()
+  }
+
+  override fun onIntentionalDisconnect() {
+    Timber.d("Intentional disconnect requested")
+    intentionalDisconnect.set(true)
+    // Also cancel any ongoing reconnection
+    isReconnecting.set(false)
+    reconnectionCycle.set(0)
+    reconnectionJob?.cancel()
+    reconnectionJob = null
+    stopPending.set(false)
   }
 
   override fun onConnectionRestored() {
@@ -94,6 +122,11 @@ class ServiceLifecycleManagerImpl(
             "waiting ${RECONNECTION_DELAY_MS}ms before attempt"
         )
 
+        // Update state to show we're reconnecting (before the delay)
+        connectionState.updateConnection(
+          ConnectionStatus.Connecting(cycle = cycle, maxCycles = MAX_RECONNECTION_CYCLES)
+        )
+
         // Wait before attempting reconnection
         delay(RECONNECTION_DELAY_MS)
 
@@ -104,7 +137,9 @@ class ServiceLifecycleManagerImpl(
         }
 
         Timber.d("Triggering reconnection attempt (cycle $cycle)")
-        connectionUseCase.connect()
+        connectionUseCase.connect(
+          cycleInfo = ConnectionCycleInfo(cycle = cycle, maxCycles = MAX_RECONNECTION_CYCLES)
+        )
 
         // Wait for connection attempt to complete
         // The connection manager has its own retry logic (3 attempts with backoff)
@@ -127,6 +162,8 @@ class ServiceLifecycleManagerImpl(
       reconnectionCycle.set(0)
       reconnectionJob?.cancel()
       reconnectionJob = null
+      // Set state to Offline since all reconnection attempts have failed
+      connectionState.updateConnection(ConnectionStatus.Offline)
       application.stopService(Intent(application, RemoteService::class.java))
     }
   }

@@ -28,7 +28,7 @@ import okio.source
 import timber.log.Timber
 
 interface ClientConnectionManager {
-  fun start()
+  fun start(cycleInfo: ConnectionCycleInfo? = null)
 
   fun stop()
 }
@@ -66,20 +66,35 @@ class ClientConnectionManagerImpl(
   ClientConnectionManager {
   private var connection: Connection? = null
   private val connectionConfig = ConnectionConfig()
+  private var currentCycleInfo: ConnectionCycleInfo? = null
 
-  override fun start() {
+  override fun start(cycleInfo: ConnectionCycleInfo?) {
     stop()
+    currentCycleInfo = cycleInfo
     launch {
       delay(DELAY_MS)
       val currentStatus = connectionState.connection.firstOrNull()
-      if (currentStatus != ConnectionStatus.Connected) {
-        attemptConnection()
+      if (currentStatus == ConnectionStatus.Connected) {
+        return@launch
       }
+      // Emit connecting state only if not already connected
+      connectionState.updateConnection(
+        ConnectionStatus.Connecting(
+          cycle = cycleInfo?.cycle,
+          maxCycles = cycleInfo?.maxCycles ?: DEFAULT_MAX_CYCLES
+        )
+      )
+      attemptConnection()
     }
   }
 
   private suspend fun attemptConnection() {
-    val connectionSettings = getConnectionSettings() ?: return
+    val connectionSettings = getConnectionSettings()
+    if (connectionSettings == null) {
+      Timber.v("No connection settings available, going offline")
+      connectionState.updateConnection(ConnectionStatus.Offline)
+      return
+    }
     Timber.v("Attempting connection on $connectionSettings")
 
     attemptConnectionWithRetry(connectionSettings.toSocketAddress())
@@ -137,7 +152,12 @@ class ClientConnectionManagerImpl(
   }
 
   private suspend fun handleConnectionFailure(networkError: NetworkError) {
-    connectionState.updateConnection(ConnectionStatus.Offline)
+    // Only set Offline if we're not in a reconnection loop
+    // When cycleInfo is present, ServiceLifecycleManager is managing reconnection
+    // and will update the state with the next cycle
+    if (currentCycleInfo == null) {
+      connectionState.updateConnection(ConnectionStatus.Offline)
+    }
 
     val uiMessage =
       when (networkError) {
@@ -293,6 +313,7 @@ class ClientConnectionManagerImpl(
   }
 
   override fun stop() {
+    currentCycleInfo = null
     connection?.cleanup()
     activityChecker.stop()
   }
@@ -300,6 +321,7 @@ class ClientConnectionManagerImpl(
   companion object {
     private const val DELAY_MS = 2000L
     private const val RECONNECT_DELAY_MS = 1000L
+    private const val DEFAULT_MAX_CYCLES = 3
   }
 }
 
@@ -459,6 +481,7 @@ class Connection(
 
   companion object {
     private const val SO_TIMEOUT = 30_000
+    private const val CONNECT_TIMEOUT = 15_000
     private const val NEWLINE = "\r\n"
     private const val MAX_PARSE_FAILURES = 5
 
@@ -467,7 +490,7 @@ class Connection(
       socket.soTimeout = SO_TIMEOUT
       socket.tcpNoDelay = true // Reduce latency for ping/pong
       socket.keepAlive = true // Enable TCP keep-alive
-      socket.connect(address)
+      socket.connect(address, CONNECT_TIMEOUT)
       return socket
     }
   }

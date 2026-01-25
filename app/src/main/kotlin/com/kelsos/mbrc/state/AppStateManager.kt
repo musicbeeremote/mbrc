@@ -100,6 +100,11 @@ class AppStateManager(
             // so reset reconnection tracking
             serviceLifecycleManager.onConnectionRestored()
           }
+
+          is ConnectionStatus.Connecting -> {
+            // Actively connecting - no action needed, ServiceLifecycleManager
+            // is already aware of reconnection attempts
+          }
         }
       }
     }

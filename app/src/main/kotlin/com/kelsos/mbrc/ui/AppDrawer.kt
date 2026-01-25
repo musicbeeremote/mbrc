@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -239,6 +241,19 @@ private fun DrawerHeader(
             val statusText = when (connectionStatus) {
               is ConnectionStatus.Connected -> connectionName
 
+              is ConnectionStatus.Connecting -> {
+                val cycle = connectionStatus.cycle
+                if (cycle != null) {
+                  stringResource(
+                    R.string.drawer_connection_connecting_cycle,
+                    cycle,
+                    connectionStatus.maxCycles
+                  )
+                } else {
+                  stringResource(R.string.drawer_connection_connecting)
+                }
+              }
+
               is ConnectionStatus.Authenticating ->
                 stringResource(R.string.drawer_connection_status_on)
 
@@ -266,7 +281,8 @@ private fun DrawerHeader(
 }
 
 /**
- * Option 3: Icon button style - circular button with color indicating status
+ * Connection status button with circular progress indicator.
+ * Shows cycle progress as an arc and indeterminate spinner when connecting.
  */
 @Composable
 private fun ConnectionStatusIconButton(
@@ -275,34 +291,66 @@ private fun ConnectionStatusIconButton(
 ) {
   val (statusColor, statusIcon) = when (connectionState) {
     ConnectionStatus.Connected -> connection_status_connected to Icons.Default.Wifi
+    is ConnectionStatus.Connecting -> MaterialTheme.colorScheme.secondary to Icons.Default.Wifi
     ConnectionStatus.Authenticating -> MaterialTheme.colorScheme.secondary to Icons.Default.Wifi
     ConnectionStatus.Offline -> connection_status_offline to Icons.Default.WifiOff
   }
 
-  Surface(
+  val isConnecting = connectionState is ConnectionStatus.Connecting ||
+    connectionState is ConnectionStatus.Authenticating
+
+  Box(
     modifier = Modifier
       .size(48.dp)
+      .clip(CircleShape)
       .clickable { onConnectionClick() },
-    shape = CircleShape,
-    color = Color.White.copy(alpha = 0.2f)
+    contentAlignment = Alignment.Center
   ) {
-    Box(
+    // Background circle
+    Surface(
       modifier = Modifier.fillMaxSize(),
-      contentAlignment = Alignment.Center
-    ) {
-      Icon(
-        imageVector = statusIcon,
-        contentDescription = stringResource(
-          when (connectionState) {
-            ConnectionStatus.Connected -> R.string.drawer_connection_status_active
-            ConnectionStatus.Authenticating -> R.string.drawer_connection_status_on
-            ConnectionStatus.Offline -> R.string.drawer_connection_status_off
-          }
-        ),
-        tint = statusColor,
-        modifier = Modifier.size(24.dp)
+      shape = CircleShape,
+      color = Color.White.copy(alpha = 0.2f)
+    ) {}
+
+    // Indeterminate spinner when connecting (outer ring)
+    if (isConnecting) {
+      CircularProgressIndicator(
+        modifier = Modifier.size(46.dp),
+        color = statusColor,
+        strokeWidth = 2.dp
       )
     }
+
+    // Cycle progress arc (determinate) - inner ring, only show when we have cycle info
+    if (connectionState is ConnectionStatus.Connecting) {
+      val cycle = connectionState.cycle
+      if (cycle != null) {
+        val progress = cycle.toFloat() / connectionState.maxCycles.toFloat()
+        CircularProgressIndicator(
+          progress = { progress },
+          modifier = Modifier.size(36.dp),
+          color = statusColor.copy(alpha = 0.7f),
+          strokeWidth = 3.dp,
+          trackColor = statusColor.copy(alpha = 0.2f)
+        )
+      }
+    }
+
+    // Center icon
+    Icon(
+      imageVector = statusIcon,
+      contentDescription = stringResource(
+        when (connectionState) {
+          ConnectionStatus.Connected -> R.string.drawer_connection_status_active
+          is ConnectionStatus.Connecting -> R.string.drawer_connection_status_on
+          ConnectionStatus.Authenticating -> R.string.drawer_connection_status_on
+          ConnectionStatus.Offline -> R.string.drawer_connection_status_off
+        }
+      ),
+      tint = statusColor,
+      modifier = Modifier.size(20.dp)
+    )
   }
 }
 
