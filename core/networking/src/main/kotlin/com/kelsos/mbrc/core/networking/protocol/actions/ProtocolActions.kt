@@ -93,13 +93,16 @@ class UpdateNowPlayingTrack(
     val track = adapter.fromJsonValue(message.data) ?: return
     val previousState =
       stateHandler.playingTrack.firstOrNull()?.toBasicTrackInfo() ?: BasicTrackInfo()
+    // Reset cover when album changes to avoid stale covers (#139)
+    val albumChanged = previousState.album != track.album
     val newState =
       previousState.copy(
         artist = track.artist,
         title = track.title,
         album = track.album,
         year = track.year,
-        path = track.path
+        path = track.path,
+        coverUrl = if (albumChanged) "" else previousState.coverUrl
       )
     stateHandler.updatePlayingTrack(newState)
     notifier.notifyTrackChanged(newState)
