@@ -328,15 +328,19 @@ fun ConnectionItemContent(
   }
 
   Row(modifier = Modifier.fillMaxWidth()) {
-    // Left accent bar for default connection
-    if (connection.isDefault) {
-      Box(
-        modifier = Modifier
-          .width(4.dp)
-          .height(72.dp)
-          .background(MaterialTheme.colorScheme.primary)
-      )
-    }
+    // Left accent bar - always reserve space to prevent layout shift on selection
+    Box(
+      modifier = Modifier
+        .width(4.dp)
+        .height(72.dp)
+        .background(
+          if (connection.isDefault) {
+            MaterialTheme.colorScheme.primary
+          } else {
+            MaterialTheme.colorScheme.surface
+          }
+        )
+    )
 
     Surface(
       modifier = Modifier.weight(1f),
