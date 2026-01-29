@@ -230,4 +230,4 @@ Apollo Player was one of the original sources of inspiration for the UI of Music
 
 * [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music)
 
-[project-screenshot]: https://raw.githubusercontent.com/musicbeeremote/mbrc/main/screenshot.png
+[project-screenshot]: https://raw.githubusercontent.com/musicbeeremote/mbrc/main/screenshot.jpg
