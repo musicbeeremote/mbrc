@@ -1,0 +1,9 @@
+codecov:
+  branch: main
+
+coverage:
+  status:
+    project: false
+    patch: false
+
+github_checks: false
