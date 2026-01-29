@@ -12,6 +12,7 @@ import com.kelsos.mbrc.core.common.state.TrackRating
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.core.networking.protocol.usecases.performUserAction
+import com.kelsos.mbrc.feature.settings.domain.SettingsManager
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,7 +27,8 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
   changeLogChecker: ChangeLogChecker,
   appState: AppStateFlow,
-  private val userActionUseCase: UserActionUseCase
+  private val userActionUseCase: UserActionUseCase,
+  settingsManager: SettingsManager
 ) : BaseViewModel<PlayerUiMessage>() {
   private val progressRelay: MutableSharedFlow<Int> = MutableSharedFlow()
   private val volumeRelay: MutableSharedFlow<Int> = MutableSharedFlow()
@@ -58,6 +60,9 @@ class PlayerViewModel(
 
   val trackDetails: StateFlow<TrackDetails> = appState.playingTrackDetails
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TrackDetails.EMPTY)
+
+  val showRatingOnPlayer: StateFlow<Boolean> = settingsManager.showRatingOnPlayerFlow
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
   val actions: IPlayerActions = PlayerActions(
     userActionUseCase = userActionUseCase,

@@ -41,7 +41,7 @@ val md_theme_light_errorContainer = Color(0xFFFFDAD6)
 val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
 
-val md_theme_dark_error = Color(0xFFFFB4AB)
+val md_theme_dark_error = Color(0xFFFF5252) // Red A200
 val md_theme_dark_errorContainer = Color(0xFF93000A)
 val md_theme_dark_onError = Color(0xFF690005)
 val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)

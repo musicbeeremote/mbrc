@@ -78,6 +78,8 @@ data class SettingsContentState(
   val debugLoggingEnabled: Boolean = false,
   val incomingCallAction: CallAction = CallAction.None,
   val trackDefaultAction: TrackAction = TrackAction.PlayNow,
+  val halfStarRatingEnabled: Boolean = true,
+  val showRatingOnPlayerEnabled: Boolean = false,
   val visibleDialog: SettingsDialogType? = null
 )
 
@@ -92,6 +94,8 @@ interface ISettingsActions {
   val onIncomingCallActionSelected: (CallAction) -> Unit
   val onPluginUpdatesChanged: (Boolean) -> Unit
   val onDebugLoggingChanged: (Boolean) -> Unit
+  val onHalfStarRatingChanged: (Boolean) -> Unit
+  val onShowRatingOnPlayerChanged: (Boolean) -> Unit
   val onTrackDefaultActionClick: () -> Unit
   val onTrackDefaultActionSelected: (TrackAction) -> Unit
   val onNavigateToLicenses: () -> Unit
@@ -109,6 +113,8 @@ object EmptySettingsActions : ISettingsActions {
   override val onIncomingCallActionSelected: (CallAction) -> Unit = {}
   override val onPluginUpdatesChanged: (Boolean) -> Unit = {}
   override val onDebugLoggingChanged: (Boolean) -> Unit = {}
+  override val onHalfStarRatingChanged: (Boolean) -> Unit = {}
+  override val onShowRatingOnPlayerChanged: (Boolean) -> Unit = {}
   override val onTrackDefaultActionClick: () -> Unit = {}
   override val onTrackDefaultActionSelected: (TrackAction) -> Unit = {}
   override val onNavigateToLicenses: () -> Unit = {}
@@ -202,6 +208,35 @@ private fun MiscellaneousSettingsSection(
         viewModel.hideDialog()
       },
       onDismiss = { viewModel.hideDialog() }
+    )
+  }
+}
+
+/**
+ * Rating settings section.
+ */
+@Composable
+private fun RatingSettingsSection(viewModel: SettingsViewModel) {
+  val halfStarRatingEnabled by viewModel.halfStarRatingEnabled.collectAsStateWithLifecycle()
+  val showRatingOnPlayerEnabled by viewModel.showRatingOnPlayerEnabled.collectAsStateWithLifecycle()
+
+  SettingsSection(title = stringResource(R.string.settings_rating)) {
+    SettingsToggleItem(
+      title = stringResource(R.string.setting_half_star_rating),
+      subtitle = stringResource(R.string.setting_half_star_rating_summary),
+      checked = halfStarRatingEnabled,
+      onCheckedChange = { enabled ->
+        viewModel.updateHalfStarRating(enabled)
+      }
+    )
+
+    SettingsToggleItem(
+      title = stringResource(R.string.setting_show_rating_on_player),
+      subtitle = stringResource(R.string.setting_show_rating_on_player_summary),
+      checked = showRatingOnPlayerEnabled,
+      onCheckedChange = { enabled ->
+        viewModel.updateShowRatingOnPlayer(enabled)
+      }
     )
   }
 }
@@ -354,6 +389,11 @@ private fun SettingsContent(
 
     SettingsDivider()
 
+    // Rating Settings Section
+    RatingSettingsSection(viewModel = viewModel)
+
+    SettingsDivider()
+
     // Library Settings Section
     LibrarySettingsSection(viewModel = viewModel)
 
@@ -400,6 +440,16 @@ fun SettingsScreenContent(
       onIncomingCallActionClick = actions.onIncomingCallActionClick,
       onPluginUpdatesChanged = actions.onPluginUpdatesChanged,
       onDebugLoggingChanged = actions.onDebugLoggingChanged
+    )
+
+    SettingsDivider()
+
+    // Rating Settings Section
+    RatingContentSection(
+      halfStarRatingEnabled = state.halfStarRatingEnabled,
+      showRatingOnPlayerEnabled = state.showRatingOnPlayerEnabled,
+      onHalfStarRatingChanged = actions.onHalfStarRatingChanged,
+      onShowRatingOnPlayerChanged = actions.onShowRatingOnPlayerChanged
     )
 
     SettingsDivider()
@@ -498,6 +548,33 @@ private fun MiscellaneousContentSection(
       subtitle = stringResource(R.string.setting_miscellaneous_debug_logging_summary),
       checked = debugLoggingEnabled,
       onCheckedChange = onDebugLoggingChanged
+    )
+  }
+}
+
+/**
+ * Rating section for content composable.
+ */
+@Composable
+private fun RatingContentSection(
+  halfStarRatingEnabled: Boolean,
+  showRatingOnPlayerEnabled: Boolean,
+  onHalfStarRatingChanged: (Boolean) -> Unit,
+  onShowRatingOnPlayerChanged: (Boolean) -> Unit
+) {
+  SettingsSection(title = stringResource(R.string.settings_rating)) {
+    SettingsToggleItem(
+      title = stringResource(R.string.setting_half_star_rating),
+      subtitle = stringResource(R.string.setting_half_star_rating_summary),
+      checked = halfStarRatingEnabled,
+      onCheckedChange = onHalfStarRatingChanged
+    )
+
+    SettingsToggleItem(
+      title = stringResource(R.string.setting_show_rating_on_player),
+      subtitle = stringResource(R.string.setting_show_rating_on_player_summary),
+      checked = showRatingOnPlayerEnabled,
+      onCheckedChange = onShowRatingOnPlayerChanged
     )
   }
 }

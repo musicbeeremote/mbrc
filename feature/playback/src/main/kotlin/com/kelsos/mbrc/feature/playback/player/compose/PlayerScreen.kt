@@ -126,6 +126,7 @@ fun PlayerScreen(
   val playbackState by viewModel.playbackState.collectAsState()
   val isScrobbling by viewModel.isScrobbling.collectAsState()
   val trackDetails by viewModel.trackDetails.collectAsState()
+  val showRatingOnPlayer by viewModel.showRatingOnPlayer.collectAsState()
 
   // Lyrics state
   val lyrics by lyricsViewModel.lyrics.collectAsState(initial = emptyList())
@@ -201,9 +202,11 @@ fun PlayerScreen(
         playbackState = playbackState,
         actions = viewModel.actions,
         hasLyrics = lyrics.isNotEmpty(),
+        showRatingOnPlayer = showRatingOnPlayer,
         onTrackInfoClick = onNavigateToNowPlaying,
         onLyricsClick = { showLyrics = true },
-        onOutputClick = { showOutputSelection = true }
+        onOutputClick = { showOutputSelection = true },
+        onRatingClick = { showBottomSheet = true }
       )
 
       // Lyrics overlay with slide animation from bottom
@@ -243,9 +246,11 @@ fun PlayerScreenContent(
   playbackState: PlaybackState,
   actions: IPlayerActions,
   hasLyrics: Boolean,
+  showRatingOnPlayer: Boolean,
   onTrackInfoClick: () -> Unit,
   onLyricsClick: () -> Unit,
   onOutputClick: () -> Unit,
+  onRatingClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   val configuration = LocalConfiguration.current
@@ -294,13 +299,16 @@ fun PlayerScreenContent(
         isFavorite = isFavorite,
         isBanned = isBanned,
         hasLyrics = hasLyrics,
+        rating = trackRating.rating,
+        showRating = showRatingOnPlayer,
         volumeState = volumeState,
         playbackState = playbackState,
         gradientBrush = gradientBrush,
         actions = actions,
         onTrackInfoClick = onTrackInfoClick,
         onLyricsClick = onLyricsClick,
-        onOutputClick = onOutputClick
+        onOutputClick = onOutputClick,
+        onRatingClick = onRatingClick
       )
 
       isTablet -> TabletPlayerLayout(
@@ -310,13 +318,16 @@ fun PlayerScreenContent(
         isFavorite = isFavorite,
         isBanned = isBanned,
         hasLyrics = hasLyrics,
+        rating = trackRating.rating,
+        showRating = showRatingOnPlayer,
         volumeState = volumeState,
         playbackState = playbackState,
         gradientBrush = gradientBrush,
         actions = actions,
         onTrackInfoClick = onTrackInfoClick,
         onLyricsClick = onLyricsClick,
-        onOutputClick = onOutputClick
+        onOutputClick = onOutputClick,
+        onRatingClick = onRatingClick
       )
 
       else -> PortraitPlayerLayout(
@@ -326,13 +337,16 @@ fun PlayerScreenContent(
         isFavorite = isFavorite,
         isBanned = isBanned,
         hasLyrics = hasLyrics,
+        rating = trackRating.rating,
+        showRating = showRatingOnPlayer,
         volumeState = volumeState,
         playbackState = playbackState,
         gradientBrush = gradientBrush,
         actions = actions,
         onTrackInfoClick = onTrackInfoClick,
         onLyricsClick = onLyricsClick,
-        onOutputClick = onOutputClick
+        onOutputClick = onOutputClick,
+        onRatingClick = onRatingClick
       )
     }
   }
@@ -474,6 +488,8 @@ private fun PortraitPlayerLayout(
   isFavorite: Boolean,
   isBanned: Boolean,
   hasLyrics: Boolean,
+  rating: Float?,
+  showRating: Boolean,
   volumeState: VolumeState,
   playbackState: PlaybackState,
   gradientBrush: Brush,
@@ -481,6 +497,7 @@ private fun PortraitPlayerLayout(
   onTrackInfoClick: () -> Unit,
   onLyricsClick: () -> Unit,
   onOutputClick: () -> Unit,
+  onRatingClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   Column(
@@ -523,6 +540,16 @@ private fun PortraitPlayerLayout(
         .fillMaxWidth()
         .padding(horizontal = PlayerConstants.CONTENT_PADDING)
     )
+
+    // Rating display (optional)
+    if (showRating) {
+      Spacer(modifier = Modifier.height(12.dp))
+      RatingDisplay(
+        rating = rating,
+        onClick = onRatingClick,
+        modifier = Modifier.padding(horizontal = PlayerConstants.CONTENT_PADDING)
+      )
+    }
 
     Spacer(modifier = Modifier.height(24.dp))
 
@@ -567,6 +594,8 @@ private fun TabletPlayerLayout(
   isFavorite: Boolean,
   isBanned: Boolean,
   hasLyrics: Boolean,
+  rating: Float?,
+  showRating: Boolean,
   volumeState: VolumeState,
   playbackState: PlaybackState,
   gradientBrush: Brush,
@@ -574,6 +603,7 @@ private fun TabletPlayerLayout(
   onTrackInfoClick: () -> Unit,
   onLyricsClick: () -> Unit,
   onOutputClick: () -> Unit,
+  onRatingClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   // For tablets in portrait, use a centered layout with max width constraint
@@ -615,6 +645,15 @@ private fun TabletPlayerLayout(
         modifier = Modifier.fillMaxWidth()
       )
 
+      // Rating display (optional)
+      if (showRating) {
+        Spacer(modifier = Modifier.height(12.dp))
+        RatingDisplay(
+          rating = rating,
+          onClick = onRatingClick
+        )
+      }
+
       Spacer(modifier = Modifier.height(32.dp))
 
       // Progress bar
@@ -653,6 +692,8 @@ private fun LandscapePlayerLayout(
   isFavorite: Boolean,
   isBanned: Boolean,
   hasLyrics: Boolean,
+  rating: Float?,
+  showRating: Boolean,
   volumeState: VolumeState,
   playbackState: PlaybackState,
   gradientBrush: Brush,
@@ -660,6 +701,7 @@ private fun LandscapePlayerLayout(
   onTrackInfoClick: () -> Unit,
   onLyricsClick: () -> Unit,
   onOutputClick: () -> Unit,
+  onRatingClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   Row(
@@ -710,6 +752,15 @@ private fun LandscapePlayerLayout(
         onLyricsClick = onLyricsClick,
         modifier = Modifier.fillMaxWidth()
       )
+
+      // Rating display (optional)
+      if (showRating) {
+        Spacer(modifier = Modifier.height(12.dp))
+        RatingDisplay(
+          rating = rating,
+          onClick = onRatingClick
+        )
+      }
 
       Spacer(modifier = Modifier.height(24.dp))
 

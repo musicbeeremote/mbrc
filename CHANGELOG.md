@@ -26,6 +26,9 @@ Changelog
 - [#205] Adds cover count support to library stats.
 - Adds support for Android 15 and 16 (API 35-36).
 - Adds data extraction rules for backup and cloud migration.
+- [#264] Adds comprehensive star rating system with bomb rating, half-star support, and clear rating.
+- [#264] Adds option to display track rating on the player screen.
+- [#264] Adds setting to enable/disable half-star ratings.
 
 ### Changed
 - [#115] Fixes elapsed time not updating correctly for streaming content.
@@ -75,6 +78,7 @@ Changelog
 [#229]: https://github.com/musicbeeremote/mbrc/issues/229
 [#241]: https://github.com/musicbeeremote/mbrc/issues/241
 [#242]: https://github.com/musicbeeremote/mbrc/issues/242
+[#264]: https://github.com/musicbeeremote/mbrc/issues/264
 
 ## [1.5.1] - 2021-09-13
 ### Changed

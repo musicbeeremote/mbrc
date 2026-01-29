@@ -56,6 +56,12 @@ class SettingsViewModel(
   val trackDefaultAction: StateFlow<TrackAction> = settingsManager.libraryTrackDefaultActionFlow
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TrackAction.PlayNow)
 
+  val halfStarRatingEnabled: StateFlow<Boolean> = settingsManager.halfStarRatingFlow
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+  val showRatingOnPlayerEnabled: StateFlow<Boolean> = settingsManager.showRatingOnPlayerFlow
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
   // Dialog state
   private val _visibleDialog = MutableStateFlow<SettingsDialogType?>(null)
   val visibleDialog: StateFlow<SettingsDialogType?> = _visibleDialog.asStateFlow()
@@ -104,6 +110,24 @@ class SettingsViewModel(
   fun updateTrackDefaultAction(action: TrackAction) {
     viewModelScope.launch {
       settingsManager.setLibraryTrackDefaultAction(action)
+    }
+  }
+
+  /**
+   * Updates half-star rating preference.
+   */
+  fun updateHalfStarRating(enabled: Boolean) {
+    viewModelScope.launch {
+      settingsManager.setHalfStarRating(enabled)
+    }
+  }
+
+  /**
+   * Updates show rating on player preference.
+   */
+  fun updateShowRatingOnPlayer(enabled: Boolean) {
+    viewModelScope.launch {
+      settingsManager.setShowRatingOnPlayer(enabled)
     }
   }
 

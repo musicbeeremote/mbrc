@@ -23,6 +23,9 @@
     <feature>Adds playlist folder navigation support.</feature>
     <feature>Adds ban track support alongside love for Last.fm ratings.</feature>
     <feature>Adds albums by genre navigation for direct access to genre albums.</feature>
+    <feature>Adds comprehensive star rating system with bomb rating, half-star support, and clear rating.</feature>
+    <feature>Adds option to display track rating on the player screen.</feature>
+    <feature>Adds setting to enable/disable half-star ratings.</feature>
     <bug>Fixes elapsed time not updating correctly for streaming content.</bug>
     <bug>Fixes widget not updating track name and album art correctly.</bug>
     <bug>Fixes widget track info position not updating dynamically.</bug>

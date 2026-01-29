@@ -37,6 +37,8 @@ object SettingsDataStore {
     val LAST_VERSION_RUN = intPreferencesKey("last_version_run")
     val REQUIRED_UPDATE_CHECK = longPreferencesKey("update_required_check")
     val CLIENT_UUID = stringPreferencesKey("uuid")
+    val HALF_STAR_RATING = booleanPreferencesKey("mbrc.settings.half_star_rating")
+    val SHOW_RATING_ON_PLAYER = booleanPreferencesKey("mbrc.settings.show_rating_on_player")
   }
 
   object DefaultValues {
@@ -49,5 +51,7 @@ object SettingsDataStore {
     const val LAST_UPDATE_CHECK = 0L
     const val LAST_VERSION_RUN = 0
     const val REQUIRED_UPDATE_CHECK = 0L
+    const val HALF_STAR_RATING = true
+    const val SHOW_RATING_ON_PLAYER = false
   }
 }

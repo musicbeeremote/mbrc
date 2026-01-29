@@ -52,9 +52,11 @@ fun PlayerPlayingLightPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -72,9 +74,11 @@ fun PlayerPlayingDarkPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -92,9 +96,11 @@ fun PlayerPausedLightPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Paused),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -112,9 +118,11 @@ fun PlayerPausedDarkPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Paused),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -136,9 +144,11 @@ fun PlayerTabletLightPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -156,9 +166,11 @@ fun PlayerTabletDarkPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -180,9 +192,11 @@ fun PlayerLandscapeLightPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -200,9 +214,11 @@ fun PlayerLandscapeDarkPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -224,9 +240,11 @@ fun PlayerMutedLightPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -244,9 +262,11 @@ fun PlayerMutedDarkPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -268,9 +288,11 @@ fun PlayerShuffleRepeatLightPreview() {
       ),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -292,9 +314,11 @@ fun PlayerShuffleRepeatDarkPreview() {
       ),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -312,9 +336,11 @@ fun PlayerEmptyTrackLightPreview() {
       playbackState = PlaybackState(),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -332,9 +358,157 @@ fun PlayerEmptyTrackDarkPreview() {
       playbackState = PlaybackState(),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+// =============================================================================
+// Rating States Previews
+// =============================================================================
+
+@PreviewTest
+@Preview(name = "Player Bomb Rating Light", showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+fun PlayerBombRatingLightPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenContent(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleBombRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(name = "Player Bomb Rating Dark", showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+fun PlayerBombRatingDarkPreview() {
+  RemoteTheme(darkTheme = true) {
+    PlayerScreenContent(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleBombRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(
+  name = "Player Half Star Rating Light",
+  showBackground = true,
+  widthDp = 360,
+  heightDp = 720
+)
+@Composable
+fun PlayerHalfStarRatingLightPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenContent(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleHalfStarRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(
+  name = "Player Half Star Rating Dark",
+  showBackground = true,
+  widthDp = 360,
+  heightDp = 720
+)
+@Composable
+fun PlayerHalfStarRatingDarkPreview() {
+  RemoteTheme(darkTheme = true) {
+    PlayerScreenContent(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleHalfStarRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(name = "Player Unrated Light", showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+fun PlayerUnratedLightPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenContent(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleUnratedRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(name = "Player Unrated Dark", showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+fun PlayerUnratedDarkPreview() {
+  RemoteTheme(darkTheme = true) {
+    PlayerScreenContent(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleUnratedRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -356,9 +530,11 @@ fun PlayerStreamLightPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -376,9 +552,11 @@ fun PlayerStreamDarkPreview() {
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
+      showRatingOnPlayer = true,
       onTrackInfoClick = {},
       onLyricsClick = {},
-      onOutputClick = {}
+      onOutputClick = {},
+      onRatingClick = {}
     )
   }
 }
@@ -445,4 +623,19 @@ private fun sampleNormalRating() = TrackRating(
 private fun sampleLovedRating() = TrackRating(
   lfmRating = LfmRating.Loved,
   rating = 5f
+)
+
+private fun sampleBombRating() = TrackRating(
+  lfmRating = LfmRating.Normal,
+  rating = 0f
+)
+
+private fun sampleHalfStarRating() = TrackRating(
+  lfmRating = LfmRating.Normal,
+  rating = 3.5f
+)
+
+private fun sampleUnratedRating() = TrackRating(
+  lfmRating = LfmRating.Normal,
+  rating = null
 )

@@ -23,6 +23,8 @@ interface SettingsManager :
   val incomingCallActionFlow: Flow<CallAction>
   override val libraryTrackDefaultActionFlow: Flow<TrackAction>
   override val shouldDisplayOnlyArtists: Flow<Boolean>
+  val halfStarRatingFlow: Flow<Boolean>
+  val showRatingOnPlayerFlow: Flow<Boolean>
 
   // Async update methods for changing settings (type-safe with sealed classes)
   suspend fun setTheme(theme: Theme)
@@ -31,6 +33,8 @@ interface SettingsManager :
   suspend fun setIncomingCallAction(action: CallAction)
   suspend fun setLibraryTrackDefaultAction(action: TrackAction)
   override suspend fun setShouldDisplayOnlyAlbumArtist(onlyAlbumArtist: Boolean)
+  suspend fun setHalfStarRating(enabled: Boolean)
+  suspend fun setShowRatingOnPlayer(enabled: Boolean)
 
   // Async utility methods
   override suspend fun checkShouldShowChangeLog(): Boolean

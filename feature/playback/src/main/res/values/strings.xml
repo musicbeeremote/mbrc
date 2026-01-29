@@ -66,6 +66,9 @@
   <!-- Rating -->
   <string name="rate_the_playing_track">Rate the playing track</string>
   <string name="rating_clear">Clear rating</string>
+  <string name="rating_bomb">Bomb rating</string>
+  <string name="rating_clear_description">Clear rating</string>
+  <string name="rating_star_description">%1$.1f star rating</string>
 
   <!-- Track Details -->
   <string name="track_details_title">Track Details</string>

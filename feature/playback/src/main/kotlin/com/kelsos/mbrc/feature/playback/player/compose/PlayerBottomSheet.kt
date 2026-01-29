@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Switch
@@ -33,8 +31,6 @@ import com.kelsos.mbrc.feature.playback.R
 import com.kelsos.mbrc.feature.playback.player.RatingDialogViewModel
 import org.koin.androidx.compose.koinViewModel
 
-private const val RATING_STAR_COUNT = 5
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerBottomSheet(
@@ -47,7 +43,8 @@ fun PlayerBottomSheet(
   viewModel: RatingDialogViewModel = koinViewModel()
 ) {
   val sheetState = rememberModalBottomSheetState()
-  val rating by viewModel.rating.collectAsState(initial = 0f)
+  val rating by viewModel.rating.collectAsState(initial = null)
+  val halfStarEnabled by viewModel.halfStarEnabled.collectAsState()
 
   ModalBottomSheet(
     onDismissRequest = onDismiss,
@@ -164,49 +161,13 @@ fun PlayerBottomSheet(
 
       Spacer(modifier = Modifier.height(12.dp))
 
-      // Star rating
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        repeat(RATING_STAR_COUNT) { index ->
-          val starValue = (index + 1).toFloat()
-          IconButton(
-            onClick = { viewModel.changeRating(starValue) },
-            modifier = Modifier.size(48.dp)
-          ) {
-            Icon(
-              imageVector = Icons.Default.Star,
-              contentDescription = null,
-              tint = if (rating >= starValue) {
-                MaterialTheme.colorScheme.primary
-              } else {
-                MaterialTheme.colorScheme.outlineVariant
-              },
-              modifier = Modifier.size(36.dp)
-            )
-          }
-        }
-      }
-
-      // Clear rating option
-      if (rating > 0) {
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.Center
-        ) {
-          Text(
-            text = stringResource(R.string.rating_clear),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-              .clickable { viewModel.changeRating(0f) }
-              .padding(8.dp)
-          )
-        }
-      }
+      // Rating bar with bomb, stars, and clear
+      RatingBar(
+        rating = rating,
+        onRatingChange = { viewModel.changeRating(it) },
+        halfStarEnabled = halfStarEnabled,
+        modifier = Modifier.fillMaxWidth()
+      )
 
       Spacer(modifier = Modifier.height(8.dp))
     }

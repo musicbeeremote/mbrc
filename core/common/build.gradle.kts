@@ -33,6 +33,10 @@ dependencies {
   implementation(libs.androidx.annotation)
   api(libs.androidx.lifecycle.viewmodel.ktx)
 
+  // Unit test dependencies
+  testImplementation(libs.truth)
+  testImplementation(libs.androidx.test.junit)
+
   // Test fixtures dependencies
   testFixturesImplementation(libs.kotlin.coroutines.test)
   testFixturesImplementation(libs.koin.test)

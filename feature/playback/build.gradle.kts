@@ -39,6 +39,7 @@ dependencies {
   implementation(project(":core:networking"))
   implementation(project(":feature:minicontrol"))
   implementation(project(":feature:misc"))
+  implementation(project(":feature:settings"))
 
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.bundles.androidx.compose)

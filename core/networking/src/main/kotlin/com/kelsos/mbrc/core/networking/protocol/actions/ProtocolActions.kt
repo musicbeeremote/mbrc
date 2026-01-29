@@ -153,9 +153,15 @@ class UpdatePluginVersionCommand(private val pluginVersionHandler: PluginVersion
 
 class UpdateRating(private val stateHandler: PlayerStateHandler) : ProtocolAction {
   override suspend fun execute(message: ProtocolMessage) {
-    val rating = message.data.toString().toFloatOrNull()
+    val dataString = message.data.toString()
+    // Empty string means unrated (null), otherwise parse as float
+    // 0 = bomb rating, 0.5-5.0 = star rating
+    val rating: Float? = when {
+      dataString.isEmpty() || dataString == "null" -> null
+      else -> dataString.toFloatOrNull()
+    }
     val previousState = stateHandler.playingTrackRating.firstOrNull() ?: TrackRating()
-    stateHandler.updateTrackRating(previousState.copy(rating = rating ?: 0.0f))
+    stateHandler.updateTrackRating(previousState.copy(rating = rating))
   }
 }
 

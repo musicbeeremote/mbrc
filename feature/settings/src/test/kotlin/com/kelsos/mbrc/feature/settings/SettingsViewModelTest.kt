@@ -42,6 +42,8 @@ class SettingsViewModelTest : KoinTest {
   private val debugLoggingFlow = MutableStateFlow(false)
   private val incomingCallActionFlow = MutableStateFlow<CallAction>(CallAction.None)
   private val trackDefaultActionFlow = MutableStateFlow<TrackAction>(TrackAction.PlayNow)
+  private val halfStarRatingFlow = MutableStateFlow(false)
+  private val showRatingOnPlayerFlow = MutableStateFlow(false)
 
   private val testModule = module {
     single { settingsManager }
@@ -58,6 +60,8 @@ class SettingsViewModelTest : KoinTest {
       every { incomingCallActionFlow } returns this@SettingsViewModelTest.incomingCallActionFlow
       every { libraryTrackDefaultActionFlow } returns
         this@SettingsViewModelTest.trackDefaultActionFlow
+      every { halfStarRatingFlow } returns this@SettingsViewModelTest.halfStarRatingFlow
+      every { showRatingOnPlayerFlow } returns this@SettingsViewModelTest.showRatingOnPlayerFlow
     }
     serviceRestarter = mockk(relaxed = true)
     debugLoggingManager = mockk(relaxed = true)
@@ -248,6 +252,91 @@ class SettingsViewModelTest : KoinTest {
 
         trackDefaultActionFlow.value = TrackAction.QueueLast
         assertThat(awaitItem()).isEqualTo(TrackAction.QueueLast)
+      }
+    }
+
+  @Test
+  fun `initial halfStarRatingEnabled should be false`() = runTest(testDispatcher) {
+    viewModel.halfStarRatingEnabled.test {
+      assertThat(awaitItem()).isFalse()
+    }
+  }
+
+  @Test
+  fun `initial showRatingOnPlayerEnabled should be false`() = runTest(testDispatcher) {
+    viewModel.showRatingOnPlayerEnabled.test {
+      assertThat(awaitItem()).isFalse()
+    }
+  }
+
+  @Test
+  fun `updateHalfStarRating should call settingsManager setHalfStarRating`() =
+    runTest(testDispatcher) {
+      coEvery { settingsManager.setHalfStarRating(any()) } returns Unit
+
+      viewModel.updateHalfStarRating(true)
+      advanceUntilIdle()
+
+      coVerify { settingsManager.setHalfStarRating(true) }
+    }
+
+  @Test
+  fun `updateHalfStarRating with false should call settingsManager`() = runTest(testDispatcher) {
+    coEvery { settingsManager.setHalfStarRating(any()) } returns Unit
+
+    viewModel.updateHalfStarRating(false)
+    advanceUntilIdle()
+
+    coVerify { settingsManager.setHalfStarRating(false) }
+  }
+
+  @Test
+  fun `updateShowRatingOnPlayer should call settingsManager setShowRatingOnPlayer`() =
+    runTest(testDispatcher) {
+      coEvery { settingsManager.setShowRatingOnPlayer(any()) } returns Unit
+
+      viewModel.updateShowRatingOnPlayer(true)
+      advanceUntilIdle()
+
+      coVerify { settingsManager.setShowRatingOnPlayer(true) }
+    }
+
+  @Test
+  fun `updateShowRatingOnPlayer with false should call settingsManager`() =
+    runTest(testDispatcher) {
+      coEvery { settingsManager.setShowRatingOnPlayer(any()) } returns Unit
+
+      viewModel.updateShowRatingOnPlayer(false)
+      advanceUntilIdle()
+
+      coVerify { settingsManager.setShowRatingOnPlayer(false) }
+    }
+
+  @Test
+  fun `halfStarRatingEnabled flow should emit new values when source flow changes`() =
+    runTest(testDispatcher) {
+      viewModel.halfStarRatingEnabled.test {
+        assertThat(awaitItem()).isFalse()
+
+        halfStarRatingFlow.value = true
+        assertThat(awaitItem()).isTrue()
+
+        halfStarRatingFlow.value = false
+        assertThat(awaitItem()).isFalse()
+      }
+    }
+
+  @Test
+  fun `showRatingOnPlayerEnabled flow should emit new values when source flow changes`() =
+    runTest(testDispatcher) {
+      viewModel.showRatingOnPlayerEnabled.test {
+        assertThat(awaitItem()).isFalse()
+
+        showRatingOnPlayerFlow.value = true
+        assertThat(awaitItem()).isTrue()
+
+        showRatingOnPlayerFlow.value = false
+        assertThat(awaitItem()).isFalse()
       }
     }
 }
