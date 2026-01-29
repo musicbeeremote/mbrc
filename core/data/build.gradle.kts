@@ -57,6 +57,7 @@ dependencies {
   androidTestImplementation(libs.androidx.test.junit)
   androidTestImplementation(libs.androidx.test.runner)
   androidTestImplementation(libs.truth)
+  androidTestImplementation(libs.kotlin.coroutines.test)
 
   // Test fixtures dependencies
   testFixturesImplementation(libs.koin.test)

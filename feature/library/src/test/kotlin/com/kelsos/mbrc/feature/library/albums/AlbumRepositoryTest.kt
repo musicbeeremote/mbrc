@@ -901,4 +901,96 @@ class AlbumRepositoryTest : KoinTest {
       ).containsExactly("Alpha Rock", "middle rock", "Zebra Rock").inOrder()
     }
   }
+
+  @Test
+  fun getAllShouldGroupEmptyAlbumsFromDifferentArtistsIntoSingleEntry() {
+    runTest(testDispatcher) {
+      // Given: Multiple artists with empty album names (issue #184)
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist3", album = "", dateAdded = 3000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums
+      val result = repository.getAll().asSnapshot()
+
+      // Then: Empty albums should be grouped into a single entry
+      assertThat(result).hasSize(1)
+      assertThat(result.first().album).isEmpty()
+      assertThat(result.first().artist).isEmpty()
+    }
+  }
+
+  @Test
+  fun getAllShouldPreserveSeparateAlbumsWithSameName() {
+    runTest(testDispatcher) {
+      // Given: Same album name from different artists (should remain separate)
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "Greatest Hits", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "Greatest Hits", dateAdded = 2000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums
+      val result = repository.getAll().asSnapshot()
+
+      // Then: Both albums should exist separately
+      assertThat(result).hasSize(2)
+      assertThat(result.map { it.artist }).containsExactly("Artist1", "Artist2")
+    }
+  }
+
+  @Test
+  fun getAllShouldHandleMixOfEmptyAndNormalAlbums() {
+    runTest(testDispatcher) {
+      // Given: Mix of empty and normal albums from various artists
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist1", album = "Album A", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "Album B", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist3", album = "Album C", dateAdded = 3000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums
+      val result = repository.getAll().asSnapshot()
+
+      // Then: Empty albums grouped into one, normal albums preserved separately
+      assertThat(result).hasSize(4)
+      // Empty album appears first (empty string sorts before other strings)
+      assertThat(
+        result.map {
+          it.album
+        }
+      ).containsExactly("", "Album A", "Album B", "Album C").inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldPutEmptyAlbumsFirstInSortOrder() {
+    runTest(testDispatcher) {
+      // Given: Albums including empty ones
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "Zulu Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist3", album = "Alpha Album", dateAdded = 3000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums
+      val result = repository.getAll().asSnapshot()
+
+      // Then: Empty album should appear first
+      assertThat(result).hasSize(3)
+      assertThat(result.first().album).isEmpty()
+      assertThat(result.map { it.album }).containsExactly("", "Alpha Album", "Zulu Album").inOrder()
+    }
+  }
 }

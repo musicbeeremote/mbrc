@@ -47,7 +47,7 @@ interface TrackDao {
 
   @Query(
     """
-    select * from track where album = '' and album_artist = :artist
+    select * from track where album = '' and (album_artist = :artist or :artist = '')
     order by album_artist collate nocase asc, album collate nocase asc, disc asc, trackno asc
     """
   )
@@ -72,7 +72,7 @@ interface TrackDao {
   @Query(
     """
     select src from track
-    where (album_artist = :artist or artist = :artist) and album = :album
+    where album = :album and ((album_artist = :artist or artist = :artist) or :artist = '')
     order by album_artist collate nocase asc, album collate nocase asc, disc asc, trackno asc
     """
   )

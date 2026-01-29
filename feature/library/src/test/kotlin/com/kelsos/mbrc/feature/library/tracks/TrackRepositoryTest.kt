@@ -655,4 +655,91 @@ class TrackRepositoryTest : KoinTest {
       assertThat(storedTracks.first { it.src == "/path/to/track1.mp3" }.id).isEqualTo(track1Id)
     }
   }
+
+  @Test
+  fun getTracksShouldReturnAllNonAlbumTracksWhenArtistIsEmpty() {
+    runTest(testDispatcher) {
+      // Given: Non-album tracks from different artists (issue #184)
+      val nonAlbumTracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Non-Album Track",
+          basePath = "/path/to/artist1",
+          baseAlbum = ""
+        ).generateTrack { src = "/path/to/artist1/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Non-Album Track",
+          basePath = "/path/to/artist2",
+          baseAlbum = "",
+          genre = "Pop"
+        ).generateTrack { src = "/path/to/artist2/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 3",
+          baseTitle = "Non-Album Track",
+          basePath = "/path/to/artist3",
+          baseAlbum = "",
+          genre = "Jazz"
+        ).generateTrack { src = "/path/to/artist3/track1.mp3" }
+      )
+
+      val albumTrack = TrackGenerator(
+        baseArtist = "Artist 1",
+        baseTitle = "Album Track",
+        basePath = "/path/to/album",
+        baseAlbum = "Regular Album"
+      ).generateTrack { src = "/path/to/album/track1.mp3" }
+
+      dao.insertAll(nonAlbumTracks + albumTrack)
+
+      // When: Query non-album tracks with empty artist (grouped empty album case)
+      val query = PagingTrackQuery.NonAlbum(artist = "")
+      val result = repository.getTracks(query).asSnapshot()
+
+      // Then: Should return all non-album tracks from any artist
+      assertThat(result).hasSize(3)
+      assertThat(result.map { it.artist }).containsExactly("Artist 1", "Artist 2", "Artist 3")
+    }
+  }
+
+  @Test
+  fun getTrackPathsShouldReturnAllNonAlbumTrackPathsWhenArtistIsEmpty() {
+    runTest(testDispatcher) {
+      // Given: Non-album tracks from different artists (issue #184)
+      val nonAlbumTracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Non-Album Track",
+          basePath = "/path/to/artist1",
+          baseAlbum = ""
+        ).generateTrack { src = "/path/to/artist1/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Non-Album Track",
+          basePath = "/path/to/artist2",
+          baseAlbum = "",
+          genre = "Pop"
+        ).generateTrack { src = "/path/to/artist2/track1.mp3" }
+      )
+
+      val albumTrack = TrackGenerator(
+        baseArtist = "Artist 1",
+        baseTitle = "Album Track",
+        basePath = "/path/to/album",
+        baseAlbum = "Regular Album"
+      ).generateTrack { src = "/path/to/album/track1.mp3" }
+
+      dao.insertAll(nonAlbumTracks + albumTrack)
+
+      // When: Query track paths for empty album with empty artist
+      val result = repository.getTrackPaths(TrackQuery.Album(album = "", artist = ""))
+
+      // Then: Should return paths for all non-album tracks
+      assertThat(result).hasSize(2)
+      assertThat(result).containsExactly(
+        "/path/to/artist1/track1.mp3",
+        "/path/to/artist2/track1.mp3"
+      )
+    }
+  }
 }

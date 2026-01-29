@@ -12,7 +12,21 @@ interface AlbumDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insert(list: List<AlbumEntity>)
 
-  @Query("select * from album order by album collate nocase asc")
+  @Query(
+    """
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY album COLLATE NOCASE ASC
+    """
+  )
   fun getAll(): PagingSource<Int, AlbumEntity>
 
   @Query(

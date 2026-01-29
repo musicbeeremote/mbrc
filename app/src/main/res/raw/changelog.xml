@@ -36,6 +36,7 @@
     <bug>Fixes artist matching when searching in album library.</bug>
     <bug>Fixes case-insensitive sorting for tracks, albums, genres, and artists.</bug>
     <bug>Fixes notification update logic for connection state changes.</bug>
+    <bug>Groups tracks without album info into a single "[Empty]" entry in album library.</bug>
     <removed>Removes legacy View-based UI components.</removed>
   </version>
   <version

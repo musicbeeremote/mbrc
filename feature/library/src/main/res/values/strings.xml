@@ -62,6 +62,7 @@
 
   <!-- Unknown values -->
   <string name="non_album_tracks">Non album tracks</string>
+  <string name="empty_album">[Empty]</string>
   <string name="unknown_album">Unknown album</string>
   <string name="unknown_artist">Unknown artist</string>
   <string name="unknown_title">Unknown title</string>

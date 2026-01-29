@@ -31,6 +31,7 @@ Changelog
 - [#264] Adds setting to enable/disable half-star ratings.
 
 ### Changed
+- [#184] Groups tracks without album info into a single "[Empty]" entry in album library.
 - [#115] Fixes elapsed time not updating correctly for streaming content.
 - [#130] Fixes widget not updating track name and album art correctly.
 - Fixes widget track info position not updating dynamically.
@@ -70,6 +71,7 @@ Changelog
 [#155]: https://github.com/musicbeeremote/mbrc/issues/155
 [#178]: https://github.com/musicbeeremote/mbrc/issues/178
 [#181]: https://github.com/musicbeeremote/mbrc/issues/181
+[#184]: https://github.com/musicbeeremote/mbrc/issues/184
 [#204]: https://github.com/musicbeeremote/mbrc/issues/204
 [#205]: https://github.com/musicbeeremote/mbrc/issues/205
 [#219]: https://github.com/musicbeeremote/mbrc/issues/219

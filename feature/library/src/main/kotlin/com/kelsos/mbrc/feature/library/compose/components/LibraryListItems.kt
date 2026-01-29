@@ -111,8 +111,18 @@ fun AlbumListItem(
   modifier: Modifier = Modifier
 ) {
   var menuExpanded by remember { mutableStateOf(false) }
-  val title = album.album.ifEmpty { stringResource(R.string.unknown_album) }
-  val subtitle = album.artist.ifEmpty { stringResource(R.string.unknown_artist) }
+  // Special case: grouped empty albums (both album and artist are empty)
+  val isGroupedEmptyAlbum = album.album.isEmpty() && album.artist.isEmpty()
+  val title = when {
+    isGroupedEmptyAlbum -> stringResource(R.string.empty_album)
+    album.album.isEmpty() -> stringResource(R.string.unknown_album)
+    else -> album.album
+  }
+  val subtitle = when {
+    isGroupedEmptyAlbum -> ""
+    album.artist.isEmpty() -> stringResource(R.string.unknown_artist)
+    else -> album.artist
+  }
 
   DoubleLineRow(
     title = title,
