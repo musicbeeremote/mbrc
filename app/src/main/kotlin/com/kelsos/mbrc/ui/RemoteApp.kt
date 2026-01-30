@@ -15,13 +15,13 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
 import com.kelsos.mbrc.core.ui.theme.RemoteTheme
@@ -43,7 +43,7 @@ import org.koin.compose.koinInject
 fun RemoteApp() {
   val settingsManager: SettingsManager = koinInject()
   // Initial value matches DataStore default ("dark") to avoid flash on first load
-  val themeState by settingsManager.themeFlow.collectAsState(initial = Theme.Dark)
+  val themeState by settingsManager.themeFlow.collectAsStateWithLifecycle(initialValue = Theme.Dark)
 
   val darkTheme = when (themeState) {
     Theme.Light -> false
@@ -65,9 +65,9 @@ fun RemoteApp() {
     var updateRequiredVersion by remember { mutableStateOf("") }
 
     // What's New overlay state
-    val showWhatsNew by whatsNewViewModel.showWhatsNew.collectAsState()
-    val whatsNewEntries by whatsNewViewModel.entries.collectAsState()
-    val whatsNewLoading by whatsNewViewModel.isLoading.collectAsState()
+    val showWhatsNew by whatsNewViewModel.showWhatsNew.collectAsStateWithLifecycle()
+    val whatsNewEntries by whatsNewViewModel.entries.collectAsStateWithLifecycle()
+    val whatsNewLoading by whatsNewViewModel.isLoading.collectAsStateWithLifecycle()
 
     // Handle back press to close overlays
     BackHandler(enabled = showUpdateRequired || showWhatsNew) {

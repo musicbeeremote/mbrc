@@ -24,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.ui.R as CoreUiR
@@ -48,7 +48,7 @@ fun MiniControl(
   modifier: Modifier = Modifier,
   viewModel: MiniControlViewModel = koinViewModel()
 ) {
-  val state by viewModel.state.collectAsState(initial = MiniControlState())
+  val state by viewModel.state.collectAsStateWithLifecycle(initialValue = MiniControlState())
 
   LaunchedEffect(Unit) {
     viewModel.events.collect { event ->

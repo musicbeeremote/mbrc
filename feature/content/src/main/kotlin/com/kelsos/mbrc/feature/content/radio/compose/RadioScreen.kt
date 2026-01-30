@@ -15,7 +15,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.core.data.radio.RadioStation
 import com.kelsos.mbrc.core.ui.R as CoreUiR
@@ -47,7 +47,7 @@ fun RadioScreen(
   viewModel: RadioViewModel = koinViewModel()
 ) {
   val stations = viewModel.state.radios.collectAsLazyPagingItems()
-  val playingTrack by viewModel.playingTrack.collectAsState()
+  val playingTrack by viewModel.playingTrack.collectAsStateWithLifecycle()
   var isRefreshing by remember { mutableStateOf(false) }
 
   val queueFailedMessage = stringResource(R.string.radio__play_failed)

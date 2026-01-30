@@ -5,11 +5,11 @@ import androidx.compose.material.icons.filled.Album
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
@@ -33,7 +33,7 @@ fun AlbumsTab(
   viewModel: BrowseAlbumViewModel = koinViewModel()
 ) {
   val albums = viewModel.albums.collectAsLazyPagingItems()
-  val showSync by viewModel.showSync.collectAsState(initial = true)
+  val showSync by viewModel.showSync.collectAsStateWithLifecycle(initialValue = true)
 
   // Handle navigation events
   LaunchedEffect(Unit) {

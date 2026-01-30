@@ -21,12 +21,12 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kelsos.mbrc.feature.playback.R
 import com.kelsos.mbrc.feature.playback.player.RatingDialogViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -43,8 +43,8 @@ fun PlayerBottomSheet(
   viewModel: RatingDialogViewModel = koinViewModel()
 ) {
   val sheetState = rememberModalBottomSheetState()
-  val rating by viewModel.rating.collectAsState(initial = null)
-  val halfStarEnabled by viewModel.halfStarEnabled.collectAsState()
+  val rating by viewModel.rating.collectAsStateWithLifecycle(initialValue = null)
+  val halfStarEnabled by viewModel.halfStarEnabled.collectAsStateWithLifecycle()
 
   ModalBottomSheet(
     onDismissRequest = onDismiss,

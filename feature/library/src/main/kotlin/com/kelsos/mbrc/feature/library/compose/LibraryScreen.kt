@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.data.library.album.Album
@@ -72,8 +72,12 @@ fun LibraryScreen(
   var searchQuery by rememberSaveable { mutableStateOf("") }
   var statsToShow by remember { mutableStateOf<LibraryStats?>(null) }
 
-  val albumArtistsOnly by viewModel.albumArtistsOnly.collectAsState(initial = false)
-  val syncProgress by viewModel.progress.collectAsState(initial = LibrarySyncProgress.Idle)
+  val albumArtistsOnly by viewModel.albumArtistsOnly.collectAsStateWithLifecycle(
+    initialValue = false
+  )
+  val syncProgress by viewModel.progress.collectAsStateWithLifecycle(
+    initialValue = LibrarySyncProgress.Idle
+  )
 
   val pagerState = rememberPagerState(pageCount = { LibraryTab.entries.size })
 

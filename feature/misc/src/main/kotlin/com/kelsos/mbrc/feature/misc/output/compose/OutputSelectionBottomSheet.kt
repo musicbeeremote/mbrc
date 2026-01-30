@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.networking.dto.OutputResponse
@@ -49,8 +49,8 @@ fun OutputSelectionBottomSheet(
   viewModel: OutputSelectionViewModel = koinViewModel()
 ) {
   val sheetState = rememberModalBottomSheetState()
-  val outputs by viewModel.outputs.collectAsState(initial = OutputResponse())
-  val events by viewModel.events.collectAsState(initial = null)
+  val outputs by viewModel.outputs.collectAsStateWithLifecycle(initialValue = OutputResponse())
+  val events by viewModel.events.collectAsStateWithLifecycle(initialValue = null)
 
   var isLoading by remember { mutableStateOf(true) }
   var errorMessage by remember { mutableStateOf<String?>(null) }

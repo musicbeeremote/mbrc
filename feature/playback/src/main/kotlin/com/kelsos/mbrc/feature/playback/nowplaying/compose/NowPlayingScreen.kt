@@ -48,7 +48,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -97,10 +97,12 @@ fun NowPlayingScreen(
   viewModel: NowPlayingViewModel = koinViewModel()
 ) {
   val tracks = viewModel.tracks.collectAsLazyPagingItems()
-  val playingTrack by viewModel.playingTrack.collectAsState()
-  val connectionState by viewModel.connectionState.collectAsState(ConnectionStatus.Offline)
+  val playingTrack by viewModel.playingTrack.collectAsStateWithLifecycle()
+  val connectionState by viewModel.connectionState.collectAsStateWithLifecycle(
+    initialValue = ConnectionStatus.Offline
+  )
   val isConnected = connectionState is ConnectionStatus.Connected
-  val trackCount by viewModel.trackCount.collectAsState()
+  val trackCount by viewModel.trackCount.collectAsStateWithLifecycle()
 
   var isRefreshing by remember { mutableStateOf(false) }
   var isSearchActive by rememberSaveable { mutableStateOf(false) }

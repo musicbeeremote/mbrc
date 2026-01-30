@@ -16,7 +16,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kelsos.mbrc.core.data.playlist.PlaylistBrowserItem
 import com.kelsos.mbrc.core.ui.R as CoreUiR
@@ -47,7 +47,7 @@ fun PlaylistScreen(
   viewModel: PlaylistViewModel = koinViewModel()
 ) {
   val items = viewModel.items.collectAsLazyPagingItems()
-  val currentPath by viewModel.currentPath.collectAsState()
+  val currentPath by viewModel.currentPath.collectAsStateWithLifecycle()
   var isRefreshing by remember { mutableStateOf(false) }
 
   val refreshFailedMessage = stringResource(R.string.playlists_load_failed)

@@ -31,7 +31,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kelsos.mbrc.core.common.state.PlayingPosition
 import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.ui.compose.EmptyScreen
@@ -60,11 +60,11 @@ fun LyricsScreen(
   modifier: Modifier = Modifier,
   viewModel: LyricsViewModel = koinViewModel()
 ) {
-  val lyrics by viewModel.lyrics.collectAsState(initial = emptyList())
-  val playingTrack by viewModel.playingTrack.collectAsState()
-  val playingPosition by viewModel.playingPosition.collectAsState()
-  val trackDetails by viewModel.trackDetails.collectAsState()
-  val isPlaying by viewModel.isPlaying.collectAsState()
+  val lyrics by viewModel.lyrics.collectAsStateWithLifecycle(initialValue = emptyList())
+  val playingTrack by viewModel.playingTrack.collectAsStateWithLifecycle()
+  val playingPosition by viewModel.playingPosition.collectAsStateWithLifecycle()
+  val trackDetails by viewModel.trackDetails.collectAsStateWithLifecycle()
+  val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
 
   LyricsScreenContent(
     lyrics = lyrics,

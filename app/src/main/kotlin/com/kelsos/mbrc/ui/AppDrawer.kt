@@ -40,7 +40,6 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,6 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kelsos.mbrc.BuildConfig
@@ -79,8 +79,8 @@ fun AppDrawer(
   val currentBackStackEntry by navController.currentBackStackEntryAsState()
   val currentRoute = currentBackStackEntry?.destination?.route
   val scope = rememberCoroutineScope()
-  val connectionStatus by drawerViewModel.connectionStatus.collectAsState()
-  val connectionName by drawerViewModel.connectionName.collectAsState()
+  val connectionStatus by drawerViewModel.connectionStatus.collectAsStateWithLifecycle()
+  val connectionName by drawerViewModel.connectionName.collectAsStateWithLifecycle()
 
   val onConnectionToggle = remember(drawerViewModel) {
     { drawerViewModel.toggleConnection() }

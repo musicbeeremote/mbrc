@@ -55,7 +55,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -76,6 +75,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.palette.graphics.Palette
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -119,20 +119,20 @@ fun PlayerScreen(
   lyricsViewModel: LyricsViewModel = koinViewModel()
 ) {
   // Collect separate state flows for granular recomposition
-  val playingTrack by viewModel.playingTrack.collectAsState()
-  val playingPosition by viewModel.playingPosition.collectAsState()
-  val trackRating by viewModel.trackRating.collectAsState()
-  val volumeState by viewModel.volumeState.collectAsState()
-  val playbackState by viewModel.playbackState.collectAsState()
-  val isScrobbling by viewModel.isScrobbling.collectAsState()
-  val trackDetails by viewModel.trackDetails.collectAsState()
-  val showRatingOnPlayer by viewModel.showRatingOnPlayer.collectAsState()
+  val playingTrack by viewModel.playingTrack.collectAsStateWithLifecycle()
+  val playingPosition by viewModel.playingPosition.collectAsStateWithLifecycle()
+  val trackRating by viewModel.trackRating.collectAsStateWithLifecycle()
+  val volumeState by viewModel.volumeState.collectAsStateWithLifecycle()
+  val playbackState by viewModel.playbackState.collectAsStateWithLifecycle()
+  val isScrobbling by viewModel.isScrobbling.collectAsStateWithLifecycle()
+  val trackDetails by viewModel.trackDetails.collectAsStateWithLifecycle()
+  val showRatingOnPlayer by viewModel.showRatingOnPlayer.collectAsStateWithLifecycle()
 
   // Lyrics state
-  val lyrics by lyricsViewModel.lyrics.collectAsState(initial = emptyList())
-  val lyricsPlayingTrack by lyricsViewModel.playingTrack.collectAsState()
-  val lyricsPlayingPosition by lyricsViewModel.playingPosition.collectAsState()
-  val isPlaying by lyricsViewModel.isPlaying.collectAsState()
+  val lyrics by lyricsViewModel.lyrics.collectAsStateWithLifecycle(initialValue = emptyList())
+  val lyricsPlayingTrack by lyricsViewModel.playingTrack.collectAsStateWithLifecycle()
+  val lyricsPlayingPosition by lyricsViewModel.playingPosition.collectAsStateWithLifecycle()
+  val isPlaying by lyricsViewModel.isPlaying.collectAsStateWithLifecycle()
 
   var showBottomSheet by remember { mutableStateOf(false) }
   var showOutputSelection by remember { mutableStateOf(false) }
@@ -401,7 +401,7 @@ private fun rememberAlbumArtState(
   )
 
   // Collect painter state as a snapshot state for proper recomposition
-  val painterState by painter.state.collectAsState()
+  val painterState by painter.state.collectAsStateWithLifecycle()
 
   var colors by remember(defaultBackground) {
     mutableStateOf(
@@ -795,7 +795,7 @@ private fun LandscapePlayerLayout(
 @Composable
 private fun AlbumCover(painter: AsyncImagePainter, modifier: Modifier = Modifier) {
   val placeholderPainter = painterResource(CoreUiR.drawable.ic_image_no_cover)
-  val painterState by painter.state.collectAsState()
+  val painterState by painter.state.collectAsStateWithLifecycle()
 
   Surface(
     modifier = modifier
