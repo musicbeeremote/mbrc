@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "dependencyDashboardAutoclose": false,
+  "prCreation": "approval",
+  "packageRules": [
+    {
+      "groupName": "Kotlin",
+      "matchPackagePatterns": ["^org.jetbrains.kotlin"]
+    },
+    {
+      "groupName": "Compose",
+      "matchPackagePatterns": ["^androidx.compose"]
+    },
+    {
+      "groupName": "AndroidX",
+      "matchPackagePatterns": ["^androidx\\.(?!compose)"]
+    }
+  ]
+}
