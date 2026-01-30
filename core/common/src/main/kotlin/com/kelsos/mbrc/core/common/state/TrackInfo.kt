@@ -1,9 +1,12 @@
 package com.kelsos.mbrc.core.common.state
 
+import androidx.compose.runtime.Stable
+
 /**
  * Interface representing track information.
  * Platform-specific implementations (like Parcelable) should implement this.
  */
+@Stable
 interface TrackInfo {
   val artist: String
   val title: String
@@ -17,6 +20,7 @@ interface TrackInfo {
 /**
  * Simple immutable implementation of TrackInfo for use in core modules.
  */
+@Stable
 data class BasicTrackInfo(
   override val artist: String = "",
   override val title: String = "",

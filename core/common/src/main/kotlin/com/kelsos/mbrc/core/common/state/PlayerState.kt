@@ -1,5 +1,8 @@
 package com.kelsos.mbrc.core.common.state
 
+import androidx.compose.runtime.Stable
+
+@Stable
 sealed class PlayerState(val state: String) {
   object Playing : PlayerState(PLAYING)
 

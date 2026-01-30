@@ -1,9 +1,12 @@
 package com.kelsos.mbrc.core.common.state
 
+import androidx.compose.runtime.Stable
+
 /**
  * Core playing track information without platform dependencies.
  * Use this in modules that don't need Parcelable or MediaItem conversion.
  */
+@Stable
 data class PlayingTrackInfo(
   val artist: String = "",
   val title: String = "",

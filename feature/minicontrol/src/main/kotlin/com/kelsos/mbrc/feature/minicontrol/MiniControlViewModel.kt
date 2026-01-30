@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.minicontrol
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.core.common.mvvm.BaseViewModel
 import com.kelsos.mbrc.core.common.mvvm.UiMessageBase
@@ -67,6 +68,7 @@ class MiniControlViewModel(
   }
 }
 
+@Stable
 data class MiniControlState(
   val playingTrack: TrackInfo = BasicTrackInfo(),
   val playingPosition: PlayingPosition = PlayingPosition(),

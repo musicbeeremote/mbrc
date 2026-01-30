@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.content.radio
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -100,6 +101,7 @@ sealed class RadioUiMessages {
   object NetworkUnavailable : RadioUiMessages()
 }
 
+@Stable
 data class RadioState(val events: Flow<RadioUiMessages>, val radios: Flow<PagingData<RadioStation>>)
 
 class RadioViewModel(

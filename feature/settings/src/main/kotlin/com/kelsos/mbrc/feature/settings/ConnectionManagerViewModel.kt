@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.settings
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 /**
  * Dialog state for the connection manager.
  */
+@Stable
 sealed interface ConnectionDialogState {
   data object Hidden : ConnectionDialogState
   data object Add : ConnectionDialogState
@@ -30,6 +32,7 @@ sealed interface ConnectionDialogState {
 /**
  * Scanning state for network discovery.
  */
+@Stable
 sealed interface ScanningState {
   data object Idle : ScanningState
   data object Scanning : ScanningState
@@ -38,6 +41,7 @@ sealed interface ScanningState {
 /**
  * Form state for add/edit connection dialog.
  */
+@Stable
 data class ConnectionFormState(
   val name: String = "",
   val address: String = "",

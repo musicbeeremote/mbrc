@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.core.common.state
 
+import androidx.compose.runtime.Stable
+
 /**
  * Represents the rating state for a track.
  *
@@ -9,6 +11,7 @@ package com.kelsos.mbrc.core.common.state
  *   - `0f` = bomb rating (actively dislike)
  *   - `0.5f - 5.0f` = star rating (half-star increments)
  */
+@Stable
 data class TrackRating(val lfmRating: LfmRating = LfmRating.Normal, val rating: Float? = null) {
   fun isFavorite(): Boolean = lfmRating == LfmRating.Loved
 

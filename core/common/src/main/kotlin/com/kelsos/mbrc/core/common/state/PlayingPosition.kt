@@ -1,5 +1,8 @@
 package com.kelsos.mbrc.core.common.state
 
+import androidx.compose.runtime.Stable
+
+@Stable
 data class PlayingPosition(val current: Duration = 0, val total: Duration = 0) {
   /** True if this is a stream with unknown duration (total == -1) */
   val isStream: Boolean get() = total < 0

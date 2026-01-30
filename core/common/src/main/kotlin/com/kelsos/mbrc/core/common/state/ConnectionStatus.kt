@@ -1,5 +1,8 @@
 package com.kelsos.mbrc.core.common.state
 
+import androidx.compose.runtime.Stable
+
+@Stable
 sealed class ConnectionStatus(val status: String) {
   data object Offline : ConnectionStatus("Offline")
 

@@ -1,12 +1,14 @@
 package com.kelsos.mbrc.core.ui.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
  * Sealed interface representing the different states of the top app bar.
  * Each state defines what UI should be rendered by the parent scaffold.
  */
+@Stable
 sealed interface TopBarState {
   /** Default top bar with screen title from navigation */
   data object Default : TopBarState
@@ -42,6 +44,7 @@ sealed interface TopBarState {
 /**
  * Sealed interface representing the different states of the floating action button.
  */
+@Stable
 sealed interface FabState {
   /** No FAB displayed */
   data object Hidden : FabState
@@ -64,6 +67,7 @@ sealed interface FabState {
 /**
  * Item for expandable FAB speed dial menu.
  */
+@Stable
 data class FabItem(val icon: ImageVector, val label: String, val onClick: () -> Unit)
 
 /**
@@ -72,6 +76,7 @@ data class FabItem(val icon: ImageVector, val label: String, val onClick: () -> 
  * @param onClick Action when item is clicked
  * @param trailingContent Optional trailing content (e.g., checkbox, switch)
  */
+@Stable
 data class MenuItem(
   val label: String,
   val onClick: () -> Unit,
@@ -84,6 +89,7 @@ data class MenuItem(
  * @param contentDescription Accessibility description
  * @param onClick Action when clicked
  */
+@Stable
 data class ActionItem(
   val icon: ImageVector,
   val contentDescription: String,
@@ -93,6 +99,7 @@ data class ActionItem(
 /**
  * Sealed interface for the navigation icon type.
  */
+@Stable
 sealed interface NavigationIconType {
   /** Hamburger menu icon that opens the drawer */
   data object Drawer : NavigationIconType

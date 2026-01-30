@@ -31,6 +31,8 @@ dependencies {
   implementation(libs.bundles.coroutines)
   implementation(libs.timber)
   implementation(libs.androidx.annotation)
+  implementation(platform(libs.androidx.compose.bom))
+  implementation(libs.androidx.compose.runtime)
   api(libs.androidx.lifecycle.viewmodel.ktx)
 
   // Unit test dependencies

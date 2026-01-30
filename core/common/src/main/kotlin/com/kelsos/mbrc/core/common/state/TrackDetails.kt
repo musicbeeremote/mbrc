@@ -1,9 +1,12 @@
 package com.kelsos.mbrc.core.common.state
 
+import androidx.compose.runtime.Stable
+
 /**
  * Extended track details beyond the basic [TrackInfo].
  * Contains metadata and file properties from the currently playing track.
  */
+@Stable
 data class TrackDetails(
   // Tag metadata
   val albumArtist: String = "",

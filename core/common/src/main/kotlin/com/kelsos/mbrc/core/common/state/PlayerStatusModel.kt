@@ -1,7 +1,9 @@
 package com.kelsos.mbrc.core.common.state
 
 import androidx.annotation.IntRange
+import androidx.compose.runtime.Stable
 
+@Stable
 data class PlayerStatusModel(
   @get:IntRange(from = 0, to = 100)
   val volume: Int = 0,
