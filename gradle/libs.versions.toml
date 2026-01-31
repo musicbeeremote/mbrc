@@ -35,6 +35,7 @@ desugar = "2.1.5"
 firebaseBom = "34.8.0"
 google-material = "1.13.0"
 gradlePlugin-agp = "8.13.2"
+gradlePlugin-baselineprofile = "1.4.1"
 gradlePlugin-crashlytics = "3.0.6"
 gradlePlugin-detekt = "1.23.8"
 gradlePlugin-gms = "4.4.4"
@@ -143,6 +144,8 @@ squareup-okio = { module = "com.squareup.okio:okio", version.ref = "squareup-oki
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "gradlePlugin-baselineprofile" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "gradlePlugin-baselineprofile" }
 screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "gradlePlugin-screenshot" }
 
 [bundles]
@@ -195,6 +198,8 @@ koin = [
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutlibraries" }
 android-application = { id = "com.android.application", version.ref = "gradlePlugin-agp" }
 android-library = { id = "com.android.library", version.ref = "gradlePlugin-agp" }
+android-test = { id = "com.android.test", version.ref = "gradlePlugin-agp" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "gradlePlugin-baselineprofile" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradlePlugin-crashlytics" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "gradlePlugin-detekt" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "gradlePlugin-gms" }

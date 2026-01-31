@@ -18,6 +18,9 @@ include(":core:networking")
 include(":core:platform")
 include(":core:queue")
 
+// Baseline profile module
+include(":baselineprofile")
+
 // Feature modules
 include(":feature:library")
 include(":feature:playback")

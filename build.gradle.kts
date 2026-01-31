@@ -6,6 +6,8 @@ plugins {
   alias(libs.plugins.kover)
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.android.library) apply false
+  alias(libs.plugins.android.test) apply false
+  alias(libs.plugins.baselineprofile) apply false
   alias(libs.plugins.kotlinAndroid) apply false
   alias(libs.plugins.kotlinter) apply false
   alias(libs.plugins.kotlinParcelize) apply false

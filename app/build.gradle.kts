@@ -19,6 +19,7 @@ plugins {
   alias(libs.plugins.detekt)
   alias(libs.plugins.screenshot)
   alias(libs.plugins.aboutlibraries)
+  alias(libs.plugins.baselineprofile)
 }
 
 object KeyLoader {
@@ -54,6 +55,11 @@ object KeyLoader {
   }
 
   fun getValue(key: String): String = properties.getProperty(key)
+
+  fun isConfigured(): Boolean {
+    val keystorePath = getValue(KEYSTORE_PATH)
+    return keystorePath != "placeholder" && File(keystorePath).exists()
+  }
 }
 
 val gitHashProvider = providers.exec {
@@ -138,17 +144,25 @@ android {
   }
 
   signingConfigs {
-    create("release") {
-      storeFile = file(KeyLoader.getValue(KeyLoader.KEYSTORE_PATH))
-      keyAlias = KeyLoader.getValue(KeyLoader.KEY_ALIAS)
-      storePassword = KeyLoader.getValue(KeyLoader.STORE_PASS)
-      keyPassword = KeyLoader.getValue(KeyLoader.KEY_PASS)
+    if (KeyLoader.isConfigured()) {
+      create("release") {
+        storeFile = file(KeyLoader.getValue(KeyLoader.KEYSTORE_PATH))
+        keyAlias = KeyLoader.getValue(KeyLoader.KEY_ALIAS)
+        storePassword = KeyLoader.getValue(KeyLoader.STORE_PASS)
+        keyPassword = KeyLoader.getValue(KeyLoader.KEY_PASS)
+      }
     }
   }
 
   buildTypes {
+    val releaseSigningConfig = if (KeyLoader.isConfigured()) {
+      signingConfigs.getByName("release")
+    } else {
+      signingConfigs.getByName("debug")
+    }
+
     getByName("release") {
-      signingConfig = signingConfigs.getByName("release")
+      signingConfig = releaseSigningConfig
       isDebuggable = false
       isMinifyEnabled = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -165,6 +179,22 @@ android {
 
       buildConfigField("String", "GIT_SHA", "\"debug_build\"")
       buildConfigField("String", "BUILD_TIME", "\"debug_build\"")
+    }
+
+    // Baseline profile build types always use debug signing for local generation
+    create("benchmarkRelease") {
+      initWith(getByName("release"))
+      signingConfig = signingConfigs.getByName("debug")
+      matchingFallbacks += "release"
+      isDebuggable = false
+    }
+
+    create("nonMinifiedRelease") {
+      initWith(getByName("release"))
+      signingConfig = signingConfigs.getByName("debug")
+      matchingFallbacks += "release"
+      isDebuggable = false
+      isMinifyEnabled = false
     }
   }
 
@@ -220,6 +250,11 @@ android {
 
 ksp {
   arg("room.schemaLocation", "$projectDir/schemas")
+}
+
+baselineProfile {
+  dexLayoutOptimization = true
+  mergeIntoMain = true
 }
 
 detekt {
@@ -290,6 +325,9 @@ dependencies {
   implementation(libs.coilKt.compose)
   implementation(libs.androidx.palette)
   implementation(libs.androidx.glance.appwidget)
+  implementation(libs.androidx.profileinstaller)
+
+  baselineProfile(project(":baselineprofile"))
 
   ksp(libs.androidx.room.compiler)
   ksp(libs.squareup.moshi.codegen)
@@ -430,10 +468,19 @@ tasks {
     ).forEach { taskName ->
       tasks.findByName(taskName)?.dependsOn(copyLicenseToAssets)
     }
-    named("processGithubReleaseGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
-    named("processPlayReleaseGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
-    named("processGithubDebugGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
-    named("processPlayDebugGoogleServices").dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
+    // Set up Google Services task dependencies for all variants
+    listOf(
+      "processGithubDebugGoogleServices",
+      "processGithubReleaseGoogleServices",
+      "processGithubBenchmarkReleaseGoogleServices",
+      "processGithubNonMinifiedReleaseGoogleServices",
+      "processPlayDebugGoogleServices",
+      "processPlayReleaseGoogleServices",
+      "processPlayBenchmarkReleaseGoogleServices",
+      "processPlayNonMinifiedReleaseGoogleServices",
+    ).forEach { taskName ->
+      tasks.findByName(taskName)?.dependsOn(copyDummyGoogleServicesJson, checkGoogleServicesJson)
+    }
   }
 }
 
