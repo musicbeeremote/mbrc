@@ -73,6 +73,15 @@ subprojects {
       }
     }
   }
+
+  // Run unit tests only on debug build type - release tests are redundant for JVM tests
+  tasks.withType<Test>().configureEach {
+    onlyIf {
+      val isRelease = name.contains("Release", ignoreCase = true)
+      val isPlay = name.contains("Play", ignoreCase = true)
+      !isRelease && !isPlay
+    }
+  }
 }
 
 
