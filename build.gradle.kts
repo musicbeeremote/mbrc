@@ -1,4 +1,22 @@
+
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+
+buildscript {
+  dependencies {
+    classpath(libs.kotlinx.serialization.json)
+  }
+}
 
 plugins {
   alias(libs.plugins.versionsBenManes)
@@ -146,69 +164,89 @@ abstract class CollectSarifReportsTask : DefaultTask() {
     files.forEach { logger.lifecycle("  - ${it.name}") }
   }
 
+  private val json = Json { ignoreUnknownKeys = true; prettyPrint = true }
+
   private fun mergeSarifFiles(inputFiles: List<File>, outputFile: File) {
     var schema: String? = null
     var version: String? = null
-    var tool: Map<String, Any?>? = null
-    val allResults = mutableListOf<Map<String, Any?>>()
-    val allArtifacts = mutableListOf<Map<String, Any?>>()
+    var tool: JsonElement? = null
+    val allResults = mutableListOf<JsonElement>()
+    val allArtifacts = mutableListOf<JsonElement>()
 
     inputFiles.forEach { file ->
-      @Suppress("UNCHECKED_CAST")
-      val json = groovy.json.JsonSlurper().parse(file) as Map<String, Any?>
-      schema = schema ?: json["\$schema"] as? String
-      version = version ?: json["version"] as? String
+      val report = json.parseToJsonElement(file.readText()).jsonObject
+      schema = schema ?: report["\$schema"]?.jsonPrimitive?.content
+      version = version ?: report["version"]?.jsonPrimitive?.content
 
-      @Suppress("UNCHECKED_CAST")
-      val runs = json["runs"] as? List<Map<String, Any?>> ?: emptyList()
+      val runs = report["runs"]?.jsonArray ?: return@forEach
 
-      runs.forEach { run ->
-        @Suppress("UNCHECKED_CAST")
-        tool = tool ?: run["tool"] as? Map<String, Any?>
+      runs.forEach { runElement ->
+        val run = runElement.jsonObject
+        tool = tool ?: run["tool"]
 
         val currentOffset = allArtifacts.size
-
-        @Suppress("UNCHECKED_CAST")
-        val artifacts = run["artifacts"] as? List<Map<String, Any?>> ?: emptyList()
+        val artifacts = run["artifacts"]?.jsonArray ?: JsonArray(emptyList())
         allArtifacts.addAll(artifacts)
 
-        @Suppress("UNCHECKED_CAST")
-        val results = run["results"] as? List<Map<String, Any?>> ?: emptyList()
-        if (currentOffset > 0 && artifacts.isNotEmpty()) {
-          results.forEach { result ->
-            @Suppress("UNCHECKED_CAST")
-            val locations = result["locations"] as? List<Map<String, Any?>>
-            locations?.forEach { location ->
-              @Suppress("UNCHECKED_CAST")
-              val physicalLocation = location["physicalLocation"] as? MutableMap<String, Any?>
-              @Suppress("UNCHECKED_CAST")
-              val artifactIndex = physicalLocation?.get("artifactLocation") as? MutableMap<String, Any?>
-              val index = artifactIndex?.get("index") as? Int
-              if (index != null) {
-                artifactIndex["index"] = index + currentOffset
-              }
-            }
-          }
+        val results = run["results"]?.jsonArray ?: JsonArray(emptyList())
+        val adjustedResults = if (currentOffset > 0 && artifacts.isNotEmpty()) {
+          results.map { result -> adjustArtifactIndices(result.jsonObject, currentOffset) }
+        } else {
+          results.toList()
         }
-        allResults.addAll(results)
+        allResults.addAll(adjustedResults)
       }
     }
 
-    val mergedRun = mutableMapOf<String, Any?>(
-      "tool" to tool,
-      "results" to allResults
-    )
-    if (allArtifacts.isNotEmpty()) {
-      mergedRun["artifacts"] = allArtifacts
+    val merged = buildJsonObject {
+      schema?.let { put("\$schema", it) }
+      version?.let { put("version", it) }
+      putJsonArray("runs") {
+        add(buildJsonObject {
+          tool?.let { put("tool", it) }
+          putJsonArray("results") { allResults.forEach { add(it) } }
+          if (allArtifacts.isNotEmpty()) {
+            putJsonArray("artifacts") { allArtifacts.forEach { add(it) } }
+          }
+        })
+      }
     }
 
-    val merged = mapOf(
-      "\$schema" to schema,
-      "version" to version,
-      "runs" to listOf(mergedRun)
-    )
+    outputFile.writeText(json.encodeToString(JsonObject.serializer(), merged))
+  }
 
-    outputFile.writeText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(merged)))
+  private fun adjustArtifactIndices(result: JsonObject, offset: Int): JsonObject {
+    val locations = result["locations"]?.jsonArray ?: return result
+    val adjustedLocations = locations.map { locationElement ->
+      val location = locationElement.jsonObject
+      val physicalLocation = location["physicalLocation"]?.jsonObject ?: return@map locationElement
+      val artifactLocation = physicalLocation["artifactLocation"]?.jsonObject ?: return@map locationElement
+      val index = artifactLocation["index"]?.jsonPrimitive?.intOrNull ?: return@map locationElement
+
+      // Rebuild the nested structure with adjusted index
+      val newArtifactLocation = buildJsonObject {
+        artifactLocation.forEach { (key, value) ->
+          if (key == "index") put(key, index + offset) else put(key, value)
+        }
+      }
+      val newPhysicalLocation = buildJsonObject {
+        physicalLocation.forEach { (key, value) ->
+          if (key == "artifactLocation") put(key, newArtifactLocation) else put(key, value)
+        }
+      }
+      buildJsonObject {
+        location.forEach { (key, value) ->
+          if (key == "physicalLocation") put(key, newPhysicalLocation) else put(key, value)
+        }
+      }
+    }
+
+    return buildJsonObject {
+      result.forEach { (key, value) ->
+        if (key == "locations") putJsonArray("locations") { adjustedLocations.forEach { add(it) } }
+        else put(key, value)
+      }
+    }
   }
 }
 
