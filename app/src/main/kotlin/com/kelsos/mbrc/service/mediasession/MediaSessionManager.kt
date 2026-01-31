@@ -51,7 +51,8 @@ class MediaSessionManager(
       object : MediaSession.Callback {
         override fun onPlaybackResumption(
           mediaSession: MediaSession,
-          controller: MediaSession.ControllerInfo
+          controller: MediaSession.ControllerInfo,
+          playWhenReady: Boolean
         ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
           val item =
             runBlocking {

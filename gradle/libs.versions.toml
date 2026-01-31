@@ -3,9 +3,9 @@ aboutlibraries = "13.2.1"
 androidx-annotation = "1.9.1"
 androidx-appcompat = "1.7.1"
 androidx-arch-core-testing = "2.2.0"
-androidx-compose-bom = "2025.12.01"
-androidx-activity-compose = "1.12.2"
-androidx-navigation-compose = "2.9.6"
+androidx-compose-bom = "2026.01.01"
+androidx-activity-compose = "1.12.3"
+androidx-navigation-compose = "2.9.7"
 androidx-constraintlayout = "2.2.1"
 androidx-core-ktx = "1.17.0"
 androidx-core-splashscreen = "1.2.0"
@@ -13,9 +13,9 @@ androidx-datastore = "1.2.0"
 androidx-fragment = "1.8.9"
 androidx-lifecycle = "2.10.0"
 androidx-lifecycle-viewmodel-compose = "2.10.0"
-androidx-media3 = "1.9.0"
-androidx-paging-runtime-ktx = "3.3.6"
-androidx-paging-compose = "3.3.6"
+androidx-media3 = "1.9.1"
+androidx-paging-runtime-ktx = "3.4.0"
+androidx-paging-compose = "3.4.0"
 androidx-glance = "1.1.1"
 androidx-palette = "1.0.0"
 androidx-preference-ktx = "1.2.1"
@@ -27,30 +27,30 @@ androidx-test-junit = "1.3.0"
 androidx-test-runner = "1.7.0"
 androidx-test-truth = "1.7.0"
 androidx-viewpager2 = "1.1.0"
-androidx-work = "2.11.0"
+androidx-work = "2.11.1"
 androidx-swiperefreshlayout = "1.2.0"
 coil = "3.3.0"
 coil-compose = "3.3.0"
 desugar = "2.1.5"
-firebaseBom = "33.16.0"
+firebaseBom = "34.8.0"
 google-material = "1.13.0"
-gradlePlugin-agp = "8.12.3"
+gradlePlugin-agp = "8.13.2"
 gradlePlugin-crashlytics = "3.0.6"
 gradlePlugin-detekt = "1.23.8"
 gradlePlugin-gms = "4.4.4"
-gradlePlugin-kotlinter = "5.3.0"
-gradlePlugin-kover = "0.9.4"
-gradlePlugin-ksp = "2.3.4"
-gradlePlugin-screenshot = "0.0.1-alpha12"
+gradlePlugin-kotlinter = "5.4.0"
+gradlePlugin-kover = "0.9.5"
+gradlePlugin-ksp = "2.3.5"
+gradlePlugin-screenshot = "0.0.1-alpha13"
 gradlePlugin-protobuf = "0.9.6"
 gradlePlugin-versionCatalog = "1.0.1"
 gradlePlugin-versionsBenManes = "0.53.0"
 koin = "4.1.1"
 kotlin = "2.3.0"
 kotlinCoroutines = "1.10.2"
-mockk = "1.14.5"
-protobuf = "4.33.2"
-robolectric = "4.16"
+mockk = "1.14.9"
+protobuf = "4.33.5"
+robolectric = "4.16.1"
 squareup-leakcanary = "2.14"
 squareup-moshi = "1.15.2"
 squareup-okhttp = "5.3.2"
@@ -118,10 +118,10 @@ coilKt-coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coilKt-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 coilKt-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil-compose" }
 com-android-tools-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
-google-firebase-analytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-google-firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
-google-firebase-perf-ktx = { module = "com.google.firebase:firebase-perf-ktx" }
+google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+google-firebase-perf = { module = "com.google.firebase:firebase-perf" }
 google-material = { module = "com.google.android.material:material", version.ref = "google-material" }
 google-protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -181,9 +181,9 @@ coroutines = [
     "kotlin-coroutines-core",
 ]
 google-firebase = [
-    "google-firebase-analytics-ktx",
-    "google-firebase-crashlytics-ktx",
-    "google-firebase-perf-ktx",
+    "google-firebase-analytics",
+    "google-firebase-crashlytics",
+    "google-firebase-perf",
 ]
 koin = [
     "koin-android",

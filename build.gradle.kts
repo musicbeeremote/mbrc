@@ -1,5 +1,4 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.gradle.kotlin.dsl.withType
 
 plugins {
   alias(libs.plugins.versionsBenManes)
@@ -180,6 +179,7 @@ abstract class CollectSarifReportsTask : DefaultTask() {
             locations?.forEach { location ->
               @Suppress("UNCHECKED_CAST")
               val physicalLocation = location["physicalLocation"] as? MutableMap<String, Any?>
+              @Suppress("UNCHECKED_CAST")
               val artifactIndex = physicalLocation?.get("artifactLocation") as? MutableMap<String, Any?>
               val index = artifactIndex?.get("index") as? Int
               if (index != null) {
@@ -237,22 +237,12 @@ tasks.register("verifyAll") {
 }
 
 tasks.withType<DependencyUpdatesTask> {
-  resolutionStrategy {
-    componentSelection {
-      all {
-        when {
-          isNonStable(candidate.version) && !isNonStable(currentVersion) -> {
-            reject("Updating stable to non stable is not allowed")
-          }
-          candidate.module == "kotlin-gradle-plugin" && candidate.version != libs.versions.kotlin.get() -> {
-            reject("Keep Kotlin version on the version specified in libs.versions.toml")
-          }
-          // KSP versions are compound versions, starting with the kotlin version
-          candidate.group == "com.google.devtools.ksp" && !candidate.version.startsWith(libs.versions.kotlin.get()) -> {
-            reject("KSP needs to stick to Kotlin version")
-          }
-        }
-      }
-    }
+  rejectVersionIf {
+    // Don't upgrade from stable to non-stable versions
+    (isNonStable(candidate.version) && !isNonStable(currentVersion)) ||
+      // Keep Kotlin version on the version specified in libs.versions.toml
+      (candidate.module == "kotlin-gradle-plugin" && candidate.version != libs.versions.kotlin.get()) ||
+      // KSP versions are compound versions, starting with the kotlin version
+      (candidate.group == "com.google.devtools.ksp" && !candidate.version.startsWith(libs.versions.kotlin.get()))
   }
 }
