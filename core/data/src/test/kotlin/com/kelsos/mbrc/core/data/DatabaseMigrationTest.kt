@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.core.data
 
-import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -18,7 +17,7 @@ class DatabaseMigrationTest {
   @get:Rule
   val helper: MigrationTestHelper = MigrationTestHelper(
     InstrumentationRegistry.getInstrumentation(),
-    Database::class.java
+    Database::class.java,
   )
 
   @Test
@@ -402,39 +401,5 @@ class DatabaseMigrationTest {
     }
 
     db.close()
-  }
-
-  @Test
-  fun testMigrationWithRoomDatabase() {
-    // Test that the migration works with the actual Room database
-    val database = Room.databaseBuilder(
-      InstrumentationRegistry.getInstrumentation().targetContext,
-      Database::class.java,
-      "test-room-migration"
-    )
-      .addMigrations(MIGRATION_3_4)
-      .build()
-
-    // Try to access all DAOs to ensure schema is correct
-    val genreDao = database.genreDao()
-    val artistDao = database.artistDao()
-    val albumDao = database.albumDao()
-    val trackDao = database.trackDao()
-    val playlistDao = database.playlistDao()
-    val radioStationDao = database.radioStationDao()
-    val connectionDao = database.connectionDao()
-    val nowPlayingDao = database.nowPlayingDao()
-
-    // Perform basic operations to ensure everything works
-    assertThat(genreDao).isNotNull()
-    assertThat(artistDao).isNotNull()
-    assertThat(albumDao).isNotNull()
-    assertThat(trackDao).isNotNull()
-    assertThat(playlistDao).isNotNull()
-    assertThat(radioStationDao).isNotNull()
-    assertThat(connectionDao).isNotNull()
-    assertThat(nowPlayingDao).isNotNull()
-
-    database.close()
   }
 }

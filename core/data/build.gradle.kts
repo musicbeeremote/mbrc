@@ -28,8 +28,15 @@ android {
     enable = true
   }
 
+  testOptions {
+    unitTests {
+      isIncludeAndroidResources = true
+    }
+  }
+
   sourceSets {
-    getByName("androidTest").assets.srcDirs("$projectDir/schemas")
+    // Use debug assets for Robolectric tests - more reliable than test.assets
+    getByName("debug").assets.srcDirs("$projectDir/schemas")
   }
 }
 
@@ -53,11 +60,12 @@ dependencies {
   ksp(libs.androidx.room.compiler)
   ksp(libs.squareup.moshi.codegen)
 
-  androidTestImplementation(libs.androidx.room.testing)
-  androidTestImplementation(libs.androidx.test.junit)
-  androidTestImplementation(libs.androidx.test.runner)
-  androidTestImplementation(libs.truth)
-  androidTestImplementation(libs.kotlin.coroutines.test)
+  testImplementation(libs.androidx.room.testing)
+  testImplementation(libs.androidx.test.core)
+  testImplementation(libs.androidx.test.junit)
+  testImplementation(libs.robolectric)
+  testImplementation(libs.truth)
+  testImplementation(libs.kotlin.coroutines.test)
 
   // Test fixtures dependencies
   testFixturesImplementation(libs.koin.test)
