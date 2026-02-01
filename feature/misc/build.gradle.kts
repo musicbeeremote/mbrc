@@ -49,10 +49,14 @@ dependencies {
   implementation(libs.squareup.okio)
   ksp(libs.squareup.moshi.codegen)
 
+  testImplementation(testFixtures(project(":core:common")))
   testImplementation(libs.androidx.test.core)
   testImplementation(libs.androidx.test.runner)
   testImplementation(libs.androidx.test.junit)
+  testImplementation(libs.turbine)
   testImplementation(libs.truth)
+  testImplementation(libs.koin.test)
+  testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.mockk)
   testImplementation(libs.robolectric)
 }

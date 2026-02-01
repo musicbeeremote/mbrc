@@ -25,4 +25,7 @@ android {
 
 dependencies {
   implementation(project(":core:common"))
+
+  testImplementation(libs.truth)
+  testImplementation(libs.androidx.test.junit)
 }

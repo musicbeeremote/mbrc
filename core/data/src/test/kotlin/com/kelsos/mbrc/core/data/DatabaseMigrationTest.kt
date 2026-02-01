@@ -17,7 +17,7 @@ class DatabaseMigrationTest {
   @get:Rule
   val helper: MigrationTestHelper = MigrationTestHelper(
     InstrumentationRegistry.getInstrumentation(),
-    Database::class.java,
+    Database::class.java
   )
 
   @Test
