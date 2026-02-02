@@ -7,15 +7,15 @@
   "packageRules": [
     {
       "groupName": "Kotlin",
-      "matchPackagePatterns": ["^org.jetbrains.kotlin"]
+      "matchPackageNames": ["/^org\\.jetbrains\\.kotlin/"]
     },
     {
       "groupName": "Compose",
-      "matchPackagePatterns": ["^androidx.compose"]
+      "matchPackageNames": ["/^androidx\\.compose/"]
     },
     {
       "groupName": "AndroidX",
-      "matchPackagePatterns": ["^androidx\\.(?!compose)"]
+      "matchPackageNames": ["/^androidx\\.(?!compose)/"]
     }
   ]
 }
