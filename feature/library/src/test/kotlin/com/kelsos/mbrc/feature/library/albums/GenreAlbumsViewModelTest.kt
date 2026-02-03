@@ -4,13 +4,16 @@ import androidx.paging.PagingData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.core.common.settings.AlbumSortField
+import com.kelsos.mbrc.core.common.settings.AlbumSortPreference
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
-import com.kelsos.mbrc.core.common.settings.TrackAction
+import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
+import com.kelsos.mbrc.core.common.settings.TrackAction
 import com.kelsos.mbrc.core.data.library.album.Album
 import com.kelsos.mbrc.core.data.library.album.AlbumRepository
 import com.kelsos.mbrc.core.queue.Queue
@@ -56,8 +59,11 @@ class GenreAlbumsViewModelTest : KoinTest {
     }
 
     // Setup default mocks
-    every { repository.getAlbumsByGenre(any()) } returns flowOf(PagingData.empty())
+    every { repository.getAlbumsByGenre(any(), any(), any()) } returns flowOf(PagingData.empty())
     every { librarySettings.libraryTrackDefaultActionFlow } returns flowOf(TrackAction.PlayNow)
+    every { librarySettings.albumSortPreferenceFlow } returns flowOf(
+      AlbumSortPreference(AlbumSortField.NAME, SortOrder.ASC)
+    )
     coEvery { connectionStateFlow.isConnected } returns true
   }
 
@@ -176,6 +182,36 @@ class GenreAlbumsViewModelTest : KoinTest {
 
       // Verify queue handler is not called for default action
       coVerify(exactly = 0) { queueHandler.queueAlbum(any<Queue>(), any<String>(), any<String>()) }
+    }
+  }
+
+  @Test
+  fun sortPreferenceShouldEmitInitialValue() {
+    runTest(testDispatcher) {
+      // Given
+      val expectedPreference = AlbumSortPreference(AlbumSortField.NAME, SortOrder.ASC)
+
+      // When & Then
+      viewModel.sortPreference.test {
+        val preference = awaitItem()
+        assertThat(preference).isEqualTo(expectedPreference)
+        cancelAndIgnoreRemainingEvents()
+      }
+    }
+  }
+
+  @Test
+  fun updateSortPreferenceShouldCallLibrarySettings() {
+    runTest(testDispatcher) {
+      // Given
+      val newPreference = AlbumSortPreference(AlbumSortField.ARTIST, SortOrder.DESC)
+
+      // When
+      viewModel.updateSortPreference(newPreference)
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      coVerify { librarySettings.setAlbumSortPreference(newPreference) }
     }
   }
 }

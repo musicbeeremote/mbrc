@@ -191,4 +191,74 @@ interface AlbumDao {
     """
   )
   fun getAlbumsByGenre(genreId: Long): PagingSource<Int, AlbumEntity>
+
+  // Get albums by genre sorted by album name ASC
+  @Query(
+    """
+        SELECT DISTINCT album.artist AS artist, album.album AS album,
+        album.date_added AS date_added, album.id AS id, album.cover AS cover
+        FROM album
+        INNER JOIN track ON album.album = track.album AND track.album_artist = album.artist
+        INNER JOIN genre ON genre.genre = track.genre
+        WHERE genre.id = :genreId
+        GROUP BY album.id
+        ORDER BY album.album COLLATE NOCASE ASC
+    """
+  )
+  fun getAlbumsByGenreByNameAsc(genreId: Long): PagingSource<Int, AlbumEntity>
+
+  // Get albums by genre sorted by album name DESC
+  @Query(
+    """
+        SELECT DISTINCT album.artist AS artist, album.album AS album,
+        album.date_added AS date_added, album.id AS id, album.cover AS cover
+        FROM album
+        INNER JOIN track ON album.album = track.album AND track.album_artist = album.artist
+        INNER JOIN genre ON genre.genre = track.genre
+        WHERE genre.id = :genreId
+        GROUP BY album.id
+        ORDER BY album.album COLLATE NOCASE DESC
+    """
+  )
+  fun getAlbumsByGenreByNameDesc(genreId: Long): PagingSource<Int, AlbumEntity>
+
+  // Get albums by genre sorted by artist ASC (ignoring "The" prefix)
+  @Query(
+    """
+        SELECT DISTINCT album.artist AS artist, album.album AS album,
+        album.date_added AS date_added, album.id AS id, album.cover AS cover
+        FROM album
+        INNER JOIN track ON album.album = track.album AND track.album_artist = album.artist
+        INNER JOIN genre ON genre.genre = track.genre
+        WHERE genre.id = :genreId
+        GROUP BY album.id
+        ORDER BY
+          CASE
+            WHEN LOWER(album.artist) LIKE 'the %' THEN SUBSTR(album.artist, 5)
+            ELSE album.artist
+          END COLLATE NOCASE ASC,
+          album.album COLLATE NOCASE ASC
+    """
+  )
+  fun getAlbumsByGenreByArtistAsc(genreId: Long): PagingSource<Int, AlbumEntity>
+
+  // Get albums by genre sorted by artist DESC (ignoring "The" prefix)
+  @Query(
+    """
+        SELECT DISTINCT album.artist AS artist, album.album AS album,
+        album.date_added AS date_added, album.id AS id, album.cover AS cover
+        FROM album
+        INNER JOIN track ON album.album = track.album AND track.album_artist = album.artist
+        INNER JOIN genre ON genre.genre = track.genre
+        WHERE genre.id = :genreId
+        GROUP BY album.id
+        ORDER BY
+          CASE
+            WHEN LOWER(album.artist) LIKE 'the %' THEN SUBSTR(album.artist, 5)
+            ELSE album.artist
+          END COLLATE NOCASE DESC,
+          album.album COLLATE NOCASE ASC
+    """
+  )
+  fun getAlbumsByGenreByArtistDesc(genreId: Long): PagingSource<Int, AlbumEntity>
 }

@@ -13,7 +13,11 @@ interface AlbumRepository : Repository<Album> {
     order: SortOrder
   ): Flow<PagingData<Album>>
 
-  fun getAlbumsByGenre(genreId: Long): Flow<PagingData<Album>>
+  fun getAlbumsByGenre(
+    genreId: Long,
+    field: AlbumSortField,
+    order: SortOrder
+  ): Flow<PagingData<Album>>
 
   fun getAll(field: AlbumSortField, order: SortOrder): Flow<PagingData<Album>>
 

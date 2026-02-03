@@ -40,8 +40,22 @@ class AlbumRepositoryImpl(
     it.toAlbum()
   }
 
-  override fun getAlbumsByGenre(genreId: Long): Flow<PagingData<Album>> = paged({
-    dao.getAlbumsByGenre(genreId)
+  override fun getAlbumsByGenre(
+    genreId: Long,
+    field: AlbumSortField,
+    order: SortOrder
+  ): Flow<PagingData<Album>> = paged({
+    when (field) {
+      AlbumSortField.NAME -> when (order) {
+        SortOrder.ASC -> dao.getAlbumsByGenreByNameAsc(genreId)
+        SortOrder.DESC -> dao.getAlbumsByGenreByNameDesc(genreId)
+      }
+
+      AlbumSortField.ARTIST -> when (order) {
+        SortOrder.ASC -> dao.getAlbumsByGenreByArtistAsc(genreId)
+        SortOrder.DESC -> dao.getAlbumsByGenreByArtistDesc(genreId)
+      }
+    }
   }) {
     it.toAlbum()
   }

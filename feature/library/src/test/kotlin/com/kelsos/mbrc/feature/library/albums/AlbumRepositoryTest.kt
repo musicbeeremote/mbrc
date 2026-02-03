@@ -722,7 +722,11 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      val result = repository.getAlbumsByGenre(1L).asSnapshot()
+      val result = repository.getAlbumsByGenre(
+        1L,
+        AlbumSortField.NAME,
+        SortOrder.ASC
+      ).asSnapshot()
 
       assertThat(result.map { it.album }).containsExactly("Rock Album 1", "Rock Album 2").inOrder()
     }
@@ -755,9 +759,225 @@ class AlbumRepositoryTest : KoinTest {
         )
       trackDao.insertAll(tracks)
 
-      val result = repository.getAlbumsByGenre(1L).asSnapshot()
+      val result = repository.getAlbumsByGenre(
+        1L,
+        AlbumSortField.NAME,
+        SortOrder.ASC
+      ).asSnapshot()
 
       assertThat(result).isEmpty()
+    }
+  }
+
+  @Test
+  fun getAlbumsByGenreShouldSortByNameDesc() {
+    runTest(testDispatcher) {
+      val genres = listOf(GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L))
+      genreDao.insertAll(genres)
+
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "Alpha Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Zebra Album", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist1", album = "Middle Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Alpha Album",
+            title = "Track 1",
+            src = "track1.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Zebra Album",
+            title = "Track 2",
+            src = "track2.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Artist1",
+            albumArtist = "Artist1",
+            album = "Middle Album",
+            title = "Track 3",
+            src = "track3.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      val result = repository.getAlbumsByGenre(
+        1L,
+        AlbumSortField.NAME,
+        SortOrder.DESC
+      ).asSnapshot()
+
+      assertThat(result.map { it.album })
+        .containsExactly("Zebra Album", "Middle Album", "Alpha Album")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun getAlbumsByGenreShouldSortByArtistAsc() {
+    runTest(testDispatcher) {
+      val genres = listOf(GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L))
+      genreDao.insertAll(genres)
+
+      val albums =
+        listOf(
+          AlbumEntity(artist = "The Beatles", album = "Abbey Road", dateAdded = 1000L),
+          AlbumEntity(artist = "AC/DC", album = "Back in Black", dateAdded = 1000L),
+          AlbumEntity(artist = "Zebra Band", album = "Zebra Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "The Beatles",
+            albumArtist = "The Beatles",
+            album = "Abbey Road",
+            title = "Track 1",
+            src = "track1.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "AC/DC",
+            albumArtist = "AC/DC",
+            album = "Back in Black",
+            title = "Track 2",
+            src = "track2.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Zebra Band",
+            albumArtist = "Zebra Band",
+            album = "Zebra Album",
+            title = "Track 3",
+            src = "track3.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      val result = repository.getAlbumsByGenre(
+        1L,
+        AlbumSortField.ARTIST,
+        SortOrder.ASC
+      ).asSnapshot()
+
+      // "The" prefix is ignored, so Beatles sorts under B
+      assertThat(result.map { it.artist })
+        .containsExactly("AC/DC", "The Beatles", "Zebra Band")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun getAlbumsByGenreShouldSortByArtistDesc() {
+    runTest(testDispatcher) {
+      val genres = listOf(GenreEntity(id = 1, genre = "Rock", dateAdded = 1000L))
+      genreDao.insertAll(genres)
+
+      val albums =
+        listOf(
+          AlbumEntity(artist = "The Beatles", album = "Abbey Road", dateAdded = 1000L),
+          AlbumEntity(artist = "AC/DC", album = "Back in Black", dateAdded = 1000L),
+          AlbumEntity(artist = "Zebra Band", album = "Zebra Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      val tracks =
+        listOf(
+          TrackEntity(
+            artist = "The Beatles",
+            albumArtist = "The Beatles",
+            album = "Abbey Road",
+            title = "Track 1",
+            src = "track1.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "AC/DC",
+            albumArtist = "AC/DC",
+            album = "Back in Black",
+            title = "Track 2",
+            src = "track2.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          ),
+          TrackEntity(
+            artist = "Zebra Band",
+            albumArtist = "Zebra Band",
+            album = "Zebra Album",
+            title = "Track 3",
+            src = "track3.mp3",
+            trackno = 1,
+            disc = 1,
+            genre = "Rock",
+            year = "2020",
+            sortableYear = "2020",
+            dateAdded = 1000L
+          )
+        )
+      trackDao.insertAll(tracks)
+
+      val result = repository.getAlbumsByGenre(
+        1L,
+        AlbumSortField.ARTIST,
+        SortOrder.DESC
+      ).asSnapshot()
+
+      // "The" prefix is ignored, so Beatles sorts under B
+      assertThat(result.map { it.artist })
+        .containsExactly("Zebra Band", "The Beatles", "AC/DC")
+        .inOrder()
     }
   }
 
