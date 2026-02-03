@@ -15,12 +15,14 @@ interface LibrarySettings {
   val genreSortPreferenceFlow: Flow<GenreSortPreference>
   val artistSortPreferenceFlow: Flow<ArtistSortPreference>
   val albumSortPreferenceFlow: Flow<AlbumSortPreference>
+  val trackSortPreferenceFlow: Flow<TrackSortPreference>
   val genreArtistsSortPreferenceFlow: Flow<ArtistSortPreference>
   val artistAlbumsSortPreferenceFlow: Flow<AlbumSortPreference>
 
   suspend fun setGenreSortPreference(preference: GenreSortPreference)
   suspend fun setArtistSortPreference(preference: ArtistSortPreference)
   suspend fun setAlbumSortPreference(preference: AlbumSortPreference)
+  suspend fun setTrackSortPreference(preference: TrackSortPreference)
   suspend fun setGenreArtistsSortPreference(preference: ArtistSortPreference)
   suspend fun setArtistAlbumsSortPreference(preference: AlbumSortPreference)
 }

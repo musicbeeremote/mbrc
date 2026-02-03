@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.core.data.library.track
 
 import androidx.paging.PagingData
+import com.kelsos.mbrc.core.common.settings.SortOrder
+import com.kelsos.mbrc.core.common.settings.TrackSortField
 import com.kelsos.mbrc.core.data.Repository
 import kotlinx.coroutines.flow.Flow
 
@@ -26,4 +28,8 @@ interface TrackRepository : Repository<Track> {
   fun getTrackPaths(query: TrackQuery): List<String>
 
   suspend fun getByPath(path: String): Track?
+
+  fun getAll(field: TrackSortField, order: SortOrder): Flow<PagingData<Track>>
+
+  fun search(term: String, field: TrackSortField, order: SortOrder): Flow<PagingData<Track>>
 }

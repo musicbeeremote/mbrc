@@ -2,6 +2,8 @@ package com.kelsos.mbrc.feature.library.tracks
 
 import androidx.paging.PagingData
 import com.kelsos.mbrc.core.common.data.Progress
+import com.kelsos.mbrc.core.common.settings.SortOrder
+import com.kelsos.mbrc.core.common.settings.TrackSortField
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.common.utilities.epoch
 import com.kelsos.mbrc.core.data.library.track.PagingTrackQuery
@@ -72,6 +74,58 @@ class TrackRepositoryImpl(
 
   override fun search(term: String): Flow<PagingData<Track>> = paged({
     dao.search(term)
+  }) { it.toTrack() }
+
+  override fun getAll(field: TrackSortField, order: SortOrder): Flow<PagingData<Track>> = paged({
+    when (field) {
+      TrackSortField.TITLE -> when (order) {
+        SortOrder.ASC -> dao.getAllByTitleAsc()
+        SortOrder.DESC -> dao.getAllByTitleDesc()
+      }
+
+      TrackSortField.ARTIST -> when (order) {
+        SortOrder.ASC -> dao.getAllByArtistAsc()
+        SortOrder.DESC -> dao.getAllByArtistDesc()
+      }
+
+      TrackSortField.ALBUM -> when (order) {
+        SortOrder.ASC -> dao.getAllByAlbumAsc()
+        SortOrder.DESC -> dao.getAllByAlbumDesc()
+      }
+
+      TrackSortField.ALBUM_ARTIST -> when (order) {
+        SortOrder.ASC -> dao.getAllByAlbumArtistAsc()
+        SortOrder.DESC -> dao.getAllByAlbumArtistDesc()
+      }
+    }
+  }) { it.toTrack() }
+
+  override fun search(
+    term: String,
+    field: TrackSortField,
+    order: SortOrder
+  ): Flow<PagingData<Track>> = paged({
+    when (field) {
+      TrackSortField.TITLE -> when (order) {
+        SortOrder.ASC -> dao.searchByTitleAsc(term)
+        SortOrder.DESC -> dao.searchByTitleDesc(term)
+      }
+
+      TrackSortField.ARTIST -> when (order) {
+        SortOrder.ASC -> dao.searchByArtistAsc(term)
+        SortOrder.DESC -> dao.searchByArtistDesc(term)
+      }
+
+      TrackSortField.ALBUM -> when (order) {
+        SortOrder.ASC -> dao.searchByAlbumAsc(term)
+        SortOrder.DESC -> dao.searchByAlbumDesc(term)
+      }
+
+      TrackSortField.ALBUM_ARTIST -> when (order) {
+        SortOrder.ASC -> dao.searchByAlbumArtistAsc(term)
+        SortOrder.DESC -> dao.searchByAlbumArtistDesc(term)
+      }
+    }
   }) { it.toTrack() }
 
   override fun getTrackPaths(query: TrackQuery): List<String> = when (query) {

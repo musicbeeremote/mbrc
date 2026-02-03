@@ -397,6 +397,8 @@ private fun LibraryTabPage(
     LibraryTab.TRACKS -> TracksTab(
       snackbarHostState = snackbarHostState,
       isSyncing = isSyncing,
+      showSortSheet = showSortSheet,
+      onDismissSortSheet = onDismissSortSheet,
       onSync = onSync
     )
   }

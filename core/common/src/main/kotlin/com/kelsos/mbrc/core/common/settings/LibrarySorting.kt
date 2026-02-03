@@ -67,6 +67,23 @@ data class SortPreference<T>(val field: T, val order: SortOrder) {
   }
 }
 
+enum class TrackSortField(val value: String) {
+  TITLE("title"),
+  ARTIST("artist"),
+  ALBUM("album"),
+  ALBUM_ARTIST("album_artist");
+
+  companion object {
+    fun fromString(value: String): TrackSortField = when (value) {
+      ARTIST.value -> ARTIST
+      ALBUM.value -> ALBUM
+      ALBUM_ARTIST.value -> ALBUM_ARTIST
+      else -> TITLE
+    }
+  }
+}
+
 typealias GenreSortPreference = SortPreference<GenreSortField>
 typealias ArtistSortPreference = SortPreference<ArtistSortField>
 typealias AlbumSortPreference = SortPreference<AlbumSortField>
+typealias TrackSortPreference = SortPreference<TrackSortField>

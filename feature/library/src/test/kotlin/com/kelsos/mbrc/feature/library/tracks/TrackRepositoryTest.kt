@@ -6,6 +6,8 @@ import androidx.paging.testing.asSnapshot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.data.Progress
+import com.kelsos.mbrc.core.common.settings.SortOrder
+import com.kelsos.mbrc.core.common.settings.TrackSortField
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.data.Database
@@ -740,6 +742,477 @@ class TrackRepositoryTest : KoinTest {
         "/path/to/artist1/track1.mp3",
         "/path/to/artist2/track1.mp3"
       )
+    }
+  }
+
+  // Sorting tests
+  @Test
+  fun getAllShouldSortByTitleAsc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Zebra",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/zebra.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Alpha",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/alpha.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 3",
+          baseTitle = "Middle",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/middle.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.TITLE, SortOrder.ASC).asSnapshot()
+
+      assertThat(result.map { it.title }).containsExactly("Alpha", "Middle", "Zebra").inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByTitleDesc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Zebra",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/zebra.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Alpha",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/alpha.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 3",
+          baseTitle = "Middle",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/middle.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.TITLE, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.title }).containsExactly("Zebra", "Middle", "Alpha").inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByArtistAscIgnoringThePrefix() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "The Beatles",
+          baseTitle = "Hey Jude",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/heyjude.mp3" },
+        TrackGenerator(
+          baseArtist = "AC/DC",
+          baseTitle = "Back in Black",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/backinblack.mp3" },
+        TrackGenerator(
+          baseArtist = "Zebra Band",
+          baseTitle = "Zebra Song",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/zebrasong.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.ARTIST, SortOrder.ASC).asSnapshot()
+
+      // "The" prefix is ignored, so Beatles sorts under B
+      assertThat(result.map { it.artist })
+        .containsExactly("AC/DC", "The Beatles", "Zebra Band")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByArtistDescIgnoringThePrefix() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "The Beatles",
+          baseTitle = "Hey Jude",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/heyjude.mp3" },
+        TrackGenerator(
+          baseArtist = "AC/DC",
+          baseTitle = "Back in Black",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/backinblack.mp3" },
+        TrackGenerator(
+          baseArtist = "Zebra Band",
+          baseTitle = "Zebra Song",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/zebrasong.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.ARTIST, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.artist })
+        .containsExactly("Zebra Band", "The Beatles", "AC/DC")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByAlbumAsc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Track 1",
+          baseAlbum = "Zebra Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Track 2",
+          baseAlbum = "Alpha Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track2.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 3",
+          baseTitle = "Track 3",
+          baseAlbum = "Middle Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track3.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.ALBUM, SortOrder.ASC).asSnapshot()
+
+      assertThat(result.map { it.album })
+        .containsExactly("Alpha Album", "Middle Album", "Zebra Album")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByAlbumDesc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Track 1",
+          baseAlbum = "Zebra Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Track 2",
+          baseAlbum = "Alpha Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track2.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist 3",
+          baseTitle = "Track 3",
+          baseAlbum = "Middle Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track3.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.ALBUM, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.album })
+        .containsExactly("Zebra Album", "Middle Album", "Alpha Album")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByTitleAsc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Rock Artist",
+          baseTitle = "Zebra Rock",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/zebra.mp3" },
+        TrackGenerator(
+          baseArtist = "Rock Band",
+          baseTitle = "Alpha Rock",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/alpha.mp3" },
+        TrackGenerator(
+          baseArtist = "Jazz Artist",
+          baseTitle = "Jazz Song",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/jazz.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.search("Rock", TrackSortField.TITLE, SortOrder.ASC).asSnapshot()
+
+      assertThat(result.map { it.title }).containsExactly("Alpha Rock", "Zebra Rock").inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByArtistAsc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "The Rock Band",
+          baseTitle = "Track 1",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Alpha Rock",
+          baseTitle = "Track 2",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track2.mp3" },
+        TrackGenerator(
+          baseArtist = "Jazz Artist",
+          baseTitle = "Track 3",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track3.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.search("Rock", TrackSortField.ARTIST, SortOrder.ASC).asSnapshot()
+
+      assertThat(result.map { it.artist }).containsExactly("Alpha Rock", "The Rock Band").inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByAlbumAsc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist",
+          baseTitle = "Rock Track 1",
+          baseAlbum = "Zebra Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist",
+          baseTitle = "Rock Track 2",
+          baseAlbum = "Alpha Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track2.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist",
+          baseTitle = "Jazz Track",
+          baseAlbum = "Jazz Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track3.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.search("Rock", TrackSortField.ALBUM, SortOrder.ASC).asSnapshot()
+
+      assertThat(result.map { it.album }).containsExactly("Alpha Album", "Zebra Album").inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByAlbumDesc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist",
+          baseTitle = "Rock Track 1",
+          baseAlbum = "Zebra Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track1.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist",
+          baseTitle = "Rock Track 2",
+          baseAlbum = "Alpha Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track2.mp3" },
+        TrackGenerator(
+          baseArtist = "Artist",
+          baseTitle = "Jazz Track",
+          baseAlbum = "Jazz Album",
+          basePath = "/path/to"
+        ).generateTrack { src = "/path/to/track3.mp3" }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.search("Rock", TrackSortField.ALBUM, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.album }).containsExactly("Zebra Album", "Alpha Album").inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByAlbumArtistDesc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Rock Artist",
+          baseTitle = "Track 1",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track1.mp3"
+          albumArtist = "The Rock Band"
+        },
+        TrackGenerator(
+          baseArtist = "Rock Star",
+          baseTitle = "Track 2",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track2.mp3"
+          albumArtist = "Alpha Rock"
+        },
+        TrackGenerator(
+          baseArtist = "Jazz Artist",
+          baseTitle = "Track 3",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track3.mp3"
+          albumArtist = "Jazz Band"
+        }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.search(
+        "Rock",
+        TrackSortField.ALBUM_ARTIST,
+        SortOrder.DESC
+      ).asSnapshot()
+
+      assertThat(
+        result.map {
+          it.albumArtist
+        }
+      ).containsExactly("The Rock Band", "Alpha Rock").inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByAlbumArtistAscIgnoringThePrefix() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Track 1",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track1.mp3"
+          albumArtist = "The Beatles"
+        },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Track 2",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track2.mp3"
+          albumArtist = "AC/DC"
+        },
+        TrackGenerator(
+          baseArtist = "Artist 3",
+          baseTitle = "Track 3",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track3.mp3"
+          albumArtist = "Zebra Band"
+        }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.ALBUM_ARTIST, SortOrder.ASC).asSnapshot()
+
+      // "The" prefix is ignored, so Beatles sorts under B
+      assertThat(result.map { it.albumArtist })
+        .containsExactly("AC/DC", "The Beatles", "Zebra Band")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun getAllShouldSortByAlbumArtistDescIgnoringThePrefix() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Artist 1",
+          baseTitle = "Track 1",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track1.mp3"
+          albumArtist = "The Beatles"
+        },
+        TrackGenerator(
+          baseArtist = "Artist 2",
+          baseTitle = "Track 2",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track2.mp3"
+          albumArtist = "AC/DC"
+        },
+        TrackGenerator(
+          baseArtist = "Artist 3",
+          baseTitle = "Track 3",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track3.mp3"
+          albumArtist = "Zebra Band"
+        }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.getAll(TrackSortField.ALBUM_ARTIST, SortOrder.DESC).asSnapshot()
+
+      assertThat(result.map { it.albumArtist })
+        .containsExactly("Zebra Band", "The Beatles", "AC/DC")
+        .inOrder()
+    }
+  }
+
+  @Test
+  fun searchShouldSortByAlbumArtistAsc() {
+    runTest(testDispatcher) {
+      val tracks = listOf(
+        TrackGenerator(
+          baseArtist = "Rock Artist",
+          baseTitle = "Track 1",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track1.mp3"
+          albumArtist = "The Rock Band"
+        },
+        TrackGenerator(
+          baseArtist = "Rock Star",
+          baseTitle = "Track 2",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track2.mp3"
+          albumArtist = "Alpha Rock"
+        },
+        TrackGenerator(
+          baseArtist = "Jazz Artist",
+          baseTitle = "Track 3",
+          basePath = "/path/to"
+        ).generateTrack {
+          src = "/path/to/track3.mp3"
+          albumArtist = "Jazz Band"
+        }
+      )
+      dao.insertAll(tracks)
+
+      val result = repository.search(
+        "Rock",
+        TrackSortField.ALBUM_ARTIST,
+        SortOrder.ASC
+      ).asSnapshot()
+
+      assertThat(
+        result.map {
+          it.albumArtist
+        }
+      ).containsExactly("Alpha Rock", "The Rock Band").inOrder()
     }
   }
 }

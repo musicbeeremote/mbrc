@@ -5,7 +5,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
+import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.settings.TrackAction
+import com.kelsos.mbrc.core.common.settings.TrackSortField
+import com.kelsos.mbrc.core.common.settings.TrackSortPreference
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
@@ -67,8 +70,13 @@ class BrowseTrackViewModelTest : KoinTest {
     // Setup default mocks
     every { searchModel.term } returns searchTermFlow
     every { repository.getAll() } returns flowOf(PagingData.empty())
+    every { repository.getAll(any(), any()) } returns flowOf(PagingData.empty())
     every { repository.search(any()) } returns flowOf(PagingData.empty())
+    every { repository.search(any(), any(), any()) } returns flowOf(PagingData.empty())
     every { librarySettings.libraryTrackDefaultActionFlow } returns flowOf(TrackAction.PlayNow)
+    every { librarySettings.trackSortPreferenceFlow } returns flowOf(
+      TrackSortPreference(TrackSortField.TITLE, SortOrder.ASC)
+    )
     coEvery { connectionStateFlow.isConnected } returns true
   }
 
@@ -321,6 +329,36 @@ class BrowseTrackViewModelTest : KoinTest {
 
       // Verify sync use case was only called once (when connected)
       coVerify(exactly = 1) { librarySyncUseCase.sync() }
+    }
+  }
+
+  @Test
+  fun sortPreferenceShouldEmitInitialValue() {
+    runTest(testDispatcher) {
+      // Given
+      val expectedPreference = TrackSortPreference(TrackSortField.TITLE, SortOrder.ASC)
+
+      // When & Then
+      viewModel.sortPreference.test {
+        val preference = awaitItem()
+        assertThat(preference).isEqualTo(expectedPreference)
+        cancelAndIgnoreRemainingEvents()
+      }
+    }
+  }
+
+  @Test
+  fun updateSortPreferenceShouldCallLibrarySettings() {
+    runTest(testDispatcher) {
+      // Given
+      val newPreference = TrackSortPreference(TrackSortField.ARTIST, SortOrder.DESC)
+
+      // When
+      viewModel.updateSortPreference(newPreference)
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      coVerify { librarySettings.setTrackSortPreference(newPreference) }
     }
   }
 }

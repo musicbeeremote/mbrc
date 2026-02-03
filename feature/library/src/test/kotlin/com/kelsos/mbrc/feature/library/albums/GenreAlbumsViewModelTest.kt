@@ -8,12 +8,12 @@ import com.kelsos.mbrc.core.common.settings.AlbumSortField
 import com.kelsos.mbrc.core.common.settings.AlbumSortPreference
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
 import com.kelsos.mbrc.core.common.settings.SortOrder
+import com.kelsos.mbrc.core.common.settings.TrackAction
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
-import com.kelsos.mbrc.core.common.settings.TrackAction
 import com.kelsos.mbrc.core.data.library.album.Album
 import com.kelsos.mbrc.core.data.library.album.AlbumRepository
 import com.kelsos.mbrc.core.queue.Queue

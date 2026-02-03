@@ -12,6 +12,8 @@ import com.kelsos.mbrc.core.common.settings.GenreSortField
 import com.kelsos.mbrc.core.common.settings.GenreSortPreference
 import com.kelsos.mbrc.core.common.settings.SortPreference
 import com.kelsos.mbrc.core.common.settings.TrackAction
+import com.kelsos.mbrc.core.common.settings.TrackSortField
+import com.kelsos.mbrc.core.common.settings.TrackSortPreference
 import com.kelsos.mbrc.core.common.utilities.AppInfo
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.common.utilities.logging.FileLoggingTree
@@ -111,6 +113,11 @@ class SettingsManagerDataStore(
     SortPreference.decode(encoded, AlbumSortField::fromString, AlbumSortField.NAME)
   }
 
+  override val trackSortPreferenceFlow: Flow<TrackSortPreference> = dataStore.data.map { prefs ->
+    val encoded = prefs[PreferenceKeys.TRACK_SORT] ?: DefaultValues.TRACK_SORT
+    SortPreference.decode(encoded, TrackSortField::fromString, TrackSortField.TITLE)
+  }
+
   override val genreArtistsSortPreferenceFlow: Flow<ArtistSortPreference> =
     dataStore.data.map { prefs ->
       val encoded = prefs[PreferenceKeys.GENRE_ARTISTS_SORT] ?: DefaultValues.GENRE_ARTISTS_SORT
@@ -188,6 +195,13 @@ class SettingsManagerDataStore(
   override suspend fun setAlbumSortPreference(preference: AlbumSortPreference) {
     dataStore.edit { preferences ->
       preferences[PreferenceKeys.ALBUM_SORT] =
+        SortPreference.encode(preference) { it.value }
+    }
+  }
+
+  override suspend fun setTrackSortPreference(preference: TrackSortPreference) {
+    dataStore.edit { preferences ->
+      preferences[PreferenceKeys.TRACK_SORT] =
         SortPreference.encode(preference) { it.value }
     }
   }

@@ -70,7 +70,10 @@
   <!-- Sorting -->
   <string name="sort_title">Sort by</string>
   <string name="sort_by_name">Name</string>
+  <string name="sort_by_track_title">Title</string>
   <string name="sort_by_artist">Artist</string>
+  <string name="sort_by_album">Album</string>
+  <string name="sort_by_album_artist">Album Artist</string>
   <string name="sort_by_year">Year</string>
   <string name="sort_ascending">Ascending</string>
   <string name="sort_descending">Descending</string>
