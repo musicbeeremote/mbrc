@@ -15,7 +15,8 @@
     },
     {
       "groupName": "AndroidX",
-      "matchPackageNames": ["/^androidx\\.(?!compose)/"]
+      "matchPackageNames": ["/^androidx\\./"],
+      "excludePackageNames": ["/^androidx\\.compose/"]
     }
   ]
 }
