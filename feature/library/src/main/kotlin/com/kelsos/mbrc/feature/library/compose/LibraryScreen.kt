@@ -152,30 +152,32 @@ fun LibraryScreen(
   val playAllLabel = stringResource(R.string.menu_play_all)
   val shuffleAllLabel = stringResource(R.string.menu_shuffle_all)
 
-  val menuItems = if (isSearchActive || syncProgress.running) {
-    emptyList()
-  } else {
-    listOf(
-      MenuItem(
-        label = playAllLabel,
-        onClick = { viewModel.playAll(shuffle = false) }
-      ),
-      MenuItem(
-        label = shuffleAllLabel,
-        onClick = { viewModel.playAll(shuffle = true) }
-      ),
-      MenuItem(
-        label = albumArtistsOnlyLabel,
-        onClick = { viewModel.updateAlbumArtistOnly(!albumArtistsOnly) },
-        trailingContent = {
-          Checkbox(checked = albumArtistsOnly, onCheckedChange = null)
-        }
-      ),
-      MenuItem(
-        label = syncStateLabel,
-        onClick = { viewModel.displayLibraryStats() }
+  val menuItems = remember(isSearchActive, syncProgress.running, albumArtistsOnly) {
+    if (isSearchActive || syncProgress.running) {
+      emptyList()
+    } else {
+      listOf(
+        MenuItem(
+          label = playAllLabel,
+          onClick = { viewModel.playAll(shuffle = false) }
+        ),
+        MenuItem(
+          label = shuffleAllLabel,
+          onClick = { viewModel.playAll(shuffle = true) }
+        ),
+        MenuItem(
+          label = albumArtistsOnlyLabel,
+          onClick = { viewModel.updateAlbumArtistOnly(!albumArtistsOnly) },
+          trailingContent = {
+            Checkbox(checked = albumArtistsOnly, onCheckedChange = null)
+          }
+        ),
+        MenuItem(
+          label = syncStateLabel,
+          onClick = { viewModel.displayLibraryStats() }
+        )
       )
-    )
+    }
   }
 
   // Show search and sort actions in app bar when not searching and not syncing
@@ -183,34 +185,36 @@ fun LibraryScreen(
   val sortDescription = stringResource(R.string.sort_button_description)
   val viewModeDescription = stringResource(R.string.album_view_mode_description)
   val isAlbumsTab = pagerState.currentPage == LibraryTab.ALBUMS.ordinal
-  val actionItems = if (!isSearchActive && !syncProgress.running) {
-    buildList {
-      if (isAlbumsTab) {
+  val actionItems = remember(isSearchActive, syncProgress.running, isAlbumsTab, isGridMode) {
+    if (!isSearchActive && !syncProgress.running) {
+      buildList {
+        if (isAlbumsTab) {
+          add(
+            ActionItem(
+              icon = if (isGridMode) Icons.AutoMirrored.Filled.ViewList else Icons.Default.GridView,
+              contentDescription = viewModeDescription,
+              onClick = { albumViewModel.toggleViewMode() }
+            )
+          )
+        }
         add(
           ActionItem(
-            icon = if (isGridMode) Icons.AutoMirrored.Filled.ViewList else Icons.Default.GridView,
-            contentDescription = viewModeDescription,
-            onClick = { albumViewModel.toggleViewMode() }
+            icon = Icons.AutoMirrored.Filled.Sort,
+            contentDescription = sortDescription,
+            onClick = { showSortSheet = true }
+          )
+        )
+        add(
+          ActionItem(
+            icon = Icons.Default.Search,
+            contentDescription = searchDescription,
+            onClick = { isSearchActive = true }
           )
         )
       }
-      add(
-        ActionItem(
-          icon = Icons.AutoMirrored.Filled.Sort,
-          contentDescription = sortDescription,
-          onClick = { showSortSheet = true }
-        )
-      )
-      add(
-        ActionItem(
-          icon = Icons.Default.Search,
-          contentDescription = searchDescription,
-          onClick = { isSearchActive = true }
-        )
-      )
+    } else {
+      emptyList()
     }
-  } else {
-    emptyList()
   }
 
   LibraryEventsEffect(

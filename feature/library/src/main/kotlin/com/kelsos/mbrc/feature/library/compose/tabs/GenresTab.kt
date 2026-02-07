@@ -53,14 +53,12 @@ fun GenresTab(
 
   // Handle navigation events
   LaunchedEffect(Unit) {
-    viewModel.events.filterIsInstance<GenreUiMessage.OpenArtists>().collect { event ->
-      onNavigateToGenreArtists(event.genre)
-    }
-  }
-
-  LaunchedEffect(Unit) {
-    viewModel.events.filterIsInstance<GenreUiMessage.OpenAlbums>().collect { event ->
-      onNavigateToGenreAlbums(event.genre)
+    viewModel.events.collect { event ->
+      when (event) {
+        is GenreUiMessage.OpenArtists -> onNavigateToGenreArtists(event.genre)
+        is GenreUiMessage.OpenAlbums -> onNavigateToGenreAlbums(event.genre)
+        else -> Unit
+      }
     }
   }
 

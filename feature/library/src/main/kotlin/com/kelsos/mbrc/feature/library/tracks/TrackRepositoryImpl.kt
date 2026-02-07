@@ -54,7 +54,7 @@ class TrackRepositoryImpl(
           withContext(dispatchers.database) {
             val matches =
               sources
-                .chunked(size = 50)
+                .chunked(size = 100)
                 .flatMap { dao.findMatchingIds(it) }
                 .associate { it.src to it.id }
 

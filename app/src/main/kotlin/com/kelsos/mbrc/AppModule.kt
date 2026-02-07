@@ -100,7 +100,7 @@ val appModule = module {
   )
 
   // Coroutine Dispatchers
-  val networkDispatcher = createDispatcher(name = "Network", threads = 2)
+  val networkDispatcher = createDispatcher(name = "Network", threads = 4)
   val databaseDispatcher = createDispatcher(name = "Database")
 
   single<AppCoroutineDispatchers> {

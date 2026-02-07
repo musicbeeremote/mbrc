@@ -10,7 +10,7 @@ class UiMessageQueueImpl : UiMessageQueue {
   override val messages = MutableSharedFlow<UiMessage>(extraBufferCapacity = EXTRA_BUFFER_CAPACITY)
 
   companion object {
-    private const val EXTRA_BUFFER_CAPACITY = 5
+    private const val EXTRA_BUFFER_CAPACITY = 20
   }
 }
 

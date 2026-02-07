@@ -140,6 +140,15 @@ class LibrarySyncWorker(
   private val librarySyncUseCase: LibrarySyncUseCase,
   private val notificationManager: NotificationManager
 ) : CoroutineWorker(context, params) {
+  private val syncTitle by lazy { applicationContext.getString(R.string.notification__sync_title) }
+  private val progressBuilder by lazy {
+    NotificationCompat
+      .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+      .setContentTitle(syncTitle)
+      .setSmallIcon(CoreUiR.drawable.ic_mbrc_status)
+      .setOngoing(true)
+  }
+
   private fun createSyncNotificationChannel() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
@@ -162,20 +171,14 @@ class LibrarySyncWorker(
   }
 
   private fun createForegroundInfo(): ForegroundInfo {
-    val title = applicationContext.getString(R.string.notification__sync_title)
     val description = applicationContext.getString(R.string.notification__sync_description)
 
     createSyncNotificationChannel()
 
-    val builder =
-      NotificationCompat
-        .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-        .setContentTitle(title)
-        .setTicker(title)
-        .setContentText(description)
-        .setSmallIcon(CoreUiR.drawable.ic_mbrc_status)
-        .setOngoing(true)
-    val notification = builder.build()
+    val notification = progressBuilder
+      .setTicker(syncTitle)
+      .setContentText(description)
+      .build()
 
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
       ForegroundInfo(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
@@ -185,18 +188,13 @@ class LibrarySyncWorker(
   }
 
   private fun updateProgress(category: LibraryMediaType, current: Int, total: Int) {
-    val title = applicationContext.getString(R.string.notification__sync_title)
     val contextText = applicationContext.getString(category.progressRes, current, total)
-    val builder =
-      NotificationCompat
-        .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-        .setContentTitle(title)
-        .setSmallIcon(CoreUiR.drawable.ic_mbrc_status)
-        .setOngoing(true)
-        .setProgress(total, current, false)
-        .setContentText(contextText)
+    val notification = progressBuilder
+      .setProgress(total, current, false)
+      .setContentText(contextText)
+      .build()
 
-    notificationManager.notify(NOTIFICATION_ID, builder.build())
+    notificationManager.notify(NOTIFICATION_ID, notification)
   }
 
   override suspend fun doWork(): Result {

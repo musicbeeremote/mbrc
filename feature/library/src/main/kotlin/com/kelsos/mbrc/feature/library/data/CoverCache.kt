@@ -41,10 +41,10 @@ class CoverCache(
     val covers = albumRepository.getCovers()
     val albumCovers = mutableListOf<AlbumCover>()
     withContext(dispatchers.io) {
-      val files = cache.listFiles()?.map { it.nameWithoutExtension }.orEmpty()
+      val files = cache.listFiles()?.mapTo(HashSet()) { it.nameWithoutExtension } ?: emptySet()
 
       for (cover in covers) {
-        if (cover.hash.isNullOrEmpty() || files.contains(cover.key())) {
+        if (cover.hash.isNullOrEmpty() || cover.key() in files) {
           albumCovers.add(cover)
         } else {
           albumCovers.add(cover.copy(hash = null))
@@ -96,10 +96,10 @@ class CoverCache(
     withContext(dispatchers.database) {
       albumRepository.updateCovers(updated)
     }
-    val storedCovers = albumRepository.getCovers().map { it.key() }
+    val storedCovers = albumRepository.getCovers().mapTo(HashSet()) { it.key() }
     val coverFiles = cache.listFiles()
     if (coverFiles != null) {
-      val notInDb = coverFiles.filter { !storedCovers.contains(it.nameWithoutExtension) }
+      val notInDb = coverFiles.filter { it.nameWithoutExtension !in storedCovers }
       Timber.v("deleting ${notInDb.size} covers no longer in db")
       for (file in notInDb) {
         runCatching { file.delete() }
