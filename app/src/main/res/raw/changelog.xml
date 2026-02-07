@@ -19,7 +19,7 @@
     <feature>Displays queue size in the Queue screen header.</feature>
     <feature>Adds Go to Album and Go to Artist actions in player menu.</feature>
     <feature>Adds Go to Album and Go to Artist actions in queue.</feature>
-    <feature>Sorts artist albums by release year.</feature>
+    <feature>Adds sorting options to library tabs and drilldowns (genres, artists, albums, tracks).</feature>
     <feature>Adds playlist folder navigation support.</feature>
     <feature>Adds ban track support alongside love for Last.fm ratings.</feature>
     <feature>Adds albums by genre navigation for direct access to genre albums.</feature>

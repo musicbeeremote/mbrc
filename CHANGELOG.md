@@ -19,7 +19,7 @@ Changelog
 - Displays queue size in the Queue screen header.
 - [#155] Adds Go to Album and Go to Artist actions in player menu.
 - [#155] Adds Go to Album and Go to Artist actions in queue.
-- [#220] Sorts artist albums by release year.
+- [#262] Adds sorting options to library tabs and drilldowns (genres, artists, albums, tracks).
 - [#181] Adds playlist folder navigation support.
 - [#229] Adds ban track support alongside love for Last.fm ratings.
 - [#226] Adds albums by genre navigation for direct access to genre albums.
@@ -75,7 +75,7 @@ Changelog
 [#204]: https://github.com/musicbeeremote/mbrc/issues/204
 [#205]: https://github.com/musicbeeremote/mbrc/issues/205
 [#219]: https://github.com/musicbeeremote/mbrc/issues/219
-[#220]: https://github.com/musicbeeremote/mbrc/issues/220
+[#262]: https://github.com/musicbeeremote/mbrc/issues/262
 [#226]: https://github.com/musicbeeremote/mbrc/issues/226
 [#229]: https://github.com/musicbeeremote/mbrc/issues/229
 [#241]: https://github.com/musicbeeremote/mbrc/issues/241
