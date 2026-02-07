@@ -1,8 +1,10 @@
 package com.kelsos.mbrc.core.ui.compose
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -51,7 +53,14 @@ fun ScreenScaffold(
       )
     },
     floatingActionButton = floatingActionButton,
-    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        Snackbar(
+          snackbarData = data,
+          modifier = Modifier.clickable { data.dismiss() }
+        )
+      }
+    },
     containerColor = if (isTransparent) {
       Color.Transparent
     } else {
@@ -110,7 +119,14 @@ fun DynamicScreenScaffold(
       }
     },
     floatingActionButton = { ScaffoldFab(state = fabState) },
-    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        Snackbar(
+          snackbarData = data,
+          modifier = Modifier.clickable { data.dismiss() }
+        )
+      }
+    },
     containerColor = if (isTransparent) {
       Color.Transparent
     } else {
