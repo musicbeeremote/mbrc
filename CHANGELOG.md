@@ -29,6 +29,7 @@ Changelog
 - [#264] Adds comprehensive star rating system with bomb rating, half-star support, and clear rating.
 - [#264] Adds option to display track rating on the player screen.
 - [#264] Adds setting to enable/disable half-star ratings.
+- [#263] Adds album grid view with auto-detection for tablets and manual toggle.
 
 ### Changed
 - [#184] Groups tracks without album info into a single "[Empty]" entry in album library.

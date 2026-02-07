@@ -47,6 +47,7 @@ object SettingsDataStore {
     val TRACK_SORT = stringPreferencesKey("mbrc.library.sort.track")
     val GENRE_ARTISTS_SORT = stringPreferencesKey("mbrc.library.sort.genre_artists")
     val ARTIST_ALBUMS_SORT = stringPreferencesKey("mbrc.library.sort.artist_albums")
+    val ALBUM_VIEW_MODE = stringPreferencesKey("mbrc.library.album_view_mode")
   }
 
   object DefaultValues {
@@ -69,5 +70,6 @@ object SettingsDataStore {
     const val TRACK_SORT = "title:asc"
     const val GENRE_ARTISTS_SORT = "name:asc"
     const val ARTIST_ALBUMS_SORT = "name:asc"
+    const val ALBUM_VIEW_MODE = "auto"
   }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -386,6 +389,142 @@ fun <T : Any> PagingListScreen(
             }
           },
           contentType = { "list_item" }
+        ) { index ->
+          items[index]?.let { item ->
+            itemContent(item)
+          }
+        }
+
+        if (items.loadState.append is LoadState.Loading) {
+          item(contentType = "loading") {
+            Box(
+              modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+              contentAlignment = Alignment.Center
+            ) {
+              CircularProgressIndicator()
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun <T : Any> SwipeRefreshGridScreen(
+  items: LazyPagingItems<T>,
+  isRefreshing: Boolean,
+  onRefresh: () -> Unit,
+  modifier: Modifier = Modifier,
+  emptyMessage: String = stringResource(R.string.no_data),
+  emptyIcon: ImageVector? = null,
+  key: ((T) -> Any)? = null,
+  itemContent: @Composable (T) -> Unit
+) {
+  PullToRefreshBox(
+    isRefreshing = isRefreshing,
+    onRefresh = onRefresh,
+    modifier = modifier
+  ) {
+    when (items.loadState.refresh) {
+      is LoadState.Loading if items.itemCount == 0 -> {
+        LoadingScreen()
+      }
+
+      is LoadState.NotLoading if items.itemCount == 0 -> {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+          EmptyScreen(
+            message = emptyMessage,
+            icon = emptyIcon,
+            modifier = Modifier
+              .fillMaxWidth()
+              .heightIn(min = maxHeight)
+              .verticalScroll(rememberScrollState())
+          )
+        }
+      }
+
+      else -> {
+        LazyVerticalGrid(
+          columns = GridCells.Adaptive(minSize = 120.dp),
+          modifier = Modifier.fillMaxSize(),
+          contentPadding = PaddingValues(8.dp),
+          horizontalArrangement = Arrangement.spacedBy(8.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+          items(
+            count = items.itemCount,
+            key = key?.let { keyFunc ->
+              { index ->
+                items.peek(index)?.let(keyFunc) ?: index
+              }
+            },
+            contentType = { "grid_item" }
+          ) { index ->
+            items[index]?.let { item ->
+              itemContent(item)
+            }
+          }
+
+          if (items.loadState.append is LoadState.Loading) {
+            item(contentType = "loading") {
+              Box(
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(16.dp),
+                contentAlignment = Alignment.Center
+              ) {
+                CircularProgressIndicator()
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+fun <T : Any> PagingGridScreen(
+  items: LazyPagingItems<T>,
+  modifier: Modifier = Modifier,
+  emptyMessage: String = stringResource(R.string.no_data),
+  emptyIcon: ImageVector? = null,
+  key: ((T) -> Any)? = null,
+  itemContent: @Composable (T) -> Unit
+) {
+  when (items.loadState.refresh) {
+    is LoadState.Loading if items.itemCount == 0 -> {
+      LoadingScreen(modifier = modifier)
+    }
+
+    is LoadState.NotLoading if items.itemCount == 0 -> {
+      EmptyScreen(
+        message = emptyMessage,
+        icon = emptyIcon,
+        modifier = modifier
+      )
+    }
+
+    else -> {
+      LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 120.dp),
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+      ) {
+        items(
+          count = items.itemCount,
+          key = key?.let { keyFunc ->
+            { index ->
+              items.peek(index)?.let(keyFunc) ?: index
+            }
+          },
+          contentType = { "grid_item" }
         ) { index ->
           items[index]?.let { item ->
             itemContent(item)

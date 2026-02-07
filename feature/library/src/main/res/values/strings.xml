@@ -78,4 +78,9 @@
   <string name="sort_ascending">Ascending</string>
   <string name="sort_descending">Descending</string>
   <string name="sort_button_description">Sort options</string>
+
+  <!-- View mode -->
+  <string name="album_view_grid">Grid view</string>
+  <string name="album_view_list">List view</string>
+  <string name="album_view_mode_description">Toggle album view mode</string>
 </resources>

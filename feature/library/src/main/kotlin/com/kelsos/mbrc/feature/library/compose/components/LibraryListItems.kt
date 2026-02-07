@@ -1,12 +1,20 @@
 package com.kelsos.mbrc.feature.library.compose.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -19,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kelsos.mbrc.core.data.library.album.Album
 import com.kelsos.mbrc.core.data.library.artist.Artist
@@ -148,6 +158,77 @@ fun AlbumListItem(
       }
     }
   )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AlbumGridItem(
+  album: Album,
+  onClick: () -> Unit,
+  onQueue: (Queue) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  var menuExpanded by remember { mutableStateOf(false) }
+  val isGroupedEmptyAlbum = album.album.isEmpty() && album.artist.isEmpty()
+  val title = when {
+    isGroupedEmptyAlbum -> stringResource(R.string.empty_album)
+    album.album.isEmpty() -> stringResource(R.string.unknown_album)
+    else -> album.album
+  }
+  val subtitle = when {
+    isGroupedEmptyAlbum -> ""
+    album.artist.isEmpty() -> stringResource(R.string.unknown_artist)
+    else -> album.artist
+  }
+
+  Card(
+    shape = RoundedCornerShape(4.dp),
+    modifier = modifier
+      .combinedClickable(
+        onClick = onClick,
+        onLongClick = { menuExpanded = true }
+      )
+  ) {
+    Column {
+      AlbumCoverByKey(
+        artist = album.artist,
+        album = album.album,
+        modifier = Modifier
+          .fillMaxWidth()
+          .aspectRatio(1f)
+          .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+      )
+      Text(
+        text = title,
+        style = MaterialTheme.typography.bodySmall,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 8.dp)
+          .padding(top = 6.dp)
+      )
+      Text(
+        text = subtitle,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 8.dp)
+          .padding(bottom = 6.dp)
+      )
+    }
+
+    Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
+      LibraryItemMenu(
+        expanded = menuExpanded,
+        onDismiss = { menuExpanded = false },
+        onQueue = onQueue
+      )
+    }
+  }
 }
 
 @Composable

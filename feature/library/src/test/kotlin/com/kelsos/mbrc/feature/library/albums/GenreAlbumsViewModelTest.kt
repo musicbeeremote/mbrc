@@ -6,6 +6,7 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.settings.AlbumSortField
 import com.kelsos.mbrc.core.common.settings.AlbumSortPreference
+import com.kelsos.mbrc.core.common.settings.AlbumViewMode
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
 import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.settings.TrackAction
@@ -212,6 +213,21 @@ class GenreAlbumsViewModelTest : KoinTest {
 
       // Then
       coVerify { librarySettings.setAlbumSortPreference(newPreference) }
+    }
+  }
+
+  @Test
+  fun toggleViewModeShouldCycleViewMode() {
+    runTest(testDispatcher) {
+      // Given - start at GRID
+      every { librarySettings.albumViewModeFlow } returns flowOf(AlbumViewMode.GRID)
+
+      // When
+      viewModel.toggleViewMode()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then - should switch to LIST
+      coVerify(exactly = 1) { librarySettings.setAlbumViewMode(AlbumViewMode.LIST) }
     }
   }
 }

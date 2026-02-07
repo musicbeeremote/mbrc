@@ -24,6 +24,7 @@ import com.kelsos.mbrc.feature.library.albums.AlbumUiMessage
 import com.kelsos.mbrc.feature.library.albums.BrowseAlbumViewModel
 import com.kelsos.mbrc.feature.library.compose.SortBottomSheet
 import com.kelsos.mbrc.feature.library.compose.SortOption
+import com.kelsos.mbrc.feature.library.compose.components.AlbumGridItem
 import com.kelsos.mbrc.feature.library.compose.components.AlbumListItem
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -39,6 +40,7 @@ fun AlbumsTab(
   snackbarHostState: SnackbarHostState,
   isSyncing: Boolean,
   showSortSheet: Boolean,
+  isGridMode: Boolean,
   onNavigateToAlbumTracks: (Album) -> Unit,
   onDismissSortSheet: () -> Unit,
   onSync: () -> Unit,
@@ -84,7 +86,15 @@ fun AlbumsTab(
       icon = Icons.Default.Album
     ),
     itemKey = { it.id },
-    modifier = modifier
+    modifier = modifier,
+    isGridMode = isGridMode,
+    gridItemContent = { album ->
+      AlbumGridItem(
+        album = album,
+        onClick = { viewModel.queue(Queue.Default, album) },
+        onQueue = { queue -> viewModel.queue(queue, album) }
+      )
+    }
   ) { album ->
     AlbumListItem(
       album = album,

@@ -26,6 +26,7 @@
     <feature>Adds comprehensive star rating system with bomb rating, half-star support, and clear rating.</feature>
     <feature>Adds option to display track rating on the player screen.</feature>
     <feature>Adds setting to enable/disable half-star ratings.</feature>
+    <feature>Adds album grid view with auto-detection for tablets and manual toggle.</feature>
     <bug>Fixes elapsed time not updating correctly for streaming content.</bug>
     <bug>Fixes widget not updating track name and album art correctly.</bug>
     <bug>Fixes widget track info position not updating dynamically.</bug>

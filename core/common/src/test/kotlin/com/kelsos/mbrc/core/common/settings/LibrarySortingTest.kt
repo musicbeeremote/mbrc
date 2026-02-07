@@ -100,6 +100,50 @@ class LibrarySortingTest {
 
   // endregion
 
+  // region AlbumViewMode tests
+
+  @Test
+  fun `AlbumViewMode fromString with valid list`() {
+    assertThat(AlbumViewMode.fromString("list")).isEqualTo(AlbumViewMode.LIST)
+  }
+
+  @Test
+  fun `AlbumViewMode fromString with valid grid`() {
+    assertThat(AlbumViewMode.fromString("grid")).isEqualTo(AlbumViewMode.GRID)
+  }
+
+  @Test
+  fun `AlbumViewMode fromString with valid auto`() {
+    assertThat(AlbumViewMode.fromString("auto")).isEqualTo(AlbumViewMode.AUTO)
+  }
+
+  @Test
+  fun `AlbumViewMode fromString with invalid falls back to AUTO`() {
+    assertThat(AlbumViewMode.fromString("invalid")).isEqualTo(AlbumViewMode.AUTO)
+  }
+
+  @Test
+  fun `AlbumViewMode isGrid returns true for GRID`() {
+    assertThat(AlbumViewMode.GRID.isGrid(320)).isTrue()
+  }
+
+  @Test
+  fun `AlbumViewMode isGrid returns false for LIST`() {
+    assertThat(AlbumViewMode.LIST.isGrid(800)).isFalse()
+  }
+
+  @Test
+  fun `AlbumViewMode isGrid returns true for AUTO on wide screen`() {
+    assertThat(AlbumViewMode.AUTO.isGrid(600)).isTrue()
+  }
+
+  @Test
+  fun `AlbumViewMode isGrid returns false for AUTO on narrow screen`() {
+    assertThat(AlbumViewMode.AUTO.isGrid(599)).isFalse()
+  }
+
+  // endregion
+
   // region SortPreference tests
 
   @Test

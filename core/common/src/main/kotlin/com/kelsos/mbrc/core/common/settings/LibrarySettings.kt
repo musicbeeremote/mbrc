@@ -25,4 +25,8 @@ interface LibrarySettings {
   suspend fun setTrackSortPreference(preference: TrackSortPreference)
   suspend fun setGenreArtistsSortPreference(preference: ArtistSortPreference)
   suspend fun setArtistAlbumsSortPreference(preference: AlbumSortPreference)
+
+  // Album view mode
+  val albumViewModeFlow: Flow<AlbumViewMode>
+  suspend fun setAlbumViewMode(mode: AlbumViewMode)
 }

@@ -6,6 +6,7 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.settings.AlbumSortField
 import com.kelsos.mbrc.core.common.settings.AlbumSortPreference
+import com.kelsos.mbrc.core.common.settings.AlbumViewMode
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
 import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.settings.TrackAction
@@ -292,6 +293,51 @@ class BrowseAlbumViewModelTest : KoinTest {
 
       // Then
       coVerify(exactly = 1) { librarySettings.setAlbumSortPreference(preference) }
+    }
+  }
+
+  @Test
+  fun toggleViewModeShouldSwitchFromAutoToList() {
+    runTest(testDispatcher) {
+      // Given
+      every { librarySettings.albumViewModeFlow } returns flowOf(AlbumViewMode.AUTO)
+
+      // When
+      viewModel.toggleViewMode()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      coVerify(exactly = 1) { librarySettings.setAlbumViewMode(AlbumViewMode.LIST) }
+    }
+  }
+
+  @Test
+  fun toggleViewModeShouldSwitchFromListToGrid() {
+    runTest(testDispatcher) {
+      // Given
+      every { librarySettings.albumViewModeFlow } returns flowOf(AlbumViewMode.LIST)
+
+      // When
+      viewModel.toggleViewMode()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      coVerify(exactly = 1) { librarySettings.setAlbumViewMode(AlbumViewMode.GRID) }
+    }
+  }
+
+  @Test
+  fun toggleViewModeShouldSwitchFromGridToList() {
+    runTest(testDispatcher) {
+      // Given
+      every { librarySettings.albumViewModeFlow } returns flowOf(AlbumViewMode.GRID)
+
+      // When
+      viewModel.toggleViewMode()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then
+      coVerify(exactly = 1) { librarySettings.setAlbumViewMode(AlbumViewMode.LIST) }
     }
   }
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.paging.compose.LazyPagingItems
 import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.ui.compose.QueueResultEffect
+import com.kelsos.mbrc.core.ui.compose.SwipeRefreshGridScreen
 import com.kelsos.mbrc.core.ui.compose.SwipeRefreshScreen
 import kotlinx.coroutines.flow.Flow
 
@@ -27,6 +28,8 @@ fun <T : Any> LibraryBrowseTab(
   emptyState: EmptyState,
   itemKey: (T) -> Any,
   modifier: Modifier = Modifier,
+  isGridMode: Boolean = false,
+  gridItemContent: @Composable ((T) -> Unit)? = null,
   itemContent: @Composable (T) -> Unit
 ) {
   QueueResultEffect(
@@ -34,18 +37,35 @@ fun <T : Any> LibraryBrowseTab(
     snackbarHostState = snackbarHostState
   )
 
-  SwipeRefreshScreen(
-    items = items,
-    isRefreshing = syncState.isSyncing,
-    onRefresh = {
-      if (syncState.showSync) {
-        syncState.onSync()
-      }
-    },
-    modifier = modifier.fillMaxSize(),
-    emptyMessage = emptyState.message,
-    emptyIcon = emptyState.icon,
-    key = itemKey,
-    itemContent = itemContent
-  )
+  if (isGridMode && gridItemContent != null) {
+    SwipeRefreshGridScreen(
+      items = items,
+      isRefreshing = syncState.isSyncing,
+      onRefresh = {
+        if (syncState.showSync) {
+          syncState.onSync()
+        }
+      },
+      modifier = modifier.fillMaxSize(),
+      emptyMessage = emptyState.message,
+      emptyIcon = emptyState.icon,
+      key = itemKey,
+      itemContent = gridItemContent
+    )
+  } else {
+    SwipeRefreshScreen(
+      items = items,
+      isRefreshing = syncState.isSyncing,
+      onRefresh = {
+        if (syncState.showSync) {
+          syncState.onSync()
+        }
+      },
+      modifier = modifier.fillMaxSize(),
+      emptyMessage = emptyState.message,
+      emptyIcon = emptyState.icon,
+      key = itemKey,
+      itemContent = itemContent
+    )
+  }
 }

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.kelsos.mbrc.core.common.settings.AlbumSortField
 import com.kelsos.mbrc.core.common.settings.AlbumSortPreference
+import com.kelsos.mbrc.core.common.settings.AlbumViewMode
 import com.kelsos.mbrc.core.common.settings.ArtistSortField
 import com.kelsos.mbrc.core.common.settings.ArtistSortPreference
 import com.kelsos.mbrc.core.common.settings.GenreSortField
@@ -130,6 +131,11 @@ class SettingsManagerDataStore(
       SortPreference.decode(encoded, AlbumSortField::fromString, AlbumSortField.NAME)
     }
 
+  override val albumViewModeFlow: Flow<AlbumViewMode> = dataStore.data.map { prefs ->
+    val value = prefs[PreferenceKeys.ALBUM_VIEW_MODE] ?: DefaultValues.ALBUM_VIEW_MODE
+    AlbumViewMode.fromString(value)
+  }
+
   override suspend fun setTheme(theme: Theme) {
     dataStore.edit { preferences ->
       preferences[PreferenceKeys.THEME] = theme.value
@@ -217,6 +223,12 @@ class SettingsManagerDataStore(
     dataStore.edit { preferences ->
       preferences[PreferenceKeys.ARTIST_ALBUMS_SORT] =
         SortPreference.encode(preference) { it.value }
+    }
+  }
+
+  override suspend fun setAlbumViewMode(mode: AlbumViewMode) {
+    dataStore.edit { preferences ->
+      preferences[PreferenceKeys.ALBUM_VIEW_MODE] = mode.value
     }
   }
 
