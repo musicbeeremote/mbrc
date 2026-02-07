@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,8 +66,8 @@ fun GenreAlbumsScreen(
   viewModel: GenreAlbumsViewModel = koinViewModel()
 ) {
   val albums = viewModel.albums.collectAsLazyPagingItems()
-  val sortPreference by viewModel.sortPreference.collectAsState(
-    initial = SortPreference(AlbumSortField.NAME, SortOrder.ASC)
+  val sortPreference by viewModel.sortPreference.collectAsStateWithLifecycle(
+    initialValue = SortPreference(AlbumSortField.NAME, SortOrder.ASC)
   )
   val albumViewMode by viewModel.albumViewMode.collectAsStateWithLifecycle(
     initialValue = AlbumViewMode.AUTO
