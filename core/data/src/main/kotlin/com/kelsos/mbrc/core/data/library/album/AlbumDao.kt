@@ -30,21 +30,59 @@ interface AlbumDao {
   fun getAll(): PagingSource<Int, AlbumEntity>
 
   // Sort by album name ASC
-  @Query("select * from album order by album collate nocase asc")
+  @Query(
+    """
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY album COLLATE NOCASE ASC
+    """
+  )
   fun getAllByNameAsc(): PagingSource<Int, AlbumEntity>
 
   // Sort by album name DESC
-  @Query("select * from album order by album collate nocase desc")
+  @Query(
+    """
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY album COLLATE NOCASE DESC
+    """
+  )
   fun getAllByNameDesc(): PagingSource<Int, AlbumEntity>
 
   // Sort by artist ASC (ignoring "The" prefix)
   @Query(
     """
-    select * from album
-    order by
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY
       CASE
-        WHEN LOWER(artist) LIKE 'the %' THEN SUBSTR(artist, 5)
-        ELSE artist
+        WHEN LOWER(CASE WHEN album = '' THEN '' ELSE artist END) LIKE 'the %'
+        THEN SUBSTR(CASE WHEN album = '' THEN '' ELSE artist END, 5)
+        ELSE CASE WHEN album = '' THEN '' ELSE artist END
       END COLLATE NOCASE ASC,
       album COLLATE NOCASE ASC
     """
@@ -54,11 +92,21 @@ interface AlbumDao {
   // Sort by artist DESC (ignoring "The" prefix)
   @Query(
     """
-    select * from album
-    order by
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY
       CASE
-        WHEN LOWER(artist) LIKE 'the %' THEN SUBSTR(artist, 5)
-        ELSE artist
+        WHEN LOWER(CASE WHEN album = '' THEN '' ELSE artist END) LIKE 'the %'
+        THEN SUBSTR(CASE WHEN album = '' THEN '' ELSE artist END, 5)
+        ELSE CASE WHEN album = '' THEN '' ELSE artist END
       END COLLATE NOCASE DESC,
       album COLLATE NOCASE ASC
     """
@@ -68,9 +116,18 @@ interface AlbumDao {
   // Search by album name ASC
   @Query(
     """
-    select * from album
-    where album like '%' || :term || '%' or artist like '%' || :term || '%'
-    order by album collate nocase asc
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    WHERE album LIKE '%' || :term || '%' OR artist LIKE '%' || :term || '%'
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY album COLLATE NOCASE ASC
     """
   )
   fun searchByNameAsc(term: String): PagingSource<Int, AlbumEntity>
@@ -78,9 +135,18 @@ interface AlbumDao {
   // Search by album name DESC
   @Query(
     """
-    select * from album
-    where album like '%' || :term || '%' or artist like '%' || :term || '%'
-    order by album collate nocase desc
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    WHERE album LIKE '%' || :term || '%' OR artist LIKE '%' || :term || '%'
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY album COLLATE NOCASE DESC
     """
   )
   fun searchByNameDesc(term: String): PagingSource<Int, AlbumEntity>
@@ -88,12 +154,22 @@ interface AlbumDao {
   // Search by artist ASC (ignoring "The" prefix)
   @Query(
     """
-    select * from album
-    where album like '%' || :term || '%' or artist like '%' || :term || '%'
-    order by
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    WHERE album LIKE '%' || :term || '%' OR artist LIKE '%' || :term || '%'
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY
       CASE
-        WHEN LOWER(artist) LIKE 'the %' THEN SUBSTR(artist, 5)
-        ELSE artist
+        WHEN LOWER(CASE WHEN album = '' THEN '' ELSE artist END) LIKE 'the %'
+        THEN SUBSTR(CASE WHEN album = '' THEN '' ELSE artist END, 5)
+        ELSE CASE WHEN album = '' THEN '' ELSE artist END
       END COLLATE NOCASE ASC,
       album COLLATE NOCASE ASC
     """
@@ -103,12 +179,22 @@ interface AlbumDao {
   // Search by artist DESC (ignoring "The" prefix)
   @Query(
     """
-    select * from album
-    where album like '%' || :term || '%' or artist like '%' || :term || '%'
-    order by
+    SELECT
+      CASE WHEN album = '' THEN '' ELSE artist END AS artist,
+      album,
+      MIN(date_added) AS date_added,
+      MIN(id) AS id,
+      NULL AS cover
+    FROM album
+    WHERE album LIKE '%' || :term || '%' OR artist LIKE '%' || :term || '%'
+    GROUP BY
+      CASE WHEN album = '' THEN '' ELSE artist END,
+      album
+    ORDER BY
       CASE
-        WHEN LOWER(artist) LIKE 'the %' THEN SUBSTR(artist, 5)
-        ELSE artist
+        WHEN LOWER(CASE WHEN album = '' THEN '' ELSE artist END) LIKE 'the %'
+        THEN SUBSTR(CASE WHEN album = '' THEN '' ELSE artist END, 5)
+        ELSE CASE WHEN album = '' THEN '' ELSE artist END
       END COLLATE NOCASE DESC,
       album COLLATE NOCASE ASC
     """

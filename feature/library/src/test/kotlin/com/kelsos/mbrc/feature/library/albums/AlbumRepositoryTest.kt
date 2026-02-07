@@ -1193,6 +1193,113 @@ class AlbumRepositoryTest : KoinTest {
   }
 
   @Test
+  fun getAllSortedByNameAscShouldGroupEmptyAlbums() {
+    runTest(testDispatcher) {
+      // Given: Multiple artists with empty album names
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist1", album = "Album A", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums sorted by name ASC
+      val result = repository.getAll(AlbumSortField.NAME, SortOrder.ASC).asSnapshot()
+
+      // Then: Empty albums should be grouped into a single entry
+      assertThat(result).hasSize(2)
+      assertThat(result.first().album).isEmpty()
+      assertThat(result.first().artist).isEmpty()
+    }
+  }
+
+  @Test
+  fun getAllSortedByNameDescShouldGroupEmptyAlbums() {
+    runTest(testDispatcher) {
+      // Given: Multiple artists with empty album names
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist1", album = "Album A", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums sorted by name DESC
+      val result = repository.getAll(AlbumSortField.NAME, SortOrder.DESC).asSnapshot()
+
+      // Then: Empty albums should be grouped into a single entry
+      assertThat(result).hasSize(2)
+      assertThat(result.map { it.album }).containsExactly("Album A", "").inOrder()
+    }
+  }
+
+  @Test
+  fun getAllSortedByArtistAscShouldGroupEmptyAlbums() {
+    runTest(testDispatcher) {
+      // Given: Multiple artists with empty album names
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist3", album = "", dateAdded = 3000L),
+          AlbumEntity(artist = "Artist1", album = "Album A", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums sorted by artist ASC
+      val result = repository.getAll(AlbumSortField.ARTIST, SortOrder.ASC).asSnapshot()
+
+      // Then: Empty albums should be grouped into a single entry
+      assertThat(result).hasSize(2)
+      assertThat(result.any { it.album.isEmpty() && it.artist.isEmpty() }).isTrue()
+    }
+  }
+
+  @Test
+  fun getAllSortedByArtistDescShouldGroupEmptyAlbums() {
+    runTest(testDispatcher) {
+      // Given: Multiple artists with empty album names
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Artist1", album = "", dateAdded = 1000L),
+          AlbumEntity(artist = "Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Artist1", album = "Album A", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      // When: Get all albums sorted by artist DESC
+      val result = repository.getAll(AlbumSortField.ARTIST, SortOrder.DESC).asSnapshot()
+
+      // Then: Empty albums should be grouped into a single entry
+      assertThat(result).hasSize(2)
+      assertThat(result.any { it.album.isEmpty() && it.artist.isEmpty() }).isTrue()
+    }
+  }
+
+  @Test
+  fun searchSortedByNameShouldGroupEmptyAlbums() {
+    runTest(testDispatcher) {
+      // Given: Multiple artists with empty album names plus a normal album
+      val albums =
+        listOf(
+          AlbumEntity(artist = "Rock Artist1", album = "", dateAdded = 1000L),
+          AlbumEntity(artist = "Rock Artist2", album = "", dateAdded = 2000L),
+          AlbumEntity(artist = "Rock Artist1", album = "Rock Album", dateAdded = 1000L)
+        )
+      dao.insert(albums)
+
+      // When: Search with term matching artists, sorted by name ASC
+      val result = repository.search("Rock", AlbumSortField.NAME, SortOrder.ASC).asSnapshot()
+
+      // Then: Empty albums should be grouped into a single entry
+      assertThat(result).hasSize(2)
+      assertThat(result.any { it.album.isEmpty() && it.artist.isEmpty() }).isTrue()
+    }
+  }
+
+  @Test
   fun getAllShouldPutEmptyAlbumsFirstInSortOrder() {
     runTest(testDispatcher) {
       // Given: Albums including empty ones
