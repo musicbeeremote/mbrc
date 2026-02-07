@@ -3,6 +3,7 @@
   <issue id="InvalidPackage">
     <ignore regexp=".*okio.*" />
     <ignore regexp=".*velocity.*" />
+    <ignore regexp=".*jacoco.*" />
     <ignore regexp="java.awt.*" />
     <ignore regexp="java.nio.file" />
   </issue>
