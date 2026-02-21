@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
+import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.core.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.feature.settings.domain.ConnectionRepository
 import kotlinx.coroutines.flow.Flow
@@ -61,7 +62,8 @@ data class ConnectionFormState(
  */
 class ConnectionManagerViewModel(
   private val repository: ConnectionRepository,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
+  private val clientConnectionUseCase: ClientConnectionUseCase
 ) : ViewModel() {
 
   // Dialog state
@@ -229,6 +231,7 @@ class ConnectionManagerViewModel(
   fun setDefaultConnection(connection: ConnectionSettings) {
     viewModelScope.launch(dispatchers.database) {
       repository.setDefault(connection)
+      clientConnectionUseCase.connect(reset = true)
     }
   }
 

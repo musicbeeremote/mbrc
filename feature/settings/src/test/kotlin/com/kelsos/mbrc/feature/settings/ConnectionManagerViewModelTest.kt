@@ -6,12 +6,14 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
+import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.core.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.feature.settings.domain.ConnectionRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -32,6 +34,7 @@ class ConnectionManagerViewModelTest : KoinTest {
 
   private lateinit var viewModel: ConnectionManagerViewModel
   private lateinit var repository: ConnectionRepository
+  private lateinit var clientConnectionUseCase: ClientConnectionUseCase
 
   private val testModule = module {
     single { repository }
@@ -42,6 +45,7 @@ class ConnectionManagerViewModelTest : KoinTest {
     repository = mockk(relaxed = true) {
       every { getAll() } returns flowOf(PagingData.empty())
     }
+    clientConnectionUseCase = mockk(relaxed = true)
 
     startKoin { modules(listOf(testModule, testDispatcherModule)) }
 
@@ -49,7 +53,8 @@ class ConnectionManagerViewModelTest : KoinTest {
       repository = repository,
       dispatchers = org.koin.java.KoinJavaComponent.get(
         com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers::class.java
-      )
+      ),
+      clientConnectionUseCase = clientConnectionUseCase
     )
   }
 
@@ -541,20 +546,22 @@ class ConnectionManagerViewModelTest : KoinTest {
   }
 
   @Test
-  fun `setDefaultConnection should call repository setDefault`() = runTest(testDispatcher) {
-    val connection = ConnectionSettings(
-      address = "192.168.1.100",
-      port = 3000,
-      name = "Test",
-      isDefault = false,
-      id = 1
-    )
+  fun `setDefaultConnection should call repository setDefault and reconnect`() =
+    runTest(testDispatcher) {
+      val connection = ConnectionSettings(
+        address = "192.168.1.100",
+        port = 3000,
+        name = "Test",
+        isDefault = false,
+        id = 1
+      )
 
-    viewModel.setDefaultConnection(connection)
-    advanceUntilIdle()
+      viewModel.setDefaultConnection(connection)
+      advanceUntilIdle()
 
-    coVerify { repository.setDefault(connection) }
-  }
+      coVerify { repository.setDefault(connection) }
+      verify { clientConnectionUseCase.connect(reset = true) }
+    }
 
   // endregion
 
