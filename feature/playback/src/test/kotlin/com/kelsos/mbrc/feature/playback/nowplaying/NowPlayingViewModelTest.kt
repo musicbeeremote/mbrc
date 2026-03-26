@@ -125,8 +125,8 @@ class NowPlayingViewModelTest : KoinTest {
         assertThat(event).isEqualTo(NowPlayingUiMessages.RefreshSucceeded)
       }
 
-      // Verify repository was called
-      coVerify(exactly = 1) { repository.getRemote() }
+      // Verify repository was called (once from init, once from test)
+      coVerify(exactly = 2) { repository.getRemote() }
     }
   }
 
@@ -146,8 +146,8 @@ class NowPlayingViewModelTest : KoinTest {
         expectNoEvents()
       }
 
-      // Verify repository was called
-      coVerify(exactly = 1) { repository.getRemote() }
+      // Verify repository was called (once from init, once from test)
+      coVerify(exactly = 2) { repository.getRemote() }
     }
   }
 
@@ -169,8 +169,8 @@ class NowPlayingViewModelTest : KoinTest {
         assertThat((event as NowPlayingUiMessages.RefreshFailed).throwable).isEqualTo(ioException)
       }
 
-      // Verify repository was called
-      coVerify(exactly = 1) { repository.getRemote() }
+      // Verify repository was called (once from init, once from test)
+      coVerify(exactly = 2) { repository.getRemote() }
     }
   }
 
@@ -190,8 +190,8 @@ class NowPlayingViewModelTest : KoinTest {
         expectNoEvents()
       }
 
-      // Verify repository was called
-      coVerify(exactly = 1) { repository.getRemote() }
+      // Verify repository was called (once from init, once from test)
+      coVerify(exactly = 2) { repository.getRemote() }
     }
   }
 
@@ -211,16 +211,16 @@ class NowPlayingViewModelTest : KoinTest {
         assertThat(event).isEqualTo(NowPlayingUiMessages.RefreshSucceeded)
       }
 
-      // Verify repository was called
-      coVerify(exactly = 1) { repository.getRemote() }
+      // Verify repository was called (once from init, once from test)
+      coVerify(exactly = 2) { repository.getRemote() }
     }
   }
 
   @Test
   fun networkCheckIsPerformedAtStartOfOperation() {
     runTest(testDispatcher) {
-      // Given - connection starts as true, then becomes false
-      coEvery { connectionStateFlow.isConnected } returns true andThen false
+      // Given - init consumes first true, then true for first test call, false for second
+      coEvery { connectionStateFlow.isConnected } returns true andThen true andThen false
       coEvery { repository.getRemote() } returns Unit
 
       // When & Then - First call should succeed, second should fail
@@ -281,8 +281,8 @@ class NowPlayingViewModelTest : KoinTest {
         expectNoEvents()
       }
 
-      // Verify repository was called twice
-      coVerify(exactly = 2) { repository.getRemote() }
+      // Verify repository was called three times (once from init, twice from test)
+      coVerify(exactly = 3) { repository.getRemote() }
     }
   }
 
