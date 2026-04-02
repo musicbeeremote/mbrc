@@ -450,24 +450,16 @@ tasks {
     rename { "LICENSE.txt" }
   }
 
-  afterEvaluate {
-    // Hook license copy to asset processing and lint tasks
-    listOf(
-      "mergeGithubDebugAssets",
-      "mergeGithubReleaseAssets",
-      "mergePlayDebugAssets",
-      "mergePlayReleaseAssets",
-      "generateGithubDebugLintReportModel",
-      "generateGithubReleaseLintReportModel",
-      "generatePlayDebugLintReportModel",
-      "generatePlayReleaseLintReportModel",
-      "lintAnalyzeGithubDebug",
-      "lintAnalyzeGithubRelease",
-      "lintAnalyzePlayDebug",
-      "lintAnalyzePlayRelease"
-    ).forEach { taskName ->
-      tasks.findByName(taskName)?.dependsOn(copyLicenseToAssets)
+  androidComponents {
+    onVariants { variant ->
+      variant.sources.assets?.addGeneratedSourceDirectory(
+        copyLicenseToAssets,
+        { objects.directoryProperty().fileValue(generatedAssetsDir.get().asFile) },
+      )
     }
+  }
+
+  afterEvaluate {
     // Set up Google Services task dependencies for all variants
     listOf(
       "processGithubDebugGoogleServices",
