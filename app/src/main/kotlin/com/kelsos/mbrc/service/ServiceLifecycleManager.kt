@@ -91,12 +91,14 @@ class ServiceLifecycleManagerImpl(
   override fun onIntentionalDisconnect() {
     Timber.d("Intentional disconnect requested")
     intentionalDisconnect.set(true)
-    // Also cancel any ongoing reconnection
+    // Cancel any ongoing reconnection
     isReconnecting.set(false)
     reconnectionCycle.set(0)
     reconnectionJob?.cancel()
     reconnectionJob = null
     stopPending.set(false)
+    // Stop the service and remove the notification
+    stopService()
   }
 
   override fun onConnectionRestored() {
