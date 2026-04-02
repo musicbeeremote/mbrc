@@ -8,6 +8,10 @@
   "prCreation": "approval",
   "packageRules": [
     {
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    },
+    {
       "groupName": "Kotlin",
       "matchPackageNames": [
         "/^org\\.jetbrains\\.kotlin/"

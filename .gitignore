@@ -49,3 +49,5 @@ hs_err_pid*.log
 replay_pid*.log
 
 .kotlin
+signing.env
+/scripts/*.jks

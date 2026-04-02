@@ -56,7 +56,25 @@ object KeyLoader {
 
   fun getValue(key: String): String = properties.getProperty(key)
 
+  fun fromEnvironment(): Boolean {
+    return System.getenv("KEYSTORE_BASE64") != null || System.getenv("KEYSTORE_FILE") != null
+  }
+
+  fun keystoreFile(project: Project): File? {
+    val base64 = System.getenv("KEYSTORE_BASE64")
+    if (base64 != null) {
+      val file = File(project.layout.buildDirectory.asFile.get(), "release.jks")
+      file.parentFile.mkdirs()
+      file.writeBytes(Base64.getDecoder().decode(base64))
+      return file
+    }
+    val path = System.getenv("KEYSTORE_FILE")
+    if (path != null) return File(path).takeIf { it.exists() }
+    return null
+  }
+
   fun isConfigured(): Boolean {
+    if (fromEnvironment()) return true
     val keystorePath = getValue(KEYSTORE_PATH)
     return keystorePath != "placeholder" && File(keystorePath).exists()
   }
@@ -144,7 +162,14 @@ android {
   }
 
   signingConfigs {
-    if (KeyLoader.isConfigured()) {
+    if (KeyLoader.fromEnvironment()) {
+      create("release") {
+        storeFile = KeyLoader.keystoreFile(project)
+        keyAlias = System.getenv("KEY_ALIAS")
+        storePassword = System.getenv("STORE_PASSWORD")
+        keyPassword = System.getenv("KEY_PASSWORD")
+      }
+    } else if (KeyLoader.isConfigured()) {
       create("release") {
         storeFile = file(KeyLoader.getValue(KeyLoader.KEYSTORE_PATH))
         keyAlias = KeyLoader.getValue(KeyLoader.KEY_ALIAS)

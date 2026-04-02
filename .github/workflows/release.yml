@@ -1,0 +1,167 @@
+# Release workflow — builds signed APK/AAB and creates a GitHub release with
+# SLSA build provenance attestation.
+#
+# Setup (one-time):
+#   1. Create a GitHub environment named "release" in Settings > Environments
+#      - Optionally add required reviewers for manual approval before release
+#      - Optionally restrict to the "main" branch
+#   2. Add the following secrets to the "release" environment:
+#      - KEYSTORE_BASE64  : base64-encoded release keystore
+#                           (generate with: base64 -w0 < release.jks)
+#      - STORE_PASSWORD   : keystore password
+#      - KEY_ALIAS        : signing key alias
+#      - KEY_PASSWORD     : signing key password
+#   3. Trigger by pushing a version tag: git tag v1.6.0 && git push origin v1.6.0
+#
+# Verify attestation locally:
+#   gh attestation verify <apk-file> --repo musicbeeremote/mbrc
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GRADLE_OPTS: >-
+    -Dorg.gradle.jvmargs=-Xmx6g\ -XX:+UseParallelGC\ -XX:MaxMetaspaceSize=1g\ -XX:+HeapDumpOnOutOfMemoryError\ -Dfile.encoding=UTF-8
+    -Dorg.gradle.parallel=true
+    -Dorg.gradle.caching=true
+    -Dorg.gradle.configuration-cache=true
+
+jobs:
+  build:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    environment: release
+    outputs:
+      apk-sha256: ${{ steps.hashes.outputs.apk-sha256 }}
+      aab-sha256: ${{ steps.hashes.outputs.aab-sha256 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@651bceb6f9ca583f16b8d75b62c36ded2ae6fc9c # v4
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > /tmp/release.jks
+
+      - name: Build release artifacts
+        env:
+          KEYSTORE_FILE: /tmp/release.jks
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleGithubRelease bundlePlayRelease --no-daemon
+
+      - name: Remove keystore
+        if: always()
+        run: rm -f /tmp/release.jks
+
+      - name: Compute artifact hashes
+        id: hashes
+        run: |
+          APK=$(find app/build/outputs/apk/github/release -name '*.apk' -type f | head -1)
+          AAB=$(find app/build/outputs/bundle/playRelease -name '*.aab' -type f | head -1)
+          echo "apk-sha256=$(sha256sum "$APK" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "aab-sha256=$(sha256sum "$AAB" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: github-apk
+          path: app/build/outputs/apk/github/release/*.apk
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: play-aab
+          path: app/build/outputs/bundle/playRelease/*.aab
+
+  attest:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: github-apk
+          path: artifacts/apk
+
+      - name: Download AAB
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: play-aab
+          path: artifacts/aab
+
+      - name: Attest APK
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4
+        with:
+          subject-path: artifacts/apk/*.apk
+
+      - name: Attest AAB
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4
+        with:
+          subject-path: artifacts/aab/*.aab
+
+  release:
+    needs: [build, attest]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: github-apk
+          path: artifacts/apk
+
+      - name: Download AAB
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: play-aab
+          path: artifacts/aab
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" \
+            --generate-notes \
+            --notes "$(cat <<'EOF'
+          ## Checksums
+
+          **APK (GitHub):** `${{ needs.build.outputs.apk-sha256 }}`
+          **AAB (Play):** `${{ needs.build.outputs.aab-sha256 }}`
+
+          ## Provenance
+
+          Build attestations are available via `gh attestation verify`.
+          EOF
+          )" \
+            artifacts/apk/*.apk \
+            artifacts/aab/*.aab
