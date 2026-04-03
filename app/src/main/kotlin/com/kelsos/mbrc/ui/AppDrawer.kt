@@ -60,6 +60,7 @@ import com.kelsos.mbrc.BuildConfig
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.ui.theme.connection_status_connected
+import com.kelsos.mbrc.core.ui.theme.connection_status_connecting
 import com.kelsos.mbrc.core.ui.theme.connection_status_offline
 import com.kelsos.mbrc.core.ui.theme.drawer_header_gradient_top_dark
 import com.kelsos.mbrc.core.ui.theme.drawer_header_gradient_top_light
@@ -291,8 +292,8 @@ private fun ConnectionStatusIconButton(
 ) {
   val (statusColor, statusIcon) = when (connectionState) {
     ConnectionStatus.Connected -> connection_status_connected to Icons.Default.Wifi
-    is ConnectionStatus.Connecting -> MaterialTheme.colorScheme.secondary to Icons.Default.Wifi
-    ConnectionStatus.Authenticating -> MaterialTheme.colorScheme.secondary to Icons.Default.Wifi
+    is ConnectionStatus.Connecting -> connection_status_connecting to Icons.Default.Wifi
+    ConnectionStatus.Authenticating -> connection_status_connecting to Icons.Default.Wifi
     ConnectionStatus.Offline -> connection_status_offline to Icons.Default.WifiOff
   }
 

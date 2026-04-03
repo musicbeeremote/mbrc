@@ -75,35 +75,32 @@ class AppStateManager(
     }
 
     launch {
-      // Track if we were ever connected to avoid triggering reconnection logic on initial Offline state
-      var wasConnected = false
+      // Track if a connection was ever attempted to avoid triggering
+      // reconnection logic on the initial Offline state (which is the default)
+      var wasConnectionAttempted = false
 
       connectionState.connection.collect { connection ->
         notifications.connectionStateChanged(connection == ConnectionStatus.Connected)
         when (connection) {
           ConnectionStatus.Offline -> {
             stopPositionUpdater()
-            // Only track connection loss if we were previously connected
-            // This prevents stopping the service immediately on startup
-            if (wasConnected) {
+            if (wasConnectionAttempted) {
               serviceLifecycleManager.onConnectionLost()
             }
           }
 
           ConnectionStatus.Connected -> {
-            wasConnected = true
+            wasConnectionAttempted = true
             serviceLifecycleManager.onConnectionRestored()
           }
 
           ConnectionStatus.Authenticating -> {
-            // Authenticating means we're in the process of connecting,
-            // so reset reconnection tracking
+            wasConnectionAttempted = true
             serviceLifecycleManager.onConnectionRestored()
           }
 
           is ConnectionStatus.Connecting -> {
-            // Actively connecting - no action needed, ServiceLifecycleManager
-            // is already aware of reconnection attempts
+            wasConnectionAttempted = true
           }
         }
       }

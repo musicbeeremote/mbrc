@@ -83,6 +83,7 @@ val drawer_header_gradient_bottom_dark = Color(0xFFBF360C) // Deep Orange 900 da
 
 // Connection Status Colors
 val connection_status_connected = Color(0xFF4CAF50) // Green
+val connection_status_connecting = Color(0xFFC62828) // Red 800
 val connection_status_offline = Color(0xFFC62828) // Red 800
 val connection_status_card_bg_light = Color(0xFFE0E0E0) // Light gray for better visibility
 val connection_status_card_bg_dark = Color.White.copy(alpha = 0.15f)
