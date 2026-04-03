@@ -30,8 +30,9 @@ class MediaSessionManager(
   private val dispatchers: AppCoroutineDispatchers
 ) {
   private var _mediaSession: MediaSession? = null
-  private val sessionJob: Job = Job()
-  val scope: CoroutineScope = CoroutineScope(sessionJob)
+  private var sessionJob: Job = Job()
+  var scope: CoroutineScope = CoroutineScope(sessionJob)
+    private set
 
   /**
    * Initializes the media session if it doesn't already exist.
@@ -42,6 +43,12 @@ class MediaSessionManager(
   fun initialize(): MediaSession {
     if (_mediaSession != null) {
       return requireNotNull(_mediaSession)
+    }
+
+    // Recreate scope if it was cancelled by a previous destroy() call
+    if (sessionJob.isCancelled) {
+      sessionJob = Job()
+      scope = CoroutineScope(sessionJob)
     }
 
     val player =

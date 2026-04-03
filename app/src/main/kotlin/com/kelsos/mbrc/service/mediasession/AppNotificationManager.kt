@@ -104,10 +104,14 @@ class AppNotificationManagerImpl(
       val mediaSession = mediaSessionManager.mediaSession ?: return
       notification = notificationBuilder.createBuilder(this.notificationData, mediaSession).build()
       notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
+    } else {
+      // Replace the notification with a placeholder to indicate disconnection.
+      // The ServiceLifecycleManager will eventually stop the service and remove it,
+      // but this avoids showing stale track data during the reconnection window.
+      notificationData = NotificationData()
+      notification = notificationBuilder.createPlaceholderBuilder().build()
+      notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
     }
-    // When disconnected, don't cancel the notification here.
-    // The ServiceLifecycleManager will stop the service, and stopForeground(REMOVE)
-    // will handle notification removal safely.
   }
 
   override fun updateState(state: PlayerState, position: PlayingPosition) {
