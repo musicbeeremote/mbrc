@@ -41,6 +41,7 @@ jobs:
     environment: release
     outputs:
       apk-sha256: ${{ steps.hashes.outputs.apk-sha256 }}
+      play-apk-sha256: ${{ steps.hashes.outputs.play-apk-sha256 }}
       aab-sha256: ${{ steps.hashes.outputs.aab-sha256 }}
     steps:
       - name: Checkout
@@ -71,7 +72,7 @@ jobs:
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleGithubRelease bundlePlayRelease --no-daemon
+        run: ./gradlew assembleGithubRelease assemblePlayRelease bundlePlayRelease --no-daemon
 
       - name: Remove keystore
         if: always()
@@ -81,8 +82,10 @@ jobs:
         id: hashes
         run: |
           APK=$(find app/build/outputs/apk/github/release -name '*.apk' -type f | head -1)
+          PLAY_APK=$(find app/build/outputs/apk/play/release -name '*.apk' -type f | head -1)
           AAB=$(find app/build/outputs/bundle/playRelease -name '*.aab' -type f | head -1)
           echo "apk-sha256=$(sha256sum "$APK" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "play-apk-sha256=$(sha256sum "$PLAY_APK" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
           echo "aab-sha256=$(sha256sum "$AAB" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Upload APK
@@ -90,6 +93,12 @@ jobs:
         with:
           name: github-apk
           path: app/build/outputs/apk/github/release/*.apk
+
+      - name: Upload Play APK
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: play-apk
+          path: app/build/outputs/apk/play/release/*.apk
 
       - name: Upload AAB
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
@@ -111,6 +120,12 @@ jobs:
           name: github-apk
           path: artifacts/apk
 
+      - name: Download Play APK
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: play-apk
+          path: artifacts/play-apk
+
       - name: Download AAB
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
@@ -121,6 +136,11 @@ jobs:
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4
         with:
           subject-path: artifacts/apk/*.apk
+
+      - name: Attest Play APK
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4
+        with:
+          subject-path: artifacts/play-apk/*.apk
 
       - name: Attest AAB
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4
@@ -139,6 +159,12 @@ jobs:
           name: github-apk
           path: artifacts/apk
 
+      - name: Download Play APK
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: play-apk
+          path: artifacts/play-apk
+
       - name: Download AAB
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
@@ -156,6 +182,7 @@ jobs:
           ## Checksums
 
           **APK (GitHub):** `${{ needs.build.outputs.apk-sha256 }}`
+          **APK (Play):** `${{ needs.build.outputs.play-apk-sha256 }}`
           **AAB (Play):** `${{ needs.build.outputs.aab-sha256 }}`
 
           ## Provenance
@@ -164,4 +191,5 @@ jobs:
           EOF
           )" \
             artifacts/apk/*.apk \
+            artifacts/play-apk/*.apk \
             artifacts/aab/*.aab
