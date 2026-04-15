@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
-    version="1.6.0"
-    release="Jan 31, 2026">
+    version="1.6.0-rc.1"
+    release="Apr 15, 2026">
     <feature>Adds play all and shuffle all library options to the library menu.</feature>
     <feature>Displays composer information in the lyrics screen header.</feature>
     <feature>Adds track details panel showing extended metadata (composer, genre, bitrate, file info, play statistics).</feature>
