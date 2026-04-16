@@ -449,7 +449,19 @@ tasks {
   }
 
   val copyDummyGoogleServicesJson by registering(GenerateGoogleServicesJson::class) {
-    onlyIf { System.getenv("CI") == "true" }
+    val googleServicesFile = file("google-services.json")
+    onlyIf {
+      System.getenv("CI") == "true" && !googleServicesFile.exists()
+    }
+    doFirst {
+      val gitRef = System.getenv("GITHUB_REF").orEmpty()
+      if (gitRef.startsWith("refs/tags/")) {
+        throw GradleException(
+          "google-services.json is missing during a tag build. " +
+            "Add the GOOGLE_SERVICES_JSON secret to the release environment.",
+        )
+      }
+    }
     inputFiles.from(dummyGoogleServicesJson)
     outputJson.set(file("google-services.json"))
   }
