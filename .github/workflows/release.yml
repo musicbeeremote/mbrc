@@ -6,11 +6,14 @@
 #      - Optionally add required reviewers for manual approval before release
 #      - Optionally restrict to the "main" branch
 #   2. Add the following secrets to the "release" environment:
-#      - KEYSTORE_BASE64  : base64-encoded release keystore
-#                           (generate with: base64 -w0 < release.jks)
-#      - STORE_PASSWORD   : keystore password
-#      - KEY_ALIAS        : signing key alias
-#      - KEY_PASSWORD     : signing key password
+#      - KEYSTORE_BASE64       : base64-encoded release keystore
+#                                (generate with: base64 -w0 < release.jks)
+#      - STORE_PASSWORD        : keystore password
+#      - KEY_ALIAS             : signing key alias
+#      - KEY_PASSWORD          : signing key password
+#      Note: For PKCS12 keystores, STORE_PASSWORD and KEY_PASSWORD are the same.
+#      - GOOGLE_SERVICES_JSON  : base64-encoded app/google-services.json
+#                                (generate with: base64 -w0 < app/google-services.json)
 #   3. Trigger by pushing a version tag: git tag v1.6.0 && git push origin v1.6.0
 #
 # Verify attestation locally:
@@ -66,6 +69,10 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > /tmp/release.jks
 
+      - name: Decode google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+
       - name: Build release artifacts
         env:
           KEYSTORE_FILE: /tmp/release.jks
@@ -74,9 +81,11 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleGithubRelease assemblePlayRelease bundlePlayRelease --no-daemon
 
-      - name: Remove keystore
+      - name: Remove secrets
         if: always()
-        run: rm -f /tmp/release.jks
+        run: |
+          rm -f /tmp/release.jks
+          rm -f app/google-services.json
 
       - name: Compute artifact hashes
         id: hashes
