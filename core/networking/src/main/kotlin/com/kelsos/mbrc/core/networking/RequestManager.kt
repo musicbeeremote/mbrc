@@ -90,7 +90,8 @@ class RequestManagerImpl(
     }
 
   private fun connect(firstMessage: SocketMessage?): Socket {
-    val connectionSettings = checkNotNull(connectionProvider.getDefault())
+    val connectionSettings = connectionProvider.getDefault()
+      ?: throw NoDefaultConnectionException()
 
     try {
       Timber.v("Preparing connection to $connectionSettings")

@@ -6,6 +6,7 @@ import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
+import com.kelsos.mbrc.core.networking.NoDefaultConnectionException
 import com.kelsos.mbrc.core.networking.api.OutputApi
 import com.kelsos.mbrc.core.networking.dto.OutputResponse
 import io.mockk.coEvery
@@ -121,6 +122,21 @@ class OutputSelectionViewModelTest : KoinTest {
         val event = awaitItem()
         assertThat(event).isInstanceOf(Outcome.Failure::class.java)
         assertThat((event as Outcome.Failure).error).isEqualTo(AppError.NetworkTimeout)
+      }
+    }
+
+  @Test
+  fun `reload should emit NotConnected error when no default connection is configured`() =
+    runTest(testDispatcher) {
+      coEvery { outputApi.getOutputs() } throws NoDefaultConnectionException()
+
+      viewModel.events.test {
+        viewModel.reload()
+        advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isInstanceOf(Outcome.Failure::class.java)
+        assertThat((event as Outcome.Failure).error).isEqualTo(AppError.NotConnected)
       }
     }
 

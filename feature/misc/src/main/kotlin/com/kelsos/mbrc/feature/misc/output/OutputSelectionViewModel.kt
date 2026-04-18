@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
+import com.kelsos.mbrc.core.networking.NoDefaultConnectionException
 import com.kelsos.mbrc.core.networking.api.OutputApi
 import com.kelsos.mbrc.core.networking.dto.OutputResponse
 import java.net.SocketException
@@ -27,6 +28,7 @@ class OutputSelectionViewModel(
 
   private fun mapError(throwable: Throwable?): Outcome<Unit> =
     when (throwable?.cause ?: throwable) {
+      is NoDefaultConnectionException -> Outcome.Failure(AppError.NotConnected)
       is SocketException -> Outcome.Failure(AppError.ConnectionRefused)
       is SocketTimeoutException -> Outcome.Failure(AppError.NetworkTimeout)
       else -> Outcome.Failure(AppError.Unknown(throwable))

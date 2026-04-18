@@ -2,6 +2,8 @@ Changelog
 -----------
 
 ## [Unreleased]
+### Fixed
+- Fixes a crash when opening the output selection (or any other API call) before a default connection is configured.
 
 ## [1.6.0-rc.2] - 2026-04-18
 ### Fixed
