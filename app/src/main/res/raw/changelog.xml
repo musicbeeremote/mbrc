@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    version="1.6.0-rc.2"
+    release="Apr 18, 2026">
+    <bug>Fixes Google Services configuration for the Play release build.</bug>
+  </version>
+  <version
     version="1.6.0-rc.1"
     release="Apr 15, 2026">
     <feature>Adds play all and shuffle all library options to the library menu.</feature>

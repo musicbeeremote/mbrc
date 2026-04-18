@@ -3,6 +3,10 @@ Changelog
 
 ## [Unreleased]
 
+## [1.6.0-rc.2] - 2026-04-18
+### Fixed
+- Fixes Google Services configuration for the Play release build.
+
 ## [1.6.0-rc.1] - 2026-04-15
 ### Added
 - [#231] Adds play all and shuffle all library options to the library menu.
@@ -247,7 +251,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.1...HEAD
+[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.2...HEAD
+[1.6.0-rc.2]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.1...v1.6.0-rc.2
 [1.6.0-rc.1]: https://github.com/musicbeeremote/mbrc/compare/v1.5.1...v1.6.0-rc.1
 [1.5.1]: https://github.com/musicbeeremote/mbrc/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/musicbeeremote/mbrc/compare/v1.4.0...v1.5.0
