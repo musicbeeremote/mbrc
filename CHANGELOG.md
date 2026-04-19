@@ -2,6 +2,8 @@ Changelog
 -----------
 
 ## [Unreleased]
+
+## [1.6.0-rc.3] - 2026-04-19
 ### Fixed
 - Fixes a crash when opening the output selection (or any other API call) before a default connection is configured.
 - Fixes a crash when the plugin sends a cover protocol message with a null `cover` field.
@@ -255,7 +257,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.2...HEAD
+[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.3...HEAD
+[1.6.0-rc.3]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.2...v1.6.0-rc.3
 [1.6.0-rc.2]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.1...v1.6.0-rc.2
 [1.6.0-rc.1]: https://github.com/musicbeeremote/mbrc/compare/v1.5.1...v1.6.0-rc.1
 [1.5.1]: https://github.com/musicbeeremote/mbrc/compare/v1.5.0...v1.5.1
