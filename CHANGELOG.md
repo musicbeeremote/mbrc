@@ -5,6 +5,7 @@ Changelog
 ### Fixed
 - Fixes a crash when opening the output selection (or any other API call) before a default connection is configured.
 - Fixes a crash when the plugin sends a cover protocol message with a null `cover` field.
+- Fixes a startup crash for users upgrading from legacy versions caused by a type mismatch on the stored last-run version code.
 
 ## [1.6.0-rc.2] - 2026-04-18
 ### Fixed

@@ -237,7 +237,7 @@ class SettingsManagerDataStore(
       preferences[PreferenceKeys.LAST_VERSION_RUN] ?: DefaultValues.LAST_VERSION_RUN
     }.first()
 
-    val currentVersion = appInfo.versionCode
+    val currentVersion = appInfo.versionCode.toLong()
 
     return if (lastVersionCode < currentVersion) {
       dataStore.edit { preferences ->
