@@ -8,7 +8,7 @@ data class CoverPayload(
   @Json(name = "status")
   val status: Int = NOT_FOUND,
   @Json(name = "cover")
-  val cover: String = ""
+  val cover: String? = null
 ) {
   companion object {
     const val READY = 1

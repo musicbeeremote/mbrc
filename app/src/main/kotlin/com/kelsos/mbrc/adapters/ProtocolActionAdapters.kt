@@ -138,7 +138,8 @@ class CoverHandlerImpl(
   override suspend fun fetchAndStoreCover(): String = withContext(dispatchers.network) {
     val result = runCatching {
       val response = playbackApi.getCover()
-      val bitmap = getBitmap(response.cover)
+      val cover = checkNotNull(response.cover) { "Cover payload had no cover data" }
+      val bitmap = getBitmap(cover)
       val file = storeCover(bitmap)
       file.toUri().toString()
     }
