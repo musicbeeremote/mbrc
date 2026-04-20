@@ -3,26 +3,27 @@
 [![codecov](https://codecov.io/gh/musicbeeremote/mbrc/branch/main/graph/badge.svg)](https://codecov.io/gh/musicbeeremote/mbrc)
 ![GitHub](https://img.shields.io/github/license/musicbeeremote/mbrc.svg)
 ![GitHub release](https://img.shields.io/github/release/musicbeeremote/mbrc.svg)
-[![Discord](https://img.shields.io/discord/420977901215678474.svg?style=popout)](https://discordapp.com/invite/rceTb57)
+[![Discord](https://img.shields.io/discord/420977901215678474.svg?style=flat)](https://discord.gg/rceTb57)
 
 <br/>
 <p align="center">
     <a href="https://github.com/musicbeeremote/mbrc">
-    <img src="logo.png" alt="Logo" width="80"   height="80" />
+        <img src="logo.png" alt="Logo" width="80" height="80" />
     </a>
+</p>
 
 <h3 align="center">MusicBee Remote</h3>
-    <p align="center">
+
+<p align="center">
         Application for controlling MusicBee through your Android Device 
         <br/>
-        <a href="https://play.google.com/store/apps/details?id=com.kelsos.mbrc">Play Store</a>
-        <br/>
-        <i>(Unavailable since January 2023, planned return in 2026)</i>
-        <br/>
+        <a href="https://play.google.com/store/apps/details?id=com.kelsos.mbrc">
+            <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60"/>
+        </a>
         <br/>
         <a href="https://mbrc.kelsos.net/help/">Help</a>
         ·
-        <a href="http://getmusicbee.com/forum/index.php?topic=7221.new;topicseen#new">MusicBee Forum</a>
+        <a href="https://getmusicbee.com/forum/index.php?topic=7221.0">MusicBee Forum</a>
         ·
         <a href="https://github.com/musicbeeremote/mbrc/issues">Report Bug</a>
         ·
@@ -52,11 +53,11 @@
 
 [![MusicBee Remote Screenshot][project-screenshot]](https://mbrc.kelsos.net)
 
-MusicBee Remote is an application that allows you to control [MusicBee](http://getmusicbee.com/) player.
+MusicBee Remote is an application that allows you to control [MusicBee](https://getmusicbee.com/) player.
 This is achieved by using a [plugin](https://github.com/musicbeeremote/mbrc-plugin) that acts as a server.
 The plugin exposes a TCP socket server and uses a JSON based protocol to communicate with the Android application.
 
-The application development started in 2011 for personal usage and then it was open sourced and released to Play Store so others could use it. The application was also presented as part of my thesis title "*Android and application development for mobile devices*".
+The application development started in 2011 for personal usage and then it was open sourced and published on the Play Store so others could use it. The application was also presented as part of my thesis title "*Android and application development for mobile devices*".
 
 ### Built With
 
@@ -74,7 +75,7 @@ The application development started in 2011 for personal usage and then it was o
 #### Testing
 
 * [MockK](https://mockk.io/) - Mocking framework
-* [Robolectric](http://robolectric.org/) - Android unit testing
+* [Robolectric](https://robolectric.org/) - Android unit testing
 * [Turbine](https://github.com/cashapp/turbine) - Flow testing
 * [Truth](https://truth.dev/) - Assertions
 
@@ -91,7 +92,7 @@ In order to get started with the project as a developer there are a few steps yo
 **Development Environment:**
 - Android Studio (stable version preferred) should be installed and up to date
 
-To get started with the the project you first have to clone the project.
+To get started with the project you first have to clone the repository.
 
 ```bash
 git clone https://github.com/musicbeeremote/mbrc.git
@@ -103,11 +104,11 @@ Then you can open the project with Android Studio.
 
 There are several ways to install the application on your device:
 
-1. **GitHub Releases** (Recommended) - Download the latest version from [releases](https://github.com/musicbeeremote/mbrc/releases). This version doesn't include crash reporting or analytics.
+1. **[Play Store](https://play.google.com/store/apps/details?id=com.kelsos.mbrc)** (Recommended) - Install the latest stable version. The Play Store build includes Firebase and Crashlytics for crash reporting and anonymous analytics.
 
-2. **Android Studio** - If you are a developer, you can build and install directly from Android Studio.
+2. **GitHub Releases** - Download APKs from [releases](https://github.com/musicbeeremote/mbrc/releases). This build is for privacy-conscious users and doesn't include crash reporting or analytics.
 
-3. **Play Store** - Currently unavailable (see note above), but planned to return in 2026. The Play Store version includes Firebase and Crashlytics for crash reporting and anonymous analytics.
+3. **Android Studio** - If you are a developer, you can build and install directly from Android Studio.
 
 ## Development
 
@@ -184,12 +185,14 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 See the [open issues](https://github.com/musicbeeremote/mbrc/issues) for a list of known issues and feature requests.
 
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
+
 ## License
 
 The source code of the application is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl.html) license. See `LICENSE` for more information.
 
     MusicBee Remote (for Android)
-    Copyright (C) 2011-2025  Konstantinos Paparas
+    Copyright (C) 2011-2026  Konstantinos Paparas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -202,11 +205,11 @@ The source code of the application is licensed under the [GPLv3](https://www.gnu
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ## Contact
 
-MusicBee Remote - [@MusicBeeRemote](https://twitter.com/musicbeeremote)
+MusicBee Remote - [@musicbeeremote.bsky.social](https://bsky.app/profile/musicbeeremote.bsky.social)
 
 Project Link: [https://github.com/musicbeeremote/mbrc](https://github.com/musicbeeremote/mbrc)
 
@@ -222,12 +225,14 @@ Jordan is responsible for the conception and creation of the application logo.
 
 * Carlos Parga
 
-Carlos created some really nice [mockups](https://groups.google.com/forum/#!topic/musicbee-remote/wgm029yfJnU) from where I drew inspiration while working on the UI.
+Carlos created some really nice mockups from where I drew inspiration while working on the UI.
 
-* [Cyanogen Apollo player](https://github.com/CyanogenMod/android_packages_apps_Apollo)
+* Cyanogen Apollo player
 
-Apollo Player was one of the original sources of inspiration for the UI of MusicBee Remote
+Apollo Player was one of the original sources of inspiration for the UI of MusicBee Remote.
 
-* [Google Play Music for Android](https://play.google.com/store/apps/details?id=com.google.android.music)
+* Google Play Music for Android (discontinued)
+
+Google Play Music was another early influence on the UI design of MusicBee Remote.
 
 [project-screenshot]: https://raw.githubusercontent.com/musicbeeremote/mbrc/main/screenshot.jpg
