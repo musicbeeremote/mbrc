@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.widgets.glance
 
+import android.content.Intent
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -12,6 +13,7 @@ import androidx.glance.ImageProvider
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -43,11 +45,11 @@ data class WidgetActions(
   val onOpenApp: Action
 ) {
   companion object {
-    val Default = WidgetActions(
+    fun default(openAppIntent: Intent) = WidgetActions(
       onPrevious = actionRunCallback<PreviousTrackAction>(),
       onPlayPause = actionRunCallback<PlayPauseAction>(),
       onNext = actionRunCallback<NextTrackAction>(),
-      onOpenApp = actionRunCallback<OpenAppAction>()
+      onOpenApp = actionStartActivity(openAppIntent)
     )
 
     /**
@@ -85,7 +87,7 @@ private const val SMALL_WIDGET_HEIGHT = 72
  * Shows: Album cover, title, artist, album, and playback controls.
  */
 @Composable
-fun NormalWidgetContent(state: WidgetState, actions: WidgetActions = WidgetActions.Default) {
+fun NormalWidgetContent(state: WidgetState, actions: WidgetActions) {
   Row(
     modifier = GlanceModifier
       .fillMaxWidth()
@@ -97,8 +99,7 @@ fun NormalWidgetContent(state: WidgetState, actions: WidgetActions = WidgetActio
     // Album cover
     AlbumCover(
       bitmap = state.coverBitmap,
-      size = NORMAL_WIDGET_HEIGHT.dp,
-      modifier = GlanceModifier.clickable(actions.onOpenApp)
+      size = NORMAL_WIDGET_HEIGHT.dp
     )
 
     // Track info and controls
@@ -154,7 +155,7 @@ fun NormalWidgetContent(state: WidgetState, actions: WidgetActions = WidgetActio
  * Shows: Album cover, title - artist, and playback controls.
  */
 @Composable
-fun SmallWidgetContent(state: WidgetState, actions: WidgetActions = WidgetActions.Default) {
+fun SmallWidgetContent(state: WidgetState, actions: WidgetActions) {
   Row(
     modifier = GlanceModifier
       .fillMaxWidth()
@@ -166,8 +167,7 @@ fun SmallWidgetContent(state: WidgetState, actions: WidgetActions = WidgetAction
     // Album cover
     AlbumCover(
       bitmap = state.coverBitmap,
-      size = SMALL_WIDGET_HEIGHT.dp,
-      modifier = GlanceModifier.clickable(actions.onOpenApp)
+      size = SMALL_WIDGET_HEIGHT.dp
     )
 
     // Track info and controls

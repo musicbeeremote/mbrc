@@ -2,6 +2,7 @@ package com.kelsos.mbrc.core.platform.intents
 
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 
 /**
  * Abstraction for launching the main app activity.
@@ -9,4 +10,6 @@ import android.content.Context
  */
 interface AppLauncher {
   fun getLaunchPendingIntent(context: Context): PendingIntent
+
+  fun getLaunchIntent(context: Context): Intent
 }

@@ -43,7 +43,10 @@ class RemoteViewIntentBuilderImpl :
 
   override fun getLaunchPendingIntent(context: Context): PendingIntent {
     val flag = FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
-    val intent = Intent(context, MainActivity::class.java)
+    val intent = getLaunchIntent(context)
     return getActivity(context, RemoteIntentCode.Open.code, intent, flag)
   }
+
+  override fun getLaunchIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
 }

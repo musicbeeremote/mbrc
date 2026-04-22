@@ -9,22 +9,30 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import androidx.glance.state.GlanceStateDefinition
+import com.kelsos.mbrc.core.platform.intents.AppLauncher
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * Small size music widget (72dp height).
  * Shows album cover, combined title-artist, and playback controls.
  */
-class SmallWidget : GlanceAppWidget() {
+class SmallWidget :
+  GlanceAppWidget(),
+  KoinComponent {
+
+  private val appLauncher: AppLauncher by inject()
 
   override val stateDefinition: GlanceStateDefinition<Preferences> = WidgetGlanceStateDefinition
 
   override suspend fun provideGlance(context: Context, id: GlanceId) {
+    val actions = WidgetActions.default(appLauncher.getLaunchIntent(context))
     provideContent {
       val prefs = currentState<Preferences>()
       val state = WidgetGlanceStateDefinition.preferencesToWidgetState(context, prefs)
 
       GlanceTheme {
-        SmallWidgetContent(state)
+        SmallWidgetContent(state, actions)
       }
     }
   }
