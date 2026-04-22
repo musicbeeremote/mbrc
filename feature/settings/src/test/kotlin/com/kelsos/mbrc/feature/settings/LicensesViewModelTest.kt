@@ -10,8 +10,6 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -150,8 +148,8 @@ class LicensesViewModelTest : KoinTest {
       every { this@mockk.name } returns name
       every { uniqueId } returns "com.test:$name:1.0.0"
       every { artifactVersion } returns "1.0.0"
-      every { licenses } returns persistentSetOf(license)
-      every { developers } returns persistentListOf(developer)
+      every { licenses } returns setOf(license)
+      every { developers } returns listOf(developer)
       every { organization } returns null
       every { website } returns "https://example.com"
     }

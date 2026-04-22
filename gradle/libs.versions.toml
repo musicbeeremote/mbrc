@@ -1,5 +1,5 @@
 [versions]
-aboutlibraries = "13.2.1"
+aboutlibraries = "14.0.1"
 androidx-annotation = "1.10.0"
 androidx-appcompat = "1.7.1"
 androidx-arch-core-testing = "2.2.0"
