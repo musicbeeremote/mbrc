@@ -2,10 +2,17 @@ Changelog
 -----------
 
 ## [Unreleased]
+
+## [1.6.0-rc.4] - 2026-04-22
 ### Fixed
 - Fixes a crash on track change when the plugin omits the `year` field for tracks without a year tag.
 - Fixes a home screen widget crash when tapping the widget to open the app, by launching the activity directly instead of routing through a Glance action callback.
 - Fixes a crash when a broadcast action throws, by catching exceptions in the message handler and swallowing the no-default-connection error during now-playing refresh.
+- Fixes the app License screen failing to load because the bundled `LICENSE.txt` asset was missing from the APK.
+
+### Changed
+- Updates `aboutlibraries` to 14.0.1 and bumps other minor/patch dependencies (Firebase BOM, Koin, androidx.annotation, Crashlytics plugin).
+- Pins GitHub Actions to newer digests (upload-artifact, setup-android, codeql-action, gradle/actions).
 
 ## [1.6.0-rc.3] - 2026-04-19
 ### Fixed
@@ -261,7 +268,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.3...HEAD
+[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.4...HEAD
+[1.6.0-rc.4]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.3...v1.6.0-rc.4
 [1.6.0-rc.3]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.2...v1.6.0-rc.3
 [1.6.0-rc.2]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.1...v1.6.0-rc.2
 [1.6.0-rc.1]: https://github.com/musicbeeremote/mbrc/compare/v1.5.1...v1.6.0-rc.1
