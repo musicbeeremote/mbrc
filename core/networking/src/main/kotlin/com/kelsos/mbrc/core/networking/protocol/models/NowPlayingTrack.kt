@@ -6,13 +6,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class NowPlayingTrack(
   @Json(name = "artist")
-  val artist: String,
+  val artist: String = "",
   @Json(name = "album")
-  val album: String,
+  val album: String = "",
   @Json(name = "title")
-  val title: String,
+  val title: String = "",
   @Json(name = "year")
-  val year: String,
+  val year: String = "",
   @Json(name = "path")
-  val path: String
+  val path: String = ""
 )

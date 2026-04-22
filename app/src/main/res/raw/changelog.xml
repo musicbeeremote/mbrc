@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    version="Unreleased"
+    release="">
+    <bug>Fixes a crash on track change when the plugin omits the year field for tracks without a year tag.</bug>
+  </version>
+  <version
     version="1.6.0-rc.3"
     release="Apr 19, 2026">
     <bug>Fixes a crash when opening the output selection (or any other API call) before a default connection is configured.</bug>

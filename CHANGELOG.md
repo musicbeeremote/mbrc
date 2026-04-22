@@ -2,6 +2,8 @@ Changelog
 -----------
 
 ## [Unreleased]
+### Fixed
+- Fixes a crash on track change when the plugin omits the `year` field for tracks without a year tag.
 
 ## [1.6.0-rc.3] - 2026-04-19
 ### Fixed
