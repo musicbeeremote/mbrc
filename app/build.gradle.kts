@@ -248,9 +248,6 @@ android {
   }
 
   sourceSets {
-    getByName("main") {
-      assets.srcDirs(layout.buildDirectory.dir("generated/assets/license"))
-    }
     getByName("androidTest") {
       assets.srcDirs("$projectDir/schemas")
     }
@@ -479,19 +476,15 @@ tasks {
     }
   }
 
-  val generatedAssetsDir = layout.buildDirectory.dir("generated/assets/license")
-
-  val copyLicenseToAssets by registering(Copy::class) {
-    from(rootProject.file("LICENSE"))
-    into(generatedAssetsDir)
-    rename { "LICENSE.txt" }
+  val copyLicenseToAssets = project.tasks.register<CopyLicenseTask>("copyLicenseToAssets") {
+    licenseFile.set(rootProject.file("LICENSE"))
   }
 
   androidComponents {
     onVariants { variant ->
       variant.sources.assets?.addGeneratedSourceDirectory(
         copyLicenseToAssets,
-        { objects.directoryProperty().fileValue(generatedAssetsDir.get().asFile) },
+        CopyLicenseTask::outputDir,
       )
     }
   }
@@ -534,3 +527,18 @@ fun String.toKebabCase(): String {
 }
 
 fun String.prefixIfNot(prefix: String): String = if (this.startsWith(prefix)) this else "$prefix-$this"
+
+abstract class CopyLicenseTask : DefaultTask() {
+  @get:InputFile
+  abstract val licenseFile: RegularFileProperty
+
+  @get:OutputDirectory
+  abstract val outputDir: DirectoryProperty
+
+  @TaskAction
+  fun copy() {
+    val dir = outputDir.get().asFile
+    dir.mkdirs()
+    licenseFile.get().asFile.copyTo(dir.resolve("LICENSE.txt"), overwrite = true)
+  }
+}
