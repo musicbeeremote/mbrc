@@ -373,7 +373,7 @@ class SettingsScreenTest : KoinTest {
         )
       }
 
-      composeTestRule.onNodeWithText("Open source license")
+      composeTestRule.onNodeWithText("Open source licenses")
         .performScrollTo()
         .performClick()
       assertThat(licensesClicked).isTrue()

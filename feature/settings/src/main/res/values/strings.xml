@@ -50,7 +50,7 @@
   <string name="settings_build_time_title">Build Time</string>
   <string name="settings_miscellaneous">Miscellaneous</string>
   <string name="settings_miscellaneous_incoming_call_action">Incoming call action</string>
-  <string name="settings_oss_license">Open source license</string>
+  <string name="settings_oss_license">Open source licenses</string>
   <string name="settings_revision_title">Revision</string>
   <string name="settings_title_license">License</string>
   <string name="settings_version_number">v%1$s</string>
