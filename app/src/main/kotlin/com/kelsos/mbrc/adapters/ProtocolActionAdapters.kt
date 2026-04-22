@@ -111,7 +111,11 @@ class NowPlayingHandlerImpl(private val repository: NowPlayingRepository) : NowP
   }
 
   override suspend fun refreshFromRemote() {
-    repository.getRemote()
+    runCatching {
+      repository.getRemote()
+    }.onFailure { e ->
+      Timber.v(e, "Failed to refresh now playing list from remote")
+    }
   }
 }
 

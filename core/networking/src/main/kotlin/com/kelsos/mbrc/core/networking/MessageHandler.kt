@@ -13,6 +13,7 @@ import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.base.ProtocolAction
 import com.kelsos.mbrc.core.networking.protocol.base.ProtocolPayload
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -138,9 +139,16 @@ class MessageHandlerImpl(
   }
 
   private suspend fun execute(event: MessageEvent) {
-    get(event.type)
-      .onSuccess { it.execute(event) }
-      .onFailure { Timber.e(it, "Failed to execute command for $event") }
+    val action = get(event.type)
+      .onFailure { Timber.e(it, "Failed to resolve command for $event") }
+      .getOrNull() ?: return
+    try {
+      action.execute(event)
+    } catch (e: CancellationException) {
+      throw e
+    } catch (e: Exception) {
+      Timber.e(e, "Failed to execute command for $event")
+    }
   }
 
   private fun get(context: Protocol) = runCatching {
