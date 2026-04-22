@@ -5,6 +5,7 @@
     release="">
     <bug>Fixes a crash on track change when the plugin omits the year field for tracks without a year tag.</bug>
     <bug>Fixes a home screen widget crash when tapping the widget to open the app, by launching the activity directly instead of routing through a Glance action callback.</bug>
+    <bug>Fixes a crash when a broadcast action throws, by catching exceptions in the message handler and swallowing the no-default-connection error during now-playing refresh.</bug>
   </version>
   <version
     version="1.6.0-rc.3"
