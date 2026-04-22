@@ -115,6 +115,12 @@ jobs:
           name: play-aab
           path: app/build/outputs/bundle/playRelease/*.aab
 
+      - name: Upload Play mapping
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: play-mapping
+          path: app/build/outputs/mapping/playRelease/mapping.txt
+
   attest:
     needs: build
     runs-on: ubuntu-latest
@@ -180,6 +186,15 @@ jobs:
           name: play-aab
           path: artifacts/aab
 
+      - name: Download Play mapping
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: play-mapping
+          path: artifacts/mapping
+
+      - name: Rename mapping with version
+        run: mv artifacts/mapping/mapping.txt "artifacts/mapping/mapping-${{ github.ref_name }}.txt"
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -206,4 +221,5 @@ jobs:
           )" \
             artifacts/apk/*.apk \
             artifacts/play-apk/*.apk \
-            artifacts/aab/*.aab
+            artifacts/aab/*.aab \
+            artifacts/mapping/mapping-*.txt
