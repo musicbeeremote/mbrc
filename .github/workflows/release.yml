@@ -192,8 +192,11 @@ jobs:
           name: play-mapping
           path: artifacts/mapping
 
-      - name: Rename mapping with version
-        run: mv artifacts/mapping/mapping.txt "artifacts/mapping/mapping-${{ github.ref_name }}.txt"
+      - name: Compress mapping with version
+        run: |
+          mv artifacts/mapping/mapping.txt "artifacts/mapping/mapping-${{ github.ref_name }}.txt"
+          (cd artifacts/mapping && zip -9 "mapping-${{ github.ref_name }}.zip" "mapping-${{ github.ref_name }}.txt")
+          rm "artifacts/mapping/mapping-${{ github.ref_name }}.txt"
 
       - name: Create GitHub Release
         env:
@@ -222,4 +225,4 @@ jobs:
             artifacts/apk/*.apk \
             artifacts/play-apk/*.apk \
             artifacts/aab/*.aab \
-            artifacts/mapping/mapping-*.txt
+            artifacts/mapping/mapping-*.zip
