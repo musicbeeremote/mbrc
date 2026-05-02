@@ -2,6 +2,10 @@ Changelog
 -----------
 
 ## [Unreleased]
+### Fixed
+- Fixes the now playing queue capping at 100 items by driving Paging 3 from a `snapshotFlow` on the last visible index, so subsequent pages load on scroll.
+- Fixes pull-to-refresh not triggering when the now playing queue is empty by wrapping the empty/loading/error states in a vertically scrollable container.
+- Fixes drag-and-drop reorder being snapped back to the server order when a new page lands mid-drag, and lets users reorder across page boundaries by appending newly loaded items without disturbing the in-progress drag.
 
 ## [1.6.0-rc.4] - 2026-04-22
 ### Fixed
