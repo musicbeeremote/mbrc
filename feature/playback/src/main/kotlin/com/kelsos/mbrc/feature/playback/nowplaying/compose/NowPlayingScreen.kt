@@ -275,24 +275,28 @@ internal fun NowPlayingContent(
   // Use a snapshot state list for Compose to observe changes during drag
   val draggableList = remember { mutableListOf<NowPlaying>().toMutableStateList() }
 
-  // Compute a signature of the paging data to detect actual changes
+  val dragDropState = rememberDragDropState(
+    lazyListState = lazyListState,
+    onMove = { from, to ->
+      draggableList.add(to, draggableList.removeAt(from))
+      onTrackMove(from, to)
+    },
+    onDragEnd = onDragEnd
+  )
+
   val dataSignature = remember(tracks.itemSnapshotList) {
     tracks.itemSnapshotList.items.map { it.id }.hashCode()
   }
 
-  // Sync list when data actually changes
   LaunchedEffect(dataSignature) {
     if (tracks.itemCount > 0) {
       val newItems = tracks.itemSnapshotList.items
       if (newItems.isNotEmpty()) {
-        // Check if content actually differs
-        val needsUpdate = draggableList.size != newItems.size ||
-          draggableList.zip(newItems).any { (old, new) -> old.id != new.id }
-
-        if (needsUpdate) {
-          draggableList.clear()
-          draggableList.addAll(newItems)
-        }
+        reconcileDraggableList(
+          current = draggableList,
+          incoming = newItems,
+          isDragging = dragDropState.draggingItemIndex != null
+        )
       }
     }
   }
@@ -332,14 +336,13 @@ internal fun NowPlayingContent(
           }
           NowPlayingTrackList(
             lazyListState = lazyListState,
+            dragDropState = dragDropState,
             draggableList = draggableList,
             tracks = tracks,
             playingTrackPath = playingTrackPath,
             isConnected = isConnected,
             onTrackClick = onTrackClick,
             onTrackRemove = onTrackRemove,
-            onTrackMove = onTrackMove,
-            onDragEnd = onDragEnd,
             onGoToAlbum = onGoToAlbum,
             onGoToArtist = onGoToArtist,
             modifier = Modifier.weight(1f)
@@ -347,6 +350,34 @@ internal fun NowPlayingContent(
         }
       }
     }
+  }
+}
+
+/**
+ * While the user is dragging, mirroring the server order would snap the dragged
+ * item back; instead, preserve the local order and only append items whose ids
+ * aren't already present, so reorders that span the page border keep the
+ * newly-loaded items reachable as drop targets.
+ */
+internal fun reconcileDraggableList(
+  current: MutableList<NowPlaying>,
+  incoming: List<NowPlaying>,
+  isDragging: Boolean
+) {
+  if (isDragging) {
+    val knownIds = current.mapTo(HashSet(current.size)) { it.id }
+    val toAppend = incoming.filter { it.id !in knownIds }
+    if (toAppend.isNotEmpty()) {
+      current.addAll(toAppend)
+    }
+    return
+  }
+
+  val needsUpdate = current.size != incoming.size ||
+    current.zip(incoming).any { (old, new) -> old.id != new.id }
+  if (needsUpdate) {
+    current.clear()
+    current.addAll(incoming)
   }
 }
 
@@ -381,27 +412,17 @@ private fun QueueHeader(trackCount: Int) {
 @Composable
 private fun NowPlayingTrackList(
   lazyListState: LazyListState,
+  dragDropState: DragDropState,
   draggableList: SnapshotStateList<NowPlaying>,
   tracks: LazyPagingItems<NowPlaying>,
   playingTrackPath: String,
   isConnected: Boolean,
   onTrackClick: (Int) -> Unit,
   onTrackRemove: (Int) -> Unit,
-  onTrackMove: (Int, Int) -> Unit,
-  onDragEnd: () -> Unit,
   onGoToAlbum: ((path: String) -> Unit)?,
   onGoToArtist: (artist: String) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val dragDropState = rememberDragDropState(
-    lazyListState = lazyListState,
-    onMove = { from, to ->
-      draggableList.add(to, draggableList.removeAt(from))
-      onTrackMove(from, to)
-    },
-    onDragEnd = onDragEnd
-  )
-
   // The LazyColumn iterates `draggableList` (a snapshot copy needed for drag &
   // drop), so it never reads `tracks[i]` directly. Without that, Paging 3 has
   // no signal to load past `initialLoadSize` and the queue caps at 100 items.
