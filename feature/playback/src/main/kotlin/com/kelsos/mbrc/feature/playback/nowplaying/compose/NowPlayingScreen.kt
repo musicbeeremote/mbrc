@@ -5,6 +5,8 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,7 +24,9 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.Album
@@ -53,6 +58,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
@@ -248,7 +254,7 @@ private fun NowPlayingEventsEffect(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NowPlayingContent(
+internal fun NowPlayingContent(
   tracks: LazyPagingItems<NowPlaying>,
   playingTrackPath: String,
   trackCount: Int,
@@ -269,24 +275,28 @@ private fun NowPlayingContent(
   // Use a snapshot state list for Compose to observe changes during drag
   val draggableList = remember { mutableListOf<NowPlaying>().toMutableStateList() }
 
-  // Compute a signature of the paging data to detect actual changes
+  val dragDropState = rememberDragDropState(
+    lazyListState = lazyListState,
+    onMove = { from, to ->
+      draggableList.add(to, draggableList.removeAt(from))
+      onTrackMove(from, to)
+    },
+    onDragEnd = onDragEnd
+  )
+
   val dataSignature = remember(tracks.itemSnapshotList) {
     tracks.itemSnapshotList.items.map { it.id }.hashCode()
   }
 
-  // Sync list when data actually changes
   LaunchedEffect(dataSignature) {
     if (tracks.itemCount > 0) {
       val newItems = tracks.itemSnapshotList.items
       if (newItems.isNotEmpty()) {
-        // Check if content actually differs
-        val needsUpdate = draggableList.size != newItems.size ||
-          draggableList.zip(newItems).any { (old, new) -> old.id != new.id }
-
-        if (needsUpdate) {
-          draggableList.clear()
-          draggableList.addAll(newItems)
-        }
+        reconcileDraggableList(
+          current = draggableList,
+          incoming = newItems,
+          isDragging = dragDropState.draggingItemIndex != null
+        )
       }
     }
   }
@@ -298,21 +308,25 @@ private fun NowPlayingContent(
   ) {
     when (val refreshState = tracks.loadState.refresh) {
       is LoadState.Loading if tracks.itemCount == 0 && draggableList.isEmpty() -> {
-        LoadingScreen()
+        ScrollablePlaceholder { LoadingScreen() }
       }
 
       is LoadState.Error if tracks.itemCount == 0 && draggableList.isEmpty() -> {
-        EmptyScreen(
-          message = refreshState.error.message ?: stringResource(R.string.refresh_failed),
-          icon = Icons.AutoMirrored.Filled.QueueMusic
-        )
+        ScrollablePlaceholder {
+          EmptyScreen(
+            message = refreshState.error.message ?: stringResource(R.string.refresh_failed),
+            icon = Icons.AutoMirrored.Filled.QueueMusic
+          )
+        }
       }
 
       is LoadState.NotLoading if tracks.itemCount == 0 && draggableList.isEmpty() -> {
-        EmptyScreen(
-          message = stringResource(R.string.now_playing__empty_list),
-          icon = Icons.AutoMirrored.Filled.QueueMusic
-        )
+        ScrollablePlaceholder {
+          EmptyScreen(
+            message = stringResource(R.string.now_playing__empty_list),
+            icon = Icons.AutoMirrored.Filled.QueueMusic
+          )
+        }
       }
 
       else -> {
@@ -322,14 +336,13 @@ private fun NowPlayingContent(
           }
           NowPlayingTrackList(
             lazyListState = lazyListState,
+            dragDropState = dragDropState,
             draggableList = draggableList,
             tracks = tracks,
             playingTrackPath = playingTrackPath,
             isConnected = isConnected,
             onTrackClick = onTrackClick,
             onTrackRemove = onTrackRemove,
-            onTrackMove = onTrackMove,
-            onDragEnd = onDragEnd,
             onGoToAlbum = onGoToAlbum,
             onGoToArtist = onGoToArtist,
             modifier = Modifier.weight(1f)
@@ -337,6 +350,48 @@ private fun NowPlayingContent(
         }
       }
     }
+  }
+}
+
+/**
+ * While the user is dragging, mirroring the server order would snap the dragged
+ * item back; instead, preserve the local order and only append items whose ids
+ * aren't already present, so reorders that span the page border keep the
+ * newly-loaded items reachable as drop targets.
+ */
+internal fun reconcileDraggableList(
+  current: MutableList<NowPlaying>,
+  incoming: List<NowPlaying>,
+  isDragging: Boolean
+) {
+  if (isDragging) {
+    val knownIds = current.mapTo(HashSet(current.size)) { it.id }
+    val toAppend = incoming.filter { it.id !in knownIds }
+    if (toAppend.isNotEmpty()) {
+      current.addAll(toAppend)
+    }
+    return
+  }
+
+  val needsUpdate = current.size != incoming.size ||
+    current.zip(incoming).any { (old, new) -> old.id != new.id }
+  if (needsUpdate) {
+    current.clear()
+    current.addAll(incoming)
+  }
+}
+
+@Composable
+private fun ScrollablePlaceholder(content: @Composable BoxScope.() -> Unit) {
+  BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(min = maxHeight)
+        .verticalScroll(rememberScrollState()),
+      contentAlignment = Alignment.Center,
+      content = content
+    )
   }
 }
 
@@ -357,28 +412,30 @@ private fun QueueHeader(trackCount: Int) {
 @Composable
 private fun NowPlayingTrackList(
   lazyListState: LazyListState,
+  dragDropState: DragDropState,
   draggableList: SnapshotStateList<NowPlaying>,
   tracks: LazyPagingItems<NowPlaying>,
   playingTrackPath: String,
   isConnected: Boolean,
   onTrackClick: (Int) -> Unit,
   onTrackRemove: (Int) -> Unit,
-  onTrackMove: (Int, Int) -> Unit,
-  onDragEnd: () -> Unit,
   onGoToAlbum: ((path: String) -> Unit)?,
   onGoToArtist: (artist: String) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val dragDropState = rememberDragDropState(
-    lazyListState = lazyListState,
-    onMove = { from, to ->
-      draggableList.add(to, draggableList.removeAt(from))
-      onTrackMove(from, to)
-    },
-    onDragEnd = onDragEnd
-  )
+  // The LazyColumn iterates `draggableList` (a snapshot copy needed for drag &
+  // drop), so it never reads `tracks[i]` directly. Without that, Paging 3 has
+  // no signal to load past `initialLoadSize` and the queue caps at 100 items.
+  // Observe the last visible index and ping `tracks[i]` to drive pagination.
+  LaunchedEffect(tracks) {
+    snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+      .collect { lastVisible ->
+        if (lastVisible != null && tracks.itemCount > 0) {
+          tracks[lastVisible.coerceIn(0, tracks.itemCount - 1)]
+        }
+      }
+  }
 
-  // Only enable drag if connected
   val dragModifier = if (isConnected) {
     Modifier.dragContainer(dragDropState)
   } else {

@@ -3,6 +3,9 @@
   <version
     version="Unreleased"
     release="">
+    <bug>Fixes the now playing queue capping at 100 items so the full queue is reachable on scroll.</bug>
+    <bug>Fixes pull-to-refresh not triggering when the now playing queue is empty.</bug>
+    <bug>Fixes drag-and-drop reorder snapping back when a new page loaded mid-drag, and now lets users reorder across page boundaries.</bug>
   </version>
   <version
     version="1.6.0-rc.4"
