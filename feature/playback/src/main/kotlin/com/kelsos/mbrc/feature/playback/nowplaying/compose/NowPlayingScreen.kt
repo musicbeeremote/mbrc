@@ -58,6 +58,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
@@ -401,7 +402,19 @@ private fun NowPlayingTrackList(
     onDragEnd = onDragEnd
   )
 
-  // Only enable drag if connected
+  // The LazyColumn iterates `draggableList` (a snapshot copy needed for drag &
+  // drop), so it never reads `tracks[i]` directly. Without that, Paging 3 has
+  // no signal to load past `initialLoadSize` and the queue caps at 100 items.
+  // Observe the last visible index and ping `tracks[i]` to drive pagination.
+  LaunchedEffect(tracks) {
+    snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+      .collect { lastVisible ->
+        if (lastVisible != null && tracks.itemCount > 0) {
+          tracks[lastVisible.coerceIn(0, tracks.itemCount - 1)]
+        }
+      }
+  }
+
   val dragModifier = if (isConnected) {
     Modifier.dragContainer(dragDropState)
   } else {
