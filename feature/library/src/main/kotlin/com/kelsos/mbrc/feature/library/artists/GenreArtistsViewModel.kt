@@ -33,7 +33,7 @@ class GenreArtistsViewModel(
 
   override val artists: Flow<PagingData<Artist>> =
     combine(genre, librarySettings.artistSortPreferenceFlow) { id, sort ->
-      Pair(id, sort.order)
+      id to sort.order
     }.flatMapLatest { (id, order) ->
       repository.getArtistByGenre(id, order)
     }.cachedIn(viewModelScope)

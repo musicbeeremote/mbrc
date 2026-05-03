@@ -2,7 +2,6 @@ package com.kelsos.mbrc.feature.library.domain
 
 import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
-import com.kelsos.mbrc.core.data.cacheIsEmpty
 import com.kelsos.mbrc.core.data.library.album.AlbumRepository
 import com.kelsos.mbrc.core.data.library.artist.ArtistRepository
 import com.kelsos.mbrc.core.data.library.genre.GenreRepository
@@ -105,10 +104,10 @@ class LibrarySyncUseCaseImpl(
 
   private suspend fun checkIfShouldSync(auto: Boolean): Boolean = !auto || isEmpty()
 
-  private suspend fun isEmpty(): Boolean = genreRepository.cacheIsEmpty() &&
-    artistRepository.cacheIsEmpty() &&
-    albumRepository.cacheIsEmpty() &&
-    trackRepository.cacheIsEmpty()
+  private suspend fun isEmpty(): Boolean = genreRepository.count() == 0L &&
+    artistRepository.count() == 0L &&
+    albumRepository.count() == 0L &&
+    trackRepository.count() == 0L
 
   override fun isRunning(): Boolean = running
 }

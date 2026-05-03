@@ -66,10 +66,9 @@ class SocketActivityChecker(dispatchers: AppCoroutineDispatchers) {
   }
 
   private suspend fun cancel() {
-    deferred?.run {
-      if (isActive) {
-        cancelAndJoin()
-      }
+    val job = deferred ?: return
+    if (job.isActive) {
+      job.cancelAndJoin()
     }
   }
 

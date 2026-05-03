@@ -14,7 +14,7 @@ class DefaultConnectionMigration(
   private val sharedPreferences: SharedPreferences,
   private val connectionDao: ConnectionDao
 ) {
-  suspend fun migrate(): Boolean {
+  fun migrate(): Boolean {
     if (!sharedPreferences.contains(OLD_DEFAULT_KEY)) {
       Timber.d("No default connection key found in SharedPreferences, nothing to migrate")
       return false

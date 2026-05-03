@@ -139,7 +139,7 @@ class MessageHandlerImpl(
   }
 
   private suspend fun execute(event: MessageEvent) {
-    val action = get(event.type)
+    val action: ProtocolAction = get(event.type)
       .onFailure { Timber.e(it, "Failed to resolve command for $event") }
       .getOrNull() ?: return
     try {
@@ -151,7 +151,7 @@ class MessageHandlerImpl(
     }
   }
 
-  private fun get(context: Protocol) = runCatching {
+  private fun get(context: Protocol): Result<ProtocolAction> = runCatching {
     commands.computeIfAbsent(context) { protocol ->
       actionFactory.create(protocol)
     }

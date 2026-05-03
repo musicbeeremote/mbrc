@@ -26,5 +26,5 @@ open class BaseLibraryViewModel<T : UiMessageBase>(
     }
   }
 
-  protected suspend fun checkConnection(): Boolean = connectionStateFlow.isConnected
+  protected fun checkConnection(): Boolean = connectionStateFlow.isConnected
 }

@@ -117,8 +117,11 @@ dependencies {
 }
 
 tasks.register("staticAnalysisAll") {
-  description = "Runs detekt, lint, and kotlinter on all modules"
-  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "detekt" } })
+  description = "Runs detekt (with type resolution), lint, and kotlinter on all modules"
+  // detektDebug runs with type resolution, which is required for rules like
+  // RedundantSuspendModifier that inspect call sites. The bare `detekt` task
+  // skips type resolution and silently misses these.
+  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "detektDebug" } })
   dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "lintKotlin" } })
   dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "lint" } })
 }
@@ -138,10 +141,17 @@ abstract class CollectSarifReportsTask : DefaultTask() {
 
     val buildDirs = subprojectBuildDirs.get()
 
-    // Collect and merge detekt SARIF reports
+    // Collect and merge detekt SARIF reports. staticAnalysisAll runs
+    // :detektDebug (with type resolution), which emits debug.sarif;
+    // fall back to detekt.sarif for any module that ran the bare task.
     val detektFiles = buildDirs.mapNotNull { buildDir ->
-      val sarifFile = File(buildDir, "reports/detekt/detekt.sarif")
-      if (sarifFile.exists()) sarifFile else null
+      val debugSarif = File(buildDir, "reports/detekt/debug.sarif")
+      val baseSarif = File(buildDir, "reports/detekt/detekt.sarif")
+      when {
+        debugSarif.exists() -> debugSarif
+        baseSarif.exists() -> baseSarif
+        else -> null
+      }
     }
     if (detektFiles.isNotEmpty()) {
       mergeSarifFiles(detektFiles, File(outputDir, "detekt.sarif"))
