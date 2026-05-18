@@ -2,6 +2,10 @@ Changelog
 -----------
 
 ## [Unreleased]
+### Fixed
+- Fixes the now playing queue capping at 100 items: only the first page ever loaded because `LazyPagingItems` was iterated indirectly. The queue now enables placeholders and iterates `LazyPagingItems` directly so Paging 3 keeps loading subsequent pages on scroll.
+- Fixes pull-to-refresh not triggering when the now playing queue is empty by wrapping the empty/loading/error states in a vertically scrollable container.
+- Fixes drag-and-drop reorder being snapped back to the server order when a new page lands mid-drag, and lets users reorder across page boundaries by guarding mid-drag refreshes with a settle window and resolving the source index against the displayed list.
 
 ## [1.6.0-rc.4] - 2026-04-22
 ### Fixed

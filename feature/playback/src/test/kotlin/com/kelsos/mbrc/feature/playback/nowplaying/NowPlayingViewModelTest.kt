@@ -12,6 +12,8 @@ import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.data.nowplaying.NowPlaying
 import com.kelsos.mbrc.core.data.nowplaying.SearchResult
+import com.kelsos.mbrc.core.networking.protocol.SelfMutationConfig
+import com.kelsos.mbrc.core.networking.protocol.SelfMutationTracker
 import com.kelsos.mbrc.core.networking.protocol.actions.UserAction
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
@@ -43,6 +45,7 @@ class NowPlayingViewModelTest : KoinTest {
       single<UserActionUseCase> { mockk(relaxed = true) }
       single<ConnectionStateFlow> { mockk(relaxed = true) }
       single<AppStateFlow> { mockk(relaxed = true) }
+      single { SelfMutationTracker(clock = { 0L }, config = SelfMutationConfig()) }
       singleOf(::NowPlayingViewModel)
     }
 
@@ -556,6 +559,52 @@ class NowPlayingViewModelTest : KoinTest {
 
       // Verify moveManager.commit was called
       coVerify(exactly = 1) { moveManager.commit() }
+    }
+  }
+
+  @Test
+  fun multipleMoveTrackCallsBatchIntoASingleNetworkMessageOnCommit() {
+    runTest(testDispatcher) {
+      // Given — a real MoveManagerImpl batches every per-row swap during the drag
+      // and submits one (originalPosition, finalPosition) tuple on commit().
+      val realMoveManager = MoveManagerImpl()
+      val realModule = module {
+        single<NowPlayingRepository> { mockk(relaxed = true) }
+        single<MoveManager> { realMoveManager }
+        single<UserActionUseCase> { mockk(relaxed = true) }
+        single<ConnectionStateFlow> { mockk(relaxed = true) }
+        single<AppStateFlow> { mockk(relaxed = true) }
+        single { SelfMutationTracker(clock = { 0L }, config = SelfMutationConfig()) }
+        singleOf(::NowPlayingViewModel)
+      }
+
+      stopKoin()
+      startKoin { modules(listOf(realModule, testDispatcherModule)) }
+
+      val realRepository: NowPlayingRepository by inject()
+      val realUserAction: UserActionUseCase by inject()
+      val realConnectionState: ConnectionStateFlow by inject()
+      val realAppState: AppStateFlow by inject()
+      val realViewModel: NowPlayingViewModel by inject()
+
+      every { realRepository.getAll() } returns flowOf(PagingData.empty())
+      every { realAppState.playingTrack } returns MutableStateFlow<TrackInfo>(BasicTrackInfo())
+      coEvery { realConnectionState.isConnected } returns true
+      coEvery { realUserAction.perform(any()) } returns Unit
+      coEvery { realRepository.move(any(), any()) } returns Unit
+
+      // When — simulate a drag through several intermediate positions
+      realViewModel.actions.moveTrack(from = 10, to = 9)
+      realViewModel.actions.moveTrack(from = 9, to = 8)
+      realViewModel.actions.moveTrack(from = 8, to = 7)
+      realViewModel.actions.moveTrack(from = 7, to = 6)
+      realViewModel.actions.move()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      // Then — exactly one network call carrying (originalPosition=10, finalPosition=6).
+      coVerify(exactly = 1) { realUserAction.perform(any()) }
+      // And exactly one local DB swap.
+      coVerify(exactly = 1) { realRepository.move(11, 7) }
     }
   }
 }

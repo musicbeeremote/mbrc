@@ -14,6 +14,7 @@ import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.common.state.TrackRating
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.api.PlaybackApi
+import com.kelsos.mbrc.core.networking.protocol.SelfMutationTracker
 import com.kelsos.mbrc.core.networking.protocol.actions.CoverHandler
 import com.kelsos.mbrc.core.networking.protocol.actions.NowPlayingHandler
 import com.kelsos.mbrc.core.networking.protocol.actions.PlayerStateHandler
@@ -105,12 +106,19 @@ class TrackChangeNotifierImpl(
 /**
  * Adapts [NowPlayingRepository] to [NowPlayingHandler] interface.
  */
-class NowPlayingHandlerImpl(private val repository: NowPlayingRepository) : NowPlayingHandler {
+class NowPlayingHandlerImpl(
+  private val repository: NowPlayingRepository,
+  private val selfMutationTracker: SelfMutationTracker
+) : NowPlayingHandler {
   override suspend fun removeTrack(position: Int) {
     repository.remove(position)
   }
 
   override suspend fun refreshFromRemote() {
+    if (selfMutationTracker.wasRecentlyMarked()) {
+      Timber.v("skipping refresh — recent self-initiated mutation")
+      return
+    }
     runCatching {
       repository.getRemote()
     }.onFailure { e ->

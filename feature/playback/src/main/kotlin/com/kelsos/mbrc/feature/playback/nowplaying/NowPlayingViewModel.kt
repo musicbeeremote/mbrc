@@ -8,6 +8,7 @@ import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.data.nowplaying.NowPlaying
+import com.kelsos.mbrc.core.networking.protocol.SelfMutationTracker
 import com.kelsos.mbrc.core.networking.protocol.payloads.NowPlayingMoveRequest
 import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.core.networking.protocol.usecases.moveTrack
@@ -46,6 +47,7 @@ class NowPlayingActions(
   private val moveManager: MoveManager,
   private val userActionUseCase: UserActionUseCase,
   private val connectionStateFlow: ConnectionStateFlow,
+  private val selfMutationTracker: SelfMutationTracker,
   private val emit: suspend (uiMessage: NowPlayingUiMessages) -> Unit
 ) : INowPlayingActions {
   override fun reload() {
@@ -96,6 +98,7 @@ class NowPlayingActions(
       }
       try {
         delay(REMOVE_DELAY_MS)
+        selfMutationTracker.mark()
         userActionUseCase.removeTrack(position)
       } catch (e: IOException) {
         Timber.e(e)
@@ -153,7 +156,8 @@ class NowPlayingViewModel(
   moveManager: MoveManager,
   userActionUseCase: UserActionUseCase,
   connectionStateFlow: ConnectionStateFlow,
-  appState: AppStateFlow
+  appState: AppStateFlow,
+  selfMutationTracker: SelfMutationTracker
 ) : BaseViewModel<NowPlayingUiMessages>() {
   val tracks: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
   val playingTrack = appState.playingTrack
@@ -168,6 +172,7 @@ class NowPlayingViewModel(
       moveManager = moveManager,
       userActionUseCase = userActionUseCase,
       connectionStateFlow = connectionStateFlow,
+      selfMutationTracker = selfMutationTracker,
       emit = this::emit
     )
 
@@ -176,6 +181,7 @@ class NowPlayingViewModel(
     moveManager.onMoveCommit { originalPosition, finalPosition ->
       viewModelScope.launch(dispatchers.network) {
         try {
+          selfMutationTracker.mark()
           userActionUseCase.moveTrack(NowPlayingMoveRequest(originalPosition, finalPosition))
           repository.move(originalPosition + 1, finalPosition + 1)
         } catch (e: IOException) {

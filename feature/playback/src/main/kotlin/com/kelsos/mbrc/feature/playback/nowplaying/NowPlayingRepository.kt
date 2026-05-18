@@ -42,9 +42,10 @@ class NowPlayingRepositoryImpl(
 ) : NowPlayingRepository {
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
-  override fun getAll(): Flow<PagingData<NowPlaying>> = paged({ dao.getAll() }) {
-    it.toNowPlaying()
-  }
+  override fun getAll(): Flow<PagingData<NowPlaying>> = paged(
+    pagingSourceFactory = { dao.getAll() },
+    enablePlaceholders = true
+  ) { it.toNowPlaying() }
 
   override suspend fun getRemote(progress: Progress?) {
     withContext(dispatchers.network) {

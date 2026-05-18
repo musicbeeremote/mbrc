@@ -5,6 +5,8 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -13,15 +15,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.Album
@@ -53,8 +57,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -79,6 +81,7 @@ import com.kelsos.mbrc.core.ui.compose.DynamicScreenScaffold
 import com.kelsos.mbrc.core.ui.compose.EmptyScreen
 import com.kelsos.mbrc.core.ui.compose.LoadingScreen
 import com.kelsos.mbrc.core.ui.compose.TopBarState
+import com.kelsos.mbrc.core.ui.compose.displayedSourceIndex
 import com.kelsos.mbrc.core.ui.compose.dragContainer
 import com.kelsos.mbrc.core.ui.compose.rememberDragDropState
 import com.kelsos.mbrc.feature.minicontrol.MiniControl
@@ -248,7 +251,7 @@ private fun NowPlayingEventsEffect(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NowPlayingContent(
+internal fun NowPlayingContent(
   tracks: LazyPagingItems<NowPlaying>,
   playingTrackPath: String,
   trackCount: Int,
@@ -261,35 +264,14 @@ private fun NowPlayingContent(
   onDragEnd: () -> Unit,
   onGoToAlbum: ((path: String) -> Unit)?,
   onGoToArtist: (artist: String) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  lazyListState: LazyListState = rememberLazyListState()
 ) {
-  // Hoist LazyListState here so it survives across refresh cycles
-  val lazyListState = rememberLazyListState()
-
-  // Use a snapshot state list for Compose to observe changes during drag
-  val draggableList = remember { mutableListOf<NowPlaying>().toMutableStateList() }
-
-  // Compute a signature of the paging data to detect actual changes
-  val dataSignature = remember(tracks.itemSnapshotList) {
-    tracks.itemSnapshotList.items.map { it.id }.hashCode()
-  }
-
-  // Sync list when data actually changes
-  LaunchedEffect(dataSignature) {
-    if (tracks.itemCount > 0) {
-      val newItems = tracks.itemSnapshotList.items
-      if (newItems.isNotEmpty()) {
-        // Check if content actually differs
-        val needsUpdate = draggableList.size != newItems.size ||
-          draggableList.zip(newItems).any { (old, new) -> old.id != new.id }
-
-        if (needsUpdate) {
-          draggableList.clear()
-          draggableList.addAll(newItems)
-        }
-      }
-    }
-  }
+  val dragDropState = rememberDragDropState(
+    lazyListState = lazyListState,
+    onMove = { from, to -> onTrackMove(from, to) },
+    onDragEnd = onDragEnd
+  )
 
   PullToRefreshBox(
     isRefreshing = isRefreshing,
@@ -297,22 +279,26 @@ private fun NowPlayingContent(
     modifier = modifier.fillMaxSize()
   ) {
     when (val refreshState = tracks.loadState.refresh) {
-      is LoadState.Loading if tracks.itemCount == 0 && draggableList.isEmpty() -> {
-        LoadingScreen()
+      is LoadState.Loading if tracks.itemCount == 0 -> {
+        ScrollablePlaceholder { LoadingScreen() }
       }
 
-      is LoadState.Error if tracks.itemCount == 0 && draggableList.isEmpty() -> {
-        EmptyScreen(
-          message = refreshState.error.message ?: stringResource(R.string.refresh_failed),
-          icon = Icons.AutoMirrored.Filled.QueueMusic
-        )
+      is LoadState.Error if tracks.itemCount == 0 -> {
+        ScrollablePlaceholder {
+          EmptyScreen(
+            message = refreshState.error.message ?: stringResource(R.string.refresh_failed),
+            icon = Icons.AutoMirrored.Filled.QueueMusic
+          )
+        }
       }
 
-      is LoadState.NotLoading if tracks.itemCount == 0 && draggableList.isEmpty() -> {
-        EmptyScreen(
-          message = stringResource(R.string.now_playing__empty_list),
-          icon = Icons.AutoMirrored.Filled.QueueMusic
-        )
+      is LoadState.NotLoading if tracks.itemCount == 0 -> {
+        ScrollablePlaceholder {
+          EmptyScreen(
+            message = stringResource(R.string.now_playing__empty_list),
+            icon = Icons.AutoMirrored.Filled.QueueMusic
+          )
+        }
       }
 
       else -> {
@@ -322,14 +308,12 @@ private fun NowPlayingContent(
           }
           NowPlayingTrackList(
             lazyListState = lazyListState,
-            draggableList = draggableList,
+            dragDropState = dragDropState,
             tracks = tracks,
             playingTrackPath = playingTrackPath,
             isConnected = isConnected,
             onTrackClick = onTrackClick,
             onTrackRemove = onTrackRemove,
-            onTrackMove = onTrackMove,
-            onDragEnd = onDragEnd,
             onGoToAlbum = onGoToAlbum,
             onGoToArtist = onGoToArtist,
             modifier = Modifier.weight(1f)
@@ -337,6 +321,20 @@ private fun NowPlayingContent(
         }
       }
     }
+  }
+}
+
+@Composable
+private fun ScrollablePlaceholder(content: @Composable BoxScope.() -> Unit) {
+  BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(min = maxHeight)
+        .verticalScroll(rememberScrollState()),
+      contentAlignment = Alignment.Center,
+      content = content
+    )
   }
 }
 
@@ -357,34 +355,31 @@ private fun QueueHeader(trackCount: Int) {
 @Composable
 private fun NowPlayingTrackList(
   lazyListState: LazyListState,
-  draggableList: SnapshotStateList<NowPlaying>,
+  dragDropState: DragDropState,
   tracks: LazyPagingItems<NowPlaying>,
   playingTrackPath: String,
   isConnected: Boolean,
   onTrackClick: (Int) -> Unit,
   onTrackRemove: (Int) -> Unit,
-  onTrackMove: (Int, Int) -> Unit,
-  onDragEnd: () -> Unit,
   onGoToAlbum: ((path: String) -> Unit)?,
   onGoToArtist: (artist: String) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val dragDropState = rememberDragDropState(
-    lazyListState = lazyListState,
-    onMove = { from, to ->
-      draggableList.add(to, draggableList.removeAt(from))
-      onTrackMove(from, to)
-    },
-    onDragEnd = onDragEnd
-  )
-
-  // Only enable drag if connected
-  val dragModifier = if (isConnected) {
-    Modifier.dragContainer(dragDropState)
-  } else {
-    Modifier
+  val dragModifier = remember(isConnected, dragDropState) {
+    if (isConnected) Modifier.dragContainer(dragDropState) else Modifier
   }
 
+  // Captured once when the drag starts so we can detect — by id match at
+  // `target` — when paging has emitted the reordered window, and stop
+  // permuting before the dragged item snaps back.
+  val draggedId = remember(dragDropState.dragSourceIndex) {
+    dragDropState.dragSourceIndex?.let { tracks.peek(it)?.id }
+  }
+
+  // Iterates `tracks` directly so Paging anchors its next refresh around the
+  // user's actual scroll position. `enablePlaceholders=true` on the pager
+  // keeps `itemCount` stable across `dao.move()` invalidations, preventing
+  // the snap-to-page-boundary that broke consecutive drags past ~position 100.
   LazyColumn(
     state = lazyListState,
     modifier = modifier
@@ -392,22 +387,37 @@ private fun NowPlayingTrackList(
       .then(dragModifier),
     flingBehavior = ScrollableDefaults.flingBehavior()
   ) {
-    itemsIndexed(
-      items = draggableList,
-      key = { _, track -> track.id }
-    ) { index, track ->
-      val isDragging = index == dragDropState.draggingItemIndex
-      val isPlaying = track.path == playingTrackPath
+    items(
+      count = tracks.itemCount,
+      key = { slot ->
+        val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
+        tracks.peek(srcIdx)?.id ?: "${ContentTypes.PLACEHOLDER}-$srcIdx"
+      },
+      contentType = { slot ->
+        val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
+        when {
+          tracks.peek(srcIdx) == null -> ContentTypes.PLACEHOLDER
+          isConnected -> ContentTypes.TRACK_SWIPEABLE
+          else -> ContentTypes.TRACK_PLAIN
+        }
+      }
+    ) { slot ->
+      val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
+      val track = tracks[srcIdx]
+      val isDragging = slot == dragDropState.draggingItemIndex
+      val isPlaying = track?.path == playingTrackPath
 
-      if (isConnected) {
+      if (track == null) {
+        NowPlayingPlaceholderItem()
+      } else if (isConnected) {
         SwipeableNowPlayingItem(
           track = track,
-          index = index,
+          index = srcIdx,
           isPlaying = isPlaying,
           isDragging = isDragging,
           dragDropState = dragDropState,
-          onClick = { onTrackClick(index + 1) },
-          onRemove = { onTrackRemove(index) },
+          onClick = { onTrackClick(srcIdx + 1) },
+          onRemove = { onTrackRemove(srcIdx) },
           onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
           onGoToArtist = { onGoToArtist(track.artist) }
         )
@@ -416,7 +426,7 @@ private fun NowPlayingTrackList(
           track = track,
           isPlaying = isPlaying,
           isDragging = false,
-          onClick = { onTrackClick(index + 1) },
+          onClick = { onTrackClick(srcIdx + 1) },
           onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
           onGoToArtist = { onGoToArtist(track.artist) },
           modifier = Modifier.animateItem()
@@ -425,7 +435,7 @@ private fun NowPlayingTrackList(
     }
 
     if (tracks.loadState.append is LoadState.Loading) {
-      item(contentType = "loading") {
+      item(contentType = ContentTypes.LOADING) {
         Box(
           modifier = Modifier
             .fillMaxWidth()
@@ -437,6 +447,61 @@ private fun NowPlayingTrackList(
       }
     }
   }
+}
+
+private object ContentTypes {
+  const val PLACEHOLDER = "placeholder"
+  const val TRACK_SWIPEABLE = "track-swipeable"
+  const val TRACK_PLAIN = "track-plain"
+  const val LOADING = "loading"
+}
+
+private fun sourceIndexFor(
+  slot: Int,
+  dragDropState: DragDropState,
+  tracks: LazyPagingItems<NowPlaying>,
+  draggedId: Long?
+): Int = resolveSourceIndex(
+  slot = slot,
+  source = dragDropState.dragSourceIndex,
+  target = dragDropState.draggingItemIndex,
+  isSettling = dragDropState.isSettling,
+  draggedId = draggedId,
+  idAtTarget = { tgt -> tracks.peek(tgt)?.id }
+)
+
+/**
+ * Computes the source-list index a LazyColumn slot should render. Applies
+ * the in-flight drag permutation, except once paging has emitted the
+ * reordered data after a drop — detected by [idAtTarget] returning the id
+ * captured at drag-start. From that point until [DragDropState] clears its
+ * drag indices, slots map directly (no permutation), so neighbor keys stay
+ * stable and `animateItem` doesn't fire spurious placement animations.
+ */
+internal fun resolveSourceIndex(
+  slot: Int,
+  source: Int?,
+  target: Int?,
+  isSettling: Boolean,
+  draggedId: Long?,
+  idAtTarget: (Int) -> Long?
+): Int {
+  if (source == null || target == null) return slot
+  val pagingHasNewOrder = isSettling &&
+    draggedId != null &&
+    idAtTarget(target) == draggedId
+  if (pagingHasNewOrder) return slot
+  return displayedSourceIndex(slot = slot, source = source, target = target)
+}
+
+@Composable
+private fun NowPlayingPlaceholderItem() {
+  Box(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(64.dp)
+      .background(MaterialTheme.colorScheme.surface)
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -458,22 +523,12 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
   )
 
   // Apply drag visual effects
-  val draggingModifier = when {
-    isDragging -> {
-      Modifier
-        .zIndex(1f)
-        .graphicsLayer { translationY = dragDropState.draggingItemOffset }
-    }
-
-    index == dragDropState.previousIndexOfDraggedItem -> {
-      Modifier
-        .zIndex(1f)
-        .graphicsLayer { translationY = dragDropState.previousItemOffset.value }
-    }
-
-    else -> {
-      Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
-    }
+  val draggingModifier = if (isDragging) {
+    Modifier
+      .zIndex(1f)
+      .graphicsLayer { translationY = dragDropState.draggingItemOffset }
+  } else {
+    Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
   }
 
   SwipeToDismissBox(

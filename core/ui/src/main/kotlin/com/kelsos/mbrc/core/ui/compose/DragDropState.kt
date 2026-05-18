@@ -1,8 +1,5 @@
 package com.kelsos.mbrc.core.ui.compose
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.lazy.LazyListItemInfo
@@ -21,6 +18,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -32,7 +30,8 @@ import kotlinx.coroutines.launch
  * androidx/compose/foundation/demos/LazyColumnDragAndDropDemo.kt
  *
  * @param state The LazyListState of the LazyColumn
- * @param scope CoroutineScope for animations and scroll operations
+ * @param scope CoroutineScope used to clear the post-drop permutation once
+ * the new paging data has had a chance to land
  * @param onMove Callback invoked when items are swapped during drag
  * @param onDragEnd Callback invoked when drag operation completes (for syncing to server)
  */
@@ -45,52 +44,83 @@ class DragDropState(
   var draggingItemIndex by mutableStateOf<Int?>(null)
     private set
 
+  /**
+   * True between drag-release and the post-drop paging emission. While set, the
+   * permutation indices stay populated so the dropped item remains rendered at
+   * its target slot, avoiding a visible snap-back to the source position before
+   * `dao.move` propagates through paging.
+   */
+  var isSettling by mutableStateOf(false)
+    private set
+
+  /**
+   * Position of the dragged item at the moment the drag started. Stays fixed
+   * for the entire drag (unlike [draggingItemIndex], which tracks the current
+   * displayed position). Used by the renderer to compute the displayed
+   * permutation without mutating the underlying data source.
+   */
+  var dragSourceIndex by mutableStateOf<Int?>(null)
+    private set
+
   internal val scrollChannel = Channel<Float>()
 
   private var draggingItemDraggedDelta by mutableFloatStateOf(0f)
   private var draggingItemInitialOffset by mutableIntStateOf(0)
+  private var settleVersion by mutableIntStateOf(0)
 
   val draggingItemOffset: Float
-    get() = draggingItemLayoutInfo?.let { item ->
-      draggingItemInitialOffset + draggingItemDraggedDelta - item.offset
-    } ?: 0f
+    get() = if (isSettling) {
+      0f
+    } else {
+      draggingItemLayoutInfo?.let { item ->
+        draggingItemInitialOffset + draggingItemDraggedDelta - item.offset
+      } ?: 0f
+    }
 
   private val draggingItemLayoutInfo: LazyListItemInfo?
     get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
 
-  var previousIndexOfDraggedItem by mutableStateOf<Int?>(null)
-    private set
-
-  var previousItemOffset = Animatable(0f)
-    private set
-
   internal fun onDragStart(offset: Offset) {
+    // Invalidate any pending settle from a previous drop so it doesn't clobber
+    // the new drag's state.
+    settleVersion++
+    isSettling = false
     state.layoutInfo.visibleItemsInfo
       .firstOrNull { item -> offset.y.toInt() in item.offset..item.offset + item.size }
       ?.also {
         draggingItemIndex = it.index
+        dragSourceIndex = it.index
         draggingItemInitialOffset = it.offset
       }
   }
 
   internal fun onDragInterrupted() {
-    if (draggingItemIndex != null) {
-      previousIndexOfDraggedItem = draggingItemIndex
-      val startOffset = draggingItemOffset
-      scope.launch {
-        previousItemOffset.snapTo(startOffset)
-        previousItemOffset.animateTo(
-          0f,
-          spring(stiffness = Spring.StiffnessMediumLow, visibilityThreshold = 1f)
-        )
-        previousIndexOfDraggedItem = null
-      }
-      // Notify that drag has ended - this triggers server sync
-      onDragEnd()
-    }
+    val hadDrag = draggingItemIndex != null
     draggingItemDraggedDelta = 0f
-    draggingItemIndex = null
     draggingItemInitialOffset = 0
+    if (hadDrag) {
+      // Keep draggingItemIndex / dragSourceIndex populated so the permutation
+      // continues to render the dropped item at its target slot until paging
+      // emits the new ordering after onDragEnd's dao.move.
+      isSettling = true
+      val version = ++settleVersion
+      onDragEnd()
+      scope.launch {
+        delay(SETTLE_TIMEOUT_MS)
+        if (version == settleVersion) {
+          isSettling = false
+          draggingItemIndex = null
+          dragSourceIndex = null
+        }
+      }
+    } else {
+      draggingItemIndex = null
+      dragSourceIndex = null
+    }
+  }
+
+  private companion object {
+    const val SETTLE_TIMEOUT_MS = 100L
   }
 
   internal fun onDrag(offset: Offset) {
@@ -155,8 +185,8 @@ fun rememberDragDropState(
   val state = remember(lazyListState) {
     DragDropState(
       state = lazyListState,
-      onMove = onMove,
       scope = scope,
+      onMove = onMove,
       onDragEnd = onDragEnd
     )
   }
@@ -169,6 +199,29 @@ fun rememberDragDropState(
   }
 
   return state
+}
+
+/**
+ * Maps a LazyColumn slot to the source-list index it should display, given
+ * the in-flight drag's [source] (where the drag started) and [target] (where
+ * the dragged item currently sits).
+ *
+ * This lets the LazyColumn render the visual reorder during a drag without
+ * mutating the underlying data — the dragged item appears at [target], items
+ * between [source] and [target] shift one slot toward [source], everything
+ * else stays put. On drag-end, the permutation collapses (source/target are
+ * cleared) and the next data emission carries the persisted order.
+ *
+ * Returns [slot] unchanged when no drag is in progress.
+ */
+fun displayedSourceIndex(slot: Int, source: Int?, target: Int?): Int {
+  if (source == null || target == null || source == target) return slot
+  return when {
+    slot == target -> source
+    source < target && slot in source until target -> slot + 1
+    source > target && slot in target + 1..source -> slot - 1
+    else -> slot
+  }
 }
 
 /**

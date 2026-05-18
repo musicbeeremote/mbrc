@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.map
 
 fun <T : Any, I : Any> paged(
   pagingSourceFactory: () -> PagingSource<Int, T>,
+  enablePlaceholders: Boolean = false,
   transform: (value: T) -> I
 ): Flow<PagingData<I>> {
   val config =
     PagingConfig(
-      enablePlaceholders = false,
+      enablePlaceholders = enablePlaceholders,
       pageSize = 50,
       prefetchDistance = 25,
       initialLoadSize = 100

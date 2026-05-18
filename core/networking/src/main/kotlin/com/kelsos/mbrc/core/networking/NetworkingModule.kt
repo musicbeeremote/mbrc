@@ -20,6 +20,9 @@ import com.kelsos.mbrc.core.networking.data.SerializationAdapter
 import com.kelsos.mbrc.core.networking.data.SerializationAdapterImpl
 import com.kelsos.mbrc.core.networking.discovery.RemoteServiceDiscovery
 import com.kelsos.mbrc.core.networking.discovery.RemoteServiceDiscoveryImpl
+import com.kelsos.mbrc.core.networking.protocol.Clock
+import com.kelsos.mbrc.core.networking.protocol.SelfMutationConfig
+import com.kelsos.mbrc.core.networking.protocol.SelfMutationTracker
 import com.kelsos.mbrc.core.networking.protocol.actions.ProtocolPingHandle
 import com.kelsos.mbrc.core.networking.protocol.actions.ProtocolVersionUpdate
 import com.kelsos.mbrc.core.networking.protocol.actions.SimpleLogCommand
@@ -77,6 +80,9 @@ val networkingModule = module {
   singleOf(::DeserializationAdapterImpl) { bind<DeserializationAdapter>() }
 
   // Core networking
+  single<Clock> { Clock { System.currentTimeMillis() } }
+  single { SelfMutationConfig() }
+  singleOf(::SelfMutationTracker)
   singleOf(::ApiBase)
   singleOf(::RequestManagerImpl) { bind<RequestManager>() }
   singleOf(::SocketActivityChecker)
