@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -184,6 +185,7 @@ fun LibraryScreen(
   val searchDescription = stringResource(R.string.library_search_hint)
   val sortDescription = stringResource(R.string.sort_button_description)
   val viewModeDescription = stringResource(R.string.album_view_mode_description)
+  val syncDescription = stringResource(R.string.library_action__sync)
   val isAlbumsTab = pagerState.currentPage == LibraryTab.ALBUMS.ordinal
   val actionItems = remember(isSearchActive, syncProgress.running, isAlbumsTab, isGridMode) {
     if (!isSearchActive && !syncProgress.running) {
@@ -197,6 +199,13 @@ fun LibraryScreen(
             )
           )
         }
+        add(
+          ActionItem(
+            icon = Icons.Default.Sync,
+            contentDescription = syncDescription,
+            onClick = { viewModel.sync() }
+          )
+        )
         add(
           ActionItem(
             icon = Icons.AutoMirrored.Filled.Sort,

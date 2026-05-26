@@ -2,12 +2,16 @@ Changelog
 -----------
 
 ## [Unreleased]
+### Added
+- Restores the sync action on the library top app bar, so a sync can be triggered without going through the empty-state button or settings.
+
 ### Fixed
 - Fixes accidental track removal while scrolling the now playing queue. Swipe-to-remove now triggers only on a deliberate right-to-left swipe, and Remove is also available from the row's overflow menu as a discoverable alternative. Reordering is now started from the drag handle on the right side of each row, so it no longer competes with scrolling or swiping.
 - Fixes the left-edge swipe-to-open gesture for the navigation drawer not working on the now playing screen.
 - Fixes the now playing queue capping at 100 items: only the first page ever loaded because `LazyPagingItems` was iterated indirectly. The queue now enables placeholders and iterates `LazyPagingItems` directly so Paging 3 keeps loading subsequent pages on scroll.
 - Fixes pull-to-refresh not triggering when the now playing queue is empty by wrapping the empty/loading/error states in a vertically scrollable container.
 - Fixes drag-and-drop reorder being snapped back to the server order when a new page lands mid-drag, and lets users reorder across page boundaries by guarding mid-drag refreshes with a settle window and resolving the source index against the displayed list.
+- Fixes a crash when the server returns a bare empty array instead of an empty page object for paged library responses; pagination now terminates cleanly on that response shape.
 
 ## [1.6.0-rc.4] - 2026-04-22
 ### Fixed

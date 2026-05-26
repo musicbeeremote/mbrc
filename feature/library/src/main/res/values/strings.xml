@@ -18,6 +18,7 @@
   <string name="library__sync_complete">Sync completed successfully. %1$s , %2$s, %3$s, %4$s and %5$s are available.</string>
   <string name="library__sync_failed">The library metadata sync was incomplete or failed completely. This might result in queueing not working properly..</string>
   <string name="library__sync_progress">Syncing %1$d of %2$d %3$s</string>
+  <string name="library_action__sync">Sync library</string>
   <string name="library_album_artists_only">Only Album Artists</string>
   <string name="library_menu__sync_state">Library Sync State</string>
   <string name="library_search_hint">Search your library</string>
