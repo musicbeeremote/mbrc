@@ -37,6 +37,7 @@ import com.kelsos.mbrc.core.networking.protocol.actions.NowPlayingHandler
 import com.kelsos.mbrc.core.networking.protocol.actions.PlayerStateHandler
 import com.kelsos.mbrc.core.networking.protocol.actions.PluginVersionHandler
 import com.kelsos.mbrc.core.networking.protocol.actions.TrackChangeNotifier
+import com.kelsos.mbrc.core.networking.protocol.models.PageAdapterFactory
 import com.kelsos.mbrc.core.platform.service.ServiceRestarter
 import com.kelsos.mbrc.feature.content.contentModule
 import com.kelsos.mbrc.feature.library.libraryModule
@@ -114,7 +115,7 @@ val appModule = module {
   }
 
   // Serialization
-  single { Moshi.Builder().build() }
+  single { Moshi.Builder().add(PageAdapterFactory).build() }
 
   // Networking Module Adapters
   // These adapters implement interfaces defined in core/networking module
