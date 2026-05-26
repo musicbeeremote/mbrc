@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
@@ -30,9 +35,13 @@ import com.kelsos.mbrc.feature.misc.whatsnew.WhatsNewViewModel
 import com.kelsos.mbrc.feature.settings.compose.UpdateRequiredScreen
 import com.kelsos.mbrc.feature.settings.domain.SettingsManager
 import com.kelsos.mbrc.feature.settings.theme.Theme
+import kotlin.math.abs
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+
+private val DRAWER_EDGE_WIDTH = 20.dp
+private const val EDGE_HORIZONTAL_DOMINANCE = 2f
 
 /**
  * Main composable container for the MusicBee Remote app.
@@ -94,6 +103,12 @@ fun RemoteApp() {
     ) {
       ModalNavigationDrawer(
         drawerState = drawerState,
+        // Only enable Material's full-area drag while the drawer is open (so
+        // swipe-to-close still works). When closed, the drawer's horizontal
+        // AnchoredDraggable competes with per-row SwipeToDismissBox on the
+        // now playing queue. Opening from the closed state is handled by a
+        // narrow left-edge detector below, plus the toolbar menu button.
+        gesturesEnabled = drawerState.isOpen,
         drawerContent = {
           AppDrawer(
             drawerState = drawerState,
@@ -102,15 +117,56 @@ fun RemoteApp() {
           )
         }
       ) {
-        // Each screen handles its own Scaffold - no shared Scaffold here
-        AppNavGraph(
-          navController = navController,
-          snackbarHostState = snackbarHostState,
-          startDestination = Screen.Home.route,
-          onOpenDrawer = {
-            scope.launch { drawerState.open() }
-          }
-        )
+        // Left-edge swipe-to-open detector. Only arms on pointer-downs within
+        // DRAWER_EDGE_WIDTH of the left edge, and only commits if the gesture
+        // crosses touch slop while clearly rightward and horizontal — content
+        // swipes elsewhere on the screen don't open the drawer.
+        Box(
+          modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(drawerState) {
+              awaitPointerEventScope {
+                val edgePx = DRAWER_EDGE_WIDTH.toPx()
+                val slop = viewConfiguration.touchSlop
+                while (true) {
+                  val down = awaitFirstDown(pass = PointerEventPass.Initial)
+                  if (drawerState.isOpen || down.position.x > edgePx) continue
+                  // Track slop ourselves on the Initial pass so children
+                  // (raised-slop swipeable rows in now-playing) can't consume
+                  // the move events before we decide to claim the gesture.
+                  var totalX = 0f
+                  var totalY = 0f
+                  var armed = false
+                  while (!armed) {
+                    val event = awaitPointerEvent(PointerEventPass.Initial)
+                    val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                    if (!change.pressed) break
+                    val delta = change.positionChange()
+                    totalX += delta.x
+                    totalY += delta.y
+                    if (totalX > slop && totalX > abs(totalY) * EDGE_HORIZONTAL_DOMINANCE) {
+                      change.consume()
+                      armed = true
+                    } else if (abs(totalY) > slop && abs(totalY) > abs(totalX)) {
+                      // Vertical-dominant gesture — let children handle it.
+                      break
+                    }
+                  }
+                  if (armed) scope.launch { drawerState.open() }
+                }
+              }
+            }
+        ) {
+          // Each screen handles its own Scaffold - no shared Scaffold here
+          AppNavGraph(
+            navController = navController,
+            snackbarHostState = snackbarHostState,
+            startDestination = Screen.Home.route,
+            onOpenDrawer = {
+              scope.launch { drawerState.open() }
+            }
+          )
+        }
       }
 
       // Update required overlay with slide animation from bottom

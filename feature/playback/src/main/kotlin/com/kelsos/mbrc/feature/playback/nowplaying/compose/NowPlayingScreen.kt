@@ -45,12 +45,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +61,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -82,7 +84,7 @@ import com.kelsos.mbrc.core.ui.compose.EmptyScreen
 import com.kelsos.mbrc.core.ui.compose.LoadingScreen
 import com.kelsos.mbrc.core.ui.compose.TopBarState
 import com.kelsos.mbrc.core.ui.compose.displayedSourceIndex
-import com.kelsos.mbrc.core.ui.compose.dragContainer
+import com.kelsos.mbrc.core.ui.compose.dragHandle
 import com.kelsos.mbrc.core.ui.compose.rememberDragDropState
 import com.kelsos.mbrc.feature.minicontrol.MiniControl
 import com.kelsos.mbrc.feature.playback.R
@@ -365,10 +367,6 @@ private fun NowPlayingTrackList(
   onGoToArtist: (artist: String) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val dragModifier = remember(isConnected, dragDropState) {
-    if (isConnected) Modifier.dragContainer(dragDropState) else Modifier
-  }
-
   // Captured once when the drag starts so we can detect — by id match at
   // `target` — when paging has emitted the reordered window, and stop
   // permuting before the dragged item snaps back.
@@ -376,73 +374,85 @@ private fun NowPlayingTrackList(
     dragDropState.dragSourceIndex?.let { tracks.peek(it)?.id }
   }
 
+  // Raise touch-slop for all swipeable rows. Slop is read by AnchoredDraggable
+  // before it arms itself, so multiplying it here keeps low-velocity vertical
+  // scrolls (which have small horizontal drift) from ever starting a swipe —
+  // race-free with the draggable's own slop check. See androidx b/252334353.
+  val parentViewConfiguration = LocalViewConfiguration.current
+  val raisedSlopViewConfiguration = remember(parentViewConfiguration) {
+    object : ViewConfiguration by parentViewConfiguration {
+      override val touchSlop: Float =
+        parentViewConfiguration.touchSlop * SWIPE_TOUCH_SLOP_MULTIPLIER
+    }
+  }
+
   // Iterates `tracks` directly so Paging anchors its next refresh around the
   // user's actual scroll position. `enablePlaceholders=true` on the pager
   // keeps `itemCount` stable across `dao.move()` invalidations, preventing
   // the snap-to-page-boundary that broke consecutive drags past ~position 100.
-  LazyColumn(
-    state = lazyListState,
-    modifier = modifier
-      .fillMaxSize()
-      .then(dragModifier),
-    flingBehavior = ScrollableDefaults.flingBehavior()
-  ) {
-    items(
-      count = tracks.itemCount,
-      key = { slot ->
+  CompositionLocalProvider(LocalViewConfiguration provides raisedSlopViewConfiguration) {
+    LazyColumn(
+      state = lazyListState,
+      modifier = modifier.fillMaxSize(),
+      flingBehavior = ScrollableDefaults.flingBehavior()
+    ) {
+      items(
+        count = tracks.itemCount,
+        key = { slot ->
+          val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
+          tracks.peek(srcIdx)?.id ?: "${ContentTypes.PLACEHOLDER}-$srcIdx"
+        },
+        contentType = { slot ->
+          val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
+          when {
+            tracks.peek(srcIdx) == null -> ContentTypes.PLACEHOLDER
+            isConnected -> ContentTypes.TRACK_SWIPEABLE
+            else -> ContentTypes.TRACK_PLAIN
+          }
+        }
+      ) { slot ->
         val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
-        tracks.peek(srcIdx)?.id ?: "${ContentTypes.PLACEHOLDER}-$srcIdx"
-      },
-      contentType = { slot ->
-        val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
-        when {
-          tracks.peek(srcIdx) == null -> ContentTypes.PLACEHOLDER
-          isConnected -> ContentTypes.TRACK_SWIPEABLE
-          else -> ContentTypes.TRACK_PLAIN
+        val track = tracks[srcIdx]
+        val isDragging = slot == dragDropState.draggingItemIndex
+        val isPlaying = track?.path == playingTrackPath
+
+        if (track == null) {
+          NowPlayingPlaceholderItem()
+        } else if (isConnected) {
+          SwipeableNowPlayingItem(
+            track = track,
+            index = srcIdx,
+            isPlaying = isPlaying,
+            isDragging = isDragging,
+            dragDropState = dragDropState,
+            onClick = { onTrackClick(srcIdx + 1) },
+            onRemove = { onTrackRemove(srcIdx) },
+            onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
+            onGoToArtist = { onGoToArtist(track.artist) }
+          )
+        } else {
+          NowPlayingTrackItem(
+            track = track,
+            isPlaying = isPlaying,
+            isDragging = false,
+            onClick = { onTrackClick(srcIdx + 1) },
+            onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
+            onGoToArtist = { onGoToArtist(track.artist) },
+            modifier = Modifier.animateItem()
+          )
         }
       }
-    ) { slot ->
-      val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
-      val track = tracks[srcIdx]
-      val isDragging = slot == dragDropState.draggingItemIndex
-      val isPlaying = track?.path == playingTrackPath
 
-      if (track == null) {
-        NowPlayingPlaceholderItem()
-      } else if (isConnected) {
-        SwipeableNowPlayingItem(
-          track = track,
-          index = srcIdx,
-          isPlaying = isPlaying,
-          isDragging = isDragging,
-          dragDropState = dragDropState,
-          onClick = { onTrackClick(srcIdx + 1) },
-          onRemove = { onTrackRemove(srcIdx) },
-          onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
-          onGoToArtist = { onGoToArtist(track.artist) }
-        )
-      } else {
-        NowPlayingTrackItem(
-          track = track,
-          isPlaying = isPlaying,
-          isDragging = false,
-          onClick = { onTrackClick(srcIdx + 1) },
-          onGoToAlbum = onGoToAlbum?.let { callback -> { callback(track.path) } },
-          onGoToArtist = { onGoToArtist(track.artist) },
-          modifier = Modifier.animateItem()
-        )
-      }
-    }
-
-    if (tracks.loadState.append is LoadState.Loading) {
-      item(contentType = ContentTypes.LOADING) {
-        Box(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-          contentAlignment = Alignment.Center
-        ) {
-          CircularProgressIndicator()
+      if (tracks.loadState.append is LoadState.Loading) {
+        item(contentType = ContentTypes.LOADING) {
+          Box(
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(16.dp),
+            contentAlignment = Alignment.Center
+          ) {
+            CircularProgressIndicator()
+          }
         }
       }
     }
@@ -519,7 +529,11 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
 ) {
   val dismissState = rememberSwipeToDismissBoxState(
     initialValue = SwipeToDismissBoxValue.Settled,
-    positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
+    // 30% of row width — short intentional swipes still commit, while the
+    // raised touch-slop (below) keeps vertical scrolls from arming the
+    // draggable in the first place. The default 50% threshold combined with
+    // the raised slop made deliberate swipes feel inert.
+    positionalThreshold = { totalDistance -> totalDistance * SWIPE_POSITIONAL_THRESHOLD }
   )
 
   // Apply drag visual effects
@@ -550,11 +564,7 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
           .fillMaxSize()
           .background(color)
           .padding(horizontal = 16.dp),
-        contentAlignment = if (dismissState.targetValue == SwipeToDismissBoxValue.StartToEnd) {
-          Alignment.CenterStart
-        } else {
-          Alignment.CenterEnd
-        }
+        contentAlignment = Alignment.CenterEnd
       ) {
         Icon(
           imageVector = Icons.Default.Delete,
@@ -563,7 +573,7 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
         )
       }
     },
-    enableDismissFromStartToEnd = true,
+    enableDismissFromStartToEnd = false,
     enableDismissFromEndToStart = true,
     onDismiss = { onRemove() }
   ) {
@@ -572,8 +582,10 @@ private fun LazyItemScope.SwipeableNowPlayingItem(
       isPlaying = isPlaying,
       isDragging = isDragging,
       onClick = onClick,
+      onRemove = onRemove,
       onGoToAlbum = onGoToAlbum,
-      onGoToArtist = onGoToArtist
+      onGoToArtist = onGoToArtist,
+      dragHandleModifier = Modifier.dragHandle(dragDropState, index)
     )
   }
 }
@@ -586,7 +598,9 @@ fun NowPlayingTrackItem(
   onClick: () -> Unit,
   onGoToAlbum: (() -> Unit)?,
   onGoToArtist: () -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  dragHandleModifier: Modifier = Modifier,
+  onRemove: (() -> Unit)? = null
 ) {
   var showMenu by remember { mutableStateOf(false) }
 
@@ -703,17 +717,44 @@ fun NowPlayingTrackItem(
                 onGoToArtist()
               }
             )
+            if (onRemove != null) {
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.menu_remove_track)) },
+                leadingIcon = {
+                  Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null
+                  )
+                },
+                onClick = {
+                  showMenu = false
+                  onRemove()
+                }
+              )
+            }
           }
         }
 
-        // Drag handle
-        Icon(
-          imageVector = Icons.Default.DragIndicator,
-          contentDescription = stringResource(R.string.now_playing__drag_handle),
-          tint = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.size(24.dp)
-        )
+        // Drag handle — 48dp touch target wraps a 24dp icon. The handle owns
+        // the long-press-drag gesture so it never competes with row-level
+        // swipe-to-dismiss or vertical scroll.
+        Box(
+          modifier = Modifier
+            .size(48.dp)
+            .then(dragHandleModifier),
+          contentAlignment = Alignment.Center
+        ) {
+          Icon(
+            imageVector = Icons.Default.DragIndicator,
+            contentDescription = stringResource(R.string.now_playing__drag_handle),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(24.dp)
+          )
+        }
       }
     }
   }
 }
+
+private const val SWIPE_TOUCH_SLOP_MULTIPLIER = 2f
+private const val SWIPE_POSITIONAL_THRESHOLD = 0.3f

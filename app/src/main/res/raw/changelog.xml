@@ -3,6 +3,8 @@
   <version
     version="Unreleased"
     release="">
+    <bug>Fixes accidental track removal while scrolling the now playing queue: swipe-to-remove now triggers only on a deliberate right-to-left swipe, Remove is also available from the row overflow menu, and reorder is started from the drag handle on the right of each row.</bug>
+    <bug>Fixes the left-edge swipe-to-open gesture for the navigation drawer not working on the now playing screen.</bug>
     <bug>Fixes the now playing queue capping at 100 items so the full queue is reachable on scroll.</bug>
     <bug>Fixes pull-to-refresh not triggering when the now playing queue is empty.</bug>
     <bug>Fixes drag-and-drop reorder snapping back when a new page loaded mid-drag, and now lets users reorder across page boundaries.</bug>
