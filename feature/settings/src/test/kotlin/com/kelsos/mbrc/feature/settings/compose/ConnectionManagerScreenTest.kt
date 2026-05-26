@@ -62,6 +62,7 @@ class ConnectionManagerScreenTest {
       ConnectionItemContent(
         connection = connection,
         onEdit = {},
+        onDelete = {},
         onSetDefault = {}
       )
     }
@@ -83,6 +84,7 @@ class ConnectionManagerScreenTest {
       ConnectionItemContent(
         connection = connection,
         onEdit = {},
+        onDelete = {},
         onSetDefault = {}
       )
     }
@@ -105,6 +107,7 @@ class ConnectionManagerScreenTest {
       ConnectionItemContent(
         connection = connection,
         onEdit = {},
+        onDelete = {},
         onSetDefault = {}
       )
     }
@@ -127,6 +130,7 @@ class ConnectionManagerScreenTest {
       ConnectionItemContent(
         connection = connection,
         onEdit = { editClicked = true },
+        onDelete = {},
         onSetDefault = {}
       )
     }
@@ -151,6 +155,7 @@ class ConnectionManagerScreenTest {
       ConnectionItemContent(
         connection = connection,
         onEdit = {},
+        onDelete = {},
         onSetDefault = { setDefaultClicked = true }
       )
     }

@@ -4,6 +4,7 @@ Changelog
 ## [Unreleased]
 ### Added
 - Restores the sync action on the library top app bar, so a sync can be triggered without going through the empty-state button or settings.
+- Adds a visible delete button (next to edit) on each connection row in the connection manager, gated by a confirmation dialog. The existing swipe-to-delete gesture is preserved as a power-user shortcut.
 
 ### Fixed
 - Fixes accidental track removal while scrolling the now playing queue. Swipe-to-remove now triggers only on a deliberate right-to-left swipe, and Remove is also available from the row's overflow menu as a discoverable alternative. Reordering is now started from the drag handle on the right side of each row, so it no longer competes with scrolling or swiping.

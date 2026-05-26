@@ -130,6 +130,7 @@ fun ConnectionManagerWithConnectionsPreviewLight() {
           ConnectionItemContent(
             connection = connection,
             onEdit = {},
+            onDelete = {},
             onSetDefault = {}
           )
         }
@@ -157,6 +158,7 @@ fun ConnectionManagerWithConnectionsPreviewDark() {
           ConnectionItemContent(
             connection = connection,
             onEdit = {},
+            onDelete = {},
             onSetDefault = {}
           )
         }
@@ -184,6 +186,7 @@ fun ConnectionManagerFabExpandedPreview() {
           ConnectionItemContent(
             connection = connection,
             onEdit = {},
+            onDelete = {},
             onSetDefault = {}
           )
         }
@@ -207,6 +210,7 @@ fun ConnectionManagerScanningPreview() {
           ConnectionItemContent(
             connection = connection,
             onEdit = {},
+            onDelete = {},
             onSetDefault = {}
           )
         }

@@ -22,6 +22,8 @@
   <string name="connection_manager_close_menu">Close menu</string>
   <string name="connection_manager_default_indicator">Default connection</string>
   <string name="connection_manager_delete">Delete</string>
+  <string name="connection_manager_delete_confirm_title">Delete connection?</string>
+  <string name="connection_manager_delete_confirm_message">%1$s will be removed. This can\'t be undone.</string>
   <string name="connection_manager_discovery_no_wifi">No WiFi connection available</string>
   <string name="connection_manager_discovery_not_found">No MusicBee plugin found on network</string>
   <string name="connection_manager_discovery_success">Successfully discovered MusicBee plugin</string>

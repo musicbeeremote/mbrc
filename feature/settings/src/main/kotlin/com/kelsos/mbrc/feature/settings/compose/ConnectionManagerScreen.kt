@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,7 +51,10 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -306,6 +310,7 @@ private fun ConnectionItem(
     ConnectionItemContent(
       connection = connection,
       onEdit = onEdit,
+      onDelete = onDelete,
       onSetDefault = onSetDefault
     )
   }
@@ -319,6 +324,7 @@ private fun ConnectionItem(
 fun ConnectionItemContent(
   connection: ConnectionSettings,
   onEdit: () -> Unit,
+  onDelete: () -> Unit,
   onSetDefault: () -> Unit
 ) {
   val containerColor = if (connection.isDefault) {
@@ -368,17 +374,78 @@ fun ConnectionItemContent(
           ConnectionStatusIndicator(isDefault = connection.isDefault)
         },
         trailingContent = {
-          IconButton(onClick = onEdit) {
-            Icon(
-              imageVector = Icons.Filled.Edit,
-              contentDescription = stringResource(R.string.common_edit),
-              tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-          }
+          ConnectionRowActions(
+            connection = connection,
+            onEdit = onEdit,
+            onDelete = onDelete
+          )
         },
         colors = ListItemDefaults.colors(containerColor = containerColor)
       )
     }
+  }
+}
+
+/**
+ * Trailing edit + delete actions for a connection row. Delete is gated by
+ * a confirmation dialog so an accidental tap doesn't destroy the entry —
+ * the swipe-to-dismiss gesture remains as the unconfirmed power-user
+ * shortcut for users who prefer it.
+ */
+@Composable
+private fun ConnectionRowActions(
+  connection: ConnectionSettings,
+  onEdit: () -> Unit,
+  onDelete: () -> Unit
+) {
+  var showDeleteConfirm by remember { mutableStateOf(false) }
+
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    IconButton(onClick = onEdit) {
+      Icon(
+        imageVector = Icons.Filled.Edit,
+        contentDescription = stringResource(R.string.common_edit),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+    }
+    IconButton(onClick = { showDeleteConfirm = true }) {
+      Icon(
+        imageVector = Icons.Filled.Delete,
+        contentDescription = stringResource(R.string.connection_manager_delete),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+    }
+  }
+
+  if (showDeleteConfirm) {
+    val displayName = connection.name.ifBlank { connection.address }
+    AlertDialog(
+      onDismissRequest = { showDeleteConfirm = false },
+      title = { Text(stringResource(R.string.connection_manager_delete_confirm_title)) },
+      text = {
+        Text(
+          stringResource(
+            R.string.connection_manager_delete_confirm_message,
+            displayName
+          )
+        )
+      },
+      confirmButton = {
+        TextButton(
+          onClick = {
+            showDeleteConfirm = false
+            onDelete()
+          }
+        ) {
+          Text(stringResource(R.string.connection_manager_delete))
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = { showDeleteConfirm = false }) {
+          Text(stringResource(android.R.string.cancel))
+        }
+      }
+    )
   }
 }
 
