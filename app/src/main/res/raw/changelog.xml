@@ -12,6 +12,7 @@
     <bug>Fixes pull-to-refresh not triggering when the now playing queue is empty.</bug>
     <bug>Fixes drag-and-drop reorder snapping back when a new page loaded mid-drag, and now lets users reorder across page boundaries.</bug>
     <bug>Fixes a crash when the server returned a bare empty array for paged library responses; pagination now terminates cleanly.</bug>
+    <bug>Fixes an out-of-memory crash on the socket message pipeline by bounding the incoming-message buffer and dropping the oldest queued message under burst load.</bug>
   </version>
   <version
     version="1.6.0-rc.4"

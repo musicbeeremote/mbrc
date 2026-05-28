@@ -14,6 +14,7 @@ Changelog
 - Fixes pull-to-refresh not triggering when the now playing queue is empty by wrapping the empty/loading/error states in a vertically scrollable container.
 - Fixes drag-and-drop reorder being snapped back to the server order when a new page lands mid-drag, and lets users reorder across page boundaries by guarding mid-drag refreshes with a settle window and resolving the source index against the displayed list.
 - Fixes a crash when the server returns a bare empty array instead of an empty page object for paged library responses; pagination now terminates cleanly on that response shape.
+- Fixes an out-of-memory crash on the socket message pipeline under burst load. The incoming-message flow now uses a bounded buffer that drops the oldest queued message when a downstream collector falls behind, instead of spawning unbounded coroutines per message.
 
 ## [1.6.0-rc.4] - 2026-04-22
 ### Fixed

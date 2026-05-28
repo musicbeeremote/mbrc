@@ -17,6 +17,7 @@ import java.net.SocketTimeoutException
 import kotlin.math.pow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -406,7 +407,10 @@ class Connection(
   private val adapter = moshi.adapter(SocketMessage::class.java)
   private val job = SupervisorJob()
   private val scope = CoroutineScope(job + dispatchers.io)
-  private val _messages = MutableSharedFlow<SocketMessage>()
+  private val _messages = MutableSharedFlow<SocketMessage>(
+    extraBufferCapacity = MESSAGE_BUFFER_CAPACITY,
+    onBufferOverflow = BufferOverflow.DROP_OLDEST
+  )
   val messages: Flow<SocketMessage> get() = _messages
 
   @Volatile
@@ -487,9 +491,7 @@ class Connection(
             return@runCatching
           }
 
-          scope.launch {
-            _messages.emit(message)
-          }
+          _messages.tryEmit(message)
         }
 
       if (result.isFailure) {
@@ -554,6 +556,7 @@ class Connection(
     internal const val CONNECT_TIMEOUT = 15_000
     private const val NEWLINE = "\r\n"
     private const val MAX_PARSE_FAILURES = 5
+    private const val MESSAGE_BUFFER_CAPACITY = 128
 
     fun connect(address: SocketAddress): Socket {
       val socket = Socket()
