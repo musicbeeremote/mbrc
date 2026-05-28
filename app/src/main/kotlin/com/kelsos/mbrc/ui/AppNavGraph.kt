@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.ui
 
+import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,9 +27,6 @@ import com.kelsos.mbrc.feature.settings.compose.AppLicenseScreen
 import com.kelsos.mbrc.feature.settings.compose.ConnectionManagerScreen
 import com.kelsos.mbrc.feature.settings.compose.LicensesScreen
 import com.kelsos.mbrc.feature.settings.compose.SettingsScreen
-import java.net.URLDecoder
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -52,12 +50,12 @@ fun AppNavGraph(
       PlayerScreen(
         onNavigateToNowPlaying = { navController.navigate(Screen.NowPlayingList.route) },
         onNavigateToAlbum = { album, artist ->
-          val encodedAlbum = URLEncoder.encode(album, StandardCharsets.UTF_8.toString())
-          val encodedArtist = URLEncoder.encode(artist, StandardCharsets.UTF_8.toString())
+          val encodedAlbum = Uri.encode(album)
+          val encodedArtist = Uri.encode(artist)
           navController.navigate("album_tracks/0/$encodedAlbum/$encodedArtist")
         },
         onNavigateToArtist = { artist ->
-          val encodedName = URLEncoder.encode(artist, StandardCharsets.UTF_8.toString())
+          val encodedName = Uri.encode(artist)
           navController.navigate("artist_albums/0/$encodedName")
         },
         snackbarHostState = snackbarHostState,
@@ -69,20 +67,20 @@ fun AppNavGraph(
       LibraryScreen(
         onOpenDrawer = onOpenDrawer,
         onNavigateToGenreArtists = { genre ->
-          val encodedName = URLEncoder.encode(genre.genre, StandardCharsets.UTF_8.toString())
+          val encodedName = Uri.encode(genre.genre)
           navController.navigate("genre_artists/${genre.id}/$encodedName")
         },
         onNavigateToGenreAlbums = { genre ->
-          val encodedName = URLEncoder.encode(genre.genre, StandardCharsets.UTF_8.toString())
+          val encodedName = Uri.encode(genre.genre)
           navController.navigate("genre_albums/${genre.id}/$encodedName")
         },
         onNavigateToArtistAlbums = { artist ->
-          val encodedName = URLEncoder.encode(artist.artist, StandardCharsets.UTF_8.toString())
+          val encodedName = Uri.encode(artist.artist)
           navController.navigate("artist_albums/${artist.id}/$encodedName")
         },
         onNavigateToAlbumTracks = { album ->
-          val encodedAlbum = URLEncoder.encode(album.album, StandardCharsets.UTF_8.toString())
-          val encodedArtist = URLEncoder.encode(album.artist, StandardCharsets.UTF_8.toString())
+          val encodedAlbum = Uri.encode(album.album)
+          val encodedArtist = Uri.encode(album.artist)
           navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
         },
         onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
@@ -139,8 +137,8 @@ fun AppNavGraph(
         navArgument("artist") { type = NavType.StringType }
       )
     ) { backStackEntry ->
-      val album = safeUrlDecode(backStackEntry.arguments?.getString("album").orEmpty())
-      val artist = safeUrlDecode(backStackEntry.arguments?.getString("artist").orEmpty())
+      val album = backStackEntry.arguments?.getString("album").orEmpty()
+      val artist = backStackEntry.arguments?.getString("artist").orEmpty()
       val albumInfo = AlbumInfo(album = album, artist = artist, cover = null)
       AlbumTracksScreen(
         albumInfo = albumInfo,
@@ -157,13 +155,13 @@ fun AppNavGraph(
         navArgument("artistName") { type = NavType.StringType }
       )
     ) { backStackEntry ->
-      val artistName = safeUrlDecode(backStackEntry.arguments?.getString("artistName").orEmpty())
+      val artistName = backStackEntry.arguments?.getString("artistName").orEmpty()
       ArtistAlbumsScreen(
         artistName = artistName,
         onNavigateBack = { navController.popBackStack() },
         onNavigateToAlbumTracks = { album ->
-          val encodedAlbum = URLEncoder.encode(album.album, StandardCharsets.UTF_8.toString())
-          val encodedArtist = URLEncoder.encode(album.artist, StandardCharsets.UTF_8.toString())
+          val encodedAlbum = Uri.encode(album.album)
+          val encodedArtist = Uri.encode(album.artist)
           navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
         },
         onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
@@ -179,13 +177,13 @@ fun AppNavGraph(
       )
     ) { backStackEntry ->
       val genreId = backStackEntry.arguments?.getLong("genreId") ?: 0L
-      val genreName = safeUrlDecode(backStackEntry.arguments?.getString("genreName").orEmpty())
+      val genreName = backStackEntry.arguments?.getString("genreName").orEmpty()
       GenreArtistsScreen(
         genreId = genreId,
         genreName = genreName,
         onNavigateBack = { navController.popBackStack() },
         onNavigateToArtistAlbums = { artist ->
-          val encodedName = URLEncoder.encode(artist.artist, StandardCharsets.UTF_8.toString())
+          val encodedName = Uri.encode(artist.artist)
           navController.navigate("artist_albums/${artist.id}/$encodedName")
         },
         onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
@@ -201,14 +199,14 @@ fun AppNavGraph(
       )
     ) { backStackEntry ->
       val genreId = backStackEntry.arguments?.getLong("genreId") ?: 0L
-      val genreName = safeUrlDecode(backStackEntry.arguments?.getString("genreName").orEmpty())
+      val genreName = backStackEntry.arguments?.getString("genreName").orEmpty()
       GenreAlbumsScreen(
         genreId = genreId,
         genreName = genreName,
         onNavigateBack = { navController.popBackStack() },
         onNavigateToAlbumTracks = { album ->
-          val encodedAlbum = URLEncoder.encode(album.album, StandardCharsets.UTF_8.toString())
-          val encodedArtist = URLEncoder.encode(album.artist, StandardCharsets.UTF_8.toString())
+          val encodedAlbum = Uri.encode(album.album)
+          val encodedArtist = Uri.encode(album.artist)
           navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
         },
         onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
@@ -228,11 +226,8 @@ fun AppNavGraph(
           scope.launch {
             val track = trackRepository.getByPath(path)
             if (track != null && track.album.isNotBlank()) {
-              val encodedAlbum = URLEncoder.encode(track.album, StandardCharsets.UTF_8.toString())
-              val encodedArtist = URLEncoder.encode(
-                track.albumArtist.ifBlank { track.artist },
-                StandardCharsets.UTF_8.toString()
-              )
+              val encodedAlbum = Uri.encode(track.album)
+              val encodedArtist = Uri.encode(track.albumArtist.ifBlank { track.artist })
               navController.navigate("album_tracks/0/$encodedAlbum/$encodedArtist")
             } else {
               snackbarHostState.showSnackbar(trackNotFoundMessage)
@@ -240,7 +235,7 @@ fun AppNavGraph(
           }
         },
         onNavigateToArtist = { artist ->
-          val encodedName = URLEncoder.encode(artist, StandardCharsets.UTF_8.toString())
+          val encodedName = Uri.encode(artist)
           navController.navigate("artist_albums/0/$encodedName")
         },
         snackbarHostState = snackbarHostState
@@ -316,6 +311,3 @@ val drawerScreens = listOf(
   Screen.Settings,
   Screen.Help
 )
-
-private fun safeUrlDecode(value: String): String =
-  runCatching { URLDecoder.decode(value, StandardCharsets.UTF_8.toString()) }.getOrDefault(value)

@@ -15,7 +15,7 @@ Changelog
 - Fixes drag-and-drop reorder being snapped back to the server order when a new page lands mid-drag, and lets users reorder across page boundaries by guarding mid-drag refreshes with a settle window and resolving the source index against the displayed list.
 - Fixes a crash when the server returns a bare empty array instead of an empty page object for paged library responses; pagination now terminates cleanly on that response shape.
 - Fixes an out-of-memory crash on the socket message pipeline under burst load. The incoming-message flow now uses a bounded buffer that drops the oldest queued message when a downstream collector falls behind, instead of spawning unbounded coroutines per message.
-- Fixes an `IllegalArgumentException` crash when navigating into an album, artist, or genre whose name contains a literal `%`, `&`, or `+`. Navigation route arguments are now URL-decoded defensively, falling back to the raw value if decoding fails.
+- Fixes an `IllegalArgumentException` crash when navigating into an album, artist, or genre whose name contains a literal `%` (e.g. "100% Hits"). Route arguments are now encoded with `Uri.encode` and consumed directly from the navigation back stack, removing the duplicate `URLDecoder.decode` step that caused the crash.
 
 ## [1.6.0-rc.4] - 2026-04-22
 ### Fixed

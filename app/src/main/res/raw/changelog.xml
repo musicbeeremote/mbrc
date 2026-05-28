@@ -13,7 +13,7 @@
     <bug>Fixes drag-and-drop reorder snapping back when a new page loaded mid-drag, and now lets users reorder across page boundaries.</bug>
     <bug>Fixes a crash when the server returned a bare empty array for paged library responses; pagination now terminates cleanly.</bug>
     <bug>Fixes an out-of-memory crash on the socket message pipeline by bounding the incoming-message buffer and dropping the oldest queued message under burst load.</bug>
-    <bug>Fixes a crash when navigating into an album, artist, or genre whose name contains a literal %, &amp;, or +.</bug>
+    <bug>Fixes a crash when navigating into an album, artist, or genre whose name contains a literal % (e.g. "100% Hits"). Route arguments now round-trip cleanly through the navigation back stack.</bug>
   </version>
   <version
     version="1.6.0-rc.4"
