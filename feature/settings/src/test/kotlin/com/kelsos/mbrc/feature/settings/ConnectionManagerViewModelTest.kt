@@ -271,7 +271,7 @@ class ConnectionManagerViewModelTest : KoinTest {
       isDefault = false,
       id = 0
     )
-    coEvery { repository.discover() } returns DiscoveryStop.Complete(discoveredConnection)
+    coEvery { repository.discover() } returns DiscoveryStop.Complete(listOf(discoveredConnection))
 
     viewModel.discoveryEvents.test {
       viewModel.startScanning()
@@ -279,7 +279,7 @@ class ConnectionManagerViewModelTest : KoinTest {
 
       val event = awaitItem()
       assertThat(event).isInstanceOf(DiscoveryStop.Complete::class.java)
-      assertThat((event as DiscoveryStop.Complete).settings).isEqualTo(discoveredConnection)
+      assertThat((event as DiscoveryStop.Complete).settings).containsExactly(discoveredConnection)
     }
   }
 

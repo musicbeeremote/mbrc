@@ -251,10 +251,9 @@ class ClientConnectionManagerImpl(
   private suspend fun discoverConnection() = connectionProvider.discover().let { discoveryStop ->
     when (discoveryStop) {
       is DiscoveryStop.Complete -> {
-        Timber.v(
-          "Discovery detected ${discoveryStop.settings.address} will attempt to connect to it"
-        )
-        discoveryStop.settings
+        val host = discoveryStop.first
+        Timber.v("Discovery detected ${host.address} will attempt to connect to it")
+        host
       }
 
       else -> {

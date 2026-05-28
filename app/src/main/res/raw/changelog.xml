@@ -5,6 +5,7 @@
     release="">
     <feature>Restores the sync action on the library top app bar, so a sync can be triggered without going through the empty-state button or settings.</feature>
     <feature>Adds a visible delete button on each connection row in the connection manager, with a confirmation dialog. Swipe-to-delete still works for power users.</feature>
+    <feature>Network discovery now finds every MusicBee plugin on the LAN in a single scan, with re-broadcasts to combat multicast packet loss.</feature>
     <bug>Fixes accidental track removal while scrolling the now playing queue: swipe-to-remove now triggers only on a deliberate right-to-left swipe, Remove is also available from the row overflow menu, and reorder is started from the drag handle on the right of each row.</bug>
     <bug>Fixes the left-edge swipe-to-open gesture for the navigation drawer not working on the now playing screen.</bug>
     <bug>Fixes the now playing queue capping at 100 items so the full queue is reachable on scroll.</bug>

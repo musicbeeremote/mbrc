@@ -109,7 +109,7 @@ fun ConnectionManagerScreen(
   val addLabel = stringResource(R.string.common_add)
   val noWifiMessage = stringResource(R.string.connection_manager_discovery_no_wifi)
   val notFoundMessage = stringResource(R.string.connection_manager_discovery_not_found)
-  val successMessage = stringResource(R.string.connection_manager_discovery_success)
+  val context = androidx.compose.ui.platform.LocalContext.current
   val portErrorMessage = stringResource(R.string.connection_manager_port_error)
 
   // Compute FAB state inline
@@ -139,8 +139,14 @@ fun ConnectionManagerScreen(
     viewModel.discoveryEvents.collect { event ->
       val message = when (event) {
         DiscoveryStop.NoWifi -> noWifiMessage
+
         DiscoveryStop.NotFound -> notFoundMessage
-        is DiscoveryStop.Complete -> successMessage
+
+        is DiscoveryStop.Complete -> context.resources.getQuantityString(
+          R.plurals.connection_manager_discovery_success_count,
+          event.settings.size,
+          event.settings.size
+        )
       }
       snackbarHostState.showSnackbar(message)
     }

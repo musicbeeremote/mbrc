@@ -8,8 +8,10 @@ import com.kelsos.mbrc.core.data.settings.ConnectionDao
 import com.kelsos.mbrc.core.data.settings.ConnectionSettingsEntity
 import com.kelsos.mbrc.core.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.core.networking.discovery.RemoteServiceDiscovery
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 interface ConnectionRepository {
   suspend fun save(settings: ConnectionSettings)
@@ -35,7 +37,30 @@ class ConnectionRepositoryImpl(
   override suspend fun discover(): DiscoveryStop {
     val discover = discovery.discover()
     if (discover is DiscoveryStop.Complete) {
-      save(discover.settings)
+      discover.settings.forEach { host ->
+        // Skip hosts already saved with the same (address, port) — repeated
+        // scans should not produce duplicate rows. Any other save failure
+        // is logged so one bad host doesn't drop the rest of the batch.
+        val existingId = withContext(dispatchers.database) {
+          dao.findId(host.address, host.port)
+        }
+        if (existingId != null) {
+          Timber.v(
+            "Discovered host %s:%d already saved (id=%d)",
+            host.address,
+            host.port,
+            existingId
+          )
+          return@forEach
+        }
+        try {
+          save(host)
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Exception) {
+          Timber.w(e, "Failed to save discovered host %s:%d", host.address, host.port)
+        }
+      }
     }
     return discover
   }

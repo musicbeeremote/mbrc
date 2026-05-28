@@ -13,6 +13,7 @@ import java.net.MulticastSocket
 import java.net.NetworkInterface
 import java.net.SocketException
 import java.net.SocketTimeoutException
+import kotlinx.coroutines.yield
 import okio.buffer
 import okio.source
 import timber.log.Timber
@@ -77,29 +78,62 @@ class RemoteServiceDiscoveryImpl(
     }
   }
 
-  private fun retryUntilNotifyContext(
-    socket: MulticastSocket,
-    maxAttempts: Int = 3,
-    totalTimeoutMs: Long = 15000
-  ): DiscoveryMessage? {
-    var attempts = 0
+  /**
+   * Collects every unique NOTIFY response that arrives within
+   * [COLLECTION_WINDOW_MS]. Re-broadcasts the discovery packet every
+   * [REBROADCAST_INTERVAL_MS] to combat UDP/multicast packet loss on
+   * multi-host LANs (the original single-broadcast scan often missed
+   * peers on the first try). De-duplicates by `(address, port)`.
+   *
+   * Returns early [POST_FIRST_GATHER_MS] after the first NOTIFY arrives
+   * — siblings on the same LAN typically answer within ~1s of each
+   * other, so the full 4s window is only paid when nobody answers.
+   * This keeps the auto-connect cold-start path fast.
+   *
+   * Co-operative cancellation: [yield] is called between socket reads
+   * so a cancelled caller (screen left, scope torn down) doesn't pin
+   * the network thread for the rest of the window.
+   */
+  private suspend fun collectNotifyMessages(socket: MulticastSocket): List<DiscoveryMessage> {
+    val found = LinkedHashMap<Pair<String, Int>, DiscoveryMessage>()
     val startTime = System.currentTimeMillis()
-    val responses = mutableListOf<DiscoveryMessage>()
+    var firstResponseAt: Long? = null
+    var lastBroadcast = startTime
 
-    while (attempts < maxAttempts && System.currentTimeMillis() - startTime < totalTimeoutMs) {
+    while (true) {
+      yield()
+      val now = System.currentTimeMillis()
+      if (now - startTime >= COLLECTION_WINDOW_MS) break
+      if (firstResponseAt != null && now - firstResponseAt >= POST_FIRST_GATHER_MS) break
+
       val message = getDiscoveryMessage(socket)
-      if (message != null) {
-        responses.add(message)
-        if (message.context == NOTIFY) {
-          Timber.v("Found notify message after %d attempts", attempts + 1)
-          return message
+      if (message != null && message.context == NOTIFY) {
+        val isNew = found.putIfAbsent(message.address to message.port, message) == null
+        if (isNew && firstResponseAt == null) {
+          firstResponseAt = System.currentTimeMillis()
         }
       }
-      attempts++
-      Timber.v("Discovery attempt: %s, responses so far: %d", attempts, responses.size)
+      if (System.currentTimeMillis() - lastBroadcast >= REBROADCAST_INTERVAL_MS) {
+        rebroadcastDiscovery(socket)
+        lastBroadcast = System.currentTimeMillis()
+      }
     }
 
-    return responses.firstOrNull { it.context == NOTIFY }
+    Timber.v("Discovery window closed, %d unique host(s) found", found.size)
+    return found.values.toList()
+  }
+
+  private fun rebroadcastDiscovery(socket: MulticastSocket) {
+    val address = getWifiAddress() ?: return
+    val data = adapter.toJson(
+      DiscoveryMessage(context = Protocol.DISCOVERY, address = address)
+    ).toByteArray()
+    try {
+      val group = InetAddress.getByName(DISCOVERY_ADDRESS)
+      socket.send(DatagramPacket(data, data.size, group, MULTICAST_PORT))
+    } catch (e: IOException) {
+      Timber.v(e, "Re-broadcast failed; will rely on already-collected responses")
+    }
   }
 
   override suspend fun discover(): DiscoveryStop {
@@ -118,10 +152,10 @@ class RemoteServiceDiscoveryImpl(
   private suspend fun waitForServiceNotification(): DiscoveryStop {
     return useMulticastLock(manager.createMulticastLock("locked")) {
       useMulticastSocket { socket ->
-        val message = retryUntilNotifyContext(socket)
+        val messages = collectNotifyMessages(socket)
 
-        return@useMulticastSocket if (message?.context == NOTIFY) {
-          DiscoveryStop.Complete(message.toConnection())
+        return@useMulticastSocket if (messages.isNotEmpty()) {
+          DiscoveryStop.Complete(messages.map { it.toConnection() })
         } else {
           DiscoveryStop.NotFound
         }
@@ -197,8 +231,25 @@ class RemoteServiceDiscoveryImpl(
   companion object {
     private const val BUFFER_SIZE = 1024
     private const val NOTIFY = "notify"
-    private const val RESPONSE_TIMEOUT = 2000
+    private const val RESPONSE_TIMEOUT = 500
     private const val MULTICAST_PORT = 45345
     private const val DISCOVERY_ADDRESS = "239.1.5.10"
+
+    // Maximum time the receiver listens for NOTIFY messages on a single
+    // scan when nobody has answered yet. Long enough for slow first
+    // responders without making the no-host case painful.
+    private const val COLLECTION_WINDOW_MS = 4000L
+
+    // Once the first NOTIFY has arrived, the loop keeps listening for
+    // this much longer to collect siblings on multi-host LANs, then
+    // returns. Tuned so single-host auto-connect doesn't pay the full
+    // COLLECTION_WINDOW_MS and so peers responding to the same broadcast
+    // (which generally answer within a few hundred ms of each other) all
+    // make it into the result.
+    private const val POST_FIRST_GATHER_MS = 1000L
+
+    // How often the discovery packet is re-broadcast inside the collection
+    // window so a single dropped multicast packet doesn't hide a host.
+    private const val REBROADCAST_INTERVAL_MS = 1000L
   }
 }
