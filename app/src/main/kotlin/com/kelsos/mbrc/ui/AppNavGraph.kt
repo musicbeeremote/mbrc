@@ -139,14 +139,8 @@ fun AppNavGraph(
         navArgument("artist") { type = NavType.StringType }
       )
     ) { backStackEntry ->
-      val album = URLDecoder.decode(
-        backStackEntry.arguments?.getString("album").orEmpty(),
-        StandardCharsets.UTF_8.toString()
-      )
-      val artist = URLDecoder.decode(
-        backStackEntry.arguments?.getString("artist").orEmpty(),
-        StandardCharsets.UTF_8.toString()
-      )
+      val album = safeUrlDecode(backStackEntry.arguments?.getString("album").orEmpty())
+      val artist = safeUrlDecode(backStackEntry.arguments?.getString("artist").orEmpty())
       val albumInfo = AlbumInfo(album = album, artist = artist, cover = null)
       AlbumTracksScreen(
         albumInfo = albumInfo,
@@ -163,10 +157,7 @@ fun AppNavGraph(
         navArgument("artistName") { type = NavType.StringType }
       )
     ) { backStackEntry ->
-      val artistName = URLDecoder.decode(
-        backStackEntry.arguments?.getString("artistName").orEmpty(),
-        StandardCharsets.UTF_8.toString()
-      )
+      val artistName = safeUrlDecode(backStackEntry.arguments?.getString("artistName").orEmpty())
       ArtistAlbumsScreen(
         artistName = artistName,
         onNavigateBack = { navController.popBackStack() },
@@ -188,10 +179,7 @@ fun AppNavGraph(
       )
     ) { backStackEntry ->
       val genreId = backStackEntry.arguments?.getLong("genreId") ?: 0L
-      val genreName = URLDecoder.decode(
-        backStackEntry.arguments?.getString("genreName").orEmpty(),
-        StandardCharsets.UTF_8.toString()
-      )
+      val genreName = safeUrlDecode(backStackEntry.arguments?.getString("genreName").orEmpty())
       GenreArtistsScreen(
         genreId = genreId,
         genreName = genreName,
@@ -213,10 +201,7 @@ fun AppNavGraph(
       )
     ) { backStackEntry ->
       val genreId = backStackEntry.arguments?.getLong("genreId") ?: 0L
-      val genreName = URLDecoder.decode(
-        backStackEntry.arguments?.getString("genreName").orEmpty(),
-        StandardCharsets.UTF_8.toString()
-      )
+      val genreName = safeUrlDecode(backStackEntry.arguments?.getString("genreName").orEmpty())
       GenreAlbumsScreen(
         genreId = genreId,
         genreName = genreName,
@@ -331,3 +316,6 @@ val drawerScreens = listOf(
   Screen.Settings,
   Screen.Help
 )
+
+private fun safeUrlDecode(value: String): String =
+  runCatching { URLDecoder.decode(value, StandardCharsets.UTF_8.toString()) }.getOrDefault(value)
