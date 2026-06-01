@@ -7,6 +7,9 @@ Changelog
 - Adds a visible delete button (next to edit) on each connection row in the connection manager, gated by a confirmation dialog. The existing swipe-to-delete gesture is preserved as a power-user shortcut.
 - Network discovery now finds every MusicBee plugin on the LAN on the first scan instead of just one. The scan listens for a few seconds, re-broadcasts the discovery packet to combat multicast packet loss, and de-duplicates results by address.
 
+### Changed
+- Long track titles, artists, and albums now scroll horizontally (marquee) on the player and mini-control instead of being cut off with an ellipsis, so the full text is always readable. Library list rows still truncate with an ellipsis.
+
 ### Fixed
 - Fixes accidental track removal while scrolling the now playing queue. Swipe-to-remove now triggers only on a deliberate right-to-left swipe, and Remove is also available from the row's overflow menu as a discoverable alternative. Reordering is now started from the drag handle on the right side of each row, so it no longer competes with scrolling or swiping.
 - Fixes the left-edge swipe-to-open gesture for the navigation drawer not working on the now playing screen.

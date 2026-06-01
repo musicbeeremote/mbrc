@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.minicontrol
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -146,7 +146,8 @@ fun MiniControlContent(
             ),
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            softWrap = false,
+            modifier = Modifier.basicMarquee()
           )
           Text(
             text = state.playingTrack.artist.ifEmpty {
@@ -157,7 +158,8 @@ fun MiniControlContent(
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            softWrap = false,
+            modifier = Modifier.basicMarquee()
           )
         }
 

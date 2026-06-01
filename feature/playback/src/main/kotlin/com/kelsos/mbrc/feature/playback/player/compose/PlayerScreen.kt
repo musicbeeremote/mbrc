@@ -10,6 +10,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -73,7 +74,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.palette.graphics.Palette
@@ -852,8 +852,10 @@ private fun TrackInfoWithFavorite(
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onSurface,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.height(28.dp)
+        softWrap = false,
+        modifier = Modifier
+          .height(28.dp)
+          .basicMarquee()
       )
 
       Spacer(modifier = Modifier.height(4.dp))
@@ -863,8 +865,10 @@ private fun TrackInfoWithFavorite(
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.height(22.dp)
+        softWrap = false,
+        modifier = Modifier
+          .height(22.dp)
+          .basicMarquee()
       )
 
       Spacer(modifier = Modifier.height(2.dp))
@@ -884,8 +888,10 @@ private fun TrackInfoWithFavorite(
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.height(20.dp)
+        softWrap = false,
+        modifier = Modifier
+          .height(20.dp)
+          .basicMarquee()
       )
     }
 
