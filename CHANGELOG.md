@@ -1,7 +1,7 @@
 Changelog
 -----------
 
-## [Unreleased]
+## [1.6.0] - 2026-06-01
 ### Added
 - Restores the sync action on the library top app bar, so a sync can be triggered without going through the empty-state button or settings.
 - Adds a visible delete button (next to edit) on each connection row in the connection manager, gated by a confirmation dialog. The existing swipe-to-delete gesture is preserved as a power-user shortcut.
@@ -285,7 +285,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.4...HEAD
+[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.4...v1.6.0
 [1.6.0-rc.4]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.3...v1.6.0-rc.4
 [1.6.0-rc.3]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.2...v1.6.0-rc.3
 [1.6.0-rc.2]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.1...v1.6.0-rc.2

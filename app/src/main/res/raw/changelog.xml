@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
-    version="Unreleased"
-    release="">
+    version="1.6.0"
+    release="Jun 1, 2026">
     <feature>Restores the sync action on the library top app bar, so a sync can be triggered without going through the empty-state button or settings.</feature>
     <feature>Adds a visible delete button on each connection row in the connection manager, with a confirmation dialog. Swipe-to-delete still works for power users.</feature>
     <feature>Network discovery now finds every MusicBee plugin on the LAN in a single scan, with re-broadcasts to combat multicast packet loss.</feature>
