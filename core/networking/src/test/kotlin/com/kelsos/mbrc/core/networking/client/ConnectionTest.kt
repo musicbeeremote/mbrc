@@ -171,6 +171,42 @@ class ConnectionTest : KoinTest {
   }
 
   @Test
+  fun oversizedMessageWithoutTerminatorShouldTearDownConnection() {
+    runTest {
+      // Given a peer that sends data well past the cap with no line terminator - the unbounded
+      // read would grow the buffer until the heap is exhausted (the OOM we are guarding against).
+      val server = createTestServer()
+      val clientSocket = Socket()
+      clientSocket.connect(server.localSocketAddress)
+
+      executor.execute {
+        try {
+          val serverSocket = server.accept()
+          serverSocket.getOutputStream().apply {
+            write("a".repeat(5000).toByteArray())
+            flush()
+          }
+          Thread.sleep(1000)
+          serverSocket.close()
+        } catch (e: Exception) {
+          if (!server.isClosed && !Thread.currentThread().isInterrupted) {
+            throw e
+          }
+        }
+      }
+
+      val cappedConfig = ConnectionConfig(maxMessageBytes = 1024)
+      val connection = createConnection(clientSocket, cappedConfig)
+
+      // When - should refuse the oversized frame and tear down rather than OOM
+      connection.listen()
+
+      // Then
+      assertThat(connection.isConnected).isFalse()
+    }
+  }
+
+  @Test
   fun cleanupShouldBeIdempotent() {
     runTest {
       // Given

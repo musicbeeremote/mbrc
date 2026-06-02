@@ -52,7 +52,11 @@ data class ConnectionConfig(
   // Slightly less than ping timeout
   val readTimeoutMs: Long = 35000L,
   // Healthcheck every 20 seconds
-  val healthCheckIntervalMs: Long = 20000L
+  val healthCheckIntervalMs: Long = 20000L,
+  // Safety ceiling for a single inbound line. Heap-relative; measured worst case on a 15k-track
+  // library is ~244 KB per 800-item page, so this leaves ~100x headroom while preventing a
+  // malformed/un-terminated frame from growing the read buffer until the heap is exhausted.
+  val maxMessageBytes: Long = defaultMaxMessageBytes()
 )
 
 class ClientConnectionManagerImpl(
@@ -542,7 +546,7 @@ class Connection(
     val originalTimeout = socket.soTimeout
     return try {
       socket.soTimeout = config.readTimeoutMs.toInt()
-      source.readUtf8Line()
+      readBoundedLine()
     } catch (e: SocketTimeoutException) {
       Timber.w("Read timeout after ${config.readTimeoutMs}ms - connection may be unresponsive")
       throw IOException("Connection read timeout", e)
@@ -551,10 +555,35 @@ class Connection(
     }
   }
 
+  /**
+   * Reads a single `\n`-terminated line, refusing to buffer more than [ConnectionConfig.maxMessageBytes]
+   * bytes. A peer that never sends a terminator would otherwise grow the okio buffer until the heap
+   * is exhausted (the OOM we are guarding against). Returns null on a clean remote close.
+   */
+  private fun readBoundedLine(): String? {
+    val limit = config.maxMessageBytes
+    val newlineIndex = source.indexOf(LINE_FEED, 0, limit)
+    if (newlineIndex != -1L) {
+      val line = source.readUtf8(newlineIndex)
+      source.skip(1) // consume the '\n'
+      return line.removeSuffix("\r")
+    }
+    // No terminator within the cap: either the stream ended, or the peer is sending an
+    // oversized/garbage frame that would grow the buffer without bound.
+    val buffered = source.buffer.size
+    if (buffered >= limit) {
+      throw IOException(
+        "Inbound message exceeded $limit bytes without a line terminator; connection corrupted"
+      )
+    }
+    return if (buffered == 0L) null else source.readUtf8().removeSuffix("\r")
+  }
+
   companion object {
     internal const val SO_TIMEOUT = 30_000
     internal const val CONNECT_TIMEOUT = 15_000
     private const val NEWLINE = "\r\n"
+    private const val LINE_FEED = '\n'.code.toByte()
     private const val MAX_PARSE_FAILURES = 5
     private const val MESSAGE_BUFFER_CAPACITY = 128
 
