@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    version="1.6.1"
+    release="unreleased">
+    <bug>Fixes out-of-memory crashes on very large now playing queues. The queue now syncs one page at a time instead of loading the whole list into memory, so memory stays flat regardless of queue size. Incoming network messages are also capped relative to the available heap as a safeguard.</bug>
+  </version>
+  <version
     version="1.6.0"
     release="Jun 1, 2026">
     <feature>Restores the sync action on the library top app bar, so a sync can be triggered without going through the empty-state button or settings.</feature>

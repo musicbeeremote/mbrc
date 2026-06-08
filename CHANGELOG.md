@@ -1,6 +1,10 @@
 Changelog
 -----------
 
+## [1.6.1]
+### Fixed
+- Fixes out-of-memory crashes on very large now playing queues. Syncing the queue used to load the entire now playing list into memory at once; it now reconciles one page at a time, so memory stays flat regardless of queue size. As a safeguard, incoming network messages are also capped to a size relative to the available heap.
+
 ## [1.6.0] - 2026-06-01
 ### Added
 - Restores the sync action on the library top app bar, so a sync can be triggered without going through the empty-state button or settings.
