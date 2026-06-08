@@ -5,17 +5,14 @@ import com.kelsos.mbrc.core.common.data.Progress
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.common.utilities.epoch
 import com.kelsos.mbrc.core.data.Repository
-import com.kelsos.mbrc.core.data.nowplaying.CachedNowPlaying
 import com.kelsos.mbrc.core.data.nowplaying.NowPlaying
 import com.kelsos.mbrc.core.data.nowplaying.NowPlayingDao
-import com.kelsos.mbrc.core.data.nowplaying.NowPlayingEntity
 import com.kelsos.mbrc.core.data.nowplaying.SearchResult
 import com.kelsos.mbrc.core.data.paged
 import com.kelsos.mbrc.core.networking.api.PlaybackApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 interface NowPlayingRepository : Repository<NowPlaying> {
   suspend fun move(from: Int, to: Int)
@@ -28,12 +25,6 @@ interface NowPlayingRepository : Repository<NowPlaying> {
 
   fun observeCount(): Flow<Int>
 }
-
-val NowPlayingEntity.key: String
-  get() = "$path-$position"
-
-val CachedNowPlaying.key: String
-  get() = "$path-$position"
 
 class NowPlayingRepositoryImpl(
   private val playbackApi: PlaybackApi,
@@ -50,10 +41,6 @@ class NowPlayingRepositoryImpl(
   override suspend fun getRemote(progress: Progress?) {
     withContext(dispatchers.network) {
       val added = epoch()
-      val cached =
-        withContext(dispatchers.database) {
-          dao.cached().associateBy { it.key }
-        }
       playbackApi
         .getNowPlayingList(progress)
         .onCompletion {
@@ -61,18 +48,9 @@ class NowPlayingRepositoryImpl(
             dao.removePreviousEntries(added)
           }
         }.collect { item ->
-          val list = item.map { it.toEntity().copy(dateAdded = added) }
-
-          val existing = list.filter { cached.containsKey(it.key) }
-          val new = list.minus(existing.toSet())
-          val update = existing.map { entity ->
-            entity.copy(id = checkNotNull(cached[entity.key]).id)
-          }
-
+          val entities = item.map { it.toEntity().copy(dateAdded = added) }
           withContext(dispatchers.database) {
-            Timber.v("updating ${update.size} and inserting ${new.size} items")
-            dao.update(update)
-            dao.insertAll(new)
+            dao.reconcilePage(entities)
           }
         }
     }

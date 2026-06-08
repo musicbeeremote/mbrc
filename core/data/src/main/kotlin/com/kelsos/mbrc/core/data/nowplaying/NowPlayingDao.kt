@@ -24,8 +24,41 @@ interface NowPlayingDao {
   @Query("select * from now_playing order by position")
   fun all(): List<NowPlayingEntity>
 
-  @Query("select id, position, path from now_playing")
-  fun cached(): List<CachedNowPlaying>
+  @Query("select id, position, path from now_playing where position in (:positions)")
+  fun cachedRange(positions: List<Int>): List<CachedNowPlaying>
+
+  /**
+   * Reconciles a single page of now-playing entries against the database within one transaction.
+   *
+   * Only the rows whose [NowPlayingEntity.position] appears in this page are read back (bounded to
+   * the page size, never the whole queue), so memory stays flat regardless of how large the remote
+   * now-playing list is. Existing rows keep their primary key id so UI identity is preserved; the
+   * rest are inserted as new rows.
+   */
+  @Transaction
+  fun reconcilePage(entities: List<NowPlayingEntity>) {
+    if (entities.isEmpty()) {
+      return
+    }
+    val cached = cachedRange(
+      entities.map {
+        it.position
+      }
+    ).associateBy { "${it.path}-${it.position}" }
+    val update = mutableListOf<NowPlayingEntity>()
+    val new = mutableListOf<NowPlayingEntity>()
+    for (entity in entities) {
+      val match = cached["${entity.path}-${entity.position}"]
+      if (match != null) {
+        update.add(entity.copy(id = match.id))
+      } else {
+        new.add(entity)
+      }
+    }
+    Timber.v("updating ${update.size} and inserting ${new.size} items")
+    update(update)
+    insertAll(new)
+  }
 
   @Query(
     """

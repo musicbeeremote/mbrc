@@ -467,6 +467,147 @@ class NowPlayingRepositoryTest : KoinTest {
   }
 
   @Test
+  fun getRemotePreservesIdsForUnchangedEntriesAcrossPages() {
+    runTest(testDispatcher) {
+      // Two pages whose (path, position) match the pre-seeded queue, so every row is an update
+      // that must keep its existing primary key id (UI identity), not a fresh insert.
+      val pageOne =
+        fakeAlbumQueue.take(5).map {
+          NowPlayingDto(
+            title = it.title,
+            artist = it.artist,
+            path = it.path,
+            position = it.position
+          )
+        }
+      val pageTwo =
+        fakeAlbumQueue.drop(5).map {
+          NowPlayingDto(
+            title = it.title,
+            artist = it.artist,
+            path = it.path,
+            position = it.position
+          )
+        }
+      every { playbackApi.getNowPlayingList(any()) } returns flowOf(pageOne, pageTwo)
+
+      repository.getRemote(null)
+
+      val resynced = dao.all().sortedBy { it.position }
+      assertThat(resynced.map { it.position }).containsExactly(
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+      ).inOrder()
+      // ids stay aligned to their original (path, position) — no wipe-and-reinsert
+      assertThat(resynced.map { it.id }).containsExactly(
+        1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L
+      ).inOrder()
+      assertThat(dao.count()).isEqualTo(10)
+    }
+  }
+
+  @Test
+  fun getRemoteInsertsNewEntriesAndDropsStaleOnes() {
+    runTest(testDispatcher) {
+      // Position 1 keeps its path (update, id preserved); positions 2-3 are different paths
+      // (new rows); the rest of the original queue is stale and must be removed on completion.
+      val remoteData =
+        listOf(
+          NowPlayingDto(
+            title = fakeAlbumQueue[0].title,
+            artist = fakeAlbumQueue[0].artist,
+            path = fakeAlbumQueue[0].path,
+            position = 1
+          ),
+          NowPlayingDto(
+            title = "Fresh A",
+            artist = "Artist A",
+            path = "/remote/a.mp3",
+            position = 2
+          ),
+          NowPlayingDto(
+            title = "Fresh B",
+            artist = "Artist B",
+            path = "/remote/b.mp3",
+            position = 3
+          )
+        )
+      every { playbackApi.getNowPlayingList(any()) } returns flowOf(remoteData)
+
+      repository.getRemote(null)
+
+      val resynced = dao.all().sortedBy { it.position }
+      assertThat(resynced.map { it.position }).containsExactly(1, 2, 3).inOrder()
+      assertThat(resynced.first { it.position == 1 }.id).isEqualTo(1L)
+      assertThat(resynced.map { it.title }).containsExactly(
+        fakeAlbumQueue[0].title,
+        "Fresh A",
+        "Fresh B"
+      ).inOrder()
+    }
+  }
+
+  @Test
+  fun cachedRangeReadsOnlyRequestedPositionsNotWholeTable() {
+    // The whole point of the fix: reconciliation must read back at most one page worth of rows,
+    // never the entire queue. cachedRange is keyed on the page's exact positions (IN-list), so a
+    // request for a few positions returns only those, regardless of how large the table is.
+    val cached = dao.cachedRange(listOf(1, 5, 10))
+
+    assertThat(cached.map { it.position }).containsExactly(1, 5, 10)
+    assertThat(cached.map { it.id }).containsExactly(1L, 5L, 10L)
+  }
+
+  @Test
+  fun getRemoteHandlesEmptyPageWithoutError() {
+    runTest(testDispatcher) {
+      // An empty page must not crash the reconcile (the IN-list / min lookups would otherwise
+      // break on an empty position set). It should simply contribute nothing to the resync.
+      val page =
+        fakeAlbumQueue.take(3).map {
+          NowPlayingDto(
+            title = it.title,
+            artist = it.artist,
+            path = it.path,
+            position = it.position
+          )
+        }
+      every { playbackApi.getNowPlayingList(any()) } returns flowOf(emptyList(), page, emptyList())
+
+      repository.getRemote(null)
+
+      val resynced = dao.all().sortedBy { it.position }
+      assertThat(resynced.map { it.position }).containsExactly(1, 2, 3).inOrder()
+      assertThat(resynced.map { it.id }).containsExactly(1L, 2L, 3L).inOrder()
+    }
+  }
+
+  @Test
+  fun getRemotePreservesIdsForSparseNonContiguousPositions() {
+    runTest(testDispatcher) {
+      // Server may number positions sparsely (here 1, 5, 10). The IN-list lookup must still match
+      // each remote item to its cached row by (path, position) and preserve ids — a position-range
+      // (BETWEEN) approach would be the trap this avoids on memory, but correctness must hold too.
+      val remoteData =
+        listOf(0, 4, 9).map { index ->
+          val entity = fakeAlbumQueue[index]
+          NowPlayingDto(
+            title = entity.title,
+            artist = entity.artist,
+            path = entity.path,
+            position = entity.position
+          )
+        }
+      every { playbackApi.getNowPlayingList(any()) } returns flowOf(remoteData)
+
+      repository.getRemote(null)
+
+      val resynced = dao.all().sortedBy { it.position }
+      assertThat(resynced.map { it.position }).containsExactly(1, 5, 10).inOrder()
+      assertThat(resynced.map { it.id }).containsExactly(1L, 5L, 10L).inOrder()
+    }
+  }
+
+  @Test
   fun getAllReturnsPagingDataFlowFromDao() {
     runTest(testDispatcher) {
       val pagingData = repository.getAll()
