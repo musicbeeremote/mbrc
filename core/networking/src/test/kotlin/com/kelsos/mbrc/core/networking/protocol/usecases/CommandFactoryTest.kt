@@ -239,6 +239,13 @@ class CommandFactoryTest {
     assertThat(action).isNotNull()
   }
 
+  @Test
+  fun `create should return SimpleLogCommand for LibraryPlayAll protocol`() {
+    val action = commandFactory.create(Protocol.LibraryPlayAll)
+    assertThat(createdActions.keys).contains(SimpleLogCommand::class)
+    assertThat(action).isNotNull()
+  }
+
   // endregion
 
   // region Error handling

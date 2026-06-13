@@ -62,6 +62,7 @@ class CommandFactoryImpl(private val resolver: (KClass<out ProtocolAction>) -> P
       Protocol.PlayerPlayPause to SimpleLogCommand::class,
       Protocol.NowPlayingListPlay to SimpleLogCommand::class,
       Protocol.PlaylistPlay to SimpleLogCommand::class,
+      Protocol.LibraryPlayAll to SimpleLogCommand::class,
       Protocol.ProtocolTag to ProtocolVersionUpdate::class
     )
 
