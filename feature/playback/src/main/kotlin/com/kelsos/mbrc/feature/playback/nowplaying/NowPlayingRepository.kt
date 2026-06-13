@@ -10,8 +10,14 @@ import com.kelsos.mbrc.core.data.nowplaying.NowPlayingDao
 import com.kelsos.mbrc.core.data.nowplaying.SearchResult
 import com.kelsos.mbrc.core.data.paged
 import com.kelsos.mbrc.core.networking.api.PlaybackApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 interface NowPlayingRepository : Repository<NowPlaying> {
@@ -31,6 +37,12 @@ class NowPlayingRepositoryImpl(
   private val dao: NowPlayingDao,
   private val dispatchers: AppCoroutineDispatchers
 ) : NowPlayingRepository {
+  // App-lifetime scope owning the single in-flight refresh. SupervisorJob keeps one refresh's
+  // failure from cancelling the scope or a later refresh.
+  private val refreshScope = CoroutineScope(dispatchers.network + SupervisorJob())
+  private val refreshMutex = Mutex()
+  private var refreshJob: Deferred<Unit>? = null
+
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
   override fun getAll(): Flow<PagingData<NowPlaying>> = paged(
@@ -38,22 +50,40 @@ class NowPlayingRepositoryImpl(
     enablePlaceholders = true
   ) { it.toNowPlaying() }
 
+  /**
+   * Refreshes the now-playing queue, keeping only a single refresh in flight. A newer trigger
+   * (user pull-to-refresh or a `nowplayinglistchanged` broadcast) cancels any refresh already
+   * running and restarts from the first page, so two refreshes never interleave their writes —
+   * which previously let one refresh's `removePreviousEntries` delete the other's rows and leave
+   * a truncated queue. The caller still suspends until its own refresh finishes (or fails).
+   */
   override suspend fun getRemote(progress: Progress?) {
-    withContext(dispatchers.network) {
-      val added = epoch()
-      playbackApi
-        .getNowPlayingList(progress)
-        .onCompletion {
+    val job =
+      refreshMutex.withLock {
+        refreshJob?.cancel()
+        refreshScope.async { fetchAndReconcile(progress) }.also { refreshJob = it }
+      }
+    job.await()
+  }
+
+  private suspend fun fetchAndReconcile(progress: Progress?) {
+    val added = epoch()
+    playbackApi
+      .getNowPlayingList(progress)
+      .onCompletion { cause ->
+        // Only prune stale rows after a clean run. A cancelled (superseded) or failed refresh
+        // must leave the existing queue intact — the replacing/next successful refresh prunes.
+        if (cause == null) {
           withContext(dispatchers.database) {
             dao.removePreviousEntries(added)
           }
-        }.collect { item ->
-          val entities = item.map { it.toEntity().copy(dateAdded = added) }
-          withContext(dispatchers.database) {
-            dao.reconcilePage(entities)
-          }
         }
-    }
+      }.collect { item ->
+        val entities = item.map { it.toEntity().copy(dateAdded = added) }
+        withContext(dispatchers.database) {
+          dao.reconcilePage(entities)
+        }
+      }
   }
 
   override fun search(term: String): Flow<PagingData<NowPlaying>> = paged({

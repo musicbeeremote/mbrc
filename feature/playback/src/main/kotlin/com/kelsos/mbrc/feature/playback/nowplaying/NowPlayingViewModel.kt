@@ -15,12 +15,14 @@ import com.kelsos.mbrc.core.networking.protocol.usecases.moveTrack
 import com.kelsos.mbrc.core.networking.protocol.usecases.playTrack
 import com.kelsos.mbrc.core.networking.protocol.usecases.removeTrack
 import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -66,6 +68,12 @@ class NowPlayingActions(
         try {
           repository.getRemote()
           if (showUserMessage) NowPlayingUiMessages.RefreshSucceeded else null
+        } catch (e: CancellationException) {
+          // A newer refresh superseded this one. If this coroutine is still active the shared
+          // refresh was cancelled (not our scope), so just dismiss the indicator; otherwise our
+          // scope is going away (e.g. screen closed) and the cancellation must propagate.
+          if (!isActive) throw e
+          if (showUserMessage) NowPlayingUiMessages.RefreshSuperseded else null
         } catch (e: IOException) {
           Timber.e(e)
           if (showUserMessage) NowPlayingUiMessages.RefreshFailed(e) else null

@@ -14,7 +14,11 @@ import com.kelsos.mbrc.core.networking.api.PlaybackApi
 import com.kelsos.mbrc.core.networking.dto.NowPlayingDto
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -578,6 +582,41 @@ class NowPlayingRepositoryTest : KoinTest {
       val resynced = dao.all().sortedBy { it.position }
       assertThat(resynced.map { it.position }).containsExactly(1, 2, 3).inOrder()
       assertThat(resynced.map { it.id }).containsExactly(1L, 2L, 3L).inOrder()
+    }
+  }
+
+  @Test
+  fun getRemoteCancelsInflightRefreshWhenANewerOneStarts() {
+    runTest(testDispatcher) {
+      // First refresh blocks before emitting any page, simulating one still in flight.
+      val blocker = CompletableDeferred<Unit>()
+      val slowFlow =
+        flow {
+          blocker.await()
+          emit(emptyList<NowPlayingDto>())
+        }
+      // Second (newer) refresh carries a different queue and completes normally.
+      val newQueue =
+        listOf(
+          NowPlayingDto(title = "B1", artist = "Artist B", path = "/remote/b1.mp3", position = 1),
+          NowPlayingDto(title = "B2", artist = "Artist B", path = "/remote/b2.mp3", position = 2)
+        )
+      every { playbackApi.getNowPlayingList(any()) } returnsMany
+        listOf(slowFlow, flowOf(newQueue))
+
+      dao.deleteAll()
+
+      // Start the slow refresh; it parks on the blocker and never finishes on its own.
+      val inflight = launch { repository.getRemote(null) }
+      advanceUntilIdle()
+
+      // A newer trigger must cancel the in-flight one and restart from scratch.
+      repository.getRemote(null)
+
+      assertThat(inflight.isCancelled).isTrue()
+      val resynced = dao.all().sortedBy { it.position }
+      assertThat(resynced.map { it.title }).containsExactly("B1", "B2").inOrder()
+      assertThat(dao.count()).isEqualTo(2)
     }
   }
 

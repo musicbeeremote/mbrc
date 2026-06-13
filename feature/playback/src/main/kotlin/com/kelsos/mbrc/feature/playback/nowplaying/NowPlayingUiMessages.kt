@@ -7,6 +7,9 @@ sealed class NowPlayingUiMessages : UiMessageBase {
 
   data object RefreshSucceeded : NowPlayingUiMessages()
 
+  /** A newer refresh took over before this one finished; dismiss the indicator without a result. */
+  data object RefreshSuperseded : NowPlayingUiMessages()
+
   data object NetworkUnavailable : NowPlayingUiMessages()
 
   data object PlayFailed : NowPlayingUiMessages()

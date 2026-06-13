@@ -22,6 +22,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -174,6 +175,27 @@ class NowPlayingViewModelTest : KoinTest {
 
       // Verify repository was called (once from init, once from test)
       coVerify(exactly = 2) { repository.getRemote() }
+    }
+  }
+
+  @Test
+  fun reloadShouldEmitRefreshSupersededWhenRefreshIsCancelledByANewerOne() {
+    runTest(testDispatcher) {
+      // Given — the shared single-flight refresh in the repository is cancelled because a newer
+      // trigger (broadcast or another pull) superseded it; getRemote surfaces a CancellationException
+      // while this view-model coroutine itself stays active.
+      coEvery { connectionStateFlow.isConnected } returns true
+      coEvery { repository.getRemote() } throws
+        CancellationException("superseded by a newer refresh")
+
+      // When & Then — must end the pull-to-refresh indicator without reporting success or failure.
+      viewModel.events.test {
+        viewModel.actions.reload(showUserMessage = true)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isEqualTo(NowPlayingUiMessages.RefreshSuperseded)
+      }
     }
   }
 

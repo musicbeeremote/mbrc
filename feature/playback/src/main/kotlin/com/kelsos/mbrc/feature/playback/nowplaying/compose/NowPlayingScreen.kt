@@ -220,6 +220,10 @@ private fun NowPlayingEventsEffect(
           onRefreshComplete()
         }
 
+        NowPlayingUiMessages.RefreshSuperseded -> {
+          onRefreshComplete()
+        }
+
         NowPlayingUiMessages.NetworkUnavailable -> {
           onRefreshComplete()
           snackbarHostState.showSnackbar(networkUnavailableMessage)

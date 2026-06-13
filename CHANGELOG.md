@@ -4,6 +4,8 @@ Changelog
 ## [1.6.1]
 ### Fixed
 - Fixes out-of-memory crashes on very large now playing queues. Syncing the queue used to load the entire now playing list into memory at once; it now reconciles one page at a time, so memory stays flat regardless of queue size. As a safeguard, incoming network messages are also capped to a size relative to the available heap.
+- Fixes the now playing queue sometimes loading only part of the list. Refreshes triggered close together (opening the screen, pull-to-refresh, or a server-side queue change) could overlap and overwrite each other's writes; a newer refresh now cancels and restarts the in-flight one, so the full queue is always loaded. A failed or superseded refresh no longer clears the existing queue.
+- Fixes a spurious error being logged on every "play all" action. The play-all confirmation broadcast from the plugin is now handled instead of being treated as an unsupported message.
 
 ## [1.6.0] - 2026-06-01
 ### Added
