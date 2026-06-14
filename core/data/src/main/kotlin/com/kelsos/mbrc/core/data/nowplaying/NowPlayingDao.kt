@@ -31,9 +31,13 @@ interface NowPlayingDao {
    * Reconciles a single page of now-playing entries against the database within one transaction.
    *
    * Only the rows whose [NowPlayingEntity.position] appears in this page are read back (bounded to
-   * the page size, never the whole queue), so memory stays flat regardless of how large the remote
-   * now-playing list is. Existing rows keep their primary key id so UI identity is preserved; the
-   * rest are inserted as new rows.
+   * the page size, never the whole queue), so memory stays flat regardless of queue size.
+   *
+   * Identity is keyed on [NowPlayingEntity.position]: an existing row at a position is updated in
+   * place (keeping its id, so UI identity stays stable), otherwise it is inserted. This keeps at
+   * most one row per position at all times — keying on `(path, position)` would instead leave the
+   * stale row in place until the end-of-refresh prune, briefly giving the `order by position`
+   * PagingSource two rows per position and crashing the LazyColumn with a duplicate key.
    */
   @Transaction
   fun reconcilePage(entities: List<NowPlayingEntity>) {
@@ -44,11 +48,11 @@ interface NowPlayingDao {
       entities.map {
         it.position
       }
-    ).associateBy { "${it.path}-${it.position}" }
+    ).associateBy { it.position }
     val update = mutableListOf<NowPlayingEntity>()
     val new = mutableListOf<NowPlayingEntity>()
     for (entity in entities) {
-      val match = cached["${entity.path}-${entity.position}"]
+      val match = cached[entity.position]
       if (match != null) {
         update.add(entity.copy(id = match.id))
       } else {

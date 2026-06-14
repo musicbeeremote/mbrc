@@ -621,6 +621,38 @@ class NowPlayingRepositoryTest : KoinTest {
   }
 
   @Test
+  fun reconcilePageReplacesTrackAtExistingPositionInPlaceWithoutLeavingDuplicate() {
+    // Regression for the duplicate-key crash: changing the track at an existing position must update
+    // that row in place (one row per position), not insert a second row alongside the stale one.
+    val replacement =
+      listOf(1, 2, 3).map { pos ->
+        NowPlayingEntity(
+          title = "Replacement $pos",
+          artist = "New Artist",
+          path = "/remote/replacement_$pos.mp3",
+          position = pos,
+          dateAdded = 999L
+        )
+      }
+
+    dao.reconcilePage(replacement)
+
+    // Exactly one row per affected position — no stale duplicates left behind by the page reconcile.
+    val rows = dao.all().sortedBy { it.position }
+    assertThat(rows.count { it.position == 1 }).isEqualTo(1)
+    assertThat(rows.count { it.position == 2 }).isEqualTo(1)
+    assertThat(rows.count { it.position == 3 }).isEqualTo(1)
+    // Slots 1-3 kept their original ids (updated in place), so UI identity is stable.
+    assertThat(rows.first { it.position == 1 }.id).isEqualTo(1L)
+    assertThat(rows.first { it.position == 2 }.id).isEqualTo(2L)
+    assertThat(rows.first { it.position == 3 }.id).isEqualTo(3L)
+    assertThat(rows.first { it.position == 1 }.title).isEqualTo("Replacement 1")
+    // Untouched positions (4-10) are still present; total is unchanged, not doubled.
+    assertThat(dao.count()).isEqualTo(10)
+    assertThat(rows.map { it.position }.toSet()).hasSize(10)
+  }
+
+  @Test
   fun getRemotePreservesIdsForSparseNonContiguousPositions() {
     runTest(testDispatcher) {
       // Server may number positions sparsely (here 1, 5, 10). The IN-list lookup must still match

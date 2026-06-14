@@ -6,6 +6,7 @@
     <bug>Fixes out-of-memory crashes on very large now playing queues. The queue now syncs one page at a time instead of loading the whole list into memory, so memory stays flat regardless of queue size. Incoming network messages are also capped relative to the available heap as a safeguard.</bug>
     <bug>Fixes the now playing queue sometimes loading only part of the list. Refreshes triggered close together no longer overlap and overwrite each other; a newer refresh cancels and restarts the in-flight one, so the full queue is always loaded.</bug>
     <bug>Fixes a spurious error logged on every "play all" action by handling the play-all confirmation broadcast instead of treating it as an unsupported message.</bug>
+    <bug>Fixes a crash when scrolling the now playing queue during a refresh. Reconciling the queue could briefly leave two entries at the same position; each position now updates in place, so an entry is never duplicated.</bug>
   </version>
   <version
     version="1.6.0"
