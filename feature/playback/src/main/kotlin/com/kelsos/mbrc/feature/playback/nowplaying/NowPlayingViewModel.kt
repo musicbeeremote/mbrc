@@ -170,6 +170,7 @@ class NowPlayingViewModel(
   val tracks: Flow<PagingData<NowPlaying>> = repository.getAll().cachedIn(viewModelScope)
   val playingTrack = appState.playingTrack
   val connectionState = connectionStateFlow.connection
+  val syncProgress: StateFlow<SyncProgress?> = repository.syncProgress()
   val trackCount: StateFlow<Int> = repository.observeCount()
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
   val actions: NowPlayingActions =

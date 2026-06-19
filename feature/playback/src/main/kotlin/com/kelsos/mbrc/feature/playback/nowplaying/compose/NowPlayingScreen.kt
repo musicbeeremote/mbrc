@@ -42,6 +42,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
@@ -90,6 +91,7 @@ import com.kelsos.mbrc.feature.minicontrol.MiniControl
 import com.kelsos.mbrc.feature.playback.R
 import com.kelsos.mbrc.feature.playback.nowplaying.NowPlayingUiMessages
 import com.kelsos.mbrc.feature.playback.nowplaying.NowPlayingViewModel
+import com.kelsos.mbrc.feature.playback.nowplaying.SyncProgress
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -108,6 +110,7 @@ fun NowPlayingScreen(
   )
   val isConnected = connectionState is ConnectionStatus.Connected
   val trackCount by viewModel.trackCount.collectAsStateWithLifecycle()
+  val syncProgress by viewModel.syncProgress.collectAsStateWithLifecycle()
 
   var isRefreshing by remember { mutableStateOf(false) }
   var isSearchActive by rememberSaveable { mutableStateOf(false) }
@@ -168,6 +171,8 @@ fun NowPlayingScreen(
     actionItems = actionItems
   ) { paddingValues ->
     Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+      SyncProgressBar(syncProgress)
+
       NowPlayingContent(
         tracks = tracks,
         playingTrackPath = playingTrack.path,
@@ -252,6 +257,19 @@ private fun NowPlayingEventsEffect(
         }
       }
     }
+  }
+}
+
+@Composable
+internal fun SyncProgressBar(syncProgress: SyncProgress?) {
+  val progress = syncProgress ?: return
+  if (progress.isDeterminate) {
+    LinearProgressIndicator(
+      progress = { progress.fraction },
+      modifier = Modifier.fillMaxWidth()
+    )
+  } else {
+    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
   }
 }
 

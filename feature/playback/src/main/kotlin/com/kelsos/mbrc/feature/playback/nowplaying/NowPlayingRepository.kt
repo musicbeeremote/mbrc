@@ -10,11 +10,15 @@ import com.kelsos.mbrc.core.data.nowplaying.NowPlayingDao
 import com.kelsos.mbrc.core.data.nowplaying.SearchResult
 import com.kelsos.mbrc.core.data.paged
 import com.kelsos.mbrc.core.networking.api.PlaybackApi
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -30,6 +34,13 @@ interface NowPlayingRepository : Repository<NowPlaying> {
   suspend fun searchTrack(query: String): SearchResult?
 
   fun observeCount(): Flow<Int>
+
+  /**
+   * Progress of the single in-flight refresh, regardless of which trigger started it
+   * (screen reload, pull-to-refresh, or a `nowplayinglistchanged` broadcast). Emits `null`
+   * while idle.
+   */
+  fun syncProgress(): StateFlow<SyncProgress?>
 }
 
 class NowPlayingRepositoryImpl(
@@ -42,6 +53,10 @@ class NowPlayingRepositoryImpl(
   private val refreshScope = CoroutineScope(dispatchers.network + SupervisorJob())
   private val refreshMutex = Mutex()
   private var refreshJob: Deferred<Unit>? = null
+
+  private val syncProgressFlow = MutableStateFlow<SyncProgress?>(null)
+
+  override fun syncProgress(): StateFlow<SyncProgress?> = syncProgressFlow.asStateFlow()
 
   override suspend fun count(): Long = withContext(dispatchers.database) { dao.count() }
 
@@ -68,8 +83,13 @@ class NowPlayingRepositoryImpl(
 
   private suspend fun fetchAndReconcile(progress: Progress?) {
     val added = epoch()
+    // Indeterminate until the first page reports a server total.
+    syncProgressFlow.value = SyncProgress(current = 0, total = 0)
     playbackApi
-      .getNowPlayingList(progress)
+      .getNowPlayingList { current, total ->
+        syncProgressFlow.value = SyncProgress(current, total)
+        progress?.invoke(current, total)
+      }
       .onCompletion { cause ->
         // Only prune stale rows after a clean run. A cancelled (superseded) or failed refresh
         // must leave the existing queue intact — the replacing/next successful refresh prunes.
@@ -77,6 +97,11 @@ class NowPlayingRepositoryImpl(
           withContext(dispatchers.database) {
             dao.removePreviousEntries(added)
           }
+        }
+        // Hide the bar when this refresh ends — but not when it was superseded: the cancelling
+        // refresh has already set its own progress and now owns the indicator.
+        if (cause !is CancellationException) {
+          syncProgressFlow.value = null
         }
       }.collect { item ->
         val entities = item.map { it.toEntity().copy(dateAdded = added) }

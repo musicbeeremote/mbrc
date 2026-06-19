@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.kelsos.mbrc.core.common.data.Progress
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.data.Database
@@ -675,6 +676,43 @@ class NowPlayingRepositoryTest : KoinTest {
       val resynced = dao.all().sortedBy { it.position }
       assertThat(resynced.map { it.position }).containsExactly(1, 5, 10).inOrder()
       assertThat(resynced.map { it.id }).containsExactly(1L, 5L, 10L).inOrder()
+    }
+  }
+
+  @Test
+  fun syncProgressReflectsRefreshAndClearsOnCompletion() {
+    runTest(testDispatcher) {
+      // Park the refresh after its first page so we can observe a non-null progress value, the way
+      // the screen would while a sync is in flight. The flow drives the progress callback exactly
+      // as ApiBase.getAllPages does on the real path.
+      val blocker = CompletableDeferred<Unit>()
+      val page = listOf(NowPlayingDto("T1", "A", "/remote/t1.mp3", 1))
+      every { playbackApi.getNowPlayingList(any()) } answers {
+        val callback = firstArg<Progress?>()
+        flow {
+          callback?.invoke(1, 1)
+          emit(page)
+          blocker.await()
+        }
+      }
+      dao.deleteAll()
+
+      assertThat(repository.syncProgress().value).isNull()
+
+      val inflight = launch { repository.getRemote(null) }
+      advanceUntilIdle()
+
+      val progress = repository.syncProgress().value
+      assertThat(progress).isNotNull()
+      assertThat(progress!!.current).isEqualTo(1)
+      assertThat(progress.total).isEqualTo(1)
+      assertThat(progress.isDeterminate).isTrue()
+
+      blocker.complete(Unit)
+      advanceUntilIdle()
+
+      assertThat(repository.syncProgress().value).isNull()
+      inflight.join()
     }
   }
 
