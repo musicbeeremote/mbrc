@@ -1,7 +1,7 @@
 Changelog
 -----------
 
-## [1.6.1]
+## [1.6.1] - 2026-06-27
 ### Added
 - Shows a progress bar at the top of the now playing queue while it is syncing, so a long sync (opening the screen, pull-to-refresh, or a server-side "play all") gives visible feedback instead of appearing stalled. The bar reflects the actual page-load progress reported by the server.
 
@@ -296,7 +296,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.4...v1.6.0
 [1.6.0-rc.4]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.3...v1.6.0-rc.4
 [1.6.0-rc.3]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.2...v1.6.0-rc.3
