@@ -8,6 +8,7 @@
     <bug>Fixes the now playing queue sometimes loading only part of the list. Refreshes triggered close together no longer overlap and overwrite each other; a newer refresh cancels and restarts the in-flight one, so the full queue is always loaded.</bug>
     <bug>Fixes a spurious error logged on every "play all" action by handling the play-all confirmation broadcast instead of treating it as an unsupported message.</bug>
     <bug>Fixes a crash when scrolling the now playing queue during a refresh. Reconciling the queue could briefly leave two entries at the same position; each position now updates in place, so an entry is never duplicated.</bug>
+    <bug>Fixes a crash when the system restarted the background remote-control service while the app was not in the foreground (Android 12+). The service no longer asks to be auto-recreated in the background and stops gracefully instead of crashing if a foreground start is denied.</bug>
   </version>
   <version
     version="1.6.0"

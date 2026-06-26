@@ -10,6 +10,7 @@ Changelog
 - Fixes the now playing queue sometimes loading only part of the list. Refreshes triggered close together (opening the screen, pull-to-refresh, or a server-side queue change) could overlap and overwrite each other's writes; a newer refresh now cancels and restarts the in-flight one, so the full queue is always loaded. A failed or superseded refresh no longer clears the existing queue.
 - Fixes a spurious error being logged on every "play all" action. The play-all confirmation broadcast from the plugin is now handled instead of being treated as an unsupported message.
 - Fixes a crash when scrolling the now playing queue during a refresh. Reconciling the queue could briefly leave two entries at the same position, which the list could then show twice and crash on; each position now updates in place, so an entry is never duplicated.
+- Fixes a crash when the system restarted the background remote-control service while the app was not in the foreground (Android 12+). The service no longer asks to be auto-recreated in the background, where promoting it to a foreground service is rejected, and it stops gracefully instead of crashing if a foreground start is denied.
 
 ## [1.6.0] - 2026-06-01
 ### Added
