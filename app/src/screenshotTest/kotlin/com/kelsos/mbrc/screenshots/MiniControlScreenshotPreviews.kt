@@ -28,6 +28,7 @@ fun MiniControlPlayingLightPreview() {
       onNavigateToPlayer = {},
       onPreviousClick = {},
       onPlayPauseClick = {},
+      onPlayPauseLongClick = {},
       onNextClick = {}
     )
   }
@@ -51,6 +52,7 @@ fun MiniControlPlayingDarkPreview() {
       onNavigateToPlayer = {},
       onPreviousClick = {},
       onPlayPauseClick = {},
+      onPlayPauseLongClick = {},
       onNextClick = {}
     )
   }
@@ -74,6 +76,7 @@ fun MiniControlPausedLightPreview() {
       onNavigateToPlayer = {},
       onPreviousClick = {},
       onPlayPauseClick = {},
+      onPlayPauseLongClick = {},
       onNextClick = {}
     )
   }
@@ -97,6 +100,7 @@ fun MiniControlPausedDarkPreview() {
       onNavigateToPlayer = {},
       onPreviousClick = {},
       onPlayPauseClick = {},
+      onPlayPauseLongClick = {},
       onNextClick = {}
     )
   }

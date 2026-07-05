@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
   <version
+    version="1.7.0"
+    release="unreleased">
+    <bug>Restores long-press-to-stop on the play/pause button (player and mini-control). Long-pressing play/pause now stops playback, a gesture lost when the player moved to the new UI; a short tap still toggles play/pause.</bug>
+  </version>
+  <version
     version="1.6.1"
     release="Jun 27, 2026">
     <feature>Shows a progress bar at the top of the now playing queue while it syncs, so a long sync (opening the screen, pull-to-refresh, or a server-side "play all") gives visible feedback instead of appearing stalled.</feature>

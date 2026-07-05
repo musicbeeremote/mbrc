@@ -15,6 +15,7 @@ import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.core.networking.protocol.usecases.next
 import com.kelsos.mbrc.core.networking.protocol.usecases.playPause
 import com.kelsos.mbrc.core.networking.protocol.usecases.previous
+import com.kelsos.mbrc.core.networking.protocol.usecases.stop
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -299,6 +300,68 @@ class MiniControlViewModelTest : KoinTest {
 
       // Verify user action was called
       coVerify(exactly = 1) { userActionUseCase.previous() }
+    }
+  }
+
+  @Test
+  fun performStopShouldEmitNetworkUnavailableWhenNotConnected() {
+    runTest(testDispatcher) {
+      // Given
+      coEvery { connectionStateFlow.isConnected } returns false
+
+      // When & Then
+      viewModel.events.test {
+        viewModel.perform(MiniControlAction.Stop)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isEqualTo(MiniControlUiMessages.NetworkUnavailable)
+      }
+
+      // Verify user action is not called when not connected
+      coVerify(exactly = 0) { userActionUseCase.stop() }
+    }
+  }
+
+  @Test
+  fun performStopShouldNotEmitWhenConnectedAndUserActionSucceeds() {
+    runTest(testDispatcher) {
+      // Given
+      coEvery { connectionStateFlow.isConnected } returns true
+      coEvery { userActionUseCase.stop() } returns Unit
+
+      // When & Then
+      viewModel.events.test {
+        viewModel.perform(MiniControlAction.Stop)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Should not emit any events on successful action
+        expectNoEvents()
+      }
+
+      // Verify user action was called
+      coVerify(exactly = 1) { userActionUseCase.stop() }
+    }
+  }
+
+  @Test
+  fun performStopShouldEmitActionFailedWhenConnectedButUserActionThrowsIOException() {
+    runTest(testDispatcher) {
+      // Given
+      coEvery { connectionStateFlow.isConnected } returns true
+      coEvery { userActionUseCase.stop() } throws IOException("Network error")
+
+      // When & Then
+      viewModel.events.test {
+        viewModel.perform(MiniControlAction.Stop)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val event = awaitItem()
+        assertThat(event).isEqualTo(MiniControlUiMessages.ActionFailed)
+      }
+
+      // Verify user action was called
+      coVerify(exactly = 1) { userActionUseCase.stop() }
     }
   }
 

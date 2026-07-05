@@ -15,6 +15,7 @@ import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.core.networking.protocol.usecases.next
 import com.kelsos.mbrc.core.networking.protocol.usecases.playPause
 import com.kelsos.mbrc.core.networking.protocol.usecases.previous
+import com.kelsos.mbrc.core.networking.protocol.usecases.stop
 import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -59,6 +60,7 @@ class MiniControlViewModel(
           MiniControlAction.PlayNext -> userActionUseCase.next()
           MiniControlAction.PlayPause -> userActionUseCase.playPause()
           MiniControlAction.PlayPrevious -> userActionUseCase.previous()
+          MiniControlAction.Stop -> userActionUseCase.stop()
         }
       } catch (e: IOException) {
         Timber.e(e)

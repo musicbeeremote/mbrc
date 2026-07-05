@@ -44,6 +44,10 @@ suspend fun UserActionUseCase.playPause() {
   perform(UserAction.create(Protocol.PlayerPlayPause))
 }
 
+suspend fun UserActionUseCase.stop() {
+  perform(UserAction.create(Protocol.PlayerStop))
+}
+
 suspend fun UserActionUseCase.play() {
   perform(UserAction.create(Protocol.PlayerPlay))
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,10 +47,8 @@ import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.SpeakerGroup
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.outlined.Lyrics
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -68,9 +67,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -1131,24 +1132,36 @@ private fun PlaybackControls(playbackState: PlaybackState, actions: IPlayerActio
     }
 
     // Play/Pause button - large filled circle
-    FilledIconButton(
-      onClick = actions.playPause,
-      modifier = Modifier.size(64.dp),
+    // Tap toggles play/pause, long-press stops playback (restores the legacy gesture).
+    // FilledIconButton has no onLongClick, so we render the same filled circle with a Surface
+    // (identical shape rasterization) and drive both gestures via combinedClickable.
+    val haptics = LocalHapticFeedback.current
+    Surface(
       shape = CircleShape,
-      colors = IconButtonDefaults.filledIconButtonColors(
-        containerColor = MaterialTheme.colorScheme.onSurface,
-        contentColor = MaterialTheme.colorScheme.surface
-      )
+      color = MaterialTheme.colorScheme.onSurface,
+      contentColor = MaterialTheme.colorScheme.surface,
+      modifier = Modifier
+        .size(64.dp)
+        .combinedClickable(
+          onClick = actions.playPause,
+          onLongClick = {
+            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            actions.stop()
+          },
+          onLongClickLabel = stringResource(R.string.main_button_stop_description)
+        )
     ) {
-      Icon(
-        imageVector = if (playbackState.playerState == PlayerState.Playing) {
-          Icons.Default.Pause
-        } else {
-          Icons.Default.PlayArrow
-        },
-        contentDescription = stringResource(R.string.main_button_play_pause_description),
-        modifier = Modifier.size(32.dp)
-      )
+      Box(contentAlignment = Alignment.Center) {
+        Icon(
+          imageVector = if (playbackState.playerState == PlayerState.Playing) {
+            Icons.Default.Pause
+          } else {
+            Icons.Default.PlayArrow
+          },
+          contentDescription = stringResource(R.string.main_button_play_pause_description),
+          modifier = Modifier.size(32.dp)
+        )
+      }
     }
 
     // Next button - larger

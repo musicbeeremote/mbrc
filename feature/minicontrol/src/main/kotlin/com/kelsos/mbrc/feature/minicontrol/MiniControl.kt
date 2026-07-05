@@ -2,6 +2,8 @@ package com.kelsos.mbrc.feature.minicontrol
 
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,18 +20,22 @@ import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,6 +71,7 @@ fun MiniControl(
     onNavigateToPlayer = onNavigateToPlayer,
     onPreviousClick = { viewModel.perform(MiniControlAction.PlayPrevious) },
     onPlayPauseClick = { viewModel.perform(MiniControlAction.PlayPause) },
+    onPlayPauseLongClick = { viewModel.perform(MiniControlAction.Stop) },
     onNextClick = { viewModel.perform(MiniControlAction.PlayNext) },
     modifier = modifier
   )
@@ -76,6 +83,7 @@ fun MiniControlContent(
   onNavigateToPlayer: () -> Unit,
   onPreviousClick: () -> Unit,
   onPlayPauseClick: () -> Unit,
+  onPlayPauseLongClick: () -> Unit,
   onNextClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
@@ -171,7 +179,25 @@ fun MiniControlContent(
           )
         }
 
-        IconButton(onClick = onPlayPauseClick) {
+        // Tap toggles play/pause, long-press stops playback (restores the legacy gesture).
+        // IconButton has no onLongClick, so we replicate its exact layout (minimum interactive
+        // size + 40.dp container + standard shape) and drive both gestures via combinedClickable.
+        val haptics = LocalHapticFeedback.current
+        Box(
+          modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .size(40.dp)
+            .clip(IconButtonDefaults.standardShape)
+            .combinedClickable(
+              onClick = onPlayPauseClick,
+              onLongClick = {
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                onPlayPauseLongClick()
+              },
+              onLongClickLabel = stringResource(R.string.main_button_stop_description)
+            ),
+          contentAlignment = Alignment.Center
+        ) {
           Icon(
             imageVector = if (state.playingState == PlayerState.Playing) {
               Icons.Default.Pause

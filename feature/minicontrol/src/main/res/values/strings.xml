@@ -5,6 +5,7 @@
   <string name="main_button_next_description">Play next track</string>
   <string name="main_button_play_pause_description">Play or pause</string>
   <string name="main_button_previous_description">Play previous track</string>
+  <string name="main_button_stop_description">Stop playback</string>
 
   <!-- Unknown values -->
   <string name="unknown_artist">Unknown artist</string>

@@ -6,4 +6,6 @@ sealed class MiniControlAction {
   data object PlayNext : MiniControlAction()
 
   data object PlayPause : MiniControlAction()
+
+  data object Stop : MiniControlAction()
 }

@@ -6,6 +6,7 @@
   <string name="main_button_next_description">When pressed it plays the next track.</string>
   <string name="main_button_play_pause_description">When pressed either it starts playing a track or pauses it if it is already playing.</string>
   <string name="main_button_previous_description">When pressed it plays the previous track</string>
+  <string name="main_button_stop_description">When long-pressed it stops playback.</string>
   <string name="main_button_repeat_description">When pressed it changes the repeat (all/none).</string>
   <string name="main_button_shuffle_description">When pressed it changes the shuffle mode (on/off).</string>
   <string name="menu_overflow_description">More options</string>
