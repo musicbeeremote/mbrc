@@ -67,6 +67,7 @@ class RemotePlayer(
     else -> STATE_IDLE
   }
 
+  @Suppress("DEPRECATION")
   override fun getState(): State = runBlocking {
     val statusModel = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
     val position = appState.playingPosition.firstOrNull().orEmpty()
@@ -90,7 +91,11 @@ class RemotePlayer(
       .add(COMMAND_GET_METADATA)
       .add(COMMAND_GET_TIMELINE)
       .add(COMMAND_GET_DEVICE_VOLUME)
+      // Android's legacy MediaSession volume provider still queries these commands on
+      // some OS/OEM versions when routing the physical volume keys to a remote player.
+      .add(COMMAND_SET_DEVICE_VOLUME)
       .add(COMMAND_SET_DEVICE_VOLUME_WITH_FLAGS)
+      .add(COMMAND_ADJUST_DEVICE_VOLUME)
       .add(COMMAND_ADJUST_DEVICE_VOLUME_WITH_FLAGS)
 
     // Only add seek commands for non-stream content
