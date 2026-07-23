@@ -136,7 +136,7 @@ class AppStateManager(
     positionJob = null
   }
 
-  private suspend fun updatePosition() {
+  private fun updatePosition() {
     val position = appState.playingPosition.value
     // For streams (total <= 0), don't coerce - just increment the elapsed time
     val current = if (position.total <= 0) {

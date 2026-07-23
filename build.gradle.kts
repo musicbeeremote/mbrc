@@ -118,12 +118,34 @@ dependencies {
 
 tasks.register("staticAnalysisAll") {
   description = "Runs detekt (with type resolution), lint, and kotlinter on all modules"
-  // detektDebug runs with type resolution, which is required for rules like
-  // RedundantSuspendModifier that inspect call sites. The bare `detekt` task
-  // skips type resolution and silently misses these.
-  dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "detektDebug" } })
   dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "lintKotlin" } })
   dependsOn(subprojects.flatMap { it.tasks.matching { t -> t.name == "lint" } })
+}
+
+// Attach one detekt task per subproject once every project is configured.
+//
+// detektDebug runs with type resolution, which is required for rules like
+// RedundantSuspendModifier that inspect call sites; the bare `detekt` task skips
+// type resolution and silently misses these. Unflavored library modules expose
+// `detektDebug`, but the flavored `:app` module only has per-flavor tasks
+// (`detektGithubDebug`, `detektPlayDebug`) and the baseline-profile test module
+// has neither. Matching on the literal name `detektDebug` therefore silently
+// skipped `:app` entirely (#333). Resolve one task per subproject with a
+// fallback chain and fail loudly if a module exposes no detekt task at all, so a
+// future naming change can never drop a module from analysis unnoticed.
+gradle.projectsEvaluated {
+  tasks.named("staticAnalysisAll").configure {
+    for (sub in subprojects) {
+      val detektTask = sub.tasks.findByName("detektDebug")
+        ?: sub.tasks.findByName("detektGithubDebug")
+        ?: sub.tasks.findByName("detekt")
+        ?: throw GradleException(
+          "staticAnalysisAll found no detekt task for ${sub.path}; refusing to " +
+            "silently skip it. Expected detektDebug, detektGithubDebug or detekt.",
+        )
+      dependsOn(detektTask)
+    }
+  }
 }
 
 abstract class CollectSarifReportsTask : DefaultTask() {
@@ -141,14 +163,17 @@ abstract class CollectSarifReportsTask : DefaultTask() {
 
     val buildDirs = subprojectBuildDirs.get()
 
-    // Collect and merge detekt SARIF reports. staticAnalysisAll runs
-    // :detektDebug (with type resolution), which emits debug.sarif;
-    // fall back to detekt.sarif for any module that ran the bare task.
+    // Collect and merge detekt SARIF reports. staticAnalysisAll runs the debug,
+    // type-resolution task per module: library modules emit debug.sarif, the
+    // flavored :app emits githubDebug.sarif; fall back to detekt.sarif for any
+    // module that ran the bare task (e.g. the baseline-profile module).
     val detektFiles = buildDirs.mapNotNull { buildDir ->
       val debugSarif = File(buildDir, "reports/detekt/debug.sarif")
+      val githubDebugSarif = File(buildDir, "reports/detekt/githubDebug.sarif")
       val baseSarif = File(buildDir, "reports/detekt/detekt.sarif")
       when {
         debugSarif.exists() -> debugSarif
+        githubDebugSarif.exists() -> githubDebugSarif
         baseSarif.exists() -> baseSarif
         else -> null
       }

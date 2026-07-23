@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
@@ -22,7 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.dp
@@ -117,45 +120,10 @@ fun RemoteApp() {
           )
         }
       ) {
-        // Left-edge swipe-to-open detector. Only arms on pointer-downs within
-        // DRAWER_EDGE_WIDTH of the left edge, and only commits if the gesture
-        // crosses touch slop while clearly rightward and horizontal — content
-        // swipes elsewhere on the screen don't open the drawer.
         Box(
           modifier = Modifier
             .fillMaxSize()
-            .pointerInput(drawerState) {
-              awaitPointerEventScope {
-                val edgePx = DRAWER_EDGE_WIDTH.toPx()
-                val slop = viewConfiguration.touchSlop
-                while (true) {
-                  val down = awaitFirstDown(pass = PointerEventPass.Initial)
-                  if (drawerState.isOpen || down.position.x > edgePx) continue
-                  // Track slop ourselves on the Initial pass so children
-                  // (raised-slop swipeable rows in now-playing) can't consume
-                  // the move events before we decide to claim the gesture.
-                  var totalX = 0f
-                  var totalY = 0f
-                  var armed = false
-                  while (!armed) {
-                    val event = awaitPointerEvent(PointerEventPass.Initial)
-                    val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                    if (!change.pressed) break
-                    val delta = change.positionChange()
-                    totalX += delta.x
-                    totalY += delta.y
-                    if (totalX > slop && totalX > abs(totalY) * EDGE_HORIZONTAL_DOMINANCE) {
-                      change.consume()
-                      armed = true
-                    } else if (abs(totalY) > slop && abs(totalY) > abs(totalX)) {
-                      // Vertical-dominant gesture — let children handle it.
-                      break
-                    }
-                  }
-                  if (armed) scope.launch { drawerState.open() }
-                }
-              }
-            }
+            .leftEdgeDrawerSwipe(drawerState) { scope.launch { drawerState.open() } }
         ) {
           // Each screen handles its own Scaffold - no shared Scaffold here
           AppNavGraph(
@@ -208,5 +176,54 @@ fun RemoteApp() {
         )
       }
     }
+  }
+}
+
+/**
+ * Left-edge swipe-to-open detector for the navigation drawer. Only arms on
+ * pointer-downs within [DRAWER_EDGE_WIDTH] of the left edge, and only commits
+ * ([onOpen]) once the gesture crosses touch slop while clearly rightward and
+ * horizontal, so content swipes elsewhere on the screen don't open the drawer.
+ *
+ * Slop is tracked here on the Initial pass so children (raised-slop swipeable
+ * rows in now-playing) can't consume the move events before we claim the gesture.
+ */
+private fun Modifier.leftEdgeDrawerSwipe(drawerState: DrawerState, onOpen: () -> Unit): Modifier =
+  pointerInput(drawerState) {
+    awaitPointerEventScope {
+      val edgePx = DRAWER_EDGE_WIDTH.toPx()
+      val slop = viewConfiguration.touchSlop
+      while (true) {
+        val down = awaitFirstDown(pass = PointerEventPass.Initial)
+        if (drawerState.isOpen || down.position.x > edgePx) continue
+        if (awaitLeftEdgeArm(down.id, slop)) onOpen()
+      }
+    }
+  }
+
+/**
+ * Waits for the in-progress gesture started by [downId] to either arm as a
+ * rightward, horizontal-dominant drawer swipe (returns `true`, consuming the
+ * move) or resolve as vertical / released (returns `false`), letting children
+ * handle it.
+ */
+private suspend fun AwaitPointerEventScope.awaitLeftEdgeArm(
+  downId: PointerId,
+  slop: Float
+): Boolean {
+  var totalX = 0f
+  var totalY = 0f
+  while (true) {
+    val event = awaitPointerEvent(PointerEventPass.Initial)
+    val change = event.changes.firstOrNull { it.id == downId } ?: return false
+    if (!change.pressed) return false
+    val delta = change.positionChange()
+    totalX += delta.x
+    totalY += delta.y
+    if (totalX > slop && totalX > abs(totalY) * EDGE_HORIZONTAL_DOMINANCE) {
+      change.consume()
+      return true
+    }
+    if (abs(totalY) > slop && abs(totalY) > abs(totalX)) return false
   }
 }
