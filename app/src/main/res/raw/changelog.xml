@@ -3,6 +3,7 @@
   <version
     version="1.7.0"
     release="unreleased">
+    <bug>Fixes the volume slider on the Now Playing screen being hidden behind the system navigation bar on foldables and other edge-to-edge devices. The player now keeps its controls clear of the system bars in portrait, landscape and on tablets.</bug>
     <bug>Restores long-press-to-stop on the play/pause button (player and mini-control). Long-pressing play/pause now stops playback, a gesture lost when the player moved to the new UI; a short tap still toggles play/pause.</bug>
   </version>
   <version

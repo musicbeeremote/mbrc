@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -193,7 +194,10 @@ fun PlayerScreen(
     isTransparent = true,
     modifier = modifier
   ) { paddingValues ->
-    // Ignore padding for player screen as it uses transparent top bar
+    // The transparent top bar draws over the gradient, but the scaffold still
+    // reports the status-bar + top-bar height as the top inset and the
+    // navigation-bar / taskbar as the bottom inset. Thread that through so every
+    // layout keeps its content clear of the system bars (#324/#325).
     Box(modifier = Modifier.fillMaxSize()) {
       PlayerScreenContent(
         playingTrack = playingTrack,
@@ -201,6 +205,7 @@ fun PlayerScreen(
         trackRating = trackRating,
         volumeState = volumeState,
         playbackState = playbackState,
+        contentPadding = paddingValues,
         actions = viewModel.actions,
         hasLyrics = lyrics.isNotEmpty(),
         showRatingOnPlayer = showRatingOnPlayer,
@@ -245,6 +250,7 @@ fun PlayerScreenContent(
   trackRating: TrackRating,
   volumeState: VolumeState,
   playbackState: PlaybackState,
+  contentPadding: PaddingValues = PaddingValues(0.dp),
   actions: IPlayerActions,
   hasLyrics: Boolean,
   showRatingOnPlayer: Boolean,
@@ -305,6 +311,7 @@ fun PlayerScreenContent(
         volumeState = volumeState,
         playbackState = playbackState,
         gradientBrush = gradientBrush,
+        contentPadding = contentPadding,
         actions = actions,
         onTrackInfoClick = onTrackInfoClick,
         onLyricsClick = onLyricsClick,
@@ -324,6 +331,7 @@ fun PlayerScreenContent(
         volumeState = volumeState,
         playbackState = playbackState,
         gradientBrush = gradientBrush,
+        contentPadding = contentPadding,
         actions = actions,
         onTrackInfoClick = onTrackInfoClick,
         onLyricsClick = onLyricsClick,
@@ -343,6 +351,7 @@ fun PlayerScreenContent(
         volumeState = volumeState,
         playbackState = playbackState,
         gradientBrush = gradientBrush,
+        contentPadding = contentPadding,
         actions = actions,
         onTrackInfoClick = onTrackInfoClick,
         onLyricsClick = onLyricsClick,
@@ -357,12 +366,11 @@ fun PlayerScreenContent(
  * Constants for player layout dimensions and values.
  */
 private object PlayerConstants {
-  const val PORTRAIT_TOP_SPACER_WEIGHT = 0.5f
   const val LANDSCAPE_ALBUM_HEIGHT_FRACTION = 0.85f
+  val PORTRAIT_BOTTOM_PADDING = 16.dp
   const val VOLUME_MAX = 100f
   const val SLIDER_DEBOUNCE_MS = 1000L
   val TABLET_WIDTH_THRESHOLD = 600.dp
-  val TOP_BAR_HEIGHT = 64.dp // Padding for transparent top bar
   val CONTENT_PADDING = 24.dp
 }
 
@@ -494,6 +502,7 @@ private fun PortraitPlayerLayout(
   volumeState: VolumeState,
   playbackState: PlaybackState,
   gradientBrush: Brush,
+  contentPadding: PaddingValues,
   actions: IPlayerActions,
   onTrackInfoClick: () -> Unit,
   onLyricsClick: () -> Unit,
@@ -506,23 +515,30 @@ private fun PortraitPlayerLayout(
       .fillMaxSize()
       .background(MaterialTheme.colorScheme.background)
       .background(gradientBrush)
-      .verticalScroll(rememberScrollState())
+      // System insets from the scaffold: status-bar + top-bar on top, and the
+      // navigation-bar / taskbar on the bottom keeps the volume row on screen (#324).
+      .padding(contentPadding)
       .padding(
-        top = PlayerConstants.TOP_BAR_HEIGHT + PlayerConstants.CONTENT_PADDING,
-        bottom = 16.dp
+        top = PlayerConstants.CONTENT_PADDING,
+        bottom = PlayerConstants.PORTRAIT_BOTTOM_PADDING
       ),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    Spacer(modifier = Modifier.weight(PlayerConstants.PORTRAIT_TOP_SPACER_WEIGHT))
-
-    // Album cover - same horizontal padding as text elements
-    AlbumCover(
-      painter = painter,
+    // Album cover - takes the leftover vertical space and sizes itself to the
+    // largest square that fits, so the metadata, transport and volume rows below
+    // always stay on screen instead of being pushed off the bottom (#324/#325).
+    BoxWithConstraints(
       modifier = Modifier
-        .padding(horizontal = PlayerConstants.CONTENT_PADDING)
+        .weight(1f)
         .fillMaxWidth()
-        .aspectRatio(1f)
-    )
+        .padding(horizontal = PlayerConstants.CONTENT_PADDING),
+      contentAlignment = Alignment.Center
+    ) {
+      AlbumCover(
+        painter = painter,
+        modifier = Modifier.size(minOf(maxWidth, maxHeight))
+      )
+    }
 
     Spacer(modifier = Modifier.height(32.dp))
 
@@ -582,8 +598,6 @@ private fun PortraitPlayerLayout(
         .fillMaxWidth()
         .padding(horizontal = PlayerConstants.CONTENT_PADDING)
     )
-
-    Spacer(modifier = Modifier.weight(1f))
   }
 }
 
@@ -600,6 +614,7 @@ private fun TabletPlayerLayout(
   volumeState: VolumeState,
   playbackState: PlaybackState,
   gradientBrush: Brush,
+  contentPadding: PaddingValues,
   actions: IPlayerActions,
   onTrackInfoClick: () -> Unit,
   onLyricsClick: () -> Unit,
@@ -613,7 +628,9 @@ private fun TabletPlayerLayout(
       .fillMaxSize()
       .background(MaterialTheme.colorScheme.background)
       .background(gradientBrush)
-      .padding(top = PlayerConstants.TOP_BAR_HEIGHT + PlayerConstants.CONTENT_PADDING),
+      // System insets (status-bar + top-bar top, navigation-bar / taskbar bottom, #324).
+      .padding(contentPadding)
+      .padding(top = PlayerConstants.CONTENT_PADDING),
     contentAlignment = Alignment.Center
   ) {
     Column(
@@ -698,6 +715,7 @@ private fun LandscapePlayerLayout(
   volumeState: VolumeState,
   playbackState: PlaybackState,
   gradientBrush: Brush,
+  contentPadding: PaddingValues,
   actions: IPlayerActions,
   onTrackInfoClick: () -> Unit,
   onLyricsClick: () -> Unit,
@@ -710,8 +728,11 @@ private fun LandscapePlayerLayout(
       .fillMaxSize()
       .background(MaterialTheme.colorScheme.background)
       .background(gradientBrush)
+      // System insets from the scaffold; in landscape this also clears a side
+      // navigation bar, which the previous fixed padding did not (#324/#325).
+      .padding(contentPadding)
       .padding(
-        top = PlayerConstants.TOP_BAR_HEIGHT + PlayerConstants.CONTENT_PADDING,
+        top = PlayerConstants.CONTENT_PADDING,
         start = PlayerConstants.CONTENT_PADDING,
         end = PlayerConstants.CONTENT_PADDING,
         bottom = PlayerConstants.CONTENT_PADDING

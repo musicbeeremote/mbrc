@@ -1,6 +1,8 @@
 package com.kelsos.mbrc.screenshots
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
@@ -10,7 +12,10 @@ import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.state.PlayingPosition
 import com.kelsos.mbrc.core.common.state.Repeat
 import com.kelsos.mbrc.core.common.state.ShuffleMode
+import com.kelsos.mbrc.core.common.state.TrackInfo
 import com.kelsos.mbrc.core.common.state.TrackRating
+import com.kelsos.mbrc.core.ui.compose.DynamicScreenScaffold
+import com.kelsos.mbrc.core.ui.compose.TopBarState
 import com.kelsos.mbrc.core.ui.theme.RemoteTheme
 import com.kelsos.mbrc.feature.playback.player.IPlayerActions
 import com.kelsos.mbrc.feature.playback.player.PlaybackState
@@ -35,6 +40,53 @@ private object PreviewPlayerActions : IPlayerActions {
   override val toggleScrobbling: () -> Unit = {}
 }
 
+/**
+ * Renders the player exactly as it ships: inside the transparent [DynamicScreenScaffold]
+ * so the recorded screenshot includes the "Now playing" top bar and the content sits
+ * below it via the scaffold's [contentPadding]. Rendering [PlayerScreenContent] alone
+ * cropped the header, which made the top spacing impossible to judge.
+ */
+@Composable
+private fun PlayerScreenPreview(
+  playingTrack: TrackInfo,
+  playingPosition: PlayingPosition,
+  trackRating: TrackRating,
+  volumeState: VolumeState,
+  playbackState: PlaybackState,
+  actions: IPlayerActions,
+  hasLyrics: Boolean,
+  showRatingOnPlayer: Boolean,
+  onTrackInfoClick: () -> Unit,
+  onLyricsClick: () -> Unit,
+  onOutputClick: () -> Unit,
+  onRatingClick: () -> Unit
+) {
+  val snackbarHostState = remember { SnackbarHostState() }
+  DynamicScreenScaffold(
+    topBarState = TopBarState.WithTitle("Now playing"),
+    snackbarHostState = snackbarHostState,
+    defaultTitle = "Now playing",
+    isTransparent = true,
+    onOverflowClick = {}
+  ) { paddingValues ->
+    PlayerScreenContent(
+      contentPadding = paddingValues,
+      playingTrack = playingTrack,
+      playingPosition = playingPosition,
+      trackRating = trackRating,
+      volumeState = volumeState,
+      playbackState = playbackState,
+      actions = actions,
+      hasLyrics = hasLyrics,
+      showRatingOnPlayer = showRatingOnPlayer,
+      onTrackInfoClick = onTrackInfoClick,
+      onLyricsClick = onLyricsClick,
+      onOutputClick = onOutputClick,
+      onRatingClick = onRatingClick
+    )
+  }
+}
+
 // =============================================================================
 // Phone Previews - Portrait
 // =============================================================================
@@ -44,7 +96,7 @@ private object PreviewPlayerActions : IPlayerActions {
 @Composable
 fun PlayerPlayingLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleNormalRating(),
@@ -66,7 +118,7 @@ fun PlayerPlayingLightPreview() {
 @Composable
 fun PlayerPlayingDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleNormalRating(),
@@ -88,7 +140,7 @@ fun PlayerPlayingDarkPreview() {
 @Composable
 fun PlayerPausedLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePausedTrack(),
       playingPosition = PlayingPosition(current = 180000, total = 354000),
       trackRating = sampleLovedRating(),
@@ -110,12 +162,99 @@ fun PlayerPausedLightPreview() {
 @Composable
 fun PlayerPausedDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePausedTrack(),
       playingPosition = PlayingPosition(current = 180000, total = 354000),
       trackRating = sampleLovedRating(),
       volumeState = VolumeState(volume = 50, mute = false),
       playbackState = PlaybackState(playerState = PlayerState.Paused),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+// =============================================================================
+// Common Device Sizes (representative sample of the main Playing state)
+//
+// Compact phone (360x720) is covered above and tablet/landscape below; these add
+// a small phone, a large modern phone, and a foldable inner screen in portrait.
+// The foldable is < 600dp wide on purpose so it exercises the portrait layout
+// branch (not the tablet one) - the exact case behind #324/#325.
+// =============================================================================
+
+@PreviewTest
+@Preview(
+  name = "Player Small Phone",
+  showBackground = true,
+  device = "spec:width=360dp,height=640dp"
+)
+@Composable
+fun PlayerSmallPhonePreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenPreview(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleNormalRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(
+  name = "Player Large Phone",
+  showBackground = true,
+  device = "spec:width=412dp,height=915dp"
+)
+@Composable
+fun PlayerLargePhonePreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenPreview(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleNormalRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(
+  name = "Player Foldable Portrait",
+  showBackground = true,
+  device = "spec:width=585dp,height=760dp"
+)
+@Composable
+fun PlayerFoldablePortraitPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenPreview(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleNormalRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
       hasLyrics = false,
       showRatingOnPlayer = true,
@@ -136,7 +275,7 @@ fun PlayerPausedDarkPreview() {
 @Composable
 fun PlayerTabletLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleNormalRating(),
@@ -158,7 +297,7 @@ fun PlayerTabletLightPreview() {
 @Composable
 fun PlayerTabletDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleNormalRating(),
@@ -184,7 +323,7 @@ fun PlayerTabletDarkPreview() {
 @Composable
 fun PlayerLandscapeLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleNormalRating(),
@@ -206,7 +345,7 @@ fun PlayerLandscapeLightPreview() {
 @Composable
 fun PlayerLandscapeDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleNormalRating(),
@@ -232,7 +371,7 @@ fun PlayerLandscapeDarkPreview() {
 @Composable
 fun PlayerMutedLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = sampleMutedTrack(),
       playingPosition = PlayingPosition(current = 240000, total = 482000),
       trackRating = sampleNormalRating(),
@@ -254,7 +393,7 @@ fun PlayerMutedLightPreview() {
 @Composable
 fun PlayerMutedDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = sampleMutedTrack(),
       playingPosition = PlayingPosition(current = 240000, total = 482000),
       trackRating = sampleNormalRating(),
@@ -276,7 +415,7 @@ fun PlayerMutedDarkPreview() {
 @Composable
 fun PlayerShuffleRepeatLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = sampleShuffleTrack(),
       playingPosition = PlayingPosition(current = 60000, total = 431000),
       trackRating = sampleLovedRating(),
@@ -302,7 +441,7 @@ fun PlayerShuffleRepeatLightPreview() {
 @Composable
 fun PlayerShuffleRepeatDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = sampleShuffleTrack(),
       playingPosition = PlayingPosition(current = 60000, total = 431000),
       trackRating = sampleLovedRating(),
@@ -328,7 +467,7 @@ fun PlayerShuffleRepeatDarkPreview() {
 @Composable
 fun PlayerEmptyTrackLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = BasicTrackInfo(),
       playingPosition = PlayingPosition(),
       trackRating = TrackRating(),
@@ -350,7 +489,7 @@ fun PlayerEmptyTrackLightPreview() {
 @Composable
 fun PlayerEmptyTrackDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = BasicTrackInfo(),
       playingPosition = PlayingPosition(),
       trackRating = TrackRating(),
@@ -376,7 +515,7 @@ fun PlayerEmptyTrackDarkPreview() {
 @Composable
 fun PlayerBombRatingLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleBombRating(),
@@ -398,7 +537,7 @@ fun PlayerBombRatingLightPreview() {
 @Composable
 fun PlayerBombRatingDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleBombRating(),
@@ -425,7 +564,7 @@ fun PlayerBombRatingDarkPreview() {
 @Composable
 fun PlayerHalfStarRatingLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleHalfStarRating(),
@@ -452,7 +591,7 @@ fun PlayerHalfStarRatingLightPreview() {
 @Composable
 fun PlayerHalfStarRatingDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleHalfStarRating(),
@@ -474,7 +613,7 @@ fun PlayerHalfStarRatingDarkPreview() {
 @Composable
 fun PlayerUnratedLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleUnratedRating(),
@@ -496,7 +635,7 @@ fun PlayerUnratedLightPreview() {
 @Composable
 fun PlayerUnratedDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = samplePlayingTrack(),
       playingPosition = samplePlayingPosition(),
       trackRating = sampleUnratedRating(),
@@ -522,7 +661,7 @@ fun PlayerUnratedDarkPreview() {
 @Composable
 fun PlayerStreamLightPreview() {
   RemoteTheme(darkTheme = false) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = sampleStreamTrack(),
       playingPosition = PlayingPosition(current = 125000, total = -1), // Stream (shows wave)
       trackRating = TrackRating(),
@@ -544,10 +683,117 @@ fun PlayerStreamLightPreview() {
 @Composable
 fun PlayerStreamDarkPreview() {
   RemoteTheme(darkTheme = true) {
-    PlayerScreenContent(
+    PlayerScreenPreview(
       playingTrack = sampleStreamTrack(),
       playingPosition = PlayingPosition(current = 125000, total = -1), // Stream (shows wave)
       trackRating = TrackRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+// =============================================================================
+// Short Viewport Previews (regression guard for #324/#325)
+//
+// On short usable heights the album cover must shrink so the volume row stays
+// visible instead of being pushed off the bottom of the screen. These heights
+// approximate a Galaxy Note 8 usable area and an even shorter viewport.
+// =============================================================================
+
+@PreviewTest
+@Preview(name = "Player Short Height Light", showBackground = true, widthDp = 360, heightDp = 560)
+@Composable
+fun PlayerShortHeightLightPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenPreview(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleNormalRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(name = "Player Short Height Dark", showBackground = true, widthDp = 360, heightDp = 560)
+@Composable
+fun PlayerShortHeightDarkPreview() {
+  RemoteTheme(darkTheme = true) {
+    PlayerScreenPreview(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleNormalRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(
+  name = "Player Very Short Height Light",
+  showBackground = true,
+  widthDp = 360,
+  heightDp = 600
+)
+@Composable
+fun PlayerVeryShortHeightLightPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenPreview(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleNormalRating(),
+      volumeState = VolumeState(volume = 75, mute = false),
+      playbackState = PlaybackState(playerState = PlayerState.Playing),
+      actions = PreviewPlayerActions,
+      hasLyrics = false,
+      showRatingOnPlayer = true,
+      onTrackInfoClick = {},
+      onLyricsClick = {},
+      onOutputClick = {},
+      onRatingClick = {}
+    )
+  }
+}
+
+@PreviewTest
+@Preview(
+  name = "Player Short Height Large Font",
+  showBackground = true,
+  widthDp = 360,
+  heightDp = 640,
+  fontScale = 1.8f
+)
+@Composable
+fun PlayerShortHeightLargeFontPreview() {
+  RemoteTheme(darkTheme = false) {
+    PlayerScreenPreview(
+      playingTrack = samplePlayingTrack(),
+      playingPosition = samplePlayingPosition(),
+      trackRating = sampleNormalRating(),
       volumeState = VolumeState(volume = 75, mute = false),
       playbackState = PlaybackState(playerState = PlayerState.Playing),
       actions = PreviewPlayerActions,
