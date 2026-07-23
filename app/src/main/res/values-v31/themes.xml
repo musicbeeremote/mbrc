@@ -4,8 +4,6 @@
   <!-- Minimal base theme for Compose app (API 31+) -->
   <style name="Theme.App" parent="Theme.Material3.DayNight.NoActionBar">
     <item name="android:windowBackground">@color/md_color_surface</item>
-    <item name="android:statusBarColor">@android:color/transparent</item>
-    <item name="android:navigationBarColor">@android:color/transparent</item>
   </style>
 
   <!-- Splash screen theme using SplashScreen API -->
