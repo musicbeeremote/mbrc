@@ -1,7 +1,6 @@
 plugins {
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlinAndroid)
-  alias(libs.plugins.ksp)
+  id("com.google.devtools.ksp")
 }
 
 android {

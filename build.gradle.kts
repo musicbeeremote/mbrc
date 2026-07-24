@@ -15,6 +15,11 @@ import kotlinx.serialization.json.putJsonArray
 buildscript {
   dependencies {
     classpath(libs.kotlinx.serialization.json)
+    // AGP 9 built-in Kotlin defaults to KGP 2.2.10; override it up to the project's Kotlin version.
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
+    classpath(
+      "com.google.devtools.ksp:symbol-processing-gradle-plugin:${libs.versions.gradlePlugin.ksp.get()}"
+    )
   }
 }
 
@@ -26,7 +31,6 @@ plugins {
   alias(libs.plugins.android.library) apply false
   alias(libs.plugins.android.test) apply false
   alias(libs.plugins.baselineprofile) apply false
-  alias(libs.plugins.kotlinAndroid) apply false
   alias(libs.plugins.kotlinter) apply false
   alias(libs.plugins.kotlinParcelize) apply false
   alias(libs.plugins.detekt)
@@ -60,13 +64,17 @@ allprojects {
 }
 
 subprojects {
-  pluginManager.withPlugin("org.jetbrains.kotlin.android") {
-    apply(plugin = "org.jmailen.kotlinter")
-    apply(plugin = "org.jetbrains.kotlinx.kover")
+  // With AGP 9 built-in Kotlin there is no kotlin.android plugin to hook; every Android
+  // module is a Kotlin module, so key kotlinter/kover off the Android plugins instead.
+  listOf("com.android.application", "com.android.library", "com.android.test").forEach { pluginId ->
+    pluginManager.withPlugin(pluginId) {
+      apply(plugin = "org.jmailen.kotlinter")
+      apply(plugin = "org.jetbrains.kotlinx.kover")
+    }
   }
 
   pluginManager.withPlugin("com.android.library") {
-    configure<com.android.build.gradle.LibraryExtension> {
+    configure<com.android.build.api.dsl.LibraryExtension> {
       lint {
         lintConfig = rootProject.file("config/lint.xml")
         sarifReport = true

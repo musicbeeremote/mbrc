@@ -1,6 +1,8 @@
 [versions]
 aboutlibraries = "14.2.1"
 androidx-annotation = "1.10.0"
+androidx-benchmark = "1.4.1"
+androidx-profileinstaller = "1.4.1"
 androidx-appcompat = "1.7.1"
 androidx-arch-core-testing = "2.2.0"
 androidx-compose-bom = "2026.06.01"
@@ -34,8 +36,8 @@ coil-compose = "3.5.0"
 desugar = "2.1.5"
 firebaseBom = "34.16.0"
 google-material = "1.14.0"
-gradlePlugin-agp = "8.13.2"
-gradlePlugin-baselineprofile = "1.4.1"
+gradlePlugin-agp = "9.3.1"
+gradlePlugin-baselineprofile = "1.5.0-alpha07"
 gradlePlugin-crashlytics = "3.0.7"
 gradlePlugin-detekt = "1.23.8"
 gradlePlugin-gms = "4.5.0"
@@ -146,8 +148,8 @@ squareup-okio = { module = "com.squareup.okio:okio", version.ref = "squareup-oki
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "gradlePlugin-baselineprofile" }
-androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "gradlePlugin-baselineprofile" }
+androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "androidx-benchmark" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "androidx-profileinstaller" }
 screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "gradlePlugin-screenshot" }
 
 [bundles]

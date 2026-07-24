@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import io.gitlab.arturbosch.detekt.Detekt
 import java.io.FileInputStream
@@ -7,10 +6,9 @@ import java.util.*
 
 plugins {
   alias(libs.plugins.android.application)
-  alias(libs.plugins.kotlinAndroid)
   alias(libs.plugins.kotlinParcelize)
   alias(libs.plugins.kotlinCompose)
-  alias(libs.plugins.ksp)
+  id("com.google.devtools.ksp")
   alias(libs.plugins.protobuf)
   alias(libs.plugins.googleServices) apply false
   alias(libs.plugins.crashlytics) apply false
@@ -256,17 +254,6 @@ android {
   lint {
     lintConfig = rootProject.file("config/lint.xml")
     sarifReport = true
-  }
-
-  applicationVariants.all {
-    val variant = this
-    variant.outputs.map { it as BaseVariantOutputImpl }
-      .forEach { output ->
-        val applicationId = defaultConfig.applicationId
-        val flavorName = variant.flavorName
-        val name = "$applicationId-$flavorName-${variant.versionCode}-v${variant.versionName}.apk"
-        output.outputFileName = name
-      }
   }
 }
 
