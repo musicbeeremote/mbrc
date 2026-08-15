@@ -3,6 +3,163 @@ package com.kelsos.mbrc.core.data
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
+/**
+ * A saved connection carried across the rebuild of a pre-Room database.
+ *
+ * [id] is preserved deliberately: `DefaultConnectionMigration` resolves the user's default
+ * connection by row id out of SharedPreferences, so reassigning ids here would silently point that
+ * lookup at the wrong server.
+ */
+// Column order of the rescue query in readLegacyConnections.
+private const val COLUMN_ADDRESS = 0
+private const val COLUMN_PORT = 1
+private const val COLUMN_NAME = 2
+private const val COLUMN_ID = 3
+
+private data class LegacyConnection(
+  val id: Long,
+  val address: String,
+  val port: Int,
+  val name: String
+)
+
+/**
+ * Tables that may exist in a pre-Room database. Dropped and rebuilt empty, except for `settings`
+ * whose rows are carried over.
+ */
+private val LEGACY_TABLES = listOf(
+  "genre",
+  "artist",
+  "album",
+  "track",
+  "now_playing",
+  "playlists",
+  "radio_station",
+  "settings"
+)
+
+/** The version 4 schema, verbatim from `schemas/com.kelsos.mbrc.core.data.Database/4.json`. */
+private val SCHEMA_V4 = listOf(
+  "CREATE TABLE IF NOT EXISTS `genre` (`genre` TEXT NOT NULL, `date_added` INTEGER NOT NULL, " +
+    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS `genre_genre_idx` ON `genre` (`genre`)",
+  "CREATE TABLE IF NOT EXISTS `artist` (`artist` TEXT NOT NULL, `date_added` INTEGER NOT NULL, " +
+    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS `artist_artist_idx` ON `artist` (`artist`)",
+  "CREATE TABLE IF NOT EXISTS `album` (`artist` TEXT NOT NULL, `album` TEXT NOT NULL, " +
+    "`cover` TEXT, `date_added` INTEGER NOT NULL, " +
+    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS `album_info_idx` ON `album` (`artist`, `album`)",
+  "CREATE TABLE IF NOT EXISTS `track` (`artist` TEXT NOT NULL, `title` TEXT NOT NULL, " +
+    "`src` TEXT NOT NULL, `trackno` INTEGER NOT NULL, `disc` INTEGER NOT NULL, " +
+    "`album_artist` TEXT NOT NULL, `album` TEXT NOT NULL, `genre` TEXT NOT NULL, " +
+    "`year` TEXT NOT NULL, `sortable_year` TEXT NOT NULL, `date_added` INTEGER NOT NULL, " +
+    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS `track_src_index` ON `track` (`src`)",
+  "CREATE TABLE IF NOT EXISTS `now_playing` (`title` TEXT NOT NULL, `artist` TEXT NOT NULL, " +
+    "`path` TEXT NOT NULL, `position` INTEGER NOT NULL, `date_added` INTEGER NOT NULL, " +
+    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE INDEX IF NOT EXISTS `now_playing_position_idx` ON `now_playing` (`position`)",
+  "CREATE INDEX IF NOT EXISTS `now_playing_date_added_idx` ON `now_playing` (`date_added`)",
+  "CREATE TABLE IF NOT EXISTS `playlists` (`name` TEXT NOT NULL, `url` TEXT NOT NULL, " +
+    "`date_added` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS `playlist_name_idx` ON `playlists` (`name`)",
+  "CREATE TABLE IF NOT EXISTS `radio_station` (`name` TEXT NOT NULL, `url` TEXT NOT NULL, " +
+    "`date_added` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS `radio_url_idx` ON `radio_station` (`url`)",
+  "CREATE TABLE IF NOT EXISTS `settings` (`address` TEXT NOT NULL, `port` INTEGER NOT NULL, " +
+    "`name` TEXT NOT NULL, `is_default` INTEGER, " +
+    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS `index_settings_address_port` ON `settings` " +
+    "(`address`, `port`)"
+)
+
+/**
+ * Rebuilds a pre-Room database into the version 4 schema, keeping the user's saved connections.
+ *
+ * Versions 1 and 2 predate the move from DBFlow to Room (Dec 2017) — the first Room database was
+ * already version 4 — so these files were written by a library whose table shapes were never
+ * exported as a Room schema. There is nothing to validate a hand-written column-by-column
+ * migration against, and no `1.json`/`2.json` has ever existed in the repo.
+ *
+ * What can be salvaged is the part the user cannot regenerate. DBFlow wrote to the same `cache.db`
+ * file and its `settings` table has carried the same (address, port, name, id) shape ever since,
+ * so the connections are read out, every cache table is dropped and recreated empty at the v4
+ * schema, and the connections are written back. The library and queue caches simply refill on the
+ * next sync.
+ *
+ * Without this, Room finds no path from 1 to 4 and throws on first database access, crashing the
+ * app on every launch with no way out but clearing app data (#342).
+ */
+private fun SupportSQLiteDatabase.rebuildFromLegacySchema() {
+  val connections = readLegacyConnections()
+
+  for (table in LEGACY_TABLES) {
+    execSQL("DROP TABLE IF EXISTS `$table`")
+  }
+  for (statement in SCHEMA_V4) {
+    execSQL(statement)
+  }
+
+  for (connection in connections) {
+    execSQL(
+      "INSERT OR IGNORE INTO `settings` (`address`, `port`, `name`, `is_default`, `id`) " +
+        "VALUES (?, ?, ?, NULL, ?)",
+      arrayOf<Any>(connection.address, connection.port, connection.name, connection.id)
+    )
+  }
+}
+
+/**
+ * Reads the saved connections out of a pre-Room `settings` table, or returns nothing when the
+ * table is absent. Columns were nullable back then, so every value is coalesced to the non-null
+ * form v4 requires.
+ */
+private fun SupportSQLiteDatabase.readLegacyConnections(): List<LegacyConnection> {
+  if (!hasTable("settings")) {
+    return emptyList()
+  }
+  val connections = mutableListOf<LegacyConnection>()
+  query(
+    "SELECT COALESCE(`address`, '') AS address, COALESCE(`port`, 0) AS port, " +
+      "COALESCE(`name`, '') AS name, `id` FROM `settings`"
+  ).use { cursor ->
+    while (cursor.moveToNext()) {
+      connections.add(
+        LegacyConnection(
+          address = cursor.getString(COLUMN_ADDRESS),
+          port = cursor.getInt(COLUMN_PORT),
+          name = cursor.getString(COLUMN_NAME),
+          id = cursor.getLong(COLUMN_ID)
+        )
+      )
+    }
+  }
+  return connections
+}
+
+private fun SupportSQLiteDatabase.hasTable(name: String): Boolean = query(
+  "SELECT 1 FROM `sqlite_master` WHERE `type` = 'table' AND `name` = ?",
+  arrayOf(name)
+).use { cursor -> cursor.moveToFirst() }
+
+/**
+ * Pre-Room databases (DBFlow, version 1 and 2) rebuilt onto the v4 schema.
+ * See [rebuildFromLegacySchema].
+ */
+val MIGRATION_1_4 = object : Migration(1, 4) {
+  override fun migrate(db: SupportSQLiteDatabase) {
+    db.rebuildFromLegacySchema()
+  }
+}
+
+/** @see MIGRATION_1_4 */
+val MIGRATION_2_4 = object : Migration(2, 4) {
+  override fun migrate(db: SupportSQLiteDatabase) {
+    db.rebuildFromLegacySchema()
+  }
+}
+
 val MIGRATION_3_4 = object : Migration(3, 4) {
   override fun migrate(db: SupportSQLiteDatabase) {
     // Add new columns to existing tables before recreation

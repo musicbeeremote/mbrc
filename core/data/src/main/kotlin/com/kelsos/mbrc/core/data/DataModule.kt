@@ -22,7 +22,7 @@ val dataModule = module {
   single {
     Room
       .databaseBuilder(get<Context>(), Database::class.java, Database.NAME)
-      .addMigrations(MIGRATION_3_4)
+      .addMigrations(MIGRATION_1_4, MIGRATION_2_4, MIGRATION_3_4)
       .build()
   }
 
