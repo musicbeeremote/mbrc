@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStore
 import com.google.protobuf.InvalidProtocolBufferException
 import com.kelsos.mbrc.core.common.state.BasicTrackInfo
@@ -21,9 +22,19 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
+/**
+ * Cache of the last playing track.
+ *
+ * The corruption handler is what keeps a damaged file from being fatal. [PlayerStateSerializer]
+ * turns an unparseable file into a [CorruptionException], but that only tells DataStore what went
+ * wrong; without a handler DataStore rethrows it out of every read and write, and since nothing
+ * ever rewrites the file the app crashes on the same bytes on every launch (#343). Replacing the
+ * contents costs nothing here, because this is a cache that the next track change refills.
+ */
 internal val Context.cacheDataStore: DataStore<Store> by dataStore(
   fileName = "cache_store.db",
-  serializer = PlayerStateSerializer
+  serializer = PlayerStateSerializer,
+  corruptionHandler = ReplaceFileCorruptionHandler { Store.getDefaultInstance() }
 )
 
 interface PlayingTrackCache {
@@ -39,9 +50,10 @@ class PlayingTrackCacheImpl(
   private val storeFlow: Flow<Store> =
     context.cacheDataStore.data
       .catch { exception ->
-        // dataStore.data throws an IOException when an error is encountered when reading data
+        // Corruption is repaired by the handler on the DataStore itself; this covers the
+        // transient read failures (permissions, no space) that leave the file intact.
         if (exception is IOException) {
-          Timber.e(exception, "Error reading sort order preferences.")
+          Timber.e(exception, "Error reading the playing track cache")
           emit(Store.getDefaultInstance())
         } else {
           throw exception
@@ -50,19 +62,26 @@ class PlayingTrackCacheImpl(
 
   override suspend fun persistInfo(playingTrack: TrackInfo) {
     withContext(dispatchers.io) {
-      context.cacheDataStore.updateData { store ->
-        val track = Track.newBuilder()
-          .setAlbum(playingTrack.album)
-          .setArtist(playingTrack.artist)
-          .setPath(playingTrack.path)
-          .setTitle(playingTrack.title)
-          .setYear(playingTrack.year)
-          .build()
+      // The read path already degrades to a default on failure; the write path had nothing, so a
+      // failure here propagated out of the collector that calls it and took the app down. Losing
+      // the cached track is not worth a crash.
+      try {
+        context.cacheDataStore.updateData { store ->
+          val track = Track.newBuilder()
+            .setAlbum(playingTrack.album)
+            .setArtist(playingTrack.artist)
+            .setPath(playingTrack.path)
+            .setTitle(playingTrack.title)
+            .setYear(playingTrack.year)
+            .build()
 
-        store.toBuilder()
-          .setTrack(track)
-          .setCover(playingTrack.coverUrl)
-          .build()
+          store.toBuilder()
+            .setTrack(track)
+            .setCover(playingTrack.coverUrl)
+            .build()
+        }
+      } catch (e: IOException) {
+        Timber.e(e, "Failed to persist the playing track")
       }
     }
   }
