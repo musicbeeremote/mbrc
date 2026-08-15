@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -109,7 +110,9 @@ fun ConnectionManagerScreen(
   val addLabel = stringResource(R.string.common_add)
   val noWifiMessage = stringResource(R.string.connection_manager_discovery_no_wifi)
   val notFoundMessage = stringResource(R.string.connection_manager_discovery_not_found)
-  val context = androidx.compose.ui.platform.LocalContext.current
+  // LocalResources rather than LocalContext.current.resources: the latter is not invalidated by a
+  // configuration change, so the snackbar could be built from stale resources.
+  val resources = LocalResources.current
   val portErrorMessage = stringResource(R.string.connection_manager_port_error)
 
   // Compute FAB state inline
@@ -142,7 +145,7 @@ fun ConnectionManagerScreen(
 
         DiscoveryStop.NotFound -> notFoundMessage
 
-        is DiscoveryStop.Complete -> context.resources.getQuantityString(
+        is DiscoveryStop.Complete -> resources.getQuantityString(
           R.plurals.connection_manager_discovery_success_count,
           event.settings.size,
           event.settings.size

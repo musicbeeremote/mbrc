@@ -82,6 +82,46 @@ subprojects {
     }
   }
 
+  // Compose lint checks are only registered where Compose is on the classpath, so naming them in
+  // config/lint.xml would make every non-Compose module report UnknownIssueId. Promote them here
+  // instead, rather than silencing UnknownIssueId globally and losing the typo check on the ids
+  // we do configure.
+  pluginManager.withPlugin("org.jetbrains.kotlin.plugin.compose") {
+    val composeChecks = listOf(
+      // State read and remember correctness: silently stale UI or a state object that is
+      // recreated on every recomposition.
+      "StateFlowValueCalledInComposition",
+      "FlowOperatorInvokedInComposition",
+      "UnrememberedMutableState",
+      "ProduceStateDoesNotAssignValue",
+      "MutableCollectionMutableState",
+      "FrequentlyChangedStateReadInComposition",
+      "CoroutineCreationDuringComposition",
+      // LocalContext.current.resources survives a configuration change and goes stale; this is
+      // the check that should have caught the plural read fixed in 9ff372ef.
+      "LocalContextResourcesRead",
+      "AutoboxingStateCreation",
+      "UnusedBoxWithConstraintsScope",
+      "OpaqueUnitKey",
+      // API shape.
+      "ModifierParameter",
+      "ComposableNaming",
+      "RememberReturnType",
+      "ComposableLambdaParameterNaming",
+      "ComposableLambdaParameterPosition"
+    )
+    pluginManager.withPlugin("com.android.library") {
+      configure<com.android.build.api.dsl.LibraryExtension> {
+        lint.error.addAll(composeChecks)
+      }
+    }
+    pluginManager.withPlugin("com.android.application") {
+      configure<com.android.build.api.dsl.ApplicationExtension> {
+        lint.error.addAll(composeChecks)
+      }
+    }
+  }
+
   // Run unit tests only on debug build type - release tests are redundant for JVM tests
   tasks.withType<Test>().configureEach {
     onlyIf {

@@ -62,7 +62,7 @@ fun LicensesScreen(
   val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
   val selectedLibrary by viewModel.selectedLibrary.collectAsStateWithLifecycle()
 
-  val title = stringResource(R.string.open_source_licenses_title)
+  val title = stringResource(R.string.settings_oss_license)
   val snackbarHostState = remember { SnackbarHostState() }
 
   ScreenScaffold(

@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Severity policy: a check we actually want enforced is an error, so CI fails on it.
+
+  Lint only aborts the build on errors, so anything left at "warning" is invisible in CI and is
+  only ever found by reading a report nobody reads. Leaving a check we care about at "warning" is
+  the same as turning it off, but with more paperwork.
+
+  Blanket warningsAsErrors is not an option: the dependency-freshness checks fire whenever a new
+  version is published upstream, which would break CI on its own schedule with no code change.
+  Those are ignored below because Renovate already opens the update PRs.
+
+  Everything promoted here reports zero violations today, so a new error means new code.
+-->
 <lint>
   <issue id="InvalidPackage">
     <ignore regexp=".*okio.*" />
@@ -7,13 +20,57 @@
     <ignore regexp="java.awt.*" />
     <ignore regexp="java.nio.file" />
   </issue>
+
+  <!-- Correctness: each of these has a matching failure in this app's history. -->
+  <!-- Cursors and TypedArrays that are never closed. -->
+  <issue id="Recycle" severity="error" />
+  <!-- Return values that must not be dropped. -->
+  <issue id="CheckResult" severity="error" />
+  <issue id="StringFormatCount" severity="error" />
+  <issue id="StringFormatMatches" severity="error" />
+  <issue id="SuspiciousIndentation" severity="error" />
+  <issue id="StaticFieldLeak" severity="error" />
+  <issue id="VisibleForTests" severity="error" />
+
+  <!-- Service, notification and intent handling: the area behind #321, #344 and the widget
+       trampoline crashes. -->
+  <issue id="ForegroundServiceType" severity="error" />
+  <issue id="NotificationPermission" severity="error" />
+  <issue id="UnspecifiedRegisterReceiverFlag" severity="error" />
+  <issue id="UnsafeIntentLaunch" severity="error" />
+  <issue id="WakelockTimeout" severity="error" />
+  <issue id="BatteryLife" severity="error" />
+
+  <!-- Resources and API hygiene. -->
   <issue id="HardcodedText" severity="error" />
-  <issue id="DuplicateStrings" severity="warning" />
-  <issue id="ImplicitSamInstance" severity="warning" />
+  <issue id="DuplicateStrings" severity="error" />
+  <issue id="UnusedResources" severity="error" />
+  <issue id="ObsoleteSdkInt" severity="error" />
+  <issue id="DiscouragedApi" severity="error" />
+  <issue id="UseKtx" severity="error" />
+  <issue id="SetTextI18n" severity="error" />
+  <issue id="ClickableViewAccessibility" severity="error" />
+
+  <!-- Kotlin interop. -->
+  <issue id="ImplicitSamInstance" severity="error" />
+  <issue id="KotlinPropertyAccess" severity="error" />
+  <issue id="LambdaLast" severity="error" />
+  <issue id="SyntheticAccessor" severity="error" />
+  <issue id="WrongThreadInterprocedural" severity="error" />
+
+  <!-- The Compose checks are promoted in the root build script instead: they are only registered
+       where Compose is on the classpath, so naming them here would make every non-Compose module
+       report UnknownIssueId. -->
+
+  <!-- Owned by Renovate, and dependent on the outside world rather than on this repo. -->
+  <issue id="GradleDependency" severity="ignore" />
+  <issue id="NewerVersionAvailable" severity="ignore" />
+  <issue id="AndroidGradlePluginVersion" severity="ignore" />
+
+  <!-- Reports third-party jars we do not control. -->
   <issue id="InvalidPackage" severity="warning" />
-  <issue id="KotlinPropertyAccess" severity="warning"/>
-  <issue id="LambdaLast" severity="warning" />
-  <issue id="SyntheticAccessor" severity="warning" />
-  <issue id="WrongThreadInterprocedural" severity="warning"/>
+  <!-- Promoting this would mean enabling resource shrinking on release builds, which changes the
+       shipped artifact and wants testing of its own. -->
+  <issue id="NotShrinkingResources" severity="warning" />
   <issue id="ObsoleteLintCustomCheck" severity="ignore" />
 </lint>

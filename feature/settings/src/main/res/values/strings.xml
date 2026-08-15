@@ -85,7 +85,6 @@
 
   <!-- License -->
   <string name="musicbee_remote_license_title">MusicBee Remote license</string>
-  <string name="open_source_licenses_title">Open source licenses</string>
   <string name="licenses_search_placeholder">Search libraries…</string>
   <string name="licenses_clear_search">Clear search</string>
   <string name="licenses_retry">Retry</string>

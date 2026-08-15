@@ -250,7 +250,6 @@ fun PlayerScreenContent(
   trackRating: TrackRating,
   volumeState: VolumeState,
   playbackState: PlaybackState,
-  contentPadding: PaddingValues = PaddingValues(0.dp),
   actions: IPlayerActions,
   hasLyrics: Boolean,
   showRatingOnPlayer: Boolean,
@@ -258,7 +257,8 @@ fun PlayerScreenContent(
   onLyricsClick: () -> Unit,
   onOutputClick: () -> Unit,
   onRatingClick: () -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
   val configuration = LocalConfiguration.current
   val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
