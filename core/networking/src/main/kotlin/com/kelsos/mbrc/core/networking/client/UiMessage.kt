@@ -23,6 +23,12 @@ sealed class UiMessage {
 
   object PluginUpdateAvailable : UiMessage()
 
+  /**
+   * [count] commands were buffered while disconnected and then given up on, so they will never
+   * reach the player.
+   */
+  data class CommandsDropped(val count: Int) : UiMessage()
+
   // Connection Error Messages
   sealed class ConnectionError : UiMessage() {
     object ServerNotFound : ConnectionError()

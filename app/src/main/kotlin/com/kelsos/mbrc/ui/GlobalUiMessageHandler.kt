@@ -6,6 +6,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import com.kelsos.mbrc.R
@@ -26,6 +27,9 @@ fun GlobalUiMessageHandler(
 ) {
   val strings = uiMessageStrings()
   val uriHandler = LocalUriHandler.current
+  // Resolved outside the composable scope, because the text depends on a count only known when the
+  // message arrives.
+  val resources = LocalContext.current.resources
 
   LaunchedEffect(Unit) {
     uiMessageQueue.messages.collect { message ->
@@ -41,6 +45,15 @@ fun GlobalUiMessageHandler(
           if (result == SnackbarResult.ActionPerformed) {
             uriHandler.openUri(PLUGIN_RELEASES_URL)
           }
+        }
+
+        is UiMessage.CommandsDropped -> {
+          val text = resources.getQuantityString(
+            R.plurals.connection_commands_dropped,
+            message.count,
+            message.count
+          )
+          snackbarHostState.showSnackbar(message = text, duration = SnackbarDuration.Long)
         }
 
         else -> message.toDisplayText(strings)?.let { text ->
@@ -76,7 +89,9 @@ private fun UiMessage.toDisplayText(strings: UiMessageStrings): String? = when (
   is UiMessage.PartyModeCommandUnavailable -> strings.partyMode
 
   // These are handled separately in the main handler
-  is UiMessage.PluginUpdateAvailable, is UiMessage.PluginUpdateRequired -> null
+  is UiMessage.PluginUpdateAvailable,
+  is UiMessage.PluginUpdateRequired,
+  is UiMessage.CommandsDropped -> null
 }
 
 /**

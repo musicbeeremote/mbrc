@@ -4,6 +4,7 @@ import com.kelsos.mbrc.core.common.state.ConnectionStatePublisher
 import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.common.utilities.coroutines.ScopeBase
+import com.kelsos.mbrc.core.networking.client.PendingCommandBuffer
 import com.kelsos.mbrc.core.networking.client.SocketMessage
 import com.kelsos.mbrc.core.networking.client.UiMessage
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
@@ -16,7 +17,9 @@ import java.net.SocketException
 import java.net.SocketTimeoutException
 import kotlin.math.pow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +36,13 @@ interface ClientConnectionManager {
 
   fun stop()
 }
+
+/**
+ * Raised when a message could not be written because the socket is no longer usable. Distinct from
+ * a write that failed mid-flight: nothing reached the wire, so the command is safe to replay.
+ */
+class SocketNotConnectedException(message: SocketMessage) :
+  IOException("Socket was not connected: $message")
 
 sealed class NetworkError : Exception() {
   data class ConnectionTimeout(override val cause: Throwable?) : NetworkError()
@@ -66,12 +76,21 @@ class ClientConnectionManagerImpl(
   private val connectionProvider: ConnectionProvider,
   private val connectionState: ConnectionStatePublisher,
   private val dispatchers: AppCoroutineDispatchers,
-  private val uiMessageQueue: UiMessageQueue
+  private val uiMessageQueue: UiMessageQueue,
+  private val pendingCommands: PendingCommandBuffer
 ) : ScopeBase(dispatchers.io),
   ClientConnectionManager {
   private var connection: Connection? = null
+  private var connectionScope: CoroutineScope? = null
   private val connectionConfig = ConnectionConfig()
   private var currentCycleInfo: ConnectionCycleInfo? = null
+
+  // Outlives individual connections, and stop(): see startOutgoingPump.
+  private val pumpScope = CoroutineScope(SupervisorJob() + dispatchers.io)
+
+  init {
+    startOutgoingPump()
+  }
 
   @Volatile
   private var isStopping = false
@@ -269,51 +288,92 @@ class ClientConnectionManagerImpl(
   }
 
   private fun setupConnection(socket: Socket) {
+    // Every coroutine below belongs to this socket. Without tearing the previous ones down first,
+    // a reconnect that skips stop() (the ping timeout path) leaves the old outgoing collector
+    // subscribed to the shared message queue, so each command is also handed to a dead connection.
+    teardownConnection()
+
+    val scope = CoroutineScope(coroutineContext + SupervisorJob(coroutineContext[Job]))
+    connectionScope = scope
+
     val connection =
       Connection(socket, moshi, dispatchers, connectionConfig).also {
         this.connection = it
       }
 
-    setupMessageFlows(connection)
-    startConnectionWorker(connection)
+    setupMessageFlows(scope, connection)
+    startConnectionWorker(scope, connection)
     setupActivityChecker(connection)
-    startHealthChecker(connection)
+    startHealthChecker(scope, connection)
   }
 
-  private fun setupMessageFlows(connection: Connection) {
-    launch {
+  private fun teardownConnection() {
+    connectionScope?.let { scope ->
+      Timber.v("Cancelling coroutines of the previous connection")
+      scope.cancel()
+    }
+    connectionScope = null
+    connection?.cleanup()
+    connection = null
+  }
+
+  private fun setupMessageFlows(scope: CoroutineScope, connection: Connection) {
+    scope.launch {
       connection.messages.collect { message ->
         messageHandler.processIncoming(message)
       }
     }
+  }
 
-    launch {
+  /**
+   * Drains the outgoing queue for as long as the manager exists, rather than for the lifetime of a
+   * single connection.
+   *
+   * The queue is a shared flow without replay, so a command emitted while nothing is collecting is
+   * gone: a tap during a reconnect would never reach a socket and would never be buffered either.
+   * Keeping a single collector alive across connections means every command is either written or
+   * handed to [pendingCommands].
+   */
+  private fun startOutgoingPump() {
+    pumpScope.launch {
       messageHandler.processOutgoing { message ->
-        connection.send(message).fold(
-          onSuccess = { true },
-          onFailure = { exception ->
-            Timber.e(exception, "Send failed")
-            // Always cleanup on send failure, regardless of isConnected status
-            // as send failures often indicate broken connections
-            connection.cleanup()
-            stop()
-          }
-        )
+        dispatchOutgoing(message)
       }
     }
   }
 
-  private fun startConnectionWorker(connection: Connection) {
-    launch(dispatchers.io) {
+  private fun dispatchOutgoing(message: SocketMessage) {
+    val current = connection
+    if (current == null) {
+      if (pendingCommands.stash(message)) {
+        Timber.d("No connection available, buffering $message for replay")
+      }
+      return
+    }
+
+    current.send(message).onFailure { exception ->
+      Timber.e(exception, "Send failed")
+      // The message never reached the wire. Buffer it so the user's command survives the
+      // reconnect instead of disappearing without any feedback.
+      pendingCommands.stash(message)
+      // A failed write means the socket is broken. Closing it lets the connection worker publish
+      // Offline, which is what drives reconnection. Calling stop() here instead would also cancel
+      // a reconnect that is already in flight.
+      current.cleanup()
+    }
+  }
+
+  private fun startConnectionWorker(scope: CoroutineScope, connection: Connection) {
+    scope.launch(dispatchers.io) {
       Timber.v("Socket connection is running")
-      handleConnectionStatus(connection.isConnected)
+      handleConnectionStatus(scope, connection.isConnected)
 
       try {
         connection.listen()
       } catch (e: IOException) {
         Timber.e(e, "Connection worker failed due to IO error")
       } finally {
-        handleConnectionStatus(connection.isConnected)
+        handleConnectionStatus(scope, connection.isConnected)
       }
     }
   }
@@ -332,8 +392,8 @@ class ClientConnectionManagerImpl(
     }
   }
 
-  private fun startHealthChecker(connection: Connection) {
-    launch {
+  private fun startHealthChecker(scope: CoroutineScope, connection: Connection) {
+    scope.launch {
       while (connection.isConnected) {
         delay(connectionConfig.healthCheckIntervalMs)
 
@@ -359,8 +419,8 @@ class ClientConnectionManagerImpl(
     }
   }
 
-  private fun handleConnectionStatus(connected: Boolean) {
-    launch {
+  private fun handleConnectionStatus(scope: CoroutineScope, connected: Boolean) {
+    scope.launch {
       if (!connected) {
         activityChecker.stop()
         connectionState.updateConnection(ConnectionStatus.Offline)
@@ -386,7 +446,7 @@ class ClientConnectionManagerImpl(
       pendingSocket = null
     }
 
-    connection?.cleanup()
+    teardownConnection()
     activityChecker.stop()
 
     // Set state to Offline immediately
@@ -463,10 +523,14 @@ class Connection(
     }.onFailure { Timber.w(it, "Failed to close socket") }
   }
 
-  fun send(message: SocketMessage) = runCatching {
+  /**
+   * Writes [message] to the socket. Failure to write is reported as [Result.failure] so the caller
+   * can tear the connection down and replay the command: an unwritten message must never look like
+   * a delivered one.
+   */
+  fun send(message: SocketMessage): Result<Unit> = runCatching {
     if (!isConnected) {
-      Timber.d("Socket was not connected: skipping $message")
-      return@runCatching
+      throw SocketNotConnectedException(message)
     }
     val address = socket.remoteSocketAddress
     Timber.v("Sending to mbrc:/$address (connected: $isConnected)::$message")

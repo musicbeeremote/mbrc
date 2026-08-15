@@ -6,14 +6,17 @@ import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.networking.client.MessageQueue
+import com.kelsos.mbrc.core.networking.client.PendingCommandBuffer
 import com.kelsos.mbrc.core.networking.client.SocketMessage
 import com.kelsos.mbrc.core.networking.client.UiMessage
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
+import com.kelsos.mbrc.core.networking.protocol.Clock
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.base.ProtocolAction
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -35,6 +38,7 @@ class MessageHandlerTest : KoinTest {
   private lateinit var messageHandler: MessageHandler
   private lateinit var actionFactory: ProtocolActionFactory
   private lateinit var messageQueue: MessageQueue
+  private val pendingCommands = PendingCommandBuffer(Clock { System.currentTimeMillis() })
   private lateinit var uiMessageQueue: UiMessageQueue
   private lateinit var connectionState: ConnectionStatePublisher
   private lateinit var clientIdProvider: ClientIdProvider
@@ -83,6 +87,7 @@ class MessageHandlerTest : KoinTest {
     messageHandler = MessageHandlerImpl(
       actionFactory = actionFactory,
       messageQueue = messageQueue,
+      pendingCommands = pendingCommands,
       uiMessageQueue = uiMessageQueue,
       connectionState = connectionState,
       clientIdProvider = clientIdProvider,
@@ -224,6 +229,26 @@ class MessageHandlerTest : KoinTest {
     coVerify { messageQueue.queue(match { it.context == Protocol.Init.context }) }
     coVerify { librarySyncTrigger.sync(auto = true) }
   }
+
+  @Test
+  fun `processIncoming should replay buffered commands after the init message`() =
+    runTest(testDispatcher) {
+      // Given a command that failed to send on the previous connection
+      val playPause = SocketMessage.create(Protocol.PlayerPlayPause)
+      pendingCommands.stash(playPause)
+
+      // When the handshake completes
+      messageHandler.processIncoming(
+        SocketMessage(context = Protocol.ProtocolTag.context, data = "4")
+      )
+      advanceUntilIdle()
+
+      // Then the command is re-queued, and never before init
+      coVerifyOrder {
+        messageQueue.queue(match { it.context == Protocol.Init.context })
+        messageQueue.queue(playPause)
+      }
+    }
 
   @Test
   fun `processIncoming should accept minimum supported protocol version 2`() =

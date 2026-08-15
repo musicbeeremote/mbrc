@@ -4,6 +4,7 @@ import com.kelsos.mbrc.core.common.state.ConnectionStatePublisher
 import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.client.MessageQueue
+import com.kelsos.mbrc.core.networking.client.PendingCommandBuffer
 import com.kelsos.mbrc.core.networking.client.SocketMessage
 import com.kelsos.mbrc.core.networking.client.UiMessage
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
@@ -29,6 +30,7 @@ interface MessageHandler {
 class MessageHandlerImpl(
   private val actionFactory: ProtocolActionFactory,
   private val messageQueue: MessageQueue,
+  private val pendingCommands: PendingCommandBuffer,
   private val uiMessageQueue: UiMessageQueue,
   private val connectionState: ConnectionStatePublisher,
   private val clientIdProvider: ClientIdProvider,
@@ -95,6 +97,7 @@ class MessageHandlerImpl(
           "Handshake complete with protocol version $protocolVersion, sending init message"
         )
         messageQueue.queue(SocketMessage.create(Protocol.Init))
+        replayPendingCommands()
 
         Timber.v("Starting automatic library sync after successful connection")
         librarySyncTrigger.sync(auto = true)
@@ -108,6 +111,19 @@ class MessageHandlerImpl(
     }
 
     else -> false
+  }
+
+  /**
+   * Re-queues the commands that could not be sent on the previous connection. Called once the
+   * handshake has queued its init message, so a replayed command can never overtake it.
+   */
+  private suspend fun replayPendingCommands() {
+    val replayable = pendingCommands.drain()
+    if (replayable.isEmpty()) {
+      return
+    }
+    Timber.d("Replaying ${replayable.size} command(s) buffered while disconnected")
+    replayable.forEach { messageQueue.queue(it) }
   }
 
   private fun parseProtocolVersion(dataPayload: Any): Int = try {

@@ -6,6 +6,8 @@ import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.Connection
 import com.kelsos.mbrc.core.networking.ConnectionConfig
+import com.kelsos.mbrc.core.networking.SocketNotConnectedException
+import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.squareup.moshi.Moshi
 import java.net.ServerSocket
 import java.net.Socket
@@ -115,6 +117,67 @@ class ConnectionTest : KoinTest {
 
       // Then
       assertThat(connection.isConnected).isFalse()
+    }
+  }
+
+  @Test
+  fun sendShouldReportFailureWhenTheSocketIsNotUsable() {
+    runTest {
+      // Given a connection whose socket has been torn down
+      val server = createTestServer()
+      val clientSocket = Socket()
+      clientSocket.connect(server.localSocketAddress)
+
+      executor.execute {
+        try {
+          server.accept()
+        } catch (e: Exception) {
+          // Expected when test completes - server socket closed
+          if (!server.isClosed) {
+            throw e
+          }
+        }
+      }
+
+      val connection = createConnection(clientSocket)
+      connection.cleanup()
+
+      // When
+      val result = connection.send(SocketMessage.create(Protocol.PlayerPlayPause))
+
+      // Then the caller can tell the message was never written
+      assertThat(result.isFailure).isTrue()
+      assertThat(result.exceptionOrNull()).isInstanceOf(SocketNotConnectedException::class.java)
+    }
+  }
+
+  @Test
+  fun sendShouldSucceedOnAHealthySocket() {
+    runTest {
+      // Given
+      val server = createTestServer()
+      val clientSocket = Socket()
+      clientSocket.connect(server.localSocketAddress)
+
+      executor.execute {
+        try {
+          server.accept()
+        } catch (e: Exception) {
+          if (!server.isClosed) {
+            throw e
+          }
+        }
+      }
+
+      val connection = createConnection(clientSocket)
+
+      // When
+      val result = connection.send(SocketMessage.create(Protocol.PlayerPlayPause))
+
+      // Then
+      assertThat(result.isSuccess).isTrue()
+
+      connection.cleanup()
     }
   }
 

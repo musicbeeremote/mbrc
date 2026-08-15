@@ -24,6 +24,10 @@
   <string name="connection_error_not_allowed">This device is not allowed to connect to MusicBee.</string>
   <string name="connection_error_party_mode">Command unavailable in party mode.</string>
   <string name="plugin_update_available">A plugin update is available. Update for the best experience.</string>
+  <plurals name="connection_commands_dropped">
+    <item quantity="one">%d command could not be sent and was discarded.</item>
+    <item quantity="other">%d commands could not be sent and were discarded.</item>
+  </plurals>
 
   <!-- Common -->
   <string name="common_library">Library</string>

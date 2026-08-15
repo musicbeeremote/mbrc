@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.core.networking
 
+import com.kelsos.mbrc.core.networking.client.PendingCommandBuffer
+
 /**
  * Information about the current reconnection cycle.
  * Used to display progress in the UI during connection attempts.
@@ -11,8 +13,10 @@ interface ClientConnectionUseCase {
   fun disconnect()
 }
 
-class ClientConnectionUseCaseImpl(private val connectionManager: ClientConnectionManager) :
-  ClientConnectionUseCase {
+class ClientConnectionUseCaseImpl(
+  private val connectionManager: ClientConnectionManager,
+  private val pendingCommands: PendingCommandBuffer
+) : ClientConnectionUseCase {
   override fun connect(reset: Boolean, cycleInfo: ConnectionCycleInfo?) {
     if (reset) {
       connectionManager.stop()
@@ -21,6 +25,9 @@ class ClientConnectionUseCaseImpl(private val connectionManager: ClientConnectio
   }
 
   override fun disconnect() {
+    // Deliberately leaving: buffered commands belong to the session the user just ended, and must
+    // not fire against the next one. A reconnect goes through connect(), which keeps them.
+    pendingCommands.clear()
     connectionManager.stop()
   }
 }

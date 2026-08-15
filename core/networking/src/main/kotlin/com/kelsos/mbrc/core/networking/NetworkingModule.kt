@@ -12,6 +12,8 @@ import com.kelsos.mbrc.core.networking.api.QueueApi
 import com.kelsos.mbrc.core.networking.api.QueueApiImpl
 import com.kelsos.mbrc.core.networking.client.MessageQueue
 import com.kelsos.mbrc.core.networking.client.MessageQueueImpl
+import com.kelsos.mbrc.core.networking.client.PendingCommandBuffer
+import com.kelsos.mbrc.core.networking.client.UiMessage
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
 import com.kelsos.mbrc.core.networking.client.UiMessageQueueImpl
 import com.kelsos.mbrc.core.networking.data.DeserializationAdapter
@@ -88,6 +90,12 @@ val networkingModule = module {
   singleOf(::SocketActivityChecker)
   singleOf(::MessageQueueImpl) { bind<MessageQueue>() }
   singleOf(::UiMessageQueueImpl) { bind<UiMessageQueue>() }
+  single {
+    val uiMessageQueue = get<UiMessageQueue>()
+    PendingCommandBuffer(get()) { count ->
+      uiMessageQueue.messages.tryEmit(UiMessage.CommandsDropped(count))
+    }
+  }
 
   // Connection management
   singleOf(::ClientConnectionManagerImpl) { bind<ClientConnectionManager>() }
