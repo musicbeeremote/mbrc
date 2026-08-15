@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import com.kelsos.mbrc.R
+import com.kelsos.mbrc.core.networking.client.DroppedCommandNotice
 import com.kelsos.mbrc.core.networking.client.UiMessage
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
 
@@ -22,14 +23,28 @@ private const val PLUGIN_RELEASES_URL = "https://github.com/musicbeeremote/plugi
 @Composable
 fun GlobalUiMessageHandler(
   uiMessageQueue: UiMessageQueue,
+  droppedCommandNotice: DroppedCommandNotice,
   snackbarHostState: SnackbarHostState,
   onPluginUpdateRequired: (version: String) -> Unit = {}
 ) {
   val strings = uiMessageStrings()
   val uriHandler = LocalUriHandler.current
-  // Resolved outside the composable scope, because the text depends on a count only known when the
-  // message arrives.
+  // Resolved outside the composable scope, because the text depends on a count that is only known
+  // once the notice arrives.
   val resources = LocalContext.current.resources
+
+  LaunchedEffect(droppedCommandNotice) {
+    droppedCommandNotice.pending.collect { count ->
+      if (count == 0) {
+        return@collect
+      }
+      val text = resources.getQuantityString(R.plurals.connection_commands_dropped, count, count)
+      // Acknowledged before the snackbar is shown, so anything lost while it is up is counted
+      // towards the next one instead of being swallowed.
+      droppedCommandNotice.acknowledge()
+      snackbarHostState.showSnackbar(message = text, duration = SnackbarDuration.Long)
+    }
+  }
 
   LaunchedEffect(Unit) {
     uiMessageQueue.messages.collect { message ->
@@ -45,15 +60,6 @@ fun GlobalUiMessageHandler(
           if (result == SnackbarResult.ActionPerformed) {
             uriHandler.openUri(PLUGIN_RELEASES_URL)
           }
-        }
-
-        is UiMessage.CommandsDropped -> {
-          val text = resources.getQuantityString(
-            R.plurals.connection_commands_dropped,
-            message.count,
-            message.count
-          )
-          snackbarHostState.showSnackbar(message = text, duration = SnackbarDuration.Long)
         }
 
         else -> message.toDisplayText(strings)?.let { text ->
@@ -89,9 +95,7 @@ private fun UiMessage.toDisplayText(strings: UiMessageStrings): String? = when (
   is UiMessage.PartyModeCommandUnavailable -> strings.partyMode
 
   // These are handled separately in the main handler
-  is UiMessage.PluginUpdateAvailable,
-  is UiMessage.PluginUpdateRequired,
-  is UiMessage.CommandsDropped -> null
+  is UiMessage.PluginUpdateAvailable, is UiMessage.PluginUpdateRequired -> null
 }
 
 /**

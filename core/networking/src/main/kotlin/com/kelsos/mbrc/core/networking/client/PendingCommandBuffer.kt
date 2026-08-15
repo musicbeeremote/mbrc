@@ -14,10 +14,11 @@ import timber.log.Timber
  *   connection eventually ages out instead of being refreshed forever.
  * - **Collapsing of value-setting commands.** Contexts in [LAST_WRITE_WINS] describe a value rather
  *   than an event, so only the newest matters: a volume drag replays the final level, and repeated
- *   play/pause taps replay as a single toggle. Event commands such as `next` or a queue removal are
- *   never collapsed, because two of them mean the user asked for two things.
- * - **Protocol chatter is never buffered.** A stale pong or handshake message is meaningless on a
- *   new socket, and the handshake is re-driven by the connection itself.
+ *   play/pause taps replay as a single toggle. Event commands such as `next` are never collapsed,
+ *   because two of them mean the user asked for two things.
+ * - **Only player commands are replayed at all.** [REPLAYABLE] is an allow-list: handshake and
+ *   keep-alive traffic belongs to the socket it was queued for, and anything addressed at a queue
+ *   position or at whatever is currently playing would land somewhere else by the time it replays.
  *
  * Buffering a command is silent: the connection indicator already tells the user they are offline,
  * and the command is still expected to happen. Discarding one is not, because that is the only
@@ -28,7 +29,6 @@ class PendingCommandBuffer(
   private val clock: Clock,
   private val ttlMs: Long = DEFAULT_TTL_MS,
   private val capacity: Int = DEFAULT_CAPACITY,
-  private val notifyIntervalMs: Long = DEFAULT_NOTIFY_INTERVAL_MS,
   private val onDiscarded: (count: Int) -> Unit = {}
 ) {
   private data class Pending(val message: SocketMessage, val queuedAt: Long)
@@ -36,7 +36,6 @@ class PendingCommandBuffer(
   private val pending = ArrayDeque<Pending>()
 
   private var discardedSinceNotify = 0
-  private var lastNotifiedAt: Long? = null
 
   /**
    * Buffers [message] for replay. Returns false when the message is protocol chatter that must not
@@ -131,38 +130,25 @@ class PendingCommandBuffer(
   }
 
   /**
-   * Hands the accumulated discard count to [onDiscarded], outside the lock so the callback cannot
-   * deadlock against the buffer.
-   *
-   * Discards arrive in bursts (a whole batch ages out at once) but can also trickle in, one per tap,
-   * once a full buffer starts overflowing. Reporting at most once per [notifyIntervalMs] keeps that
-   * from turning into a stream of snackbars; a suppressed count is not lost, it is added to the next
-   * report.
+   * Hands the discard count to [onDiscarded], outside the lock so the callback cannot deadlock
+   * against the buffer. Coalescing losses into a single notification is the receiver's job: the
+   * buffer only reports what it gave up on.
    */
   private fun reportDiscarded() {
-    val count = takeDiscardReport()
+    val count = takeDiscardCount()
     if (count > 0) {
       onDiscarded(count)
     }
   }
 
   @Synchronized
-  private fun takeDiscardReport(): Int {
-    if (discardedSinceNotify == 0) {
-      return 0
-    }
-    val now = clock.now()
-    val suppressed = lastNotifiedAt?.let { now - it < notifyIntervalMs } == true
-    if (suppressed) {
-      return 0
-    }
+  private fun takeDiscardCount(): Int {
     val count = discardedSinceNotify
     discardedSinceNotify = 0
-    lastNotifiedAt = now
     return count
   }
 
-  private fun isReplayable(message: SocketMessage): Boolean = message.context !in NOT_REPLAYABLE
+  private fun isReplayable(message: SocketMessage): Boolean = message.context in REPLAYABLE
 
   companion object {
     /**
@@ -175,24 +161,35 @@ class PendingCommandBuffer(
     const val DEFAULT_CAPACITY = 16
 
     /**
-     * Long enough that an overflowing buffer cannot produce a snackbar per tap, short enough that a
-     * second round of losses after a reconnect still reads as news.
+     * Commands that still mean the same thing on a later connection.
+     *
+     * Deliberately an allow-list. Replay is only safe for commands addressed at the player itself,
+     * so anything scoped to a position or to whatever happens to be playing is left out: replaying
+     * a queue removal or a rating up to [DEFAULT_TTL_MS] later would hit whatever moved into that
+     * slot in the meantime. A deny-list would also make every protocol context added in the future
+     * replayable by default, with nothing forcing that decision to be made.
      */
-    const val DEFAULT_NOTIFY_INTERVAL_MS = 10_000L
-
-    /**
-     * Handshake and keep-alive traffic belongs to the socket it was queued for.
-     */
-    private val NOT_REPLAYABLE = setOf(
-      Protocol.Ping.context,
-      Protocol.Pong.context,
-      Protocol.Player.context,
-      Protocol.ProtocolTag.context,
-      Protocol.Init.context
+    private val REPLAYABLE = setOf(
+      Protocol.PlayerVolume.context,
+      Protocol.PlayerMute.context,
+      Protocol.PlayerRepeat.context,
+      Protocol.PlayerShuffle.context,
+      Protocol.PlayerState.context,
+      Protocol.PlayerPlayPause.context,
+      Protocol.PlayerPlay.context,
+      Protocol.PlayerPause.context,
+      Protocol.PlayerStop.context,
+      Protocol.PlayerNext.context,
+      Protocol.PlayerPrevious.context
     )
 
     /**
-     * Commands that set a value rather than describe an event: only the newest matters.
+     * Commands that set a value rather than describe an event: only the newest matters. A subset of
+     * [REPLAYABLE].
+     *
+     * `playpause` is here despite being a toggle. Offline the player never confirms anything, so
+     * the UI does not move and a user jabbing the button three times is asking for one thing, not
+     * for three toggles.
      */
     private val LAST_WRITE_WINS = setOf(
       Protocol.PlayerVolume.context,
@@ -200,9 +197,7 @@ class PendingCommandBuffer(
       Protocol.PlayerRepeat.context,
       Protocol.PlayerShuffle.context,
       Protocol.PlayerState.context,
-      Protocol.PlayerPlayPause.context,
-      Protocol.NowPlayingPosition.context,
-      Protocol.NowPlayingRating.context
+      Protocol.PlayerPlayPause.context
     )
   }
 }

@@ -31,6 +31,7 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.kelsos.mbrc.core.networking.client.DroppedCommandNotice
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
 import com.kelsos.mbrc.core.ui.theme.RemoteTheme
 import com.kelsos.mbrc.feature.misc.whatsnew.WhatsNewScreen
@@ -70,6 +71,7 @@ fun RemoteApp() {
     val scope = rememberCoroutineScope()
     val drawerViewModel: DrawerViewModel = koinViewModel()
     val uiMessageQueue: UiMessageQueue = koinInject()
+    val droppedCommandNotice: DroppedCommandNotice = koinInject()
     val whatsNewViewModel: WhatsNewViewModel = koinViewModel()
 
     // Update required overlay state
@@ -92,6 +94,7 @@ fun RemoteApp() {
     // Handle global UI messages (connection errors, etc.)
     GlobalUiMessageHandler(
       uiMessageQueue = uiMessageQueue,
+      droppedCommandNotice = droppedCommandNotice,
       snackbarHostState = snackbarHostState,
       onPluginUpdateRequired = { version ->
         updateRequiredVersion = version

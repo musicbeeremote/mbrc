@@ -13,9 +13,8 @@ class PendingCommandBufferTest {
 
   private fun buffer(
     ttlMs: Long = PendingCommandBuffer.DEFAULT_TTL_MS,
-    capacity: Int = PendingCommandBuffer.DEFAULT_CAPACITY,
-    notifyIntervalMs: Long = PendingCommandBuffer.DEFAULT_NOTIFY_INTERVAL_MS
-  ) = PendingCommandBuffer(clock, ttlMs, capacity, notifyIntervalMs) { discarded.add(it) }
+    capacity: Int = PendingCommandBuffer.DEFAULT_CAPACITY
+  ) = PendingCommandBuffer(clock, ttlMs, capacity) { discarded.add(it) }
 
   @Test
   fun `buffers a failed command for replay`() {
@@ -86,15 +85,28 @@ class PendingCommandBufferTest {
   }
 
   @Test
-  fun `queue mutations keep the order the user performed them in`() {
+  fun `commands scoped to a queue position are never replayed`() {
+    // The queue can move on while the buffer waits, so a removal queued at index 1 would delete
+    // whatever took that slot, and a rating would land on the next song.
     val buffer = buffer()
-    val removeFirst = SocketMessage.create(Protocol.NowPlayingListRemove, 1)
-    val removeSecond = SocketMessage.create(Protocol.NowPlayingListRemove, 2)
-    buffer.stash(removeFirst)
-    buffer.stash(removeSecond)
-    buffer.stash(removeFirst)
 
-    assertThat(buffer.drain()).containsExactly(removeFirst, removeSecond, removeFirst).inOrder()
+    assertThat(buffer.stash(SocketMessage.create(Protocol.NowPlayingListRemove, 1))).isFalse()
+    assertThat(buffer.stash(SocketMessage.create(Protocol.NowPlayingListMove, 1))).isFalse()
+    assertThat(buffer.stash(SocketMessage.create(Protocol.NowPlayingListPlay, 1))).isFalse()
+    assertThat(buffer.stash(SocketMessage.create(Protocol.NowPlayingRating, 4))).isFalse()
+    assertThat(buffer.stash(SocketMessage.create(Protocol.NowPlayingPosition, 1000))).isFalse()
+
+    assertThat(buffer.drain()).isEmpty()
+  }
+
+  @Test
+  fun `a command is only replayed if it is on the allow list`() {
+    // Anything not explicitly cleared for replay stays out, so a protocol context added later is
+    // not silently replayable.
+    val buffer = buffer()
+
+    assertThat(buffer.stash(SocketMessage.create(Protocol.PlayerScrobble, true))).isFalse()
+    assertThat(buffer.stash(SocketMessage.create(Protocol.PlaylistPlay, "a"))).isFalse()
   }
 
   @Test
@@ -165,15 +177,14 @@ class PendingCommandBufferTest {
   @Test
   fun `the oldest command is dropped once capacity is reached`() {
     val buffer = buffer(capacity = 2)
-    val first = SocketMessage.create(Protocol.NowPlayingListPlay, 1)
-    val second = SocketMessage.create(Protocol.NowPlayingListPlay, 2)
-    val third = SocketMessage.create(Protocol.NowPlayingListPlay, 3)
+    val next = SocketMessage.create(Protocol.PlayerNext)
+    val previous = SocketMessage.create(Protocol.PlayerPrevious)
 
-    buffer.stash(first)
-    buffer.stash(second)
-    buffer.stash(third)
+    buffer.stash(next)
+    buffer.stash(previous)
+    buffer.stash(next)
 
-    assertThat(buffer.drain()).containsExactly(second, third).inOrder()
+    assertThat(buffer.drain()).containsExactly(previous, next).inOrder()
   }
 
   @Test
@@ -202,7 +213,7 @@ class PendingCommandBufferTest {
   fun `commands aged out of the buffer are reported once, with their count`() {
     val buffer = buffer(ttlMs = 10_000L)
     buffer.stash(SocketMessage.create(Protocol.PlayerNext))
-    buffer.stash(SocketMessage.create(Protocol.NowPlayingListPlay, 1))
+    buffer.stash(SocketMessage.create(Protocol.PlayerPrevious))
 
     now += 10_000L
     buffer.drain()
@@ -211,42 +222,22 @@ class PendingCommandBufferTest {
   }
 
   @Test
-  fun `an overflowing buffer does not report once per tap`() {
-    val buffer = buffer(capacity = 1, notifyIntervalMs = 10_000L)
+  fun `commands pushed out by a full buffer are reported`() {
+    val buffer = buffer(capacity = 1)
 
-    repeat(5) { index ->
-      now += 1_000L
-      buffer.stash(SocketMessage.create(Protocol.NowPlayingListPlay, index))
-    }
+    buffer.stash(SocketMessage.create(Protocol.PlayerNext))
+    buffer.stash(SocketMessage.create(Protocol.PlayerNext))
 
-    // Four commands were pushed out, but the user is told once.
     assertThat(discarded).containsExactly(1)
   }
 
   @Test
-  fun `losses suppressed by the notification window are added to the next report`() {
-    val buffer = buffer(capacity = 1, notifyIntervalMs = 10_000L)
-
-    repeat(5) { index ->
-      now += 1_000L
-      buffer.stash(SocketMessage.create(Protocol.NowPlayingListPlay, index))
-    }
-    now += 10_000L
-    buffer.stash(SocketMessage.create(Protocol.NowPlayingListPlay, 99))
-
-    // 1 reported immediately, then the 3 held back plus the one just pushed out.
-    assertThat(discarded).containsExactly(1, 4).inOrder()
-  }
-
-  @Test
   fun `an explicit disconnect is not reported as a loss`() {
-    val buffer = buffer(capacity = 1)
-    buffer.stash(SocketMessage.create(Protocol.NowPlayingListPlay, 1))
-    buffer.stash(SocketMessage.create(Protocol.NowPlayingListPlay, 2))
-    discarded.clear()
+    val buffer = buffer()
+    buffer.stash(SocketMessage.create(Protocol.PlayerNext))
 
     buffer.clear()
-    buffer.stash(SocketMessage.create(Protocol.PlayerNext))
+    buffer.drain()
 
     assertThat(discarded).isEmpty()
   }

@@ -80,7 +80,12 @@ class ClientConnectionManagerImpl(
   private val pendingCommands: PendingCommandBuffer
 ) : ScopeBase(dispatchers.io),
   ClientConnectionManager {
+  // Written when a connection is set up or torn down, read by the outgoing pump, which runs on a
+  // different thread of the io pool.
+  @Volatile
   private var connection: Connection? = null
+
+  @Volatile
   private var connectionScope: CoroutineScope? = null
   private val connectionConfig = ConnectionConfig()
   private var currentCycleInfo: ConnectionCycleInfo? = null
@@ -345,21 +350,37 @@ class ClientConnectionManagerImpl(
   private fun dispatchOutgoing(message: SocketMessage) {
     val current = connection
     if (current == null) {
-      if (pendingCommands.stash(message)) {
-        Timber.d("No connection available, buffering $message for replay")
-      }
+      bufferForReplay(message)
       return
     }
 
     current.send(message).onFailure { exception ->
       Timber.e(exception, "Send failed")
-      // The message never reached the wire. Buffer it so the user's command survives the
-      // reconnect instead of disappearing without any feedback.
-      pendingCommands.stash(message)
+      // Only a message that never reached the wire is safe to replay. A write that failed
+      // mid-flight may have put part of the frame on the socket already, and replaying it would
+      // hand the player a second copy of a command that is not idempotent.
+      if (exception is SocketNotConnectedException) {
+        bufferForReplay(message)
+      }
       // A failed write means the socket is broken. Closing it lets the connection worker publish
       // Offline, which is what drives reconnection. Calling stop() here instead would also cancel
       // a reconnect that is already in flight.
       current.cleanup()
+    }
+  }
+
+  /**
+   * Holds [message] until a connection comes back, unless the manager is stopped: after an explicit
+   * disconnect there is no session to replay into, and a command buffered then would fire against
+   * whichever session the user opens next.
+   */
+  private fun bufferForReplay(message: SocketMessage) {
+    if (isStopping) {
+      Timber.d("Manager is stopped, discarding $message instead of buffering it")
+      return
+    }
+    if (pendingCommands.stash(message)) {
+      Timber.d("No connection available, buffering $message for replay")
     }
   }
 
