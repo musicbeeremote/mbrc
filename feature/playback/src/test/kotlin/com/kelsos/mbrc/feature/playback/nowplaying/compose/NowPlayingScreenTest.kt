@@ -135,10 +135,11 @@ class NowPlayingScreenTest {
     val totalItems = 350
     val playingIndex = 200
     val listState = LazyListState()
+    val pager = pagerOf(totalItems)
 
     composeTestRule.setContent {
       TestNowPlayingContent(
-        tracks = pagerOf(totalItems).flow.collectAsLazyPagingItems(),
+        tracks = pager.flow.collectAsLazyPagingItems(),
         trackCount = totalItems,
         isConnected = false,
         playingTrackIndex = playingIndex,
@@ -157,10 +158,11 @@ class NowPlayingScreenTest {
   fun `the queue stays at the top when the playing track is not in it`() {
     val totalItems = 350
     val listState = LazyListState()
+    val pager = pagerOf(totalItems)
 
     composeTestRule.setContent {
       TestNowPlayingContent(
-        tracks = pagerOf(totalItems).flow.collectAsLazyPagingItems(),
+        tracks = pager.flow.collectAsLazyPagingItems(),
         trackCount = totalItems,
         isConnected = false,
         playingTrackIndex = null,
@@ -179,10 +181,13 @@ class NowPlayingScreenTest {
     val totalItems = 350
     val listState = LazyListState()
     var playingIndex by mutableStateOf<Int?>(null)
+    // Hoisted: writing playingIndex recomposes this lambda, and building the Pager inside it would
+    // hand collectAsLazyPagingItems a new flow, restarting paging and collapsing itemCount to 0.
+    val pager = pagerOf(totalItems)
 
     composeTestRule.setContent {
       TestNowPlayingContent(
-        tracks = pagerOf(totalItems).flow.collectAsLazyPagingItems(),
+        tracks = pager.flow.collectAsLazyPagingItems(),
         trackCount = totalItems,
         isConnected = false,
         playingTrackIndex = playingIndex,
