@@ -6,7 +6,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import com.kelsos.mbrc.R
@@ -30,8 +30,9 @@ fun GlobalUiMessageHandler(
   val strings = uiMessageStrings()
   val uriHandler = LocalUriHandler.current
   // Resolved outside the composable scope, because the text depends on a count that is only known
-  // once the notice arrives.
-  val resources = LocalContext.current.resources
+  // once the notice arrives. LocalResources rather than LocalContext.current.resources so the
+  // lookup is invalidated when the configuration changes.
+  val resources = LocalResources.current
 
   LaunchedEffect(droppedCommandNotice) {
     droppedCommandNotice.pending.collect { count ->
