@@ -91,7 +91,7 @@ private val SCHEMA_V4 = listOf(
  * Without this, Room finds no path from 1 to 4 and throws on first database access, crashing the
  * app on every launch with no way out but clearing app data (#342).
  */
-private fun SupportSQLiteDatabase.rebuildFromLegacySchema() {
+internal fun SupportSQLiteDatabase.rebuildFromLegacySchema() {
   val connections = readLegacyConnections()
 
   for (table in LEGACY_TABLES) {
