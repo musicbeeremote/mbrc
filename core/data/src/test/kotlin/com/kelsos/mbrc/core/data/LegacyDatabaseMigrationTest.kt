@@ -166,7 +166,9 @@ class LegacyDatabaseMigrationTest {
     val context = InstrumentationRegistry.getInstrumentation().targetContext
     val path = context.getDatabasePath(migrationTestDb)
     path.parentFile?.mkdirs()
-    path.delete()
+    // deleteDatabase, not delete: the previous test left -wal/-shm sidecars behind when Room
+    // opened the file, and those would be replayed into the database created below.
+    SQLiteDatabase.deleteDatabase(path)
 
     val db = SQLiteDatabase.openOrCreateDatabase(path, null)
     db.execSQL(

@@ -3,6 +3,12 @@ package com.kelsos.mbrc.core.data
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
+// Column order of the rescue query in readLegacyConnections.
+private const val COLUMN_ADDRESS = 0
+private const val COLUMN_PORT = 1
+private const val COLUMN_NAME = 2
+private const val COLUMN_ID = 3
+
 /**
  * A saved connection carried across the rebuild of a pre-Room database.
  *
@@ -10,12 +16,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * connection by row id out of SharedPreferences, so reassigning ids here would silently point that
  * lookup at the wrong server.
  */
-// Column order of the rescue query in readLegacyConnections.
-private const val COLUMN_ADDRESS = 0
-private const val COLUMN_PORT = 1
-private const val COLUMN_NAME = 2
-private const val COLUMN_ID = 3
-
 private data class LegacyConnection(
   val id: Long,
   val address: String,
@@ -101,6 +101,12 @@ private fun SupportSQLiteDatabase.rebuildFromLegacySchema() {
     execSQL(statement)
   }
 
+  // OR IGNORE because v4 puts a unique index on (address, port) that the legacy table did not
+  // have: DBFlow declared the pair as a unique group with ConflictAction.IGNORE, and a unique
+  // index does not constrain NULLs, so two rows can arrive that both coalesce to the same pair
+  // (most plausibly a pair of half-written rows with no address). Only the first is kept. Such a
+  // row cannot describe a reachable server anyway, so the alternative — failing the migration and
+  // leaving the user on a crashing app — would be a far worse trade.
   for (connection in connections) {
     execSQL(
       "INSERT OR IGNORE INTO `settings` (`address`, `port`, `name`, `is_default`, `id`) " +
