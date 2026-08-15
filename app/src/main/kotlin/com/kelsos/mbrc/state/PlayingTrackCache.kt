@@ -34,7 +34,12 @@ import timber.log.Timber
 internal val Context.cacheDataStore: DataStore<Store> by dataStore(
   fileName = "cache_store.db",
   serializer = PlayerStateSerializer,
-  corruptionHandler = ReplaceFileCorruptionHandler { Store.getDefaultInstance() }
+  corruptionHandler = ReplaceFileCorruptionHandler { exception ->
+    // Logged so a repair is visible at all: it is otherwise silent, and the cause is worth
+    // knowing if it turns out to happen to more than one person.
+    Timber.e(exception, "The playing track cache was unreadable and has been rebuilt")
+    Store.getDefaultInstance()
+  }
 )
 
 interface PlayingTrackCache {
