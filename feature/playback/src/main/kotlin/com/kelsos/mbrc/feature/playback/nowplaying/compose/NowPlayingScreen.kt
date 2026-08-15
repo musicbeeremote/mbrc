@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -56,8 +57,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -92,6 +96,9 @@ import com.kelsos.mbrc.feature.playback.R
 import com.kelsos.mbrc.feature.playback.nowplaying.NowPlayingUiMessages
 import com.kelsos.mbrc.feature.playback.nowplaying.NowPlayingViewModel
 import com.kelsos.mbrc.feature.playback.nowplaying.SyncProgress
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -105,6 +112,7 @@ fun NowPlayingScreen(
 ) {
   val tracks = viewModel.tracks.collectAsLazyPagingItems()
   val playingTrack by viewModel.playingTrack.collectAsStateWithLifecycle()
+  val playingTrackIndex by viewModel.playingTrackIndex.collectAsStateWithLifecycle()
   val connectionState by viewModel.connectionState.collectAsStateWithLifecycle(
     initialValue = ConnectionStatus.Offline
   )
@@ -116,7 +124,11 @@ fun NowPlayingScreen(
   var isSearchActive by rememberSaveable { mutableStateOf(false) }
   var searchQuery by rememberSaveable { mutableStateOf("") }
 
+  val lazyListState = rememberLazyListState()
+  val scope = rememberCoroutineScope()
+
   val searchPlaceholder = stringResource(R.string.now_playing_search_hint)
+  val scrollToPlayingLabel = stringResource(R.string.now_playing__scroll_to_playing)
   val title = stringResource(R.string.nav_queue)
 
   // Compute scaffold configuration based on current state
@@ -139,15 +151,31 @@ fun NowPlayingScreen(
     TopBarState.WithTitle(title)
   }
 
-  // Show search action in app bar when not searching
+  // Show search action in app bar when not searching, plus a jump-to-playing-track action
+  // once the queue is known to hold the playing track.
   val actionItems = if (!isSearchActive) {
-    listOf(
-      ActionItem(
-        icon = Icons.Default.Search,
-        contentDescription = searchPlaceholder,
-        onClick = { isSearchActive = true }
+    buildList {
+      playingTrackIndex?.let { index ->
+        add(
+          ActionItem(
+            icon = Icons.Default.MyLocation,
+            contentDescription = scrollToPlayingLabel,
+            onClick = {
+              scope.launch {
+                lazyListState.animateScrollToItem(scrollTargetIndex(index, tracks.itemCount))
+              }
+            }
+          )
+        )
+      }
+      add(
+        ActionItem(
+          icon = Icons.Default.Search,
+          contentDescription = searchPlaceholder,
+          onClick = { isSearchActive = true }
+        )
       )
-    )
+    }
   } else {
     emptyList()
   }
@@ -176,6 +204,7 @@ fun NowPlayingScreen(
       NowPlayingContent(
         tracks = tracks,
         playingTrackPath = playingTrack.path,
+        playingTrackIndex = playingTrackIndex,
         trackCount = trackCount,
         isRefreshing = isRefreshing,
         isConnected = isConnected,
@@ -189,7 +218,8 @@ fun NowPlayingScreen(
         onDragEnd = { viewModel.actions.move() },
         onGoToAlbum = onNavigateToAlbum,
         onGoToArtist = onNavigateToArtist,
-        modifier = Modifier.weight(1f)
+        modifier = Modifier.weight(1f),
+        lazyListState = lazyListState
       )
 
       MiniControl(
@@ -260,6 +290,63 @@ private fun NowPlayingEventsEffect(
   }
 }
 
+/**
+ * Brings the playing track into view once per visit to the queue.
+ *
+ * The pager runs with placeholders, so every queue slot exists as soon as the item count is known
+ * and the list can be positioned before the page holding the track has loaded. Both the index and
+ * the count arrive asynchronously (the index from a database lookup, the count from the first
+ * page), so the effect waits for them instead of firing on composition. It gives up after
+ * [AUTO_SCROLL_TIMEOUT_MS] and never moves a list the user has already scrolled, so it cannot yank
+ * the queue out from under someone.
+ *
+ * The one-shot flag is deliberately not saved: drawer navigation saves this destination's state and
+ * a restored flag would suppress the scroll on exactly the return trip that needs it. Across a
+ * configuration change the restored [LazyListState] carries the user's position, and the
+ * already-scrolled check takes over from the flag.
+ */
+@Composable
+private fun AutoScrollToPlayingTrackEffect(
+  lazyListState: LazyListState,
+  itemCount: () -> Int,
+  playingTrackIndex: Int?
+) {
+  var hasScrolled by remember { mutableStateOf(false) }
+  val currentIndex by rememberUpdatedState(playingTrackIndex)
+
+  LaunchedEffect(lazyListState) {
+    if (hasScrolled) {
+      return@LaunchedEffect
+    }
+    val target = withTimeoutOrNull(AUTO_SCROLL_TIMEOUT_MS) {
+      snapshotFlow { currentIndex to itemCount() }
+        .first { (index, count) -> index != null && index < count }
+    }
+    hasScrolled = true
+    val (index, count) = target ?: return@LaunchedEffect
+    // Only reposition a list still sitting at the top. Anywhere else means either the user has
+    // started scrolling or the saved position was restored, and both beat a jump to the playing
+    // track.
+    val atTop = lazyListState.firstVisibleItemIndex == 0 &&
+      lazyListState.firstVisibleItemScrollOffset == 0
+    if (!atTop) {
+      return@LaunchedEffect
+    }
+    lazyListState.scrollToItem(scrollTargetIndex(checkNotNull(index), count))
+  }
+}
+
+/**
+ * The list index to scroll to so that the track at [playingIndex] lands in view with a couple of
+ * preceding tracks visible for context, clamped to the bounds of a list of [itemCount] entries.
+ */
+internal fun scrollTargetIndex(playingIndex: Int, itemCount: Int): Int {
+  if (itemCount <= 0) {
+    return 0
+  }
+  return (playingIndex - SCROLL_LEADING_CONTEXT).coerceIn(0, itemCount - 1)
+}
+
 @Composable
 internal fun SyncProgressBar(syncProgress: SyncProgress?) {
   val progress = syncProgress ?: return
@@ -289,12 +376,19 @@ internal fun NowPlayingContent(
   onGoToAlbum: ((path: String) -> Unit)?,
   onGoToArtist: (artist: String) -> Unit,
   modifier: Modifier = Modifier,
+  playingTrackIndex: Int? = null,
   lazyListState: LazyListState = rememberLazyListState()
 ) {
   val dragDropState = rememberDragDropState(
     lazyListState = lazyListState,
     onMove = { from, to -> onTrackMove(from, to) },
     onDragEnd = onDragEnd
+  )
+
+  AutoScrollToPlayingTrackEffect(
+    lazyListState = lazyListState,
+    itemCount = { tracks.itemCount },
+    playingTrackIndex = playingTrackIndex
   )
 
   PullToRefreshBox(
@@ -780,3 +874,9 @@ fun NowPlayingTrackItem(
 
 private const val SWIPE_TOUCH_SLOP_MULTIPLIER = 2f
 private const val SWIPE_POSITIONAL_THRESHOLD = 0.3f
+
+/** How long to wait for the queue and the playing track's index before giving up the auto-scroll. */
+private const val AUTO_SCROLL_TIMEOUT_MS = 5000L
+
+/** Tracks kept visible above the playing one, so it does not land flush against the top bar. */
+private const val SCROLL_LEADING_CONTEXT = 2

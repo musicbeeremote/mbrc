@@ -2,6 +2,9 @@ Changelog
 -----------
 
 ## [1.7.0]
+### Added
+- The now playing queue opens on the track that is playing instead of at the top, with a couple of tracks above it for context. A new action in the top bar jumps back to the playing track after you have scrolled away. The queue is left alone if you start scrolling before the track is located, so it never moves under your finger.
+
 ### Fixed
 - Fixes the volume slider on the Now Playing screen being hidden behind the system navigation bar. On foldables and other edge-to-edge devices the volume row could be drawn under the navigation bar or taskbar and could not be used; the player now keeps its controls clear of the system bars in portrait, landscape and on tablets.
 - Restores long-press-to-stop on the play/pause button. Long-pressing play/pause on the player and the mini-control now stops playback, a gesture that was lost when the player moved to the new UI. A short tap still toggles play/pause.

@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -34,6 +36,13 @@ interface NowPlayingRepository : Repository<NowPlaying> {
   suspend fun searchTrack(query: String): SearchResult?
 
   fun observeCount(): Flow<Int>
+
+  /**
+   * Zero-based index of the first queue entry with [path], or `null` while the queue holds no such
+   * entry. Emits again as the queue changes, so a lookup made before the sync reached the track
+   * resolves once its page lands.
+   */
+  fun observeIndexOfPath(path: String): Flow<Int?>
 
   /**
    * Progress of the single in-flight refresh, regardless of which trigger started it
@@ -153,4 +162,12 @@ class NowPlayingRepositoryImpl(
   }
 
   override fun observeCount(): Flow<Int> = dao.observeCount()
+
+  override fun observeIndexOfPath(path: String): Flow<Int?> = if (path.isBlank()) {
+    flowOf(null)
+  } else {
+    // A sync reconciles page by page, so the underlying query re-runs on every page write.
+    // Only forward the emissions where the index actually moved.
+    dao.observeIndexOfPath(path).distinctUntilChanged()
+  }
 }

@@ -629,4 +629,24 @@ class NowPlayingViewModelTest : KoinTest {
       coVerify(exactly = 1) { realRepository.move(11, 7) }
     }
   }
+
+  @Test
+  fun playingTrackIndexLooksUpTheQueueIndexOfThePlayingTrack() {
+    runTest(testDispatcher) {
+      val playingTrack = MutableStateFlow<TrackInfo>(BasicTrackInfo(path = "/a.mp3"))
+      every { appStateFlow.playingTrack } returns playingTrack
+      every { repository.observeIndexOfPath("/a.mp3") } returns flowOf(4)
+      every { repository.observeIndexOfPath("/b.mp3") } returns flowOf(9)
+
+      viewModel.playingTrackIndex.test {
+        assertThat(awaitItem()).isEqualTo(4)
+
+        // A track change re-runs the lookup rather than leaving a stale index behind.
+        playingTrack.value = BasicTrackInfo(path = "/b.mp3")
+
+        assertThat(awaitItem()).isEqualTo(9)
+        cancelAndIgnoreRemainingEvents()
+      }
+    }
+  }
 }

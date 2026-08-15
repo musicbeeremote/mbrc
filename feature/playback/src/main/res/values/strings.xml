@@ -40,6 +40,7 @@
   <string name="nav_queue">Queue</string>
   <string name="now_playing__drag_handle">Drag to reorder</string>
   <string name="now_playing__empty_list">Your queue is empty</string>
+  <string name="now_playing__scroll_to_playing">Scroll to playing track</string>
   <string name="now_playing__search_not_found">No track found matching your search</string>
   <string name="now_playing__search_success">Playing: %1$s</string>
   <string name="now_playing_empty">The playlist is empty</string>

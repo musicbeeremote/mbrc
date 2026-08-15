@@ -1,6 +1,11 @@
 package com.kelsos.mbrc.feature.playback.nowplaying.compose
 
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -124,7 +129,88 @@ class NowPlayingScreenTest {
 
     assertThat(source.loadCount).isGreaterThan(initialLoads)
   }
+
+  @Test
+  fun `opening the queue scrolls the playing track into view`() {
+    val totalItems = 350
+    val playingIndex = 200
+    val listState = LazyListState()
+
+    composeTestRule.setContent {
+      TestNowPlayingContent(
+        tracks = pagerOf(totalItems).flow.collectAsLazyPagingItems(),
+        trackCount = totalItems,
+        isConnected = false,
+        playingTrackIndex = playingIndex,
+        lazyListState = listState
+      )
+    }
+
+    composeTestRule.waitUntil(timeoutMillis = 5_000) {
+      listState.firstVisibleItemIndex != 0
+    }
+    // Two tracks of context are kept above the playing one.
+    assertThat(listState.firstVisibleItemIndex).isEqualTo(playingIndex - 2)
+  }
+
+  @Test
+  fun `the queue stays at the top when the playing track is not in it`() {
+    val totalItems = 350
+    val listState = LazyListState()
+
+    composeTestRule.setContent {
+      TestNowPlayingContent(
+        tracks = pagerOf(totalItems).flow.collectAsLazyPagingItems(),
+        trackCount = totalItems,
+        isConnected = false,
+        playingTrackIndex = null,
+        lazyListState = listState
+      )
+    }
+    composeTestRule.waitForIdle()
+
+    assertThat(listState.firstVisibleItemIndex).isEqualTo(0)
+  }
+
+  @Test
+  fun `the auto-scroll leaves a list the user already scrolled alone`() {
+    // The index is resolved by a database lookup, so it can arrive after the user has started
+    // scrolling. Jumping the list out from under them at that point is worse than not scrolling.
+    val totalItems = 350
+    val listState = LazyListState()
+    var playingIndex by mutableStateOf<Int?>(null)
+
+    composeTestRule.setContent {
+      TestNowPlayingContent(
+        tracks = pagerOf(totalItems).flow.collectAsLazyPagingItems(),
+        trackCount = totalItems,
+        isConnected = false,
+        playingTrackIndex = playingIndex,
+        lazyListState = listState
+      )
+    }
+
+    composeTestRule.onRoot().performTouchInput { swipeUp() }
+    composeTestRule.waitForIdle()
+    val scrolledTo = listState.firstVisibleItemIndex
+    assertThat(scrolledTo).isGreaterThan(0)
+
+    playingIndex = 200
+    composeTestRule.waitForIdle()
+
+    assertThat(listState.firstVisibleItemIndex).isEqualTo(scrolledTo)
+  }
 }
+
+private fun pagerOf(totalItems: Int): Pager<Int, NowPlaying> = Pager(
+  config = PagingConfig(
+    pageSize = 50,
+    initialLoadSize = 100,
+    prefetchDistance = 25,
+    enablePlaceholders = true
+  ),
+  pagingSourceFactory = { CountingPagingSource(totalItems = totalItems) }
+)
 
 private class CountingPagingSource(private val totalItems: Int) : PagingSource<Int, NowPlaying>() {
   @Volatile var loadCount: Int = 0
@@ -176,7 +262,9 @@ private fun ComposeContentTestRule.setEmptyContent() {
 private fun TestNowPlayingContent(
   tracks: LazyPagingItems<NowPlaying>,
   trackCount: Int,
-  isConnected: Boolean
+  isConnected: Boolean,
+  playingTrackIndex: Int? = null,
+  lazyListState: LazyListState = rememberLazyListState()
 ) {
   NowPlayingContent(
     tracks = tracks,
@@ -190,6 +278,8 @@ private fun TestNowPlayingContent(
     onTrackMove = { _, _ -> },
     onDragEnd = {},
     onGoToAlbum = null,
-    onGoToArtist = {}
+    onGoToArtist = {},
+    playingTrackIndex = playingTrackIndex,
+    lazyListState = lazyListState
   )
 }

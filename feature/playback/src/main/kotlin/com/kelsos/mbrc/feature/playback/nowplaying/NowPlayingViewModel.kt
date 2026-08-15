@@ -17,10 +17,14 @@ import com.kelsos.mbrc.core.networking.protocol.usecases.removeTrack
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -158,6 +162,8 @@ class NowPlayingActions(
   }
 }
 
+private const val SUBSCRIPTION_TIMEOUT_MS = 5000L
+
 class NowPlayingViewModel(
   repository: NowPlayingRepository,
   dispatchers: AppCoroutineDispatchers,
@@ -172,7 +178,21 @@ class NowPlayingViewModel(
   val connectionState = connectionStateFlow.connection
   val syncProgress: StateFlow<SyncProgress?> = repository.syncProgress()
   val trackCount: StateFlow<Int> = repository.observeCount()
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT_MS), 0)
+
+  /**
+   * Zero-based index of the playing track in the queue, or `null` when the queue does not hold it
+   * (nothing playing yet, or the queue has not synced that far). Duplicates of the same file
+   * resolve to the first one, matching how the list highlights them.
+   */
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val playingTrackIndex: StateFlow<Int?> = appState.playingTrack
+    .map { it.path }
+    .distinctUntilChanged()
+    .flatMapLatest { path -> repository.observeIndexOfPath(path) }
+    .distinctUntilChanged()
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT_MS), null)
+
   val actions: NowPlayingActions =
     NowPlayingActions(
       scope = viewModelScope,

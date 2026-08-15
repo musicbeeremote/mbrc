@@ -4,6 +4,7 @@ import androidx.paging.testing.asSnapshot
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.data.Progress
 import com.kelsos.mbrc.core.common.test.testDispatcher
@@ -16,6 +17,7 @@ import com.kelsos.mbrc.core.networking.dto.NowPlayingDto
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -728,6 +730,95 @@ class NowPlayingRepositoryTest : KoinTest {
           it.path
         }
       ).containsExactlyElementsIn(fakeAlbumQueue.map { it.path })
+    }
+  }
+
+  @Test
+  fun observeIndexOfPathReturnsTheZeroBasedListIndexOfTheTrack() {
+    runTest(testDispatcher) {
+      // Position 8 in the fixture, so the eighth row of an `order by position` list.
+      val track = fakeAlbumQueue.first { it.position == 8 }
+
+      val index = repository.observeIndexOfPath(track.path).first()
+
+      assertThat(index).isEqualTo(7)
+    }
+  }
+
+  @Test
+  fun observeIndexOfPathCountsRowsSoGapsInPositionDoNotShiftTheIndex() {
+    runTest(testDispatcher) {
+      // A partially applied reorder (or a server numbering positions from something other than 1)
+      // leaves gaps. The index must follow the row order, not the raw position value.
+      dao.deleteAll()
+      dao.insertAll(
+        listOf(
+          NowPlayingEntity(title = "A", path = "/a.mp3", position = 40, id = 1),
+          NowPlayingEntity(title = "B", path = "/b.mp3", position = 90, id = 2),
+          NowPlayingEntity(title = "C", path = "/c.mp3", position = 91, id = 3)
+        )
+      )
+
+      assertThat(repository.observeIndexOfPath("/a.mp3").first()).isEqualTo(0)
+      assertThat(repository.observeIndexOfPath("/b.mp3").first()).isEqualTo(1)
+      assertThat(repository.observeIndexOfPath("/c.mp3").first()).isEqualTo(2)
+    }
+  }
+
+  @Test
+  fun observeIndexOfPathResolvesADuplicatedTrackToItsFirstOccurrence() {
+    runTest(testDispatcher) {
+      dao.deleteAll()
+      dao.insertAll(
+        listOf(
+          NowPlayingEntity(title = "A", path = "/a.mp3", position = 1, id = 1),
+          NowPlayingEntity(title = "B", path = "/dup.mp3", position = 2, id = 2),
+          NowPlayingEntity(title = "C", path = "/c.mp3", position = 3, id = 3),
+          NowPlayingEntity(title = "B", path = "/dup.mp3", position = 4, id = 4)
+        )
+      )
+
+      assertThat(repository.observeIndexOfPath("/dup.mp3").first()).isEqualTo(1)
+    }
+  }
+
+  @Test
+  fun observeIndexOfPathReturnsNullWhenTheQueueDoesNotHoldTheTrack() {
+    runTest(testDispatcher) {
+      val index = repository.observeIndexOfPath("/music/not/queued.mp3").first()
+
+      assertThat(index).isNull()
+    }
+  }
+
+  @Test
+  fun observeIndexOfPathReturnsNullForABlankPathWithoutQueryingTheQueue() {
+    runTest(testDispatcher) {
+      // Nothing has played yet, so the playing track carries an empty path.
+      assertThat(repository.observeIndexOfPath("").first()).isNull()
+    }
+  }
+
+  @Test
+  fun observeIndexOfPathEmitsOnceTheSyncReachesTheTrack() {
+    runTest(testDispatcher) {
+      // The screen asks for the index before the queue has synced that far; the lookup has to
+      // resolve on its own when the page holding the track lands.
+      dao.deleteAll()
+
+      repository.observeIndexOfPath("/late.mp3").test {
+        assertThat(awaitItem()).isNull()
+
+        dao.insertAll(
+          listOf(
+            NowPlayingEntity(title = "A", path = "/a.mp3", position = 1, id = 1),
+            NowPlayingEntity(title = "Late", path = "/late.mp3", position = 2, id = 2)
+          )
+        )
+
+        assertThat(awaitItem()).isEqualTo(1)
+        cancelAndIgnoreRemainingEvents()
+      }
     }
   }
 

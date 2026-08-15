@@ -149,6 +149,26 @@ interface NowPlayingDao {
   )
   fun findPositionByQuery(query: String): Int?
 
+  /**
+   * Emits the zero-based row index of the first queue entry with [path], as the list is ordered by
+   * `position`, or `null` while no entry matches.
+   *
+   * The index is counted rather than derived from `position` so it stays correct whatever base the
+   * server numbers positions from and survives gaps left by a partially applied reorder. It is a
+   * `Flow` so a lookup issued before the queue finished syncing resolves on its own once the page
+   * holding the track lands.
+   */
+  @Query(
+    """
+        select (select count(*) from now_playing where position < entry.position)
+        from now_playing entry
+        where entry.path = :path
+        order by entry.position
+        limit 1
+        """
+  )
+  fun observeIndexOfPath(path: String): Flow<Int?>
+
   @Query(
     """
         select position, title from now_playing
