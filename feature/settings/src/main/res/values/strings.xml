@@ -26,6 +26,7 @@
   <string name="connection_manager_delete_confirm_message">%1$s will be removed. This can\'t be undone.</string>
   <string name="connection_manager_discovery_no_wifi">No WiFi connection available</string>
   <string name="connection_manager_discovery_not_found">No MusicBee plugin found on network</string>
+  <string name="connection_manager_discovery_local_network_denied">Local network access is off, so no scan is possible</string>
   <plurals name="connection_manager_discovery_success_count">
     <item quantity="one">Discovered %d MusicBee plugin on the network</item>
     <item quantity="other">Discovered %d MusicBee plugins on the network</item>

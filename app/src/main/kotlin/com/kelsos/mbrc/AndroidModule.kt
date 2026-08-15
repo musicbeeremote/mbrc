@@ -13,8 +13,10 @@ import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import com.kelsos.mbrc.adapters.RemoteViewIntentBuilderImpl
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import com.kelsos.mbrc.core.platform.intents.AppLauncher
 import com.kelsos.mbrc.core.platform.intents.MediaIntentBuilder
+import com.kelsos.mbrc.service.LocalNetworkAccessImpl
 import com.kelsos.mbrc.service.NotificationActionReceiver
 import com.kelsos.mbrc.service.ServiceChecker
 import com.kelsos.mbrc.service.ServiceCheckerImpl
@@ -53,6 +55,7 @@ val androidModule = module {
 
   // Service Components
   singleOf(::NotificationActionReceiver)
+  singleOf(::LocalNetworkAccessImpl) { bind<LocalNetworkAccess>() }
   singleOf(::ServiceCheckerImpl) { bind<ServiceChecker>() }
   singleOf(::ServiceLifecycleManagerImpl) { bind<ServiceLifecycleManager>() }
 

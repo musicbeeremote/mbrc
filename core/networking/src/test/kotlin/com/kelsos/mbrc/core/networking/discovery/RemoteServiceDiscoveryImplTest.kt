@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import com.squareup.moshi.Moshi
 import io.mockk.Runs
 import io.mockk.clearAllMocks
@@ -36,6 +37,7 @@ class RemoteServiceDiscoveryImplTest : KoinTest {
   private val wifiManager: WifiManager = mockk(relaxed = true)
   private val connectivityManager: ConnectivityManager = mockk(relaxed = true)
   private val multicastLock: WifiManager.MulticastLock = mockk(relaxed = true)
+  private var localNetworkPermitted = true
   private val network: Network = mockk()
   private val networkCapabilities: NetworkCapabilities = mockk()
 
@@ -44,6 +46,7 @@ class RemoteServiceDiscoveryImplTest : KoinTest {
       single { wifiManager }
       single { connectivityManager }
       single { Moshi.Builder().build() }
+      single<LocalNetworkAccess> { LocalNetworkAccess { localNetworkPermitted } }
       singleOf(::RemoteServiceDiscoveryImpl) {
         bind<RemoteServiceDiscovery>()
       }
@@ -221,5 +224,15 @@ class RemoteServiceDiscoveryImplTest : KoinTest {
     every { connectivityManager.activeNetwork } returns network
     every { connectivityManager.getNetworkCapabilities(network) } returns networkCapabilities
     every { networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns true
+  }
+
+  @Test
+  fun discoverShouldReportDeniedAccessRatherThanNotFound() = runTest(testDispatcher) {
+    // "No hosts found" would blame the network for a permission the user can grant.
+    localNetworkPermitted = false
+
+    val result = discovery.discover()
+
+    assertThat(result).isEqualTo(DiscoveryStop.LocalNetworkDenied)
   }
 }

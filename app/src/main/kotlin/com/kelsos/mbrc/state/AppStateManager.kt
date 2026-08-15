@@ -102,6 +102,12 @@ class AppStateManager(
           is ConnectionStatus.Connecting -> {
             wasConnectionAttempted = true
           }
+
+          ConnectionStatus.LocalNetworkDenied -> {
+            // Not a connection loss: retrying cannot help, so do not hand this to the
+            // reconnection loop.
+            stopPositionUpdater()
+          }
         }
       }
     }

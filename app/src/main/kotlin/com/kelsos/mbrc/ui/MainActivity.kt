@@ -1,17 +1,26 @@
 package com.kelsos.mbrc.ui
 
-import android.content.pm.PackageManager
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.kelsos.mbrc.core.common.state.ConnectionStatePublisher
+import com.kelsos.mbrc.core.common.state.ConnectionStatus
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
+import com.kelsos.mbrc.service.LocalNetworkAccessImpl
 import com.kelsos.mbrc.service.ServiceChecker
 import org.koin.android.ext.android.inject
 
@@ -22,12 +31,42 @@ import org.koin.android.ext.android.inject
 class MainActivity : ComponentActivity() {
 
   private val serviceChecker: ServiceChecker by inject()
+  private val localNetworkAccess: LocalNetworkAccess by inject()
+  private val connectionState: ConnectionStatePublisher by inject()
+  private val preferences: SharedPreferences by inject()
 
-  // Start the service once the local-network permission has been resolved (granted or not):
-  // a denied result still starts the app, the LAN connection just won't be reachable.
+  private var showLocalNetworkRationale by mutableStateOf(false)
+
+  /**
+   * Whether the user has already turned the rationale down. Kept across configuration changes so a
+   * rotation does not put the dialog back in their face after they dismissed it.
+   */
+  private var rationaleDeclined = false
+
+  /**
+   * Whether the system prompt has ever been launched.
+   *
+   * `shouldShowRequestPermissionRationale` cannot answer this on its own: it is false both before
+   * the first request and after a permanent denial. Persisted rather than kept in the instance
+   * state because the distinction has to survive the process being killed, otherwise a cold start
+   * looks like "never asked" and Grant calls a prompt the system will not show.
+   */
+  private var permissionRequested: Boolean
+    get() = preferences.getBoolean(PREF_PERMISSION_REQUESTED, false)
+    set(value) = preferences.edit { putBoolean(PREF_PERMISSION_REQUESTED, value) }
+
   private val localNetworkPermissionLauncher =
-    registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-      serviceChecker.startServiceIfNotRunning()
+    registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+      if (granted) {
+        serviceChecker.startServiceIfNotRunning()
+        return@registerForActivityResult
+      }
+      denyLocalNetwork()
+      // A permanently denied permission makes launch() return instantly without showing anything,
+      // so without this the Grant action would appear to do nothing at all.
+      if (!shouldShowRequestPermissionRationale(ACCESS_LOCAL_NETWORK)) {
+        openAppSettings()
+      }
     }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +74,8 @@ class MainActivity : ComponentActivity() {
     installSplashScreen()
 
     super.onCreate(savedInstanceState)
+
+    rationaleDeclined = savedInstanceState?.getBoolean(STATE_RATIONALE_DECLINED) == true
 
     // Enable edge-to-edge display with transparent system bars
     // Using auto() with transparent scrims for both light and dark themes
@@ -53,34 +94,91 @@ class MainActivity : ComponentActivity() {
     WindowCompat.setDecorFitsSystemWindows(window, false)
 
     // Start the remote service if not already running (same as BaseActivity)
-    ensureLocalNetworkAccessThenStart()
+    ensureLocalNetworkAccessThenStart(restored = savedInstanceState != null)
 
     setContent {
-      RemoteApp()
+      RemoteApp(
+        onRequestLocalNetworkAccess = ::requestLocalNetworkAccess,
+        showLocalNetworkRationale = showLocalNetworkRationale,
+        onLocalNetworkRationaleContinue = {
+          showLocalNetworkRationale = false
+          permissionRequested = true
+          localNetworkPermissionLauncher.launch(ACCESS_LOCAL_NETWORK)
+        },
+        onLocalNetworkRationaleDismiss = {
+          showLocalNetworkRationale = false
+          rationaleDeclined = true
+          denyLocalNetwork()
+        }
+      )
     }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putBoolean(STATE_RATIONALE_DECLINED, rationaleDeclined)
   }
 
   /**
-   * On Android 17 (API 37) the local network is gated behind the runtime
-   * [ACCESS_LOCAL_NETWORK] permission; without it the TCP/multicast connection to
-   * MusicBee is blocked. Request it before starting the service. Older releases and the
-   * already-granted case start the service directly.
+   * On Android 17 (API 37) the local network is gated behind the `ACCESS_LOCAL_NETWORK` runtime
+   * permission; without it the TCP/multicast connection to MusicBee is blocked. Explain that before
+   * the system prompt appears, since the system dialog carries no context of its own. Older
+   * releases and the already-granted case start the service directly.
+   *
+   * @param restored true when the activity is being recreated, in which case the dialog state comes
+   * from the saved instance state rather than being decided again.
    */
-  private fun ensureLocalNetworkAccessThenStart() {
-    if (Build.VERSION.SDK_INT >= LOCAL_NETWORK_PERMISSION_SDK) {
-      val alreadyGranted = ContextCompat.checkSelfPermission(this, ACCESS_LOCAL_NETWORK) ==
-        PackageManager.PERMISSION_GRANTED
-      if (!alreadyGranted) {
-        localNetworkPermissionLauncher.launch(ACCESS_LOCAL_NETWORK)
-        return
-      }
+  private fun ensureLocalNetworkAccessThenStart(restored: Boolean) {
+    if (localNetworkAccess.isPermitted()) {
+      serviceChecker.startServiceIfNotRunning()
+      return
     }
-    serviceChecker.startServiceIfNotRunning()
+    if (!restored && !rationaleDeclined) {
+      showLocalNetworkRationale = true
+      return
+    }
+    denyLocalNetwork()
+  }
+
+  /**
+   * Records that nothing can connect. The service is deliberately not started: it exists to hold a
+   * connection, so without access it would only leave a foreground notification for a connection
+   * that can never happen.
+   */
+  private fun denyLocalNetwork() {
+    connectionState.updateConnection(ConnectionStatus.LocalNetworkDenied)
+  }
+
+  /**
+   * Sends the user somewhere they can actually grant access: the prompt while the system still
+   * shows it, the app's settings page once it does not.
+   */
+  private fun requestLocalNetworkAccess() {
+    if (localNetworkAccess.isPermitted()) {
+      return
+    }
+    val promptAvailable = !permissionRequested ||
+      shouldShowRequestPermissionRationale(ACCESS_LOCAL_NETWORK)
+    if (promptAvailable) {
+      permissionRequested = true
+      localNetworkPermissionLauncher.launch(ACCESS_LOCAL_NETWORK)
+      return
+    }
+    openAppSettings()
+  }
+
+  private fun openAppSettings() {
+    startActivity(
+      Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+      )
+    )
   }
 
   private companion object {
-    // Android 17. Use a literal since the framework constant is not yet named in the SDK.
-    const val LOCAL_NETWORK_PERMISSION_SDK = 37
-    const val ACCESS_LOCAL_NETWORK = "android.permission.ACCESS_LOCAL_NETWORK"
+    const val ACCESS_LOCAL_NETWORK = LocalNetworkAccessImpl.ACCESS_LOCAL_NETWORK
+    const val STATE_RATIONALE_DECLINED = "local_network_rationale_declined"
+    const val PREF_PERMISSION_REQUESTED = "local_network_permission_requested"
   }
 }

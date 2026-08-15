@@ -10,6 +10,7 @@ import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.core.networking.ConnectionCycleInfo
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -34,13 +35,15 @@ class ServiceLifecycleManagerImplTest : KoinTest {
   private val application: Application = mockk(relaxed = true)
   private val connectionUseCase: ClientConnectionUseCase = mockk(relaxed = true)
   private val connectionState: ConnectionStatePublisher = mockk(relaxed = true)
+  private var localNetworkPermitted = true
 
   private val testModule = module {
     single { application }
     single { connectionUseCase }
     single { connectionState }
+    single<LocalNetworkAccess> { LocalNetworkAccess { localNetworkPermitted } }
     single<ServiceLifecycleManager> {
-      ServiceLifecycleManagerImpl(get(), get(), get(), get())
+      ServiceLifecycleManagerImpl(get(), get(), get(), get(), get())
     }
   }
 
@@ -55,10 +58,37 @@ class ServiceLifecycleManagerImplTest : KoinTest {
     // Reset ServiceState before each test
     ServiceState.setRunning(false)
     ServiceState.setStopping(false)
+    localNetworkPermitted = true
 
     // Setup default mocks
     coEvery { connectionUseCase.connect(any(), any()) } just Runs
     every { application.stopService(any()) } returns true
+  }
+
+  @Test
+  fun `does not reconnect when local network access is denied`() = runTest {
+    // Retrying cannot recover a missing permission, and a reconnection cycle would blame the
+    // network for something only the user can fix.
+    localNetworkPermitted = false
+    ServiceState.setRunning(true)
+
+    serviceLifecycleManager.onConnectionLost()
+    testDispatcher.scheduler.advanceUntilIdle()
+
+    coVerify(exactly = 0) { connectionUseCase.connect(any(), any()) }
+    verify { connectionState.updateConnection(ConnectionStatus.LocalNetworkDenied) }
+  }
+
+  @Test
+  fun `denied local network access does not report a generic offline state`() = runTest {
+    // Offline would overwrite the specific reason and put the UI back to "not connected".
+    localNetworkPermitted = false
+    ServiceState.setRunning(true)
+
+    serviceLifecycleManager.onConnectionLost()
+    testDispatcher.scheduler.advanceUntilIdle()
+
+    verify(exactly = 0) { connectionState.updateConnection(ConnectionStatus.Offline) }
   }
 
   @After

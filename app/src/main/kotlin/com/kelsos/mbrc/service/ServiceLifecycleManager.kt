@@ -7,6 +7,7 @@ import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.core.networking.ConnectionCycleInfo
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
@@ -53,6 +54,7 @@ class ServiceLifecycleManagerImpl(
   private val application: Application,
   private val connectionUseCase: ClientConnectionUseCase,
   private val connectionState: ConnectionStatePublisher,
+  private val localNetworkAccess: LocalNetworkAccess,
   dispatchers: AppCoroutineDispatchers
 ) : ServiceLifecycleManager {
   private val scope = CoroutineScope(SupervisorJob() + dispatchers.main)
@@ -74,6 +76,15 @@ class ServiceLifecycleManagerImpl(
 
     if (!ServiceState.isRunning || ServiceState.isStopping) {
       Timber.v("Service not running or already stopping, ignoring connection loss")
+      return
+    }
+
+    // Retrying cannot recover from a missing permission, and presenting it as a reconnection
+    // blames the network for something only the user can fix.
+    if (!localNetworkAccess.isPermitted()) {
+      Timber.d("Local network permission missing, not attempting to reconnect")
+      connectionState.updateConnection(ConnectionStatus.LocalNetworkDenied)
+      stopService(publishOffline = false)
       return
     }
 
@@ -157,15 +168,21 @@ class ServiceLifecycleManagerImpl(
     }
   }
 
-  private fun stopService() {
+  /**
+   * @param publishOffline false when the caller has already published a more specific reason for
+   * stopping, so it is not immediately overwritten by a generic Offline.
+   */
+  private fun stopService(publishOffline: Boolean = true) {
     if (stopPending.compareAndSet(false, true)) {
       Timber.d("Stopping service due to connection failure")
       isReconnecting.set(false)
       reconnectionCycle.set(0)
       reconnectionJob?.cancel()
       reconnectionJob = null
-      // Set state to Offline since all reconnection attempts have failed
-      connectionState.updateConnection(ConnectionStatus.Offline)
+      if (publishOffline) {
+        // Set state to Offline since all reconnection attempts have failed
+        connectionState.updateConnection(ConnectionStatus.Offline)
+      }
       application.stopService(Intent(application, RemoteService::class.java))
     }
   }

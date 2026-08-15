@@ -75,7 +75,8 @@ fun AppDrawer(
   drawerState: DrawerState,
   navController: NavController,
   drawerViewModel: DrawerViewModel,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  onRequestLocalNetworkAccess: () -> Unit = {}
 ) {
   val currentBackStackEntry by navController.currentBackStackEntryAsState()
   val currentRoute = currentBackStackEntry?.destination?.route
@@ -83,8 +84,14 @@ fun AppDrawer(
   val connectionStatus by drawerViewModel.connectionStatus.collectAsStateWithLifecycle()
   val connectionName by drawerViewModel.connectionName.collectAsStateWithLifecycle()
 
-  val onConnectionToggle = remember(drawerViewModel) {
-    { drawerViewModel.toggleConnection() }
+  // Tapping connect while local network access is denied asks for access instead of starting a
+  // connection attempt that cannot succeed.
+  val onConnectionToggle = remember(drawerViewModel, onRequestLocalNetworkAccess) {
+    {
+      if (!drawerViewModel.toggleConnection()) {
+        onRequestLocalNetworkAccess()
+      }
+    }
   }
 
   val onNavigate: (Screen) -> Unit = remember(scope, drawerState, navController) {
@@ -260,6 +267,9 @@ private fun DrawerHeader(
 
               is ConnectionStatus.Offline ->
                 stringResource(R.string.drawer_connection_not_connected)
+
+              is ConnectionStatus.LocalNetworkDenied ->
+                stringResource(R.string.drawer_connection_local_network_denied)
             }
             if (statusText != null) {
               Text(
@@ -282,6 +292,26 @@ private fun DrawerHeader(
 }
 
 /**
+ * Colour and icon for a connection state. Denied local network access is drawn like Offline: the
+ * distinction is carried by the label and the banner, not by inventing a third indicator style.
+ */
+private fun ConnectionStatus.appearance(): Pair<Color, ImageVector> = when (this) {
+  ConnectionStatus.Connected -> connection_status_connected to Icons.Default.Wifi
+  is ConnectionStatus.Connecting -> connection_status_connecting to Icons.Default.Wifi
+  ConnectionStatus.Authenticating -> connection_status_connecting to Icons.Default.Wifi
+  ConnectionStatus.Offline -> connection_status_offline to Icons.Default.WifiOff
+  ConnectionStatus.LocalNetworkDenied -> connection_status_offline to Icons.Default.WifiOff
+}
+
+private fun ConnectionStatus.contentDescriptionRes(): Int = when (this) {
+  ConnectionStatus.Connected -> R.string.drawer_connection_status_active
+  is ConnectionStatus.Connecting -> R.string.drawer_connection_status_on
+  ConnectionStatus.Authenticating -> R.string.drawer_connection_status_on
+  ConnectionStatus.Offline -> R.string.drawer_connection_status_off
+  ConnectionStatus.LocalNetworkDenied -> R.string.drawer_connection_local_network_denied
+}
+
+/**
  * Connection status button with circular progress indicator.
  * Shows cycle progress as an arc and indeterminate spinner when connecting.
  */
@@ -290,12 +320,7 @@ private fun ConnectionStatusIconButton(
   connectionState: ConnectionStatus,
   onConnectionClick: () -> Unit
 ) {
-  val (statusColor, statusIcon) = when (connectionState) {
-    ConnectionStatus.Connected -> connection_status_connected to Icons.Default.Wifi
-    is ConnectionStatus.Connecting -> connection_status_connecting to Icons.Default.Wifi
-    ConnectionStatus.Authenticating -> connection_status_connecting to Icons.Default.Wifi
-    ConnectionStatus.Offline -> connection_status_offline to Icons.Default.WifiOff
-  }
+  val (statusColor, statusIcon) = connectionState.appearance()
 
   val isConnecting = connectionState is ConnectionStatus.Connecting ||
     connectionState is ConnectionStatus.Authenticating
@@ -341,14 +366,7 @@ private fun ConnectionStatusIconButton(
     // Center icon
     Icon(
       imageVector = statusIcon,
-      contentDescription = stringResource(
-        when (connectionState) {
-          ConnectionStatus.Connected -> R.string.drawer_connection_status_active
-          is ConnectionStatus.Connecting -> R.string.drawer_connection_status_on
-          ConnectionStatus.Authenticating -> R.string.drawer_connection_status_on
-          ConnectionStatus.Offline -> R.string.drawer_connection_status_off
-        }
-      ),
+      contentDescription = stringResource(connectionState.contentDescriptionRes()),
       tint = statusColor,
       modifier = Modifier.size(20.dp)
     )

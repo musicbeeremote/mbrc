@@ -17,4 +17,12 @@ sealed class ConnectionStatus(val status: String) {
   data object Authenticating : ConnectionStatus("Authenticating")
 
   data object Connected : ConnectionStatus("Connected")
+
+  /**
+   * The local network cannot be reached because the user has not granted permission for it.
+   *
+   * Terminal rather than transient: retrying cannot succeed, so nothing should present this as a
+   * connection that is still being attempted. The only way out is the user granting access.
+   */
+  data object LocalNetworkDenied : ConnectionStatus("LocalNetworkDenied")
 }

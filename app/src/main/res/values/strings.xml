@@ -24,6 +24,15 @@
   <string name="connection_error_not_allowed">This device is not allowed to connect to MusicBee.</string>
   <string name="connection_error_party_mode">Command unavailable in party mode.</string>
   <string name="plugin_update_available">A plugin update is available. Update for the best experience.</string>
+
+  <!-- Local network permission (Android 17+) -->
+  <string name="local_network_rationale_title">Connect to MusicBee</string>
+  <string name="local_network_rationale_message">MusicBee Remote controls MusicBee on your computer over your local network. Android needs your permission for this. Without it the app cannot find or reach your computer.</string>
+  <string name="local_network_rationale_continue">Continue</string>
+  <string name="local_network_rationale_not_now">Not now</string>
+  <string name="local_network_denied_banner">Local network access is off, so MusicBee cannot be reached.</string>
+  <string name="local_network_denied_grant">Grant</string>
+  <string name="drawer_connection_local_network_denied">Permission required</string>
   <plurals name="connection_commands_dropped">
     <item quantity="one">%d command could not be sent and was discarded.</item>
     <item quantity="other">%d commands could not be sent and were discarded.</item>

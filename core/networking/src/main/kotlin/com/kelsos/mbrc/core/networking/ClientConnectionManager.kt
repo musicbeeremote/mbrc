@@ -77,7 +77,8 @@ class ClientConnectionManagerImpl(
   private val connectionState: ConnectionStatePublisher,
   private val dispatchers: AppCoroutineDispatchers,
   private val uiMessageQueue: UiMessageQueue,
-  private val pendingCommands: PendingCommandBuffer
+  private val pendingCommands: PendingCommandBuffer,
+  private val localNetworkAccess: LocalNetworkAccess
 ) : ScopeBase(dispatchers.io),
   ClientConnectionManager {
   // Written when a connection is set up or torn down, read by the outgoing pump, which runs on a
@@ -105,6 +106,15 @@ class ClientConnectionManagerImpl(
   private var pendingSocket: Socket? = null
 
   override fun start(cycleInfo: ConnectionCycleInfo?) {
+    // Every path into a connection ends up here: the service starting, the reconnection loop, the
+    // drawer toggle, the connection manager screen. Refusing here means a missing permission can
+    // never be presented as a connection attempt, whichever of them asked.
+    if (!localNetworkAccess.isPermitted()) {
+      Timber.d("Local network access is not permitted, refusing to connect")
+      connectionState.updateConnection(ConnectionStatus.LocalNetworkDenied)
+      return
+    }
+
     // Don't restart if already connected
     val currentStatus = connectionState.connection.value
     if (currentStatus == ConnectionStatus.Connected) {
@@ -470,8 +480,13 @@ class ClientConnectionManagerImpl(
     teardownConnection()
     activityChecker.stop()
 
-    // Set state to Offline immediately
-    connectionState.updateConnection(ConnectionStatus.Offline)
+    // Set state to Offline immediately, unless something more specific already explains why there
+    // is no connection. Denied local network access is terminal, and a stop is part of how that
+    // state is reached (the service is torn down), so overwriting it here would put the UI back to
+    // "not connected" and hide the only thing the user can act on.
+    if (connectionState.connection.value !is ConnectionStatus.LocalNetworkDenied) {
+      connectionState.updateConnection(ConnectionStatus.Offline)
+    }
   }
 
   companion object {

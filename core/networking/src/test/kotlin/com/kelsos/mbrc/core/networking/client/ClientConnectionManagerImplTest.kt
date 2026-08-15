@@ -10,6 +10,7 @@ import com.kelsos.mbrc.core.common.test.testDispatcherModule
 import com.kelsos.mbrc.core.networking.ClientConnectionManagerImpl
 import com.kelsos.mbrc.core.networking.ConnectionProvider
 import com.kelsos.mbrc.core.networking.Listener
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import com.kelsos.mbrc.core.networking.MessageHandler
 import com.kelsos.mbrc.core.networking.SocketActivityChecker
 import com.kelsos.mbrc.core.networking.discovery.DiscoveryStop
@@ -53,9 +54,12 @@ class ClientConnectionManagerImplTest : KoinTest {
       single<ConnectionStatePublisher> { mockk(relaxed = true) }
       single<UiMessageQueue> { mockk(relaxed = true) }
       single { PendingCommandBuffer(Clock { System.currentTimeMillis() }) }
+      single<LocalNetworkAccess> { LocalNetworkAccess { localNetworkPermitted } }
       single { Moshi.Builder().build() }
       singleOf(::ClientConnectionManagerImpl)
     }
+
+  private var localNetworkPermitted = true
 
   private val connectionManager: ClientConnectionManagerImpl by inject()
   private val activityChecker: SocketActivityChecker by inject()
@@ -242,6 +246,21 @@ class ClientConnectionManagerImplTest : KoinTest {
 
       // Then - Should handle multiple starts without issues
       verify(atLeast = 1) { connectionProvider.getDefault() }
+    }
+  }
+
+  @Test
+  fun startShouldRefuseToConnectWhenLocalNetworkAccessIsDenied() {
+    runTest(testDispatcher) {
+      // Without the permission a connection cannot succeed, so attempting one would show the user
+      // a reconnection that blames the network for something only they can fix.
+      localNetworkPermitted = false
+
+      connectionManager.start()
+      testDispatcher.scheduler.advanceUntilIdle()
+
+      verify { connectionState.updateConnection(ConnectionStatus.LocalNetworkDenied) }
+      coVerify(exactly = 0) { connectionProvider.getDefault() }
     }
   }
 }

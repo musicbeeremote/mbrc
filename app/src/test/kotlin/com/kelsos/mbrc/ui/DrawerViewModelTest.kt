@@ -5,13 +5,16 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
+import com.kelsos.mbrc.core.common.state.ConnectionStatePublisher
 import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import com.kelsos.mbrc.feature.settings.domain.ConnectionRepository
 import com.kelsos.mbrc.service.ServiceChecker
 import com.kelsos.mbrc.service.ServiceLifecycleManager
 import com.kelsos.mbrc.utils.testDispatcher
 import com.kelsos.mbrc.utils.testDispatcherModule
+import com.kelsos.mbrc.utils.testDispatchers
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -38,6 +41,8 @@ class DrawerViewModelTest : KoinTest {
     single<ConnectionRepository> { mockk(relaxed = true) }
     single<ServiceChecker> { mockk(relaxed = true) }
     single<ServiceLifecycleManager> { mockk(relaxed = true) }
+    single<LocalNetworkAccess> { LocalNetworkAccess { true } }
+    single<ConnectionStatePublisher> { mockk(relaxed = true) }
     singleOf(::DrawerViewModel)
   }
 
@@ -129,6 +134,36 @@ class DrawerViewModelTest : KoinTest {
       verify(exactly = 1) { serviceLifecycleManager.onIntentionalDisconnect() }
       coVerify(exactly = 1) { clientConnectionUseCase.disconnect() }
       coVerify(exactly = 0) { clientConnectionUseCase.connect(any(), any()) }
+    }
+  }
+
+  @Test
+  fun `toggleConnection refuses to connect when local network access is denied`() {
+    runTest(testDispatcher) {
+      // A connection attempt cannot succeed without the permission, and showing one would blame
+      // the network for something only the user can fix.
+      val publisher: ConnectionStatePublisher = mockk(relaxed = true)
+      val useCase: ClientConnectionUseCase = mockk(relaxed = true)
+      val checker: ServiceChecker = mockk(relaxed = true)
+      val stateFlow: ConnectionStateFlow = mockk(relaxed = true)
+      every { stateFlow.connection } returns MutableStateFlow(ConnectionStatus.Offline)
+      val denied = DrawerViewModel(
+        connectionStateFlow = stateFlow,
+        clientConnectionUseCase = useCase,
+        connectionRepository = mockk(relaxed = true),
+        dispatchers = testDispatchers,
+        serviceChecker = checker,
+        serviceLifecycleManager = mockk(relaxed = true),
+        localNetworkAccess = { false },
+        connectionStatePublisher = publisher
+      )
+
+      val started = denied.toggleConnection()
+
+      assertThat(started).isFalse()
+      coVerify(exactly = 0) { useCase.connect(any(), any()) }
+      verify(exactly = 0) { checker.startServiceIfNotRunning() }
+      verify { publisher.updateConnection(ConnectionStatus.LocalNetworkDenied) }
     }
   }
 
@@ -230,6 +265,8 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionRepository> { mockConnectionRepository }
         single<ServiceChecker> { mockk(relaxed = true) }
         single<ServiceLifecycleManager> { mockk(relaxed = true) }
+        single<LocalNetworkAccess> { LocalNetworkAccess { true } }
+        single<ConnectionStatePublisher> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -276,6 +313,8 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionRepository> { mockConnectionRepository }
         single<ServiceChecker> { mockk(relaxed = true) }
         single<ServiceLifecycleManager> { mockk(relaxed = true) }
+        single<LocalNetworkAccess> { LocalNetworkAccess { true } }
+        single<ConnectionStatePublisher> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -321,6 +360,8 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionRepository> { mockConnectionRepository }
         single<ServiceChecker> { mockk(relaxed = true) }
         single<ServiceLifecycleManager> { mockk(relaxed = true) }
+        single<LocalNetworkAccess> { LocalNetworkAccess { true } }
+        single<ConnectionStatePublisher> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -365,6 +406,8 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionRepository> { mockConnectionRepository }
         single<ServiceChecker> { mockk(relaxed = true) }
         single<ServiceLifecycleManager> { mockk(relaxed = true) }
+        single<LocalNetworkAccess> { LocalNetworkAccess { true } }
+        single<ConnectionStatePublisher> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 
@@ -410,6 +453,8 @@ class DrawerViewModelTest : KoinTest {
         single<ConnectionRepository> { mockConnectionRepository }
         single<ServiceChecker> { mockk(relaxed = true) }
         single<ServiceLifecycleManager> { mockk(relaxed = true) }
+        single<LocalNetworkAccess> { LocalNetworkAccess { true } }
+        single<ConnectionStatePublisher> { mockk(relaxed = true) }
         singleOf(::DrawerViewModel)
       }
 

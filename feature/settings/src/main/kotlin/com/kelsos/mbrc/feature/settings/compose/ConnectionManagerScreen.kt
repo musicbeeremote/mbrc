@@ -109,6 +109,8 @@ fun ConnectionManagerScreen(
   val scanLabel = stringResource(R.string.connection_manager_scan)
   val addLabel = stringResource(R.string.common_add)
   val noWifiMessage = stringResource(R.string.connection_manager_discovery_no_wifi)
+  val localNetworkDeniedMessage =
+    stringResource(R.string.connection_manager_discovery_local_network_denied)
   val notFoundMessage = stringResource(R.string.connection_manager_discovery_not_found)
   // LocalResources rather than LocalContext.current.resources: the latter is not invalidated by a
   // configuration change, so the snackbar could be built from stale resources.
@@ -144,6 +146,8 @@ fun ConnectionManagerScreen(
         DiscoveryStop.NoWifi -> noWifiMessage
 
         DiscoveryStop.NotFound -> notFoundMessage
+
+        DiscoveryStop.LocalNetworkDenied -> localNetworkDeniedMessage
 
         is DiscoveryStop.Complete -> resources.getQuantityString(
           R.plurals.connection_manager_discovery_success_count,

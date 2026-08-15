@@ -3,6 +3,7 @@ package com.kelsos.mbrc.core.networking.discovery
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.squareup.moshi.Moshi
 import java.io.IOException
@@ -25,6 +26,7 @@ fun interface RemoteServiceDiscovery {
 class RemoteServiceDiscoveryImpl(
   private val manager: WifiManager,
   private val connectivityManager: ConnectivityManager,
+  private val localNetworkAccess: LocalNetworkAccess,
   moshi: Moshi
 ) : RemoteServiceDiscovery {
   private val adapter = moshi.adapter(DiscoveryMessage::class.java)
@@ -137,6 +139,11 @@ class RemoteServiceDiscoveryImpl(
   }
 
   override suspend fun discover(): DiscoveryStop {
+    // Multicast discovery needs the same permission the connection does, so without it a scan
+    // would report "no hosts found" for a problem that has nothing to do with the network.
+    if (!localNetworkAccess.isPermitted()) {
+      return DiscoveryStop.LocalNetworkDenied
+    }
     if (!isWifiConnected()) {
       return DiscoveryStop.NoWifi
     }

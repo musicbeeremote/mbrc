@@ -17,6 +17,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,8 +30,12 @@ import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.networking.client.DroppedCommandNotice
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
 import com.kelsos.mbrc.core.ui.theme.RemoteTheme
@@ -53,7 +58,12 @@ private const val EDGE_HORIZONTAL_DOMINANCE = 2f
  * Each screen handles its own Scaffold configuration.
  */
 @Composable
-fun RemoteApp() {
+fun RemoteApp(
+  onRequestLocalNetworkAccess: () -> Unit = {},
+  showLocalNetworkRationale: Boolean = false,
+  onLocalNetworkRationaleContinue: () -> Unit = {},
+  onLocalNetworkRationaleDismiss: () -> Unit = {}
+) {
   val settingsManager: SettingsManager = koinInject()
   // Initial value matches DataStore default ("dark") to avoid flash on first load
   val themeState by settingsManager.themeFlow.collectAsStateWithLifecycle(initialValue = Theme.Dark)
@@ -70,6 +80,20 @@ fun RemoteApp() {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val drawerViewModel: DrawerViewModel = koinViewModel()
+    val connectionStatus by drawerViewModel.connectionStatus.collectAsStateWithLifecycle()
+
+    // A grant made outside the app (or from the banner) has to clear the denied state, otherwise
+    // the banner outlives the problem.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+      val observer = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+          drawerViewModel.refreshLocalNetworkAccess()
+        }
+      }
+      lifecycleOwner.lifecycle.addObserver(observer)
+      onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
     val uiMessageQueue: UiMessageQueue = koinInject()
     val droppedCommandNotice: DroppedCommandNotice = koinInject()
     val whatsNewViewModel: WhatsNewViewModel = koinViewModel()
@@ -89,6 +113,22 @@ fun RemoteApp() {
         showUpdateRequired -> showUpdateRequired = false
         showWhatsNew -> whatsNewViewModel.dismiss()
       }
+    }
+
+    // Surfaced through the snackbar host every screen already has, rather than as a banner: a
+    // persistent bar at the top pushes each screen's own toolbar down and double-counts the status
+    // bar inset. Indefinite so it stays until access is granted or the user dismisses it.
+    LocalNetworkDeniedNotice(
+      denied = connectionStatus is ConnectionStatus.LocalNetworkDenied,
+      snackbarHostState = snackbarHostState,
+      onGrant = onRequestLocalNetworkAccess
+    )
+
+    if (showLocalNetworkRationale) {
+      LocalNetworkRationaleDialog(
+        onContinue = onLocalNetworkRationaleContinue,
+        onDismiss = onLocalNetworkRationaleDismiss
+      )
     }
 
     // Handle global UI messages (connection errors, etc.)
@@ -119,7 +159,8 @@ fun RemoteApp() {
           AppDrawer(
             drawerState = drawerState,
             navController = navController,
-            drawerViewModel = drawerViewModel
+            drawerViewModel = drawerViewModel,
+            onRequestLocalNetworkAccess = onRequestLocalNetworkAccess
           )
         }
       ) {
