@@ -1,5 +1,5 @@
 [versions]
-aboutlibraries = "14.2.1"
+aboutlibraries = "15.0.4"
 androidx-annotation = "1.10.0"
 androidx-benchmark = "1.4.1"
 androidx-profileinstaller = "1.4.1"
