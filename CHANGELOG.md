@@ -4,6 +4,7 @@ Changelog
 ## [1.7.0]
 ### Added
 - The now playing queue opens on the track that is playing instead of at the top, with a couple of tracks above it for context. A new action in the top bar jumps back to the playing track after you have scrolled away. The queue is left alone if you start scrolling before the track is located, so it never moves under your finger.
+- On Android 17 the app now asks for permission to reach devices on your local network, which that release requires before anything can connect to MusicBee. The reason is explained before the system prompt appears, since the prompt itself only mentions nearby devices. If the permission is declined the app says so and stops trying, instead of showing "Connecting..." for something that cannot succeed, and offers a way back to the prompt or to app settings. Scanning for a plugin reports the same reason rather than claiming nothing was found.
 
 ### Fixed
 - Fixes a crash when the app asked for its background remote-control service at a moment the system would not allow it to start (Android 12+), such as toggling the connection just as the app went to the background. The request is now declined quietly and retried the next time the app is opened.
@@ -11,6 +12,8 @@ Changelog
 - Fixes a crash on every launch for anyone updating from a very old version of the app. Databases written before the app moved to Room had no upgrade path and the app died as soon as it read from one, leaving no way out but reinstalling. Those databases are now upgraded, and the saved connections in them are carried over.
 - Fixes the volume slider on the Now Playing screen being hidden behind the system navigation bar. On foldables and other edge-to-edge devices the volume row could be drawn under the navigation bar or taskbar and could not be used; the player now keeps its controls clear of the system bars in portrait, landscape and on tablets.
 - Restores long-press-to-stop on the play/pause button. Long-pressing play/pause on the player and the mini-control now stops playback, a gesture that was lost when the player moved to the new UI. A short tap still toggles play/pause.
+- Fixes the app freezing, and sometimes being closed by the system as unresponsive, when using the lock screen, notification, headset or car controls while the connection to MusicBee was down or dropping out. Play, pause, skip, seek and volume were all sent in a way that made the app wait for the connection before it could draw anything else; they are now sent in the background and the app stays responsive whether or not the command gets through.
+- Fixes skipping to the next or previous track also telling MusicBee to jump to the start of the track. Skipping now leaves the position to the player, so a track that was meant to resume where you left it is no longer reset.
 
 ## [1.6.1] - 2026-06-27
 ### Added

@@ -204,15 +204,20 @@ class RemotePlayer(
         COMMAND_SEEK_TO_NEXT,
         COMMAND_SEEK_TO_NEXT_MEDIA_ITEM
         -> userActionUseCase.next()
-      }
 
-      val to =
-        when (positionMs) {
-          C.TIME_UNSET -> 0L
-          else -> positionMs
+        // Only a real seek carries a position. Skipping asks for the next track's default
+        // position, which is MusicBee's to decide: forcing zero here would send a second command
+        // for every skip and overwrite a resume position the player was holding.
+        else -> {
+          val to =
+            when (positionMs) {
+              C.TIME_UNSET -> 0L
+              else -> positionMs
+            }
+
+          userActionUseCase.performUserAction(Protocol.NowPlayingPosition, to)
         }
-
-      userActionUseCase.performUserAction(Protocol.NowPlayingPosition, to)
+      }
     }
   }
 
