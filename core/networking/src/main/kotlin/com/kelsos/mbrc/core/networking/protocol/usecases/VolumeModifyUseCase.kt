@@ -1,10 +1,14 @@
 package com.kelsos.mbrc.core.networking.protocol.usecases
 
 import com.kelsos.mbrc.core.common.state.AppStateFlow
+import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.client.MessageQueue
 import com.kelsos.mbrc.core.networking.client.SocketMessage
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 /**
  * Handles the step based volume changes.
@@ -24,10 +28,37 @@ interface VolumeModifyUseCase {
    * Reduces volume to 20% of the original volume
    */
   suspend fun reduceVolume()
+
+  /**
+   * Fire-and-forget [increase], for callers on the main thread.
+   *
+   * Sending is a suspending queue write that parks until a collector drains it, so a main-thread
+   * caller must never wait for it. See [UserActionUseCase.tryPerform].
+   */
+  fun tryIncrease()
+
+  /**
+   * Fire-and-forget [decrease], for callers on the main thread. See [tryIncrease].
+   */
+  fun tryDecrease()
 }
 
-class VolumeModifyUseCaseImpl(private val appState: AppStateFlow, private val queue: MessageQueue) :
-  VolumeModifyUseCase {
+class VolumeModifyUseCaseImpl(
+  private val appState: AppStateFlow,
+  private val queue: MessageQueue,
+  dispatchers: AppCoroutineDispatchers
+) : VolumeModifyUseCase {
+  private val job = SupervisorJob()
+  private val scope = CoroutineScope(job + dispatchers.network)
+
+  override fun tryIncrease() {
+    scope.launch { increase() }
+  }
+
+  override fun tryDecrease() {
+    scope.launch { decrease() }
+  }
+
   private suspend fun currentVolume() = appState.playerStatus.firstOrNull()?.volume ?: 0
 
   private suspend fun isMute() = appState.playerStatus.firstOrNull()?.mute == true

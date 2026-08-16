@@ -6,7 +6,6 @@ import com.kelsos.mbrc.core.networking.protocol.actions.UserAction
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.core.networking.protocol.usecases.VolumeModifyUseCase
-import kotlinx.coroutines.runBlocking
 
 class MediaIntentHandler(
   private val userActionUseCase: UserActionUseCase,
@@ -60,12 +59,12 @@ class MediaIntentHandler(
       KeyEvent.KEYCODE_MEDIA_PREVIOUS -> postAction(UserAction(Protocol.PlayerPrevious, true))
 
       KeyEvent.KEYCODE_VOLUME_UP -> {
-        runBlocking { volumeModifyUseCase.increase() }
+        volumeModifyUseCase.tryIncrease()
         true
       }
 
       KeyEvent.KEYCODE_VOLUME_DOWN -> {
-        runBlocking { volumeModifyUseCase.decrease() }
+        volumeModifyUseCase.tryDecrease()
         true
       }
 

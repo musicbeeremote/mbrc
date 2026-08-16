@@ -3,15 +3,23 @@ package com.kelsos.mbrc.core.networking.protocol
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.PlayerStatusModel
+import com.kelsos.mbrc.core.common.test.testDispatcher
+import com.kelsos.mbrc.core.common.test.testDispatchers
+import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.client.MessageQueue
 import com.kelsos.mbrc.core.networking.client.SocketMessage
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.usecases.VolumeModifyUseCaseImpl
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -28,7 +36,7 @@ class VolumeModifyUseCaseImplTest {
     appStateFlow = mockk()
     messageQueue = mockk(relaxed = true)
     every { appStateFlow.playerStatus } returns playerStatusFlow
-    volumeModifyUseCase = VolumeModifyUseCaseImpl(appStateFlow, messageQueue)
+    volumeModifyUseCase = VolumeModifyUseCaseImpl(appStateFlow, messageQueue, testDispatchers)
   }
 
   // ==================== increase() tests ====================
@@ -257,5 +265,61 @@ class VolumeModifyUseCaseImplTest {
 
     // Then
     coVerify(exactly = 0) { messageQueue.queue(any()) }
+  }
+
+  // ==================== fire-and-forget tests ====================
+
+  @Test
+  fun `tryIncrease should queue the same volume increase does`() = runTest(testDispatcher) {
+    // Given
+    playerStatusFlow.value = PlayerStatusModel(volume = 20)
+
+    // When
+    volumeModifyUseCase.tryIncrease()
+    advanceUntilIdle()
+
+    // Then
+    val slot = slot<SocketMessage>()
+    coVerify { messageQueue.queue(capture(slot)) }
+    assertThat(slot.captured.data).isEqualTo(30)
+  }
+
+  @Test
+  fun `tryDecrease should queue the same volume decrease does`() = runTest(testDispatcher) {
+    // Given
+    playerStatusFlow.value = PlayerStatusModel(volume = 20)
+
+    // When
+    volumeModifyUseCase.tryDecrease()
+    advanceUntilIdle()
+
+    // Then
+    val slot = slot<SocketMessage>()
+    coVerify { messageQueue.queue(capture(slot)) }
+    assertThat(slot.captured.data).isEqualTo(10)
+  }
+
+  @Test
+  fun `tryIncrease should return while the queue is still parked`() = runTest {
+    // The queue suspends until something drains it, which is the state the app is in whenever the
+    // connection is down. A caller on the main thread must not wait for that. Running the work on
+    // an unconfined dispatcher means it starts inline and reaches the suspension point before
+    // tryIncrease returns, so if it were awaiting the send this test would never finish.
+    val dispatchers = object : AppCoroutineDispatchers {
+      override val main: CoroutineDispatcher = UnconfinedTestDispatcher()
+      override val io: CoroutineDispatcher = UnconfinedTestDispatcher()
+      override val database: CoroutineDispatcher = UnconfinedTestDispatcher()
+      override val network: CoroutineDispatcher = UnconfinedTestDispatcher()
+    }
+    val neverDrained = mockk<MessageQueue>()
+    coEvery { neverDrained.queue(any()) } coAnswers { awaitCancellation() }
+    playerStatusFlow.value = PlayerStatusModel(volume = 20)
+    val useCase = VolumeModifyUseCaseImpl(appStateFlow, neverDrained, dispatchers)
+
+    // When
+    useCase.tryIncrease()
+
+    // Then reaching this line at all is the assertion: the send is in flight, not awaited.
+    coVerify { neverDrained.queue(any()) }
   }
 }

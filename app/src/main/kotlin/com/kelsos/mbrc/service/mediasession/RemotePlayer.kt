@@ -15,7 +15,6 @@ import com.google.common.util.concurrent.Futures.immediateVoidFuture
 import com.google.common.util.concurrent.ListenableFuture
 import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.PlayerState
-import com.kelsos.mbrc.core.common.state.PlayerStatusModel
 import com.kelsos.mbrc.core.common.state.ShuffleMode
 import com.kelsos.mbrc.core.common.state.orEmpty
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
@@ -34,10 +33,9 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -48,7 +46,7 @@ class RemotePlayer(
   private val volumeModifyUseCase: VolumeModifyUseCase,
   private val appState: AppStateFlow,
   private val dispatchers: AppCoroutineDispatchers,
-  scope: CoroutineScope
+  private val scope: CoroutineScope
 ) : SimpleBasePlayer(context.mainLooper) {
   init {
     appState.playerStatus.invalidateStateOnEach(scope)
@@ -60,6 +58,21 @@ class RemotePlayer(
     withContext(dispatchers.main) { invalidateState() }
   }.launchIn(scope)
 
+  /**
+   * Runs a command off the main thread and answers Media3 immediately.
+   *
+   * Media3 dispatches these handlers on the application main looper, and every command ends in a
+   * suspending write to the outgoing message queue. That queue parks the caller whenever nothing is
+   * draining it, which is exactly the case while the connection is down or reconnecting, so waiting
+   * for the command inline blocks the main thread until the system raises an ANR. Nothing here has
+   * a result the caller needs, so the returned future completes right away and the command travels
+   * on its own.
+   */
+  private fun dispatch(block: suspend () -> Unit): ListenableFuture<*> {
+    scope.launch(dispatchers.network) { block() }
+    return immediateVoidFuture()
+  }
+
   private fun getPlaybackState(state: PlayerState): Int = when (state) {
     PlayerState.Playing -> STATE_READY
     PlayerState.Paused -> STATE_READY
@@ -67,10 +80,12 @@ class RemotePlayer(
     else -> STATE_IDLE
   }
 
-  override fun getState(): State = runBlocking {
-    val statusModel = appState.playerStatus.firstOrNull() ?: PlayerStatusModel()
-    val position = appState.playingPosition.firstOrNull().orEmpty()
-    val playingTrack = appState.playingTrack.firstOrNull().orEmpty().toPlayingTrack()
+  // Media3 calls this on the main thread and often, so it reads the state flows directly rather
+  // than collecting them. Every value is already in memory; none of this touches the network.
+  override fun getState(): State {
+    val statusModel = appState.playerStatus.value
+    val position = appState.playingPosition.value.orEmpty()
+    val playingTrack = appState.playingTrack.value.orEmpty().toPlayingTrack()
     val isStream = position.isStream
 
     val commandsBuilder = Player.Commands
@@ -124,7 +139,7 @@ class RemotePlayer(
 
     val playlist = listOf(previous, mediaItem, next)
 
-    State
+    return State
       .Builder()
       .setAvailableCommands(commands)
       .setAudioAttributes(AudioAttributes.DEFAULT)
@@ -180,7 +195,7 @@ class RemotePlayer(
     seekCommand: Int
   ): ListenableFuture<*> {
     Timber.d("received seek command: $seekCommand item: $mediaItemIndex at $positionMs")
-    runBlocking {
+    return dispatch {
       when (seekCommand) {
         COMMAND_SEEK_TO_PREVIOUS,
         COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM
@@ -199,24 +214,22 @@ class RemotePlayer(
 
       userActionUseCase.performUserAction(Protocol.NowPlayingPosition, to)
     }
-    return immediateVoidFuture()
   }
 
   override fun handleSetPlayWhenReady(playWhenReady: Boolean): ListenableFuture<*> {
     Timber.d("received play when ready: $playWhenReady")
-    runBlocking {
+    return dispatch {
       if (playWhenReady) {
         userActionUseCase.play()
       } else {
         userActionUseCase.pause()
       }
     }
-    return immediateVoidFuture()
   }
 
   override fun handleSetShuffleModeEnabled(shuffleModeEnabled: Boolean): ListenableFuture<*> {
     Timber.d("received shuffle mode enabled: $shuffleModeEnabled")
-    runBlocking {
+    return dispatch {
       val mode =
         if (shuffleModeEnabled) {
           ShuffleMode.OFF
@@ -225,46 +238,38 @@ class RemotePlayer(
         }
       userActionUseCase.perform(UserAction(Protocol.PlayerShuffle, mode))
     }
-    return immediateVoidFuture()
   }
 
-  override fun handleStop(): ListenableFuture<*> {
-    runBlocking {
-      userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
-    }
-    return immediateVoidFuture()
+  override fun handleStop(): ListenableFuture<*> = dispatch {
+    userActionUseCase.perform(UserAction(Protocol.PlayerStop, true))
   }
 
   override fun handleSetDeviceVolume(deviceVolume: Int, flags: Int): ListenableFuture<*> {
     Timber.d("received device volume: $deviceVolume")
-    runBlocking {
+    return dispatch {
       userActionUseCase.perform(UserAction(Protocol.PlayerVolume, deviceVolume))
     }
-    return immediateVoidFuture()
   }
 
   override fun handleIncreaseDeviceVolume(flags: Int): ListenableFuture<*> {
     Timber.d("received increase device volume")
-    runBlocking {
+    return dispatch {
       volumeModifyUseCase.increase()
     }
-    return immediateVoidFuture()
   }
 
   override fun handleDecreaseDeviceVolume(flags: Int): ListenableFuture<*> {
     Timber.d("received decrease device volume")
-    runBlocking {
+    return dispatch {
       volumeModifyUseCase.decrease()
     }
-    return immediateVoidFuture()
   }
 
   override fun handleSetDeviceMuted(muted: Boolean, flags: Int): ListenableFuture<*> {
     Timber.d("received device muted: $muted")
-    runBlocking {
+    return dispatch {
       userActionUseCase.perform(UserAction(Protocol.PlayerMute, muted))
     }
-    return immediateVoidFuture()
   }
 
   override fun handleSetMediaItems(

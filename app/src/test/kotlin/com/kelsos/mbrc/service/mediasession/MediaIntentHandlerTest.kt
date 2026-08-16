@@ -33,8 +33,8 @@ class MediaIntentHandlerTest {
       every { tryPerform(any()) } just Runs
     }
     volumeModifyUseCase = mockk {
-      coEvery { increase() } just Runs
-      coEvery { decrease() } just Runs
+      every { tryIncrease() } just Runs
+      every { tryDecrease() } just Runs
     }
     mediaIntentHandler = MediaIntentHandler(userActionUseCase, volumeModifyUseCase)
   }
@@ -155,7 +155,8 @@ class MediaIntentHandlerTest {
     val result = mediaIntentHandler.handleMediaIntent(intent)
 
     assertThat(result).isTrue()
-    coVerify { volumeModifyUseCase.increase() }
+    // Fire-and-forget: the handler runs on the main thread and must not await the send.
+    verify { volumeModifyUseCase.tryIncrease() }
   }
 
   @Test
@@ -165,7 +166,7 @@ class MediaIntentHandlerTest {
     val result = mediaIntentHandler.handleMediaIntent(intent)
 
     assertThat(result).isTrue()
-    coVerify { volumeModifyUseCase.decrease() }
+    verify { volumeModifyUseCase.tryDecrease() }
   }
 
   @Test
