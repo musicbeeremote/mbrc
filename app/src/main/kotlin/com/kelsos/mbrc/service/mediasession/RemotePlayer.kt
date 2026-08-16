@@ -32,9 +32,15 @@ import com.kelsos.mbrc.core.platform.state.toPlayingTrack
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -48,10 +54,43 @@ class RemotePlayer(
   private val dispatchers: AppCoroutineDispatchers,
   private val scope: CoroutineScope
 ) : SimpleBasePlayer(context.mainLooper) {
+  /**
+   * Rate-limited streams for the two commands a drag fires continuously.
+   *
+   * Dragging the volume slider or the seek bar issues a command roughly every 10ms, and each one
+   * carries an absolute value rather than a delta, so the intermediate ones tell the plugin
+   * nothing the next one does not. Sending all of them costs a socket write and a state broadcast
+   * back for every pixel of travel, so a single drag turns into a couple of hundred round trips.
+   *
+   * [sample] keeps the movement visible while it is happening, and [debounce] guarantees the value
+   * the drag settles on is sent even if the finger lifts between samples, which is the one thing a
+   * plain sample gets wrong: it would leave the volume wherever the last tick happened to fall.
+   * The two overlap by design, so equal values are dropped rather than sent twice.
+   */
+  private val volumeRequests = latestWins<Int>()
+  private val seekRequests = latestWins<Long>()
+
+  private fun <T> latestWins() =
+    MutableSharedFlow<T>(extraBufferCapacity = REQUEST_BUFFER, onBufferOverflow = DROP_OLDEST)
+
+  private fun <T> MutableSharedFlow<T>.throttled() =
+    merge(sample(THROTTLE_MS), debounce(THROTTLE_MS)).distinctUntilChanged()
+
   init {
     appState.playerStatus.invalidateStateOnEach(scope)
     appState.playingPosition.invalidateStateOnEach(scope)
     appState.playingTrack.invalidateStateOnEach(scope)
+
+    scope.launch(dispatchers.network) {
+      volumeRequests.throttled().collect {
+        userActionUseCase.perform(UserAction(Protocol.PlayerVolume, it))
+      }
+    }
+    scope.launch(dispatchers.network) {
+      seekRequests.throttled().collect {
+        userActionUseCase.performUserAction(Protocol.NowPlayingPosition, it)
+      }
+    }
   }
 
   private fun <T> StateFlow<T>.invalidateStateOnEach(scope: CoroutineScope) = onEach {
@@ -215,7 +254,7 @@ class RemotePlayer(
               else -> positionMs
             }
 
-          userActionUseCase.performUserAction(Protocol.NowPlayingPosition, to)
+          seekRequests.tryEmit(to)
         }
       }
     }
@@ -251,9 +290,8 @@ class RemotePlayer(
 
   override fun handleSetDeviceVolume(deviceVolume: Int, flags: Int): ListenableFuture<*> {
     Timber.d("received device volume: $deviceVolume")
-    return dispatch {
-      userActionUseCase.perform(UserAction(Protocol.PlayerVolume, deviceVolume))
-    }
+    volumeRequests.tryEmit(deviceVolume)
+    return immediateVoidFuture()
   }
 
   override fun handleIncreaseDeviceVolume(flags: Int): ListenableFuture<*> {
@@ -289,5 +327,10 @@ class RemotePlayer(
   companion object {
     private const val MIN_VOLUME = 0
     private const val MAX_VOLUME = 100
+
+    // 20 updates a second: fast enough that a drag still looks live, slow enough that a gesture
+    // costs a handful of messages instead of a couple of hundred.
+    private const val THROTTLE_MS = 50L
+    private const val REQUEST_BUFFER = 8
   }
 }
