@@ -27,6 +27,7 @@ fun <T : Any> LibraryBrowseTab(
   syncState: SyncState,
   emptyState: EmptyState,
   itemKey: (T) -> Any,
+  listId: String,
   modifier: Modifier = Modifier,
   isGridMode: Boolean = false,
   gridItemContent: @Composable ((T) -> Unit)? = null,
@@ -40,6 +41,7 @@ fun <T : Any> LibraryBrowseTab(
   if (isGridMode && gridItemContent != null) {
     SwipeRefreshGridScreen(
       items = items,
+      listId = listId,
       isRefreshing = syncState.isSyncing,
       onRefresh = {
         if (syncState.showSync) {
@@ -55,6 +57,7 @@ fun <T : Any> LibraryBrowseTab(
   } else {
     SwipeRefreshScreen(
       items = items,
+      listId = listId,
       isRefreshing = syncState.isSyncing,
       onRefresh = {
         if (syncState.showSync) {

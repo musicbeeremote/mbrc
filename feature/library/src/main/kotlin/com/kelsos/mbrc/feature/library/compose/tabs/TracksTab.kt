@@ -73,6 +73,7 @@ fun TracksTab(
       icon = Icons.Default.MusicNote
     ),
     itemKey = { it.id },
+    listId = "library-tracks",
     modifier = modifier
   ) { track ->
     TrackListItem(

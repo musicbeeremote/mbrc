@@ -76,6 +76,7 @@ import com.kelsos.mbrc.core.ui.compose.DynamicScreenScaffold
 import com.kelsos.mbrc.core.ui.compose.FabItem
 import com.kelsos.mbrc.core.ui.compose.FabState
 import com.kelsos.mbrc.core.ui.compose.TopBarState
+import com.kelsos.mbrc.core.ui.compose.pagedItemKey
 import com.kelsos.mbrc.feature.settings.ConnectionDialogState
 import com.kelsos.mbrc.feature.settings.ConnectionFormState
 import com.kelsos.mbrc.feature.settings.ConnectionManagerViewModel
@@ -257,7 +258,7 @@ private fun ConnectionList(
         ) {
           items(
             count = connections.itemCount,
-            key = { index -> connections.peek(index)?.id ?: index },
+            key = pagedItemKey("connections", connections) { it.id },
             contentType = { "connection_item" }
           ) { index ->
             connections[index]?.let { connection ->

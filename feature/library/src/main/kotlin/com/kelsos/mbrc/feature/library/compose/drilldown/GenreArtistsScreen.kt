@@ -107,6 +107,7 @@ fun GenreArtistsScreen(
     Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
       PagingListScreen(
         items = artists,
+        listId = "genreartists",
         modifier = Modifier.weight(1f),
         emptyMessage = stringResource(R.string.artists_list_empty),
         emptyIcon = Icons.Default.Person,

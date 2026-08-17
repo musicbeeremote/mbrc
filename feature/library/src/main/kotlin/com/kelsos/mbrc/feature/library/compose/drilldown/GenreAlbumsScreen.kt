@@ -130,6 +130,7 @@ fun GenreAlbumsScreen(
       if (isGridMode) {
         PagingGridScreen(
           items = albums,
+          listId = "genrealbums-grid",
           modifier = Modifier.weight(1f),
           emptyMessage = stringResource(R.string.albums_list_empty),
           emptyIcon = Icons.Default.Album,
@@ -144,6 +145,7 @@ fun GenreAlbumsScreen(
       } else {
         PagingListScreen(
           items = albums,
+          listId = "genrealbums-list",
           modifier = Modifier.weight(1f),
           emptyMessage = stringResource(R.string.albums_list_empty),
           emptyIcon = Icons.Default.Album,

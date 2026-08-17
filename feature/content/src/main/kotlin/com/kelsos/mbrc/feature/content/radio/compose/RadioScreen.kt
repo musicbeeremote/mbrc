@@ -105,6 +105,7 @@ fun RadioScreen(
     ) {
       SwipeRefreshScreen(
         items = stations,
+        listId = "radio",
         isRefreshing = isRefreshing,
         onRefresh = {
           isRefreshing = true

@@ -83,6 +83,7 @@ fun ArtistsTab(
       icon = Icons.Default.Person
     ),
     itemKey = { it.id },
+    listId = "library-artists",
     modifier = modifier
   ) { artist ->
     ArtistListItem(

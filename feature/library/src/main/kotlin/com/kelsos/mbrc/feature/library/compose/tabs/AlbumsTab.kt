@@ -86,6 +86,7 @@ fun AlbumsTab(
       icon = Icons.Default.Album
     ),
     itemKey = { it.id },
+    listId = "library-albums",
     modifier = modifier,
     isGridMode = isGridMode,
     gridItemContent = { album ->

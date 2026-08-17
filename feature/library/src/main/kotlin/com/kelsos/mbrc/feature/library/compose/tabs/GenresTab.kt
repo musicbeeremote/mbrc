@@ -88,6 +88,7 @@ fun GenresTab(
       icon = Icons.AutoMirrored.Filled.QueueMusic
     ),
     itemKey = { it.id },
+    listId = "library-genres",
     modifier = modifier
   ) { genre ->
     GenreListItem(

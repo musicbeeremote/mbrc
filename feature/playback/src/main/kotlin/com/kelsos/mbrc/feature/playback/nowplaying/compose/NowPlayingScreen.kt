@@ -90,6 +90,8 @@ import com.kelsos.mbrc.core.ui.compose.LoadingScreen
 import com.kelsos.mbrc.core.ui.compose.TopBarState
 import com.kelsos.mbrc.core.ui.compose.displayedSourceIndex
 import com.kelsos.mbrc.core.ui.compose.dragHandle
+import com.kelsos.mbrc.core.ui.compose.namespacedKey
+import com.kelsos.mbrc.core.ui.compose.placeholderKey
 import com.kelsos.mbrc.core.ui.compose.rememberDragDropState
 import com.kelsos.mbrc.feature.minicontrol.MiniControl
 import com.kelsos.mbrc.feature.playback.R
@@ -514,9 +516,12 @@ private fun NowPlayingTrackList(
     ) {
       items(
         count = tracks.itemCount,
+        // Keyed through the drag remap rather than the raw slot, and namespaced so a duplicate-key
+        // crash names this list instead of quoting a bare row id (#346).
         key = { slot ->
           val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
-          tracks.peek(srcIdx)?.id ?: "${ContentTypes.PLACEHOLDER}-$srcIdx"
+          tracks.peek(srcIdx)?.let { namespacedKey(NOW_PLAYING_LIST_ID, it.id) }
+            ?: placeholderKey(NOW_PLAYING_LIST_ID, srcIdx)
         },
         contentType = { slot ->
           val srcIdx = sourceIndexFor(slot, dragDropState, tracks, draggedId)
@@ -872,6 +877,7 @@ fun NowPlayingTrackItem(
   }
 }
 
+private const val NOW_PLAYING_LIST_ID = "nowplaying"
 private const val SWIPE_TOUCH_SLOP_MULTIPLIER = 2f
 private const val SWIPE_POSITIONAL_THRESHOLD = 0.3f
 

@@ -119,6 +119,7 @@ fun PlaylistScreen(
     Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
       SwipeRefreshScreen(
         items = items,
+        listId = "playlists",
         isRefreshing = isRefreshing,
         onRefresh = {
           isRefreshing = true

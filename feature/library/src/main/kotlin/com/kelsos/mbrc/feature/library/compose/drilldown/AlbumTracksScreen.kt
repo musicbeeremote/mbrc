@@ -43,6 +43,7 @@ import com.kelsos.mbrc.core.ui.compose.LoadingScreen
 import com.kelsos.mbrc.core.ui.compose.NavigationIconType
 import com.kelsos.mbrc.core.ui.compose.QueueResultEffect
 import com.kelsos.mbrc.core.ui.compose.ScreenScaffold
+import com.kelsos.mbrc.core.ui.compose.pagedItemKey
 import com.kelsos.mbrc.feature.library.R
 import com.kelsos.mbrc.feature.library.albums.AlbumInfo
 import com.kelsos.mbrc.feature.library.compose.components.AlbumCoverByKey
@@ -126,7 +127,7 @@ fun AlbumTracksScreen(
 
             items(
               count = tracks.itemCount,
-              key = { index -> tracks.peek(index)?.id ?: index },
+              key = pagedItemKey("albumtracks", tracks) { it.id },
               contentType = { "track_item" }
             ) { index ->
               tracks[index]?.let { track ->

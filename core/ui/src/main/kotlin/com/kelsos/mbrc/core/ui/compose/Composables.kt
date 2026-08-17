@@ -284,6 +284,7 @@ fun MoreOptionsButton(
 @Composable
 fun <T : Any> SwipeRefreshScreen(
   items: LazyPagingItems<T>,
+  listId: String,
   isRefreshing: Boolean,
   onRefresh: () -> Unit,
   modifier: Modifier = Modifier,
@@ -321,11 +322,7 @@ fun <T : Any> SwipeRefreshScreen(
         ) {
           items(
             count = items.itemCount,
-            key = key?.let { keyFunc ->
-              { index ->
-                items.peek(index)?.let(keyFunc) ?: index
-              }
-            },
+            key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
             contentType = { "list_item" }
           ) { index ->
             items[index]?.let { item ->
@@ -358,6 +355,7 @@ fun <T : Any> SwipeRefreshScreen(
 @Composable
 fun <T : Any> PagingListScreen(
   items: LazyPagingItems<T>,
+  listId: String,
   modifier: Modifier = Modifier,
   emptyMessage: String = stringResource(R.string.no_data),
   emptyIcon: ImageVector? = null,
@@ -383,11 +381,7 @@ fun <T : Any> PagingListScreen(
       ) {
         items(
           count = items.itemCount,
-          key = key?.let { keyFunc ->
-            { index ->
-              items.peek(index)?.let(keyFunc) ?: index
-            }
-          },
+          key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
           contentType = { "list_item" }
         ) { index ->
           items[index]?.let { item ->
@@ -416,6 +410,7 @@ fun <T : Any> PagingListScreen(
 @Composable
 fun <T : Any> SwipeRefreshGridScreen(
   items: LazyPagingItems<T>,
+  listId: String,
   isRefreshing: Boolean,
   onRefresh: () -> Unit,
   modifier: Modifier = Modifier,
@@ -457,11 +452,7 @@ fun <T : Any> SwipeRefreshGridScreen(
         ) {
           items(
             count = items.itemCount,
-            key = key?.let { keyFunc ->
-              { index ->
-                items.peek(index)?.let(keyFunc) ?: index
-              }
-            },
+            key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
             contentType = { "grid_item" }
           ) { index ->
             items[index]?.let { item ->
@@ -490,6 +481,7 @@ fun <T : Any> SwipeRefreshGridScreen(
 @Composable
 fun <T : Any> PagingGridScreen(
   items: LazyPagingItems<T>,
+  listId: String,
   modifier: Modifier = Modifier,
   emptyMessage: String = stringResource(R.string.no_data),
   emptyIcon: ImageVector? = null,
@@ -519,11 +511,7 @@ fun <T : Any> PagingGridScreen(
       ) {
         items(
           count = items.itemCount,
-          key = key?.let { keyFunc ->
-            { index ->
-              items.peek(index)?.let(keyFunc) ?: index
-            }
-          },
+          key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
           contentType = { "grid_item" }
         ) { index ->
           items[index]?.let { item ->
