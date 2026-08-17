@@ -12,6 +12,7 @@
     <bug>Restores long-press-to-stop on the play/pause button (player and mini-control). Long-pressing play/pause now stops playback, a gesture lost when the player moved to the new UI; a short tap still toggles play/pause.</bug>
     <bug>Fixes the app freezing, and sometimes being closed by the system as unresponsive, when using the lock screen, notification, headset or car controls while the connection to MusicBee was down. Commands are now sent in the background, so the app stays responsive whether or not they get through.</bug>
     <bug>Fixes skipping to the next or previous track also telling MusicBee to jump to the start of the track, which could reset a track that was meant to resume where you left it.</bug>
+    <bug>Fixes a crash when swiping back while the app was moving to another screen, most often after picking a destination from the navigation drawer. A screen already on its way out now ignores further navigation, and drawer items switch screens immediately instead of waiting for the drawer to close.</bug>
   </version>
   <version
     version="1.6.1"

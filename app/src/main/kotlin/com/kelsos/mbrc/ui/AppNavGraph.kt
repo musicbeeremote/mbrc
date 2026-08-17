@@ -46,79 +46,84 @@ fun AppNavGraph(
     startDestination = startDestination
   ) {
     // Main screens accessible from drawer
-    composable(Screen.Home.route) {
+    composable(Screen.Home.route) { entry ->
       PlayerScreen(
-        onNavigateToNowPlaying = { navController.navigate(Screen.NowPlayingList.route) },
+        onNavigateToNowPlaying = {
+          navController.navigateFrom(entry, Screen.NowPlayingList.route)
+        },
         onNavigateToAlbum = { album, artist ->
           val encodedAlbum = Uri.encode(album)
           val encodedArtist = Uri.encode(artist)
-          navController.navigate("album_tracks/0/$encodedAlbum/$encodedArtist")
+          navController.navigateFrom(entry, "album_tracks/0/$encodedAlbum/$encodedArtist")
         },
         onNavigateToArtist = { artist ->
           val encodedName = Uri.encode(artist)
-          navController.navigate("artist_albums/0/$encodedName")
+          navController.navigateFrom(entry, "artist_albums/0/$encodedName")
         },
         snackbarHostState = snackbarHostState,
         onOpenDrawer = onOpenDrawer
       )
     }
 
-    composable(Screen.Library.route) {
+    composable(Screen.Library.route) { entry ->
       LibraryScreen(
         onOpenDrawer = onOpenDrawer,
         onNavigateToGenreArtists = { genre ->
           val encodedName = Uri.encode(genre.genre)
-          navController.navigate("genre_artists/${genre.id}/$encodedName")
+          navController.navigateFrom(entry, "genre_artists/${genre.id}/$encodedName")
         },
         onNavigateToGenreAlbums = { genre ->
           val encodedName = Uri.encode(genre.genre)
-          navController.navigate("genre_albums/${genre.id}/$encodedName")
+          navController.navigateFrom(entry, "genre_albums/${genre.id}/$encodedName")
         },
         onNavigateToArtistAlbums = { artist ->
           val encodedName = Uri.encode(artist.artist)
-          navController.navigate("artist_albums/${artist.id}/$encodedName")
+          navController.navigateFrom(entry, "artist_albums/${artist.id}/$encodedName")
         },
         onNavigateToAlbumTracks = { album ->
           val encodedAlbum = Uri.encode(album.album)
           val encodedArtist = Uri.encode(album.artist)
-          navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
+          navController.navigateFrom(
+            entry,
+            "album_tracks/${album.id}/$encodedAlbum/$encodedArtist"
+          )
         },
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToPlayer = { navController.navigateFrom(entry, Screen.Home.route) },
         snackbarHostState = snackbarHostState
       )
     }
 
-    composable(Screen.Playlists.route) {
+    composable(Screen.Playlists.route) { entry ->
       PlaylistScreen(
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToPlayer = { navController.navigateFrom(entry, Screen.Home.route) },
         snackbarHostState = snackbarHostState,
         onOpenDrawer = onOpenDrawer
       )
     }
 
-    composable(Screen.Radio.route) {
+    composable(Screen.Radio.route) { entry ->
       RadioScreen(
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToPlayer = { navController.navigateFrom(entry, Screen.Home.route) },
         snackbarHostState = snackbarHostState,
         onOpenDrawer = onOpenDrawer
       )
     }
 
-    composable(Screen.Settings.route) {
+    composable(Screen.Settings.route) { entry ->
       SettingsScreen(
         snackbarHostState = snackbarHostState,
         onOpenDrawer = onOpenDrawer,
-        onNavigateToLicenses = { navController.navigate(Screen.Licenses.route) },
-        onNavigateToAppLicense = { navController.navigate(Screen.AppLicense.route) }
+        onNavigateToLicenses = { navController.navigateFrom(entry, Screen.Licenses.route) },
+        onNavigateToAppLicense = { navController.navigateFrom(entry, Screen.AppLicense.route) }
       )
     }
 
-    composable(Screen.Licenses.route) {
-      LicensesScreen(onNavigateBack = { navController.popBackStack() })
+    composable(Screen.Licenses.route) { entry ->
+      LicensesScreen(onNavigateBack = { navController.popFrom(entry) })
     }
 
-    composable(Screen.AppLicense.route) {
-      AppLicenseScreen(onNavigateBack = { navController.popBackStack() })
+    composable(Screen.AppLicense.route) { entry ->
+      AppLicenseScreen(onNavigateBack = { navController.popFrom(entry) })
     }
 
     composable(Screen.Help.route) {
@@ -142,8 +147,8 @@ fun AppNavGraph(
       val albumInfo = AlbumInfo(album = album, artist = artist, cover = null)
       AlbumTracksScreen(
         albumInfo = albumInfo,
-        onNavigateBack = { navController.popBackStack() },
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateBack = { navController.popFrom(backStackEntry) },
+        onNavigateToPlayer = { navController.navigateFrom(backStackEntry, Screen.Home.route) },
         snackbarHostState = snackbarHostState
       )
     }
@@ -158,13 +163,16 @@ fun AppNavGraph(
       val artistName = backStackEntry.arguments?.getString("artistName").orEmpty()
       ArtistAlbumsScreen(
         artistName = artistName,
-        onNavigateBack = { navController.popBackStack() },
+        onNavigateBack = { navController.popFrom(backStackEntry) },
         onNavigateToAlbumTracks = { album ->
           val encodedAlbum = Uri.encode(album.album)
           val encodedArtist = Uri.encode(album.artist)
-          navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
+          navController.navigateFrom(
+            backStackEntry,
+            "album_tracks/${album.id}/$encodedAlbum/$encodedArtist"
+          )
         },
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToPlayer = { navController.navigateFrom(backStackEntry, Screen.Home.route) },
         snackbarHostState = snackbarHostState
       )
     }
@@ -181,12 +189,12 @@ fun AppNavGraph(
       GenreArtistsScreen(
         genreId = genreId,
         genreName = genreName,
-        onNavigateBack = { navController.popBackStack() },
+        onNavigateBack = { navController.popFrom(backStackEntry) },
         onNavigateToArtistAlbums = { artist ->
           val encodedName = Uri.encode(artist.artist)
-          navController.navigate("artist_albums/${artist.id}/$encodedName")
+          navController.navigateFrom(backStackEntry, "artist_albums/${artist.id}/$encodedName")
         },
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToPlayer = { navController.navigateFrom(backStackEntry, Screen.Home.route) },
         snackbarHostState = snackbarHostState
       )
     }
@@ -203,32 +211,37 @@ fun AppNavGraph(
       GenreAlbumsScreen(
         genreId = genreId,
         genreName = genreName,
-        onNavigateBack = { navController.popBackStack() },
+        onNavigateBack = { navController.popFrom(backStackEntry) },
         onNavigateToAlbumTracks = { album ->
           val encodedAlbum = Uri.encode(album.album)
           val encodedArtist = Uri.encode(album.artist)
-          navController.navigate("album_tracks/${album.id}/$encodedAlbum/$encodedArtist")
+          navController.navigateFrom(
+            backStackEntry,
+            "album_tracks/${album.id}/$encodedAlbum/$encodedArtist"
+          )
         },
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToPlayer = { navController.navigateFrom(backStackEntry, Screen.Home.route) },
         snackbarHostState = snackbarHostState
       )
     }
 
-    composable(Screen.NowPlayingList.route) {
+    composable(Screen.NowPlayingList.route) { entry ->
       val trackRepository: TrackRepository = koinInject()
       val scope = rememberCoroutineScope()
       val trackNotFoundMessage = stringResource(R.string.navigation_track_not_in_library)
 
       NowPlayingScreen(
         onOpenDrawer = onOpenDrawer,
-        onNavigateToPlayer = { navController.navigate(Screen.Home.route) },
+        onNavigateToPlayer = { navController.navigateFrom(entry, Screen.Home.route) },
         onNavigateToAlbum = { path ->
+          // The repository lookup runs before the navigate, so this one can resolve long after
+          // the tap. The guard inside navigateFrom is what keeps it from landing mid-gesture.
           scope.launch {
             val track = trackRepository.getByPath(path)
             if (track != null && track.album.isNotBlank()) {
               val encodedAlbum = Uri.encode(track.album)
               val encodedArtist = Uri.encode(track.albumArtist.ifBlank { track.artist })
-              navController.navigate("album_tracks/0/$encodedAlbum/$encodedArtist")
+              navController.navigateFrom(entry, "album_tracks/0/$encodedAlbum/$encodedArtist")
             } else {
               snackbarHostState.showSnackbar(trackNotFoundMessage)
             }
@@ -236,7 +249,7 @@ fun AppNavGraph(
         },
         onNavigateToArtist = { artist ->
           val encodedName = Uri.encode(artist)
-          navController.navigate("artist_albums/0/$encodedName")
+          navController.navigateFrom(entry, "artist_albums/0/$encodedName")
         },
         snackbarHostState = snackbarHostState
       )

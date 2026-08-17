@@ -96,8 +96,13 @@ fun AppDrawer(
 
   val onNavigate: (Screen) -> Unit = remember(scope, drawerState, navController) {
     { screen: Screen ->
-      scope.launch {
-        drawerState.close()
+      // Navigate on the tap instead of awaiting the close animation first. A navigation that
+      // lands a few hundred milliseconds later can arrive in the middle of a predictive back
+      // gesture, and the pop that gesture then performs targets an entry that is no longer the
+      // top of the back stack, which crashes (#348). The guard covers the residual case where
+      // a gesture is already under way when the item is tapped.
+      val current = navController.currentBackStackEntry
+      if (current == null || current.lifecycleIsResumed()) {
         navController.navigate(screen.route) {
           popUpTo(navController.graph.startDestinationId) {
             saveState = true
@@ -106,6 +111,7 @@ fun AppDrawer(
           restoreState = true
         }
       }
+      scope.launch { drawerState.close() }
     }
   }
 
