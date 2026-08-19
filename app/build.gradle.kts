@@ -361,6 +361,11 @@ dependencies {
   testImplementation(libs.robolectric)
   testImplementation(libs.androidx.glance.testing)
   testImplementation(libs.androidx.glance.appwidget.testing)
+  testImplementation(libs.androidx.compose.ui.test.junit4)
+  // Drives a real predictive back gesture in PredictiveBackNavigationRaceTest.
+  testImplementation(libs.androidx.navigationevent)
+  testImplementation(libs.androidx.navigationevent.compose)
+  debugImplementation(libs.androidx.compose.ui.test.manifest)
 
   androidTestImplementation(libs.androidx.room.testing)
   androidTestImplementation(libs.androidx.test.runner)
