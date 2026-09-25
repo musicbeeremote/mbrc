@@ -13,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
@@ -46,6 +47,9 @@ class MainActivity : ComponentActivity() {
   private val settingsManager: SettingsManager by inject()
 
   private var showLocalNetworkRationale by mutableStateOf(false)
+
+  /** How many times access has been refused in this activity, so each refusal is announced. */
+  private var localNetworkDenials by mutableIntStateOf(0)
 
   /**
    * Whether the user has already turned the rationale down. Kept across configuration changes so a
@@ -112,6 +116,7 @@ class MainActivity : ComponentActivity() {
       RemoteApp(
         onRequestLocalNetworkAccess = ::requestLocalNetworkAccess,
         showLocalNetworkRationale = showLocalNetworkRationale,
+        localNetworkDenials = localNetworkDenials,
         onLocalNetworkRationaleContinue = {
           showLocalNetworkRationale = false
           permissionRequested = true
@@ -196,6 +201,7 @@ class MainActivity : ComponentActivity() {
    * that can never happen.
    */
   private fun denyLocalNetwork() {
+    localNetworkDenials++
     connectionState.updateConnection(ConnectionStatus.LocalNetworkDenied)
   }
 

@@ -48,17 +48,23 @@ fun LocalNetworkRationaleDialog(onContinue: () -> Unit, onDismiss: () -> Unit) {
  *
  * [SnackbarDuration.Indefinite] because this is a standing condition, not an event: it should
  * remain until access is granted or the user waves it away.
+ *
+ * [denials] counts every refusal, and the notice is shown again on each one. [denied] alone cannot
+ * do this: tapping Grant dismisses the snackbar, and when the prompt it opens is refused as well,
+ * the status is set to the denied value it already held, so nothing changes and the notice would
+ * never return.
  */
 @Composable
 fun LocalNetworkDeniedNotice(
   denied: Boolean,
+  denials: Int,
   snackbarHostState: SnackbarHostState,
   onGrant: () -> Unit
 ) {
   val message = stringResource(R.string.local_network_denied_banner)
   val grant = stringResource(R.string.local_network_denied_grant)
 
-  LaunchedEffect(denied) {
+  LaunchedEffect(denied, denials) {
     if (!denied) {
       return@LaunchedEffect
     }

@@ -64,6 +64,7 @@ private const val EDGE_HORIZONTAL_DOMINANCE = 2f
 fun RemoteApp(
   onRequestLocalNetworkAccess: () -> Unit = {},
   showLocalNetworkRationale: Boolean = false,
+  localNetworkDenials: Int = 0,
   onLocalNetworkRationaleContinue: () -> Unit = {},
   onLocalNetworkRationaleDismiss: () -> Unit = {}
 ) {
@@ -123,6 +124,7 @@ fun RemoteApp(
     // bar inset. Indefinite so it stays until access is granted or the user dismisses it.
     LocalNetworkDeniedNotice(
       denied = connectionStatus is ConnectionStatus.LocalNetworkDenied,
+      denials = localNetworkDenials,
       snackbarHostState = snackbarHostState,
       onGrant = onRequestLocalNetworkAccess
     )
