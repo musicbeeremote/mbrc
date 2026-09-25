@@ -1,7 +1,7 @@
 Changelog
 -----------
 
-## [1.7.0]
+## [1.7.0] - 2026-09-25
 ### Added
 - The now playing queue opens on the track that is playing instead of at the top, with a couple of tracks above it for context. A new action in the top bar jumps back to the playing track after you have scrolled away. The queue is left alone if you start scrolling before the track is located, so it never moves under your finger.
 - On Android 17 the app now asks for permission to reach devices on your local network, which that release requires before anything can connect to MusicBee. The reason is explained before the system prompt appears, since the prompt itself only mentions nearby devices. If the permission is declined the app says so and stops trying, instead of showing "Connecting..." for something that cannot succeed, and offers a way back to the prompt or to app settings. Scanning for a plugin reports the same reason rather than claiming nothing was found.
@@ -322,7 +322,8 @@ Changelog
 - Removes the dialogs that used to appear on each new setup.
 
 
-[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/musicbeeremote/mbrc/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/musicbeeremote/mbrc/compare/v1.6.1...v1.7.0
 [1.6.1]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.4...v1.6.0
 [1.6.0-rc.4]: https://github.com/musicbeeremote/mbrc/compare/v1.6.0-rc.3...v1.6.0-rc.4
