@@ -14,10 +14,10 @@ import org.junit.runner.RunWith
  *
  * To generate the profile:
  * ```
- * ./gradlew :app:generateGithubReleaseBaselineProfile
+ * ./gradlew :app:generateBaselineProfile
  * ```
  *
- * The generated profile will be placed in `app/src/main/baselineProfiles/`.
+ * The generated profile will be placed in `app/src/main/generated/baselineProfiles/`.
  *
  * The journey covers the screens the app is actually used on, not just its launch. A profile
  * recorded from a cold start alone leaves the queue, the library and the player uncompiled, which
