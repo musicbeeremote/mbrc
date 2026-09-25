@@ -1,7 +1,7 @@
 package com.kelsos.mbrc.core.common.utilities.logging
 
-import android.content.Context
 import android.util.Log
+import java.io.Closeable
 import java.io.File
 import java.util.logging.FileHandler
 import java.util.logging.Level
@@ -9,7 +9,16 @@ import java.util.logging.Logger
 import java.util.logging.SimpleFormatter
 import timber.log.Timber
 
-class FileLoggingTree(context: Context) : Timber.DebugTree() {
+/**
+ * Writes the log to [LOGS_DIR] under [filesDir].
+ *
+ * Must be [close]d once it is uprooted. The handler is attached to a process-wide [Logger] and
+ * holds a lock file next to the log, so an uprooted tree that is never closed keeps writing every
+ * line, and the next tree finds the log locked and opens a second file beside it.
+ */
+class FileLoggingTree(filesDir: File) :
+  Timber.DebugTree(),
+  Closeable {
   private val handler: FileHandler
   private val logger: Logger = Logger.getLogger(LOGGER_NAME)
 
@@ -17,7 +26,6 @@ class FileLoggingTree(context: Context) : Timber.DebugTree() {
     logger.level = Level.ALL
     logger.useParentHandlers = false
 
-    val filesDir = context.filesDir
     val logDir = File(filesDir, LOGS_DIR)
     if (!logDir.exists()) {
       logDir.mkdir()
@@ -40,6 +48,11 @@ class FileLoggingTree(context: Context) : Timber.DebugTree() {
       Log.WARN -> logger.log(Level.WARNING, logMessage)
       Log.ERROR -> logger.log(Level.SEVERE, logMessage)
     }
+  }
+
+  override fun close() {
+    logger.removeHandler(handler)
+    handler.close()
   }
 
   override fun createStackElementTag(element: StackTraceElement): String =

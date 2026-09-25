@@ -71,8 +71,9 @@ class SettingsManagerDataStore(
           if (enabled) {
             plantFileLogging()
           } else {
-            Timber.forest().find { it is FileLoggingTree }?.let {
+            Timber.forest().filterIsInstance<FileLoggingTree>().firstOrNull()?.let {
               Timber.uproot(it)
+              it.close()
             }
           }
         }
@@ -89,7 +90,7 @@ class SettingsManagerDataStore(
     }
 
     try {
-      Timber.plant(FileLoggingTree(context.applicationContext))
+      Timber.plant(FileLoggingTree(context.filesDir))
     } catch (e: IOException) {
       Timber.w(e, "Could not open the log file, continuing without file logging")
     }
