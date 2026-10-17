@@ -35,7 +35,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.kelsos.mbrc.core.common.layout.WindowWidthClass
 import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.networking.client.DroppedCommandNotice
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
@@ -155,8 +154,7 @@ fun RemoteApp(
           .fillMaxSize()
           .background(MaterialTheme.colorScheme.background)
       ) {
-        AdaptiveNavigationScaffold(
-          widthClass = widthClass,
+        NavigationDrawerScaffold(
           drawerState = drawerState,
           navController = navController,
           drawerViewModel = drawerViewModel,
@@ -165,14 +163,7 @@ fun RemoteApp(
           Box(
             modifier = Modifier
               .fillMaxSize()
-              // The edge swipe only has a drawer to open while the drawer is the modal one.
-              .then(
-                if (widthClass == WindowWidthClass.Compact) {
-                  Modifier.leftEdgeDrawerSwipe(drawerState) { scope.launch { drawerState.open() } }
-                } else {
-                  Modifier
-                }
-              )
+              .leftEdgeDrawerSwipe(drawerState) { scope.launch { drawerState.open() } }
           ) {
             // Each screen handles its own Scaffold - no shared Scaffold here
             AppNavGraph(

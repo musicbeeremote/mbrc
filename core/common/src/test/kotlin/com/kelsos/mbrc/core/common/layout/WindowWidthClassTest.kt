@@ -19,14 +19,6 @@ class WindowWidthClassTest {
     val phoneLandscape = WindowWidthClass.fromWidthDp(720)
 
     assertThat(phoneLandscape.supportsTwoPanes).isFalse()
-    assertThat(phoneLandscape.prefersPersistentNavigation).isTrue()
-  }
-
-  @Test
-  fun `only compact keeps navigation behind a menu button`() {
-    assertThat(WindowWidthClass.Compact.prefersPersistentNavigation).isFalse()
-    assertThat(WindowWidthClass.Medium.prefersPersistentNavigation).isTrue()
-    assertThat(WindowWidthClass.Expanded.prefersPersistentNavigation).isTrue()
   }
 
   @Test

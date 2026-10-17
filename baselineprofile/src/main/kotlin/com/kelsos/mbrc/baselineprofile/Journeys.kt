@@ -170,10 +170,9 @@ internal fun MacrobenchmarkScope.scrollCurrentList(times: Int = 3) {
 }
 
 /**
- * Navigates through the drawer or the rail, whichever the width class put on screen.
- *
- * The drawer has to be opened first; the rail is already there and has no button, so a missing
- * hamburger is expected rather than a failure.
+ * Navigates through the drawer, opening it first from the hamburger. The drawer is modal at every
+ * width, so a missing hamburger means the journey is lost and fails the run rather than silently
+ * skipping the destination and profiling less than it claims to.
  *
  * Both ends are waited on against the drawer's header, which is the one piece of it that is not
  * also a screen title. Tapping the hamburger toggles, so a tap arriving while the drawer is still
@@ -181,13 +180,13 @@ internal fun MacrobenchmarkScope.scrollCurrentList(times: Int = 3) {
  * waitForIdle returns too early to prevent that on its own.
  */
 internal fun MacrobenchmarkScope.openDestination(label: String) {
-  runCatching {
-    if (!drawerIsOpen()) {
-      device.findObject(By.desc(DRAWER_BUTTON))?.click()
-      device.wait(Until.hasObject(By.text(label)), WAIT_MILLIS)
-    }
-    device.findObject(By.text(label))?.click()
+  if (!drawerIsOpen()) {
+    checkNotNull(device.findObject(By.desc(DRAWER_BUTTON))) {
+      "No drawer button on screen on the way to $label"
+    }.click()
+    device.wait(Until.hasObject(By.text(label)), WAIT_MILLIS)
   }
+  runCatching { device.findObject(By.text(label))?.click() }
   device.wait(Until.gone(By.text(DRAWER_HEADER)), WAIT_MILLIS)
   device.waitForIdle()
 }

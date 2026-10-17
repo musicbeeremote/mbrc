@@ -38,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.kelsos.mbrc.core.ui.R
-import com.kelsos.mbrc.core.ui.layout.windowWidthClass
 
 /**
  * Main scaffold top bar that renders different UI based on [TopBarState].
@@ -281,19 +280,9 @@ private fun ProgressTopBar(
 
 @Composable
 private fun NavigationIconContent(navigationIcon: NavigationIconType, onOpenDrawer: () -> Unit) {
-  // At medium and expanded widths the destinations are already on screen in a rail or a permanent
-  // drawer, so the menu button would open something that is not hidden. Suppressed here rather
-  // than at each call site so no screen can forget.
-  val navigationIsPersistent = windowWidthClass().prefersPersistentNavigation
-
   when (navigationIcon) {
-    NavigationIconType.Drawer ->
-      if (!navigationIsPersistent) {
-        DrawerNavigationIcon(onClick = onOpenDrawer)
-      }
-
+    NavigationIconType.Drawer -> DrawerNavigationIcon(onClick = onOpenDrawer)
     is NavigationIconType.Back -> BackNavigationIcon(onClick = navigationIcon.onBack)
-
     NavigationIconType.None -> { /* No icon */ }
   }
 }

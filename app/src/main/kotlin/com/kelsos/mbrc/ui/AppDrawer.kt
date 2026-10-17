@@ -42,9 +42,6 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,8 +70,8 @@ import com.kelsos.mbrc.core.ui.theme.drawer_header_gradient_top_light
 /**
  * Stateless drawer content that can be used in previews and tests.
  *
- * The stateful side (connection status, the navigation callback, which affordance to show at all)
- * lives in [AdaptiveNavigationScaffold], since it is shared with the rail and the permanent drawer.
+ * The stateful side (connection status, the navigation callback) lives in
+ * [NavigationDrawerScaffold].
  */
 @Composable
 fun DrawerContent(
@@ -90,129 +87,34 @@ fun DrawerContent(
     modifier = modifier,
     drawerContainerColor = MaterialTheme.colorScheme.surface
   ) {
-    DrawerSheetBody(
-      currentRoute = currentRoute,
-      connectionStatus = connectionStatus,
-      connectionName = connectionName,
-      versionName = versionName,
-      onConnectionToggle = onConnectionToggle,
-      onNavigate = onNavigate
-    )
-  }
-}
-
-/**
- * The same drawer contents in a sheet that stays on screen, for expanded widths where there is
- * room to keep the destinations visible instead of behind a menu button.
- */
-@Composable
-fun PermanentDrawerContent(
-  currentRoute: String?,
-  connectionStatus: ConnectionStatus,
-  connectionName: String?,
-  versionName: String,
-  onConnectionToggle: () -> Unit,
-  onNavigate: (Screen) -> Unit,
-  modifier: Modifier = Modifier
-) {
-  PermanentDrawerSheet(
-    modifier = modifier,
-    drawerContainerColor = MaterialTheme.colorScheme.surface
-  ) {
-    DrawerSheetBody(
-      currentRoute = currentRoute,
-      connectionStatus = connectionStatus,
-      connectionName = connectionName,
-      versionName = versionName,
-      onConnectionToggle = onConnectionToggle,
-      onNavigate = onNavigate
-    )
-  }
-}
-
-@Composable
-private fun DrawerSheetBody(
-  currentRoute: String?,
-  connectionStatus: ConnectionStatus,
-  connectionName: String?,
-  versionName: String,
-  onConnectionToggle: () -> Unit,
-  onNavigate: (Screen) -> Unit
-) {
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .verticalScroll(rememberScrollState())
-  ) {
-    // Header with app name and connection status
-    DrawerHeader(
-      connectionStatus = connectionStatus,
-      connectionName = connectionName,
-      onConnectionToggle = onConnectionToggle
-    )
-
-    // Main navigation items
-    DrawerNavigationItems(
-      currentRoute = currentRoute,
-      onNavigate = onNavigate
-    )
-
-    Spacer(modifier = Modifier.weight(1f))
-
-    // Version info
-    Text(
-      text = stringResource(R.string.drawer_version, versionName),
-      style = MaterialTheme.typography.labelSmall,
-      color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+    Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 28.dp, vertical = 16.dp)
-    )
-  }
-}
-
-/**
- * Icon-and-label rail for medium widths, where a permanent drawer would take too much of the
- * screen but a menu button hiding five destinations is still the wrong trade.
- */
-@Composable
-fun AppNavigationRail(
-  currentRoute: String?,
-  connectionStatus: ConnectionStatus,
-  onConnectionToggle: () -> Unit,
-  onNavigate: (Screen) -> Unit,
-  modifier: Modifier = Modifier
-) {
-  NavigationRail(
-    modifier = modifier,
-    containerColor = MaterialTheme.colorScheme.surface,
-    header = {
-      ConnectionStatusIconButton(
-        connectionState = connectionStatus,
-        onConnectionClick = onConnectionToggle,
-        containerColor = MaterialTheme.colorScheme.surfaceVariant
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+    ) {
+      // Header with app name and connection status
+      DrawerHeader(
+        connectionStatus = connectionStatus,
+        connectionName = connectionName,
+        onConnectionToggle = onConnectionToggle
       )
-    }
-  ) {
-    Spacer(modifier = Modifier.height(8.dp))
 
-    (primaryNavigationItems + secondaryNavigationItems).forEach { item ->
-      NavigationRailItem(
-        selected = currentRoute == item.screen.route,
-        onClick = { onNavigate(item.screen) },
-        icon = {
-          Icon(
-            imageVector = item.icon,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp)
-          )
-        },
-        label = {
-          Text(
-            text = stringResource(item.titleRes),
-            style = MaterialTheme.typography.labelSmall
-          )
-        }
+      // Main navigation items
+      DrawerNavigationItems(
+        currentRoute = currentRoute,
+        onNavigate = onNavigate
+      )
+
+      Spacer(modifier = Modifier.weight(1f))
+
+      // Version info
+      Text(
+        text = stringResource(R.string.drawer_version, versionName),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 28.dp, vertical = 16.dp)
       )
     }
   }
@@ -366,10 +268,7 @@ private fun ConnectionStatus.contentDescriptionRes(): Int = when (this) {
 @Composable
 private fun ConnectionStatusIconButton(
   connectionState: ConnectionStatus,
-  onConnectionClick: () -> Unit,
-  // The drawer header draws it over a coloured gradient, the rail over the plain surface, so the
-  // backing circle cannot be a fixed translucent white in both.
-  containerColor: Color = Color.White.copy(alpha = 0.2f)
+  onConnectionClick: () -> Unit
 ) {
   val (statusColor, statusIcon) = connectionState.appearance()
 
@@ -387,7 +286,7 @@ private fun ConnectionStatusIconButton(
     Surface(
       modifier = Modifier.fillMaxSize(),
       shape = CircleShape,
-      color = containerColor
+      color = Color.White.copy(alpha = 0.2f)
     ) {}
 
     // Indeterminate spinner when connecting (outer ring)

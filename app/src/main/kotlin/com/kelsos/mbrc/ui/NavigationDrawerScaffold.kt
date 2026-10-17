@@ -1,33 +1,26 @@
 package com.kelsos.mbrc.ui
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kelsos.mbrc.BuildConfig
-import com.kelsos.mbrc.core.common.layout.WindowWidthClass
 import kotlinx.coroutines.launch
 
 /**
- * Hosts [content] behind whichever navigation affordance the available width justifies: a modal
- * drawer on phones, a rail on medium widths, and a permanent drawer once there is room to keep the
- * destinations on screen without crowding the content.
+ * Hosts [content] behind the modal navigation drawer at every window width.
  *
- * The width class decides this rather than the device orientation, so a phone in landscape stays on
- * the modal drawer and a tablet in portrait does not.
+ * Wide windows deliberately get the same dismissible drawer as phones: a rail or a permanent drawer
+ * keeps the destinations on screen for good, and on a tablet or a phone in landscape that space is
+ * better spent on the player and the library.
  */
 @Composable
-fun AdaptiveNavigationScaffold(
-  widthClass: WindowWidthClass,
+fun NavigationDrawerScaffold(
   drawerState: DrawerState,
   navController: NavHostController,
   drawerViewModel: DrawerViewModel,
@@ -48,66 +41,38 @@ fun AdaptiveNavigationScaffold(
     }
   }
 
-  // Persistent navigation has no drawer to dismiss, so the close is a no-op there rather than a
-  // separate navigation path.
   val onNavigate = rememberDrawerNavigation(navController) {
     if (drawerState.isOpen) {
       scope.launch { drawerState.close() }
     }
   }
 
-  when (widthClass) {
-    WindowWidthClass.Compact -> ModalNavigationDrawer(
-      drawerState = drawerState,
-      // Only enable Material's full-area drag while the drawer is open (so
-      // swipe-to-close still works). When closed, the drawer's horizontal
-      // AnchoredDraggable competes with per-row SwipeToDismissBox on the
-      // now playing queue. Opening from the closed state is handled by a
-      // narrow left-edge detector at the call site, plus the toolbar menu button.
-      gesturesEnabled = drawerState.isOpen,
-      drawerContent = {
-        DrawerContent(
-          currentRoute = currentRoute,
-          connectionStatus = connectionStatus,
-          connectionName = connectionName,
-          versionName = BuildConfig.VERSION_NAME,
-          onConnectionToggle = onConnectionToggle,
-          onNavigate = onNavigate
-        )
-      },
-      content = content
-    )
-
-    WindowWidthClass.Medium -> Row(modifier = Modifier.fillMaxSize()) {
-      AppNavigationRail(
+  ModalNavigationDrawer(
+    drawerState = drawerState,
+    // Only enable Material's full-area drag while the drawer is open (so
+    // swipe-to-close still works). When closed, the drawer's horizontal
+    // AnchoredDraggable competes with per-row SwipeToDismissBox on the
+    // now playing queue. Opening from the closed state is handled by a
+    // narrow left-edge detector at the call site, plus the toolbar menu button.
+    gesturesEnabled = drawerState.isOpen,
+    drawerContent = {
+      DrawerContent(
         currentRoute = currentRoute,
         connectionStatus = connectionStatus,
+        connectionName = connectionName,
+        versionName = BuildConfig.VERSION_NAME,
         onConnectionToggle = onConnectionToggle,
         onNavigate = onNavigate
       )
-      content()
-    }
-
-    WindowWidthClass.Expanded -> PermanentNavigationDrawer(
-      drawerContent = {
-        PermanentDrawerContent(
-          currentRoute = currentRoute,
-          connectionStatus = connectionStatus,
-          connectionName = connectionName,
-          versionName = BuildConfig.VERSION_NAME,
-          onConnectionToggle = onConnectionToggle,
-          onNavigate = onNavigate
-        )
-      },
-      content = content
-    )
-  }
+    },
+    content = content
+  )
 }
 
 /**
- * Builds the top-level navigation callback shared by the drawer, the rail and the permanent
- * drawer. [onNavigated] runs whether or not the navigation was performed, so a drawer still closes
- * when the tap was swallowed by the resumed-entry guard.
+ * Builds the drawer's top-level navigation callback. [onNavigated] runs whether or not the
+ * navigation was performed, so the drawer still closes when the tap was swallowed by the
+ * resumed-entry guard.
  */
 @Composable
 private fun rememberDrawerNavigation(

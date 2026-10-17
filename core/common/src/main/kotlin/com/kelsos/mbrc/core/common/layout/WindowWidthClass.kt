@@ -30,10 +30,6 @@ enum class WindowWidthClass {
   val supportsTwoPanes: Boolean
     get() = this == Expanded
 
-  /** True when navigation should be persistently visible rather than behind a modal drawer. */
-  val prefersPersistentNavigation: Boolean
-    get() = this != Compact
-
   companion object {
     fun fromWidthDp(widthDp: Int): WindowWidthClass = when {
       widthDp >= WindowBreakpoints.EXPANDED_MIN_WIDTH_DP -> Expanded
