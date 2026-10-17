@@ -1,5 +1,7 @@
 package com.kelsos.mbrc.screenshots
 
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
@@ -14,6 +16,7 @@ import com.kelsos.mbrc.ui.Screen
 fun DrawerPreviewLight() {
   RemoteTheme(darkTheme = false) {
     DrawerContent(
+      drawerState = rememberDrawerState(DrawerValue.Open),
       currentRoute = Screen.Home.route,
       connectionStatus = ConnectionStatus.Connected,
       connectionName = "Living Room PC",
@@ -30,6 +33,7 @@ fun DrawerPreviewLight() {
 fun DrawerPreviewDark() {
   RemoteTheme(darkTheme = true) {
     DrawerContent(
+      drawerState = rememberDrawerState(DrawerValue.Open),
       currentRoute = Screen.Home.route,
       connectionStatus = ConnectionStatus.Connected,
       connectionName = "Living Room PC",
@@ -46,6 +50,7 @@ fun DrawerPreviewDark() {
 fun DrawerPreviewOffline() {
   RemoteTheme(darkTheme = false) {
     DrawerContent(
+      drawerState = rememberDrawerState(DrawerValue.Open),
       currentRoute = Screen.Home.route,
       connectionStatus = ConnectionStatus.Offline,
       connectionName = null,
@@ -62,6 +67,7 @@ fun DrawerPreviewOffline() {
 fun DrawerPreviewQueueSelected() {
   RemoteTheme(darkTheme = false) {
     DrawerContent(
+      drawerState = rememberDrawerState(DrawerValue.Open),
       currentRoute = Screen.NowPlayingList.route,
       connectionStatus = ConnectionStatus.Connected,
       connectionName = "Desktop",

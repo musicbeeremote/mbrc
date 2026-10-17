@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -71,10 +72,12 @@ import com.kelsos.mbrc.core.ui.theme.drawer_header_gradient_top_light
  * Stateless drawer content that can be used in previews and tests.
  *
  * The stateful side (connection status, the navigation callback) lives in
- * [NavigationDrawerScaffold].
+ * [NavigationDrawerScaffold]. [drawerState] is what lets back close the drawer: the sheet only
+ * registers its back handler when it is given the state it would close (#388).
  */
 @Composable
 fun DrawerContent(
+  drawerState: DrawerState,
   currentRoute: String?,
   connectionStatus: ConnectionStatus,
   connectionName: String?,
@@ -84,6 +87,7 @@ fun DrawerContent(
   modifier: Modifier = Modifier
 ) {
   ModalDrawerSheet(
+    drawerState = drawerState,
     modifier = modifier,
     drawerContainerColor = MaterialTheme.colorScheme.surface
   ) {

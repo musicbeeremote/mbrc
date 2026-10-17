@@ -57,6 +57,7 @@ fun NavigationDrawerScaffold(
     gesturesEnabled = drawerState.isOpen,
     drawerContent = {
       DrawerContent(
+        drawerState = drawerState,
         currentRoute = currentRoute,
         connectionStatus = connectionStatus,
         connectionName = connectionName,
