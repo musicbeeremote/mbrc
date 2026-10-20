@@ -61,6 +61,7 @@
   <string name="player_go_to_artist">Go to Artist</string>
   <string name="player_lfm_ban">Ban on Last.fm</string>
   <string name="player_lfm_love">Love on Last.fm</string>
+  <string name="player_live">LIVE</string>
   <string name="player_scrobbling">Scrobbling</string>
   <string name="player_screen_title">Player</string>
   <string name="player_track_rating">Track rating</string>

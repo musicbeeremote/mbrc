@@ -52,6 +52,7 @@ import com.kelsos.mbrc.core.ui.compose.ThinSlider
 import com.kelsos.mbrc.core.ui.compose.WaveProgressIndicator
 import com.kelsos.mbrc.feature.playback.R
 import com.kelsos.mbrc.feature.playback.lyrics.LyricsViewModel
+import com.kelsos.mbrc.feature.playback.player.compose.TrackDurationLabel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -284,8 +285,8 @@ private fun LyricsFooter(
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
       )
-      Text(
-        text = playingPosition.totalMinutes,
+      TrackDurationLabel(
+        position = playingPosition,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
       )

@@ -1,6 +1,13 @@
 Changelog
 -----------
 
+## [1.7.1]
+### Changed
+- Streams now show a red dot and "LIVE" where the player and the lyrics screen show a track's length. A stream has no length, so that spot used to repeat the elapsed time.
+
+### Fixed
+- Fixes the elapsed time in the player stopping after the connection to MusicBee dropped and came back while it kept playing. The time only moved when MusicBee sent a position update and then froze again; it now keeps counting every second after a reconnect.
+
 ## [1.7.0] - 2026-09-25
 ### Added
 - The now playing queue opens on the track that is playing instead of at the top, with a couple of tracks above it for context. A new action in the top bar jumps back to the playing track after you have scrolled away. The queue is left alone if you start scrolling before the track is located, so it never moves under your finger.

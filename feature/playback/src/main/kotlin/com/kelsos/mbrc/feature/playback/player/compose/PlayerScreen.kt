@@ -1059,8 +1059,8 @@ private fun ProgressSection(
         style = timeStyle,
         color = MaterialTheme.colorScheme.onSurfaceVariant
       )
-      Text(
-        text = position.totalMinutes,
+      TrackDurationLabel(
+        position = position,
         style = timeStyle,
         color = MaterialTheme.colorScheme.onSurfaceVariant
       )
