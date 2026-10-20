@@ -1,15 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:best-practices"
   ],
   "dependencyDashboard": true,
   "dependencyDashboardAutoclose": false,
   "prCreation": "approval",
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
-      "pinDigests": true
+      "description": "Supply-chain cooldown: only offer a version once it has been public for a week. Limited to datasources whose registries report release timestamps, since Renovate 42 holds back any update it cannot date.",
+      "matchDatasources": ["maven", "github-tags", "github-releases"],
+      "minimumReleaseAge": "7 days"
     },
     {
       "groupName": "Kotlin",
