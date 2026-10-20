@@ -87,7 +87,6 @@ subprojects {
     configure<com.android.build.api.dsl.LibraryExtension> {
       lint {
         lintConfig = rootProject.file("config/lint.xml")
-        sarifReport = true
       }
     }
   }
@@ -172,7 +171,7 @@ kover {
   }
 }
 
-val dummyGoogleServices: Configuration by configurations.creating {
+val dummyGoogleServices: Configuration = configurations.create("dummyGoogleServices") {
   isCanBeConsumed = true
   isCanBeResolved = false
 

@@ -253,13 +253,12 @@ android {
 
   sourceSets {
     getByName("androidTest") {
-      assets.srcDirs("$projectDir/schemas")
+      assets.directories.add("$projectDir/schemas")
     }
   }
 
   lint {
     lintConfig = rootProject.file("config/lint.xml")
-    sarifReport = true
   }
 }
 
@@ -278,7 +277,7 @@ detekt {
   buildUponDefaultConfig = true
 }
 
-val dummyGoogleServicesJson: Configuration by configurations.creating {
+val dummyGoogleServicesJson: Configuration = configurations.create("dummyGoogleServicesJson") {
   isCanBeResolved = true
   isCanBeConsumed = false
 
@@ -458,7 +457,7 @@ tasks {
     }
   }
 
-  val copyDummyGoogleServicesJson by registering(GenerateGoogleServicesJson::class) {
+  val copyDummyGoogleServicesJson = register<GenerateGoogleServicesJson>("copyDummyGoogleServicesJson") {
     val googleServicesFile = file("google-services.json")
     onlyIf {
       System.getenv("CI") == "true" && !googleServicesFile.exists()
@@ -476,7 +475,7 @@ tasks {
     outputJson.set(file("google-services.json"))
   }
 
-  val checkGoogleServicesJson by registering {
+  val checkGoogleServicesJson = register("checkGoogleServicesJson") {
     val googleServicesFile = file("google-services.json")
     onlyIf { System.getenv("CI") != "true" }
     doLast {

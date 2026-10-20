@@ -35,7 +35,7 @@ android {
 
   sourceSets {
     // Use debug assets for Robolectric tests - more reliable than test.assets
-    getByName("debug").assets.srcDirs("$projectDir/schemas")
+    getByName("debug").assets.directories.add("$projectDir/schemas")
   }
 }
 
