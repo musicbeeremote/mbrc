@@ -7,9 +7,6 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
-import com.kelsos.mbrc.core.common.state.AppStateFlow
-import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
-import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.networking.ClientConnectionManager
 import com.kelsos.mbrc.service.mediasession.AppNotificationManager
 import com.kelsos.mbrc.state.AppStateManager
@@ -21,8 +18,6 @@ class RemoteService : Service() {
   private val appStateManager: AppStateManager by inject()
   private val notificationManager: AppNotificationManager by inject()
   private val connectionManager: ClientConnectionManager by inject()
-  private val connectionState: ConnectionStateFlow by inject()
-  private val appState: AppStateFlow by inject()
   private val handler = Handler(Looper.getMainLooper())
   private var receiverRegistered = false
 
@@ -101,31 +96,19 @@ class RemoteService : Service() {
   }
 
   /**
-   * Outliving the task is only worth it while there is still something to control, so the
-   * notification stays usable for music that is actually playing. Any other state left a live
-   * [android.media.session.MediaSession] behind, and with it the remote volume slider the app puts
-   * over the volume keys, for an app the user had dismissed and could not get rid of.
+   * Swiping the app away is the only way to quit the remote, so it always stops, whatever MusicBee
+   * is doing. Outliving the task left a live [android.media.session.MediaSession] behind, and with
+   * it the remote volume slider over the volume keys and a playing notification that cannot be
+   * swiped away. Playback runs on the PC: stopping only closes the socket and sends MusicBee
+   * nothing.
    *
-   * Stopping here runs the full [onDestroy] teardown, which is what releases the session. Keeping
-   * the service means keeping [appStateManager] running too: stopping it used to leave a service in
-   * the foreground whose notification no longer followed the track or the player state.
+   * Stopping here runs the full [onDestroy] teardown, which is what releases the session.
    */
   override fun onTaskRemoved(rootIntent: Intent?) {
     super.onTaskRemoved(rootIntent)
-    if (worthKeepingAlive()) {
-      Timber.d("Background Service::Task removed, keeping the service for ongoing playback")
-      return
-    }
-    Timber.d(
-      "Background Service::Task removed, nothing left to control; stopping " +
-        "(connected: ${connectionState.isConnected}, " +
-        "state: ${appState.playerStatus.value.state.state})"
-    )
+    Timber.d("Background Service::Task removed, stopping")
     stopSelf()
   }
-
-  private fun worthKeepingAlive(): Boolean =
-    connectionState.isConnected && appState.playerStatus.value.state == PlayerState.Playing
 
   companion object {
     const val DESTROY_DELAY_MS = 150L

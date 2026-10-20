@@ -37,6 +37,12 @@ class RemoteServiceTest : KoinTest {
   private val appStateManager: AppStateManager = mockk(relaxed = true)
   private val notificationManager: AppNotificationManager = mockk(relaxed = true)
   private val connectionManager: ClientConnectionManager = mockk(relaxed = true)
+
+  /**
+   * The service no longer reads these. They stay in the graph so that a keep-alive check brought
+   * back into [RemoteService.onTaskRemoved] would see a connected, playing remote and fail the
+   * task-removal test instead of passing by default.
+   */
   private val connectionState: ConnectionStateFlow = mockk(relaxed = true)
   private val appState: AppStateFlow = mockk(relaxed = true)
   private val playerStatus = MutableStateFlow(PlayerStatusModel())
@@ -101,52 +107,29 @@ class RemoteServiceTest : KoinTest {
   }
 
   @Test
-  fun `dismissing the app while music is playing keeps the service and its session alive`() {
+  fun `dismissing the app while music is playing still stops the service`() {
     every { connectionState.isConnected } returns true
     playerStatus.value = PlayerStatusModel(state = PlayerState.Playing)
     val service = Robolectric.buildService(RemoteService::class.java).create().get()
 
     service.onTaskRemoved(Intent())
 
-    assertWithMessage("the notification controls are the point of outliving the task")
-      .that(shadowOf(service).isStoppedBySelf)
-      .isFalse()
-  }
-
-  @Test
-  fun `a service kept alive past task removal keeps following the player state`() {
-    every { connectionState.isConnected } returns true
-    playerStatus.value = PlayerStatusModel(state = PlayerState.Playing)
-    val service = Robolectric.buildService(RemoteService::class.java).create().get()
-
-    service.onTaskRemoved(Intent())
-
-    verify(exactly = 0) { appStateManager.stop() }
-  }
-
-  @Test
-  fun `dismissing the app while paused stops the service so the volume slider goes away`() {
-    every { connectionState.isConnected } returns true
-    playerStatus.value = PlayerStatusModel(state = PlayerState.Paused)
-    val service = Robolectric.buildService(RemoteService::class.java).create().get()
-
-    service.onTaskRemoved(Intent())
-
-    assertWithMessage("a paused remote has nothing left to control")
+    assertWithMessage("swiping the app away is the only way to quit the remote while it plays")
       .that(shadowOf(service).isStoppedBySelf)
       .isTrue()
   }
 
   @Test
-  fun `dismissing the app while disconnected stops the service`() {
-    every { connectionState.isConnected } returns false
-    playerStatus.value = PlayerStatusModel(state = PlayerState.Playing)
-    val service = Robolectric.buildService(RemoteService::class.java).create().get()
+  fun `destroying the service releases the session, the state ticker and the connection`() {
+    val controller = Robolectric.buildService(RemoteService::class.java).create()
 
-    service.onTaskRemoved(Intent())
+    controller.destroy()
 
-    assertWithMessage("a stale Playing state must not keep the session alive without a connection")
-      .that(shadowOf(service).isStoppedBySelf)
+    verify { notificationManager.destroy() }
+    verify { appStateManager.stop() }
+    verify { connectionManager.stop() }
+    assertWithMessage("the playing notification must go with the service")
+      .that(shadowOf(controller.get()).isForegroundStopped)
       .isTrue()
   }
 }
