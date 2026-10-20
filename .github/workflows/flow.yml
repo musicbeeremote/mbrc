@@ -52,9 +52,6 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
-
       - name: Static analysis
         run: ./gradlew staticAnalysisAll collectSarifReports --continue --no-daemon
 
@@ -97,9 +94,6 @@ jobs:
           # dependencies entry. Gradle still evicts dependencies unused for 30 days on its own.
           cache-cleanup: never
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
-
       - name: Run Tests
         run: ./gradlew koverXmlReportUnit --continue --no-daemon
 
@@ -138,9 +132,6 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
           cache-cleanup: never
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
 
       - name: Validate Screenshots
         run: ./gradlew validateGithubDebugScreenshotTest --no-daemon
