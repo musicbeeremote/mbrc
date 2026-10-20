@@ -92,6 +92,7 @@ class AppStateManager(
 
           ConnectionStatus.Connected -> {
             wasConnectionAttempted = true
+            refillNotification()
             serviceLifecycleManager.onConnectionRestored()
             resumePositionUpdaterIfPlaying()
           }
@@ -113,10 +114,10 @@ class AppStateManager(
       }
     }
 
+    val streamSwitches = playingPosition.distinctUntilChangedBy { it.isStream }
+
     launch {
-      // The notification only shows whether this is a stream, so the one-second ticker below
-      // would otherwise rebuild it for nothing (#385).
-      playingPosition.distinctUntilChangedBy { it.isStream }.collect { position ->
+      streamSwitches.collect { position ->
         val playerState = appState.playerStatus.map { it.state }.first()
         notifications.updateState(playerState, position)
       }
@@ -128,6 +129,17 @@ class AppStateManager(
     notifications.cancel()
     stopPositionUpdater()
     isRunning = false
+  }
+
+  /**
+   * A disconnect strips the notification down to a placeholder. Reconnecting to the same track in
+   * the same state brings no new value through the flows that normally fill it, and position
+   * ticks only reach it when playback switches between a track and a stream (#385), so it is
+   * filled from the current state here instead.
+   */
+  private fun refillNotification() {
+    notifications.updatePlayingTrack(appState.playingTrack.value)
+    notifications.updateState(appState.playerStatus.value.state, appState.playingPosition.value)
   }
 
   private fun startPositionUpdater() {

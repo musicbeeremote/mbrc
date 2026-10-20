@@ -219,6 +219,25 @@ class AppStateManagerTest {
   }
 
   @Test
+  fun `a reconnect refills the notification the disconnect emptied`() = managerTest {
+    val track = BasicTrackInfo(artist = "Camel", title = "Lady Fantasy")
+    appState.updatePlayingTrack(track)
+    appState.updatePlayerStatus(PlayerStatusModel(state = PlayerState.Paused))
+    connection.value = ConnectionStatus.Connected
+    stateManager.start()
+    idle()
+    connection.value = ConnectionStatus.Offline
+    idle()
+    clearMocks(notifications, answers = false)
+
+    connection.value = ConnectionStatus.Connected
+    idle()
+
+    verify { notifications.updatePlayingTrack(track) }
+    verify { notifications.updateState(PlayerState.Paused, any()) }
+  }
+
+  @Test
   fun `a switch between a track and a stream updates the notification`() = managerTest {
     appState.updatePlayingPosition(PlayingPosition(current = 0, total = 60_000))
     stateManager.start()

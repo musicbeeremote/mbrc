@@ -15,13 +15,9 @@ import com.kelsos.mbrc.R
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.state.PlayingPosition
 import com.kelsos.mbrc.core.common.state.TrackInfo
-import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.platform.mediasession.NotificationData
 import com.kelsos.mbrc.core.platform.state.toPlayingTrack
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 interface AppNotificationManager {
   fun initialize()
@@ -46,7 +42,6 @@ interface AppNotificationManager {
 
 class AppNotificationManagerImpl(
   private val context: Context,
-  private val dispatchers: AppCoroutineDispatchers,
   private val notificationManager: NotificationManager,
   private val notificationBuilder: NotificationBuilder,
   private val mediaSessionManager: MediaSessionManager
@@ -62,26 +57,30 @@ class AppNotificationManagerImpl(
   private var postedData: NotificationData? = null
 
   /**
-   * Track and state updates run in parallel on [MediaSessionManager.scope]. Without this, two of
-   * them could interleave so that [postedData] names one notification while the other is on
-   * screen, and the skip in [update] would then keep the wrong one up.
+   * Guards [notificationData], [postedData] and the post itself. Track updates arrive from
+   * [MediaSessionManager.scope] while state and connection changes arrive from the state manager's
+   * thread. Unguarded, a late update could post over the disconnect placeholder, or leave
+   * [postedData] naming a notification that is not the one on screen, so the skip in [update]
+   * would keep the wrong one up. [NotificationManager.notify] may be called from any thread, so
+   * posting happens under the lock and posts land in the order the changes were made.
    */
-  private val updates = Mutex()
+  private val lock = Any()
 
   init {
     ensureChannelExists()
   }
 
-  private suspend fun update(change: (NotificationData) -> NotificationData) = updates.withLock {
+  private fun update(change: (NotificationData) -> NotificationData) = synchronized(lock) {
     notificationData = change(notificationData)
-    val mediaSession = mediaSessionManager.mediaSession ?: return@withLock
-    if (notificationData == postedData) return@withLock
-    notification = notificationBuilder.createBuilder(notificationData, mediaSession).build()
+    val mediaSession = mediaSessionManager.mediaSession ?: return@synchronized
+    if (notificationData == postedData) return@synchronized
+    post(notificationBuilder.createBuilder(notificationData, mediaSession).build())
     postedData = notificationData
+  }
 
-    withContext(dispatchers.main) {
-      notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
-    }
+  private fun post(notification: Notification) {
+    this.notification = notification
+    notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
   }
 
   override fun initialize() {
@@ -117,28 +116,23 @@ class AppNotificationManagerImpl(
     }
   }
 
-  override fun connectionStateChanged(connected: Boolean) {
+  override fun connectionStateChanged(connected: Boolean) = synchronized(lock) {
     if (connected) {
-      val mediaSession = mediaSessionManager.mediaSession ?: return
-      notification = notificationBuilder.createBuilder(this.notificationData, mediaSession).build()
-      postedData = this.notificationData
-      notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
+      val mediaSession = mediaSessionManager.mediaSession ?: return@synchronized
+      post(notificationBuilder.createBuilder(notificationData, mediaSession).build())
+      postedData = notificationData
     } else {
       // Replace the notification with a placeholder to indicate disconnection.
       // The ServiceLifecycleManager will eventually stop the service and remove it,
       // but this avoids showing stale track data during the reconnection window.
       notificationData = NotificationData()
       postedData = null
-      notification = notificationBuilder.createPlaceholderBuilder().build()
-      notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
+      post(notificationBuilder.createPlaceholderBuilder().build())
     }
   }
 
-  override fun updateState(state: PlayerState, position: PlayingPosition) {
-    mediaSessionManager.scope.launch {
-      update { it.copy(playerState = state, isStream = position.isStream) }
-    }
-  }
+  override fun updateState(state: PlayerState, position: PlayingPosition) =
+    update { it.copy(playerState = state, isStream = position.isStream) }
 
   override fun createPlaceholder(): Notification {
     ensureChannelExists()

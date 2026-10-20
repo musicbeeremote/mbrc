@@ -61,7 +61,6 @@ class NotificationBuilder(
         .setContentTitle(title)
         .setContentText(artist)
 
-      // A running clock here would change the notification every second (#385).
       if (notificationData.isStream) {
         builder.setSubText(getString(context, R.string.notification__live))
       } else {

@@ -235,6 +235,37 @@ class RemotePlayerTest {
   }
 
   @Test
+  fun `the end of a track is not mistaken for drift`() {
+    val reported = PlayingPosition(current = 199_000, total = 200_000)
+
+    val atEnd = reported.copy(current = 200_000)
+
+    assertWithMessage("the ticker stops at the duration while Media3 keeps extrapolating past it")
+      .that(atEnd.departsFrom(reported, extrapolatedMs = 205_000, playing = true))
+      .isFalse()
+  }
+
+  @Test
+  fun `a stream keeps extrapolating without a duration to stop at`() {
+    val reported = PlayingPosition(current = 10_000, total = -1)
+
+    val tick = reported.copy(current = 11_000)
+
+    assertThat(tick.departsFrom(reported, extrapolatedMs = 11_004, playing = true)).isFalse()
+  }
+
+  @Test
+  fun `a stream refreshed at position zero still reports a duration`() = runTest(testDispatcher) {
+    status.value = PlayerStatusModel(state = PlayerState.Playing)
+    position.value = PlayingPosition(current = 0, total = -1)
+    val player = player(backgroundScope)
+
+    assertWithMessage("a zero duration hides the progress bar for the whole stream")
+      .that(player.duration)
+      .isGreaterThan(0)
+  }
+
+  @Test
   fun `a new duration refreshes the session`() {
     val reported = PlayingPosition(current = 10_000, total = 200_000)
 

@@ -13,7 +13,6 @@ import com.kelsos.mbrc.core.common.state.BasicTrackInfo
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.state.PlayingPosition
 import com.kelsos.mbrc.core.common.test.testDispatchers
-import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.core.networking.protocol.usecases.VolumeModifyUseCase
 import com.kelsos.mbrc.core.platform.mediasession.NotificationData
@@ -22,16 +21,15 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The track and state updates are posted from [MediaSessionManager.scope], which runs on a real
- * background dispatcher, so those assertions wait on [built] rather than on a test scheduler. The
+ * Track updates are posted from [MediaSessionManager.scope], which runs on a real background
+ * dispatcher, so those assertions wait on [built] rather than on a test scheduler. State and
+ * connection updates post on the calling thread and can be asserted straight away. The
  * session manager itself keeps the standard test dispatchers: its collectors must stay parked, or
  * they would touch Media3 off the main thread.
  *
@@ -46,13 +44,6 @@ class AppNotificationManagerImplTest {
   private val notificationBuilder = mockk<NotificationBuilder>()
   private val built = LinkedBlockingQueue<NotificationData>()
   private val placeholders = LinkedBlockingQueue<Unit>()
-
-  private val immediateDispatchers = object : AppCoroutineDispatchers {
-    override val main: CoroutineDispatcher = Dispatchers.Unconfined
-    override val io: CoroutineDispatcher = Dispatchers.Unconfined
-    override val database: CoroutineDispatcher = Dispatchers.Unconfined
-    override val network: CoroutineDispatcher = Dispatchers.Unconfined
-  }
 
   private lateinit var sessionManager: MediaSessionManager
   private lateinit var manager: AppNotificationManagerImpl
@@ -77,7 +68,6 @@ class AppNotificationManagerImplTest {
     )
     manager = AppNotificationManagerImpl(
       context = context,
-      dispatchers = immediateDispatchers,
       notificationManager = notificationManager,
       notificationBuilder = notificationBuilder,
       mediaSessionManager = sessionManager
@@ -231,14 +221,26 @@ class AppNotificationManagerImplTest {
   fun `a state update that changes nothing is not posted again`() {
     manager.initialize()
     manager.updateState(PlayerState.Playing, PlayingPosition(current = 1_000, total = 200_000))
-    awaitBuilt()
 
     manager.updateState(PlayerState.Playing, PlayingPosition(current = 2_000, total = 200_000))
 
     assertWithMessage("the position is not on the notification, so a tick must not re-post it")
-      .that(built.poll(QUIET_MILLIS, TimeUnit.MILLISECONDS))
-      .isNull()
+      .that(built)
+      .hasSize(1)
     verify(exactly = 1) { notificationManager.notify(MEDIA_NOTIFICATION_ID, any()) }
+  }
+
+  @Test
+  fun `state updates are posted in the order they were made`() {
+    manager.initialize()
+
+    manager.updateState(PlayerState.Playing, PlayingPosition())
+    manager.updateState(PlayerState.Paused, PlayingPosition())
+
+    assertWithMessage("a pause overtaken by the play before it would leave the wrong button up")
+      .that(built.map { it.playerState })
+      .containsExactly(PlayerState.Playing, PlayerState.Paused)
+      .inOrder()
   }
 
   @Test
@@ -282,7 +284,6 @@ class AppNotificationManagerImplTest {
 
   private companion object {
     const val AWAIT_SECONDS = 5L
-    const val QUIET_MILLIS = 500L
     const val MEDIA_NOTIFICATION_ID = AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID
   }
 }

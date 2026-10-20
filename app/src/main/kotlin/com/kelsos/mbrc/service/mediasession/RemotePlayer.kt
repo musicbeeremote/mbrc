@@ -176,12 +176,12 @@ class RemotePlayer(
     val commands = commandsBuilder.build()
 
     val item = playingTrack.toMediaItem()
-    // For streams, set duration equal to current position so progress appears full
-    val durationUs = if (!isStream) {
-      position.total.toDuration(DurationUnit.MILLISECONDS).inWholeMicroseconds
+    val durationMs = if (isStream) {
+      position.current.coerceAtLeast(MIN_STREAM_DURATION_MS)
     } else {
-      position.current.toDuration(DurationUnit.MILLISECONDS).inWholeMicroseconds
+      position.total
     }
+    val durationUs = durationMs.toDuration(DurationUnit.MILLISECONDS).inWholeMicroseconds
     val mediaItem = MediaItemData
       .Builder(0)
       .setMediaItem(item)
@@ -353,8 +353,20 @@ class RemotePlayer(
     internal const val POSITION_DRIFT_TOLERANCE_MS = 2_000L
 
     /**
+     * A stream reports no duration, so the session is given one no longer than the position and
+     * the progress bar shows full. The session is no longer refreshed every second (#385), so the
+     * duration stays at whatever the position was at the last refresh; the floor keeps a stream
+     * that was refreshed at position zero from reporting a zero duration, which hides the bar.
+     */
+    private const val MIN_STREAM_DURATION_MS = 1L
+
+    /**
      * True when this position is news to the session rather than the ticker catching up with what
      * it already extrapolates: a new duration, a seek, or a correction from the plugin.
+     *
+     * Media3 does not stop its extrapolation at the end of a track while the ticker does, so the
+     * comparison caps it at the duration. Otherwise every tick after the end would count as drift
+     * until the next track arrives.
      *
      * [SimpleBasePlayer] extrapolates a ready, playing position on its own, and so does the system
      * from the session's playback state. Invalidating on every ticker step re-posted the session
@@ -366,7 +378,8 @@ class RemotePlayer(
       playing: Boolean
     ): Boolean {
       if (total != reported.total) return true
-      val drift = abs(current - extrapolatedMs)
+      val expectedMs = if (isStream) extrapolatedMs else extrapolatedMs.coerceAtMost(total)
+      val drift = abs(current - expectedMs)
       return if (playing) drift > POSITION_DRIFT_TOLERANCE_MS else drift > 0
     }
 
