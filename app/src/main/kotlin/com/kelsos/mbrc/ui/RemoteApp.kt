@@ -9,7 +9,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemGestures
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +27,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -52,6 +58,8 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 private val DRAWER_EDGE_WIDTH = 20.dp
+private val DRAWER_EDGE_BAND_HEIGHT = 200.dp
+private const val DRAWER_EDGE_BAND_CENTER = 2f / 3f
 private const val EDGE_HORIZONTAL_DOMINANCE = 2f
 
 /**
@@ -160,11 +168,18 @@ fun RemoteApp(
           drawerViewModel = drawerViewModel,
           onRequestLocalNetworkAccess = onRequestLocalNetworkAccess
         ) {
+          val systemGestureEdgePx = WindowInsets.systemGestures.getLeft(
+            LocalDensity.current,
+            LocalLayoutDirection.current
+          )
           Box(
             modifier = Modifier
               .fillMaxSize()
-              .leftEdgeDrawerSwipe(drawerState) { scope.launch { drawerState.open() } }
+              .leftEdgeDrawerSwipe(drawerState, systemGestureEdgePx) {
+                scope.launch { drawerState.open() }
+              }
           ) {
+            DrawerEdgeGestureExclusion(drawerState, systemGestureEdgePx)
             // Each screen handles its own Scaffold - no shared Scaffold here
             AppNavGraph(
               navController = navController,
@@ -221,26 +236,54 @@ fun RemoteApp(
 }
 
 /**
+ * Under gesture navigation ([systemGestureEdgePx] > 0) the system back zone covers the whole left
+ * edge, so [leftEdgeDrawerSwipe] would never see a touch. This takes a
+ * [DRAWER_EDGE_BAND_HEIGHT] band back from the system, the most Android allows per edge, centred
+ * at [DRAWER_EDGE_BAND_CENTER] of the height where a thumb reaches. Back still works above and
+ * below the band, and everywhere while the drawer is open.
+ */
+@Composable
+private fun DrawerEdgeGestureExclusion(drawerState: DrawerState, systemGestureEdgePx: Int) {
+  if (systemGestureEdgePx == 0 || drawerState.isOpen) return
+  val bandHeightPx = with(LocalDensity.current) { DRAWER_EDGE_BAND_HEIGHT.toPx() }
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .systemGestureExclusion { coordinates ->
+        val height = coordinates.size.height.toFloat()
+        val top = (height * DRAWER_EDGE_BAND_CENTER - bandHeightPx / 2)
+          .coerceIn(0f, (height - bandHeightPx).coerceAtLeast(0f))
+        Rect(0f, top, systemGestureEdgePx.toFloat(), (top + bandHeightPx).coerceAtMost(height))
+      }
+  )
+}
+
+/**
  * Left-edge swipe-to-open detector for the navigation drawer. Only arms on
- * pointer-downs within [DRAWER_EDGE_WIDTH] of the left edge, and only commits
+ * pointer-downs within [DRAWER_EDGE_WIDTH] of the left edge, widened to
+ * [systemGestureEdgePx] under gesture navigation so the whole strip
+ * [DrawerEdgeGestureExclusion] takes from the system opens the drawer. Only commits
  * ([onOpen]) once the gesture crosses touch slop while clearly rightward and
  * horizontal, so content swipes elsewhere on the screen don't open the drawer.
  *
  * Slop is tracked here on the Initial pass so children (raised-slop swipeable
  * rows in now-playing) can't consume the move events before we claim the gesture.
  */
-private fun Modifier.leftEdgeDrawerSwipe(drawerState: DrawerState, onOpen: () -> Unit): Modifier =
-  pointerInput(drawerState) {
-    awaitPointerEventScope {
-      val edgePx = DRAWER_EDGE_WIDTH.toPx()
-      val slop = viewConfiguration.touchSlop
-      while (true) {
-        val down = awaitFirstDown(pass = PointerEventPass.Initial)
-        if (drawerState.isOpen || down.position.x > edgePx) continue
-        if (awaitLeftEdgeArm(down.id, slop)) onOpen()
-      }
+private fun Modifier.leftEdgeDrawerSwipe(
+  drawerState: DrawerState,
+  systemGestureEdgePx: Int,
+  onOpen: () -> Unit
+): Modifier = pointerInput(drawerState, systemGestureEdgePx) {
+  awaitPointerEventScope {
+    val edgePx = maxOf(DRAWER_EDGE_WIDTH.toPx(), systemGestureEdgePx.toFloat())
+    val slop = viewConfiguration.touchSlop
+    while (true) {
+      val down = awaitFirstDown(pass = PointerEventPass.Initial)
+      if (drawerState.isOpen || down.position.x > edgePx) continue
+      if (awaitLeftEdgeArm(down.id, slop)) onOpen()
     }
   }
+}
 
 /**
  * Waits for the in-progress gesture started by [downId] to either arm as a

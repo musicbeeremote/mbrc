@@ -8,6 +8,7 @@
     <bug>Fixes there being no way to quit the remote while MusicBee was playing. Swiping the app away from recents now always closes it, which puts the volume keys back on the phone and removes the notification. MusicBee keeps playing.</bug>
     <bug>Fixes tablets, and most phones held sideways, keeping the navigation drawer open for good. Since 1.7.0 the destinations stayed on screen down the side with no menu button to hide them. The drawer now stays out of the way until you open it, at every screen size.</bug>
     <bug>Fixes back leaving the app while the navigation drawer was open. Back now closes the drawer and keeps you on the screen you were on.</bug>
+    <bug>Fixes swiping in from the left edge not opening the navigation drawer with gesture navigation, where the system took the swipe as back. The lower middle of the left edge now opens the drawer, and back still works from the rest of the edge.</bug>
   </version>
   <version
     version="1.7.0"
