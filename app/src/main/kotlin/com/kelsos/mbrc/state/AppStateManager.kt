@@ -92,6 +92,7 @@ class AppStateManager(
           ConnectionStatus.Connected -> {
             wasConnectionAttempted = true
             serviceLifecycleManager.onConnectionRestored()
+            resumePositionUpdaterIfPlaying()
           }
 
           ConnectionStatus.Authenticating -> {
@@ -133,6 +134,17 @@ class AppStateManager(
         delay(UPDATE_PERIOD_MS)
         updatePosition()
       }
+    }
+  }
+
+  /**
+   * Going offline stops the ticker, and the player-state collector only restarts it on a state
+   * change. A reconnect while MusicBee kept playing leaves the state at Playing, so the ticker is
+   * restarted here instead.
+   */
+  private fun resumePositionUpdaterIfPlaying() {
+    if (appState.playerStatus.value.state == PlayerState.Playing) {
+      startPositionUpdater()
     }
   }
 

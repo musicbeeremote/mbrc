@@ -243,6 +243,28 @@ class AppStateManagerTest {
   }
 
   @Test
+  fun `the position resumes advancing after a reconnect while still playing`() = managerTest {
+    appState.updatePlayingPosition(PlayingPosition(current = 0, total = 60_000))
+    connection.value = ConnectionStatus.Connected
+    stateManager.start()
+    idle()
+
+    publishPlayerState(PlayerState.Playing)
+    elapse(2 * ONE_SECOND)
+
+    connection.value = ConnectionStatus.Offline
+    elapse(ONE_SECOND)
+    val whileOffline = appState.playingPosition.value.current
+
+    connection.value = ConnectionStatus.Connected
+    elapse(3 * ONE_SECOND + 1)
+
+    assertWithMessage("the drop stopped the ticker and an unchanged Playing never restarts it")
+      .that(appState.playingPosition.value.current)
+      .isEqualTo(whileOffline + 3 * ONE_SECOND)
+  }
+
+  @Test
   fun `stopping cancels the notification and the position updater`() = managerTest {
     appState.updatePlayingPosition(PlayingPosition(current = 0, total = 60_000))
     stateManager.start()
