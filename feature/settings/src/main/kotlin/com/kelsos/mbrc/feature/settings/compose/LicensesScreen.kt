@@ -90,7 +90,7 @@ fun LicensesScreen(
 
         is LicensesUiState.Error -> {
           ErrorState(
-            message = state.message,
+            message = stringResource(R.string.licenses_loading_error),
             onRetry = viewModel::retry,
             modifier = Modifier.weight(1f)
           )

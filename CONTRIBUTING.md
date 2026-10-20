@@ -10,6 +10,7 @@ Thank you for your interest in contributing to MusicBee Remote! This document pr
   - [Reporting Bugs](#reporting-bugs)
   - [Suggesting Features](#suggesting-features)
   - [Code Contributions](#code-contributions)
+  - [Translations](#translations)
 - [Development Setup](#development-setup)
 - [Code Style](#code-style)
 - [Testing](#testing)
@@ -71,6 +72,11 @@ We welcome code contributions for:
 - Performance improvements
 - Documentation improvements
 - Test coverage improvements
+
+### Translations
+
+Translations are welcome, including partial ones. See [TRANSLATING.md](TRANSLATING.md) for how to
+add or update a language.
 
 ## Development Setup
 

@@ -1,52 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Not translated: the label arrays point at strings that are translated in strings.xml, and the
+  value arrays are stored in preferences, so a translated value would break the setting.
+-->
 <resources>
-  <string-array name="preferences_library_track_default_action_option_labels">
-    <item>Queue Next</item>
-    <item>Queue Last</item>
-    <item>Play Now</item>
-    <item>Play Now (Queue All)</item>
+  <string-array name="preferences_library_track_default_action_option_labels" translatable="false">
+    <item>@string/menu_queue_next</item>
+    <item>@string/menu_queue_last</item>
+    <item>@string/menu_play</item>
+    <item>@string/menu_play_queue_all</item>
   </string-array>
 
-  <string-array name="preferences_library_track_default_action_option_values">
+  <string-array name="preferences_library_track_default_action_option_values" translatable="false">
     <item>next</item>
     <item>last</item>
     <item>now</item>
     <item>add-all</item>
   </string-array>
 
-  <string-array name="keep_screen_on_options">
+  <string-array name="keep_screen_on_options" translatable="false">
     <item>@string/setting_keep_screen_on_never</item>
     <item>@string/setting_keep_screen_on_while_charging</item>
     <item>@string/setting_keep_screen_on_always</item>
   </string-array>
 
-  <string-array name="keep_screen_on_options_values">
+  <string-array name="keep_screen_on_options_values" translatable="false">
     <item>never</item>
     <item>while_charging</item>
     <item>always</item>
   </string-array>
 
-  <string-array name="incoming_action_options">
-    <item>None</item>
-    <item>Pause</item>
-    <item>Stop</item>
-    <item>Reduce Volume</item>
+  <string-array name="incoming_action_options" translatable="false">
+    <item>@string/action_none</item>
+    <item>@string/action_pause</item>
+    <item>@string/action_stop</item>
+    <item>@string/action_reduce_volume</item>
   </string-array>
 
-  <string-array name="incoming_action_options_values">
+  <string-array name="incoming_action_options_values" translatable="false">
     <item>none</item>
     <item>pause</item>
     <item>stop</item>
     <item>reduce</item>
   </string-array>
 
-  <string-array name="theme_options">
+  <string-array name="theme_options" translatable="false">
     <item>@string/theme_system</item>
     <item>@string/theme_light</item>
     <item>@string/theme_dark</item>
   </string-array>
 
-  <string-array name="theme_options_values">
+  <string-array name="theme_options_values" translatable="false">
     <item>system</item>
     <item>light</item>
     <item>dark</item>

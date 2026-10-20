@@ -236,7 +236,7 @@ private fun VersionHeader(
       horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
       Text(
-        text = "Version ${version.version}",
+        text = stringResource(R.string.whats_new_version, version.version),
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.onSurface

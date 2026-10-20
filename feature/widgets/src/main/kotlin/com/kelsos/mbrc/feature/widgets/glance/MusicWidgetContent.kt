@@ -2,6 +2,7 @@ package com.kelsos.mbrc.feature.widgets.glance
 
 import android.content.Intent
 import android.graphics.Bitmap
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -10,6 +11,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
@@ -78,6 +80,12 @@ private val subtitleStyle: TextStyle
     fontWeight = FontWeight.Normal
   )
 
+/**
+ * Glance composes outside the Compose UI tree, so `stringResource` has no context to read from.
+ */
+@Composable
+private fun glanceString(@StringRes id: Int): String = LocalContext.current.getString(id)
+
 private const val CONTROL_BUTTON_SIZE = 40
 private const val NORMAL_WIDGET_HEIGHT = 128
 private const val SMALL_WIDGET_HEIGHT = 72
@@ -118,21 +126,21 @@ fun NormalWidgetContent(state: WidgetState, actions: WidgetActions) {
       ) {
         // Title
         Text(
-          text = state.title.ifEmpty { "Unknown title" },
+          text = state.title.ifEmpty { glanceString(R.string.unknown_title) },
           style = titleStyle,
           maxLines = 1
         )
         Spacer(modifier = GlanceModifier.height(2.dp))
         // Artist
         Text(
-          text = state.artist.ifEmpty { "Unknown artist" },
+          text = state.artist.ifEmpty { glanceString(R.string.unknown_artist) },
           style = subtitleStyle,
           maxLines = 1
         )
         Spacer(modifier = GlanceModifier.height(2.dp))
         // Album
         Text(
-          text = state.album.ifEmpty { "Unknown album" },
+          text = state.album.ifEmpty { glanceString(R.string.unknown_album) },
           style = subtitleStyle,
           maxLines = 1
         )
@@ -185,7 +193,7 @@ fun SmallWidgetContent(state: WidgetState, actions: WidgetActions) {
         verticalAlignment = Alignment.CenterVertically
       ) {
         Text(
-          text = state.title.ifEmpty { "Unknown title" },
+          text = state.title.ifEmpty { glanceString(R.string.unknown_title) },
           style = titleStyle,
           maxLines = 1
         )
@@ -194,7 +202,7 @@ fun SmallWidgetContent(state: WidgetState, actions: WidgetActions) {
           style = subtitleStyle
         )
         Text(
-          text = state.artist.ifEmpty { "Unknown artist" },
+          text = state.artist.ifEmpty { glanceString(R.string.unknown_artist) },
           style = subtitleStyle,
           maxLines = 1
         )
@@ -229,7 +237,7 @@ private fun AlbumCover(
 
   Image(
     provider = imageProvider,
-    contentDescription = "Album cover",
+    contentDescription = glanceString(R.string.description_album_cover),
     modifier = modifier
       .size(size)
       .cornerRadius(4.dp)
@@ -253,7 +261,7 @@ private fun PlaybackControls(
     // Previous button
     ControlButton(
       iconRes = R.drawable.baseline_skip_previous_24,
-      contentDescription = "Previous",
+      contentDescription = glanceString(R.string.action_previous),
       onClick = actions.onPrevious,
       modifier = GlanceModifier.defaultWeight()
     )
@@ -261,7 +269,9 @@ private fun PlaybackControls(
     // Play/Pause button
     ControlButton(
       iconRes = if (isPlaying) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24,
-      contentDescription = if (isPlaying) "Pause" else "Play",
+      contentDescription = glanceString(
+        if (isPlaying) R.string.action_pause else CoreUiR.string.action_play
+      ),
       onClick = actions.onPlayPause,
       modifier = GlanceModifier.defaultWeight()
     )
@@ -269,7 +279,7 @@ private fun PlaybackControls(
     // Next button
     ControlButton(
       iconRes = R.drawable.baseline_skip_next_24,
-      contentDescription = "Next",
+      contentDescription = glanceString(R.string.action_next),
       onClick = actions.onNext,
       modifier = GlanceModifier.defaultWeight()
     )

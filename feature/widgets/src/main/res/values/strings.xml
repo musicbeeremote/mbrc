@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Accessibility descriptions -->
+  <string name="action_next">Next</string>
+  <string name="action_pause">Pause</string>
+  <string name="action_previous">Previous</string>
+  <string name="description_album_cover">Album cover</string>
+
+  <!-- Unknown values -->
+  <string name="unknown_album">Unknown album</string>
+  <string name="unknown_artist">Unknown artist</string>
+  <string name="unknown_title">Unknown title</string>
+</resources>

@@ -398,7 +398,7 @@ internal fun NowPlayingContent(
     onRefresh = onRefresh,
     modifier = modifier.fillMaxSize()
   ) {
-    when (val refreshState = tracks.loadState.refresh) {
+    when (tracks.loadState.refresh) {
       is LoadState.Loading if tracks.itemCount == 0 -> {
         ScrollablePlaceholder { LoadingScreen() }
       }
@@ -406,7 +406,7 @@ internal fun NowPlayingContent(
       is LoadState.Error if tracks.itemCount == 0 -> {
         ScrollablePlaceholder {
           EmptyScreen(
-            message = refreshState.error.message ?: stringResource(R.string.refresh_failed),
+            message = stringResource(R.string.refresh_failed),
             icon = Icons.AutoMirrored.Filled.QueueMusic
           )
         }

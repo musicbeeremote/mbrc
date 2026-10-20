@@ -2,7 +2,7 @@
 <resources>
   <!-- App branding -->
   <string name="application_description">Remote Control Application for MusicBee</string>
-  <string name="application_name">MusicBee Remote</string>
+  <string name="application_name" translatable="false">MusicBee Remote</string>
   <string name="application_starting">Attempting to establish connection…</string>
 
   <!-- Playback actions (used in notification) -->

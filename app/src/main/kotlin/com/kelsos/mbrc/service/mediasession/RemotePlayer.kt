@@ -13,6 +13,7 @@ import androidx.media3.common.SimpleBasePlayer
 import androidx.media3.common.util.UnstableApi
 import com.google.common.util.concurrent.Futures.immediateVoidFuture
 import com.google.common.util.concurrent.ListenableFuture
+import com.kelsos.mbrc.R
 import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.PlayerState
 import com.kelsos.mbrc.core.common.state.ShuffleMode
@@ -54,6 +55,8 @@ class RemotePlayer(
   private val dispatchers: AppCoroutineDispatchers,
   private val scope: CoroutineScope
 ) : SimpleBasePlayer(context.mainLooper) {
+  private val playlistTitle = context.getString(R.string.nav_now_playing)
+
   /**
    * Rate-limited streams for the two commands a drag fires continuously.
    *
@@ -193,7 +196,7 @@ class RemotePlayer(
         MediaMetadata
           .Builder()
           .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
-          .setTitle("Now Playing")
+          .setTitle(playlistTitle)
           .build()
       ).setCurrentMediaItemIndex(1)
       .setContentPositionMs(position.current)

@@ -53,7 +53,7 @@ fun OutputSelectionBottomSheet(
   val events by viewModel.events.collectAsStateWithLifecycle(initialValue = null)
 
   var isLoading by remember { mutableStateOf(true) }
-  var errorMessage by remember { mutableStateOf<String?>(null) }
+  var errorMessage by remember { mutableStateOf<Int?>(null) }
 
   LaunchedEffect(Unit) {
     viewModel.reload()
@@ -76,8 +76,10 @@ fun OutputSelectionBottomSheet(
       is Outcome.Failure -> {
         isLoading = false
         errorMessage = when (event.error) {
-          is AppError.ConnectionRefused, is AppError.NetworkTimeout -> "Connection error"
-          else -> "Unknown error"
+          is AppError.ConnectionRefused, is AppError.NetworkTimeout ->
+            R.string.output_selection__connection_error
+
+          else -> R.string.output_selection__unknown_error
         }
       }
 
@@ -116,6 +118,7 @@ fun OutputSelectionBottomSheet(
         )
       }
 
+      val error = errorMessage
       when {
         isLoading -> {
           Box(
@@ -128,7 +131,7 @@ fun OutputSelectionBottomSheet(
           }
         }
 
-        errorMessage != null -> {
+        error != null -> {
           Box(
             modifier = Modifier
               .fillMaxWidth()
@@ -136,7 +139,7 @@ fun OutputSelectionBottomSheet(
             contentAlignment = Alignment.Center
           ) {
             Text(
-              text = errorMessage.orEmpty(),
+              text = stringResource(error),
               style = MaterialTheme.typography.bodyLarge,
               color = MaterialTheme.colorScheme.error
             )

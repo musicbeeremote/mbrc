@@ -59,7 +59,7 @@
   <string name="settings_oss_license">Open source licenses</string>
   <string name="settings_revision_title">Revision</string>
   <string name="settings_title_license">License</string>
-  <string name="settings_version_number">v%1$s</string>
+  <string name="settings_version_number" translatable="false">v%1$s</string>
 
   <!-- Rating settings -->
   <string name="settings_rating">Rating</string>
@@ -96,6 +96,7 @@
   <string name="licenses_no_results">No libraries found for \"%1$s\"</string>
   <string name="licenses_empty">No libraries found</string>
   <string name="license_loading_error">Failed to load license</string>
+  <string name="licenses_loading_error">Failed to load libraries</string>
 
   <!-- Plugin update -->
   <string name="plugin_update__description">Please update the MusicBee plugin to version %1$s to enjoy all features.</string>

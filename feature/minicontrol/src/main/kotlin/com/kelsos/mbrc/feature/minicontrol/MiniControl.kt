@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,13 +58,15 @@ fun MiniControl(
 ) {
   val state by viewModel.state.collectAsStateWithLifecycle(initialValue = MiniControlState())
 
+  val resources = LocalResources.current
+
   LaunchedEffect(Unit) {
     viewModel.events.collect { event ->
       val message = when (event) {
-        MiniControlUiMessages.NetworkUnavailable -> "Network unavailable"
-        MiniControlUiMessages.ActionFailed -> "Action failed"
+        MiniControlUiMessages.NetworkUnavailable -> R.string.mini_control_network_unavailable
+        MiniControlUiMessages.ActionFailed -> R.string.mini_control_action_failed
       }
-      snackbarHostState.showSnackbar(message)
+      snackbarHostState.showSnackbar(resources.getString(message))
     }
   }
 

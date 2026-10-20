@@ -51,6 +51,17 @@
   <issue id="SetTextI18n" severity="error" />
   <issue id="ClickableViewAccessibility" severity="error" />
 
+  <!-- Translations. A string with no translation falls back to English at runtime, so a partial
+       translation still works, and a new English string must not fail CI until a volunteer
+       translates it. A translation that no longer has an English source, breaks a placeholder, or
+       uses the wrong plural forms for its language is a real bug and stays an error.
+       See TRANSLATING.md. -->
+  <issue id="MissingTranslation" severity="ignore" />
+  <issue id="ExtraTranslation" severity="error" />
+  <issue id="StringFormatInvalid" severity="error" />
+  <issue id="MissingQuantity" severity="error" />
+  <issue id="UnusedQuantity" severity="error" />
+
   <!-- Kotlin interop. -->
   <issue id="ImplicitSamInstance" severity="error" />
   <issue id="KotlinPropertyAccess" severity="error" />

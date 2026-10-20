@@ -7,6 +7,10 @@
   <string name="main_button_previous_description">Play previous track</string>
   <string name="main_button_stop_description">Stop playback</string>
 
+  <!-- Messages -->
+  <string name="mini_control_action_failed">Action failed</string>
+  <string name="mini_control_network_unavailable">Network unavailable</string>
+
   <!-- Unknown values -->
   <string name="unknown_artist">Unknown artist</string>
   <string name="unknown_title">Unknown title</string>

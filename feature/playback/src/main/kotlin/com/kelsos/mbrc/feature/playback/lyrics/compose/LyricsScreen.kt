@@ -187,7 +187,7 @@ private fun LyricsHeader(
       )
       if (composer.isNotBlank()) {
         Text(
-          text = stringResource(R.string.track_details_composer) + ": " + composer,
+          text = stringResource(R.string.lyrics_composer, composer),
           style = MaterialTheme.typography.bodySmall,
           color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
           maxLines = 1,

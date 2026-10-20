@@ -25,6 +25,7 @@
 
   <!-- Lyrics -->
   <string name="lyrics_collapse">Collapse lyrics</string>
+  <string name="lyrics_composer">Composer: %1$s</string>
   <string name="lyrics_loading">Loading lyrics…</string>
   <string name="lyrics_not_found">No lyrics available</string>
   <string name="nav_lyrics">Lyrics</string>

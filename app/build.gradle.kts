@@ -109,6 +109,10 @@ android {
     compose = true
   }
 
+  androidResources {
+    generateLocaleConfig = true
+  }
+
   defaultConfig {
     applicationId = "com.kelsos.mbrc"
     minSdk = minSDKVersion

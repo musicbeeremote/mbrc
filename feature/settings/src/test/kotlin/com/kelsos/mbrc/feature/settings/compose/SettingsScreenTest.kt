@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.kelsos.mbrc.core.common.settings.TrackAction
 import com.kelsos.mbrc.core.common.utilities.AppInfo
 import com.kelsos.mbrc.feature.settings.SettingsDialogType
@@ -517,14 +518,13 @@ class SettingsScreenTest : KoinTest {
         )
       }
 
-      // Dialog uses array resource values which differ from the settings item display
-      // Check that all 4 options exist in the dialog (None appears in both subtitle and dialog)
-      composeTestRule.onAllNodesWithText("None").fetchSemanticsNodes().size.let {
-        assertThat(it).isAtLeast(1)
+      composeTestRule.onAllNodesWithText("Do nothing").fetchSemanticsNodes().size.let {
+        assertWithMessage("'Do nothing' is both the current value and a dialog option")
+          .that(it).isAtLeast(1)
       }
       composeTestRule.onNodeWithText("Pause").assertIsDisplayed()
       composeTestRule.onNodeWithText("Stop").assertIsDisplayed()
-      composeTestRule.onNodeWithText("Reduce Volume").assertIsDisplayed()
+      composeTestRule.onNodeWithText("Reduce volume").assertIsDisplayed()
     } finally {
       teardownKoin()
     }

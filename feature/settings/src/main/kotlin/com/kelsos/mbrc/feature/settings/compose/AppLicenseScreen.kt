@@ -66,7 +66,7 @@ fun AppLicenseScreen(
         ) {
           Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-              text = state.message,
+              text = stringResource(R.string.license_loading_error),
               style = MaterialTheme.typography.bodyLarge,
               color = MaterialTheme.colorScheme.error,
               textAlign = TextAlign.Center,
