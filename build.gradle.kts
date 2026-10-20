@@ -139,6 +139,8 @@ subprojects {
       val isPlay = name.contains("Play", ignoreCase = true)
       !isRelease && !isPlay
     }
+    // Robolectric 4.17 reaches into FileDescriptor through jdk.internal.access on JDK 17+
+    jvmArgs("--add-opens=java.base/jdk.internal.access=ALL-UNNAMED")
   }
 }
 

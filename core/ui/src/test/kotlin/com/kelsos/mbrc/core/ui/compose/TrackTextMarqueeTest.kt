@@ -10,6 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Coverage for #328.
@@ -19,6 +20,7 @@ import org.robolectric.RobolectricTestRunner
  * someone who has turned animations off, which is what [trackTextMarquee] gates.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(sdk = [36]) // Espresso 3.7.0 calls InputManager.getInstance(), which API 37 removed
 class TrackTextMarqueeTest {
   @get:Rule
   val composeRule = createComposeRule()
