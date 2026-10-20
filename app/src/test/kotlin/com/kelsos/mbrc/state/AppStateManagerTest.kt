@@ -15,6 +15,7 @@ import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatchers
 import com.kelsos.mbrc.service.ServiceLifecycleManager
 import com.kelsos.mbrc.service.mediasession.AppNotificationManager
+import io.mockk.clearMocks
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -199,6 +200,35 @@ class AppStateManagerTest {
     elapse(3 * ONE_SECOND)
 
     assertThat(appState.playingPosition.value.current).isEqualTo(3 * ONE_SECOND)
+  }
+
+  @Test
+  fun `the position ticker does not rebuild the notification`() = managerTest {
+    appState.updatePlayingPosition(PlayingPosition(current = 0, total = 60_000))
+    stateManager.start()
+    idle()
+    publishPlayerState(PlayerState.Playing)
+    clearMocks(notifications, answers = false)
+
+    elapse(5 * ONE_SECOND)
+
+    assertWithMessage("the ticker has to have run for this to prove anything")
+      .that(appState.playingPosition.value.current)
+      .isEqualTo(5 * ONE_SECOND)
+    verify(exactly = 0) { notifications.updateState(any(), any()) }
+  }
+
+  @Test
+  fun `a switch between a track and a stream updates the notification`() = managerTest {
+    appState.updatePlayingPosition(PlayingPosition(current = 0, total = 60_000))
+    stateManager.start()
+    idle()
+    clearMocks(notifications, answers = false)
+
+    appState.updatePlayingPosition(PlayingPosition(current = 0, total = -1))
+    idle()
+
+    verify(exactly = 1) { notifications.updateState(any(), match { it.isStream }) }
   }
 
   @Test

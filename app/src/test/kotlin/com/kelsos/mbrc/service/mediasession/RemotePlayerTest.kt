@@ -5,6 +5,7 @@ import androidx.media3.common.Player
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.BasicTrackInfo
 import com.kelsos.mbrc.core.common.state.PlayerState
@@ -17,13 +18,17 @@ import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatchers
 import com.kelsos.mbrc.core.networking.protocol.usecases.UserActionUseCase
 import com.kelsos.mbrc.core.networking.protocol.usecases.VolumeModifyUseCase
+import com.kelsos.mbrc.service.mediasession.RemotePlayer.Companion.POSITION_DRIFT_TOLERANCE_MS
+import com.kelsos.mbrc.service.mediasession.RemotePlayer.Companion.departsFrom
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowSystemClock
 
 /**
  * Covers the state Media3 reads back from the player: what it reports about playback, and which
@@ -157,5 +162,84 @@ class RemotePlayerTest {
     val player = player(backgroundScope)
 
     assertThat(player.currentPosition).isEqualTo(12_345)
+  }
+
+  /**
+   * The ticker no longer refreshes the session (#385), so this extrapolation is what keeps the
+   * progress bar moving. `SimpleBasePlayer` builds its state on first access, hence the read
+   * before the clock moves.
+   */
+  @Test
+  fun `while playing the session advances the position on its own`() = runTest(testDispatcher) {
+    status.value = PlayerStatusModel(state = PlayerState.Playing)
+    position.value = PlayingPosition(current = 10_000, total = 200_000)
+    val player = player(backgroundScope)
+    player.contentPosition
+
+    ShadowSystemClock.advanceBy(Duration.ofSeconds(3))
+
+    assertWithMessage("the progress bar must move without the app re-posting every second")
+      .that(player.contentPosition)
+      .isEqualTo(13_000)
+  }
+
+  @Test
+  fun `while paused the position holds still`() = runTest(testDispatcher) {
+    status.value = PlayerStatusModel(state = PlayerState.Paused)
+    position.value = PlayingPosition(current = 10_000, total = 200_000)
+    val player = player(backgroundScope)
+    player.contentPosition
+
+    ShadowSystemClock.advanceBy(Duration.ofSeconds(3))
+
+    assertThat(player.contentPosition).isEqualTo(10_000)
+  }
+
+  @Test
+  fun `a ticker step the session already extrapolated does not refresh it`() {
+    val reported = PlayingPosition(current = 10_000, total = 200_000)
+
+    val tick = reported.copy(current = 11_000)
+
+    assertThat(tick.departsFrom(reported, extrapolatedMs = 11_004, playing = true)).isFalse()
+  }
+
+  @Test
+  fun `a seek while playing refreshes the session`() {
+    val reported = PlayingPosition(current = 10_000, total = 200_000)
+
+    val seek = reported.copy(current = 90_000)
+
+    assertThat(seek.departsFrom(reported, extrapolatedMs = 11_000, playing = true)).isTrue()
+  }
+
+  @Test
+  fun `drift past the tolerance refreshes the session`() {
+    val reported = PlayingPosition(current = 10_000, total = 200_000)
+    val extrapolated = 20_000L
+
+    val behind = reported.copy(current = extrapolated - POSITION_DRIFT_TOLERANCE_MS - 1)
+
+    assertThat(behind.departsFrom(reported, extrapolated, playing = true)).isTrue()
+  }
+
+  @Test
+  fun `any position change while paused refreshes the session`() {
+    val reported = PlayingPosition(current = 10_000, total = 200_000)
+
+    val nudge = reported.copy(current = 10_500)
+
+    assertWithMessage("nothing advances the position while paused, so every change is a seek")
+      .that(nudge.departsFrom(reported, extrapolatedMs = 10_000, playing = false))
+      .isTrue()
+  }
+
+  @Test
+  fun `a new duration refreshes the session`() {
+    val reported = PlayingPosition(current = 10_000, total = 200_000)
+
+    val longer = PlayingPosition(current = 10_000, total = 300_000)
+
+    assertThat(longer.departsFrom(reported, extrapolatedMs = 10_000, playing = true)).isTrue()
   }
 }

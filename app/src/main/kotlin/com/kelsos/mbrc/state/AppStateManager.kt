@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
@@ -113,7 +114,9 @@ class AppStateManager(
     }
 
     launch {
-      playingPosition.collect { position ->
+      // The notification only shows whether this is a stream, so the one-second ticker below
+      // would otherwise rebuild it for nothing (#385).
+      playingPosition.distinctUntilChangedBy { it.isStream }.collect { position ->
         val playerState = appState.playerStatus.map { it.state }.first()
         notifications.updateState(playerState, position)
       }

@@ -216,20 +216,43 @@ class AppNotificationManagerImplTest {
     val data = awaitBuilt()
     assertThat(data.playerState).isEqualTo(PlayerState.Playing)
     assertThat(data.isStream).isFalse()
-    assertWithMessage("a track with a known duration needs no elapsed time in the notification")
-      .that(data.elapsedTime)
-      .isEmpty()
   }
 
   @Test
-  fun `a stream shows the elapsed time instead of a duration`() {
+  fun `a stream is marked as one in the notification`() {
     manager.initialize()
 
     manager.updateState(PlayerState.Playing, PlayingPosition(current = 65_000, total = -1))
 
-    val data = awaitBuilt()
-    assertThat(data.isStream).isTrue()
-    assertThat(data.elapsedTime).isEqualTo("01:05")
+    assertThat(awaitBuilt().isStream).isTrue()
+  }
+
+  @Test
+  fun `a state update that changes nothing is not posted again`() {
+    manager.initialize()
+    manager.updateState(PlayerState.Playing, PlayingPosition(current = 1_000, total = 200_000))
+    awaitBuilt()
+
+    manager.updateState(PlayerState.Playing, PlayingPosition(current = 2_000, total = 200_000))
+
+    assertWithMessage("the position is not on the notification, so a tick must not re-post it")
+      .that(built.poll(QUIET_MILLIS, TimeUnit.MILLISECONDS))
+      .isNull()
+    verify(exactly = 1) { notificationManager.notify(MEDIA_NOTIFICATION_ID, any()) }
+  }
+
+  @Test
+  fun `a reconnect posts the notification even when its content is unchanged`() {
+    manager.initialize()
+    manager.connectionStateChanged(connected = true)
+    awaitBuilt()
+
+    manager.connectionStateChanged(connected = false)
+    manager.updateState(PlayerState.Stopped, PlayingPosition())
+
+    assertWithMessage("the placeholder replaced it, so the same content must go up again")
+      .that(awaitBuilt().playerState)
+      .isEqualTo(PlayerState.Stopped)
   }
 
   @Test
@@ -259,6 +282,7 @@ class AppNotificationManagerImplTest {
 
   private companion object {
     const val AWAIT_SECONDS = 5L
+    const val QUIET_MILLIS = 500L
     const val MEDIA_NOTIFICATION_ID = AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID
   }
 }

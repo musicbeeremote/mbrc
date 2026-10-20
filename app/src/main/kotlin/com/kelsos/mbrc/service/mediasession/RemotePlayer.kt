@@ -16,6 +16,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.kelsos.mbrc.R
 import com.kelsos.mbrc.core.common.state.AppStateFlow
 import com.kelsos.mbrc.core.common.state.PlayerState
+import com.kelsos.mbrc.core.common.state.PlayingPosition
 import com.kelsos.mbrc.core.common.state.ShuffleMode
 import com.kelsos.mbrc.core.common.state.orEmpty
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
@@ -30,6 +31,7 @@ import com.kelsos.mbrc.core.networking.protocol.usecases.play
 import com.kelsos.mbrc.core.networking.protocol.usecases.previous
 import com.kelsos.mbrc.core.platform.media.toMediaItem
 import com.kelsos.mbrc.core.platform.state.toPlayingTrack
+import kotlin.math.abs
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.coroutines.CoroutineScope
@@ -79,10 +81,21 @@ class RemotePlayer(
   private fun <T> MutableSharedFlow<T>.throttled() =
     merge(sample(THROTTLE_MS), debounce(THROTTLE_MS)).distinctUntilChanged()
 
+  /** The position [getState] last handed to Media3, which the session now extrapolates from. */
+  private var reportedPosition: PlayingPosition? = null
+
   init {
     appState.playerStatus.invalidateStateOnEach(scope)
-    appState.playingPosition.invalidateStateOnEach(scope)
     appState.playingTrack.invalidateStateOnEach(scope)
+    appState.playingPosition.onEach { position ->
+      withContext(dispatchers.main) {
+        val reported = reportedPosition
+        val playing = appState.playerStatus.value.state == PlayerState.Playing
+        if (reported == null || position.departsFrom(reported, contentPosition, playing)) {
+          invalidateState()
+        }
+      }
+    }.launchIn(scope)
 
     scope.launch(dispatchers.network) {
       volumeRequests.throttled().collect {
@@ -127,6 +140,7 @@ class RemotePlayer(
   override fun getState(): State {
     val statusModel = appState.playerStatus.value
     val position = appState.playingPosition.value.orEmpty()
+    reportedPosition = position
     val playingTrack = appState.playingTrack.value.orEmpty().toPlayingTrack()
     val isStream = position.isStream
 
@@ -330,6 +344,31 @@ class RemotePlayer(
   companion object {
     private const val MIN_VOLUME = 0
     private const val MAX_VOLUME = 100
+
+    /**
+     * How far the app's position may wander from the session's own extrapolation before the
+     * session is corrected. The app advances its position on a one-second ticker, which lags real
+     * time by a few milliseconds a step; a seek or a correction from the plugin moves it by more.
+     */
+    internal const val POSITION_DRIFT_TOLERANCE_MS = 2_000L
+
+    /**
+     * True when this position is news to the session rather than the ticker catching up with what
+     * it already extrapolates: a new duration, a seek, or a correction from the plugin.
+     *
+     * [SimpleBasePlayer] extrapolates a ready, playing position on its own, and so does the system
+     * from the session's playback state. Invalidating on every ticker step re-posted the session
+     * and the notification once a second for nothing (#385).
+     */
+    internal fun PlayingPosition.departsFrom(
+      reported: PlayingPosition,
+      extrapolatedMs: Long,
+      playing: Boolean
+    ): Boolean {
+      if (total != reported.total) return true
+      val drift = abs(current - extrapolatedMs)
+      return if (playing) drift > POSITION_DRIFT_TOLERANCE_MS else drift > 0
+    }
 
     // 20 updates a second: fast enough that a drag still looks live, slow enough that a gesture
     // costs a handful of messages instead of a couple of hundred.

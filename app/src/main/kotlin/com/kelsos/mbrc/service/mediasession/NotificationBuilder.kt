@@ -61,10 +61,9 @@ class NotificationBuilder(
         .setContentTitle(title)
         .setContentText(artist)
 
-      // For streams, show elapsed time in subtext; otherwise show album
-      if (notificationData.isStream && notificationData.elapsedTime.isNotEmpty()) {
-        val liveLabel = getString(context, R.string.notification__live)
-        builder.setSubText("$liveLabel • ${notificationData.elapsedTime}")
+      // A running clock here would change the notification every second (#385).
+      if (notificationData.isStream) {
+        builder.setSubText(getString(context, R.string.notification__live))
       } else {
         builder.setSubText(album)
       }

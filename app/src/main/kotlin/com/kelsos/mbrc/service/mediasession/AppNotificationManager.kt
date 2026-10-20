@@ -19,6 +19,8 @@ import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.platform.mediasession.NotificationData
 import com.kelsos.mbrc.core.platform.state.toPlayingTrack
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 interface AppNotificationManager {
@@ -52,13 +54,30 @@ class AppNotificationManagerImpl(
   private var notification: Notification? = null
   private var notificationData: NotificationData = NotificationData()
 
+  /**
+   * What the notification on screen was last built from, or null while the placeholder shows.
+   * Re-posting identical content is not free: SystemUI treats every post as fresh activity and
+   * moves the card up the media carousel (#385).
+   */
+  private var postedData: NotificationData? = null
+
+  /**
+   * Track and state updates run in parallel on [MediaSessionManager.scope]. Without this, two of
+   * them could interleave so that [postedData] names one notification while the other is on
+   * screen, and the skip in [update] would then keep the wrong one up.
+   */
+  private val updates = Mutex()
+
   init {
     ensureChannelExists()
   }
 
-  private suspend fun update(notificationData: NotificationData) {
-    val mediaSession = mediaSessionManager.mediaSession ?: return
+  private suspend fun update(change: (NotificationData) -> NotificationData) = updates.withLock {
+    notificationData = change(notificationData)
+    val mediaSession = mediaSessionManager.mediaSession ?: return@withLock
+    if (notificationData == postedData) return@withLock
     notification = notificationBuilder.createBuilder(notificationData, mediaSession).build()
+    postedData = notificationData
 
     withContext(dispatchers.main) {
       notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
@@ -94,8 +113,7 @@ class AppNotificationManagerImpl(
             )
           }.getOrNull()
         }
-      notificationData = notificationData.copy(track = playingTrack.toPlayingTrack(), cover = cover)
-      update(notificationData)
+      update { it.copy(track = playingTrack.toPlayingTrack(), cover = cover) }
     }
   }
 
@@ -103,12 +121,14 @@ class AppNotificationManagerImpl(
     if (connected) {
       val mediaSession = mediaSessionManager.mediaSession ?: return
       notification = notificationBuilder.createBuilder(this.notificationData, mediaSession).build()
+      postedData = this.notificationData
       notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
     } else {
       // Replace the notification with a placeholder to indicate disconnection.
       // The ServiceLifecycleManager will eventually stop the service and remove it,
       // but this avoids showing stale track data during the reconnection window.
       notificationData = NotificationData()
+      postedData = null
       notification = notificationBuilder.createPlaceholderBuilder().build()
       notificationManager.notify(AppNotificationManager.MEDIA_SESSION_NOTIFICATION_ID, notification)
     }
@@ -116,12 +136,7 @@ class AppNotificationManagerImpl(
 
   override fun updateState(state: PlayerState, position: PlayingPosition) {
     mediaSessionManager.scope.launch {
-      notificationData = notificationData.copy(
-        playerState = state,
-        isStream = position.isStream,
-        elapsedTime = if (position.isStream) position.currentMinutes else ""
-      )
-      update(notificationData)
+      update { it.copy(playerState = state, isStream = position.isStream) }
     }
   }
 

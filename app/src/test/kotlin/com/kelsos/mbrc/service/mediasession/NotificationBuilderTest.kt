@@ -135,22 +135,10 @@ class NotificationBuilderTest {
   }
 
   @Test
-  fun `a stream shows the elapsed time instead of the album`() {
-    val notification = notificationFor(
-      NotificationData(track = track, isStream = true, elapsedTime = "12:34")
-    )
+  fun `a stream is labelled live instead of showing the album or a running clock`() {
+    val notification = notificationFor(NotificationData(track = track, isStream = true))
 
-    assertThat(notification.subText()).contains("12:34")
-    assertThat(notification.subText()).isNotEqualTo("Lateralus")
-  }
-
-  @Test
-  fun `a stream with no elapsed time falls back to the album`() {
-    val notification = notificationFor(
-      NotificationData(track = track, isStream = true, elapsedTime = "")
-    )
-
-    assertThat(notification.subText()).isEqualTo("Lateralus")
+    assertThat(notification.subText()).isEqualTo(app.getString(R.string.notification__live))
   }
 
   @Test

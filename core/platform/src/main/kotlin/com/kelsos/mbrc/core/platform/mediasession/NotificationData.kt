@@ -8,6 +8,5 @@ data class NotificationData(
   val track: PlayingTrack = PlayingTrack(),
   val playerState: PlayerState = PlayerState.Stopped,
   val cover: Bitmap? = null,
-  val isStream: Boolean = false,
-  val elapsedTime: String = ""
+  val isStream: Boolean = false
 )
