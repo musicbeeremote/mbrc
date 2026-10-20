@@ -32,7 +32,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     permissions:
-      contents: write # dependency graph submission
+      contents: read
       security-events: write # SARIF upload
     steps:
       - name: Checkout
@@ -51,8 +51,6 @@ jobs:
         uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/development' }}
-          # Generate and submit dependency graph for security scanning
-          dependency-graph: generate-and-submit
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
