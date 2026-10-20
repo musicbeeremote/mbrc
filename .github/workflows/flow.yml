@@ -25,10 +25,15 @@ env:
     -Dorg.gradle.caching=true
     -Dorg.gradle.configuration-cache=true
 
+permissions: {}
+
 jobs:
   check:
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # dependency graph submission
+      security-events: write # SARIF upload
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -72,6 +77,8 @@ jobs:
   test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -111,6 +118,8 @@ jobs:
   screenshot:
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

@@ -37,11 +37,15 @@ env:
     -Dorg.gradle.caching=true
     -Dorg.gradle.configuration-cache=true
 
+permissions: {}
+
 jobs:
   build:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     environment: release
+    permissions:
+      contents: read
     outputs:
       apk-sha256: ${{ steps.hashes.outputs.apk-sha256 }}
       play-apk-sha256: ${{ steps.hashes.outputs.play-apk-sha256 }}
@@ -61,6 +65,9 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          # Signed release artifacts must not be built from a cache that other workflows can write
+          cache-disabled: true
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
@@ -193,33 +200,40 @@ jobs:
           path: artifacts/mapping
 
       - name: Compress mapping with version
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          mv artifacts/mapping/mapping.txt "artifacts/mapping/mapping-${{ github.ref_name }}.txt"
-          (cd artifacts/mapping && zip -9 "mapping-${{ github.ref_name }}.zip" "mapping-${{ github.ref_name }}.txt")
-          rm "artifacts/mapping/mapping-${{ github.ref_name }}.txt"
+          mv artifacts/mapping/mapping.txt "artifacts/mapping/mapping-${TAG}.txt"
+          (cd artifacts/mapping && zip -9 "mapping-${TAG}.zip" "mapping-${TAG}.txt")
+          rm "artifacts/mapping/mapping-${TAG}.txt"
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+          APK_SHA256: ${{ needs.build.outputs.apk-sha256 }}
+          PLAY_APK_SHA256: ${{ needs.build.outputs.play-apk-sha256 }}
+          AAB_SHA256: ${{ needs.build.outputs.aab-sha256 }}
         run: |
           PRERELEASE_FLAG=""
-          if [[ "${{ github.ref_name }}" =~ -(alpha|beta|rc) ]]; then
+          if [[ "$TAG" =~ -(alpha|beta|rc) ]]; then
             PRERELEASE_FLAG="--prerelease"
           fi
-          gh release create "${{ github.ref_name }}" \
-            --repo "${{ github.repository }}" \
+          gh release create "$TAG" \
+            --repo "$REPO" \
             --generate-notes \
             $PRERELEASE_FLAG \
-            --notes "$(cat <<'EOF'
+            --notes "$(cat <<EOF
           ## Checksums
 
-          **APK (GitHub):** `${{ needs.build.outputs.apk-sha256 }}`
-          **APK (Play):** `${{ needs.build.outputs.play-apk-sha256 }}`
-          **AAB (Play):** `${{ needs.build.outputs.aab-sha256 }}`
+          **APK (GitHub):** \`${APK_SHA256}\`
+          **APK (Play):** \`${PLAY_APK_SHA256}\`
+          **AAB (Play):** \`${AAB_SHA256}\`
 
           ## Provenance
 
-          Build attestations are available via `gh attestation verify`.
+          Build attestations are available via \`gh attestation verify\`.
           EOF
           )" \
             artifacts/apk/*.apk \
