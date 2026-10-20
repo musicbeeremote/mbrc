@@ -132,11 +132,9 @@ android {
     unitTests.isIncludeAndroidResources = true
   }
 
-  // Configure screenshot tests to use less memory
   tasks.withType<Test>().matching { it.name.contains("ScreenshotTest") }.configureEach {
     maxHeapSize = "4g"
     maxParallelForks = 1
-    forkEvery = 10 // Restart JVM every 10 tests to free memory
   }
 
   compileOptions {
