@@ -4,7 +4,8 @@
 # Setup (one-time):
 #   1. Create a GitHub environment named "release" in Settings > Environments
 #      - Optionally add required reviewers for manual approval before release
-#      - Optionally restrict to the "main" branch
+#      - Restrict deployments to the "v*" tag pattern (a "main" branch rule
+#        would block tag-triggered runs)
 #   2. Add the following secrets to the "release" environment:
 #      - KEYSTORE_BASE64       : base64-encoded release keystore
 #                                (generate with: base64 -w0 < release.jks)
@@ -15,6 +16,7 @@
 #      - GOOGLE_SERVICES_JSON  : base64-encoded app/google-services.json
 #                                (generate with: base64 -w0 < app/google-services.json)
 #   3. Trigger by pushing a version tag: git tag v1.6.0 && git push origin v1.6.0
+#      The tagged commit must have a passing CI run from a push to a branch.
 #
 # Verify attestation locally:
 #   gh attestation verify <apk-file> --repo musicbeeremote/mbrc
@@ -40,7 +42,33 @@ env:
 permissions: {}
 
 jobs:
+  ci-passed:
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    steps:
+      - name: Require a green CI run for the tagged commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          for _ in $(seq 1 40); do
+            RESULT=$(gh run list --repo "$REPO" --workflow CI --commit "$SHA" --event push \
+              --json status,conclusion --jq '.[0] // empty | "\(.status) \(.conclusion)"')
+            case "$RESULT" in
+              "completed success") echo "CI passed for $SHA"; exit 0 ;;
+              completed*) echo "CI did not pass for $SHA: $RESULT"; exit 1 ;;
+            esac
+            echo "CI for $SHA is ${RESULT:-not started yet}, waiting"
+            sleep 60
+          done
+          echo "Timed out waiting for CI on $SHA"
+          exit 1
+
   build:
+    needs: ci-passed
     timeout-minutes: 30
     runs-on: ubuntu-latest
     environment: release
@@ -130,6 +158,7 @@ jobs:
 
   attest:
     needs: build
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -171,6 +200,7 @@ jobs:
 
   release:
     needs: [build, attest]
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     permissions:
       contents: write
