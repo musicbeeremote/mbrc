@@ -99,6 +99,7 @@ subprojects {
     configure<com.android.build.api.dsl.LibraryExtension> {
       lint {
         lintConfig = rootProject.file("config/lint.xml")
+        ignoreTestSources = true
       }
     }
   }

@@ -259,6 +259,7 @@ android {
 
   lint {
     lintConfig = rootProject.file("config/lint.xml")
+    ignoreTestSources = true
   }
 }
 
