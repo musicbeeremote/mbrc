@@ -181,8 +181,8 @@ class MyViewModel : ViewModel() {
 # Run all local checks
 ./gradlew verifyLocal
 
-# Generate coverage report
-./gradlew koverHtmlReport
+# Generate coverage report (debug unit tests, the same scope as CI)
+./gradlew koverHtmlReportUnit
 ```
 
 ### Screenshot Tests

@@ -101,12 +101,12 @@ jobs:
         uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
 
       - name: Run Tests
-        run: ./gradlew koverXmlReport --continue --no-daemon
+        run: ./gradlew koverXmlReportUnit --continue --no-daemon
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
-          files: ./build/reports/kover/report.xml
+          files: ./build/reports/kover/reportUnit.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 

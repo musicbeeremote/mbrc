@@ -137,8 +137,8 @@ The project has two product flavors:
 # Run all checks including instrumentation tests
 ./gradlew verifyAll
 
-# Generate test coverage report
-./gradlew koverHtmlReport
+# Generate test coverage report (debug unit tests, the same scope as CI)
+./gradlew koverHtmlReportUnit
 
 # Check for dependency updates
 ./gradlew dependencyUpdates

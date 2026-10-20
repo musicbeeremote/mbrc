@@ -397,6 +397,11 @@ dependencies {
 }
 
 kover {
+  currentProject {
+    createVariant("unit") {
+      add("githubDebug")
+    }
+  }
   reports {
     filters {
       excludes {

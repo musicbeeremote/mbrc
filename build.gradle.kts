@@ -83,6 +83,18 @@ subprojects {
     }
   }
 
+  // The root "unit" report only merges custom variants of the same name, not the debug
+  // variant AGP provides, so each library declares one. :app maps its own to githubDebug.
+  pluginManager.withPlugin("com.android.library") {
+    configure<kotlinx.kover.gradle.plugin.dsl.KoverProjectExtension> {
+      currentProject {
+        createVariant("unit") {
+          add("debug")
+        }
+      }
+    }
+  }
+
   pluginManager.withPlugin("com.android.library") {
     configure<com.android.build.api.dsl.LibraryExtension> {
       lint {
@@ -151,6 +163,11 @@ subprojects {
  * roughly 2,200 uncovered lines and pulled the reported figure several points below the real one.
  */
 kover {
+  // koverXmlReportUnit merges each module's "unit" variant (debug only). The total report also
+  // pulls in every release-like variant, compiling them all although no release unit test runs.
+  currentProject {
+    createVariant("unit") {}
+  }
   reports {
     filters {
       excludes {
