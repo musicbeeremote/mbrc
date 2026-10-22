@@ -11,10 +11,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [34])
 class ServiceCheckerImplTest {
   private val application: Application = mockk(relaxed = true)
   private val serviceChecker = ServiceCheckerImpl(application)

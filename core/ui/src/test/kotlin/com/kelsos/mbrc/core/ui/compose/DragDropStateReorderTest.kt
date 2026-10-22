@@ -21,7 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 /**
  * The reorder half of [DragDropState], which [DragDropStateSettleTest] leaves alone.
@@ -32,7 +31,6 @@ import org.robolectric.annotation.Config
  * smallest move that reorders.
  */
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [34])
 class DragDropStateReorderTest {
 
   @get:Rule

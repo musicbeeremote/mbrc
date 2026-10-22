@@ -26,7 +26,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 /**
  * Drives a real predictive back gesture against a real [NavHost] to pin down the #348 crash.
@@ -58,7 +57,6 @@ import org.robolectric.annotation.Config
  * exercised here are hardening rather than a demonstrated fix for #348.
  */
 @RunWith(AndroidJUnit4::class)
-@Config(sdk = [34])
 class PredictiveBackNavigationRaceTest {
   /**
    * The pop runs inside the `PredictiveBackHandler` coroutine, so a failure there never reaches the

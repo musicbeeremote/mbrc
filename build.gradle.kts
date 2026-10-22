@@ -83,6 +83,21 @@ subprojects {
     }
   }
 
+  listOf("com.android.application", "com.android.library").forEach { pluginId ->
+    pluginManager.withPlugin(pluginId) {
+      dependencies {
+        constraints {
+          add("testImplementation", libs.androidx.test.espresso.core) {
+            because(
+              "Compose UI testing still pulls espresso-core 3.5.0, which calls " +
+                "InputManager.getInstance() and fails every Compose test on API 37",
+            )
+          }
+        }
+      }
+    }
+  }
+
   // The root "unit" report only merges custom variants of the same name, not the debug
   // variant AGP provides, so each library declares one. :app maps its own to githubDebug.
   pluginManager.withPlugin("com.android.library") {
