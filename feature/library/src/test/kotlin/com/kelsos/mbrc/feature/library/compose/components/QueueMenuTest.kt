@@ -7,12 +7,15 @@ import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import com.kelsos.mbrc.core.data.library.album.Album
 import com.kelsos.mbrc.core.data.library.artist.Artist
 import com.kelsos.mbrc.core.data.library.genre.Genre
 import com.kelsos.mbrc.core.data.library.track.Track
@@ -42,6 +45,23 @@ class QueueMenuTest {
         ArtistListItem(Artist("Artist", 1), onClick = {}, onQueue = queued::add)
       }
     )
+      .containsExactly(play, queueNext, queueLast)
+      .inOrder()
+  }
+
+  @Test
+  fun `an album row offers play, queue next and queue last`() {
+    assertThat(openMenu { AlbumListItem(album, onClick = {}, onQueue = queued::add) })
+      .containsExactly(play, queueNext, queueLast)
+      .inOrder()
+  }
+
+  @Test
+  fun `a long press on an album grid tile offers play, queue next and queue last`() {
+    composeRule.setContent { AlbumGridItem(album, onClick = {}, onQueue = queued::add) }
+    composeRule.onNodeWithText(album.album).performTouchInput { longClick() }
+
+    assertThat(menuLabels())
       .containsExactly(play, queueNext, queueLast)
       .inOrder()
   }
@@ -112,6 +132,8 @@ class QueueMenuTest {
     .onAllNodes(hasAnyAncestor(isPopup()) and hasClickAction())
     .fetchSemanticsNodes()
     .map { node -> node.config[SemanticsProperties.Text].joinToString() }
+
+  private val album = Album(id = 1, artist = "Artist", album = "Album", cover = null)
 
   private val track = Track(
     artist = "Artist",
