@@ -17,10 +17,25 @@ interface ConnectionRepository {
   suspend fun save(settings: ConnectionSettings)
 
   /**
-   * Makes the host at [address] and [port] the default, adding it under [name] when it is not saved
-   * yet. An existing entry is reused as it is, so a user's own name for it survives.
+   * The first saved host, in the order given, at one of [addresses] on [port], or null when none of
+   * them is saved. A connect link lists every address of one computer, so a match on any of them is
+   * that computer.
    */
-  suspend fun saveAsDefault(address: String, port: Int, name: String): ConnectionSettings
+  suspend fun findSaved(addresses: List<String>, port: Int): ConnectionSettings?
+
+  /**
+   * Makes the host at [address] and [port] the default and returns it as stored.
+   *
+   * An entry already at [address] is reused. Failing that, an entry at one of [sameHostAddresses]
+   * (other addresses of the same computer) is moved to [address] rather than duplicated. Only when
+   * neither exists is a new entry added under [name]. A reused or moved entry keeps its own name.
+   */
+  suspend fun saveAsDefault(
+    address: String,
+    port: Int,
+    name: String,
+    sameHostAddresses: List<String>
+  ): ConnectionSettings
 
   suspend fun delete(settings: ConnectionSettings)
 
@@ -87,13 +102,32 @@ class ConnectionRepositoryImpl(
     }
   }
 
-  override suspend fun saveAsDefault(address: String, port: Int, name: String): ConnectionSettings =
+  override suspend fun findSaved(addresses: List<String>, port: Int): ConnectionSettings? =
     withContext(dispatchers.database) {
-      val id = dao.findId(address, port)
-        ?: dao.insert(ConnectionSettingsEntity(address = address, port = port, name = name))
-      dao.updateDefault(id)
-      checkNotNull(dao.getById(id)).toConnection()
+      addresses.firstNotNullOfOrNull { address ->
+        dao.findId(address, port)?.let(dao::getById)?.toConnection()
+      }
     }
+
+  override suspend fun saveAsDefault(
+    address: String,
+    port: Int,
+    name: String,
+    sameHostAddresses: List<String>
+  ): ConnectionSettings = withContext(dispatchers.database) {
+    val id = dao.findId(address, port)
+      ?: moveToAddress(sameHostAddresses, port, address)
+      ?: dao.insert(ConnectionSettingsEntity(address = address, port = port, name = name))
+    dao.updateDefault(id)
+    checkNotNull(dao.getById(id)).toConnection()
+  }
+
+  /** Moves the first entry saved at one of [from] on [port] to [address], returning its id. */
+  private fun moveToAddress(from: List<String>, port: Int, address: String): Long? {
+    val entry = from.firstNotNullOfOrNull { dao.findId(it, port)?.let(dao::getById) } ?: return null
+    dao.update(entry.copy(address = address))
+    return entry.id
+  }
 
   override suspend fun delete(settings: ConnectionSettings) {
     withContext(dispatchers.database) {

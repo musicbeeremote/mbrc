@@ -4,6 +4,8 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kelsos.mbrc.core.common.data.ConnectionSettings
+import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import com.kelsos.mbrc.core.networking.client.UiMessage
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
@@ -12,6 +14,7 @@ import com.kelsos.mbrc.core.networking.connectlink.ConnectLinkError
 import com.kelsos.mbrc.core.networking.connectlink.ConnectLinkParser
 import com.kelsos.mbrc.core.networking.connectlink.ConnectLinkResult
 import com.kelsos.mbrc.core.networking.connectlink.ReachableHostFinder
+import com.kelsos.mbrc.feature.settings.domain.ConnectionRepository
 import com.kelsos.mbrc.feature.settings.domain.DefaultConnectionSwitcher
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.Job
@@ -40,11 +43,20 @@ sealed interface ConnectLinkState {
   /**
    * Waiting for the user's tap: a link never connects on its own.
    *
+   * @property saved the connection already stored at one of the link's addresses, or null when this
+   * computer is new to the app.
    * @property problem what went wrong on the previous attempt, or null before the first one.
    */
-  data class Confirm(val link: ConnectLink, val problem: ConnectProblem?) : ConnectLinkState
+  data class Confirm(
+    val link: ConnectLink,
+    val saved: ConnectionSettings?,
+    val problem: ConnectProblem?
+  ) : ConnectLinkState
 
   data object Connecting : ConnectLinkState
+
+  /** The link names the default host, and the app is already connected to it: nothing to do. */
+  data class AlreadyConnected(val name: String) : ConnectLinkState
 
   data class Rejected(val error: ConnectLinkError) : ConnectLinkState
 }
@@ -55,11 +67,14 @@ sealed interface ConnectLinkState {
  * [ConnectLink.serverId] and redeeming [ConnectLink.pairingCode] wait for protocol V6
  * (musicbeeremote/mbrc#406).
  *
- * The link is kept in [savedState] until it is used or dismissed, so a confirm dialog the system
- * killed the process under comes back when the user returns.
+ * A computer counts as saved when any of the link's addresses is stored on the link's port, since
+ * the plugin lists every address of the one machine. The link is kept in [savedState] until it is
+ * used or dismissed, so a confirm dialog the system killed the process under comes back.
  */
 class ConnectLinkViewModel(
   private val savedState: SavedStateHandle,
+  private val repository: ConnectionRepository,
+  private val connectionState: ConnectionStateFlow,
   private val hostFinder: ReachableHostFinder,
   private val defaultConnectionSwitcher: DefaultConnectionSwitcher,
   private val localNetworkAccess: LocalNetworkAccess,
@@ -69,32 +84,32 @@ class ConnectLinkViewModel(
   private val _state = MutableStateFlow<ConnectLinkState>(ConnectLinkState.Hidden)
   val state: StateFlow<ConnectLinkState> = _state.asStateFlow()
 
-  private var connecting: Job? = null
+  private var working: Job? = null
 
   init {
     savedState.get<String>(KEY_LINK)?.let(::show)
   }
 
   fun open(link: String) {
-    connecting?.cancel()
     savedState[KEY_LINK] = link
     show(link)
   }
 
   fun connect() {
-    val link = (_state.value as? ConnectLinkState.Confirm)?.link ?: return
+    val confirm = _state.value as? ConnectLinkState.Confirm ?: return
     if (!localNetworkAccess.isPermitted()) {
-      _state.value = ConnectLinkState.Confirm(link, ConnectProblem.LocalNetworkDenied)
+      _state.value = confirm.copy(problem = ConnectProblem.LocalNetworkDenied)
       return
     }
     _state.value = ConnectLinkState.Connecting
-    connecting = viewModelScope.launch {
+    working = viewModelScope.launch {
+      val link = confirm.link
       val address = hostFinder.firstReachable(link.hosts, link.port)
       if (address == null) {
-        _state.value = ConnectLinkState.Confirm(link, ConnectProblem.Unreachable)
+        _state.value = confirm.copy(problem = ConnectProblem.Unreachable)
         return@launch
       }
-      switchTo(link, address)
+      switchTo(confirm, address)
     }
   }
 
@@ -107,20 +122,33 @@ class ConnectLinkViewModel(
   }
 
   fun dismiss() {
-    connecting?.cancel()
+    working?.cancel()
     close()
   }
 
   private fun show(link: String) {
-    _state.value = when (val result = ConnectLinkParser.parse(link)) {
-      is ConnectLinkResult.Valid -> ConnectLinkState.Confirm(result.link, problem = null)
-      is ConnectLinkResult.Invalid -> ConnectLinkState.Rejected(result.error)
+    working?.cancel()
+    working = viewModelScope.launch {
+      _state.value = when (val result = ConnectLinkParser.parse(link)) {
+        is ConnectLinkResult.Valid -> stateFor(result.link)
+        is ConnectLinkResult.Invalid -> ConnectLinkState.Rejected(result.error)
+      }
     }
   }
 
-  private suspend fun switchTo(link: ConnectLink, address: String) {
+  private suspend fun stateFor(link: ConnectLink): ConnectLinkState {
+    val saved = repository.findSaved(link.hosts, link.port)
+    if (saved != null && saved.isDefault && connectionState.isConnected) {
+      return ConnectLinkState.AlreadyConnected(saved.name.ifBlank { saved.address })
+    }
+    return ConnectLinkState.Confirm(link, saved, problem = null)
+  }
+
+  private suspend fun switchTo(confirm: ConnectLinkState.Confirm, address: String) {
+    val link = confirm.link
+    val name = confirm.saved?.name ?: link.name ?: address
     try {
-      defaultConnectionSwitcher.switchTo(address, link.port, link.name ?: address) { saved ->
+      defaultConnectionSwitcher.switchTo(address, link.port, name, link.hosts) { saved ->
         close()
         uiMessageQueue.messages.emit(UiMessage.ConnectingTo(saved.name))
       }
@@ -128,7 +156,7 @@ class ConnectLinkViewModel(
       throw e
     } catch (e: Exception) {
       Timber.e(e, "Failed to save %s:%d from a connect link", address, link.port)
-      _state.value = ConnectLinkState.Confirm(link, ConnectProblem.SaveFailed)
+      _state.value = confirm.copy(problem = ConnectProblem.SaveFailed)
     }
   }
 

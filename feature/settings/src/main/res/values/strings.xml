@@ -43,6 +43,9 @@
   <!-- Connect link (QR code) -->
   <string name="connect_link_title">Connect to MusicBee</string>
   <string name="connect_link_message">Add this computer and connect to it?</string>
+  <string name="connect_link_message_saved">%1$s is already saved. Make it the default and connect to it?</string>
+  <string name="connect_link_already_connected_title">Already connected</string>
+  <string name="connect_link_already_connected_message">MusicBee Remote is already connected to %1$s.</string>
   <string name="connect_link_addresses">Addresses</string>
   <string name="connect_link_port">Port %1$d</string>
   <string name="connect_link_connect">Connect</string>

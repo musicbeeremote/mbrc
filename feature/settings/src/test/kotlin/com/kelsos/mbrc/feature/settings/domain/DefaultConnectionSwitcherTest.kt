@@ -46,7 +46,10 @@ class DefaultConnectionSwitcherTest {
   @Test
   fun `switching to an address reports the stored host before reconnecting`() =
     runTest(testDispatcher) {
-      coEvery { repository.saveAsDefault("192.168.1.5", 3000, "LIVING-ROOM-PC") } returns stored
+      coEvery {
+        repository.saveAsDefault("192.168.1.5", 3000, "LIVING-ROOM-PC", emptyList())
+      } returns
+        stored
       val reported = mutableListOf<ConnectionSettings>()
       var connectedBeforeReport = false
       coEvery { clientConnectionUseCase.connect(any(), any()) } answers {
@@ -54,7 +57,7 @@ class DefaultConnectionSwitcherTest {
         true
       }
 
-      switcher.switchTo("192.168.1.5", 3000, "LIVING-ROOM-PC") { reported += it }
+      switcher.switchTo("192.168.1.5", 3000, "LIVING-ROOM-PC", emptyList()) { reported += it }
 
       assertWithMessage("the stored row wins, so a user's own name for the host is what is shown")
         .that(reported)
@@ -66,12 +69,12 @@ class DefaultConnectionSwitcherTest {
 
   @Test
   fun `a switch cancelled while saving still reconnects`() = runTest(testDispatcher) {
-    coEvery { repository.saveAsDefault(any(), any(), any()) } coAnswers {
+    coEvery { repository.saveAsDefault(any(), any(), any(), any()) } coAnswers {
       delay(SAVE_MS)
       stored
     }
 
-    val job = launch { switcher.switchTo("192.168.1.5", 3000, "Den PC") {} }
+    val job = launch { switcher.switchTo("192.168.1.5", 3000, "Den PC", emptyList()) {} }
     runCurrent()
     job.cancel()
     advanceUntilIdle()

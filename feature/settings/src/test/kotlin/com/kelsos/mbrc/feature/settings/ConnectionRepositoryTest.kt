@@ -339,7 +339,7 @@ class ConnectionRepositoryTest : KoinTest {
 
     val host = withoutId[1]
 
-    val saved = repository.saveAsDefault(host.address, host.port, host.name)
+    val saved = repository.saveAsDefault(host.address, host.port, host.name, emptyList())
 
     assertThat(saved).isEqualTo(withoutId[1].copy(id = 2, isDefault = true))
     assertThat(repository.getDefault()).isEqualTo(saved)
@@ -354,7 +354,7 @@ class ConnectionRepositoryTest : KoinTest {
 
       val host = withoutId[1]
 
-      val saved = repository.saveAsDefault(host.address, host.port, "From the QR code")
+      val saved = repository.saveAsDefault(host.address, host.port, "From the QR code", emptyList())
 
       assertWithMessage("a rescan must not add a second row for the same host")
         .that(repository.count())
@@ -364,6 +364,44 @@ class ConnectionRepositoryTest : KoinTest {
         .isEqualTo(withoutId[1].name)
       assertThat(repository.getDefault()?.id).isEqualTo(2)
     }
+
+  @Test
+  fun `saveAsDefault moves a host saved at another of its addresses instead of duplicating it`() =
+    runTest(testDispatcher) {
+      val (_, withoutId) = generateSettings(2)
+      withoutId.forEach { repository.save(it) }
+      val wslAdapter = withoutId[1]
+
+      val saved = repository.saveAsDefault(
+        "192.168.1.5",
+        wslAdapter.port,
+        "From the QR code",
+        listOf("192.168.1.5", wslAdapter.address)
+      )
+
+      assertWithMessage("the same computer must not gain a second row")
+        .that(repository.count())
+        .isEqualTo(2)
+      assertThat(saved).isEqualTo(
+        wslAdapter.copy(address = "192.168.1.5", isDefault = true, id = 2)
+      )
+    }
+
+  @Test
+  fun `findSaved returns the first stored host in the order given`() = runTest(testDispatcher) {
+    val (withId, withoutId) = generateSettings(3)
+    withoutId.forEach { repository.save(it) }
+
+    val found = repository.findSaved(
+      listOf("10.9.9.9", withId[2].address, withId[1].address),
+      withId[1].port
+    )
+
+    assertThat(found?.id).isEqualTo(withId[2].id)
+    assertWithMessage("a different port is a different plugin")
+      .that(repository.findSaved(listOf(withId[1].address), 9999))
+      .isNull()
+  }
 
   private fun generateSettings(count: Long): Settings {
     val withoutId = mutableListOf<ConnectionSettings>()

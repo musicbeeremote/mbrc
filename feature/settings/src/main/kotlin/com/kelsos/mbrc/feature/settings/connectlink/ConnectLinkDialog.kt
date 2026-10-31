@@ -20,8 +20,9 @@ import com.kelsos.mbrc.core.networking.connectlink.ConnectLinkError
 import com.kelsos.mbrc.feature.settings.R
 
 /**
- * The confirm step for a connect link, and what follows it: progress, a failed attempt, or a
- * refused link. Nothing connects until [onConnect] is tapped.
+ * The confirm step for a connect link, and what follows it: progress, a failed attempt, a refused
+ * link, or a note that the app is already connected to that computer. Nothing connects until
+ * [onConnect] is tapped.
  *
  * @param onGrantLocalNetworkAccess sends the user to the Android 17 permission prompt or settings.
  */
@@ -37,6 +38,7 @@ fun ConnectLinkDialog(
 
     is ConnectLinkState.Confirm -> HostDialog(
       link = state.link,
+      savedName = state.saved?.name?.ifBlank { null },
       problem = state.problem,
       onConfirm = if (state.problem == ConnectProblem.LocalNetworkDenied) {
         onGrantLocalNetworkAccess
@@ -47,6 +49,9 @@ fun ConnectLinkDialog(
     )
 
     ConnectLinkState.Connecting -> ConnectingDialog(onDismiss = onDismiss)
+
+    is ConnectLinkState.AlreadyConnected ->
+      AlreadyConnectedDialog(name = state.name, onDismiss = onDismiss)
 
     is ConnectLinkState.Rejected -> RejectedDialog(error = state.error, onDismiss = onDismiss)
   }
@@ -85,21 +90,31 @@ private fun textFor(problem: ConnectProblem?): HostDialogText = when (problem) {
   )
 }
 
+/**
+ * @param savedName the name of the connection already stored for this computer, or null when it is
+ * new to the app. A saved computer is offered as "make it the default" rather than "add it".
+ */
 @Composable
 private fun HostDialog(
   link: ConnectLink,
+  savedName: String?,
   problem: ConnectProblem?,
   onConfirm: () -> Unit,
   onDismiss: () -> Unit
 ) {
   val text = textFor(problem)
+  val message = if (problem == null && savedName != null) {
+    stringResource(R.string.connect_link_message_saved, savedName)
+  } else {
+    stringResource(text.message)
+  }
   AlertDialog(
     onDismissRequest = onDismiss,
     title = { Text(stringResource(text.title)) },
     text = {
       Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(text.message))
-        link.name?.let { name ->
+        Text(message)
+        (savedName ?: link.name)?.let { name ->
           Text(name, style = MaterialTheme.typography.titleMedium)
         }
         Text(
@@ -118,6 +133,18 @@ private fun HostDialog(
     },
     dismissButton = {
       TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) }
+    }
+  )
+}
+
+@Composable
+private fun AlreadyConnectedDialog(name: String, onDismiss: () -> Unit) {
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text(stringResource(R.string.connect_link_already_connected_title)) },
+    text = { Text(stringResource(R.string.connect_link_already_connected_message, name)) },
+    confirmButton = {
+      TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.ok)) }
     }
   )
 }

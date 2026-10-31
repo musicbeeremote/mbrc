@@ -18,14 +18,15 @@ interface DefaultConnectionSwitcher {
   suspend fun switchTo(connection: ConnectionSettings)
 
   /**
-   * Switches to the host at [address] and [port], saving it under [name] when it is not saved yet.
-   * [onSaved] receives the stored host, which keeps its existing name when it was already saved,
-   * before the reconnect starts.
+   * Switches to the host at [address] and [port]. It is stored as [ConnectionRepository.saveAsDefault]
+   * describes: reused, moved from one of [sameHostAddresses], or added under [name]. [onSaved]
+   * receives the stored host before the reconnect starts.
    */
   suspend fun switchTo(
     address: String,
     port: Int,
     name: String,
+    sameHostAddresses: List<String>,
     onSaved: suspend (ConnectionSettings) -> Unit
   )
 }
@@ -44,9 +45,10 @@ class DefaultConnectionSwitcherImpl(
     address: String,
     port: Int,
     name: String,
+    sameHostAddresses: List<String>,
     onSaved: suspend (ConnectionSettings) -> Unit
   ) = withContext(NonCancellable) {
-    onSaved(repository.saveAsDefault(address, port, name))
+    onSaved(repository.saveAsDefault(address, port, name, sameHostAddresses))
     reconnect()
   }
 

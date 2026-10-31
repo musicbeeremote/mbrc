@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.networking.connectlink.ConnectLink
 import com.kelsos.mbrc.core.networking.connectlink.ConnectLinkError
 import org.junit.Rule
@@ -45,7 +46,7 @@ class ConnectLinkDialogTest {
 
   @Test
   fun `the confirm dialog shows the host and connects only on the tap`() {
-    show(ConnectLinkState.Confirm(link, problem = null))
+    show(ConnectLinkState.Confirm(link, saved = null, problem = null))
 
     composeTestRule.onNodeWithText("Connect to MusicBee").assertIsDisplayed()
     composeTestRule.onNodeWithText("LIVING-ROOM-PC").assertIsDisplayed()
@@ -60,7 +61,7 @@ class ConnectLinkDialogTest {
 
   @Test
   fun `cancel dismisses without connecting`() {
-    show(ConnectLinkState.Confirm(link, problem = null))
+    show(ConnectLinkState.Confirm(link, saved = null, problem = null))
 
     composeTestRule.onNodeWithText("Cancel").performClick()
 
@@ -69,7 +70,7 @@ class ConnectLinkDialogTest {
 
   @Test
   fun `an unanswered attempt offers a retry`() {
-    show(ConnectLinkState.Confirm(link, ConnectProblem.Unreachable))
+    show(ConnectLinkState.Confirm(link, saved = null, problem = ConnectProblem.Unreachable))
 
     composeTestRule.onNodeWithText("MusicBee did not answer").assertIsDisplayed()
     composeTestRule.onNodeWithText("Try again").performClick()
@@ -79,7 +80,7 @@ class ConnectLinkDialogTest {
 
   @Test
   fun `denied local network access sends the user to grant it instead of connecting`() {
-    show(ConnectLinkState.Confirm(link, ConnectProblem.LocalNetworkDenied))
+    show(ConnectLinkState.Confirm(link, saved = null, problem = ConnectProblem.LocalNetworkDenied))
 
     composeTestRule.onNodeWithText("Local network access is off").assertIsDisplayed()
     composeTestRule.onNodeWithText("Grant access").performClick()
@@ -89,7 +90,7 @@ class ConnectLinkDialogTest {
 
   @Test
   fun `a failed save offers a retry`() {
-    show(ConnectLinkState.Confirm(link, ConnectProblem.SaveFailed))
+    show(ConnectLinkState.Confirm(link, saved = null, problem = ConnectProblem.SaveFailed))
 
     composeTestRule.onNodeWithText("Couldn't add this computer").assertIsDisplayed()
     composeTestRule.onNodeWithText("Try again").performClick()
@@ -134,6 +135,34 @@ class ConnectLinkDialogTest {
       state = ConnectLinkState.Rejected(error)
       composeTestRule.onNodeWithText(message).assertIsDisplayed()
     }
+    composeTestRule.onNodeWithText("OK").performClick()
+
+    assertThat(calls).containsExactly("dismiss")
+  }
+
+  @Test
+  fun `a saved computer is offered as the default under its own name`() {
+    val saved = ConnectionSettings("192.168.1.5", 3000, "Study", isDefault = false, id = 3)
+    show(ConnectLinkState.Confirm(link, saved = saved, problem = null))
+
+    composeTestRule
+      .onNodeWithText("Study is already saved. Make it the default and connect to it?")
+      .assertIsDisplayed()
+    composeTestRule.onNodeWithText("LIVING-ROOM-PC").assertDoesNotExist()
+    composeTestRule.onNodeWithText("Connect").performClick()
+
+    assertThat(calls).containsExactly("connect")
+  }
+
+  @Test
+  fun `an already connected computer only needs acknowledging`() {
+    show(ConnectLinkState.AlreadyConnected("Study"))
+
+    composeTestRule.onNodeWithText("Already connected").assertIsDisplayed()
+    composeTestRule.onNodeWithText(
+      "MusicBee Remote is already connected to Study."
+    ).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Connect").assertDoesNotExist()
     composeTestRule.onNodeWithText("OK").performClick()
 
     assertThat(calls).containsExactly("dismiss")
