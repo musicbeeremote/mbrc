@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.playback.nowplaying.compose
 
+import android.content.Context
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -8,10 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.paging.LoadState
@@ -23,6 +27,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.data.nowplaying.NowPlaying
@@ -203,6 +208,30 @@ class NowPlayingScreenTest {
 
     assertThat(listState.firstVisibleItemIndex).isEqualTo(scrolledTo)
   }
+
+  @Test
+  fun `a page that fails to load offers a retry that loads it`() {
+    val source = FailingSecondPageSource(totalItems = 120)
+    val pager = Pager(
+      config = PagingConfig(pageSize = 40, initialLoadSize = 40, prefetchDistance = 5),
+      pagingSourceFactory = { source }
+    )
+    val retry = ApplicationProvider.getApplicationContext<Context>()
+      .getString(com.kelsos.mbrc.core.ui.R.string.action_retry)
+
+    composeTestRule.setContent {
+      TestNowPlayingContent(
+        tracks = pager.flow.collectAsLazyPagingItems(),
+        trackCount = 120,
+        isConnected = true
+      )
+    }
+
+    composeTestRule.onNode(hasScrollAction()).performScrollToNode(hasText(retry))
+    composeTestRule.onNodeWithText(retry).performClick()
+
+    composeTestRule.onNode(hasScrollAction()).performScrollToNode(hasText("Track 41"))
+  }
 }
 
 private fun pagerOf(totalItems: Int): Pager<Int, NowPlaying> = Pager(
@@ -285,4 +314,35 @@ private fun TestNowPlayingContent(
     playingTrackIndex = playingTrackIndex,
     lazyListState = lazyListState
   )
+}
+
+/** Serves [totalItems] tracks in pages, failing the page after the first the first time it loads. */
+private class FailingSecondPageSource(private val totalItems: Int) :
+  PagingSource<Int, NowPlaying>() {
+  private var failed = false
+
+  override fun getRefreshKey(state: PagingState<Int, NowPlaying>): Int? = null
+
+  override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NowPlaying> {
+    val key = params.key ?: 0
+    if (key > 0 && !failed) {
+      failed = true
+      return LoadResult.Error(IllegalStateException("page at $key"))
+    }
+    val end = (key + params.loadSize).coerceAtMost(totalItems)
+    val data = (key until end).map { i ->
+      NowPlaying(
+        id = i.toLong() + 1,
+        title = "Track ${i + 1}",
+        artist = "Artist ${i + 1}",
+        path = "/path/$i",
+        position = i + 1
+      )
+    }
+    return LoadResult.Page(
+      data = data,
+      prevKey = null,
+      nextKey = if (end >= totalItems) null else end
+    )
+  }
 }

@@ -512,7 +512,7 @@ private fun <T : Any> PagedColumn(
     val append = items.loadState.append
     if (append !is LoadState.NotLoading) {
       item(contentType = "footer") {
-        PagedFooter(append = append, onRetry = items::retry)
+        PagingAppendFooter(append = append, onRetry = items::retry)
       }
     }
   }
@@ -547,7 +547,7 @@ private fun <T : Any> PagedGrid(
     val append = items.loadState.append
     if (append !is LoadState.NotLoading) {
       item(span = { GridItemSpan(maxLineSpan) }, contentType = "footer") {
-        PagedFooter(append = append, onRetry = items::retry)
+        PagingAppendFooter(append = append, onRetry = items::retry)
       }
     }
   }
@@ -563,13 +563,14 @@ private fun <T : Any> rememberPagedItemKey(
 }
 
 /**
- * The row after the last loaded item while the next page is loading or has failed to load. A
- * failed page gets a retry, since paging never asks for it again on its own.
+ * The row after the last loaded item while the next page is loading or has failed to load, given
+ * the list's [append] state. A failed page gets a retry, since paging never asks for it again on
+ * its own.
  */
 @Composable
-private fun PagedFooter(append: LoadState, onRetry: () -> Unit) {
+fun PagingAppendFooter(append: LoadState, onRetry: () -> Unit, modifier: Modifier = Modifier) {
   Box(
-    modifier = Modifier
+    modifier = modifier
       .fillMaxWidth()
       .padding(16.dp),
     contentAlignment = Alignment.Center

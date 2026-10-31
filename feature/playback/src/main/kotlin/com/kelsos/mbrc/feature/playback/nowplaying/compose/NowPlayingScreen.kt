@@ -37,7 +37,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -87,6 +86,7 @@ import com.kelsos.mbrc.core.ui.compose.DragDropState
 import com.kelsos.mbrc.core.ui.compose.DynamicScreenScaffold
 import com.kelsos.mbrc.core.ui.compose.EmptyScreen
 import com.kelsos.mbrc.core.ui.compose.LoadingScreen
+import com.kelsos.mbrc.core.ui.compose.PagingAppendFooter
 import com.kelsos.mbrc.core.ui.compose.TopBarState
 import com.kelsos.mbrc.core.ui.compose.displayedSourceIndex
 import com.kelsos.mbrc.core.ui.compose.dragHandle
@@ -564,16 +564,10 @@ private fun NowPlayingTrackList(
         }
       }
 
-      if (tracks.loadState.append is LoadState.Loading) {
+      val append = tracks.loadState.append
+      if (append !is LoadState.NotLoading) {
         item(contentType = ContentTypes.LOADING) {
-          Box(
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(16.dp),
-            contentAlignment = Alignment.Center
-          ) {
-            CircularProgressIndicator()
-          }
+          PagingAppendFooter(append = append, onRetry = tracks::retry)
         }
       }
     }
