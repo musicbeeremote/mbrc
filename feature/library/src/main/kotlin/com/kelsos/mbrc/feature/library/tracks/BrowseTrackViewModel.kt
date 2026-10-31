@@ -7,7 +7,6 @@ import com.kelsos.mbrc.core.common.settings.TrackSortPreference
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.data.library.track.TrackRepository
 import com.kelsos.mbrc.feature.library.LibrarySearchModel
-import com.kelsos.mbrc.feature.library.domain.LibrarySyncUseCase
 import com.kelsos.mbrc.feature.library.queue.QueueHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +18,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class BrowseTrackViewModel(
   private val repository: TrackRepository,
-  private val librarySyncUseCase: LibrarySyncUseCase,
   queueHandler: QueueHandler,
   private val searchModel: LibrarySearchModel,
   private val librarySettings: LibrarySettings,
@@ -40,16 +38,6 @@ class BrowseTrackViewModel(
     }.cachedIn(viewModelScope)
 
   val showSync = searchModel.term.map { it.isEmpty() }
-
-  fun sync() {
-    viewModelScope.launch {
-      if (!checkConnection()) {
-        emit(TrackUiMessage.NetworkUnavailable)
-        return@launch
-      }
-      librarySyncUseCase.sync()
-    }
-  }
 
   fun updateSortPreference(preference: TrackSortPreference) {
     viewModelScope.launch {

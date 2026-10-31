@@ -1,5 +1,6 @@
 package com.kelsos.mbrc.feature.library.compose.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -67,9 +68,10 @@ fun GenreListItem(
     trailingContent = {
       Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
         MoreOptionsButton(onClick = { menuExpanded = true })
-        GenreItemMenu(
+        QueueMenu(
           expanded = menuExpanded,
           onDismiss = { menuExpanded = false },
+          actions = playQueueActions,
           onQueue = onQueue,
           onGoToAlbums = onGoToAlbums
         )
@@ -103,9 +105,10 @@ fun ArtistListItem(
     trailingContent = {
       Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
         MoreOptionsButton(onClick = { menuExpanded = true })
-        LibraryItemMenu(
+        QueueMenu(
           expanded = menuExpanded,
           onDismiss = { menuExpanded = false },
+          actions = playQueueActions,
           onQueue = onQueue
         )
       }
@@ -150,9 +153,10 @@ fun AlbumListItem(
     trailingContent = {
       Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
         MoreOptionsButton(onClick = { menuExpanded = true })
-        LibraryItemMenu(
+        QueueMenu(
           expanded = menuExpanded,
           onDismiss = { menuExpanded = false },
+          actions = playQueueActions,
           onQueue = onQueue
         )
       }
@@ -222,9 +226,10 @@ fun AlbumGridItem(
     }
 
     Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-      LibraryItemMenu(
+      QueueMenu(
         expanded = menuExpanded,
         onDismiss = { menuExpanded = false },
+        actions = playQueueActions,
         onQueue = onQueue
       )
     }
@@ -275,9 +280,10 @@ fun TrackListItem(
     trailingContent = {
       Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
         MoreOptionsButton(onClick = { menuExpanded = true })
-        TrackItemMenu(
+        QueueMenu(
           expanded = menuExpanded,
           onDismiss = { menuExpanded = false },
+          actions = trackQueueActions,
           onQueue = onQueue
         )
       }
@@ -285,118 +291,52 @@ fun TrackListItem(
   )
 }
 
-@Composable
-private fun TrackItemMenu(expanded: Boolean, onDismiss: () -> Unit, onQueue: (Queue) -> Unit) {
-  DropdownMenu(
-    expanded = expanded,
-    onDismissRequest = onDismiss
-  ) {
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_play)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Now)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_queue_next)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Next)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_queue_last)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Last)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_play_artist)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.PlayArtist)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_play_queue_all)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.AddAll)
-      }
-    )
-  }
-}
+private class QueueAction(val queue: Queue, @StringRes val label: Int)
 
-@Composable
-private fun LibraryItemMenu(expanded: Boolean, onDismiss: () -> Unit, onQueue: (Queue) -> Unit) {
-  DropdownMenu(
-    expanded = expanded,
-    onDismissRequest = onDismiss
-  ) {
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_play)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Now)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_queue_next)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Next)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_queue_last)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Last)
-      }
-    )
-  }
-}
+private val playQueueActions = listOf(
+  QueueAction(Queue.Now, R.string.menu_play),
+  QueueAction(Queue.Next, R.string.menu_queue_next),
+  QueueAction(Queue.Last, R.string.menu_queue_last)
+)
 
+private val trackQueueActions = playQueueActions + listOf(
+  QueueAction(Queue.PlayArtist, R.string.menu_play_artist),
+  QueueAction(Queue.AddAll, R.string.menu_play_queue_all)
+)
+
+/**
+ * The overflow menu of a library row: [onGoToAlbums] first when given, then one item per entry in
+ * [actions]. Every item closes the menu before it acts.
+ */
 @Composable
-private fun GenreItemMenu(
+private fun QueueMenu(
   expanded: Boolean,
   onDismiss: () -> Unit,
+  actions: List<QueueAction>,
   onQueue: (Queue) -> Unit,
-  onGoToAlbums: () -> Unit
+  onGoToAlbums: (() -> Unit)? = null
 ) {
   DropdownMenu(
     expanded = expanded,
     onDismissRequest = onDismiss
   ) {
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_go_to_albums)) },
-      onClick = {
-        onDismiss()
-        onGoToAlbums()
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_play)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Now)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_queue_next)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Next)
-      }
-    )
-    DropdownMenuItem(
-      text = { Text(stringResource(R.string.menu_queue_last)) },
-      onClick = {
-        onDismiss()
-        onQueue(Queue.Last)
-      }
-    )
+    onGoToAlbums?.let { goToAlbums ->
+      DropdownMenuItem(
+        text = { Text(stringResource(R.string.menu_go_to_albums)) },
+        onClick = {
+          onDismiss()
+          goToAlbums()
+        }
+      )
+    }
+    actions.forEach { action ->
+      DropdownMenuItem(
+        text = { Text(stringResource(action.label)) },
+        onClick = {
+          onDismiss()
+          onQueue(action.queue)
+        }
+      )
+    }
   }
 }

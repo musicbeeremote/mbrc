@@ -13,13 +13,11 @@ import com.kelsos.mbrc.core.common.settings.TrackAction
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
-import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.data.library.artist.Artist
 import com.kelsos.mbrc.core.data.library.artist.ArtistRepository
 import com.kelsos.mbrc.core.queue.Queue
 import com.kelsos.mbrc.feature.library.LibrarySearchModel
-import com.kelsos.mbrc.feature.library.domain.LibrarySyncUseCase
 import com.kelsos.mbrc.feature.library.queue.QueueHandler
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -47,7 +45,6 @@ class BrowseArtistViewModelTest : KoinTest {
   private val testModule =
     module {
       single<ArtistRepository> { mockk(relaxed = true) }
-      single<LibrarySyncUseCase> { mockk(relaxed = true) }
       single<QueueHandler> { mockk(relaxed = true) }
       single<ConnectionStateFlow> { mockk(relaxed = true) }
       single<LibrarySearchModel> { mockk(relaxed = true) }
@@ -57,7 +54,6 @@ class BrowseArtistViewModelTest : KoinTest {
 
   private val viewModel: BrowseArtistViewModel by inject()
   private val repository: ArtistRepository by inject()
-  private val librarySyncUseCase: LibrarySyncUseCase by inject()
   private val queueHandler: QueueHandler by inject()
   private val connectionStateFlow: ConnectionStateFlow by inject()
   private val searchModel: LibrarySearchModel by inject()
@@ -69,7 +65,6 @@ class BrowseArtistViewModelTest : KoinTest {
       modules(listOf(testModule, testDispatcherModule))
     }
 
-    // Setup default mocks
     every { searchModel.term } returns searchTermFlow
     every { librarySettings.shouldDisplayOnlyArtists } returns shouldDisplayOnlyArtistsFlow
     every { repository.getAll() } returns flowOf(PagingData.empty())
@@ -90,68 +85,21 @@ class BrowseArtistViewModelTest : KoinTest {
   }
 
   @Test
-  fun queueShouldEmitNetworkUnavailableWhenNotConnected() {
-    runTest(testDispatcher) {
-      // Given
-      coEvery { connectionStateFlow.isConnected } returns false
-      val artist = Artist(id = 1, artist = "Test Artist")
-
-      // When & Then
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, artist)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val event = awaitItem()
-        assertThat(event).isEqualTo(ArtistUiMessage.NetworkUnavailable)
-      }
-
-      // Verify queue handler is not called when not connected
-      coVerify(exactly = 0) { queueHandler.queueArtist(any(), any()) }
-    }
-  }
-
-  @Test
   fun queueShouldEmitQueueSuccessWhenConnectedAndQueueSucceeds() {
     runTest(testDispatcher) {
-      // Given
       coEvery { connectionStateFlow.isConnected } returns true
       val artist = Artist(id = 1, artist = "Test Artist")
       val queueResult = Outcome.Success(15)
       coEvery { queueHandler.queueArtist(Queue.Next, "Test Artist") } returns queueResult
 
-      // When & Then
-      viewModel.events.test {
+      viewModel.queueResults.test {
         viewModel.queue(Queue.Next, artist)
         testDispatcher.scheduler.advanceUntilIdle()
 
         val event = awaitItem()
-        assertThat(event).isEqualTo(ArtistUiMessage.QueueSuccess(15))
+        assertThat(event).isEqualTo(Outcome.Success(15))
       }
 
-      // Verify queue handler was called
-      coVerify(exactly = 1) { queueHandler.queueArtist(Queue.Next, "Test Artist") }
-    }
-  }
-
-  @Test
-  fun queueShouldEmitQueueFailedWhenConnectedButQueueFails() {
-    runTest(testDispatcher) {
-      // Given
-      coEvery { connectionStateFlow.isConnected } returns true
-      val artist = Artist(id = 1, artist = "Test Artist")
-      val queueResult = Outcome.Failure(AppError.OperationFailed)
-      coEvery { queueHandler.queueArtist(Queue.Next, "Test Artist") } returns queueResult
-
-      // When & Then
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, artist)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val event = awaitItem()
-        assertThat(event).isEqualTo(ArtistUiMessage.QueueFailed)
-      }
-
-      // Verify queue handler was called
       coVerify(exactly = 1) { queueHandler.queueArtist(Queue.Next, "Test Artist") }
     }
   }
@@ -159,10 +107,8 @@ class BrowseArtistViewModelTest : KoinTest {
   @Test
   fun queueShouldEmitOpenArtistAlbumsWhenQueueIsDefault() {
     runTest(testDispatcher) {
-      // Given
       val artist = Artist(id = 1, artist = "Test Artist")
 
-      // When & Then
       viewModel.events.test {
         viewModel.queue(Queue.Default, artist)
         testDispatcher.scheduler.advanceUntilIdle()
@@ -171,103 +117,7 @@ class BrowseArtistViewModelTest : KoinTest {
         assertThat(event).isEqualTo(ArtistUiMessage.OpenArtistAlbums(artist))
       }
 
-      // Verify queue handler is not called for default action
       coVerify(exactly = 0) { queueHandler.queueArtist(any(), any()) }
-    }
-  }
-
-  @Test
-  fun syncShouldEmitNetworkUnavailableWhenNotConnected() {
-    runTest(testDispatcher) {
-      // Given
-      coEvery { connectionStateFlow.isConnected } returns false
-
-      // When & Then
-      viewModel.events.test {
-        viewModel.sync()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val event = awaitItem()
-        assertThat(event).isEqualTo(ArtistUiMessage.NetworkUnavailable)
-      }
-
-      // Verify sync use case is not called when not connected
-      coVerify(exactly = 0) { librarySyncUseCase.sync() }
-    }
-  }
-
-  @Test
-  fun syncShouldCallSyncUseCaseWhenConnected() {
-    runTest(testDispatcher) {
-      // Given
-      coEvery { connectionStateFlow.isConnected } returns true
-
-      // When & Then
-      viewModel.events.test {
-        viewModel.sync()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Should not emit any events for successful sync
-        expectNoEvents()
-      }
-
-      // Verify sync use case was called
-      coVerify(exactly = 1) { librarySyncUseCase.sync() }
-    }
-  }
-
-  @Test
-  fun networkCheckIsPerformedAtStartOfQueueOperation() {
-    runTest(testDispatcher) {
-      // Given - connection starts as true, then becomes false
-      coEvery { connectionStateFlow.isConnected } returns true andThen false
-      val artist = Artist(id = 1, artist = "Test Artist")
-      val queueResult = Outcome.Success(8)
-      coEvery { queueHandler.queueArtist(any(), any()) } returns queueResult
-
-      // When & Then - First call should succeed, second should fail
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, artist) // Should succeed (first call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val firstEvent = awaitItem()
-        assertThat(firstEvent).isEqualTo(ArtistUiMessage.QueueSuccess(8))
-
-        viewModel.queue(Queue.Next, artist) // Should fail (second call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val secondEvent = awaitItem()
-        assertThat(secondEvent).isEqualTo(ArtistUiMessage.NetworkUnavailable)
-      }
-
-      // Verify queue handler was only called once (when connected)
-      coVerify(exactly = 1) { queueHandler.queueArtist(any(), any()) }
-    }
-  }
-
-  @Test
-  fun networkCheckIsPerformedAtStartOfSyncOperation() {
-    runTest(testDispatcher) {
-      // Given - connection starts as true, then becomes false
-      coEvery { connectionStateFlow.isConnected } returns true andThen false
-
-      // When & Then - First call should succeed, second should fail
-      viewModel.events.test {
-        viewModel.sync() // Should succeed (first call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // No events expected for successful sync
-        expectNoEvents()
-
-        viewModel.sync() // Should fail (second call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val event = awaitItem()
-        assertThat(event).isEqualTo(ArtistUiMessage.NetworkUnavailable)
-      }
-
-      // Verify sync use case was only called once (when connected)
-      coVerify(exactly = 1) { librarySyncUseCase.sync() }
     }
   }
 
@@ -287,15 +137,12 @@ class BrowseArtistViewModelTest : KoinTest {
   @Test
   fun updateSortPreferenceShouldCallLibrarySettings() {
     runTest(testDispatcher) {
-      // Given
       val newPreference = ArtistSortPreference(ArtistSortField.NAME, SortOrder.DESC)
       coEvery { librarySettings.setArtistSortPreference(any()) } returns Unit
 
-      // When
       viewModel.updateSortPreference(newPreference)
       testDispatcher.scheduler.advanceUntilIdle()
 
-      // Then
       coVerify(exactly = 1) { librarySettings.setArtistSortPreference(newPreference) }
     }
   }

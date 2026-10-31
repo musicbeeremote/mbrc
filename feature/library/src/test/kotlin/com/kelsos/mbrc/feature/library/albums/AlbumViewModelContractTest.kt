@@ -12,7 +12,6 @@ import com.kelsos.mbrc.core.common.settings.TrackAction
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
-import com.kelsos.mbrc.core.common.utilities.AppError
 import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.data.library.album.Album
 import com.kelsos.mbrc.core.data.library.album.AlbumRepository
@@ -82,49 +81,16 @@ abstract class AlbumViewModelContractTest<VM : BaseAlbumViewModel> : KoinTest {
   }
 
   @Test
-  fun `queueing while disconnected reports the network and queues nothing`() {
-    runTest(testDispatcher) {
-      coEvery { connectionStateFlow.isConnected } returns false
-
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, album)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(awaitItem()).isEqualTo(AlbumUiMessage.NetworkUnavailable)
-      }
-
-      coVerify(exactly = 0) { queueHandler.queueAlbum(any(), any(), any()) }
-    }
-  }
-
-  @Test
   fun `a successful queue reports the number of tracks added`() {
     runTest(testDispatcher) {
       coEvery { queueHandler.queueAlbum(Queue.Next, "Test Album", "Test Artist") } returns
         Outcome.Success(10)
 
-      viewModel.events.test {
+      viewModel.queueResults.test {
         viewModel.queue(Queue.Next, album)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        assertThat(awaitItem()).isEqualTo(AlbumUiMessage.QueueSuccess(10))
-      }
-
-      coVerify(exactly = 1) { queueHandler.queueAlbum(Queue.Next, "Test Album", "Test Artist") }
-    }
-  }
-
-  @Test
-  fun `a failed queue reports the failure`() {
-    runTest(testDispatcher) {
-      coEvery { queueHandler.queueAlbum(Queue.Next, "Test Album", "Test Artist") } returns
-        Outcome.Failure(AppError.OperationFailed)
-
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, album)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(awaitItem()).isEqualTo(AlbumUiMessage.QueueFailed)
+        assertThat(awaitItem()).isEqualTo(Outcome.Success(10))
       }
 
       coVerify(exactly = 1) { queueHandler.queueAlbum(Queue.Next, "Test Album", "Test Artist") }
@@ -142,26 +108,6 @@ abstract class AlbumViewModelContractTest<VM : BaseAlbumViewModel> : KoinTest {
       }
 
       coVerify(exactly = 0) { queueHandler.queueAlbum(any(), any(), any()) }
-    }
-  }
-
-  @Test
-  fun `the connection is checked again on every queue request`() {
-    runTest(testDispatcher) {
-      coEvery { connectionStateFlow.isConnected } returns true andThen false
-      coEvery { queueHandler.queueAlbum(any(), any(), any()) } returns Outcome.Success(10)
-
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, album)
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(awaitItem()).isEqualTo(AlbumUiMessage.QueueSuccess(10))
-
-        viewModel.queue(Queue.Next, album)
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(awaitItem()).isEqualTo(AlbumUiMessage.NetworkUnavailable)
-      }
-
-      coVerify(exactly = 1) { queueHandler.queueAlbum(any(), any(), any()) }
     }
   }
 

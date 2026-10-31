@@ -40,21 +40,8 @@ class AlbumTracksViewModel(
   }
 
   fun queueAlbum(album: AlbumInfo) {
-    viewModelScope.launch {
-      if (!checkConnection()) {
-        emit(TrackUiMessage.NetworkUnavailable)
-        return@launch
-      }
-      val queueResult = queueHandler.queueAlbum(
-        type = Queue.Now,
-        album = album.album,
-        artist = album.artist
-      )
-      if (queueResult.isSuccess) {
-        emit(TrackUiMessage.QueueSuccess(queueResult.getOrNull() ?: 0))
-      } else {
-        emit(TrackUiMessage.QueueFailed)
-      }
+    launchQueue {
+      queueHandler.queueAlbum(type = Queue.Now, album = album.album, artist = album.artist)
     }
   }
 }

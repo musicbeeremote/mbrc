@@ -26,7 +26,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,8 +34,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kelsos.mbrc.core.common.utilities.AppError
-import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.queue.Queue
 import com.kelsos.mbrc.core.ui.compose.EmptyScreen
 import com.kelsos.mbrc.core.ui.compose.LoadingScreen
@@ -49,9 +46,7 @@ import com.kelsos.mbrc.feature.library.albums.AlbumInfo
 import com.kelsos.mbrc.feature.library.compose.components.AlbumCoverByKey
 import com.kelsos.mbrc.feature.library.compose.components.TrackListItem
 import com.kelsos.mbrc.feature.library.tracks.AlbumTracksViewModel
-import com.kelsos.mbrc.feature.library.tracks.TrackUiMessage
 import com.kelsos.mbrc.feature.minicontrol.MiniControl
-import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -71,19 +66,8 @@ fun AlbumTracksScreen(
     viewModel.load(albumInfo)
   }
 
-  // Handle queue results
-  val queueResults = remember {
-    viewModel.events.map { event ->
-      when (event) {
-        is TrackUiMessage.QueueSuccess -> Outcome.Success(event.tracksCount)
-        is TrackUiMessage.QueueFailed -> Outcome.Failure(AppError.OperationFailed)
-        is TrackUiMessage.NetworkUnavailable -> Outcome.Failure(AppError.NetworkUnavailable)
-      }
-    }
-  }
-
   QueueResultEffect(
-    queueResults = queueResults,
+    queueResults = viewModel.queueResults,
     snackbarHostState = snackbarHostState
   )
 

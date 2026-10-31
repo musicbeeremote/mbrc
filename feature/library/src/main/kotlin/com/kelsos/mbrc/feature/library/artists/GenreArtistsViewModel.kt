@@ -23,7 +23,7 @@ class GenreArtistsViewModel(
   queueHandler: QueueHandler,
   private val librarySettings: LibrarySettings,
   connectionStateFlow: ConnectionStateFlow
-) : BaseArtistViewModel(queueHandler, librarySettings, connectionStateFlow) {
+) : BaseArtistViewModel(queueHandler, connectionStateFlow) {
   private val genre: MutableSharedFlow<Long> = MutableSharedFlow(replay = 1)
 
   val sortPreference: Flow<SortOrder> = librarySettings.artistSortPreferenceFlow

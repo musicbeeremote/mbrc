@@ -6,7 +6,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,8 +14,6 @@ import com.kelsos.mbrc.core.common.settings.GenreSortField
 import com.kelsos.mbrc.core.common.settings.GenreSortPreference
 import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.settings.SortPreference
-import com.kelsos.mbrc.core.common.utilities.AppError
-import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.data.library.genre.Genre
 import com.kelsos.mbrc.core.queue.Queue
 import com.kelsos.mbrc.feature.library.R
@@ -25,8 +22,6 @@ import com.kelsos.mbrc.feature.library.compose.SortOption
 import com.kelsos.mbrc.feature.library.compose.components.GenreListItem
 import com.kelsos.mbrc.feature.library.genres.BrowseGenreViewModel
 import com.kelsos.mbrc.feature.library.genres.GenreUiMessage
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 
 val genreSortOptions = listOf(
@@ -57,26 +52,13 @@ fun GenresTab(
       when (event) {
         is GenreUiMessage.OpenArtists -> onNavigateToGenreArtists(event.genre)
         is GenreUiMessage.OpenAlbums -> onNavigateToGenreAlbums(event.genre)
-        else -> Unit
       }
     }
   }
 
-  // Handle queue results
-  val queueResults = remember {
-    viewModel.events.map { event ->
-      when (event) {
-        is GenreUiMessage.QueueSuccess -> Outcome.Success(event.tracksCount)
-        is GenreUiMessage.QueueFailed -> Outcome.Failure(AppError.OperationFailed)
-        is GenreUiMessage.NetworkUnavailable -> Outcome.Failure(AppError.NetworkUnavailable)
-        else -> null
-      }
-    }.filterIsInstance<Outcome<Int>>()
-  }
-
   LibraryBrowseTab(
     items = genres,
-    queueResults = queueResults,
+    queueResults = viewModel.queueResults,
     snackbarHostState = snackbarHostState,
     syncState = SyncState(
       isSyncing = isSyncing,

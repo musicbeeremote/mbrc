@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -24,8 +23,6 @@ import com.kelsos.mbrc.core.common.settings.AlbumSortField
 import com.kelsos.mbrc.core.common.settings.AlbumSortPreference
 import com.kelsos.mbrc.core.common.settings.AlbumViewMode
 import com.kelsos.mbrc.core.common.settings.SortOrder
-import com.kelsos.mbrc.core.common.utilities.AppError
-import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.data.library.album.Album
 import com.kelsos.mbrc.core.queue.Queue
 import com.kelsos.mbrc.core.ui.compose.ActionItem
@@ -44,7 +41,6 @@ import com.kelsos.mbrc.feature.library.compose.components.AlbumListItem
 import com.kelsos.mbrc.feature.library.compose.isAlbumGrid
 import com.kelsos.mbrc.feature.minicontrol.MiniControl
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
 
 /**
  * The albums of one artist or genre, as a list or grid following the album view mode. [filter] is
@@ -84,19 +80,8 @@ internal fun <K : Any> AlbumDrilldownScreen(
     }
   }
 
-  val queueResults = remember {
-    viewModel.events.map { event ->
-      when (event) {
-        is AlbumUiMessage.QueueSuccess -> Outcome.Success(event.tracksCount)
-        is AlbumUiMessage.QueueFailed -> Outcome.Failure(AppError.OperationFailed)
-        is AlbumUiMessage.NetworkUnavailable -> Outcome.Failure(AppError.NetworkUnavailable)
-        else -> null
-      }
-    }.filterIsInstance<Outcome<Int>>()
-  }
-
   QueueResultEffect(
-    queueResults = queueResults,
+    queueResults = viewModel.queueResults,
     snackbarHostState = snackbarHostState
   )
 

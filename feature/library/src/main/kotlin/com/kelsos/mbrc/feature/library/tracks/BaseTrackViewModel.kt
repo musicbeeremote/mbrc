@@ -1,6 +1,5 @@
 package com.kelsos.mbrc.feature.library.tracks
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
@@ -9,33 +8,22 @@ import com.kelsos.mbrc.core.queue.Queue
 import com.kelsos.mbrc.feature.library.BaseLibraryViewModel
 import com.kelsos.mbrc.feature.library.queue.QueueHandler
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 
 abstract class BaseTrackViewModel(
   private val queueHandler: QueueHandler,
-  librarySettings: LibrarySettings,
+  private val librarySettings: LibrarySettings,
   connectionStateFlow: ConnectionStateFlow
-) : BaseLibraryViewModel<TrackUiMessage>(librarySettings, connectionStateFlow) {
+) : BaseLibraryViewModel<Nothing>(connectionStateFlow) {
   abstract val tracks: Flow<PagingData<Track>>
 
   fun queue(action: Queue, track: Track) {
-    viewModelScope.launch {
-      if (!checkConnection()) {
-        emit(TrackUiMessage.NetworkUnavailable)
-        return@launch
-      }
+    launchQueue { queueHandler.queueTrack(track = track, type = queueActionFor(action)) }
+  }
 
-      val queueAction = getQueueAction(action)
-      val result = queueHandler.queueTrack(track = track, type = queueAction)
-
-      val message =
-        if (result.isSuccess) {
-          TrackUiMessage.QueueSuccess(result.getOrNull() ?: 0)
-        } else {
-          TrackUiMessage.QueueFailed
-        }
-
-      emit(message)
-    }
+  private suspend fun queueActionFor(action: Queue): Queue = if (action == Queue.Default) {
+    Queue.fromTrackAction(librarySettings.libraryTrackDefaultActionFlow.first())
+  } else {
+    action
   }
 }

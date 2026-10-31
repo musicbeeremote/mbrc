@@ -2,14 +2,10 @@ package com.kelsos.mbrc.feature.library.albums
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
-import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.settings.AlbumSortField
 import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.feature.library.LibrarySearchModel
-import com.kelsos.mbrc.feature.library.domain.LibrarySyncUseCase
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -27,67 +23,16 @@ class BrowseAlbumViewModelTest : AlbumViewModelContractTest<BrowseAlbumViewModel
   private val searchTerm = MutableStateFlow("")
 
   override val viewModelModule = module {
-    single<LibrarySyncUseCase> { mockk(relaxed = true) }
     single<LibrarySearchModel> { mockk(relaxed = true) }
     singleOf(::BrowseAlbumViewModel)
   }
   override val viewModel: BrowseAlbumViewModel by inject()
 
-  private val librarySyncUseCase: LibrarySyncUseCase by inject()
   private val searchModel: LibrarySearchModel by inject()
 
   @Before
   fun stubSearchTerm() {
     every { searchModel.term } returns searchTerm
-  }
-
-  @Test
-  fun `syncing while disconnected reports the network and does not sync`() {
-    runTest(testDispatcher) {
-      coEvery { connectionStateFlow.isConnected } returns false
-
-      viewModel.events.test {
-        viewModel.sync()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(awaitItem()).isEqualTo(AlbumUiMessage.NetworkUnavailable)
-      }
-
-      coVerify(exactly = 0) { librarySyncUseCase.sync() }
-    }
-  }
-
-  @Test
-  fun `syncing while connected runs the sync without reporting anything`() {
-    runTest(testDispatcher) {
-      viewModel.events.test {
-        viewModel.sync()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        expectNoEvents()
-      }
-
-      coVerify(exactly = 1) { librarySyncUseCase.sync() }
-    }
-  }
-
-  @Test
-  fun `the connection is checked again on every sync request`() {
-    runTest(testDispatcher) {
-      coEvery { connectionStateFlow.isConnected } returns true andThen false
-
-      viewModel.events.test {
-        viewModel.sync()
-        testDispatcher.scheduler.advanceUntilIdle()
-        expectNoEvents()
-
-        viewModel.sync()
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(awaitItem()).isEqualTo(AlbumUiMessage.NetworkUnavailable)
-      }
-
-      coVerify(exactly = 1) { librarySyncUseCase.sync() }
-    }
   }
 
   @Test

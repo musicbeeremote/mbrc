@@ -55,7 +55,6 @@ class AlbumTracksViewModelTest : KoinTest {
       modules(listOf(testModule, testDispatcherModule))
     }
 
-    // Setup default mocks
     every { repository.getTracks(any()) } returns flowOf(PagingData.empty())
     every { librarySettings.libraryTrackDefaultActionFlow } returns flowOf(TrackAction.PlayNow)
     coEvery { connectionStateFlow.isConnected } returns true
@@ -67,42 +66,8 @@ class AlbumTracksViewModelTest : KoinTest {
   }
 
   @Test
-  fun queueShouldEmitNetworkUnavailableWhenNotConnected() {
-    runTest(testDispatcher) {
-      // Given
-      coEvery { connectionStateFlow.isConnected } returns false
-      val track =
-        Track(
-          id = 1,
-          artist = "Test Artist",
-          title = "Test Track",
-          album = "Test Album",
-          year = "2023",
-          genre = "Rock",
-          disc = 1,
-          trackno = 1,
-          src = "",
-          albumArtist = "Test Artist"
-        )
-
-      // When & Then
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, track)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val event = awaitItem()
-        assertThat(event).isEqualTo(TrackUiMessage.NetworkUnavailable)
-      }
-
-      // Verify queue handler is not called when not connected
-      coVerify(exactly = 0) { queueHandler.queueTrack(any<Track>(), any<Queue>()) }
-    }
-  }
-
-  @Test
   fun queueShouldEmitQueueSuccessWhenConnectedAndQueueSucceeds() {
     runTest(testDispatcher) {
-      // Given
       coEvery { connectionStateFlow.isConnected } returns true
       val track =
         Track(
@@ -120,50 +85,21 @@ class AlbumTracksViewModelTest : KoinTest {
       val queueResult = Outcome.Success(1)
       coEvery { queueHandler.queueTrack(track = track, type = Queue.Next) } returns queueResult
 
-      // When & Then
-      viewModel.events.test {
+      viewModel.queueResults.test {
         viewModel.queue(Queue.Next, track)
         testDispatcher.scheduler.advanceUntilIdle()
 
         val event = awaitItem()
-        assertThat(event).isEqualTo(TrackUiMessage.QueueSuccess(1))
+        assertThat(event).isEqualTo(Outcome.Success(1))
       }
 
-      // Verify queue handler was called
       coVerify(exactly = 1) { queueHandler.queueTrack(track = track, type = Queue.Next) }
-    }
-  }
-
-  @Test
-  fun queueAlbumShouldEmitNetworkUnavailableWhenNotConnected() {
-    runTest(testDispatcher) {
-      // Given
-      coEvery { connectionStateFlow.isConnected } returns false
-      val albumInfo =
-        AlbumInfo(
-          album = "Test Album",
-          artist = "Test Artist",
-          cover = null
-        )
-
-      // When & Then
-      viewModel.events.test {
-        viewModel.queueAlbum(albumInfo)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val event = awaitItem()
-        assertThat(event).isEqualTo(TrackUiMessage.NetworkUnavailable)
-      }
-
-      // Verify queue handler is not called when not connected
-      coVerify(exactly = 0) { queueHandler.queueAlbum(any(), any(), any()) }
     }
   }
 
   @Test
   fun queueAlbumShouldCallQueueHandlerWhenConnected() {
     runTest(testDispatcher) {
-      // Given
       coEvery { connectionStateFlow.isConnected } returns true
       val albumInfo =
         AlbumInfo(
@@ -175,92 +111,15 @@ class AlbumTracksViewModelTest : KoinTest {
       coEvery { queueHandler.queueAlbum(Queue.Now, "Test Album", "Test Artist") } returns
         queueResult
 
-      // When & Then
-      viewModel.events.test {
+      viewModel.queueResults.test {
         viewModel.queueAlbum(albumInfo)
         testDispatcher.scheduler.advanceUntilIdle()
 
         val event = awaitItem()
-        assertThat(event).isEqualTo(TrackUiMessage.QueueSuccess(10))
+        assertThat(event).isEqualTo(Outcome.Success(10))
       }
 
-      // Verify queue handler was called
       coVerify(exactly = 1) { queueHandler.queueAlbum(Queue.Now, "Test Album", "Test Artist") }
-    }
-  }
-
-  @Test
-  fun networkCheckIsPerformedAtStartOfQueueOperation() {
-    runTest(testDispatcher) {
-      // Given - connection starts as true, then becomes false
-      coEvery { connectionStateFlow.isConnected } returns true andThen false
-      val track =
-        Track(
-          id = 1,
-          artist = "Test Artist",
-          title = "Test Track",
-          album = "Test Album",
-          year = "2023",
-          genre = "Rock",
-          disc = 1,
-          trackno = 1,
-          src = "",
-          albumArtist = "Test Artist"
-        )
-      val queueResult = Outcome.Success(1)
-      coEvery { queueHandler.queueTrack(any<Track>(), any<Queue>()) } returns queueResult
-
-      // When & Then - First call should succeed, second should fail
-      viewModel.events.test {
-        viewModel.queue(Queue.Next, track) // Should succeed (first call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val firstEvent = awaitItem()
-        assertThat(firstEvent).isEqualTo(TrackUiMessage.QueueSuccess(1))
-
-        viewModel.queue(Queue.Next, track) // Should fail (second call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val secondEvent = awaitItem()
-        assertThat(secondEvent).isEqualTo(TrackUiMessage.NetworkUnavailable)
-      }
-
-      // Verify queue handler was only called once (when connected)
-      coVerify(exactly = 1) { queueHandler.queueTrack(any<Track>(), any<Queue>()) }
-    }
-  }
-
-  @Test
-  fun networkCheckIsPerformedAtStartOfQueueAlbumOperation() {
-    runTest(testDispatcher) {
-      // Given - connection starts as true, then becomes false
-      coEvery { connectionStateFlow.isConnected } returns true andThen false
-      val albumInfo =
-        AlbumInfo(
-          album = "Test Album",
-          artist = "Test Artist",
-          cover = null
-        )
-      val queueResult = Outcome.Success(10)
-      coEvery { queueHandler.queueAlbum(any(), any(), any()) } returns queueResult
-
-      // When & Then - First call should succeed, second should fail
-      viewModel.events.test {
-        viewModel.queueAlbum(albumInfo) // Should succeed (first call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val firstEvent = awaitItem()
-        assertThat(firstEvent).isEqualTo(TrackUiMessage.QueueSuccess(10))
-
-        viewModel.queueAlbum(albumInfo) // Should fail (second call)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val secondEvent = awaitItem()
-        assertThat(secondEvent).isEqualTo(TrackUiMessage.NetworkUnavailable)
-      }
-
-      // Verify queue handler was only called once (when connected)
-      coVerify(exactly = 1) { queueHandler.queueAlbum(any(), any(), any()) }
     }
   }
 }

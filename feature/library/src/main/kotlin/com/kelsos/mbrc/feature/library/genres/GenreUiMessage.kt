@@ -7,10 +7,4 @@ sealed class GenreUiMessage : UiMessageBase {
   data class OpenArtists(val genre: Genre) : GenreUiMessage()
 
   data class OpenAlbums(val genre: Genre) : GenreUiMessage()
-
-  data class QueueSuccess(val tracksCount: Int) : GenreUiMessage()
-
-  object QueueFailed : GenreUiMessage()
-
-  object NetworkUnavailable : GenreUiMessage()
 }

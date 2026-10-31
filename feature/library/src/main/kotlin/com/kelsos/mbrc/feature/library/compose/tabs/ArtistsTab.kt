@@ -6,7 +6,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,8 +14,6 @@ import com.kelsos.mbrc.core.common.settings.ArtistSortField
 import com.kelsos.mbrc.core.common.settings.ArtistSortPreference
 import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.settings.SortPreference
-import com.kelsos.mbrc.core.common.utilities.AppError
-import com.kelsos.mbrc.core.common.utilities.Outcome
 import com.kelsos.mbrc.core.data.library.artist.Artist
 import com.kelsos.mbrc.core.queue.Queue
 import com.kelsos.mbrc.feature.library.R
@@ -26,7 +23,6 @@ import com.kelsos.mbrc.feature.library.compose.SortBottomSheet
 import com.kelsos.mbrc.feature.library.compose.SortOption
 import com.kelsos.mbrc.feature.library.compose.components.ArtistListItem
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 
 val artistSortOptions = listOf(
@@ -57,21 +53,9 @@ fun ArtistsTab(
     }
   }
 
-  // Handle queue results
-  val queueResults = remember {
-    viewModel.events.map { event ->
-      when (event) {
-        is ArtistUiMessage.QueueSuccess -> Outcome.Success(event.tracksCount)
-        is ArtistUiMessage.QueueFailed -> Outcome.Failure(AppError.OperationFailed)
-        is ArtistUiMessage.NetworkUnavailable -> Outcome.Failure(AppError.NetworkUnavailable)
-        else -> null
-      }
-    }.filterIsInstance<Outcome<Int>>()
-  }
-
   LibraryBrowseTab(
     items = artists,
-    queueResults = queueResults,
+    queueResults = viewModel.queueResults,
     snackbarHostState = snackbarHostState,
     syncState = SyncState(
       isSyncing = isSyncing,

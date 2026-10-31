@@ -19,7 +19,7 @@ abstract class BaseAlbumViewModel(
   private val queueHandler: QueueHandler,
   private val librarySettings: LibrarySettings,
   connectionStateFlow: ConnectionStateFlow
-) : BaseLibraryViewModel<AlbumUiMessage>(librarySettings, connectionStateFlow) {
+) : BaseLibraryViewModel<AlbumUiMessage>(connectionStateFlow) {
   abstract val albums: Flow<PagingData<Album>>
 
   val sortPreference: Flow<AlbumSortPreference> =
@@ -32,23 +32,7 @@ abstract class BaseAlbumViewModel(
       return
     }
 
-    viewModelScope.launch {
-      if (!checkConnection()) {
-        emit(AlbumUiMessage.NetworkUnavailable)
-        return@launch
-      }
-
-      val result = queueHandler.queueAlbum(queue, album.album, album.artist)
-
-      val message =
-        if (result.isSuccess) {
-          AlbumUiMessage.QueueSuccess(result.getOrNull() ?: 0)
-        } else {
-          AlbumUiMessage.QueueFailed
-        }
-
-      emit(message)
-    }
+    launchQueue { queueHandler.queueAlbum(queue, album.album, album.artist) }
   }
 
   fun updateSortPreference(preference: AlbumSortPreference) {

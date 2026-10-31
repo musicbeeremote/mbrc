@@ -10,7 +10,6 @@ import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
 import com.kelsos.mbrc.core.data.library.artist.Artist
 import com.kelsos.mbrc.core.data.library.artist.ArtistRepository
 import com.kelsos.mbrc.feature.library.LibrarySearchModel
-import com.kelsos.mbrc.feature.library.domain.LibrarySyncUseCase
 import com.kelsos.mbrc.feature.library.queue.QueueHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -28,12 +27,11 @@ private data class ArtistSearchParams(
 @OptIn(ExperimentalCoroutinesApi::class)
 class BrowseArtistViewModel(
   private val repository: ArtistRepository,
-  private val librarySyncUseCase: LibrarySyncUseCase,
   private val searchModel: LibrarySearchModel,
   private val librarySettings: LibrarySettings,
   queueHandler: QueueHandler,
   connectionStateFlow: ConnectionStateFlow
-) : BaseArtistViewModel(queueHandler, librarySettings, connectionStateFlow) {
+) : BaseArtistViewModel(queueHandler, connectionStateFlow) {
   val shouldDisplayOnlyArtists = librarySettings.shouldDisplayOnlyArtists
   val sortPreference: Flow<ArtistSortPreference> = librarySettings.artistSortPreferenceFlow
 
@@ -57,16 +55,6 @@ class BrowseArtistViewModel(
     }.cachedIn(viewModelScope)
 
   val showSync = searchModel.term.map { it.isEmpty() }
-
-  fun sync() {
-    viewModelScope.launch {
-      if (!checkConnection()) {
-        emit(ArtistUiMessage.NetworkUnavailable)
-        return@launch
-      }
-      librarySyncUseCase.sync()
-    }
-  }
 
   fun updateSortPreference(preference: ArtistSortPreference) {
     viewModelScope.launch {
