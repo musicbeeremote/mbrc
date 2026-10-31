@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,33 +51,13 @@ fun GenreListItem(
   onGoToAlbums: () -> Unit,
   modifier: Modifier = Modifier
 ) {
-  var menuExpanded by remember { mutableStateOf(false) }
-
-  SingleLineRow(
+  IconListItem(
     text = genre.genre,
+    icon = Icons.AutoMirrored.Filled.QueueMusic,
     onClick = onClick,
-    onLongClick = { menuExpanded = true },
+    onQueue = onQueue,
     modifier = modifier,
-    leadingContent = {
-      Icon(
-        imageVector = Icons.AutoMirrored.Filled.QueueMusic,
-        contentDescription = null,
-        modifier = Modifier.size(24.dp),
-        tint = MaterialTheme.colorScheme.primary
-      )
-    },
-    trailingContent = {
-      Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-        MoreOptionsButton(onClick = { menuExpanded = true })
-        QueueMenu(
-          expanded = menuExpanded,
-          onDismiss = { menuExpanded = false },
-          actions = playQueueActions,
-          onQueue = onQueue,
-          onGoToAlbums = onGoToAlbums
-        )
-      }
-    }
+    onGoToAlbums = onGoToAlbums
   )
 }
 
@@ -87,31 +68,41 @@ fun ArtistListItem(
   onQueue: (Queue) -> Unit,
   modifier: Modifier = Modifier
 ) {
+  IconListItem(
+    text = artist.artist,
+    icon = Icons.Default.Person,
+    onClick = onClick,
+    onQueue = onQueue,
+    modifier = modifier
+  )
+}
+
+@Composable
+private fun IconListItem(
+  text: String,
+  icon: ImageVector,
+  onClick: () -> Unit,
+  onQueue: (Queue) -> Unit,
+  modifier: Modifier = Modifier,
+  onGoToAlbums: (() -> Unit)? = null
+) {
   var menuExpanded by remember { mutableStateOf(false) }
 
   SingleLineRow(
-    text = artist.artist,
+    text = text,
     onClick = onClick,
     onLongClick = { menuExpanded = true },
     modifier = modifier,
-    leadingContent = {
-      Icon(
-        imageVector = Icons.Default.Person,
-        contentDescription = null,
-        modifier = Modifier.size(24.dp),
-        tint = MaterialTheme.colorScheme.primary
-      )
-    },
+    leadingContent = { RowIcon(icon) },
     trailingContent = {
-      Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-        MoreOptionsButton(onClick = { menuExpanded = true })
-        QueueMenu(
-          expanded = menuExpanded,
-          onDismiss = { menuExpanded = false },
-          actions = playQueueActions,
-          onQueue = onQueue
-        )
-      }
+      RowQueueMenu(
+        expanded = menuExpanded,
+        onExpand = { menuExpanded = true },
+        onDismiss = { menuExpanded = false },
+        actions = playQueueActions,
+        onQueue = onQueue,
+        onGoToAlbums = onGoToAlbums
+      )
     }
   )
 }
@@ -124,18 +115,7 @@ fun AlbumListItem(
   modifier: Modifier = Modifier
 ) {
   var menuExpanded by remember { mutableStateOf(false) }
-  // Special case: grouped empty albums (both album and artist are empty)
-  val isGroupedEmptyAlbum = album.album.isEmpty() && album.artist.isEmpty()
-  val title = when {
-    isGroupedEmptyAlbum -> stringResource(R.string.empty_album)
-    album.album.isEmpty() -> stringResource(R.string.unknown_album)
-    else -> album.album
-  }
-  val subtitle = when {
-    isGroupedEmptyAlbum -> ""
-    album.artist.isEmpty() -> stringResource(R.string.unknown_artist)
-    else -> album.artist
-  }
+  val (title, subtitle) = albumLabels(album)
 
   DoubleLineRow(
     title = title,
@@ -151,15 +131,13 @@ fun AlbumListItem(
       )
     },
     trailingContent = {
-      Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-        MoreOptionsButton(onClick = { menuExpanded = true })
-        QueueMenu(
-          expanded = menuExpanded,
-          onDismiss = { menuExpanded = false },
-          actions = playQueueActions,
-          onQueue = onQueue
-        )
-      }
+      RowQueueMenu(
+        expanded = menuExpanded,
+        onExpand = { menuExpanded = true },
+        onDismiss = { menuExpanded = false },
+        actions = playQueueActions,
+        onQueue = onQueue
+      )
     }
   )
 }
@@ -173,17 +151,7 @@ fun AlbumGridItem(
   modifier: Modifier = Modifier
 ) {
   var menuExpanded by remember { mutableStateOf(false) }
-  val isGroupedEmptyAlbum = album.album.isEmpty() && album.artist.isEmpty()
-  val title = when {
-    isGroupedEmptyAlbum -> stringResource(R.string.empty_album)
-    album.album.isEmpty() -> stringResource(R.string.unknown_album)
-    else -> album.album
-  }
-  val subtitle = when {
-    isGroupedEmptyAlbum -> ""
-    album.artist.isEmpty() -> stringResource(R.string.unknown_artist)
-    else -> album.artist
-  }
+  val (title, subtitle) = albumLabels(album)
 
   Card(
     shape = RoundedCornerShape(4.dp),
@@ -269,26 +237,71 @@ fun TrackListItem(
           size = 48.dp
         )
       } else {
-        Icon(
-          imageVector = Icons.Default.MusicNote,
-          contentDescription = null,
-          modifier = Modifier.size(24.dp),
-          tint = MaterialTheme.colorScheme.primary
-        )
+        RowIcon(Icons.Default.MusicNote)
       }
     },
     trailingContent = {
-      Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-        MoreOptionsButton(onClick = { menuExpanded = true })
-        QueueMenu(
-          expanded = menuExpanded,
-          onDismiss = { menuExpanded = false },
-          actions = trackQueueActions,
-          onQueue = onQueue
-        )
-      }
+      RowQueueMenu(
+        expanded = menuExpanded,
+        onExpand = { menuExpanded = true },
+        onDismiss = { menuExpanded = false },
+        actions = trackQueueActions,
+        onQueue = onQueue
+      )
     }
   )
+}
+
+/**
+ * The titles an album row shows. An album and artist both empty are the tracks grouped under no
+ * album at all, which read as one "empty album" with no artist line.
+ */
+@Composable
+private fun albumLabels(album: Album): Pair<String, String> {
+  val isGroupedEmptyAlbum = album.album.isEmpty() && album.artist.isEmpty()
+  val title = when {
+    isGroupedEmptyAlbum -> stringResource(R.string.empty_album)
+    album.album.isEmpty() -> stringResource(R.string.unknown_album)
+    else -> album.album
+  }
+  val subtitle = when {
+    isGroupedEmptyAlbum -> ""
+    album.artist.isEmpty() -> stringResource(R.string.unknown_artist)
+    else -> album.artist
+  }
+  return title to subtitle
+}
+
+@Composable
+private fun RowIcon(imageVector: ImageVector) {
+  Icon(
+    imageVector = imageVector,
+    contentDescription = null,
+    modifier = Modifier.size(24.dp),
+    tint = MaterialTheme.colorScheme.primary
+  )
+}
+
+/** The overflow button of a list row and the [QueueMenu] it opens, anchored to the button. */
+@Composable
+private fun RowQueueMenu(
+  expanded: Boolean,
+  onExpand: () -> Unit,
+  onDismiss: () -> Unit,
+  actions: List<QueueAction>,
+  onQueue: (Queue) -> Unit,
+  onGoToAlbums: (() -> Unit)? = null
+) {
+  Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
+    MoreOptionsButton(onClick = onExpand)
+    QueueMenu(
+      expanded = expanded,
+      onDismiss = onDismiss,
+      actions = actions,
+      onQueue = onQueue,
+      onGoToAlbums = onGoToAlbums
+    )
+  }
 }
 
 private class QueueAction(val queue: Queue, @StringRes val label: Int)

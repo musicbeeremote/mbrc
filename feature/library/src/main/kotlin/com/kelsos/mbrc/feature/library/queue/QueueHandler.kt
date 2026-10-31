@@ -38,38 +38,18 @@ class QueueHandler(
     }
   }
 
-  suspend fun queueAlbum(type: Queue, album: String, artist: String): Outcome<Int> = try {
-    val paths = withContext(dispatchers.database) {
-      trackRepository.getTrackPaths(TrackQuery.Album(album, artist))
-    }
-    if (queue(type, paths)) {
-      paths.size.asSuccess()
-    } else {
-      AppError.OperationFailed.asFailure()
-    }
-  } catch (e: IOException) {
-    Timber.e(e)
-    AppError.NetworkUnavailable.asFailure()
-  }
+  suspend fun queueAlbum(type: Queue, album: String, artist: String): Outcome<Int> =
+    queueMatching(type, TrackQuery.Album(album, artist))
 
-  suspend fun queueArtist(type: Queue, artist: String): Outcome<Int> = try {
-    val paths = withContext(dispatchers.database) {
-      trackRepository.getTrackPaths(TrackQuery.Artist(artist))
-    }
-    if (queue(type, paths)) {
-      paths.size.asSuccess()
-    } else {
-      AppError.OperationFailed.asFailure()
-    }
-  } catch (e: IOException) {
-    Timber.e(e)
-    AppError.NetworkUnavailable.asFailure()
-  }
+  suspend fun queueArtist(type: Queue, artist: String): Outcome<Int> =
+    queueMatching(type, TrackQuery.Artist(artist))
 
-  suspend fun queueGenre(type: Queue, genre: String): Outcome<Int> = try {
-    val paths = withContext(dispatchers.database) {
-      trackRepository.getTrackPaths(TrackQuery.Genre(genre))
-    }
+  suspend fun queueGenre(type: Queue, genre: String): Outcome<Int> =
+    queueMatching(type, TrackQuery.Genre(genre))
+
+  /** Queues every library track [query] matches, reporting how many were sent. */
+  private suspend fun queueMatching(type: Queue, query: TrackQuery): Outcome<Int> = try {
+    val paths = withContext(dispatchers.database) { trackRepository.getTrackPaths(query) }
     if (queue(type, paths)) {
       paths.size.asSuccess()
     } else {

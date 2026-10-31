@@ -52,13 +52,13 @@ fun AppNavGraph(
           navController.navigateFrom(entry, Screen.NowPlayingList.route)
         },
         onNavigateToAlbum = { album, artist ->
-          val encodedAlbum = Uri.encode(album)
-          val encodedArtist = Uri.encode(artist)
-          navController.navigateFrom(entry, "album_tracks/0/$encodedAlbum/$encodedArtist")
+          navController.navigateFrom(
+            entry,
+            Screen.AlbumTracks(0, album, artist).route
+          )
         },
         onNavigateToArtist = { artist ->
-          val encodedName = Uri.encode(artist)
-          navController.navigateFrom(entry, "artist_albums/0/$encodedName")
+          navController.navigateFrom(entry, Screen.ArtistAlbums(0, artist).route)
         },
         snackbarHostState = snackbarHostState,
         onOpenDrawer = onOpenDrawer
@@ -69,23 +69,18 @@ fun AppNavGraph(
       LibraryScreen(
         onOpenDrawer = onOpenDrawer,
         onNavigateToGenreArtists = { genre ->
-          val encodedName = Uri.encode(genre.genre)
-          navController.navigateFrom(entry, "genre_artists/${genre.id}/$encodedName")
+          navController.navigateFrom(entry, Screen.GenreArtists(genre.id, genre.genre).route)
         },
         onNavigateToGenreAlbums = { genre ->
-          val encodedName = Uri.encode(genre.genre)
-          navController.navigateFrom(entry, "genre_albums/${genre.id}/$encodedName")
+          navController.navigateFrom(entry, Screen.GenreAlbums(genre.id, genre.genre).route)
         },
         onNavigateToArtistAlbums = { artist ->
-          val encodedName = Uri.encode(artist.artist)
-          navController.navigateFrom(entry, "artist_albums/${artist.id}/$encodedName")
+          navController.navigateFrom(entry, Screen.ArtistAlbums(artist.id, artist.artist).route)
         },
         onNavigateToAlbumTracks = { album ->
-          val encodedAlbum = Uri.encode(album.album)
-          val encodedArtist = Uri.encode(album.artist)
           navController.navigateFrom(
             entry,
-            "album_tracks/${album.id}/$encodedAlbum/$encodedArtist"
+            Screen.AlbumTracks(album.id, album.album, album.artist).route
           )
         },
         onNavigateToPlayer = { navController.navigateFrom(entry, Screen.Home.route) },
@@ -165,11 +160,9 @@ fun AppNavGraph(
         artistName = artistName,
         onNavigateBack = { navController.popFrom(backStackEntry) },
         onNavigateToAlbumTracks = { album ->
-          val encodedAlbum = Uri.encode(album.album)
-          val encodedArtist = Uri.encode(album.artist)
           navController.navigateFrom(
             backStackEntry,
-            "album_tracks/${album.id}/$encodedAlbum/$encodedArtist"
+            Screen.AlbumTracks(album.id, album.album, album.artist).route
           )
         },
         onNavigateToPlayer = { navController.navigateFrom(backStackEntry, Screen.Home.route) },
@@ -191,8 +184,10 @@ fun AppNavGraph(
         genreName = genreName,
         onNavigateBack = { navController.popFrom(backStackEntry) },
         onNavigateToArtistAlbums = { artist ->
-          val encodedName = Uri.encode(artist.artist)
-          navController.navigateFrom(backStackEntry, "artist_albums/${artist.id}/$encodedName")
+          navController.navigateFrom(
+            backStackEntry,
+            Screen.ArtistAlbums(artist.id, artist.artist).route
+          )
         },
         onNavigateToPlayer = { navController.navigateFrom(backStackEntry, Screen.Home.route) },
         snackbarHostState = snackbarHostState
@@ -213,11 +208,9 @@ fun AppNavGraph(
         genreName = genreName,
         onNavigateBack = { navController.popFrom(backStackEntry) },
         onNavigateToAlbumTracks = { album ->
-          val encodedAlbum = Uri.encode(album.album)
-          val encodedArtist = Uri.encode(album.artist)
           navController.navigateFrom(
             backStackEntry,
-            "album_tracks/${album.id}/$encodedAlbum/$encodedArtist"
+            Screen.AlbumTracks(album.id, album.album, album.artist).route
           )
         },
         onNavigateToPlayer = { navController.navigateFrom(backStackEntry, Screen.Home.route) },
@@ -239,17 +232,17 @@ fun AppNavGraph(
           scope.launch {
             val track = trackRepository.getByPath(path)
             if (track != null && track.album.isNotBlank()) {
-              val encodedAlbum = Uri.encode(track.album)
-              val encodedArtist = Uri.encode(track.albumArtist.ifBlank { track.artist })
-              navController.navigateFrom(entry, "album_tracks/0/$encodedAlbum/$encodedArtist")
+              navController.navigateFrom(
+                entry,
+                Screen.AlbumTracks(0, track.album, track.albumArtist.ifBlank { track.artist }).route
+              )
             } else {
               snackbarHostState.showSnackbar(trackNotFoundMessage)
             }
           }
         },
         onNavigateToArtist = { artist ->
-          val encodedName = Uri.encode(artist)
-          navController.navigateFrom(entry, "artist_albums/0/$encodedName")
+          navController.navigateFrom(entry, Screen.ArtistAlbums(0, artist).route)
         },
         snackbarHostState = snackbarHostState
       )
@@ -285,28 +278,28 @@ sealed class Screen(val route: String) {
 
   // Detail screens with arguments (using companion objects for route templates)
   data class AlbumTracks(val albumId: Long, val album: String, val artist: String) :
-    Screen("album_tracks/$albumId/$album/$artist") {
+    Screen("album_tracks/$albumId/${Uri.encode(album)}/${Uri.encode(artist)}") {
     companion object {
       const val ROUTE = "album_tracks/{albumId}/{album}/{artist}"
     }
   }
 
   data class ArtistAlbums(val artistId: Long, val artistName: String) :
-    Screen("artist_albums/$artistId/$artistName") {
+    Screen("artist_albums/$artistId/${Uri.encode(artistName)}") {
     companion object {
       const val ROUTE = "artist_albums/{artistId}/{artistName}"
     }
   }
 
   data class GenreArtists(val genreId: Long, val genreName: String) :
-    Screen("genre_artists/$genreId/$genreName") {
+    Screen("genre_artists/$genreId/${Uri.encode(genreName)}") {
     companion object {
       const val ROUTE = "genre_artists/{genreId}/{genreName}"
     }
   }
 
   data class GenreAlbums(val genreId: Long, val genreName: String) :
-    Screen("genre_albums/$genreId/$genreName") {
+    Screen("genre_albums/$genreId/${Uri.encode(genreName)}") {
     companion object {
       const val ROUTE = "genre_albums/{genreId}/{genreName}"
     }

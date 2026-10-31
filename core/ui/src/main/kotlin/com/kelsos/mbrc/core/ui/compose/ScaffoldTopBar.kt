@@ -226,29 +226,14 @@ private fun ProgressTopBar(
   )
 
   Column {
-    TopAppBar(
-      title = {
-        Text(
-          text = title,
-          style = MaterialTheme.typography.titleLarge
-        )
-      },
-      navigationIcon = {
-        NavigationIconContent(navigationIcon, onOpenDrawer)
-      },
-      actions = {
-        // Render action items first
-        actionItems.forEach { action ->
-          IconButton(onClick = action.onClick) {
-            Icon(
-              imageVector = action.icon,
-              contentDescription = action.contentDescription
-            )
-          }
-        }
-        // Then the overflow menu
-        MenuDropdown(menuItems, onOverflowClick)
-      }
+    DefaultTopBar(
+      title = title,
+      navigationIcon = navigationIcon,
+      actionItems = actionItems,
+      menuItems = menuItems,
+      isTransparent = false,
+      onOpenDrawer = onOpenDrawer,
+      onOverflowClick = onOverflowClick
     )
 
     AnimatedVisibility(
