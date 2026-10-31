@@ -14,6 +14,7 @@ import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import com.kelsos.mbrc.adapters.RemoteViewIntentBuilderImpl
 import com.kelsos.mbrc.core.networking.LocalNetworkAccess
+import com.kelsos.mbrc.core.networking.UserConnectPreparer
 import com.kelsos.mbrc.core.platform.intents.AppLauncher
 import com.kelsos.mbrc.core.platform.intents.MediaIntentBuilder
 import com.kelsos.mbrc.service.LocalNetworkAccessImpl
@@ -22,6 +23,7 @@ import com.kelsos.mbrc.service.ServiceChecker
 import com.kelsos.mbrc.service.ServiceCheckerImpl
 import com.kelsos.mbrc.service.ServiceLifecycleManager
 import com.kelsos.mbrc.service.ServiceLifecycleManagerImpl
+import com.kelsos.mbrc.service.UserConnectPreparerImpl
 import com.kelsos.mbrc.service.mediasession.AppNotificationManager
 import com.kelsos.mbrc.service.mediasession.AppNotificationManagerImpl
 import com.kelsos.mbrc.service.mediasession.MediaIntentHandler
@@ -58,6 +60,7 @@ val androidModule = module {
   singleOf(::LocalNetworkAccessImpl) { bind<LocalNetworkAccess>() }
   singleOf(::ServiceCheckerImpl) { bind<ServiceChecker>() }
   singleOf(::ServiceLifecycleManagerImpl) { bind<ServiceLifecycleManager>() }
+  singleOf(::UserConnectPreparerImpl) { bind<UserConnectPreparer>() }
 
   // Media Session and Notifications
   singleOf(::MediaSessionManager)

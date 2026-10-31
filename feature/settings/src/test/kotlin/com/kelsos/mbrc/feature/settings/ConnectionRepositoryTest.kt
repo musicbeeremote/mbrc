@@ -339,7 +339,7 @@ class ConnectionRepositoryTest : KoinTest {
 
     val host = withoutId[1]
 
-    val saved = repository.saveAsDefault(host.address, host.port, host.name, emptyList())
+    val saved = repository.saveAsDefault(host.address, host.port, host.name, null)
 
     assertThat(saved).isEqualTo(withoutId[1].copy(id = 2, isDefault = true))
     assertThat(repository.getDefault()).isEqualTo(saved)
@@ -354,7 +354,7 @@ class ConnectionRepositoryTest : KoinTest {
 
       val host = withoutId[1]
 
-      val saved = repository.saveAsDefault(host.address, host.port, "From the QR code", emptyList())
+      val saved = repository.saveAsDefault(host.address, host.port, "From the QR code", null)
 
       assertWithMessage("a rescan must not add a second row for the same host")
         .that(repository.count())
@@ -376,7 +376,7 @@ class ConnectionRepositoryTest : KoinTest {
         "192.168.1.5",
         wslAdapter.port,
         "From the QR code",
-        listOf("192.168.1.5", wslAdapter.address)
+        sameHostId = 2
       )
 
       assertWithMessage("the same computer must not gain a second row")
@@ -388,19 +388,44 @@ class ConnectionRepositoryTest : KoinTest {
     }
 
   @Test
-  fun `findSaved returns the first stored host in the order given`() = runTest(testDispatcher) {
-    val (withId, withoutId) = generateSettings(3)
-    withoutId.forEach { repository.save(it) }
+  fun `findSaved returns the first stored host in link order with the link's name`() =
+    runTest(testDispatcher) {
+      val (withId, withoutId) = generateSettings(3)
+      withoutId.forEach { repository.save(it.copy(name = "THOTH")) }
 
-    val found = repository.findSaved(
-      listOf("10.9.9.9", withId[2].address, withId[1].address),
-      withId[1].port
-    )
+      val found = repository.findSaved(
+        listOf("10.9.9.9", withId[2].address, withId[1].address),
+        withId[1].port,
+        "thoth"
+      )
 
-    assertThat(found?.id).isEqualTo(withId[2].id)
-    assertWithMessage("a different port is a different plugin")
-      .that(repository.findSaved(listOf(withId[1].address), 9999))
-      .isNull()
+      assertThat(found?.id).isEqualTo(withId[2].id)
+      assertWithMessage("a different port is a different plugin")
+        .that(repository.findSaved(listOf(withId[1].address), 9999, "THOTH"))
+        .isNull()
+    }
+
+  @Test
+  fun `findSaved does not claim another computer that shares an address`() =
+    runTest(testDispatcher) {
+      val (withId, withoutId) = generateSettings(1)
+      repository.save(withoutId[0])
+
+      assertWithMessage("a VirtualBox or VPN address is the same on every machine")
+        .that(repository.findSaved(listOf(withId[0].address), withId[0].port, "OFFICE-PC"))
+        .isNull()
+      assertWithMessage("without a name the link cannot vouch for any saved host")
+        .that(repository.findSaved(listOf(withId[0].address), withId[0].port, null))
+        .isNull()
+    }
+
+  @Test
+  fun `saveAsDefault adds a host when the remembered entry has gone`() = runTest(testDispatcher) {
+    val saved = repository.saveAsDefault("192.168.1.5", 3000, "THOTH", sameHostId = 42)
+
+    assertThat(saved.address).isEqualTo("192.168.1.5")
+    assertThat(saved.name).isEqualTo("THOTH")
+    assertThat(repository.count()).isEqualTo(1)
   }
 
   private fun generateSettings(count: Long): Settings {

@@ -3,6 +3,7 @@ package com.kelsos.mbrc.feature.settings.domain
 import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
+import com.kelsos.mbrc.core.networking.UserConnectPreparer
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 
@@ -19,14 +20,14 @@ interface DefaultConnectionSwitcher {
 
   /**
    * Switches to the host at [address] and [port]. It is stored as [ConnectionRepository.saveAsDefault]
-   * describes: reused, moved from one of [sameHostAddresses], or added under [name]. [onSaved]
-   * receives the stored host before the reconnect starts.
+   * describes: reused, moved from the entry [sameHostId], or added under [name]. [onSaved] receives
+   * the stored host before the reconnect starts.
    */
   suspend fun switchTo(
     address: String,
     port: Int,
     name: String,
-    sameHostAddresses: List<String>,
+    sameHostId: Long?,
     onSaved: suspend (ConnectionSettings) -> Unit
   )
 }
@@ -34,6 +35,7 @@ interface DefaultConnectionSwitcher {
 class DefaultConnectionSwitcherImpl(
   private val repository: ConnectionRepository,
   private val clientConnectionUseCase: ClientConnectionUseCase,
+  private val userConnectPreparer: UserConnectPreparer,
   private val dispatchers: AppCoroutineDispatchers
 ) : DefaultConnectionSwitcher {
   override suspend fun switchTo(connection: ConnectionSettings) = withContext(NonCancellable) {
@@ -45,14 +47,15 @@ class DefaultConnectionSwitcherImpl(
     address: String,
     port: Int,
     name: String,
-    sameHostAddresses: List<String>,
+    sameHostId: Long?,
     onSaved: suspend (ConnectionSettings) -> Unit
   ) = withContext(NonCancellable) {
-    onSaved(repository.saveAsDefault(address, port, name, sameHostAddresses))
+    onSaved(repository.saveAsDefault(address, port, name, sameHostId))
     reconnect()
   }
 
   private suspend fun reconnect() {
+    userConnectPreparer.prepare()
     clientConnectionUseCase.connect(reset = true)
   }
 }

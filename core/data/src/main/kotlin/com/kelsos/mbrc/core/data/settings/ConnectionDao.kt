@@ -44,6 +44,12 @@ interface ConnectionDao {
   @Query("select id from settings where address = :address and port = :port")
   fun findId(address: String, port: Int): Long?
 
+  @Query("select * from settings where port = :port and address in (:addresses)")
+  fun findAll(addresses: List<String>, port: Int): List<ConnectionSettingsEntity>
+
+  @Query("update settings set address = :address where id = :id")
+  fun updateAddress(id: Long, address: String): Int
+
   @Query("select * from settings where is_default = 1")
   fun getDefault(): ConnectionSettingsEntity?
 
@@ -57,5 +63,22 @@ interface ConnectionDao {
   fun updateDefault(id: Long) {
     clearDefaults()
     setDefault(id)
+  }
+
+  /**
+   * Makes the host at [address] and [port] the default as one write, so a network scan saving the
+   * same host at the same moment cannot slip in between the lookup and the insert. An entry already
+   * at [address] is reused; failing that the entry [sameHostId] is moved to [address]; failing that
+   * a new entry is added under [name].
+   *
+   * @return the id of the default entry.
+   */
+  @Transaction
+  fun saveAsDefault(address: String, port: Int, name: String, sameHostId: Long?): Long {
+    val id = findId(address, port)
+      ?: sameHostId?.takeIf { updateAddress(it, address) > 0 }
+      ?: insert(ConnectionSettingsEntity(address = address, port = port, name = name))
+    updateDefault(id)
+    return id
   }
 }

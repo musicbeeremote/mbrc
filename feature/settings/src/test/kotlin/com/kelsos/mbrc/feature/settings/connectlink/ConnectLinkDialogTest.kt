@@ -158,14 +158,24 @@ class ConnectLinkDialogTest {
   fun `an already connected computer only needs acknowledging`() {
     show(ConnectLinkState.AlreadyConnected("Study"))
 
-    composeTestRule.onNodeWithText("Already connected").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Already set up").assertIsDisplayed()
     composeTestRule.onNodeWithText(
-      "MusicBee Remote is already connected to Study."
+      "Study is already your default computer, and MusicBee Remote is connected or connecting to it."
     ).assertIsDisplayed()
     composeTestRule.onNodeWithText("Connect").assertDoesNotExist()
     composeTestRule.onNodeWithText("OK").performClick()
 
     assertThat(calls).containsExactly("dismiss")
+  }
+
+  @Test
+  fun `a saved computer without a name is offered under its address`() {
+    val saved = ConnectionSettings("192.168.1.5", 3000, "", isDefault = false, id = 3)
+    show(ConnectLinkState.Confirm(link, saved = saved, problem = null))
+
+    composeTestRule
+      .onNodeWithText("192.168.1.5 is already saved. Make it the default and connect to it?")
+      .assertIsDisplayed()
   }
 
   @Test

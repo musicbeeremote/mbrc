@@ -38,7 +38,7 @@ fun ConnectLinkDialog(
 
     is ConnectLinkState.Confirm -> HostDialog(
       link = state.link,
-      savedName = state.saved?.name?.ifBlank { null },
+      savedName = state.saved?.let { saved -> saved.name.ifBlank { saved.address } },
       problem = state.problem,
       onConfirm = if (state.problem == ConnectProblem.LocalNetworkDenied) {
         onGrantLocalNetworkAccess

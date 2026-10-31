@@ -39,7 +39,7 @@ class ConnectLinkViewModelTest {
     val address: String,
     val port: Int,
     val name: String,
-    val sameHostAddresses: List<String>
+    val sameHostId: Long?
   )
 
   /** Records each switch and answers with the stored host, or throws when [failing] is set. */
@@ -53,19 +53,20 @@ class ConnectLinkViewModelTest {
       address: String,
       port: Int,
       name: String,
-      sameHostAddresses: List<String>,
+      sameHostId: Long?,
       onSaved: suspend (ConnectionSettings) -> Unit
     ) {
       check(!failing) { "database unavailable" }
-      switches += Switch(address, port, name, sameHostAddresses)
+      switches += Switch(address, port, name, sameHostId)
       onSaved(ConnectionSettings(address, port, name, isDefault = true, id = 7))
     }
   }
 
   private class FakeConnectionState : ConnectionStateFlow {
-    override val connection: StateFlow<ConnectionStatus> =
-      MutableStateFlow(ConnectionStatus.Offline)
-    override var isConnected = false
+    val status = MutableStateFlow<ConnectionStatus>(ConnectionStatus.Offline)
+    override val connection: StateFlow<ConnectionStatus> = status
+    override val isConnected: Boolean
+      get() = status.value is ConnectionStatus.Connected
   }
 
   private val dispatcher = StandardTestDispatcher()
@@ -108,7 +109,7 @@ class ConnectLinkViewModelTest {
   @Before
   fun setUp() {
     Dispatchers.setMain(dispatcher)
-    coEvery { repository.findSaved(any(), any()) } answers { savedHost }
+    coEvery { repository.findSaved(any(), any(), any()) } answers { savedHost }
     viewModel = viewModelWith()
   }
 
@@ -150,7 +151,7 @@ class ConnectLinkViewModelTest {
   @Test
   fun `the connected default computer needs no switch`() = runTest(dispatcher) {
     savedHost = ConnectionSettings("192.168.1.5", 3000, "Study", isDefault = true, id = 3)
-    connectionState.isConnected = true
+    connectionState.status.value = ConnectionStatus.Connected
 
     open(twoHostLink)
 
@@ -160,9 +161,22 @@ class ConnectLinkViewModelTest {
   }
 
   @Test
-  fun `the default computer is offered again while it is not connected`() = runTest(dispatcher) {
+  fun `a default computer still being connected to is not restarted`() = runTest(dispatcher) {
     savedHost = ConnectionSettings("192.168.1.5", 3000, "Study", isDefault = true, id = 3)
-    connectionState.isConnected = false
+
+    listOf(ConnectionStatus.Connecting(), ConnectionStatus.Authenticating).forEach { status ->
+      connectionState.status.value = status
+      open(twoHostLink)
+
+      assertWithMessage("a cold start from the camera is still connecting when the link resolves")
+        .that(viewModel.state.value)
+        .isEqualTo(ConnectLinkState.AlreadyConnected("Study"))
+    }
+  }
+
+  @Test
+  fun `the default computer is offered again while it is offline`() = runTest(dispatcher) {
+    savedHost = ConnectionSettings("192.168.1.5", 3000, "Study", isDefault = true, id = 3)
 
     open(twoHostLink)
 
@@ -181,9 +195,7 @@ class ConnectLinkViewModelTest {
       assertThat((awaitItem() as UiMessage.ConnectingTo).name).isEqualTo("Den PC")
     }
 
-    assertWithMessage("every link address is passed on, so a saved row at another one is moved")
-      .that(switcher.switches)
-      .containsExactly(Switch("172.20.48.1", 3000, "Den PC", listOf("192.168.1.5", "172.20.48.1")))
+    assertThat(switcher.switches).containsExactly(Switch("172.20.48.1", 3000, "Den PC", null))
     assertThat(viewModel.state.value).isEqualTo(ConnectLinkState.Hidden)
   }
 
@@ -197,6 +209,9 @@ class ConnectLinkViewModelTest {
     advanceUntilIdle()
 
     assertThat(switcher.switches.single().name).isEqualTo("Study")
+    assertWithMessage("the matched row is moved by id rather than searched for again")
+      .that(switcher.switches.single().sameHostId)
+      .isEqualTo(3)
   }
 
   @Test

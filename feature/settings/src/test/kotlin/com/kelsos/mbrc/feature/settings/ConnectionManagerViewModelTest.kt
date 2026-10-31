@@ -58,6 +58,7 @@ class ConnectionManagerViewModelTest : KoinTest {
       defaultConnectionSwitcher = DefaultConnectionSwitcherImpl(
         repository,
         clientConnectionUseCase,
+        mockk(relaxed = true),
         dispatchers
       )
     )

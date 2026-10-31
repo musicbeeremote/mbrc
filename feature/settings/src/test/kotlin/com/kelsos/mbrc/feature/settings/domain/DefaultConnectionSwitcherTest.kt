@@ -5,6 +5,7 @@ import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatchers
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
+import com.kelsos.mbrc.core.networking.UserConnectPreparer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
@@ -22,8 +23,13 @@ class DefaultConnectionSwitcherTest {
 
   private val repository = mockk<ConnectionRepository>(relaxed = true)
   private val clientConnectionUseCase = mockk<ClientConnectionUseCase>(relaxed = true)
-  private val switcher =
-    DefaultConnectionSwitcherImpl(repository, clientConnectionUseCase, testDispatchers)
+  private val userConnectPreparer = mockk<UserConnectPreparer>(relaxed = true)
+  private val switcher = DefaultConnectionSwitcherImpl(
+    repository,
+    clientConnectionUseCase,
+    userConnectPreparer,
+    testDispatchers
+  )
 
   private val stored = ConnectionSettings(
     address = "192.168.1.5",
@@ -39,6 +45,7 @@ class DefaultConnectionSwitcherTest {
 
     coVerifyOrder {
       repository.setDefault(stored)
+      userConnectPreparer.prepare()
       clientConnectionUseCase.connect(reset = true, cycleInfo = null)
     }
   }
@@ -47,7 +54,7 @@ class DefaultConnectionSwitcherTest {
   fun `switching to an address reports the stored host before reconnecting`() =
     runTest(testDispatcher) {
       coEvery {
-        repository.saveAsDefault("192.168.1.5", 3000, "LIVING-ROOM-PC", emptyList())
+        repository.saveAsDefault("192.168.1.5", 3000, "LIVING-ROOM-PC", null)
       } returns
         stored
       val reported = mutableListOf<ConnectionSettings>()
@@ -57,7 +64,7 @@ class DefaultConnectionSwitcherTest {
         true
       }
 
-      switcher.switchTo("192.168.1.5", 3000, "LIVING-ROOM-PC", emptyList()) { reported += it }
+      switcher.switchTo("192.168.1.5", 3000, "LIVING-ROOM-PC", null) { reported += it }
 
       assertWithMessage("the stored row wins, so a user's own name for the host is what is shown")
         .that(reported)
@@ -74,7 +81,7 @@ class DefaultConnectionSwitcherTest {
       stored
     }
 
-    val job = launch { switcher.switchTo("192.168.1.5", 3000, "Den PC", emptyList()) {} }
+    val job = launch { switcher.switchTo("192.168.1.5", 3000, "Den PC", null) {} }
     runCurrent()
     job.cancel()
     advanceUntilIdle()

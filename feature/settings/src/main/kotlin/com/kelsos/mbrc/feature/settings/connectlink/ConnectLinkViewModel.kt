@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
+import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.networking.LocalNetworkAccess
 import com.kelsos.mbrc.core.networking.client.UiMessage
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
@@ -55,7 +56,10 @@ sealed interface ConnectLinkState {
 
   data object Connecting : ConnectLinkState
 
-  /** The link names the default host, and the app is already connected to it: nothing to do. */
+  /**
+   * The link names the default host and the app is connected or already connecting to it, so there
+   * is nothing to do. Offering Connect here would only restart a connection that is under way.
+   */
   data class AlreadyConnected(val name: String) : ConnectLinkState
 
   data class Rejected(val error: ConnectLinkError) : ConnectLinkState
@@ -67,9 +71,9 @@ sealed interface ConnectLinkState {
  * [ConnectLink.serverId] and redeeming [ConnectLink.pairingCode] wait for protocol V6
  * (musicbeeremote/mbrc#406).
  *
- * A computer counts as saved when any of the link's addresses is stored on the link's port, since
- * the plugin lists every address of the one machine. The link is kept in [savedState] until it is
- * used or dismissed, so a confirm dialog the system killed the process under comes back.
+ * A computer counts as saved by the rule in [ConnectionRepository.findSaved]. The link is kept in
+ * [savedState] until it is used or dismissed, so a confirm dialog the system killed the process
+ * under comes back.
  */
 class ConnectLinkViewModel(
   private val savedState: SavedStateHandle,
@@ -137,8 +141,8 @@ class ConnectLinkViewModel(
   }
 
   private suspend fun stateFor(link: ConnectLink): ConnectLinkState {
-    val saved = repository.findSaved(link.hosts, link.port)
-    if (saved != null && saved.isDefault && connectionState.isConnected) {
+    val saved = repository.findSaved(link.hosts, link.port, link.name)
+    if (saved != null && saved.isDefault && connectionState.connection.value.isUnderWay()) {
       return ConnectLinkState.AlreadyConnected(saved.name.ifBlank { saved.address })
     }
     return ConnectLinkState.Confirm(link, saved, problem = null)
@@ -148,7 +152,7 @@ class ConnectLinkViewModel(
     val link = confirm.link
     val name = confirm.saved?.name ?: link.name ?: address
     try {
-      defaultConnectionSwitcher.switchTo(address, link.port, name, link.hosts) { saved ->
+      defaultConnectionSwitcher.switchTo(address, link.port, name, confirm.saved?.id) { saved ->
         close()
         uiMessageQueue.messages.emit(UiMessage.ConnectingTo(saved.name))
       }
@@ -159,6 +163,10 @@ class ConnectLinkViewModel(
       _state.value = confirm.copy(problem = ConnectProblem.SaveFailed)
     }
   }
+
+  private fun ConnectionStatus.isUnderWay(): Boolean = this is ConnectionStatus.Connected ||
+    this is ConnectionStatus.Connecting ||
+    this == ConnectionStatus.Authenticating
 
   private fun close() {
     savedState.remove<String>(KEY_LINK)

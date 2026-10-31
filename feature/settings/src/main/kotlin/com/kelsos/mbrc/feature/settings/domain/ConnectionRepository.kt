@@ -17,24 +17,27 @@ interface ConnectionRepository {
   suspend fun save(settings: ConnectionSettings)
 
   /**
-   * The first saved host, in the order given, at one of [addresses] on [port], or null when none of
-   * them is saved. A connect link lists every address of one computer, so a match on any of them is
-   * that computer.
+   * The saved host that is the computer behind a connect link: stored at one of [addresses] on
+   * [port] under [name] (ignoring case), the first such in the order given.
+   *
+   * The name has to agree because an address alone does not identify a computer across networks:
+   * VirtualBox, Docker and VPN adapters reuse the same addresses on every machine, and two homes can
+   * share a subnet. A host the user renamed is therefore not matched here; it is still reused when
+   * the address that answers is the one it is saved at.
    */
-  suspend fun findSaved(addresses: List<String>, port: Int): ConnectionSettings?
+  suspend fun findSaved(addresses: List<String>, port: Int, name: String?): ConnectionSettings?
 
   /**
-   * Makes the host at [address] and [port] the default and returns it as stored.
-   *
-   * An entry already at [address] is reused. Failing that, an entry at one of [sameHostAddresses]
-   * (other addresses of the same computer) is moved to [address] rather than duplicated. Only when
-   * neither exists is a new entry added under [name]. A reused or moved entry keeps its own name.
+   * Makes the host at [address] and [port] the default and returns it as stored. An entry already
+   * at [address] is reused; failing that the entry [sameHostId] (found by [findSaved]) is moved to
+   * [address]; only when neither applies is a new entry added under [name]. A reused or moved entry
+   * keeps its own name.
    */
   suspend fun saveAsDefault(
     address: String,
     port: Int,
     name: String,
-    sameHostAddresses: List<String>
+    sameHostId: Long?
   ): ConnectionSettings
 
   suspend fun delete(settings: ConnectionSettings)
@@ -102,31 +105,29 @@ class ConnectionRepositoryImpl(
     }
   }
 
-  override suspend fun findSaved(addresses: List<String>, port: Int): ConnectionSettings? =
-    withContext(dispatchers.database) {
-      addresses.firstNotNullOfOrNull { address ->
-        dao.findId(address, port)?.let(dao::getById)?.toConnection()
-      }
+  override suspend fun findSaved(
+    addresses: List<String>,
+    port: Int,
+    name: String?
+  ): ConnectionSettings? {
+    if (name.isNullOrBlank()) {
+      return null
     }
+    return withContext(dispatchers.database) {
+      val sameName = dao.findAll(addresses, port).filter { it.name.equals(name, ignoreCase = true) }
+      addresses.firstNotNullOfOrNull { address -> sameName.find { it.address == address } }
+        ?.toConnection()
+    }
+  }
 
   override suspend fun saveAsDefault(
     address: String,
     port: Int,
     name: String,
-    sameHostAddresses: List<String>
+    sameHostId: Long?
   ): ConnectionSettings = withContext(dispatchers.database) {
-    val id = dao.findId(address, port)
-      ?: moveToAddress(sameHostAddresses, port, address)
-      ?: dao.insert(ConnectionSettingsEntity(address = address, port = port, name = name))
-    dao.updateDefault(id)
+    val id = dao.saveAsDefault(address, port, name, sameHostId)
     checkNotNull(dao.getById(id)).toConnection()
-  }
-
-  /** Moves the first entry saved at one of [from] on [port] to [address], returning its id. */
-  private fun moveToAddress(from: List<String>, port: Int, address: String): Long? {
-    val entry = from.firstNotNullOfOrNull { dao.findId(it, port)?.let(dao::getById) } ?: return null
-    dao.update(entry.copy(address = address))
-    return entry.id
   }
 
   override suspend fun delete(settings: ConnectionSettings) {
