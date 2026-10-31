@@ -33,8 +33,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -85,10 +83,7 @@ fun LibraryScreen(
   val albumViewMode by albumViewModel.albumViewMode.collectAsStateWithLifecycle(
     initialValue = AlbumViewMode.AUTO
   )
-  val screenWidthDp = with(LocalDensity.current) {
-    LocalWindowInfo.current.containerSize.width.toDp()
-  }
-  val isGridMode = albumViewMode.isGrid(screenWidthDp.value.toInt())
+  val isGridMode = isAlbumGrid(albumViewMode)
 
   val albumArtistsOnly by viewModel.albumArtistsOnly.collectAsStateWithLifecycle(
     initialValue = false

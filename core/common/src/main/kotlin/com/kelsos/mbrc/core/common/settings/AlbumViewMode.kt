@@ -13,6 +13,16 @@ enum class AlbumViewMode(val value: String) {
     LIST -> false
   }
 
+  /**
+   * The mode the view mode toggle switches to. [AUTO] resolves to [LIST] because the toggle only
+   * offers list and grid, and leaving automatic is the point of pressing it.
+   */
+  fun next(): AlbumViewMode = when (this) {
+    AUTO -> LIST
+    LIST -> GRID
+    GRID -> LIST
+  }
+
   companion object {
     fun fromString(value: String): AlbumViewMode = entries.find { it.value == value } ?: AUTO
   }

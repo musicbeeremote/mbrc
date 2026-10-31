@@ -4,8 +4,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kelsos.mbrc.core.common.settings.AlbumSortField
-import com.kelsos.mbrc.core.common.settings.AlbumSortPreference
-import com.kelsos.mbrc.core.common.settings.AlbumViewMode
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
 import com.kelsos.mbrc.core.common.settings.SortOrder
 import com.kelsos.mbrc.core.common.state.ConnectionStateFlow
@@ -17,7 +15,6 @@ import com.kelsos.mbrc.feature.library.queue.QueueHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -33,13 +30,10 @@ class BrowseAlbumViewModel(
   private val repository: AlbumRepository,
   private val librarySyncUseCase: LibrarySyncUseCase,
   queueHandler: QueueHandler,
-  private val librarySettings: LibrarySettings,
+  librarySettings: LibrarySettings,
   connectionStateFlow: ConnectionStateFlow,
   private val searchModel: LibrarySearchModel
 ) : BaseAlbumViewModel(queueHandler, librarySettings, connectionStateFlow) {
-  val sortPreference: Flow<AlbumSortPreference> = librarySettings.albumSortPreferenceFlow
-  val albumViewMode: Flow<AlbumViewMode> = librarySettings.albumViewModeFlow
-
   override val albums: Flow<PagingData<Album>> =
     combine(searchModel.term, sortPreference) { keyword, sort ->
       AlbumSearchParams(keyword, sort.field, sort.order)
@@ -60,24 +54,6 @@ class BrowseAlbumViewModel(
         return@launch
       }
       librarySyncUseCase.sync()
-    }
-  }
-
-  fun updateSortPreference(preference: AlbumSortPreference) {
-    viewModelScope.launch {
-      librarySettings.setAlbumSortPreference(preference)
-    }
-  }
-
-  fun toggleViewMode() {
-    viewModelScope.launch {
-      val current = librarySettings.albumViewModeFlow.first()
-      val next = when (current) {
-        AlbumViewMode.AUTO -> AlbumViewMode.LIST
-        AlbumViewMode.LIST -> AlbumViewMode.GRID
-        AlbumViewMode.GRID -> AlbumViewMode.LIST
-      }
-      librarySettings.setAlbumViewMode(next)
     }
   }
 }
