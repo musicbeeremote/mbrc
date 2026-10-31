@@ -5,23 +5,11 @@ plugins {
 
 android {
   namespace = "com.kelsos.mbrc.baselineprofile"
-  compileSdk = 37
 
   defaultConfig {
     minSdk = 28
-    targetSdk = 37
+    targetSdk = providers.gradleProperty("mbrc.sdk.target").get().toInt()
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-  }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-
-  kotlin {
-    compilerOptions {
-      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-    }
   }
 
   targetProjectPath = ":app"

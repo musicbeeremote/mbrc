@@ -66,6 +66,33 @@ allprojects {
 }
 
 subprojects {
+  // One compile SDK, Java level and Kotlin JVM target for every Android module, and one minSdk and
+  // desugaring setup for the app and libraries. :app adds its targetSdk; :baselineprofile keeps its
+  // own minSdk, since macrobenchmarks need API 28.
+  listOf("com.android.application", "com.android.library", "com.android.test").forEach { pluginId ->
+    pluginManager.withPlugin(pluginId) {
+      configure<com.android.build.api.dsl.CommonExtension> {
+        compileSdk = providers.gradleProperty("mbrc.sdk.compile").get().toInt()
+        compileOptions.sourceCompatibility = JavaVersion.VERSION_11
+        compileOptions.targetCompatibility = JavaVersion.VERSION_11
+      }
+    }
+  }
+  listOf("com.android.application", "com.android.library").forEach { pluginId ->
+    pluginManager.withPlugin(pluginId) {
+      configure<com.android.build.api.dsl.CommonExtension> {
+        defaultConfig.minSdk = providers.gradleProperty("mbrc.sdk.min").get().toInt()
+        compileOptions.isCoreLibraryDesugaringEnabled = true
+      }
+      dependencies {
+        add("coreLibraryDesugaring", libs.com.android.tools.desugar)
+      }
+    }
+  }
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+    compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+  }
+
   pluginManager.withPlugin("org.jetbrains.kotlin.plugin.compose") {
     configure<org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension> {
       stabilityConfigurationFiles.add(

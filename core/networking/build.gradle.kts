@@ -5,21 +5,9 @@ plugins {
 
 android {
   namespace = "com.kelsos.mbrc.core.networking"
-  compileSdk = 37
-
-  defaultConfig {
-    minSdk = 23
-  }
-
-  compileOptions {
-    isCoreLibraryDesugaringEnabled = true
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
 
   kotlin {
     compilerOptions {
-      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
       freeCompilerArgs.set(listOf(
         "-Xannotation-default-target=param-property"
       ))
@@ -36,8 +24,6 @@ android {
 }
 
 dependencies {
-  coreLibraryDesugaring(libs.com.android.tools.desugar)
-
   api(project(":core:common"))
 
   implementation(libs.bundles.coroutines)

@@ -92,13 +92,8 @@ val buildTimeProvider = providers.provider {
 
 val appVersionName = "1.7.0"
 val appVersionCode = 132
-val minSDKVersion = 23
-val compileSDKVersion = 37
-// targetSdk 37 opts into Android 17 behaviors (see ACCESS_LOCAL_NETWORK handling in MainActivity).
-val targetSDKVersion = 37
 
 android {
-  compileSdk = compileSDKVersion
   namespace = "com.kelsos.mbrc"
   testNamespace = "com.kelsos.mbrc.test"
 
@@ -115,8 +110,8 @@ android {
 
   defaultConfig {
     applicationId = "com.kelsos.mbrc"
-    minSdk = minSDKVersion
-    targetSdk = targetSDKVersion
+    // targetSdk 37 opts into Android 17 behaviors (see ACCESS_LOCAL_NETWORK handling in MainActivity).
+    targetSdk = providers.gradleProperty("mbrc.sdk.target").get().toInt()
     versionCode = appVersionCode
     versionName = appVersionName
     buildConfigField("String", "GIT_SHA", "\"${gitHashProvider.get()}\"")
@@ -137,15 +132,8 @@ android {
     maxParallelForks = 1
   }
 
-  compileOptions {
-    isCoreLibraryDesugaringEnabled = true
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-
   kotlin {
     compilerOptions {
-      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
       freeCompilerArgs.set(listOf(
         "-Xannotation-default-target=param-property"
       ))
@@ -286,8 +274,6 @@ val dummyGoogleServicesJson: Configuration = configurations.create("dummyGoogleS
 }
 
 dependencies {
-  coreLibraryDesugaring(libs.com.android.tools.desugar)
-
   implementation(project(":core:platform"))
   implementation(project(":core:networking"))
   implementation(project(":core:data"))
@@ -348,19 +334,12 @@ dependencies {
   testImplementation(testFixtures(project(":core:common")))
   testImplementation(libs.androidx.arch.core.testing)
   testImplementation(libs.androidx.room.testing)
-  testImplementation(libs.androidx.test.core)
+  testImplementation(libs.bundles.unit.test)
   testImplementation(libs.androidx.test.runner)
-  testImplementation(libs.androidx.test.junit)
   testImplementation(libs.androidx.test.truth)
   testImplementation(libs.bundles.androidx.test.espresso)
   testImplementation(libs.androidx.paging.common.ktx)
   testImplementation(libs.androidx.paging.testing)
-  testImplementation(libs.turbine)
-  testImplementation(libs.truth)
-  testImplementation(libs.koin.test)
-  testImplementation(libs.kotlin.coroutines.test)
-  testImplementation(libs.mockk)
-  testImplementation(libs.robolectric)
   testImplementation(libs.androidx.glance.testing)
   testImplementation(libs.androidx.glance.appwidget.testing)
   testImplementation(libs.androidx.compose.ui.test.junit4)

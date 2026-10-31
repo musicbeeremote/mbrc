@@ -5,26 +5,9 @@ plugins {
 
 android {
   namespace = "com.kelsos.mbrc.feature.widgets"
-  compileSdk = 37
-
-  defaultConfig {
-    minSdk = 23
-  }
 
   buildFeatures {
     compose = true
-  }
-
-  compileOptions {
-    isCoreLibraryDesugaringEnabled = true
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-
-  kotlin {
-    compilerOptions {
-      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-    }
   }
 
   testOptions {
@@ -34,8 +17,6 @@ android {
 }
 
 dependencies {
-  coreLibraryDesugaring(libs.com.android.tools.desugar)
-
   implementation(project(":core:common"))
   implementation(project(":core:ui"))
   implementation(project(":core:platform"))

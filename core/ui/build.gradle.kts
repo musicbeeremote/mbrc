@@ -5,11 +5,6 @@ plugins {
 
 android {
   namespace = "com.kelsos.mbrc.core.ui"
-  compileSdk = 37
-
-  defaultConfig {
-    minSdk = 23
-  }
 
   buildFeatures {
     compose = true
@@ -18,17 +13,6 @@ android {
   testOptions {
     unitTests.isReturnDefaultValues = true
     unitTests.isIncludeAndroidResources = true
-  }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-
-  kotlin {
-    compilerOptions {
-      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-    }
   }
 }
 
