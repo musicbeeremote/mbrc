@@ -4,12 +4,10 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -130,212 +129,6 @@ object EmptySettingsActions : ISettingsActions {
 }
 
 /**
- * Appearance settings section.
- */
-@Composable
-private fun AppearanceSettingsSection(viewModel: SettingsViewModel) {
-  val currentTheme by viewModel.currentTheme.collectAsStateWithLifecycle()
-  val visibleDialog by viewModel.visibleDialog.collectAsStateWithLifecycle()
-  val keepScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle()
-
-  SettingsSection(title = stringResource(R.string.settings_appearance)) {
-    SettingsItem(
-      title = stringResource(R.string.setting_appearance_theme),
-      subtitle = getThemeDisplayName(currentTheme),
-      onClick = { viewModel.showDialog(SettingsDialogType.Theme) }
-    )
-
-    SettingsItem(
-      title = stringResource(R.string.setting_keep_screen_on),
-      subtitle = getKeepScreenOnDisplayName(keepScreenOn),
-      onClick = { viewModel.showDialog(SettingsDialogType.KeepScreenOn) }
-    )
-  }
-
-  if (visibleDialog == SettingsDialogType.KeepScreenOn) {
-    KeepScreenOnDialog(
-      currentMode = keepScreenOn,
-      onModeSelected = { mode ->
-        viewModel.updateKeepScreenOn(mode)
-        viewModel.hideDialog()
-      },
-      onDismiss = { viewModel.hideDialog() }
-    )
-  }
-
-  // Theme Selection Dialog
-  if (visibleDialog == SettingsDialogType.Theme) {
-    ThemeSelectionDialog(
-      currentTheme = currentTheme,
-      onThemeSelected = { theme ->
-        viewModel.updateTheme(theme)
-        viewModel.hideDialog()
-      },
-      onDismiss = { viewModel.hideDialog() }
-    )
-  }
-}
-
-/**
- * Miscellaneous settings section.
- */
-@Composable
-private fun MiscellaneousSettingsSection(
-  viewModel: SettingsViewModel,
-  context: Context,
-  phonePermissionLauncher: ActivityResultLauncher<String>,
-  serviceRestarter: ServiceRestarter
-) {
-  // Reactive state management
-  val pluginUpdatesEnabled by viewModel.pluginUpdatesEnabled.collectAsStateWithLifecycle()
-  val debugLoggingEnabled by viewModel.debugLoggingEnabled.collectAsStateWithLifecycle()
-  val incomingCallAction by viewModel.incomingCallAction.collectAsStateWithLifecycle()
-  val visibleDialog by viewModel.visibleDialog.collectAsStateWithLifecycle()
-
-  SettingsSection(title = stringResource(R.string.settings_miscellaneous)) {
-    SettingsItem(
-      title = stringResource(R.string.settings_miscellaneous_incoming_call_action),
-      subtitle = getIncomingCallActionDisplayName(incomingCallAction),
-      onClick = {
-        if (hasPhonePermission(context)) {
-          viewModel.showDialog(SettingsDialogType.IncomingCallAction)
-        } else {
-          phonePermissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
-        }
-      }
-    )
-
-    SettingsToggleItem(
-      title = stringResource(R.string.setting_miscellaneous_plugin_updates),
-      subtitle = stringResource(R.string.setting_miscellaneous_plugin_updates_summary),
-      checked = pluginUpdatesEnabled,
-      onCheckedChange = { enabled ->
-        viewModel.updatePluginUpdates(enabled)
-      }
-    )
-
-    SettingsToggleItem(
-      title = stringResource(R.string.setting_miscellaneous_debug_logging),
-      subtitle = stringResource(R.string.setting_miscellaneous_debug_logging_summary),
-      checked = debugLoggingEnabled,
-      onCheckedChange = { enabled ->
-        viewModel.updateDebugLogging(enabled)
-      }
-    )
-  }
-
-  // Incoming Call Action Dialog
-  if (visibleDialog == SettingsDialogType.IncomingCallAction) {
-    IncomingCallActionDialog(
-      currentAction = incomingCallAction,
-      onActionSelected = { action ->
-        viewModel.updateIncomingCallAction(action)
-        viewModel.hideDialog()
-      },
-      onDismiss = { viewModel.hideDialog() }
-    )
-  }
-}
-
-/**
- * Rating settings section.
- */
-@Composable
-private fun RatingSettingsSection(viewModel: SettingsViewModel) {
-  val halfStarRatingEnabled by viewModel.halfStarRatingEnabled.collectAsStateWithLifecycle()
-  val showRatingOnPlayerEnabled by viewModel.showRatingOnPlayerEnabled.collectAsStateWithLifecycle()
-
-  SettingsSection(title = stringResource(R.string.settings_rating)) {
-    SettingsToggleItem(
-      title = stringResource(R.string.setting_half_star_rating),
-      subtitle = stringResource(R.string.setting_half_star_rating_summary),
-      checked = halfStarRatingEnabled,
-      onCheckedChange = { enabled ->
-        viewModel.updateHalfStarRating(enabled)
-      }
-    )
-
-    SettingsToggleItem(
-      title = stringResource(R.string.setting_show_rating_on_player),
-      subtitle = stringResource(R.string.setting_show_rating_on_player_summary),
-      checked = showRatingOnPlayerEnabled,
-      onCheckedChange = { enabled ->
-        viewModel.updateShowRatingOnPlayer(enabled)
-      }
-    )
-  }
-}
-
-/**
- * Library settings section.
- */
-@Composable
-private fun LibrarySettingsSection(viewModel: SettingsViewModel) {
-  val trackDefaultAction by viewModel.trackDefaultAction.collectAsStateWithLifecycle()
-  val visibleDialog by viewModel.visibleDialog.collectAsStateWithLifecycle()
-
-  SettingsSection(title = stringResource(R.string.common_library)) {
-    SettingsItem(
-      title = stringResource(R.string.preferences_library_track_default_action_title),
-      subtitle = getTrackActionDisplayName(trackDefaultAction),
-      onClick = { viewModel.showDialog(SettingsDialogType.TrackDefaultAction) }
-    )
-  }
-
-  // Track Default Action Dialog
-  if (visibleDialog == SettingsDialogType.TrackDefaultAction) {
-    TrackDefaultActionDialog(
-      currentAction = trackDefaultAction,
-      onActionSelected = { action ->
-        viewModel.updateTrackDefaultAction(action)
-        viewModel.hideDialog()
-      },
-      onDismiss = { viewModel.hideDialog() }
-    )
-  }
-}
-
-/**
- * About settings section.
- */
-@Composable
-private fun AboutSettingsSection(
-  onNavigateToLicenses: () -> Unit,
-  onNavigateToAppLicense: () -> Unit,
-  appInfo: AppInfo = koinInject()
-) {
-  SettingsSection(title = stringResource(R.string.preferences_category_about)) {
-    SettingsItem(
-      title = stringResource(R.string.settings_oss_license),
-      onClick = onNavigateToLicenses
-    )
-
-    SettingsItem(
-      title = stringResource(R.string.settings_title_license),
-      onClick = onNavigateToAppLicense
-    )
-
-    SettingsItem(
-      title = stringResource(R.string.preferences_about_version),
-      subtitle = stringResource(
-        R.string.settings_version_number,
-        appInfo.versionName
-      )
-    )
-
-    SettingsItem(
-      title = stringResource(R.string.settings_build_time_title),
-      subtitle = appInfo.buildTime
-    )
-
-    SettingsItem(
-      title = stringResource(R.string.settings_revision_title),
-      subtitle = appInfo.gitRevision
-    )
-  }
-}
-
-/**
  * Settings screen implemented in Jetpack Compose.
  * Provides all application settings and preferences.
  */
@@ -370,66 +163,80 @@ fun SettingsScreen(
     onOpenDrawer = onOpenDrawer,
     modifier = modifier
   ) { paddingValues ->
-    SettingsContent(
-      viewModel = viewModel,
-      context = context,
-      phonePermissionLauncher = phonePermissionLauncher,
-      serviceRestarter = serviceRestarter,
-      onNavigateToLicenses = onNavigateToLicenses,
-      onNavigateToAppLicense = onNavigateToAppLicense,
-      paddingValues = paddingValues
+    SettingsScreenContent(
+      state = collectSettingsContentState(viewModel),
+      actions = remember(viewModel, onNavigateToLicenses, onNavigateToAppLicense) {
+        ViewModelSettingsActions(
+          viewModel = viewModel,
+          onIncomingCallActionClick = {
+            if (hasPhonePermission(context)) {
+              viewModel.showDialog(SettingsDialogType.IncomingCallAction)
+            } else {
+              phonePermissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
+            }
+          },
+          onNavigateToLicenses = onNavigateToLicenses,
+          onNavigateToAppLicense = onNavigateToAppLicense
+        )
+      },
+      modifier = Modifier.padding(paddingValues)
     )
   }
 }
 
 @Composable
-private fun SettingsContent(
+private fun collectSettingsContentState(viewModel: SettingsViewModel): SettingsContentState {
+  val currentTheme by viewModel.currentTheme.collectAsStateWithLifecycle()
+  val keepScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle()
+  val pluginUpdatesEnabled by viewModel.pluginUpdatesEnabled.collectAsStateWithLifecycle()
+  val debugLoggingEnabled by viewModel.debugLoggingEnabled.collectAsStateWithLifecycle()
+  val incomingCallAction by viewModel.incomingCallAction.collectAsStateWithLifecycle()
+  val trackDefaultAction by viewModel.trackDefaultAction.collectAsStateWithLifecycle()
+  val halfStarRatingEnabled by viewModel.halfStarRatingEnabled.collectAsStateWithLifecycle()
+  val showRatingOnPlayerEnabled by viewModel.showRatingOnPlayerEnabled.collectAsStateWithLifecycle()
+  val visibleDialog by viewModel.visibleDialog.collectAsStateWithLifecycle()
+
+  return SettingsContentState(
+    currentTheme = currentTheme,
+    keepScreenOn = keepScreenOn,
+    pluginUpdatesEnabled = pluginUpdatesEnabled,
+    debugLoggingEnabled = debugLoggingEnabled,
+    incomingCallAction = incomingCallAction,
+    trackDefaultAction = trackDefaultAction,
+    halfStarRatingEnabled = halfStarRatingEnabled,
+    showRatingOnPlayerEnabled = showRatingOnPlayerEnabled,
+    visibleDialog = visibleDialog
+  )
+}
+
+/**
+ * [ISettingsActions] backed by [viewModel]. The incoming call action needs the phone permission
+ * first, so the screen supplies [onIncomingCallActionClick] to ask for it.
+ */
+private class ViewModelSettingsActions(
   viewModel: SettingsViewModel,
-  context: Context,
-  phonePermissionLauncher: ActivityResultLauncher<String>,
-  serviceRestarter: ServiceRestarter,
-  onNavigateToLicenses: () -> Unit,
-  onNavigateToAppLicense: () -> Unit,
-  paddingValues: PaddingValues
-) {
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .padding(paddingValues)
-      .verticalScroll(rememberScrollState())
-      .padding(vertical = 8.dp)
-  ) {
-    // Appearance Settings Section
-    AppearanceSettingsSection(viewModel = viewModel)
-
-    SettingsDivider()
-
-    // Miscellaneous Settings Section
-    MiscellaneousSettingsSection(
-      viewModel = viewModel,
-      context = context,
-      phonePermissionLauncher = phonePermissionLauncher,
-      serviceRestarter = serviceRestarter
-    )
-
-    SettingsDivider()
-
-    // Rating Settings Section
-    RatingSettingsSection(viewModel = viewModel)
-
-    SettingsDivider()
-
-    // Library Settings Section
-    LibrarySettingsSection(viewModel = viewModel)
-
-    SettingsDivider()
-
-    // About Section
-    AboutSettingsSection(
-      onNavigateToLicenses = onNavigateToLicenses,
-      onNavigateToAppLicense = onNavigateToAppLicense
-    )
+  override val onIncomingCallActionClick: () -> Unit,
+  override val onNavigateToLicenses: () -> Unit,
+  override val onNavigateToAppLicense: () -> Unit
+) : ISettingsActions {
+  override val onThemeClick: () -> Unit = { viewModel.showDialog(SettingsDialogType.Theme) }
+  override val onThemeSelected: (Theme) -> Unit = viewModel::updateTheme
+  override val onKeepScreenOnClick: () -> Unit = {
+    viewModel.showDialog(SettingsDialogType.KeepScreenOn)
   }
+  override val onKeepScreenOnSelected: (KeepScreenOn) -> Unit = viewModel::updateKeepScreenOn
+  override val onIncomingCallActionSelected: (CallAction) -> Unit =
+    viewModel::updateIncomingCallAction
+  override val onPluginUpdatesChanged: (Boolean) -> Unit = viewModel::updatePluginUpdates
+  override val onDebugLoggingChanged: (Boolean) -> Unit = viewModel::updateDebugLogging
+  override val onHalfStarRatingChanged: (Boolean) -> Unit = viewModel::updateHalfStarRating
+  override val onShowRatingOnPlayerChanged: (Boolean) -> Unit = viewModel::updateShowRatingOnPlayer
+  override val onTrackDefaultActionClick: () -> Unit = {
+    viewModel.showDialog(SettingsDialogType.TrackDefaultAction)
+  }
+  override val onTrackDefaultActionSelected: (TrackAction) -> Unit =
+    viewModel::updateTrackDefaultAction
+  override val onDismissDialog: () -> Unit = viewModel::hideDialog
 }
 
 /**
