@@ -2,6 +2,9 @@ Changelog
 -----------
 
 ## [1.7.1]
+### Added
+- Prepares for connecting by QR code, a feature of the upcoming MusicBee Remote plugin 2.0. Current plugin versions do not show a QR code, so nothing changes until you install plugin 2.0. Once you have it, scanning the code in the plugin's setup or settings with the phone's own camera opens the app, which lists the computer's name and addresses and asks before it connects. The app then tries every address at once, saves the first one that answers as the default connection and connects to it, so there is nothing to type. This works where scanning the network does not, such as on guest networks, mesh Wi-Fi that blocks discovery, or a computer on another subnet. Only addresses on your local network are accepted, and a code from a newer plugin than the app understands asks you to update the app instead of guessing.
+
 ### Changed
 - Streams now show a red dot and "LIVE" where the player and the lyrics screen show a track's length. A stream has no length, so that spot used to repeat the elapsed time.
 

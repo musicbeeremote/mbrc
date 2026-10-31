@@ -3,6 +3,7 @@
   <version
     version="1.7.1"
     release="unreleased">
+    <feature>Ready for connecting by QR code, which needs the upcoming MusicBee Remote plugin 2.0; current plugin versions do not show a code, so nothing changes until then. With plugin 2.0, scan its code with your phone's camera, confirm, and the app finds the computer's address, saves it as the default connection and connects, even on guest networks and other setups where scanning the network does not work.</feature>
     <feature>Streams now show a red dot and "LIVE" where the player and the lyrics screen show a track's length, instead of repeating the elapsed time.</feature>
     <bug>Fixes the elapsed time in the player stopping after the connection to MusicBee dropped and came back while it kept playing. It now keeps counting every second after a reconnect.</bug>
     <bug>Fixes there being no way to quit the remote while MusicBee was playing. Swiping the app away from recents now always closes it, which puts the volume keys back on the phone and removes the notification. MusicBee keeps playing.</bug>

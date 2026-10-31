@@ -2,11 +2,14 @@ package com.kelsos.mbrc.feature.settings
 
 import com.kelsos.mbrc.core.common.settings.ChangeLogChecker
 import com.kelsos.mbrc.core.common.settings.LibrarySettings
+import com.kelsos.mbrc.feature.settings.connectlink.ConnectLinkViewModel
 import com.kelsos.mbrc.feature.settings.data.ClientInformationStore
 import com.kelsos.mbrc.feature.settings.data.ClientInformationStoreImpl
 import com.kelsos.mbrc.feature.settings.data.SettingsManagerDataStore
 import com.kelsos.mbrc.feature.settings.domain.ConnectionRepository
 import com.kelsos.mbrc.feature.settings.domain.ConnectionRepositoryImpl
+import com.kelsos.mbrc.feature.settings.domain.DefaultConnectionSwitcher
+import com.kelsos.mbrc.feature.settings.domain.DefaultConnectionSwitcherImpl
 import com.kelsos.mbrc.feature.settings.domain.PluginUpdateCheckUseCase
 import com.kelsos.mbrc.feature.settings.domain.PluginUpdateCheckUseCaseImpl
 import com.kelsos.mbrc.feature.settings.domain.SettingsManager
@@ -51,10 +54,12 @@ val settingsModule = module {
 
   // Use cases
   singleOf(::PluginUpdateCheckUseCaseImpl) { bind<PluginUpdateCheckUseCase>() }
+  singleOf(::DefaultConnectionSwitcherImpl) { bind<DefaultConnectionSwitcher>() }
 
   // ViewModels
   singleOf(::ConnectionManagerViewModel)
   viewModelOf(::SettingsViewModel)
   viewModelOf(::LicensesViewModel)
   viewModelOf(::AppLicenseViewModel)
+  viewModelOf(::ConnectLinkViewModel)
 }

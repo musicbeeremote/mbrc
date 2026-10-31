@@ -17,6 +17,9 @@ import com.kelsos.mbrc.core.networking.client.MessageQueueImpl
 import com.kelsos.mbrc.core.networking.client.PendingCommandBuffer
 import com.kelsos.mbrc.core.networking.client.UiMessageQueue
 import com.kelsos.mbrc.core.networking.client.UiMessageQueueImpl
+import com.kelsos.mbrc.core.networking.connectlink.PluginProbe
+import com.kelsos.mbrc.core.networking.connectlink.ReachableHostFinder
+import com.kelsos.mbrc.core.networking.connectlink.SocketPluginProbe
 import com.kelsos.mbrc.core.networking.data.DeserializationAdapter
 import com.kelsos.mbrc.core.networking.data.DeserializationAdapterImpl
 import com.kelsos.mbrc.core.networking.data.SerializationAdapter
@@ -123,6 +126,10 @@ val networkingModule = module {
   }
   single { DiscoveryTiming.SHIPPED }
   singleOf(::RemoteServiceDiscoveryImpl) { bind<RemoteServiceDiscovery>() }
+
+  // Connect links (QR code)
+  singleOf(::SocketPluginProbe) { bind<PluginProbe>() }
+  singleOf(::ReachableHostFinder)
 
   // Domain-specific API implementations
   singleOf(::LibraryApiImpl) { bind<LibraryApi>() }

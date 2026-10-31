@@ -16,6 +16,12 @@ import timber.log.Timber
 interface ConnectionRepository {
   suspend fun save(settings: ConnectionSettings)
 
+  /**
+   * Makes the host at [address] and [port] the default, adding it under [name] when it is not saved
+   * yet. An existing entry is reused as it is, so a user's own name for it survives.
+   */
+  suspend fun saveAsDefault(address: String, port: Int, name: String): ConnectionSettings
+
   suspend fun delete(settings: ConnectionSettings)
 
   fun getAll(): Flow<PagingData<ConnectionSettings>>
@@ -80,6 +86,14 @@ class ConnectionRepositoryImpl(
       }
     }
   }
+
+  override suspend fun saveAsDefault(address: String, port: Int, name: String): ConnectionSettings =
+    withContext(dispatchers.database) {
+      val id = dao.findId(address, port)
+        ?: dao.insert(ConnectionSettingsEntity(address = address, port = port, name = name))
+      dao.updateDefault(id)
+      checkNotNull(dao.getById(id)).toConnection()
+    }
 
   override suspend fun delete(settings: ConnectionSettings) {
     withContext(dispatchers.database) {

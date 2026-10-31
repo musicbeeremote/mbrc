@@ -6,9 +6,11 @@ import com.google.common.truth.Truth.assertThat
 import com.kelsos.mbrc.core.common.data.ConnectionSettings
 import com.kelsos.mbrc.core.common.test.testDispatcher
 import com.kelsos.mbrc.core.common.test.testDispatcherModule
+import com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers
 import com.kelsos.mbrc.core.networking.ClientConnectionUseCase
 import com.kelsos.mbrc.core.networking.discovery.DiscoveryStop
 import com.kelsos.mbrc.feature.settings.domain.ConnectionRepository
+import com.kelsos.mbrc.feature.settings.domain.DefaultConnectionSwitcherImpl
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -48,12 +50,16 @@ class ConnectionManagerViewModelTest : KoinTest {
 
     startKoin { modules(listOf(testModule, testDispatcherModule)) }
 
+    val dispatchers: AppCoroutineDispatchers =
+      org.koin.java.KoinJavaComponent.get(AppCoroutineDispatchers::class.java)
     viewModel = ConnectionManagerViewModel(
       repository = repository,
-      dispatchers = org.koin.java.KoinJavaComponent.get(
-        com.kelsos.mbrc.core.common.utilities.coroutines.AppCoroutineDispatchers::class.java
-      ),
-      clientConnectionUseCase = clientConnectionUseCase
+      dispatchers = dispatchers,
+      defaultConnectionSwitcher = DefaultConnectionSwitcherImpl(
+        repository,
+        clientConnectionUseCase,
+        dispatchers
+      )
     )
   }
 

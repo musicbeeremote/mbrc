@@ -23,6 +23,9 @@ sealed class UiMessage {
 
   object PluginUpdateAvailable : UiMessage()
 
+  /** A host from a connect link was saved as the default and the app is connecting to it. */
+  class ConnectingTo(val name: String) : UiMessage()
+
   // Connection Error Messages
   sealed class ConnectionError : UiMessage() {
     object ServerNotFound : ConnectionError()

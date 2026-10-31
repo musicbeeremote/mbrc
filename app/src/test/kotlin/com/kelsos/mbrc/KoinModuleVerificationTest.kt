@@ -13,6 +13,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.util.DisplayMetrics
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.SavedStateHandle
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import org.junit.Test
@@ -53,7 +54,9 @@ class KoinModuleVerificationTest {
         ConnectivityManager::class,
         WorkManager::class,
         // WorkManager-specific types for Workers
-        WorkerParameters::class
+        WorkerParameters::class,
+        // Supplied by the ViewModel factory
+        SavedStateHandle::class
       )
     )
   }

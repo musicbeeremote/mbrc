@@ -40,6 +40,27 @@
   <string name="connection_manager_scan">SCAN</string>
   <string name="connection_manager_scanning">Scanning for MusicBee on your network…</string>
 
+  <!-- Connect link (QR code) -->
+  <string name="connect_link_title">Connect to MusicBee</string>
+  <string name="connect_link_message">Add this computer and connect to it?</string>
+  <string name="connect_link_addresses">Addresses</string>
+  <string name="connect_link_port">Port %1$d</string>
+  <string name="connect_link_connect">Connect</string>
+  <string name="connect_link_connecting">Looking for MusicBee…</string>
+  <string name="connect_link_unreachable_title">MusicBee did not answer</string>
+  <string name="connect_link_unreachable_message">None of these addresses answered. Check that the phone is on the same network as the computer and that MusicBee is running.</string>
+  <string name="connect_link_try_again">Try again</string>
+  <string name="connect_link_local_network_title">Local network access is off</string>
+  <string name="connect_link_local_network_message">MusicBee Remote needs access to devices on your local network to reach this computer. Grant access, then connect.</string>
+  <string name="connect_link_grant_access">Grant access</string>
+  <string name="connect_link_save_failed_title">Couldn\'t add this computer</string>
+  <string name="connect_link_save_failed_message">MusicBee answered, but the app could not save or connect to this computer. Try again.</string>
+  <string name="connect_link_rejected_title">Can\'t use this link</string>
+  <string name="connect_link_error_not_a_link">This is not a MusicBee Remote connection link.</string>
+  <string name="connect_link_error_newer_version">This link comes from a newer plugin. Update MusicBee Remote to use it.</string>
+  <string name="connect_link_error_malformed">This link is incomplete or damaged. Show the QR code again in the plugin and scan it again.</string>
+  <string name="connect_link_error_no_local_address">This link points outside your local network, so it was not used.</string>
+
   <!-- Connection dialog -->
   <string name="settings_dialog_hint_host">Hostname / IP</string>
   <string name="settings_dialog_hint_name">Computer name</string>

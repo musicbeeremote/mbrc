@@ -95,6 +95,8 @@ private fun UiMessage.toDisplayText(strings: UiMessageStrings): String? = when (
 
   is UiMessage.PartyModeCommandUnavailable -> strings.partyMode
 
+  is UiMessage.ConnectingTo -> strings.connectingTo.format(name)
+
   // These are handled separately in the main handler
   is UiMessage.PluginUpdateAvailable, is UiMessage.PluginUpdateRequired -> null
 }
@@ -115,7 +117,8 @@ data class UiMessageStrings(
   val notAllowed: String,
   val partyMode: String,
   val pluginUpdateAvailable: String,
-  val learnMore: String
+  val learnMore: String,
+  val connectingTo: String
 )
 
 @Composable
@@ -131,5 +134,6 @@ private fun uiMessageStrings() = UiMessageStrings(
   notAllowed = stringResource(R.string.connection_error_not_allowed),
   partyMode = stringResource(R.string.connection_error_party_mode),
   pluginUpdateAvailable = stringResource(R.string.plugin_update_available),
-  learnMore = stringResource(R.string.action_learn_more)
+  learnMore = stringResource(R.string.action_learn_more),
+  connectingTo = stringResource(R.string.connect_link_connecting_to)
 )

@@ -50,6 +50,8 @@ import com.kelsos.mbrc.core.ui.theme.RemoteTheme
 import com.kelsos.mbrc.feature.misc.whatsnew.WhatsNewScreen
 import com.kelsos.mbrc.feature.misc.whatsnew.WhatsNewViewModel
 import com.kelsos.mbrc.feature.settings.compose.UpdateRequiredScreen
+import com.kelsos.mbrc.feature.settings.connectlink.ConnectLinkDialog
+import com.kelsos.mbrc.feature.settings.connectlink.ConnectLinkState
 import com.kelsos.mbrc.feature.settings.domain.SettingsManager
 import com.kelsos.mbrc.feature.settings.theme.Theme
 import kotlin.math.abs
@@ -73,7 +75,10 @@ fun RemoteApp(
   showLocalNetworkRationale: Boolean = false,
   localNetworkDenials: Int = 0,
   onLocalNetworkRationaleContinue: () -> Unit = {},
-  onLocalNetworkRationaleDismiss: () -> Unit = {}
+  onLocalNetworkRationaleDismiss: () -> Unit = {},
+  connectLinkState: ConnectLinkState = ConnectLinkState.Hidden,
+  onConnectLinkConfirm: () -> Unit = {},
+  onConnectLinkDismiss: () -> Unit = {}
 ) {
   val settingsManager: SettingsManager = koinInject()
   // Initial value matches DataStore default ("dark") to avoid flash on first load
@@ -142,6 +147,13 @@ fun RemoteApp(
         onDismiss = onLocalNetworkRationaleDismiss
       )
     }
+
+    ConnectLinkDialog(
+      state = if (showLocalNetworkRationale) ConnectLinkState.Hidden else connectLinkState,
+      onConnect = onConnectLinkConfirm,
+      onGrantLocalNetworkAccess = onRequestLocalNetworkAccess,
+      onDismiss = onConnectLinkDismiss
+    )
 
     // Handle global UI messages (connection errors, etc.)
     GlobalUiMessageHandler(

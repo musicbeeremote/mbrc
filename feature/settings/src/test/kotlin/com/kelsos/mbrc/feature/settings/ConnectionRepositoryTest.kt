@@ -332,6 +332,39 @@ class ConnectionRepositoryTest : KoinTest {
     val withoutId: List<ConnectionSettings>
   )
 
+  @Test
+  fun `saveAsDefault adds a new host and makes it the default`() = runTest(testDispatcher) {
+    val (_, withoutId) = generateSettings(2)
+    repository.save(withoutId[0])
+
+    val host = withoutId[1]
+
+    val saved = repository.saveAsDefault(host.address, host.port, host.name)
+
+    assertThat(saved).isEqualTo(withoutId[1].copy(id = 2, isDefault = true))
+    assertThat(repository.getDefault()).isEqualTo(saved)
+    assertThat(repository.count()).isEqualTo(2)
+  }
+
+  @Test
+  fun `saveAsDefault reuses the entry already saved at that address and port`() =
+    runTest(testDispatcher) {
+      val (_, withoutId) = generateSettings(2)
+      withoutId.forEach { repository.save(it) }
+
+      val host = withoutId[1]
+
+      val saved = repository.saveAsDefault(host.address, host.port, "From the QR code")
+
+      assertWithMessage("a rescan must not add a second row for the same host")
+        .that(repository.count())
+        .isEqualTo(2)
+      assertWithMessage("the user's own name for the host is kept")
+        .that(saved.name)
+        .isEqualTo(withoutId[1].name)
+      assertThat(repository.getDefault()?.id).isEqualTo(2)
+    }
+
   private fun generateSettings(count: Long): Settings {
     val withoutId = mutableListOf<ConnectionSettings>()
     val withId = mutableListOf<ConnectionSettings>()

@@ -20,11 +20,13 @@ import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.kelsos.mbrc.core.common.state.ConnectionStatePublisher
 import com.kelsos.mbrc.core.common.state.ConnectionStatus
 import com.kelsos.mbrc.core.networking.LocalNetworkAccess
+import com.kelsos.mbrc.feature.settings.connectlink.ConnectLinkViewModel
 import com.kelsos.mbrc.feature.settings.data.KeepScreenOn
 import com.kelsos.mbrc.feature.settings.domain.SettingsManager
 import com.kelsos.mbrc.service.LocalNetworkAccessImpl
@@ -33,6 +35,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Main entry point for the Compose-based MusicBee Remote app.
@@ -45,6 +48,7 @@ class MainActivity : ComponentActivity() {
   private val connectionState: ConnectionStatePublisher by inject()
   private val preferences: SharedPreferences by inject()
   private val settingsManager: SettingsManager by inject()
+  private val connectLinkViewModel: ConnectLinkViewModel by viewModel()
 
   private var showLocalNetworkRationale by mutableStateOf(false)
 
@@ -112,7 +116,12 @@ class MainActivity : ComponentActivity() {
 
     keepScreenOnWhileVisible()
 
+    if (savedInstanceState == null) {
+      openConnectLink(intent)
+    }
+
     setContent {
+      val connectLinkState by connectLinkViewModel.state.collectAsStateWithLifecycle()
       RemoteApp(
         onRequestLocalNetworkAccess = ::requestLocalNetworkAccess,
         showLocalNetworkRationale = showLocalNetworkRationale,
@@ -126,9 +135,37 @@ class MainActivity : ComponentActivity() {
           showLocalNetworkRationale = false
           rationaleDeclined = true
           denyLocalNetwork()
-        }
+        },
+        connectLinkState = connectLinkState,
+        onConnectLinkConfirm = connectLinkViewModel::connect,
+        onConnectLinkDismiss = connectLinkViewModel::dismiss
       )
     }
+  }
+
+  /** A grant made in the system prompt or in app settings lands here on the way back. */
+  override fun onResume() {
+    super.onResume()
+    connectLinkViewModel.refreshLocalNetworkAccess()
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    openConnectLink(intent)
+  }
+
+  /**
+   * Hands a connect link from the plugin's QR code to the confirm dialog. A launch from recents
+   * replays the intent that first opened the activity, so that one is ignored rather than asking
+   * the user to confirm an old scan again.
+   */
+  private fun openConnectLink(intent: Intent) {
+    val launchedFromRecents = intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0
+    val link = intent.dataString
+    if (intent.action != Intent.ACTION_VIEW || link == null || launchedFromRecents) {
+      return
+    }
+    connectLinkViewModel.open(link)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
