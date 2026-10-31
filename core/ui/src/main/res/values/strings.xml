@@ -23,4 +23,5 @@
 
   <!-- Errors -->
   <string name="connection_error_network_unavailable">Network is unreachable. Please check your network connection.</string>
+  <string name="paging_load_failed">This list could not be loaded</string>
 </resources>

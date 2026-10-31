@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,6 +39,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -299,7 +301,6 @@ fun MoreOptionsButton(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Any> SwipeRefreshScreen(
   items: LazyPagingItems<T>,
@@ -312,58 +313,15 @@ fun <T : Any> SwipeRefreshScreen(
   key: ((T) -> Any)? = null,
   itemContent: @Composable (T) -> Unit
 ) {
-  PullToRefreshBox(
+  PagedScreen(
+    items = items,
+    emptyMessage = emptyMessage,
+    emptyIcon = emptyIcon,
     isRefreshing = isRefreshing,
     onRefresh = onRefresh,
     modifier = modifier
-  ) {
-    when (items.loadState.refresh) {
-      is LoadState.Loading if items.itemCount == 0 -> {
-        LoadingScreen()
-      }
-
-      is LoadState.NotLoading if items.itemCount == 0 -> {
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-          EmptyScreen(
-            message = emptyMessage,
-            icon = emptyIcon,
-            modifier = Modifier
-              .fillMaxWidth()
-              .heightIn(min = maxHeight)
-              .verticalScroll(rememberScrollState())
-          )
-        }
-      }
-
-      else -> {
-        LazyColumn(
-          modifier = Modifier.fillMaxSize()
-        ) {
-          items(
-            count = items.itemCount,
-            key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
-            contentType = { "list_item" }
-          ) { index ->
-            items[index]?.let { item ->
-              itemContent(item)
-            }
-          }
-
-          if (items.loadState.append is LoadState.Loading) {
-            item(contentType = "loading") {
-              Box(
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(16.dp),
-                contentAlignment = Alignment.Center
-              ) {
-                CircularProgressIndicator()
-              }
-            }
-          }
-        }
-      }
-    }
+  ) { contentModifier ->
+    PagedColumn(items, listId, key, contentModifier, itemContent)
   }
 }
 
@@ -381,51 +339,18 @@ fun <T : Any> PagingListScreen(
   key: ((T) -> Any)? = null,
   itemContent: @Composable (T) -> Unit
 ) {
-  when (items.loadState.refresh) {
-    is LoadState.Loading if items.itemCount == 0 -> {
-      LoadingScreen(modifier = modifier)
-    }
-
-    is LoadState.NotLoading if items.itemCount == 0 -> {
-      EmptyScreen(
-        message = emptyMessage,
-        icon = emptyIcon,
-        modifier = modifier
-      )
-    }
-
-    else -> {
-      LazyColumn(
-        modifier = modifier.fillMaxSize()
-      ) {
-        items(
-          count = items.itemCount,
-          key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
-          contentType = { "list_item" }
-        ) { index ->
-          items[index]?.let { item ->
-            itemContent(item)
-          }
-        }
-
-        if (items.loadState.append is LoadState.Loading) {
-          item(contentType = "loading") {
-            Box(
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-              contentAlignment = Alignment.Center
-            ) {
-              CircularProgressIndicator()
-            }
-          }
-        }
-      }
-    }
+  PagedScreen(
+    items = items,
+    emptyMessage = emptyMessage,
+    emptyIcon = emptyIcon,
+    isRefreshing = false,
+    onRefresh = null,
+    modifier = modifier
+  ) { contentModifier ->
+    PagedColumn(items, listId, key, contentModifier, itemContent)
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Any> SwipeRefreshGridScreen(
   items: LazyPagingItems<T>,
@@ -438,62 +363,15 @@ fun <T : Any> SwipeRefreshGridScreen(
   key: ((T) -> Any)? = null,
   itemContent: @Composable (T) -> Unit
 ) {
-  PullToRefreshBox(
+  PagedScreen(
+    items = items,
+    emptyMessage = emptyMessage,
+    emptyIcon = emptyIcon,
     isRefreshing = isRefreshing,
     onRefresh = onRefresh,
     modifier = modifier
-  ) {
-    when (items.loadState.refresh) {
-      is LoadState.Loading if items.itemCount == 0 -> {
-        LoadingScreen()
-      }
-
-      is LoadState.NotLoading if items.itemCount == 0 -> {
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-          EmptyScreen(
-            message = emptyMessage,
-            icon = emptyIcon,
-            modifier = Modifier
-              .fillMaxWidth()
-              .heightIn(min = maxHeight)
-              .verticalScroll(rememberScrollState())
-          )
-        }
-      }
-
-      else -> {
-        LazyVerticalGrid(
-          columns = GridCells.Adaptive(minSize = albumGridMinCellSize()),
-          modifier = Modifier.fillMaxSize(),
-          contentPadding = PaddingValues(8.dp),
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-          verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-          items(
-            count = items.itemCount,
-            key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
-            contentType = { "grid_item" }
-          ) { index ->
-            items[index]?.let { item ->
-              itemContent(item)
-            }
-          }
-
-          if (items.loadState.append is LoadState.Loading) {
-            item(contentType = "loading") {
-              Box(
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(16.dp),
-                contentAlignment = Alignment.Center
-              ) {
-                CircularProgressIndicator()
-              }
-            }
-          }
-        }
-      }
-    }
+  ) { contentModifier ->
+    PagedGrid(items, listId, key, contentModifier, itemContent)
   }
 }
 
@@ -507,50 +385,201 @@ fun <T : Any> PagingGridScreen(
   key: ((T) -> Any)? = null,
   itemContent: @Composable (T) -> Unit
 ) {
+  PagedScreen(
+    items = items,
+    emptyMessage = emptyMessage,
+    emptyIcon = emptyIcon,
+    isRefreshing = false,
+    onRefresh = null,
+    modifier = modifier
+  ) { contentModifier ->
+    PagedGrid(items, listId, key, contentModifier, itemContent)
+  }
+}
+
+/**
+ * The first-load spinner, empty state and load failure shared by every paged screen, handing
+ * [modifier] to [content] once rows exist.
+ *
+ * A non-null [onRefresh] wraps the screen in a [PullToRefreshBox], which takes [modifier] itself
+ * and makes the empty and failure states scrollable: the refresh gesture only starts from a
+ * scrollable child, so a static placeholder could never be pulled.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun <T : Any> PagedScreen(
+  items: LazyPagingItems<T>,
+  emptyMessage: String,
+  emptyIcon: ImageVector?,
+  isRefreshing: Boolean,
+  onRefresh: (() -> Unit)?,
+  modifier: Modifier = Modifier,
+  content: @Composable (Modifier) -> Unit
+) {
+  if (onRefresh == null) {
+    PagedStates(items, emptyMessage, emptyIcon, scrollablePlaceholder = false, modifier, content)
+  } else {
+    PullToRefreshBox(
+      isRefreshing = isRefreshing,
+      onRefresh = onRefresh,
+      modifier = modifier
+    ) {
+      PagedStates(items, emptyMessage, emptyIcon, scrollablePlaceholder = true, content = content)
+    }
+  }
+}
+
+@Composable
+private fun <T : Any> PagedStates(
+  items: LazyPagingItems<T>,
+  emptyMessage: String,
+  emptyIcon: ImageVector?,
+  scrollablePlaceholder: Boolean,
+  modifier: Modifier = Modifier,
+  content: @Composable (Modifier) -> Unit
+) {
   when (items.loadState.refresh) {
     is LoadState.Loading if items.itemCount == 0 -> {
       LoadingScreen(modifier = modifier)
     }
 
     is LoadState.NotLoading if items.itemCount == 0 -> {
-      EmptyScreen(
-        message = emptyMessage,
-        icon = emptyIcon,
-        modifier = modifier
-      )
+      PagedPlaceholder(scrollablePlaceholder, modifier) { placeholderModifier ->
+        EmptyScreen(
+          message = emptyMessage,
+          icon = emptyIcon,
+          modifier = placeholderModifier
+        )
+      }
     }
 
-    else -> {
-      LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = albumGridMinCellSize()),
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-      ) {
-        items(
-          count = items.itemCount,
-          key = key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) },
-          contentType = { "grid_item" }
-        ) { index ->
-          items[index]?.let { item ->
-            itemContent(item)
-          }
-        }
-
-        if (items.loadState.append is LoadState.Loading) {
-          item(contentType = "loading") {
-            Box(
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-              contentAlignment = Alignment.Center
-            ) {
-              CircularProgressIndicator()
-            }
-          }
-        }
+    is LoadState.Error if items.itemCount == 0 -> {
+      PagedPlaceholder(scrollablePlaceholder, modifier) { placeholderModifier ->
+        ErrorScreen(
+          message = stringResource(R.string.paging_load_failed),
+          modifier = placeholderModifier,
+          onRetry = items::retry
+        )
       }
+    }
+
+    else -> content(modifier)
+  }
+}
+
+@Composable
+private fun PagedPlaceholder(
+  scrollable: Boolean,
+  modifier: Modifier = Modifier,
+  content: @Composable (Modifier) -> Unit
+) {
+  if (scrollable) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+      content(
+        Modifier
+          .fillMaxWidth()
+          .heightIn(min = maxHeight)
+          .verticalScroll(rememberScrollState())
+      )
+    }
+  } else {
+    content(modifier)
+  }
+}
+
+@Composable
+private fun <T : Any> PagedColumn(
+  items: LazyPagingItems<T>,
+  listId: String,
+  key: ((T) -> Any)?,
+  modifier: Modifier = Modifier,
+  itemContent: @Composable (T) -> Unit
+) {
+  val itemKey = rememberPagedItemKey(listId, items, key)
+  LazyColumn(
+    modifier = modifier.fillMaxSize()
+  ) {
+    items(
+      count = items.itemCount,
+      key = itemKey,
+      contentType = { "list_item" }
+    ) { index ->
+      items[index]?.let { item ->
+        itemContent(item)
+      }
+    }
+
+    val append = items.loadState.append
+    if (append !is LoadState.NotLoading) {
+      item(contentType = "footer") {
+        PagedFooter(append = append, onRetry = items::retry)
+      }
+    }
+  }
+}
+
+@Composable
+private fun <T : Any> PagedGrid(
+  items: LazyPagingItems<T>,
+  listId: String,
+  key: ((T) -> Any)?,
+  modifier: Modifier = Modifier,
+  itemContent: @Composable (T) -> Unit
+) {
+  val itemKey = rememberPagedItemKey(listId, items, key)
+  LazyVerticalGrid(
+    columns = GridCells.Adaptive(minSize = albumGridMinCellSize()),
+    modifier = modifier.fillMaxSize(),
+    contentPadding = PaddingValues(8.dp),
+    horizontalArrangement = Arrangement.spacedBy(8.dp),
+    verticalArrangement = Arrangement.spacedBy(8.dp)
+  ) {
+    items(
+      count = items.itemCount,
+      key = itemKey,
+      contentType = { "grid_item" }
+    ) { index ->
+      items[index]?.let { item ->
+        itemContent(item)
+      }
+    }
+
+    val append = items.loadState.append
+    if (append !is LoadState.NotLoading) {
+      item(span = { GridItemSpan(maxLineSpan) }, contentType = "footer") {
+        PagedFooter(append = append, onRetry = items::retry)
+      }
+    }
+  }
+}
+
+@Composable
+private fun <T : Any> rememberPagedItemKey(
+  listId: String,
+  items: LazyPagingItems<T>,
+  key: ((T) -> Any)?
+): ((Int) -> Any)? = remember(listId, items, key) {
+  key?.let { keyFunc -> pagedItemKey(listId, items, keyFunc) }
+}
+
+/**
+ * The row after the last loaded item while the next page is loading or has failed to load. A
+ * failed page gets a retry, since paging never asks for it again on its own.
+ */
+@Composable
+private fun PagedFooter(append: LoadState, onRetry: () -> Unit) {
+  Box(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(16.dp),
+    contentAlignment = Alignment.Center
+  ) {
+    if (append is LoadState.Error) {
+      TextButton(onClick = onRetry) {
+        Text(stringResource(R.string.action_retry))
+      }
+    } else {
+      CircularProgressIndicator()
     }
   }
 }
