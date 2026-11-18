@@ -3,8 +3,10 @@
   "extends": [
     "config:best-practices"
   ],
-  "dependencyDashboard": true,
-  "dependencyDashboardAutoclose": false,
+  "dependencyDashboard": {
+    "enabled": true,
+    "autoclose": false
+  },
   "prCreation": "approval",
   "packageRules": [
     {
