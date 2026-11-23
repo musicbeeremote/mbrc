@@ -11,6 +11,8 @@
   <string name="feedback_logs">包含日志</string>
   <string name="feedback_title">你对这个应用感觉如何？</string>
   <string name="tab_help">帮助</string>
+  <string name="help_webview_unavailable">此设备上的 Android System WebView 加载失败，无法在这里显示帮助页面。</string>
+  <string name="help_open_in_browser">在浏览器中打开帮助</string>
 
   <!-- Output selection -->
   <string name="output_selection__connection_error">连接错误</string>
