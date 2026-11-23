@@ -14,7 +14,7 @@
   <!-- FAB -->
   <string name="fab_open_menu">打开操作菜单</string>
   <string name="fab_close_menu">关闭操作菜单</string>
-  <string name="no_data">无有效数据</string>
+  <string name="no_data">暂无数据</string>
 
   <!-- Queue results -->
   <string name="queue_result__failure">加入播放队列失败</string>

@@ -19,7 +19,7 @@
   <string name="output_selection_title">选择输出设备</string>
 
   <!-- What's New -->
-  <string name="entry_type_bug">Bug修复</string>
+  <string name="entry_type_bug">Bug 修复</string>
   <string name="entry_type_feature">新功能</string>
   <string name="entry_type_removed">已移除</string>
   <string name="whats_new_empty">暂无更新日志</string>

@@ -29,7 +29,7 @@
 
   <!-- Now playing -->
   <plurals name="now_playing__track_count">
-    <item quantity="other">%d 首曲目已加入队列</item>
+    <item quantity="other">队列中共 %d 首曲目</item>
   </plurals>
   <string name="menu_remove_track">移除曲目</string>
   <string name="now_playing__drag_handle">拖动以重新排序</string>
@@ -37,11 +37,11 @@
   <string name="now_playing__scroll_to_playing">滚动到正在播放的曲目</string>
   <string name="now_playing__search_not_found">未找到与搜索匹配的曲目</string>
   <string name="now_playing__search_success">正在播放：%1$s</string>
-  <string name="now_playing_empty">播放列表为空</string>
+  <string name="now_playing_empty">播放队列为空</string>
   <string name="now_playing_move_failed">移动曲目失败</string>
-  <string name="now_playing_search_hint">在播放列表中搜索</string>
+  <string name="now_playing_search_hint">在播放队列中搜索</string>
   <string name="now_playing_search_no_results">未找到结果</string>
-  <string name="now_playing_track_removed">已从播放列表中移除曲目</string>
+  <string name="now_playing_track_removed">已从播放队列中移除曲目</string>
 
   <!-- Output selection -->
   <string name="output_error">加载输出设备失败</string>
