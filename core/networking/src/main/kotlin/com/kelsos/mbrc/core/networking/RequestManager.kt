@@ -6,6 +6,7 @@ import com.kelsos.mbrc.core.networking.data.DeserializationAdapter
 import com.kelsos.mbrc.core.networking.data.SerializationAdapter
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.base.ProtocolPayload
+import com.squareup.moshi.JsonDataException
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.Socket
@@ -34,10 +35,15 @@ class RequestManagerImpl(
       val inputStream = socket.getInputStream()
       val bufferedReader = inputStream.bufferedReader(Charset.defaultCharset())
 
-      while (handshake) {
-        if (socket.isHandshakeComplete(bufferedReader)) {
-          break
+      try {
+        while (handshake) {
+          if (socket.isHandshakeComplete(bufferedReader)) {
+            break
+          }
         }
+      } catch (e: IOException) {
+        socket.close()
+        throw e
       }
 
       return@withContext ActiveConnection(socket, bufferedReader)
@@ -49,7 +55,11 @@ class RequestManagerImpl(
         bufferedReader.readLine()
       }
     if (!line.isNullOrEmpty()) {
-      val message = deserializationAdapter.objectify(line, SocketMessage::class)
+      val message = try {
+        deserializationAdapter.objectify(line, SocketMessage::class)
+      } catch (e: JsonDataException) {
+        throw UnexpectedHandshakeReplyException(e)
+      }
 
       val context = Protocol.Companion.fromString(message.context)
       Timber.v("incoming context => ${context.context}")
