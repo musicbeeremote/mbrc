@@ -10,6 +10,12 @@ android {
   buildFeatures {
     compose = true
   }
+
+  testOptions {
+    unitTests {
+      isIncludeAndroidResources = true
+    }
+  }
 }
 
 dependencies {
@@ -32,4 +38,6 @@ dependencies {
   testImplementation(testFixtures(project(":core:common")))
   testImplementation(libs.bundles.unit.test)
   testImplementation(libs.androidx.test.runner)
+  testImplementation(libs.androidx.compose.ui.test.junit4)
+  debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

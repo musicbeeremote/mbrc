@@ -3,6 +3,7 @@ package com.kelsos.mbrc.feature.misc.help.compose
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -39,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -50,6 +52,7 @@ import com.kelsos.mbrc.feature.misc.help.FeedbackViewModel
 import java.io.File
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 private sealed class HelpFeedbackTab(val index: Int) {
   data object Help : HelpFeedbackTab(0)
@@ -146,29 +149,70 @@ private fun HelpFeedbackContent(viewModel: FeedbackViewModel, modifier: Modifier
   }
 }
 
+/**
+ * Shows the online help in a [WebView]. Creating one throws when the device's Android System
+ * WebView fails to load, so the screen then offers to open the same page in the browser instead.
+ */
 @Suppress("COMPOSE_UICOMPOSABLE_INVOCATION")
 @Composable
-private fun HelpContent(modifier: Modifier = Modifier, versionName: String) {
+internal fun HelpContent(
+  versionName: String,
+  modifier: Modifier = Modifier,
+  createWebView: (Context) -> WebView = ::WebView
+) {
+  val helpUrl = "https://mbrc.kelsos.net/help?version=$versionName"
+  var webViewFailed by remember { mutableStateOf(false) }
+  if (webViewFailed) {
+    HelpInBrowser(helpUrl = helpUrl, modifier = modifier)
+    return
+  }
   LazyColumn(modifier = modifier.fillMaxSize()) {
     item {
       AndroidView(
         factory = { context ->
-          WebView(context).apply {
-            webViewClient = object : WebViewClient() {
-              override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-              ): Boolean {
-                val url = request?.url.toString()
-                view?.loadUrl(url)
-                return false
+          try {
+            createWebView(context).apply {
+              webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(
+                  view: WebView?,
+                  request: WebResourceRequest?
+                ): Boolean {
+                  val url = request?.url.toString()
+                  view?.loadUrl(url)
+                  return false
+                }
               }
+              loadUrl(helpUrl)
             }
-            loadUrl("https://mbrc.kelsos.net/help?version=$versionName")
+          } catch (e: RuntimeException) {
+            Timber.w(e, "WebView is unavailable, offering the browser instead")
+            webViewFailed = true
+            View(context)
           }
         },
         modifier = Modifier.fillMaxSize()
       )
+    }
+  }
+}
+
+@Composable
+private fun HelpInBrowser(helpUrl: String, modifier: Modifier = Modifier) {
+  val uriHandler = LocalUriHandler.current
+  Column(
+    modifier = modifier
+      .fillMaxSize()
+      .padding(24.dp),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Text(
+      text = stringResource(R.string.help_webview_unavailable),
+      style = MaterialTheme.typography.bodyLarge
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = { runCatching { uriHandler.openUri(helpUrl) } }) {
+      Text(stringResource(R.string.help_open_in_browser))
     }
   }
 }

@@ -10,6 +10,8 @@ Changelog
 - Streams now show a red dot and "LIVE" where the player and the lyrics screen show a track's length. A stream has no length, so that spot used to repeat the elapsed time.
 
 ### Fixed
+- Fixes a crash when the saved connection points at a port where another program, not the MusicBee plugin, is listening. The app read that program's reply as a plugin message and closed. The connection now fails like any other unreachable computer.
+- Fixes a crash on opening Help on devices where Android System WebView fails to load. The Help tab now says so and offers to open the help page in the browser.
 - Fixes a crash while scrolling a library list during a library sync. A row could briefly appear twice when newly synced items pushed the list down between two pages, which closed the app. The repeat is now left out, and the list corrects itself as the sync moves on.
 - Fixes the elapsed time in the player stopping after the connection to MusicBee dropped and came back while it kept playing. The time only moved when MusicBee sent a position update and then froze again; it now keeps counting every second after a reconnect.
 - Fixes there being no way to quit the remote while MusicBee was playing. Since 1.7.0, swiping the app away from recents during playback left it running, with its notification stuck in place and the volume keys still moving the MusicBee volume slider. Swiping the app away now always closes it, which puts the volume keys back on the phone and removes the notification. MusicBee keeps playing; reopening the app reconnects.

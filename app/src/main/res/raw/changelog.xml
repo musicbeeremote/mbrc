@@ -14,6 +14,8 @@
     <bug>Fixes the remote's media controls in the notification shade updating every second while MusicBee played, which kept pushing its card ahead of your phone's own player. The notification now only changes when something on it does, and the progress bar keeps moving on its own.</bug>
     <bug>Fixes two phones knocking each other off MusicBee every few seconds when one was set up from the other's backup or by a phone transfer such as Smart Switch. Each phone now keeps its own identity, and phones already set up this way recover after this update without clearing app data.</bug>
     <bug>Fixes a crash while scrolling a library list during a library sync, when newly synced items briefly made a row appear twice. The repeat is now left out, and the list corrects itself as the sync moves on.</bug>
+    <bug>Fixes a crash when the saved connection points at a port where another program, not the MusicBee plugin, is listening. The connection now fails like any other unreachable computer.</bug>
+    <bug>Fixes a crash on opening Help on devices where Android System WebView fails to load. The Help tab now offers to open the help page in the browser instead.</bug>
   </version>
   <version
     version="1.7.0"

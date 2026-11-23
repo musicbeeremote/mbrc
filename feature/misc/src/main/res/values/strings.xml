@@ -16,6 +16,8 @@
   <string name="feedback_title">How you feel about the application?</string>
   <string name="feedback_version_info" translatable="false">\n\nDevice: %1$s %2$s Android(%3$s)\nMusicBee Remote v%4$s</string>
   <string name="tab_help">Help</string>
+  <string name="help_webview_unavailable">The help page can\'t be shown here because Android System WebView failed to load on this device.</string>
+  <string name="help_open_in_browser">Open help in the browser</string>
 
   <!-- Output selection -->
   <string name="output_selection__connection_error">Connection error</string>
