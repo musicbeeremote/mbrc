@@ -7,6 +7,7 @@ import com.kelsos.mbrc.core.networking.data.SerializationAdapter
 import com.kelsos.mbrc.core.networking.protocol.base.Protocol
 import com.kelsos.mbrc.core.networking.protocol.base.ProtocolPayload
 import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.Socket
@@ -35,15 +36,18 @@ class RequestManagerImpl(
       val inputStream = socket.getInputStream()
       val bufferedReader = inputStream.bufferedReader(Charset.defaultCharset())
 
+      var handshakeDone = false
       try {
         while (handshake) {
           if (socket.isHandshakeComplete(bufferedReader)) {
             break
           }
         }
-      } catch (e: IOException) {
-        socket.close()
-        throw e
+        handshakeDone = true
+      } finally {
+        if (!handshakeDone) {
+          socket.close()
+        }
       }
 
       return@withContext ActiveConnection(socket, bufferedReader)
@@ -58,6 +62,10 @@ class RequestManagerImpl(
       val message = try {
         deserializationAdapter.objectify(line, SocketMessage::class)
       } catch (e: JsonDataException) {
+        throw UnexpectedHandshakeReplyException(e)
+      } catch (e: JsonEncodingException) {
+        throw UnexpectedHandshakeReplyException(e)
+      } catch (e: IllegalStateException) {
         throw UnexpectedHandshakeReplyException(e)
       }
 

@@ -71,9 +71,8 @@ class RequestManagerHandshakeTest {
     return clientClosed
   }
 
-  @Test
-  fun `a service answering a bare number fails the connection instead of crashing`() = runBlocking {
-    val clientClosed = replyOnce("42")
+  private fun assertRejected(reply: String) = runBlocking {
+    val clientClosed = replyOnce(reply)
 
     val thrown = runCatching { manager.openConnection() }.exceptionOrNull()
 
@@ -87,15 +86,17 @@ class RequestManagerHandshakeTest {
   }
 
   @Test
-  fun `a service answering text that is not json fails the connection with an IOException`() =
-    runBlocking {
-      val clientClosed = replyOnce("HTTP/1.1 400 Bad Request")
+  fun `a service answering a bare number fails the connection instead of crashing`() {
+    assertRejected("42")
+  }
 
-      val thrown = runCatching { manager.openConnection() }.exceptionOrNull()
+  @Test
+  fun `a service answering text that is not json fails the connection`() {
+    assertRejected("HTTP/1.1 400 Bad Request")
+  }
 
-      assertThat(thrown).isInstanceOf(IOException::class.java)
-      assertWithMessage("the socket to the wrong service must be closed")
-        .that(clientClosed.get(5, TimeUnit.SECONDS))
-        .isTrue()
-    }
+  @Test
+  fun `a service answering json null fails the connection instead of crashing`() {
+    assertRejected("null")
+  }
 }
