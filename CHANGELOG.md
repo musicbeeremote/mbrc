@@ -3,6 +3,7 @@ Changelog
 
 ## [1.7.1]
 ### Added
+- The app is now available in Simplified Chinese, translated by yangf73. It follows your phone's language, and on Android 13 and later you can also choose it for MusicBee Remote alone in the system's per-app language setting. Anything not yet translated falls back to English.
 - Prepares for connecting by QR code, a feature of the upcoming MusicBee Remote plugin 2.0. Current plugin versions do not show a QR code, so nothing changes until you install plugin 2.0. Once you have it, scanning the code in the plugin's setup or settings with the phone's own camera opens the app, which lists the computer's name and addresses and asks before it connects. The app then tries every address at once, saves the first one that answers as the default connection and connects to it, so there is nothing to type. This works where scanning the network does not, such as on guest networks, mesh Wi-Fi that blocks discovery, or a computer on another subnet. Only addresses on your local network are accepted, and a code from a newer plugin than the app understands asks you to update the app instead of guessing.
 
 ### Changed
