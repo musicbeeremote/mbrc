@@ -90,8 +90,8 @@ val buildTimeProvider = providers.provider {
   df.format(Date())
 }
 
-val appVersionName = "1.7.0"
-val appVersionCode = 132
+val appVersionName = "1.7.1"
+val appVersionCode = 133
 
 android {
   namespace = "com.kelsos.mbrc"
